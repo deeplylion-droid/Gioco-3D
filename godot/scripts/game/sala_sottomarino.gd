@@ -610,15 +610,19 @@ func _sezioni(s0: float, s1: float) -> PackedFloat32Array:
 	return pulito
 
 
-## Il passaggio dalla porta del bacino (nel muro della sala delle condotte, x 40) al tunnel: pavimento, fianchi
+## Il passaggio dalla porta del bacino (nel muro della sala delle condotte, x 40,4) al tunnel: pavimento, fianchi
 ## e soffitto, lunghi quanto lo spessore fra i due muri.
+const MURO_CONDOTTE_X := 40.4
 func _passaggio_porta(st: Dictionary, facce: PackedVector3Array) -> void:
 	var p := punto(PORTA_S)
 	var r := destra(PORTA_S)
 	var d := direzione(PORTA_S)
 	var a := _al(p, r, Vector2(-muro, 0.0))                 # sul muro del tunnel
 	var verso_fuori := -r                                    # verso la sala delle condotte
-	var lungo := 40.0 - a.x if absf(verso_fuori.x) > 0.5 else 0.8
+	# (fino al muro ovest della sala delle condotte, che nel gioco sta a x 40,4: inseguimento_proposte.py, X0_GIOCO.
+	# Finiva a x 40: fra i due restavano 40 cm senza pavimento, soffitto e fianchi, e dalla porta si vedeva fuori dal
+	# livello; segnalazione dell'utente sulla v0.3.14)
+	var lungo := MURO_CONDOTTE_X - a.x if absf(verso_fuori.x) > 0.5 else 0.8
 	var b := a + verso_fuori * (lungo + 0.02)
 	var h := d * PORTA_LARGA * 0.5
 	var y0 := Vector3.UP * piano
