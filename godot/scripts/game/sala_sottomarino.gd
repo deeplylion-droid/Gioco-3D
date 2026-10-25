@@ -1074,20 +1074,35 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	_perno = perno
 	_volantino = volantino
 	_perno_chiuso = perno.global_transform.basis.rotated(Vector3.UP, deg_to_rad(-PORTELLO_APERTO))
-	# l'interazione: nella camera, guardando la porta
+	# l'interazione: dalla camera, guardando la porta o il battente aperto col volantino. Due zone sottili (collaudo P1:
+	# la zona di prima era profonda 0,6 m nella camera e da vicino il raggio ci partiva dentro, senza colpirla): una
+	# nel vano della porta, una attorno al battente (si muove con lui)
 	var usa := Interactable.new()
 	usa.name = "ChiudiPortello"
 	usa.prompt = "Chiudi"
 	usa.one_shot = true
 	var cs := CollisionShape3D.new()
 	var bx := BoxShape3D.new()
-	bx.size = Vector3(PORTELLO_LARGO, PORTELLO_ALTO, 0.6)
+	bx.size = Vector3(PORTELLO_LARGO, PORTELLO_ALTO, 0.06)
 	cs.shape = bx
 	usa.add_child(cs)
 	nodo.add_child(usa)
-	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.35, r, Vector2(0.0, sg + PORTELLO_ALTO * 0.5)))
+	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.04, r, Vector2(0.0, sg + PORTELLO_ALTO * 0.5)))
 	usa.interacted.connect(func(_by): chiudi_portello())
 	_usa_portello = usa
+	var usa_b := Interactable.new()
+	usa_b.name = "ChiudiPortelloBattente"
+	usa_b.prompt = "Chiudi"
+	usa_b.one_shot = true
+	var cs_b := CollisionShape3D.new()
+	var bx_b := BoxShape3D.new()
+	bx_b.size = Vector3(PORTELLO_LARGO + BATTENTE_DI * 2.0, PORTELLO_ALTO, BATTENTE_SPESSO + 0.2)
+	cs_b.shape = bx_b
+	usa_b.add_child(cs_b)
+	perno.add_child(usa_b)
+	usa_b.position = Vector3(-px, PORTELLO_ALTO * 0.5, 0.0)
+	usa_b.interacted.connect(func(_by): chiudi_portello())
+	_usa_battente = usa_b
 
 
 ## La sagoma della porta del portello, quasi tonda: larga PORTELLO_LARGO, alta PORTELLO_ALTO, l'arco in alto e gli
@@ -1187,6 +1202,11 @@ var _perno: Node3D
 var _volantino: Node3D
 var _perno_chiuso: Basis
 var _usa_portello: Interactable
+var _usa_battente: Interactable
+## Dove va il giocatore quando chiude il portello: sull'asse della camera stagna, a questa distanza dalla porta (fuori
+## da dove passa il battente, che chiudendosi spazza fino a 1,6 m dalla cerniera; collaudo P1).
+const CAMERA_DOVE_GUARDA := 2.2
+var _guarda_oblo := false
 var finito := false
 signal fine_demo
 
@@ -1214,6 +1234,28 @@ func chiudi_portello() -> void:
 	if finito:
 		return
 	finito = true
+	for u in [_usa_portello, _usa_battente]:
+		if u:
+			u.enabled = false
+	# il giocatore fa da solo un passo indietro sull'asse della camera, guardando l'oblò, mentre il battente si chiude:
+	# così il battente non lo spinge e lo schianto si vede tutto, al centro della vista (collaudo P1)
+	var pl := GameState.player
+	if pl and is_instance_valid(pl) and _in_camera(pl.global_position):
+		pl.input_enabled = false
+		pl.velocity = Vector3.ZERO
+		var L := lunghezza()
+		var dove := punto(L) + direzione(L) * CAMERA_DOVE_GUARDA
+		dove.y = pl.global_position.y
+		var da_p := pl.global_position
+		var oblo := _oblo_chiuso()
+		_guarda_oblo = true
+		var tp := create_tween()
+		tp.tween_method(func(k: float):
+			if is_instance_valid(pl):
+				pl.global_position = da_p.lerp(dove, k)
+				pl.velocity = Vector3.ZERO
+				pl.look_at_point(oblo), 0.0, 1.0, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		await tp.finished
 	var tw := create_tween()
 	var da := _perno.global_transform.basis
 	tw.tween_method(func(k: float):
@@ -1223,6 +1265,29 @@ func chiudi_portello() -> void:
 	# perno: lì una rotazione positiva attorno a z si vede oraria)
 	tw.tween_property(_volantino, "rotation:z", TAU * 0.75, 1.3).set_trans(Tween.TRANS_SINE)
 	tw.tween_callback(_finale)
+
+
+## Vero se [param q] sta nella camera stagna (dietro la porta, fino al fondo).
+func _in_camera(q: Vector3) -> bool:
+	var L := lunghezza()
+	var v := q - punto(L)
+	var dentro := v.dot(direzione(L))
+	return dentro > -0.2 and dentro < 3.2 and absf(v.dot(destra(L))) < 1.6
+
+
+## Il centro dell'oblò a portello chiuso, dalla parte della camera (dove guarda il giocatore).
+func _oblo_chiuso() -> Vector3:
+	var ox := PORTELLO_LARGO * 0.5 + BATTENTE_DI + 0.04
+	return Transform3D(_perno_chiuso, _perno.global_position) * Vector3(ox, OBLO_Y, -BATTENTE_SPESSO * 0.5)
+
+
+## Durante la chiusura e lo schianto il giocatore guarda l'oblò (i comandi sono spenti).
+func _process_oblo() -> void:
+	if not _guarda_oblo:
+		return
+	var pl := GameState.player
+	if pl and is_instance_valid(pl) and not pl.input_enabled:
+		pl.look_at_point(_oblo_chiuso())
 
 
 ## Lei sbatte contro il portello: arriva dal fondo della vasca dell'approdo e ci schiaccia la faccia sull'oblò.
@@ -1563,6 +1628,7 @@ func _metti_lei(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	_process_oblo()
 	if attivo and not _curva_passata and bersaglio == null and _s_bersaglio > PRIMA_CURVA:
 		_curva_passata = true
 		prima_curva_passata.emit()
