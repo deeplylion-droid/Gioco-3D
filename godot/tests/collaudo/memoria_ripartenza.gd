@@ -75,9 +75,13 @@ func _run() -> void:
 
 func _misura() -> Dictionary:
 	var rss := 0
-	for riga in FileAccess.get_file_as_string("/proc/self/status").split("\n"):
+	# (i file di /proc hanno lunghezza 0: si leggono riga per riga)
+	var f := FileAccess.open("/proc/self/status", FileAccess.READ)
+	while f and not f.eof_reached():
+		var riga := f.get_line()
 		if riga.begins_with("VmRSS:"):
 			rss = int(riga.split(":")[1].strip_edges().split(" ")[0]) / 1024
+			break
 	var sc := get_tree().current_scene
 	return {"statica": int(Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0), "rss": rss,
 		"video": int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED) / 1048576.0),
