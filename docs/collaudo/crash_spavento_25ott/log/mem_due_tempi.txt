@@ -1,0 +1,80 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.318 - Forward+ - Using Device #0: Unknown - llvmpipe (LLVM 20.1.2, 256 bits)
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+
+Ripartenza in due tempi, renderer llvmpipe (LLVM 20.1.2, 256 bits), scena user://scena_ridotta_sala_principale.tscn
+  fotogramma | statica MB | RSS MB | video MB | oggetti | nodi | scena
+    -1 |    228 |  12124 |   1789 |    5167 |   1680 | SalaPrincipale
+     0 |    228 |  12124 |   1789 |    5169 |   1680 | SalaPrincipale
+     1 |    228 |  12124 |   1789 |    5170 |   1680 | SalaPrincipale
+     2 |    228 |  12124 |   1789 |    5194 |     97 | -
+     3 |    202 |  12125 |   1789 |    3089 |     98 | CambioDiScena
+     4 |    201 |  12123 |   1250 |    3068 |     98 | CambioDiScena
+     5 |    203 |  12120 |   1250 |    4155 |     97 | -
+     6 |    228 |  12224 |   1887 |    5070 |   1619 | SalaPrincipale
+     7 |    230 |  12405 |   1875 |    5232 |   1689 | SalaPrincipale
+     8 |    231 |  12453 |   1875 |    5232 |   1689 | SalaPrincipale
+     9 |    231 |  12453 |   1875 |    5251 |   1692 | SalaPrincipale
+    10 |    231 |  12453 |   1875 |    5250 |   1692 | SalaPrincipale
+    11 |    232 |  12453 |   1875 |    5255 |   1692 | SalaPrincipale
+    12 |    232 |  12453 |   1875 |    5254 |   1692 | SalaPrincipale
+    13 |    233 |  12453 |   1875 |    5238 |   1681 | SalaPrincipale
+    14 |    233 |  12465 |   1875 |    5238 |   1681 | SalaPrincipale
+    15 |    233 |  12467 |   1875 |    5243 |   1681 | SalaPrincipale
+    16 |    234 |  12475 |   1875 |    5243 |   1681 | SalaPrincipale
+    17 |    229 |  12483 |   1880 |    5167 |   1671 | SalaPrincipale
+    18 |    229 |  12504 |   1880 |    5181 |   1674 | SalaPrincipale
+    19 |    229 |  12514 |   1789 |    5181 |   1674 | SalaPrincipale
+    20 |    229 |  12522 |   1789 |    5181 |   1674 | SalaPrincipale
+    21 |    229 |  12526 |   1789 |    5181 |   1674 | SalaPrincipale
+    22 |    229 |  12552 |   1789 |    5181 |   1674 | SalaPrincipale
+    23 |    229 |  12564 |   1789 |    5195 |   1677 | SalaPrincipale
+    24 |    229 |  12575 |   1789 |    5195 |   1677 | SalaPrincipale
+    25 |    229 |  12587 |   1789 |    5195 |   1677 | SalaPrincipale
+    26 |    229 |  12589 |   1789 |    5195 |   1677 | SalaPrincipale
+    27 |    229 |  12609 |   1789 |    5209 |   1680 | SalaPrincipale
+    28 |    229 |  12621 |   1789 |    5194 |   1677 | SalaPrincipale
+    29 |    229 |  12633 |   1789 |    5208 |   1680 | SalaPrincipale
+    30 |    229 |  12651 |   1789 |    5208 |   1680 | SalaPrincipale
+    31 |    229 |  12653 |   1789 |    5208 |   1680 | SalaPrincipale
+    32 |    229 |  12690 |   1789 |    5208 |   1680 | SalaPrincipale
+    33 |    229 |  12690 |   1789 |    5194 |   1677 | SalaPrincipale
+    34 |    229 |  12690 |   1789 |    5208 |   1680 | SalaPrincipale
+    35 |    229 |  12691 |   1789 |    5208 |   1680 | SalaPrincipale
+    36 |    229 |  12696 |   1789 |    5208 |   1680 | SalaPrincipale
+    37 |    229 |  12708 |   1789 |    5208 |   1680 | SalaPrincipale
+    38 |    229 |  12721 |   1789 |    5222 |   1683 | SalaPrincipale
+    39 |    229 |  12722 |   1789 |    5208 |   1680 | SalaPrincipale
+    40 |    229 |  12722 |   1789 |    5208 |   1680 | SalaPrincipale
+    41 |    229 |  12721 |   1789 |    5208 |   1680 | SalaPrincipale
+    42 |    229 |  12722 |   1789 |    5208 |   1680 | SalaPrincipale
+    43 |    229 |  12722 |   1789 |    5208 |   1680 | SalaPrincipale
+    44 |    229 |  12722 |   1789 |    5194 |   1677 | SalaPrincipale
+    45 |    229 |  12721 |   1789 |    5194 |   1677 | SalaPrincipale
+    46 |    229 |  12721 |   1789 |    5209 |   1680 | SalaPrincipale
+    47 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    48 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    49 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    50 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    51 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    52 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    53 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    54 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    55 |    229 |  12722 |   1789 |    5195 |   1677 | SalaPrincipale
+    56 |    229 |  12721 |   1789 |    5209 |   1680 | SalaPrincipale
+    57 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    58 |    229 |  12722 |   1789 |    5195 |   1677 | SalaPrincipale
+    59 |    229 |  12721 |   1789 |    5209 |   1680 | SalaPrincipale
+    60 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    61 |    229 |  12722 |   1789 |    5209 |   1680 | SalaPrincipale
+    62 |    229 |  12722 |   1789 |    5194 |   1677 | SalaPrincipale
+    63 |    229 |  12721 |   1789 |    5208 |   1680 | SalaPrincipale
+    64 |    229 |  12722 |   1789 |    5208 |   1680 | SalaPrincipale
+    65 |    229 |  12722 |   1789 |    5194 |   1677 | SalaPrincipale
+    66 |    229 |  12722 |   1789 |    5194 |   1677 | SalaPrincipale
+
+PRIMA:  statica 228 MB, RSS 12124 MB, video 1789 MB, oggetti 5167, nodi 1680
+PICCO:  statica 234 MB (+6), RSS 12722 MB (+598), video 1887 MB (+98), oggetti 5255, nodi 1692
+DOPO:   statica 229 MB, RSS 12722 MB, video 1789 MB, oggetti 5194, nodi 1677
+
+RISULTATO: 1 controlli ok, 0 falliti

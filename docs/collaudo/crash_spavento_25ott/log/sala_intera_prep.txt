@@ -1,0 +1,92 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  ok    dopo il risveglio nel corridoio si gioca ((4.8, 0.0, 39.6))
+Gli interni: corridoio, spogliatoi, lo stanzino del bagnino con lo zaino
+  ok    dal corridoio del risveglio agli spogliatoi
+  ok    dagli spogliatoi dentro lo stanzino
+  (zaino in (4.837, 0.72, 32.47), il raggio trova Prendi:<Area3D#341080809145>)
+  ok    nello stanzino si prende lo zaino-pompa dalla rastrelliera (in (3.49, 0.0, 32.47), il raggio trova <null>)
+  ok    dallo stanzino al lavapiedi, fino al tornello
+  (scorciatoia: il tornello sbloccato col getto, lo prova test_interni)
+  ok    il tornello
+  (scorciatoia: la saracinesca aperta con la turbina, lo prova test_interni)
+  ok    sotto la saracinesca, nella sala, fino alla statua
+La sala: la piscina a onde e il pozzo
+  (scorciatoia: la piscina vuota e il portello aperto, la tappa 5 la prova test_tappe56)
+  ok    giù per la scala del pozzo fino alla camera delle onde (y -9.05)
+  ok    la camera delle onde: le paratie si aprono al passaggio, il tunnel fino alla sala pompe
+La sala pompe, il risveglio e il raccordo
+  (scorciatoia: le pompe avviate e la leva tirata, li prova test_tappe56)
+rocce: 166, doppie 115, già coperte 2, senza posto 49 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22)]
+rocce della riva dell'imbarco: 1
+  ok    nella sala pompe fino alla porta del ponte inferiore
+  ok    col maniglione la porta del ponte si apre
+  ok    dalla porta del ponte su per le due rampe del raccordo
+ERROR: Parameter "material" is null.
+  ok    il corridoio C2 fino alla porta di servizio
+La Risalita: la scala verso il fiume, il capannone, la barca, l'infermeria, la scala di servizio
+  ok    dalla porta di servizio giù per la scala fino al capannone
+  ok    le stanze della Risalita sono caricate (nel thread, dalla sala pompe)
+  ok    nel capannone fino all'imbarco
+  (scorciatoia: le paratie girate per il giro giusto, lo prova test_risalita)
+  ok    in barca fino all'approdo, giù sulla banchina ((-35.0, -5.399141, 54.8))
+  ok    dall'approdo, porta di servizio, zona del personale, infermeria, porta nord
+  ok    su per la scala di servizio fino alla porta di C3
+C3, il magazzino, la serranda, la sala
+  ok    da C3 al magazzino dei gonfiabili
+  (scorciatoia: la keycard della cassaforte, la provano test_infermeria_gioco e test_risalita)
+  ok    la keycard nel lettore col tasto E: verde
+  ok    sotto la serranda, nella sala
+SPAVENTO: modi preparazione, intera, saltata, nodi alla serranda 6035, checkpoint CheckpointSerranda
+
+SPAVENTO 1 (preparazione)
+  (torre: in preparazione nascosta dopo 0.0 s di attesa alla serranda)
+  ok    1 preparazione: lungo la scia (3.5 s), alla fossa lei ti prende (in (-16.21, 0.0, -5.54)); torre: preparata, nascosta
+  [stato presa 1, 66.7 s] thread: altri 260 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#1628312714021>, in sala false | pipeline draw 0 spec 0 | memoria statica 2027 MB, oggetti 17167, nodi 6806, orfani 304
+  FALLITO 1: alla presa la torre si sta caricando o preparando (preparata, nascosta)
+  ok    1: la sequenza di morte di lei col glitch
+  (fine della sequenza a 1.4 s, sala nuova a 1.5 s, 303 fotogrammi; attesa dei caricamenti 0.0 s)
+  ok    1: la sequenza va fino in fondo (1.4 s) e poi la sala si ricarica
+  ok    1: la sala si ricarica solo a caricamenti e preparazioni finiti
+  ok    1: si riparte e si gioca, in piedi sul pavimento ((-18.3, 0.0, -0.5))
+  ok    1: dal checkpoint giusto (CheckpointAreaBimbi; alla presa CheckpointAreaBimbi, prima di partire CheckpointSerranda; a 1.50 m dal nodo del checkpoint, a 0.00 m dal posto salvato (-18.3, 0.0, -0.5))
+  ok    1: la sala intera (mancano: ; nodi 5820, alla serranda 6035)
+  [stato 10 s dopo la ripartenza 1, 74.6 s] thread: altri 260 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#2025815290183>, in sala false | pipeline draw 0 spec 0 | memoria statica 2034 MB, oggetti 17365, nodi 6792, orfani 304
+  ok    1: dalla presa a 10 s dopo la ripartenza nessun errore del motore o degli script (0)
+
+SPAVENTO 2 (intera)
+  ok    2 intera: lungo la scia (0.6 s), alla fossa lei ti prende (in (-16.22, 0.0, -5.54)); torre: preparata, nascosta
+  [stato presa 2, 75.3 s] thread: altri 260 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#2025815290183>, in sala false | pipeline draw 0 spec 0 | memoria statica 2034 MB, oggetti 17402, nodi 6803, orfani 304
+  ok    2: la sequenza di morte di lei col glitch
+  (fine della sequenza a 1.4 s, sala nuova a 1.4 s, 303 fotogrammi; attesa dei caricamenti 0.0 s)
+  ok    2: la sequenza va fino in fondo (1.4 s) e poi la sala si ricarica
+  ok    2: la sala si ricarica solo a caricamenti e preparazioni finiti
+  ok    2: si riparte e si gioca, in piedi sul pavimento ((-18.3, 0.0, -0.5))
+  ok    2: dal checkpoint giusto (CheckpointAreaBimbi; alla presa CheckpointAreaBimbi, prima di partire CheckpointAreaBimbi; a 1.50 m dal nodo del checkpoint, a 0.00 m dal posto salvato (-18.3, 0.0, -0.5))
+  ok    2: la sala intera (mancano: ; nodi 5820, alla serranda 6035)
+  [stato 10 s dopo la ripartenza 2, 82.8 s] thread: altri 260 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#2421489148446>, in sala false | pipeline draw 0 spec 0 | memoria statica 2039 MB, oggetti 17502, nodi 6792, orfani 304
+  ok    2: dalla presa a 10 s dopo la ripartenza nessun errore del motore o degli script (0)
+
+SPAVENTO 3 (saltata)
+  ok    3 saltata: lungo la scia (0.7 s), alla fossa lei ti prende (in (-16.22, 0.0, -5.54)); torre: preparata, nascosta
+  [stato presa 3, 83.6 s] thread: altri 260 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#2421489148446>, in sala false | pipeline draw 0 spec 0 | memoria statica 2039 MB, oggetti 17539, nodi 6803, orfani 304
+  ok    3: la sequenza di morte di lei col glitch
+  (fine della sequenza a 0.5 s, sala nuova a 0.5 s, 63 fotogrammi; attesa dei caricamenti 0.0 s)
+  ok    3: tenendo premuto la sequenza si salta (finita a 0.5 s)
+  ok    3: la sala si ricarica solo a caricamenti e preparazioni finiti
+ERROR: Initializing already initialized RID
+ERROR: Parameter "mem" is null.
+ERROR: Parameter "m" is null.
+ERROR: Parameter "m" is null.
+ERROR: Parameter "m" is null.
+ERROR: Parameter "m" is null.
+ERROR: Parameter "m" is null.
+  ok    3: si riparte e si gioca, in piedi sul pavimento ((-18.3, 0.0, -0.5))
+  ok    3: dal checkpoint giusto (CheckpointAreaBimbi; alla presa CheckpointAreaBimbi, prima di partire CheckpointAreaBimbi; a 1.50 m dal nodo del checkpoint, a 0.00 m dal posto salvato (-18.3, 0.0, -0.5))
+  ok    3: la sala intera (mancano: ; nodi 6791, alla serranda 6035)
+  [stato 10 s dopo la ripartenza 3, 90.2 s] thread: altri 260 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#2729669833697>, in sala false | pipeline draw 0 spec 0 | memoria statica 2043 MB, oggetti 17641, nodi 6792, orfani 304
+    Initializing already initialized RID (rid_owner.h:236, get_or_null)
+    Parameter "mem" is null. (rid_owner.h:284, initialize_rid)
+  FALLITO 3: dalla presa a 10 s dopo la ripartenza nessun errore del motore o degli script (2)
+
+RISULTATO: 45 controlli ok, 2 falliti

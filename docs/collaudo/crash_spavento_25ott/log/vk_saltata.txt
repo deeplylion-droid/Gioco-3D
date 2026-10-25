@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.318 - Forward+ - Using Device #0: Unknown - llvmpipe (LLVM 20.1.2, 256 bits)
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+
+Sala ridotta (user://scena_ridotta_sala_principale.tscn), renderer llvmpipe (LLVM 20.1.2, 256 bits), sequenza saltata
+  checkpoint: CheckpointAreaBimbi
+  ok    lei ti prende
+  [0.00] camera (-15.65, 1.59, -4.4), dall'occhio 2.75 m | lei fase 6 visibile true | glitch 0.00 | nero 0.00 | thread in corso 0 | pipeline draw 86 spec 208 | errori 0
+  [0.28] camera (-15.35, 1.51, -4.92), dall'occhio 4.24 m | lei fase 6 visibile true | glitch 0.15 | nero 0.00 | thread in corso 0 | pipeline draw 90 spec 214 | errori 0
+  [0.54] camera (-14.52, 2.99, -6.05), dall'occhio 2.23 m | lei fase 6 visibile true | glitch 0.89 | nero 0.00 | thread in corso 0 | pipeline draw 90 spec 214 | errori 0
+  [0.81] camera (-14.04, 3.86, -6.97), dall'occhio 0.98 m | lei fase 6 visibile true | glitch 0.97 | nero 0.00 | thread in corso 0 | pipeline draw 90 spec 214 | errori 0
+  [1.07] camera (-13.91, 4.05, -7.16), dall'occhio 0.61 m | lei fase 6 visibile true | glitch 0.60 | nero 0.00 | thread in corso 0 | pipeline draw 90 spec 214 | errori 0
+  (sala ricaricata dopo 8.1 s)
+  [dopo] camera (-18.3, 1.6, -0.5), dall'occhio 7.45 m | lei fase 2 visibile true | glitch -1.00 | nero -1.00 | thread in corso 0 | pipeline draw 107 spec 238 | errori 0
+  [dopo] camera (-18.3, 1.6, -0.5), dall'occhio 7.45 m | lei fase 2 visibile true | glitch -1.00 | nero -1.00 | thread in corso 0 | pipeline draw 107 spec 238 | errori 0
+  ok    nessun valore non finito in camera, lei e luci (0)
+  ok    nessun errore del motore o degli script dalla presa a 5 s dopo (0)
+
+RISULTATO: 3 controlli ok, 0 falliti

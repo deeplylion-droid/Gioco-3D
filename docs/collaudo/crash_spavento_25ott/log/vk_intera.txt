@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.318 - Forward+ - Using Device #0: Unknown - llvmpipe (LLVM 20.1.2, 256 bits)
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+
+Sala ridotta (user://scena_ridotta_sala_principale.tscn), renderer llvmpipe (LLVM 20.1.2, 256 bits), sequenza intera
+  checkpoint: CheckpointAreaBimbi
+  ok    lei ti prende
+  [0.00] camera (-15.64, 1.59, -4.41), dall'occhio 2.75 m | lei fase 6 visibile true | glitch 0.00 | nero 0.00 | thread in corso 0 | pipeline draw 87 spec 210 | errori 0
+  [0.27] camera (-15.36, 1.52, -4.91), dall'occhio 4.24 m | lei fase 6 visibile true | glitch 0.15 | nero 0.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [0.53] camera (-14.57, 3.02, -5.98), dall'occhio 2.28 m | lei fase 6 visibile true | glitch 0.95 | nero 0.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [0.80] camera (-14.03, 3.84, -6.97), dall'occhio 0.91 m | lei fase 6 visibile true | glitch 0.28 | nero 0.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [1.07] camera (-13.87, 3.99, -7.14), dall'occhio 0.64 m | lei fase 6 visibile true | glitch 0.62 | nero 0.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [1.34] camera (-13.87, 4.0, -7.15), dall'occhio 0.63 m | lei fase 6 visibile true | glitch 0.84 | nero 0.17 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [1.61] camera (-13.93, 3.94, -7.17), dall'occhio 0.66 m | lei fase 6 visibile true | glitch 0.30 | nero 0.60 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [1.87] camera (-13.93, 4.0, -7.19), dall'occhio 0.63 m | lei fase 6 visibile true | glitch 0.30 | nero 0.94 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [2.14] camera (-13.9, 4.04, -7.16), dall'occhio 0.62 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [2.40] camera (-13.88, 4.0, -7.15), dall'occhio 0.63 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [2.66] camera (-13.88, 4.0, -7.15), dall'occhio 0.63 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [2.94] camera (-13.9, 4.0, -7.15), dall'occhio 0.64 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [3.20] camera (-13.89, 4.0, -7.15), dall'occhio 0.64 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [3.47] camera (-13.88, 4.0, -7.15), dall'occhio 0.63 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [3.73] camera (-13.89, 4.0, -7.15), dall'occhio 0.64 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [4.00] camera (-13.9, 4.0, -7.15), dall'occhio 0.64 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [4.27] camera (-13.89, 4.0, -7.15), dall'occhio 0.64 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [4.53] camera (-13.88, 4.0, -7.15), dall'occhio 0.63 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [4.80] camera (-13.89, 4.0, -7.15), dall'occhio 0.64 m | lei fase 6 visibile true | glitch 0.30 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  [5.06] camera (-13.9, 4.0, -7.15), dall'occhio 0.64 m | lei fase 6 visibile true | glitch -1.00 | nero 1.00 | thread in corso 0 | pipeline draw 91 spec 216 | errori 0
+  (sala ricaricata dopo 26.8 s)
+  [dopo] camera (-18.3, 1.6, -0.5), dall'occhio 7.45 m | lei fase 2 visibile true | glitch -1.00 | nero -1.00 | thread in corso 0 | pipeline draw 108 spec 242 | errori 0
+  [dopo] camera (-18.3, 1.6, -0.5), dall'occhio 7.45 m | lei fase 2 visibile true | glitch -1.00 | nero -1.00 | thread in corso 0 | pipeline draw 108 spec 242 | errori 0
+  ok    nessun valore non finito in camera, lei e luci (0)
+  ok    nessun errore del motore o degli script dalla presa a 5 s dopo (0)
+
+RISULTATO: 3 controlli ok, 0 falliti
