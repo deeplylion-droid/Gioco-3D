@@ -183,7 +183,8 @@ func _costruisci() -> void:
 	else:
 		# il muro della stanza fino alla cornice, e la cornice d'ottone: una flangia tonda sottile sul muro coi rivetti
 		_faccia_muro(_raggio_bordo() - 0.02)
-		_flangia(_raggio_bordo() - 0.02, RAGGIO_RIVETTI * k_vetro + 0.05, rivetti, RAGGIO_RIVETTI * k_vetro)
+		# (poco più larga del vetro: 10 cm oltre il bordo d'ottone, i rivetti nel mezzo)
+		_flangia(_raggio_bordo() - 0.02, _raggio_bordo() + 0.1, rivetti, _raggio_bordo() + 0.05)
 	st.generate_normals()
 	var mp := MeshInstance3D.new()
 	mp.name = "struttura_piastra_oblo"
