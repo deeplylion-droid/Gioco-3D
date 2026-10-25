@@ -408,6 +408,8 @@ func _carica_torre() -> void:
 	_torre_voluta = true
 	if sala_torre:
 		return
+	if not _torre_preparata:
+		AttesaZone.attendi(&"torre")
 	if _torre_preparata:
 		_mostra_torre()
 	elif _torre_nascosta:
@@ -448,10 +450,10 @@ func _process(_delta: float) -> void:
 			_prepara_torre()
 	elif stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS and _torre_voluta and sala_torre == null \
 			and Time.get_ticks_msec() - _torre_voluta_da > ATTESA_TORRE * 1000.0:
-		# Riserva: il portone è aperto da troppo e il thread non ha finito (un PC lento, la cache fredda). Il
-		# thread continua (va finito, Game.esci lo aspetta); la sua copia si lascia andare quando arriva.
-		push_warning("Sala della torre: il thread non ha finito in %d s, la carico qui" % int(ATTESA_TORRE))
-		_aggiungi_torre(ResourceLoader.load(sala_torre_scena, "", ResourceLoader.CACHE_MODE_IGNORE_DEEP) as PackedScene)
+		# Il portone è aperto da un po' e il thread non ha finito (un PC lento, la cache fredda). Prima qui si
+		# caricava e si costruiva tutta la torre in un fotogramma (20 s di gioco fermo nella misura del 25 ottobre):
+		# adesso si aspetta il thread senza bloccare; cosa si vede intanto lo decide AttesaZone.
+		AttesaZone.attendi(&"torre")
 	elif stato == ResourceLoader.THREAD_LOAD_FAILED or stato == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 		# Riserva: se il thread non ce la fa, la torre si carica qui (un attimo di fermo), così il
 		# giocatore non resta mai davanti al portone aperto senza la sala.
@@ -474,7 +476,8 @@ func _prepara_torre() -> void:
 	t.process_mode = Node.PROCESS_MODE_DISABLED
 	_torre_nascosta = t
 	add_child(t)
-	await t.call(&"costruisci_a_pezzi")
+	# (col portone già aperto, a pezzi più grandi: si entra prima, mai tutta in un fotogramma)
+	await t.call(&"costruisci_a_pezzi", 40.0 if _torre_voluta else 8.0)
 	# (fuori dall'albero: una morte ha ricaricato la sala mentre la torre si preparava)
 	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
@@ -510,6 +513,7 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 
 
 func _completa_torre() -> void:
+	AttesaZone.pronta(&"torre")
 	# il guscio provvisorio dietro il portone (sala_architettura.glb) lascia il posto alla sala vera
 	var guscio := find_child("sala_torre_guscio", true, false)
 	if guscio:
@@ -642,13 +646,25 @@ func _collega_inseguimento(ins: Node3D) -> void:
 		ins.connect(&"sb1_finito", _attiva_sottomarino)
 
 
-## Dopo SB1: il tunnel entra nel gioco (se il thread non ce l'ha fatta, si carica qui, un attimo di fermo).
+## Dopo SB1: il tunnel entra nel gioco. Se il thread non ha ancora finito non si blocca più (prima: load e
+## costruzione intera in un fotogramma): si aspetta il thread e la costruzione va avanti a pezzi più grandi (al più
+## 50 ms per fotogramma); cosa si vede intanto lo decide AttesaZone. Solo col thread fallito si carica qui.
 func _attiva_sottomarino() -> void:
-	if sala_sottomarino == null:
-		_sottomarino_in_caricamento = false
-		_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, false)
-	elif not bool(sala_sottomarino.get(&"costruita")):
+	if sala_sottomarino == null or not bool(sala_sottomarino.get(&"costruita")):
+		AttesaZone.attendi(&"tunnel")
+	if sala_sottomarino == null and not _sottomarino_in_caricamento:
+		_precarica_sottomarino()
+	while sala_sottomarino == null:
+		if not _sottomarino_in_caricamento:
+			# il thread è finito senza il tunnel (fallito): l'unico caso che carica qui
+			_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, true)
+			break
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	if not bool(sala_sottomarino.get(&"costruita")):
 		await sala_sottomarino.call(&"costruisci_a_pezzi", 50.0)
+	AttesaZone.pronta(&"tunnel")
 	sala_sottomarino.call(&"attiva_tunnel")
 
 

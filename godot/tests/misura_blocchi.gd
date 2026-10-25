@@ -6,9 +6,14 @@ extends Node
 ## fine i 15 fotogrammi più lunghi.
 ## Con --headless misura il lavoro sulla CPU (istanze, costruzioni, script), senza disegno né shader. Col renderer
 ## vero misura anche shader e pipeline: per la cache vuota si sposta via prima user://shader_cache (non si cancella).
-## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/misura_blocchi.gd [test]
+## Alla fine stampa anche "BLOCCHI_SOPRA_LIMITE: n", i fotogrammi sopra [constant LIMITE_MS] dopo i primi
+## [constant AVVIO] (l'ingresso nella sala, nel gioco dietro lo schermo nero): la CI vuole 0.
+## Uso (a tempo vero, senza --fixed-fps: i thread lavorano in tempo vero, il gioco deve fare lo stesso):
+##   godot --headless --path godot --script res://tests/run.gd -- res://tests/misura_blocchi.gd [test]
 
 const SOGLIA_MS := 50.0
+const LIMITE_MS := 100.0
+const AVVIO := 10
 const MONITOR := {
 	"surface": Performance.PIPELINE_COMPILATIONS_SURFACE,
 	"draw": Performance.PIPELINE_COMPILATIONS_DRAW,
@@ -58,7 +63,10 @@ func _notification(what: int) -> void:
 func _fine() -> void:
 	if _lunghi.is_empty() and _f == 0:
 		return
+	var sopra := _lunghi.filter(func(e): return e[0] > LIMITE_MS and e[1] > AVVIO).size()
 	_lunghi.sort_custom(func(x, y): return x[0] > y[0])
 	print("BLOCCHI: %d fotogrammi, %d sopra %.0f ms; i più lunghi: %s" % [_f, _lunghi.size(), SOGLIA_MS,
 			", ".join(_lunghi.slice(0, 15).map(func(e): return "%.0f ms (f %d)" % [e[0], e[1]]))])
+	print("BLOCCHI_SOPRA_LIMITE: %d (sopra %.0f ms dopo i primi %d fotogrammi)" % [sopra, LIMITE_MS, AVVIO])
 	_f = 0
+	_lunghi.clear()

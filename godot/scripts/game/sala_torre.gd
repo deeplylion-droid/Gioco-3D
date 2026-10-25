@@ -1269,14 +1269,15 @@ const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 ## Grafica._attiva_shader_avanzati) costa 100-150 ms sulla CPU della CI, troppo per un passo della
 ## costruzione a pezzi. La sala principale li crea entrando (a schermo nero) e li tiene finché c'è: i passi
 ## ritrovano gli shader pronti. Chi li chiama deve tenere l'array (gli shader vivono finché c'è un materiale).
-static func materiali_campione() -> Array[Material]:
+static func materiali_campione(crea := true) -> Array[Material]:
 	var out: Array[Material] = [_emissivo(Color.WHITE, 1.0), _metallo_scuro(), _materiale_gabbia(),
 			_materiale_gocce(), _materiale_fondo_pozzo(), load(ACQUA) as Material]
 	# (l'oblò con lei sul muro est: piastra, vasca, ottone, vetro e veli d'acqua)
 	for m in ObloLei.materiali():
 		out.append(m as Material)
-	for m in out:
-		m.get_rid()   # lo shader si crea adesso, non al primo uso
+	if crea:
+		for m in out:
+			m.get_rid()   # lo shader si crea adesso, non al primo uso
 	return out
 
 

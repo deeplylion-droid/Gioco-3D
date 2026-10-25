@@ -181,19 +181,36 @@ func costruisci() -> void:
 	costruita = true
 
 
+## Fine dei passi della costruzione a pezzi (prima del riscaldamento e delle forme).
+signal passi_finiti
+var _costruendo := false
+var _ms_pezzo := 6.0
+
+
 ## Costruisce un passo per volta, senza superare [param ms_per_fotogramma] millisecondi per fotogramma (mentre
 ## si è ancora nella sala delle condotte).
+## Chiamata di nuovo mentre si costruisce (il giocatore è arrivato prima della fine) non ricomincia: alza i
+## millisecondi per fotogramma e aspetta la fine dei passi.
 func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
+	if _costruendo:
+		_ms_pezzo = maxf(_ms_pezzo, ms_per_fotogramma)
+		await passi_finiti
+		return
+	_costruendo = true
+	_ms_pezzo = ms_per_fotogramma
 	var passi := _passi()
 	var t0 := Time.get_ticks_usec()
 	for passo in passi:
 		if not is_inside_tree():
+			_costruendo = false
 			return
 		(passo as Callable).call()
-		if (Time.get_ticks_usec() - t0) / 1000.0 > ms_per_fotogramma:
+		if (Time.get_ticks_usec() - t0) / 1000.0 > _ms_pezzo:
 			await get_tree().process_frame
 			t0 = Time.get_ticks_usec()
 	costruita = true
+	_costruendo = false
+	passi_finiti.emit()
 	await _riscalda()
 	# le forme del tunnel per i tentacoli di lei (FormeTunnel di grafica, circa 1 s di calcolo a pezzi)
 	if is_inside_tree():

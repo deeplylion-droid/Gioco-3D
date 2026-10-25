@@ -126,8 +126,13 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	_a_pezzi = true
 	var t0 := Time.get_ticks_usec()
 	_coda = _passi()
+	var k := 0
 	while not _coda.is_empty():
+		var tp := Time.get_ticks_usec()
 		(_coda.pop_front() as Callable).call()
+		if OS.has_environment("TORRE_TEMPI"):
+			print("inseguimento passo %d: %.1f ms" % [k, (Time.get_ticks_usec() - tp) / 1000.0])
+		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			await get_tree().process_frame
 			# tolta dall'albero mentre si costruiva (una morte ricarica la sala): non serve più, come nella torre
