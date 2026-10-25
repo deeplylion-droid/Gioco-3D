@@ -22,7 +22,7 @@ extends Node3D
 @export var tremito_durata := 0.35
 ## La luce rosa davanti: quanti metri oltre il giocatore guarda, l'energia, l'apertura del cono (gradi).
 @export var luce_avanti := 7.0
-@export var luce_energia := 3.5
+@export var luce_energia := 20.0
 @export var luce_angolo := 26.0
 ## Dove nasce la luce, sopra l'origine di lei (come la sua OmniLight in LeiTunnel).
 const LUCE_DA := Vector3(0, 2.6, 0.9)
@@ -76,7 +76,7 @@ func _ready() -> void:
 	luce.light_energy = 0.0
 	luce.spot_angle = luce_angolo
 	luce.spot_angle_attenuation = 1.6
-	luce.spot_attenuation = float(OS.get_environment("EFF_ATT")) if OS.has_environment("EFF_ATT") else 0.5   # (cala piano: arriva oltre il giocatore)
+	luce.spot_attenuation = 0.3   # (cala piano: arriva oltre il giocatore)
 	luce.light_cull_mask = 0xFFFFF & ~2   # (non la lancia in mano: livello 2, viewmodel)
 	luce.spot_range = 30.0
 	luce.light_volumetric_fog_energy = 0.5
@@ -147,7 +147,7 @@ func _metti_luce(gap: float) -> void:
 	luce.global_position = da
 	luce.look_at(a, Vector3.UP)
 	luce.spot_range = clampf(da.distance_to(a) + 6.0, 10.0, 40.0)
-	luce.light_energy = (float(OS.get_environment("EFF_E")) if OS.has_environment("EFF_E") else luce_energia) * forza_luce * (1.0 if is_finite(gap) else 0.0)
+	luce.light_energy = luce_energia * forza_luce * (1.0 if is_finite(gap) else 0.0)
 
 
 func _aggiorna_tremito(delta: float) -> void:
