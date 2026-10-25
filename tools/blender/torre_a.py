@@ -43,6 +43,10 @@ R_SPIRALE = 4.6                            # raggio della spirale finale attorno
 M_CHIUSO = R_GROVIGLIO + 0.1               # mezza larghezza di un tubo chiuso
 QUANTI = 38                                # scivoli decorativi da tenere
 BOCCA_Y = 17.4                             # nel gioco: y della bocca del tubo dell'inseguimento sul muro est
+# nel gioco: l'oblò con lei sul muro est, accanto alla bocca (scelta dell'utente del 24 ottobre): il centro della faccia
+# verso la sala e il lato del foro quadrato (la piastra rivettata di ObloLei, che lo riempie); dietro, nella sala
+# delle condotte, la cisterna piena d'acqua (inseguimento_proposte.py, OBLO_TORRE)
+OBLO_Y, OBLO_Z, OBLO_LATO = 13.7, -18.25, 1.9
 GIOCO = False                              # True: GLB per il gioco (collisioni -col, prop solidi) e torre_gioco.json
 COLORI = {'tsc_giallo': '#f0b414', 'tsc_rosso': '#d22a1e', 'tsc_blu': '#1f62c4', 'tsc_verde': '#35a63a',
           'tsc_arancio': '#f06a14', 'tsc_viola': '#7e36b4', 'tsc_turchese': '#14a8b0', 'tsc_rosa': '#e0507e',
@@ -1501,7 +1505,9 @@ def versione_A(mats):
     P.GRATE[0] = K.Costruttore(mats)
     sp = Spazio()
     # nel gioco il tubo dell'inseguimento passa nel muro est: lì il muro ha il foro (coperto dal collare)
-    P.guscio_profondo(c, buco_est=(BOCCA_Y - 1.0, BOCCA_Y + 1.0, FONDO + 0.6, FONDO + 2.6) if GIOCO else None)
+    P.guscio_profondo(c, buco_est=[(BOCCA_Y - 1.0, BOCCA_Y + 1.0, FONDO + 0.6, FONDO + 2.6),
+                                   (OBLO_Y - OBLO_LATO / 2, OBLO_Y + OBLO_LATO / 2, OBLO_Z - OBLO_LATO / 2, OBLO_Z + OBLO_LATO / 2)]
+                      if GIOCO else None)
     luci = dict(lavoro=[], fari=[], gocce=[], emergenza=[])
     percorso = []
     aperture = {}                      # (torre, L) -> lista di aperture della ringhiera
@@ -2391,6 +2397,7 @@ def versione_A(mats):
     gioco['balconata'] = dict(centro=[31.0, YI1 - 0.8, -1.5], primo_salto=list(salti[0]['da']))
     gioco['pozzo'] = [C[0], C[1], FONDO]
     gioco['vasca_fondo'] = dict(rett=[xv0, yv0, xv1, yv1], acqua=FONDO + 0.6 - 0.12)
+    gioco['oblo_lei'] = dict(centro=[XI1, OBLO_Y, OBLO_Z], normale=[-1.0, 0.0, 0.0], lato=OBLO_LATO)
     gioco['raccolta'] = raccolta
     gioco['imbocchi'] = imbocchi
     gioco['bocche_chiuse'] = [dict(pos=p_, verso=d_, tubo=ch_) for p_, d_, ch_ in BOCCHE_CHIUSE]

@@ -44,6 +44,11 @@ BOCCA = Vector((40.0, 17.4, -18.4))      # la bocca del tubo dell'inseguimento s
 # grata: così i palmi battono sulle sbarre e i tentacoli restano sott'acqua) e sale da 5 m sotto
 POZZETTO_GRATA = (50.75, 7.6, 53.4, 10.2, 6.7, -33.4 + 0.12)
 R_TUBO = 0.8                             # il tubo dell'inseguimento (come la bocca)
+# nel gioco: l'oblò con lei nel muro est della torre (come in torre_a.py: y e quota del centro, lato del foro) e,
+# dietro, la cisterna piena d'acqua dove sta lei: l'interno lo fa ObloLei nel gioco (vasca larga 3,2, fonda 3,6, da
+# 5,2 m sotto il centro a 1,8 sopra, dal piano del muro est della torre a 0,4 + 0,02 m), qui il fuori, sulle gambe
+OBLO_TORRE = (13.7, -18.25, 1.9)
+OBLO_VASCA = dict(larga=3.2, fonda=3.6, sotto=5.2, sopra=1.8, dentro=0.02)
 X0 = 40.0                                # il muro in comune con la sala della torre
 # Nel gioco (--gioco) la sala sta nel mondo accanto alla torre, quindi:
 # - il muro ovest è in X0_GIOCO, non nel piano del muro est della torre (x 40: due facce nello stesso piano
@@ -145,7 +150,7 @@ def intaglia_col_tubo(ob, gioco=0.004):
     bpy.data.meshes.remove(me)
 
 
-def guscio(c, x1, y0, y1, z0, z1, buco=None, porta=None, fossa=None):
+def guscio(c, x1, y0, y1, z0, z1, buco=None, porta=None, fossa=None, oblo=None):
     """La sala dietro la torre: muri di lamiera e cemento dello scafo con le costole, soffitto con le travi,
     pavimento. Nel muro ovest (x = X0) il buco della bocca; porta = (y, z) della porta d'uscita nel muro ovest;
     fossa = (x0, y0, x1, y1, profondità, quota del bordo): il pozzo di scarico nel pavimento (dove lei si nasconde per SB1);
@@ -184,6 +189,8 @@ def guscio(c, x1, y0, y1, z0, z1, buco=None, porta=None, fossa=None):
         fori.append((buco.y - 1.1, buco.y + 1.1, buco.z - 1.1, buco.z + 1.1))
     if porta is not None:
         fori.append((porta[0] - 0.75, porta[0] + 0.75, porta[1], porta[1] + 2.2))
+    if oblo is not None:          # (y, z, lato): il foro quadrato dell'oblò della torre
+        fori.append((oblo[0] - oblo[2] / 2, oblo[0] + oblo[2] / 2, oblo[1] - oblo[2] / 2, oblo[1] + oblo[2] / 2))
     ys = sorted({y0, y1} | {f[0] for f in fori} | {f[1] for f in fori})
     for ya, yb in zip(ys[:-1], ys[1:]):
         zs = [z0, z1]
@@ -264,6 +271,37 @@ def controlla_tubi(oggetti, linee, r):
 ## Quanto sotto il piano di una pedana (P.piattaforma) arrivano le gambe: al fondo del suo telaio (26 cm). Nelle
 ## proposte erano 30 cm, e la pedana restava staccata di 4 cm.
 SOTTO_PEDANA = 0.3
+
+
+def cisterna_oblo(c, z_terra, fuori=0.04):
+    """Il fuori della cisterna dietro l'oblò della torre: cinque facce di lamiera 4 cm fuori dall'interno di ObloLei
+    (il lato sul muro resta aperto: lì c'è il foro con la piastra e il vetro), il piano sotto con le travi gialle come
+    le vasche sospese, le fasce rivettate e quattro gambe fino al fondo allagato."""
+    yc, zc, _lato = OBLO_TORRE
+    v = OBLO_VASCA
+    xa, xb = 40.0 + 0.4 + v['dentro'] - fuori, 40.0 + 0.4 + v['dentro'] + v['fonda'] + fuori
+    xa = max(xa, X0 + 0.002)
+    ya, yb = yc - v['larga'] / 2 - fuori, yc + v['larga'] / 2 + fuori
+    za, zb = zc - v['sotto'] - fuori, zc + v['sopra'] + fuori
+    m = 'metallo_grigio'
+    c.faccia_verso([(xb, ya, za), (xb, yb, za), (xb, yb, zb), (xb, ya, zb)], m, (1, 0, 0))
+    c.faccia_verso([(xa, ya, za), (xb, ya, za), (xb, ya, zb), (xa, ya, zb)], m, (0, -1, 0))
+    c.faccia_verso([(xa, yb, za), (xb, yb, za), (xb, yb, zb), (xa, yb, zb)], m, (0, 1, 0))
+    c.faccia_verso([(xa, ya, zb), (xb, ya, zb), (xb, yb, zb), (xa, yb, zb)], m, (0, 0, 1))
+    c.faccia_verso([(xa, ya, za), (xb, ya, za), (xb, yb, za), (xa, yb, za)], m, (0, 0, -1))
+    # le fasce di rinforzo attorno, ogni 1,8 m (sporgono 3 cm), e il bordo in cima
+    z = za + 0.6
+    while z < zb - 0.3:
+        c.scatola((xb, ya - 0.03, z), (xb + 0.03, yb + 0.03, z + 0.12), m)
+        c.scatola((xa, ya - 0.03, z), (xb, ya, z + 0.12), m)
+        c.scatola((xa, yb, z), (xb, yb + 0.03, z + 0.12), m)
+        z += 1.8
+    c.scatola((xa, ya - 0.05, zb), (xb + 0.05, yb + 0.05, zb + 0.08), 'metallo')
+    # il piano sotto con le travi, poi le gambe
+    c.scatola((xa, ya - 0.1, za - 0.3), (xb + 0.1, yb + 0.1, za), m)
+    for y in (ya + 0.4, (ya + yb) / 2, yb - 0.4):
+        c.scatola((xa, y - 0.1, za - 0.6), (xb + 0.05, y + 0.1, za - 0.3), 'gioco_giallo')
+    gambe(c, xa, ya, xb, yb, za - 0.6, z_terra)
 
 
 def gambe(c, x0, y0, x1, y1, z_alto, z_basso, mat='metallo_grigio', r=0.16):
@@ -543,7 +581,9 @@ def versione_A(mats):
     fosse = [(43.6, 7.9, 45.8, 10.1, 4.5, -33.4 + 0.12)]
     if GIOCO:
         fosse.append(POZZETTO_GRATA)
-    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=fosse)
+    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=fosse, oblo=OBLO_TORRE if GIOCO else None)
+    if GIOCO:
+        cisterna_oblo(c, z0)
     collare = None
     if GIOCO:   # il collare attorno al tubo della bocca, sul muro ovest (copre gli angoli del foro), solo da vedere
         cc = K.Costruttore(mats)

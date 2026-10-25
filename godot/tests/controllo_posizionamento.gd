@@ -39,6 +39,9 @@ const ZONE := [
 	# come quando ci arriva (enigmi non risolti) e dopo (risolti)
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_arrivo", "parti": ["Risalita"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_dopo", "parti": ["Risalita"]},
+	# gli oblò dei corridoi con lei dietro il vetro (ObloLei): ferma nella sua posa, coi tentacoli contro la vasca
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_oblo",
+			"parti": ["Risalita/ObloFiume", "Risalita/ObloPersonale", "Risalita/ObloServizio"]},
 	# la tappa 7 (il ritorno): le porte col maniglione (sala pompe, ponte) e il portello sul fondo della piscina aperti
 	# (coordinatore, 22 ottobre; collaudo: la porta della sala pompe aperta sporgeva sulla strada del ritorno). Senza
 	# "zona": ogni caso prende la zona del giro iniziale
@@ -46,6 +49,8 @@ const ZONE := [
 			"Tecnici/Ambienti/SalaPompe/PORTA_ponte", "Sala/Interattivi/sala_portello_scarico"]},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "inseguimento_dopo",
 			"parti": ["SalaInseguimento"]},
+	# l'oblò del fondo della torre con lei dietro il vetro (ObloLei, come quelli della Risalita)
+	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "torre_oblo", "parti": ["ObloLei"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
@@ -342,6 +347,23 @@ func _prepara(stato: String) -> void:
 		"risalita_arrivo":
 			_mostra_risalita()
 			for i in 10:
+				await get_tree().physics_frame
+			return
+		"torre_oblo":
+			# lei dietro il vetro della torre, ferma nella posa dopo 2 s (come risalita_oblo)
+			for o in _radice.find_children("*", "ObloLei", true, false):
+				(o as ObloLei).set_process(false)
+				(o as ObloLei)._mostra()
+			for i in 120:
+				await get_tree().physics_frame
+			return
+		"risalita_oblo":
+			# enigmi: lei dietro i tre vetri, ferma nella posa dopo 2 s (i tentacoli morbidi si sono posati)
+			_mostra_risalita()
+			for o in _radice.find_children("*", "ObloLei", true, false):
+				(o as ObloLei).set_process(false)
+				(o as ObloLei)._mostra()
+			for i in 120:
 				await get_tree().physics_frame
 			return
 		"risalita_dopo":

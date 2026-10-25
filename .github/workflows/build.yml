@@ -187,6 +187,14 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_parkour_gommoni.gd
 
+      - name: Test degli oblò con lei dietro il vetro (compare fuori vista, ti segue con l'occhio, se ne va se guardi via o ti avvicini, una volta sola, resta nella vasca)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_oblo_lei.gd
+
+      - name: Test dell'oblò con lei nella torre (nel foro del muro, compare una volta, va via entrando nella bocca)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_oblo_torre.gd
+
       - name: Test dell'inseguimento (le condotte, SB1)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento.gd

@@ -790,8 +790,9 @@ def pose_schianto(arm, C, Z, t, T=2.4):
         teso = pc + rot_giro(arm) @ Vector((s * (0.30 - 0.04 * a), -0.95 - 0.10 * a,
                                             0.10 + 0.08 * math.cos(2 * math.pi * (0.0 if s > 0 else 0.5))))
         alto = pc + rot_giro(arm) @ Vector((s * 0.5, -0.8, 0.45))
-        # (il polso a PALMO dal portello: il palmo e le dita a filo del vetro, misurato sulla mesh delle mani)
-        contatto = Vector((s * 0.62, -dd + PALMO, hh + 0.05 - 0.05 * liscio(0.0, 1.0, 0.7, T, t)))
+        # i palmi sul telaio del portello, a 0,71 m dall'asse (il telaio va da 0,65 a 0,78, la sua faccia sul piano
+        # dell'oblò: ambienti-2, 24 ottobre); il polso a PALMO (+4 mm) dal piano: il palmo e le dita a filo
+        contatto = Vector((s * 0.71, -dd + PALMO + 0.004, hh + 0.05 - 0.05 * liscio(0.0, 1.0, 0.7, T, t)))
         # dalle braccia tese della corsa, su ai lati della testa, e giu' piatte sul portello
         polso = teso.lerp(alto, liscio(0.0, 1.0, 0.0, 0.18, t)).lerp(contatto, liscio(0.0, 1.0, 0.18, 0.36, t))
         braccio_mondo(arm, suf, polso, (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
@@ -801,6 +802,231 @@ def pose_schianto(arm, C, Z, t, T=2.4):
 PALMO = 0.24            # schianto: il polso a tanto dal portello, perché il palmo ci stia a filo
 VISO_DAVANTI = 0.39     # quanto il punto piu' avanti della testa (la frangia) sta davanti all'occhio (m, misurato sulla mesh:
                         # sonda di schianto, 1 cm dal portello)
+
+
+# --------------------------------------------------------------------------------------------- gli oblò della risalita
+
+# Lei dietro un grosso oblò in tre corridoi della risalita (24 ottobre, "pose diverse di Jilly ogni volta"): calma, a
+# fauce chiusa, ti guarda (l'occhio e la testa li gira il gioco verso il giocatore), poi si stacca e sparisce lenta nel
+# buio dell'acqua. Il vetro e' un piano verticale a OBLO[0] m davanti all'origine, col centro a OBLO[1] m d'altezza (come
+# lo schianto: il gioco mette l'origine di lei a centro_vetro + normale * OBLO[0] - su * OBLO[1]); OBLO_R il raggio del
+# vetro (la parte che si vede).
+OBLO_R = 0.55
+T_OBLO = 4.0            # i cicli delle pose (il respiro)
+T_STACCA = 2.6          # si stacca: indietro e giu' nel buio
+SBIRCIA_OCCHIO = 0.60     # sbircia: l'occhio a tanto dal centro del vetro, sul bordo (il vetro degli oblò di enigmi ha 0,6 m di
+                          # raggio: mezzo viso dietro il muro)
+STACCA_ALZA = 0.04      # m: nei distacchi i palmi partono gia' staccati dal vetro di tanto (nella dissolvenza di 0,3 s fra
+                        # la posa ferma e il distacco le mani, fondendo due pose, passavano il vetro di 1-3 cm)
+OBLO_INDIETRO = 8.0     # gradi: quanto e' inclinata col basso all'indietro (i tentacoli lontani dal vetro)
+SBIRCIA_LATO = 1.0      # da che parte del bordo sbircia: +1 alla sua sinistra (a destra per chi guarda dal corridoio);
+                        # oblo_sbircia_altro dall'altra parte
+
+
+RACCOLTA = 0.95        # sbircia: quanto si stringono i tentacoli sotto la campana (0 aperti come fluttua, 1 dritti giu')
+
+
+def raccogli(arm, k):
+    """Stringe i tentacoli sotto la campana: ogni tentacolo gira alla radice perche' la punta si avvicini alla
+    verticale (lo scostamento orizzontale dalla radice scala di 1 - k), la forma resta quella della posa."""
+    for b in arm.data.bones:
+        if not b.name.startswith('tentacolo') or b.name.startswith(ZAMPE):
+            continue
+        if b.parent and b.parent.name.startswith('tentacolo'):
+            continue
+        ultimo = b
+        while ultimo.children:
+            ultimo = ultimo.children[0]
+        h = arm.pose.bones[b.name].head.copy()
+        v = arm.pose.bones[ultimo.name].tail - h
+        oriz = Vector((v.x, v.y, 0.0)) * (1.0 - k)
+        z = -math.sqrt(max(v.length_squared - oriz.length_squared, 0.0))
+        w = Vector((oriz.x, oriz.y, z))
+        asse = v.cross(w)
+        if asse.length < 1e-6:
+            continue
+        ruota(arm, b.name, asse.normalized(), math.degrees(v.angle(w)))
+
+
+def _calma(arm, C, Z, t, avanti=8.0, su=-3.0, indietro=OBLO_INDIETRO, raccolta=False):
+    """La base calma degli oblò: il corpo e i tentacoli che fluttuano piano, le dita morbide, la fauce chiusa, il busto
+    appena sporto verso il vetro. Prima di spostarla e di mettere le mani."""
+    u = (t / T_OBLO) % 1.0
+    corpo = campiona(C, 'fluttua', 2.0 * u)
+    # raccolta: i tentacoli stretti sotto di lei (quelli della statua) invece che aperti, per le vasche strette
+    tent = campiona(C, 'fluttua', 2.0 * u)
+    dita = mix(campiona(C, 'statua', 0.0, False), campiona(C, 'insegue', 0.0), 0.4, DITA_OSSA)
+    applica(arm, base(C, corpo, tent, dita))
+    Z.leggi()
+    busto(arm, avanti=avanti + 1.5 * math.sin(2 * math.pi * u), lato=1.5 * math.sin(2 * math.pi * u + 0.7))
+    testa(arm, su=su + indietro - 1.5 * math.sin(2 * math.pi * u + 0.5))
+    fauce_mascella(arm, C, 0.0)
+    if raccolta:
+        raccogli(arm, RACCOLTA)
+    # tutta lei inclinata col basso all'indietro (la testa resta dritta): i tentacoli che fluttuano non arrivano al vetro
+    ruota(arm, 'radice', (1, 0, 0), indietro)
+
+
+def _occhio_in(arm, voglio):
+    """Sposta tutta lei perche' l'occhio vada nel punto [voglio] (spazio del modello)."""
+    sposta(arm, Vector(voglio) - mondo(arm, arm.pose.bones['occhio'].head))
+
+
+def _palmo(arm, suf, punto):
+    """Il palmo piatto sul vetro in [punto] (il polso a PALMO dal piano, piu' 6 mm: nelle dissolvenze le dita avanzano un poco), le dita in su."""
+    braccio_mondo(arm, suf, Vector(punto) + Vector((0.0, 0.006, 0.0)), (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
+
+
+def pose_oblo_schiacciata(arm, C, Z, t):
+    """Ciclo: la faccia e i due palmi sul vetro, ti fissa e respira piano."""
+    dd, hh = OBLO
+    u = (t / T_OBLO) % 1.0
+    _calma(arm, C, Z, t, avanti=10.0, su=-4.0, raccolta=True)
+    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.010 + 0.004 * math.sin(2 * math.pi * u), hh + 0.01 * math.sin(2 * math.pi * u)))
+    for suf, s in (('.L', 1), ('.R', -1)):
+        _palmo(arm, suf, (s * (OBLO_R - 0.12), -dd + PALMO, hh - 0.08 + 0.01 * math.sin(2 * math.pi * u + s)))
+    Z.segui()
+
+
+def pose_oblo_schiacciata_stacca(arm, C, Z, t):
+    """Si stacca dal vetro: le mani lasciano per prime e salgono, poi va indietro e scende nel buio."""
+    dd, hh = OBLO
+    u = t / T_STACCA
+    via = liscio(0.0, 1.0, 0.15, 1.0, u)
+    _calma(arm, C, Z, 0.0, avanti=10.0 - 22.0 * via, su=-4.0 - 16.0 * liscio(0.0, 1.0, 0.35, 1.0, u), raccolta=True)
+    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.010 + 1.8 * via, hh - 1.5 * via ** 1.6))
+    lascia = liscio(0.0, 1.0, 0.0, 0.4, u)
+    for suf, s in (('.L', 1), ('.R', -1)):
+        pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
+        vetro = Vector((s * (OBLO_R - 0.12), -dd + PALMO + STACCA_ALZA, hh - 0.08))
+        su = pc + Vector((s * 0.45, 0.25, 0.75))
+        _palmo(arm, suf, vetro.lerp(su, lascia))
+    Z.segui()
+
+
+def pose_oblo_sbircia(arm, C, Z, t, s=SBIRCIA_LATO):
+    """Ciclo: sbircia dal bordo dell'oblò, mezzo viso dentro il vetro e una mano sola, la testa piegata verso il bordo,
+    il corpo dietro il muro."""
+    dd, hh = OBLO
+    u = (t / T_OBLO) % 1.0
+    _calma(arm, C, Z, t, avanti=6.0, su=-2.0, raccolta=True)
+    testa(arm, piega=-s * 16.0 + 1.5 * math.sin(2 * math.pi * u), giro=-s * 10.0)
+    # l'occhio poco dentro il bordo: si vede mezzo viso, il resto e il corpo dietro il muro
+    _occhio_in(arm, (s * SBIRCIA_OCCHIO + 0.01 * math.sin(2 * math.pi * u), -dd + VISO_DAVANTI - 0.022, hh + 0.03))
+    # la mano verso il centro dell'oblò, poggiata sul vetro accanto al viso (l'altra resta dietro il muro)
+    suf_vetro = '.L' if s < 0 else '.R'
+    _palmo(arm, suf_vetro, (s * (OBLO_R - 0.50), -dd + PALMO, hh - 0.12 + 0.008 * math.sin(2 * math.pi * u)))
+    altro = '.R' if suf_vetro == '.L' else '.L'
+    braccio(arm, altro, (0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
+    Z.segui()
+
+
+def pose_oblo_sbircia_stacca(arm, C, Z, t, s=SBIRCIA_LATO):
+    """Si ritira dietro il bordo e scende nel buio."""
+    dd, hh = OBLO
+    u = t / T_STACCA
+    via = liscio(0.0, 1.0, 0.1, 1.0, u)
+    _calma(arm, C, Z, 0.0, avanti=6.0 - 14.0 * via, su=-2.0 - 10.0 * via, raccolta=True)
+    testa(arm, piega=-s * 16.0 * (1 - via), giro=-s * 10.0 * (1 - via))
+    # (indietro e giu', non di lato: la vasca del corridoio del personale e' stretta)
+    _occhio_in(arm, (s * SBIRCIA_OCCHIO, -dd + VISO_DAVANTI - 0.022 + 1.8 * via, hh + 0.03 - 1.3 * via ** 1.6))
+    suf_vetro = '.L' if s < 0 else '.R'
+    pc = mondo(arm, arm.pose.bones['braccio' + suf_vetro].head)
+    vetro = Vector((s * (OBLO_R - 0.50), -dd + PALMO + STACCA_ALZA, hh - 0.12))
+    _palmo(arm, suf_vetro, vetro.lerp(pc + Vector((0.0, 0.25, 0.7)), liscio(0.0, 1.0, 0.0, 0.35, u)))
+    altro = '.R' if suf_vetro == '.L' else '.L'
+    braccio(arm, altro, (0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
+    Z.segui()
+
+
+def _palmo_capovolta(arm, suf, punto):
+    """Il palmo sul vetro in [punto] (spazio del modello, piu' 1,2 cm: nella sfumatura verso il distacco le dita
+    avanzano un poco) con lei a testa in giu': il gomito verso l'esterno e verso
+    il suo corpo (in alto), le dita in giu' (verso la sua testa)."""
+    sp = arm.pose.bones['braccio' + suf].head.copy()
+    W = arm.matrix_world.inverted() @ (Vector(punto) + Vector((0.0, 0.012, 0.0)))
+    fuori = 1.0 if sp.x > 0 else -1.0
+    POSE.posa_braccio(arm, suf, W, sp + Vector((fuori * 0.8, 0.3, 0.4)), Vector((0.0, -0.25, -1.0)),
+                      Vector((0.0, 1.0, 0.0)))
+
+
+def _mani_capovolta(arm, dd, hh, lascia=0.0, staccando=False):
+    for suf in ('.L', '.R'):
+        sp = mondo(arm, arm.pose.bones['braccio' + suf].head)
+        f = 1.0 if sp.x > 0 else -1.0
+        vetro = Vector((f * (OBLO_R - 0.14), -dd + PALMO + (STACCA_ALZA if staccando else 0.0), hh - 0.12))
+        _palmo_capovolta(arm, suf, vetro.lerp(sp + Vector((f * 0.5, 0.3, -0.6)), lascia))
+
+
+def pose_oblo_capovolta(arm, C, Z, t):
+    """Ciclo: a testa in giu', l'occhio rovesciato contro il vetro, i palmi ai lati della testa, i capelli e i tentacoli
+    verso l'alto (verso il corpo), dondola appena."""
+    dd, hh = OBLO
+    u = (t / T_OBLO) % 1.0
+    _calma(arm, C, Z, t, avanti=4.0, su=6.0, indietro=OBLO_INDIETRO)
+    # tutta lei girata intorno all'asse avanti-indietro: la faccia resta verso il vetro
+    ruota(arm, 'radice', (0, 1, 0), 180.0 + 1.0 * math.sin(2 * math.pi * u))
+    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.046, hh + 0.01 * math.sin(2 * math.pi * u)))
+    _mani_capovolta(arm, dd, hh)
+    Z.segui()
+
+
+def pose_oblo_capovolta_stacca(arm, C, Z, t):
+    """Si stacca a testa in giu', va indietro e scende nel buio."""
+    dd, hh = OBLO
+    u = t / T_STACCA
+    via = liscio(0.0, 1.0, 0.15, 1.0, u)
+    _calma(arm, C, Z, 0.0, avanti=4.0 - 10.0 * via, su=6.0, indietro=OBLO_INDIETRO)
+    ruota(arm, 'radice', (0, 1, 0), 180.0)
+    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.046 + 2.0 * via, hh - 2.6 * via ** 1.6))
+    _mani_capovolta(arm, dd, hh, liscio(0.0, 1.0, 0.0, 0.4, u), staccando=True)
+    Z.segui()
+
+
+# L'oblò della torre (quarta posa, scelta A dell'utente, 24 ottobre): arriva dal buio e appoggia al vetro l'occhio
+# enorme, che riempie l'oblò e segue il giocatore; poi si stacca lenta e torna nel buio. La testa piegata indietro
+# (la frangia va su, l'occhio e' la cosa piu' avanti), i palmi sul vetro ai lati, fuori dall'oblò.
+OCCHIO_SU = 24.0            # gradi: la testa piegata indietro
+OCCHIO_DAVANTI = 0.278      # quanto la pelle piu' avanti (l'occhio) sta davanti all'osso dell'occhio con la testa cosi'
+OCCHIO_VIA = (0.45, 0.0)    # da dove arriva e dove torna: tanti metri indietro e giu' (il buio della vasca)
+OCCHIO_MANI = 0.42          # i palmi sul vetro a tanto dal centro (dietro il muro, fuori dall'oblò)
+T_ARRIVA = 3.0
+
+
+def _occhio_posa(arm, C, Z, t, via, mani=1.0, staccando=False):
+    """L'occhio sul vetro; via: 0 sul vetro, 1 lontana nel buio (OCCHIO_VIA); mani: 1 i palmi sul vetro."""
+    dd, hh = OBLO
+    u = (t / T_OBLO) % 1.0
+    _calma(arm, C, Z, t, avanti=6.0, su=OCCHIO_SU * (1.0 - 0.6 * via), indietro=20.0, raccolta=True)
+    _occhio_in(arm, (0.006 * math.sin(2 * math.pi * u), -dd + OCCHIO_DAVANTI + 0.008 + 0.003 * math.sin(2 * math.pi * u)
+                     + OCCHIO_VIA[0] * via, hh - OCCHIO_VIA[1] * via ** 1.4))
+    for suf, s in (('.L', 1), ('.R', -1)):
+        pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
+        vetro = Vector((s * OCCHIO_MANI, -dd + PALMO + (STACCA_ALZA if staccando else 0.0),
+                        hh - 0.10 + 0.006 * math.sin(2 * math.pi * u + s)))
+        # (lungo i fianchi e un po' indietro: le mani non passano mai davanti al piano del vetro)
+        lungo = pc + Vector((s * 0.35, 0.25, -0.85))
+        _palmo(arm, suf, lungo.lerp(vetro, mani))
+    Z.segui()
+
+
+def pose_oblo_occhio(arm, C, Z, t):
+    """Ciclo: l'occhio sul vetro, respira piano."""
+    _occhio_posa(arm, C, Z, t, 0.0)
+
+
+def pose_oblo_occhio_arriva(arm, C, Z, t):
+    """3 s: dal buio (indietro e giu') fino al vetro, rallentando; le mani si posano alla fine."""
+    u = t / T_ARRIVA
+    via = 1.0 - liscio(0.0, 1.0, 0.0, 0.9, u)
+    # (il tempo del respiro finisce dove comincia il ciclo oblo_occhio: niente scatto al passaggio)
+    _occhio_posa(arm, C, Z, (t - T_ARRIVA) % T_OBLO, via, mani=liscio(0.0, 1.0, 0.6, 1.0, u))
+
+
+def pose_oblo_occhio_stacca(arm, C, Z, t):
+    """Si stacca lenta e torna nel buio: le mani lasciano, poi indietro e giu'."""
+    u = t / T_STACCA
+    _occhio_posa(arm, C, Z, t, liscio(0.0, 1.0, 0.1, 1.0, u), mani=1.0 - liscio(0.0, 1.0, 0.0, 0.35, u), staccando=True)
 
 
 ANIMAZIONI = {
@@ -821,6 +1047,19 @@ ANIMAZIONI = {
     'tuffo_sb1': (1.3, False, lambda a, C, Z, t: pose_tuffo_sb1(a, C, Z, t)),
     'riemerge': (1.8, False, lambda a, C, Z, t: pose_riemerge(a, C, Z, t)),
     'schianto': (2.4, False, lambda a, C, Z, t: pose_schianto(a, C, Z, t)),
+    # gli oblò della risalita
+    'oblo_schiacciata': (T_OBLO, True, pose_oblo_schiacciata),
+    'oblo_schiacciata_stacca': (T_STACCA, False, pose_oblo_schiacciata_stacca),
+    'oblo_sbircia': (T_OBLO, True, pose_oblo_sbircia),
+    'oblo_sbircia_stacca': (T_STACCA, False, pose_oblo_sbircia_stacca),
+    'oblo_sbircia_altro': (T_OBLO, True, lambda a, C, Z, t: pose_oblo_sbircia(a, C, Z, t, -SBIRCIA_LATO)),
+    'oblo_sbircia_altro_stacca': (T_STACCA, False, lambda a, C, Z, t: pose_oblo_sbircia_stacca(a, C, Z, t, -SBIRCIA_LATO)),
+    'oblo_capovolta': (T_OBLO, True, pose_oblo_capovolta),
+    'oblo_capovolta_stacca': (T_STACCA, False, pose_oblo_capovolta_stacca),
+    # l'oblò della torre
+    'oblo_occhio': (T_OBLO, True, pose_oblo_occhio),
+    'oblo_occhio_arriva': (T_ARRIVA, False, pose_oblo_occhio_arriva),
+    'oblo_occhio_stacca': (T_STACCA, False, pose_oblo_occhio_stacca),
 }
 
 # Quanto e' aperta la fauce (le blend shape di fauce_apre: 0 chiusa, 1 come alla fine) nel tempo, per le animazioni
@@ -831,6 +1070,17 @@ FAUCE = {
     'ritrae': lambda t: 1.0,
     'riemerge': fauce_riemerge,
     'schianto': lambda t: 1.0,
+    'oblo_schiacciata': lambda t: 0.0,
+    'oblo_schiacciata_stacca': lambda t: 0.0,
+    'oblo_sbircia': lambda t: 0.0,
+    'oblo_sbircia_stacca': lambda t: 0.0,
+    'oblo_sbircia_altro': lambda t: 0.0,
+    'oblo_sbircia_altro_stacca': lambda t: 0.0,
+    'oblo_capovolta': lambda t: 0.0,
+    'oblo_capovolta_stacca': lambda t: 0.0,
+    'oblo_occhio': lambda t: 0.0,
+    'oblo_occhio_arriva': lambda t: 0.0,
+    'oblo_occhio_stacca': lambda t: 0.0,
 }
 
 
@@ -941,6 +1191,18 @@ def _scena_anteprima(nome):
         d, h = BORDO_SB1
         scatola('pavimento', (0, -d - 1.5, h - 0.1), (4.0, 3.0, 0.2), (0.3, 0.3, 0.32))
         scatola('muro_pozzo', (0, -d - 0.05, h - 2.0), (2.2, 0.1, 4.0), (0.25, 0.25, 0.27))
+    elif nome.startswith('oblo_'):
+        # il vetro dell'oblò (trasparente) e la cornice, nel muro; il corridoio dalla parte -y
+        d, h = OBLO
+        scatola('vetro', (0, -d - 0.01, h), (2 * OBLO_R, 0.02, 2 * OBLO_R), (0.6, 0.8, 0.85), 0.15)
+        bpy.ops.mesh.primitive_torus_add(location=(0, -d - 0.06, h), rotation=(math.pi / 2, 0, 0),
+                                         major_radius=OBLO_R + 0.06, minor_radius=0.07)
+        bpy.context.object.name = 'rif_cornice'
+        for nm, c, dim in (('muro_sx', (-OBLO_R - 1.1, -d - 0.15, h), (2.0, 0.2, 4.0)),
+                           ('muro_dx', (OBLO_R + 1.1, -d - 0.15, h), (2.0, 0.2, 4.0)),
+                           ('muro_su', (0, -d - 0.15, h + OBLO_R + 1.0), (4.4, 0.2, 2.0)),
+                           ('muro_giu', (0, -d - 0.15, h - OBLO_R - 1.0), (4.4, 0.2, 2.0))):
+            scatola(nm, c, dim, (0.25, 0.25, 0.27))
     else:
         f, a = VASCA
         scatola('fondo', (0, -1.5, f - 0.1), (6.0, 6.0, 0.2), (0.3, 0.3, 0.32))
@@ -972,7 +1234,16 @@ def anteprime(arm, C, Z, nome, durata, fn, cartella, n=6):
         cam.data.lens = 30
     cam = sc.camera
     righe = []
-    for vista, (pos, tgt) in (('davanti', ((2.0, -7.5, 3.6), (0, -0.8, 3.2))), ('lato', ((7.5, -1.2, 3.6), (0, -0.9, 3.0)))):
+    viste = (('davanti', ((2.0, -7.5, 3.6), (0, -0.8, 3.2))), ('lato', ((7.5, -1.2, 3.6), (0, -0.9, 3.0))))
+    if nome.startswith('oblo_'):
+        # dal corridoio, all'altezza degli occhi, e di lato da dietro il muro (il muro di lato si nasconde)
+        d, h = OBLO
+        viste = (('davanti', ((0.3, -d - 2.2, h - 0.1), (0, -d, h))), ('lato', ((4.5, -d + 1.2, h + 0.3), (0, -d + 0.8, h - 0.4))))
+    for vista, (pos, tgt) in viste:
+        if nome.startswith('oblo_'):
+            for o in bpy.data.objects:
+                if o.name.startswith('rif_muro'):
+                    o.hide_render = vista == 'lato'
         pezzi = []
         for i in range(n):
             t = durata * i / (n - 1) if n > 1 else 0.0
@@ -991,6 +1262,48 @@ def anteprime(arm, C, Z, nome, durata, fn, cartella, n=6):
         for i, im in enumerate(pezzi):
             G.paste(im, (W * i, H * r))
     G.save(os.path.join(cartella, f'{nome}.jpg'), quality=85)
+    mesh_attive(False)
+
+
+def controlla_vetro(arm, C, Z, nome, durata, fn, n=9):
+    """Oblò: quanto la pelle (tutte le mesh) arriva vicino al piano del vetro (y = -OBLO[0]) in n fotogrammi; stampa
+    il punto piu' avanti per ciascuno (positivo: dietro il vetro, negativo: dentro)."""
+    import numpy as np
+    mesh_attive(True)
+    dd = OBLO[0]
+    peggio = 1e9
+    for i in range(n):
+        t = durata * i / (n - 1)
+        fn(arm, C, Z, t)
+        dg = bpy.context.evaluated_depsgraph_get()
+        avanti, chi = 1e9, ''
+        senza_mani, chi2 = 1e9, ''
+        lo, hi = np.full(3, 1e9), np.full(3, -1e9)
+        for o in bpy.data.objects:
+            if o.type != 'MESH' or o.name.startswith('rif_') or o.hide_render:
+                continue
+            oe = o.evaluated_get(dg)
+            me = oe.to_mesh()
+            if len(me.vertices) == 0:
+                oe.to_mesh_clear()
+                continue
+            co = np.empty(len(me.vertices) * 3)
+            me.vertices.foreach_get('co', co)
+            co = co.reshape(-1, 3) @ np.array(o.matrix_world.to_3x3()).T + np.array(o.matrix_world.translation)
+            oe.to_mesh_clear()
+            d = float((co[:, 1] + dd).min())
+            lo, hi = np.minimum(lo, co.min(0)), np.maximum(hi, co.max(0))
+            if os.environ.get('CHI'):
+                print(f'  OGGETTO {o.name}: x {co[:, 0].min():.2f}..{co[:, 0].max():.2f} vetro {(co[:, 1].min() + dd) * 100:.1f} cm', flush=True)
+            if d < avanti:
+                avanti, chi = d, o.name
+            if 'Mani' not in o.name and d < senza_mani:
+                senza_mani, chi2 = d, o.name
+        peggio = min(peggio, avanti)
+        print(f'VETRO {nome} t={t:.2f}: al piu\' avanti {avanti * 100:.1f} cm dal vetro ({chi}); senza le mani {senza_mani * 100:.1f} cm ({chi2}); '
+              f'ingombro dal centro del vetro: lati {lo[0]:.2f}..{hi[0]:.2f}, dietro fino a {hi[1] + dd:.2f}, '
+              f'sotto {lo[2] - OBLO[1]:.2f}, sopra {hi[2] - OBLO[1]:.2f}', flush=True)
+    print(f'VETRO {nome}: minimo {peggio * 100:.1f} cm', flush=True)
     mesh_attive(False)
 
 
@@ -1031,6 +1344,8 @@ def main():
             out['animazioni'][nome]['fauce'] = [round(FAUCE[nome](min(i / FPS, durata) if not (ciclo and i == n) else 0.0), 4)
                                                 for i in range(n + 1)]
         print(f'ANIMAZIONE {nome}: {n + 1} fotogrammi', flush=True)
+        if '--vetro' in sys.argv and nome.startswith('oblo_'):
+            controlla_vetro(arm, C, Z, nome, durata, fn)
         if '--anteprime' in sys.argv:
             anteprime(arm, C, Z, nome, durata, fn, cartella)
     with open(USCITA, 'w') as f:
