@@ -873,8 +873,8 @@ def _occhio_in(arm, voglio):
 
 
 def _palmo(arm, suf, punto):
-    """Il palmo piatto sul vetro in [punto] (il polso a PALMO dal piano, piu' 2 mm), le dita in su."""
-    braccio_mondo(arm, suf, Vector(punto) + Vector((0.0, 0.002, 0.0)), (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
+    """Il palmo piatto sul vetro in [punto] (il polso a PALMO dal piano, piu' 6 mm: nelle dissolvenze le dita avanzano un poco), le dita in su."""
+    braccio_mondo(arm, suf, Vector(punto) + Vector((0.0, 0.006, 0.0)), (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
 
 
 def pose_oblo_schiacciata(arm, C, Z, t):
