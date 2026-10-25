@@ -372,6 +372,9 @@ func _oblo(nome: String, centro: Vector3, normale: Vector3, posa: String, zona: 
 	o.name = nome
 	o.posa = posa
 	o.zona = zona
+	# il muro del corridoio fino alla cornice d'ottone (niente piastra quadrata scura, scelta dell'utente del 25 ottobre):
+	# lo zoccolo di cemento fino a 1 m dal pavimento (gli oblò stanno a 1,5 m), le lamiere sopra (triplanari nel mondo)
+	o.muro = [{"materiale": _mat_cemento, "da": -INF, "a": -0.5}, {"materiale": _mat_lamiere, "da": -0.5, "a": INF}]
 	for k in opzioni:
 		o.set(k, opzioni[k])
 	o.transform = Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)

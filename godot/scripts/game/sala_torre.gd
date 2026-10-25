@@ -732,8 +732,10 @@ func _oblo_lei() -> void:
 	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
 	var hi := b([float(d["centro"][0]) - 0.1, float(v[1]) - 5.0, FONDO_Z + 2.6])
 	oblo.zona = AABB(lo.min(hi), (hi - lo).abs())
+	var xf := Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
+	oblo.muro = _muro_oblo(xf, float(d["lato"]) * 0.5)
+	oblo.transform = global_transform.affine_inverse() * xf
 	add_child(oblo)
-	oblo.global_transform = Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
 	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
 	var bocca := Area3D.new()
 	bocca.name = "BoccaOblo"
@@ -753,6 +755,70 @@ func _oblo_lei() -> void:
 	inseguimento_aggiunto.connect(func(ins: Node3D):
 		if ins.has_signal(&"lei_compare"):
 			ins.connect(&"lei_compare", func(_dove): _oblo_via()))
+
+
+## Il muro della torre attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, le
+## piastrelle e l'intonaco arrivano fino alla cornice d'ottone): per ogni superficie di torre_A che sta nel piano del
+## muro dove c'è il foro, il suo materiale, le quote che copre e come le sue UV seguono il muro (ricavate da un suo
+## triangolo), nelle coordinate dell'oblò [param xf] (vedi ObloLei.muro).
+func _muro_oblo(xf: Transform3D, h: float) -> Array:
+	var out := []
+	var mi := find_child("torre_A", true, false) as MeshInstance3D
+	if mi == null or mi.mesh == null:
+		return out
+	var verso := xf.affine_inverse() * mi.global_transform if mi.is_inside_tree() else xf.affine_inverse() * _xf_in_sala(mi)
+	for i in mi.mesh.get_surface_count():
+		var arr := mi.mesh.surface_get_arrays(i)
+		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var uv: PackedVector2Array = arr[Mesh.ARRAY_TEX_UV]
+		var idx = arr[Mesh.ARRAY_INDEX]
+		if uv.is_empty():
+			continue
+		var y0 := INF
+		var y1 := -INF
+		var t := Transform2D()
+		var trovata := false
+		var n: int = (idx as PackedInt32Array).size() if idx != null else v.size()
+		for k in range(0, n, 3):
+			var ii := [idx[k], idx[k + 1], idx[k + 2]] if idx != null else [k, k + 1, k + 2]
+			var p := [verso * v[ii[0]], verso * v[ii[1]], verso * v[ii[2]]]
+			# (nel piano del muro, la faccia verso la sala, vicino al foro)
+			if absf(p[0].z) > 0.01 or absf(p[1].z) > 0.01 or absf(p[2].z) > 0.01:
+				continue
+			var lo := Vector2(minf(p[0].x, minf(p[1].x, p[2].x)), minf(p[0].y, minf(p[1].y, p[2].y)))
+			var hi := Vector2(maxf(p[0].x, maxf(p[1].x, p[2].x)), maxf(p[0].y, maxf(p[1].y, p[2].y)))
+			if hi.x < -h - 0.5 or lo.x > h + 0.5 or hi.y < -h - 0.5 or lo.y > h + 0.5:
+				continue
+			var e1 := Vector2(p[1].x - p[0].x, p[1].y - p[0].y)
+			var e2 := Vector2(p[2].x - p[0].x, p[2].y - p[0].y)
+			var det := e1.x * e2.y - e1.y * e2.x
+			if absf(det) < 1e-4:
+				continue
+			y0 = minf(y0, lo.y)
+			y1 = maxf(y1, hi.y)
+			if not trovata:
+				# uv = A (x, y) + b: A = F E^-1
+				var f1 := uv[ii[1]] - uv[ii[0]]
+				var f2 := uv[ii[2]] - uv[ii[0]]
+				var ei := Transform2D(Vector2(e2.y, -e1.y) / det, Vector2(-e2.x, e1.x) / det, Vector2.ZERO)
+				var fa := Transform2D(f1, f2, Vector2.ZERO)
+				t = fa * ei
+				t.origin = uv[ii[0]] - t.basis_xform(Vector2(p[0].x, p[0].y))
+				trovata = true
+		if trovata:
+			out.append({"materiale": mi.get_active_material(i), "da": y0, "a": y1, "uv": t})
+	return out
+
+
+## La trasformazione di [param n] nella sala, anche se non è ancora nell'albero (costruzione a pezzi).
+func _xf_in_sala(n: Node3D) -> Transform3D:
+	var t := Transform3D.IDENTITY
+	var q: Node = n
+	while q != null and q != self:
+		if q is Node3D:
+			t = (q as Node3D).transform * t
+		q = q.get_parent()
+	return global_transform * t
 
 
 func _oblo_via() -> void:
