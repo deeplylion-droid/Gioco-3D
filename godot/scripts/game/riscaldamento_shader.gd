@@ -353,10 +353,10 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 	_rimetti(radice, stato)
 
 
-## Rende visibile [param radice] e mette sullo strato fuori vista i suoi nodi visibili (le luci illuminano solo
-## quello): torna lo stato da rimettere con [method _rimetti].
+## Rende visibile [param radice] e mette sullo strato fuori vista i suoi nodi visibili, luci comprese (la camera del
+## gioco non le vede): torna lo stato da rimettere con [method _rimetti].
 static func _fuori_vista(radice: Node3D) -> Dictionary:
-	var stato := {"visibile": radice.visible, "strati": {}, "maschere": {}, "aabb": AABB()}
+	var stato := {"visibile": radice.visible, "strati": {}, "aabb": AABB()}
 	radice.visible = true
 	var primo := true
 	for v in radice.find_children("*", "VisualInstance3D", true, false):
@@ -364,11 +364,11 @@ static func _fuori_vista(radice: Node3D) -> Dictionary:
 		if not vi.is_visible_in_tree():
 			continue
 		stato["strati"][vi] = vi.layers
+		# (alle luci solo lo strato: la camera del gioco non le usa più. La loro cull mask non si tocca: cambiata, se
+		# poi la zona restava nascosta fino all'uscita il motore non staccava le mesh dalla luce, "BUG, indexing did
+		# not unpair geometries from light"; prove di mascotte su test_torre_ingresso, 25 ottobre)
 		vi.layers = SalaTorre.STRATO_PREPARA
-		if vi is Light3D:
-			stato["maschere"][vi] = (vi as Light3D).light_cull_mask
-			(vi as Light3D).light_cull_mask = SalaTorre.STRATO_PREPARA
-		elif vi is GeometryInstance3D:
+		if vi is GeometryInstance3D:
 			var box := vi.global_transform * vi.get_aabb()
 			stato["aabb"] = box if primo else (stato["aabb"] as AABB).merge(box)
 			primo = false
@@ -396,7 +396,7 @@ static func _camera(radice: Node3D, principale: Viewport, aabb: AABB) -> SubView
 	return sv
 
 
-## Rimette strati e maschere (a nodi visibili: chi nel frattempo si è nascosto si mostra un attimo, nello stesso
+## Rimette gli strati (a nodi visibili: chi nel frattempo si è nascosto si mostra un attimo, nello stesso
 ## fotogramma) e poi la visibilità della radice.
 static func _rimetti(radice: Node3D, stato: Dictionary) -> void:
 	if not is_instance_valid(radice):
@@ -417,8 +417,6 @@ static func _rimetti(radice: Node3D, stato: Dictionary) -> void:
 					(x as Node3D).visible = true
 				x = x.get_parent()
 		n.layers = stato["strati"][vi]
-		if stato["maschere"].has(vi):
-			(n as Light3D).light_cull_mask = stato["maschere"][vi]
 		for g in giu:
 			g.visible = false
 	radice.visible = stato["visibile"]
