@@ -246,7 +246,9 @@ func _presa() -> void:
 	var attesa := GameState.attesa_ripartenza
 	print("  (la ripartenza ha aspettato i caricamenti per %.1f s)" % attesa)
 	check(spia or attesa < Game.ATTESA_SPIA + 0.1, "se l'attesa è lunga si vede la spia del caricamento (%.1f s, spia %s)" % [attesa, spia])
-	for i in 600:
+	# (a tempo: la ripartenza aspetta i caricamenti nel thread, anche qualche secondo)
+	var t_attesa := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_attesa < 90000:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player) and not GameState.is_dying and GameState.player.input_enabled:
 			break
