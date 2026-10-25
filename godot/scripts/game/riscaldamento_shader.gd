@@ -92,17 +92,32 @@ func _run() -> void:
 	finito.emit()
 
 
+## Le impostazioni di [param principale] che cambiano le pipeline (antialiasing, scala e upscaler: con FSR 2 o col
+## TAA ci sono i vettori di movimento, che sono pipeline loro; atlante delle ombre), copiate in [param sv]: se no si
+## compilano varianti che il gioco non usa e al primo fotogramma vero mancano le sue (draw 8 per lei all'oblò,
+## test_riscaldamento_pipeline del 25 ottobre).
+static func copia_viewport(sv: SubViewport, principale: Viewport) -> void:
+	sv.msaa_3d = principale.msaa_3d
+	sv.screen_space_aa = principale.screen_space_aa
+	sv.use_taa = principale.use_taa
+	sv.use_debanding = principale.use_debanding
+	sv.use_hdr_2d = principale.use_hdr_2d
+	sv.scaling_3d_mode = principale.scaling_3d_mode
+	sv.scaling_3d_scale = principale.scaling_3d_scale
+	sv.fsr_sharpness = principale.fsr_sharpness
+	sv.anisotropic_filtering_level = principale.anisotropic_filtering_level
+	sv.texture_mipmap_bias = principale.texture_mipmap_bias
+	sv.positional_shadow_atlas_size = principale.positional_shadow_atlas_size
+	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
+
+
 func _disegna() -> void:
 	var sv := SubViewport.new()
 	sv.name = "RiscaldamentoShader"
 	sv.size = Vector2i(64, 64)
 	sv.own_world_3d = true
 	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	var principale := get_viewport()
-	sv.msaa_3d = principale.msaa_3d
-	sv.screen_space_aa = principale.screen_space_aa
-	sv.use_taa = principale.use_taa
-	sv.use_hdr_2d = principale.use_hdr_2d
+	copia_viewport(sv, get_viewport())
 	add_child(sv)
 	var amb := ambiente()
 	if amb:
@@ -153,6 +168,8 @@ func _disegna() -> void:
 
 
 var _luci: Array[Light3D] = []
+## Il pezzo dell'oblò che si sta disegnando (per i test: dove cadono le pipeline).
+var pezzo := ""
 
 
 ## I passi di un pezzo appena mostrato: un fotogramma senza ombre, poi uno con l'ombra di ogni luce, da sola.
@@ -175,6 +192,10 @@ func _disegna_oblo(sv: SubViewport) -> void:
 	sv.add_child(o)
 	o.set_process(false)
 	o._mostra()
+	# (il riscaldamento dell'oblò stesso, un SubViewport suo, qui non serve: da solo erano 32 pipeline in un fotogramma)
+	var suo := o.get_node_or_null(^"Riscaldamento") as SubViewport
+	if suo:
+		suo.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	# (la luce rosa di lei fa le stesse ombre della luce di prova: spenta, i passi delle ombre li fanno le luci di prova)
 	for l in o.find_children("*", "Light3D", true, false):
 		(l as Light3D).visible = false
@@ -189,6 +210,7 @@ func _disegna_oblo(sv: SubViewport) -> void:
 		if not is_instance_valid(gi):
 			continue
 		gi.visible = true
+		pezzo = "%s (%s)" % [gi.name, gi.get_class()]
 		await _passi_ombre()
 		if not is_inside_tree():
 			return
@@ -226,13 +248,7 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 	var sv := SubViewport.new()
 	sv.name = "PreparaMateriali"
 	sv.size = Vector2i(320, 180)
-	sv.msaa_3d = principale.msaa_3d
-	sv.screen_space_aa = principale.screen_space_aa
-	sv.use_taa = principale.use_taa
-	sv.use_debanding = principale.use_debanding
-	sv.use_hdr_2d = principale.use_hdr_2d
-	sv.positional_shadow_atlas_size = principale.positional_shadow_atlas_size
-	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
+	copia_viewport(sv, principale)
 	sv.world_3d = principale.find_world_3d()
 	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	var cam := Camera3D.new()
