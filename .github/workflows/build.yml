@@ -256,9 +256,9 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
-          xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
-          xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
-          xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
 
       - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)
         if: steps.progetto.outputs.presente == 'si'
@@ -330,6 +330,8 @@ jobs:
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_pool_sala.gd 2>&1 | tee pool_sala.log || true
           rm -f godot/override.cfg
           grep -q "RISULTATO: [0-9]* controlli ok, 0 falliti" pool_sala.log
+          # e nessun errore interno del motore (tools/ci/senza_bug.sh)
+          ! grep -n "ERROR: BUG," pool_sala.log
 
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'
