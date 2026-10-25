@@ -40,6 +40,13 @@ from lib_audio import (SR, env_points, f32, fade, hp, lp, lufs, mix_into, n_of, 
 USCITA = os.path.join(RADICE, 'docs', 'proposte', 'canto_sirena')
 # il canto da vicino: sotto i versi (-19 corti, circa -22 integrati), sopra il fiato (-27)
 CANTO_LUFS = -24
+# Scelta dell'utente del 25 ottobre sera: A, con "il respiro abbassato del 70%, la melodia alzata del 30% e senza quel
+# suono fastidioso di grattamento che compare ritmicamente" (erano i versi, il ringhio raschiato ogni 4-6 s: i picchi
+# acuti dell'esempio cadevano proprio sui versi). Nel gioco: il fiato a x0,3 (-10,5 dB), il canto a x1,3 (+2,3 dB), e
+# mentre canta niente versi.
+FIATO_X = 0.3
+CANTO_X = 1.3
+CANTO_GIOCO_LUFS = CANTO_LUFS + 20.0 * np.log10(CANTO_X)
 # la scala: la minore con la seconda abbassata (frigio), da sol2 a fa3 (Hz)
 SCALA = [196.0, 220.0, 233.1, 261.6, 293.7, 329.6, 349.2]
 # le vocali di una gola grande (un po' più basse di quelle umane): (F1, F2, F3)
@@ -206,6 +213,27 @@ def esempio(rng, variante, base, dur=30.0):
     return f32(limiter(fade(canto + sotto, 0.5, 1.5), -3.0))
 
 
+def esempio_ritoccato(rng, variante, fiato, dur=30.0):
+    """L'esempio dopo la scelta dell'utente: sotto solo il fiato in ciclo a FIATO_X (niente versi), il canto a
+    CANTO_GIOCO_LUFS da vicino, come in esempio()."""
+    ir = ir_sala()
+    n = n_of(dur)
+    canto = np.zeros((n, 2))
+    t = 1.0
+    k = 0
+    vicinanze = [0.0, 0.5, 1.0, 1.0]
+    while t < dur - 3.0:
+        d = min(float(rng.uniform(4.0, 8.0)), dur - t - 0.5)
+        x = bagnata(frase(rng, variante, d), ir, CANTO_GIOCO_LUFS)
+        vic = vicinanze[min(k, 3)]
+        x = lp(x, 900 + 1100 * vic, 2) * 10 ** ((-9.0 * (1 - vic)) / 20)
+        mix_into(canto, x, n_of(t))
+        t += d + float(rng.uniform(3.0, 7.0))
+        k += 1
+    sotto = stereo(np.tile(fiato, int(np.ceil(n / len(fiato))))[:n] * FIATO_X)
+    return f32(limiter(fade(canto + sotto, 0.5, 1.5), -3.0))
+
+
 def bagnata(x, ir, livello=CANTO_LUFS):
     """La frase col riverbero del tunnel (e la sua coda), portata a [param livello] LUFS."""
     y = reverb(x, ir, wet=0.3, dry=1.0, tail=True)
@@ -230,7 +258,8 @@ FRASI_GIOCO = 10
 
 def gioco(variante):
     """Nel gioco, dopo la scelta dell'utente: FRASI_GIOCO frasi della variante, mono (la voce viene da lei, in 3D),
-    con un filo del riverbero del tunnel come i versi (il resto lo fa il gioco), a CANTO_LUFS. In godot/audio/lei/
+    con un filo del riverbero del tunnel come i versi (il resto lo fa il gioco), a CANTO_GIOCO_LUFS (+2,3 dB, scelta
+    dell'utente). In godot/audio/lei/
     come lei_tunnel_canto_NN, registrate per catalogo.py e licenze.py."""
     from comune import salva
     ir = ir_sala()
@@ -241,7 +270,7 @@ def gioco(variante):
         if y.ndim == 2:
             y = y.mean(axis=1)
         y = fade(y[:len(x) + n_of(1.5)], 0.0, 1.0)
-        y = limiter(normalize_lufs(y, CANTO_LUFS, -3.0), -3.0)
+        y = limiter(normalize_lufs(y, CANTO_GIOCO_LUFS, -3.0), -3.0)
         picco = 20.0 * np.log10(float(np.abs(y).max()) + 1e-12) + 0.01
         salva('lei', 'lei_tunnel_canto_%02d' % (k + 1), y, loudness=None, picco=picco, qualita=5,
               nota='tunnel, canto di sirena (variante %s, 25 ottobre): una frase ogni 8-15 s mentre insegue' % variante)
@@ -250,6 +279,15 @@ def gioco(variante):
 def main():
     if len(sys.argv) > 2 and sys.argv[1] == 'gioco':
         gioco(sys.argv[2].upper())
+        return
+    if len(sys.argv) > 1 and sys.argv[1] == 'ritoccato':
+        os.makedirs(USCITA, exist_ok=True)
+        fiato = tunnel.genera()['lei_tunnel_fiato']
+        x = esempio_ritoccato(np.random.default_rng(101), 'A', fiato)
+        for est in ('mp3', 'ogg'):
+            nome = os.path.join(USCITA, 'canto_A_ritoccato_esempio_30s.' + est)
+            write_mp3(nome, x) if est == 'mp3' else write_ogg(nome, x, 5)
+        print('canto_A_ritoccato_esempio_30s', 'LUFS %.1f' % lufs(x), 'picco %.1f dB' % (20 * np.log10(np.abs(x).max())))
         return
     cartella = sys.argv[1] if len(sys.argv) > 1 else USCITA
     os.makedirs(cartella, exist_ok=True)
