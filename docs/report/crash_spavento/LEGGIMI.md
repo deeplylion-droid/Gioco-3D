@@ -51,6 +51,18 @@ Indizio dell'utente: crasha solo se la sequenza di morte arriva fino in fondo (5
 - **Un secondo accesso a un oggetto liberato**, trovato da `test_torre` con il conteggio degli errori: `FormeTunnel.prepara_a_pezzi`, una funzione statica a pezzi, quindi non si ferma quando il tunnel viene liberato. Dopo una morte nella torre, mentre si preparavano le forme del tunnel, continuava sulle forme di collisione già liberate ("previously freed"). Nel gioco esportato è un crash. Ora a ogni forma controlla che tunnel e forma ci siano ancora.
 - `LuciBianche` non legge più le geometrie fuori dall'albero. Nella ricarica toccava una lampada della sala vecchia, già tolta dalla scena, con l'errore `get_global_transform: !is_inside_tree()`.
 
+## La ricarica in due tempi (memoria)
+
+L'utente ha una scheda da 4 GB e la sala da sola ne usa 2,2-2,4. Prima, alla ricarica, la sala nuova si costruiva e si caricava sulla GPU mentre la vecchia non era ancora liberata nel renderer. Misure di `tests/collaudo/memoria_ripartenza.gd`, a ogni fotogramma:
+
+| | In un tempo (prima) | In due tempi (ora) |
+|---|---|---|
+| Vulkan, sala ridotta: memoria video | da 1789 a 2427 MB (+638), poi memoria della macchina finita | 1789, 1250 nella scena vuota, picco 1887 (+98), poi 1789 |
+| Senza schermo, sala intera: memoria statica | +11 MB | +5 MB (nella scena vuota scende da 1579 a 1440) |
+| Senza schermo, sala intera: oggetti | da 14345 a 17959 (+3600) | +300 |
+
+`GameState._cambia_in_due_tempi`: prima una scena vuota ("Ripartenza", resta il nero della sequenza di morte). Poi 2 fotogrammi e 2 `frame_post_draw`, finché la sala vecchia è liberata anche nel renderer. Infine `change_scene_to_packed` dal PackedScene della sala tenuto in GameState: le risorse restano in cache e la ripartenza non si allunga. Il PackedScene si lascia andare al ritorno al titolo e al cambio di livello.
+
 ## Prove
 
 - `test_presa_vera` (in CI), che verifica:
