@@ -2,16 +2,22 @@ extends Node
 ## Test dell'infermeria del gioco (scenes/risalita/infermeria.tscn, aspetto B), nella scena di prova
 ## tests/scene/infermeria_gioco_prova.tscn: la catena dei 4 passi, simulando il getto e il tasto E
 ## guardando gli oggetti (così si prova anche che si raggiungono), e i checkpoint dopo ogni passo.
-## 1. All'inizio il negatoscopio sfarfalla, la cassaforte è chiusa e la keycard non si prende.
-## 2. Col getto sull'interruttore il negatoscopio si accende.
+## 1. All'inizio il negatoscopio sfarfalla, la cassaforte è chiusa e la keycard non si prende; la porta nord (verso la
+##    scala di servizio) è chiusa e non si passa.
+## 2. Col getto sull'interruttore il negatoscopio si accende e la porta nord si apre da sola fino al muro, col suono della
+##    porta del ponte; poi si passa.
 ## 3. Solo un cassetto ha l'adesivo rosa; aperto, dentro c'è la radiografia, che si prende.
 ## 4. La radiografia sul negatoscopio: si vedono i puntini, 4, 1 e 7.
 ## 5. La cassaforte: un codice sbagliato non la apre, 4-1-7 sì; dentro la keycard e la Polaroid.
 ## 6. Checkpoint: tutto resta com'era (negatoscopio acceso con la radiografia, cassaforte aperta,
-##    keycard nell'inventario e non più nella cassaforte).
+##    keycard nell'inventario e non più nella cassaforte, porta nord già aperta, senza suono).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
 
 const SCENA := "res://tests/scene/infermeria_gioco_prova.tscn"
+## I punti dove gira l'anta della porta nord (x, z dell'infermeria) del collaudo di ambienti-1 (25 ottobre): l'asse dei
+## cardini è a (-1,762, -3,122), l'anta è larga 0,876.
+const PUNTI_ARCO := [Vector2(-2.2, -2.75), Vector2(-1.76, -2.55), Vector2(-1.3, -2.75), Vector2(-1.2, -2.85), Vector2(-2.45, -2.6),
+		Vector2(-1.76, -2.85)]
 
 var level: Node
 var p: Player
@@ -39,9 +45,19 @@ func _run() -> void:
 	print("1. All'inizio")
 	check(not neg.e_acceso(), "il negatoscopio sfarfalla (senza corrente)")
 	check(not cassa.aperta_ora and not keycard.can_interact(p), "la cassaforte è chiusa e la keycard non si prende")
+	# la porta nord (verso la scala di servizio) è chiusa finché non colpisci il pulsantone (richiesta dell'utente del 25 ottobre)
+	var anta := inf.get(&"_anta_nord") as Node3D
+	check(anta != null and not bool(inf.get(&"porta_nord_aperta")) and absf(anta.rotation_degrees.y) < 0.5,
+		"la porta nord è chiusa (anta a %.1f gradi)" % (anta.rotation_degrees.y if anta else -1.0))
+	var fuori: Vector3 = inf.to_global(Vector3(-2.2, 0.0, -4.0))
+	p.teleport(inf.to_global(Vector3(-2.2, 0.0, -2.2)), 0.0, 0.0)
+	await _secondi(0.2)
+	await _cammina_verso(fuori, 3.0)
+	check(inf.to_local(p.global_position).z > -3.25, "e non si passa (il giocatore si ferma a z %.2f)" % inf.to_local(p.global_position).z)
 
 	print("2. Il getto sull'interruttore")
 	_zaino()
+	var suoni_porta := int(Audio.conteggio.get(&"porta_ponte_apre", 0))
 	p.teleport(Vector3(1.4, 0.0, 0.4), 0.0, 0.0)
 	await _secondi(0.2)
 	var bersaglio := inter.global_position
@@ -55,6 +71,15 @@ func _run() -> void:
 	Input.action_release(&"spray")
 	await _secondi(0.3)
 	check(inter.powered and neg.e_acceso(), "colpito l'interruttore, il negatoscopio si accende")
+	check(bool(inf.get(&"porta_nord_aperta")) and anta.rotation_degrees.y > 1.0 and anta.rotation_degrees.y < 179.0,
+		"e la porta nord comincia ad aprirsi da sola (anta a %.0f gradi)" % anta.rotation_degrees.y)
+	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "col suono della porta del ponte")
+	await _secondi(3.0)
+	check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "fino ad aprirsi contro il muro (anta a %.1f gradi)" % anta.rotation_degrees.y)
+	p.teleport(inf.to_global(Vector3(-2.2, 0.0, -2.2)), 0.0, 0.0)
+	await _secondi(0.2)
+	await _cammina_verso(fuori, 3.0)
+	check(inf.to_local(p.global_position).z < -3.4, "e adesso si passa (il giocatore arriva a z %.2f)" % inf.to_local(p.global_position).z)
 	check(neg.gruppi_visibili().is_empty(), "senza radiografia non si vedono puntini")
 	await _secondi(0.1)
 	check(String(GameState.snapshot.get("checkpoint", "")).ends_with("DopoLuce"), "checkpoint dopo la luce")
@@ -154,9 +179,72 @@ func _run() -> void:
 	cassa = inf.get_node(^"Cassaforte") as CassaforteRotelle
 	check(neg.e_acceso() and neg.con_radiografia and neg.gruppi_visibili() == PackedInt32Array([4, 1, 7]), "il negatoscopio è acceso con la radiografia")
 	check(cassa.aperta_ora and cassa.cifre == PackedInt32Array([4, 1, 7]), "la cassaforte è aperta")
+	anta = inf.get(&"_anta_nord") as Node3D
+	check(bool(inf.get(&"porta_nord_aperta")) and anta and absf(anta.rotation_degrees.y - 180.0) < 0.5,
+		"la porta nord è già aperta, senza riaprirsi (anta a %.1f gradi)" % (anta.rotation_degrees.y if anta else -1.0))
+	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "e senza suono")
 	var kc := inf.get_node_or_null(^"Keycard")
 	check(p.has_item(&"keycard") and (kc == null or kc.is_queued_for_deletion()), "la keycard è nell'inventario e non più nella cassaforte")
+
+	print("7. Il giocatore fermo dove gira l'anta della porta nord quando colpisce il pulsantone (collaudo di ambienti-1)")
+	for punto: Vector2 in PUNTI_ARCO:
+		get_tree().change_scene_to_file(SCENA)
+		await _aspetta_livello()
+		inf = level.get_node(^"Infermeria")
+		inter = inf.get_node(^"Interruttore") as WaterButton
+		anta = inf.get(&"_anta_nord") as Node3D
+		p.teleport(inf.to_global(Vector3(punto.x, 0.0, punto.y)), 0.0, 0.0)
+		await _secondi(0.4)
+		var prima: Vector3 = inf.to_local(p.global_position)
+		inter.powered = true
+		inter.pressed.emit()
+		var spinta := 0.0
+		var dentro := 0
+		for i in int(3.2 * 60.0):
+			await get_tree().physics_frame
+			var ora: Vector3 = inf.to_local(p.global_position)
+			spinta = maxf(spinta, Vector2(ora.x - prima.x, ora.z - prima.z).length())
+			if _dentro_anta(inf):
+				dentro += 1
+		check(spinta < 0.02 and dentro == 0, "(%.2f, %.2f): l'anta non spinge il giocatore (%.3f m) e non lo attraversa (%d fotogrammi; ferma a %.0f gradi)" % [
+			punto.x, punto.y, spinta, dentro, anta.rotation_degrees.y])
+		await _cammina_verso(inf.to_global(Vector3.ZERO), 2.0)
+		for i in int(4.0 * 60.0):
+			if absf(anta.rotation_degrees.y - 180.0) < 0.5:
+				break
+			await get_tree().physics_frame
+		check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "(%.2f, %.2f): andato via il giocatore, l'anta finisce aperta contro il muro (%.1f gradi)" % [
+			punto.x, punto.y, anta.rotation_degrees.y])
 	_fine()
+
+
+## Vero se il corpo del giocatore entra nella collisione dell'anta nord (di più di 1 cm: appoggiato all'anta chiusa, come a
+## un muro, non conta).
+func _dentro_anta(inf: Node) -> bool:
+	var corpo := inf.find_child("AntaNord", true, false) as CollisionObject3D
+	var forma: CollisionShape3D = null
+	for c in p.get_children():
+		if c is CollisionShape3D and not (c as CollisionShape3D).disabled:
+			forma = c
+			break
+	if forma == null or corpo == null:
+		return false
+	# la forma del giocatore 1 cm più stretta
+	var stretta := ConvexPolygonShape3D.new()
+	var punti := PackedVector3Array()
+	var k := (Player.BODY_RADIUS - 0.01) / Player.BODY_RADIUS
+	for v in (forma.shape as ConvexPolygonShape3D).points:
+		punti.append(Vector3(v.x * k, v.y, v.z * k))
+	stretta.points = punti
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = stretta
+	q.transform = forma.global_transform
+	q.collision_mask = 0xFFFFFFFF
+	q.exclude = [p.get_rid()]
+	for r in p.get_world_3d().direct_space_state.intersect_shape(q, 16):
+		if r["collider"] == corpo:
+			return true
+	return false
 
 
 ## Guarda il nodo e preme E: vero se l'Interactor lo trova (si raggiunge) e lo usa.
@@ -242,6 +330,18 @@ func _aspetta_livello() -> void:
 		if p.input_enabled:
 			break
 		await get_tree().process_frame
+
+
+## Cammina verso [param t] per al più [param secondi] (tasto avanti, sguardo verso il punto).
+func _cammina_verso(t: Vector3, secondi: float) -> void:
+	Input.action_press(&"move_forward")
+	for i in int(secondi * 60.0):
+		var d := t - p.global_position
+		if Vector2(d.x, d.z).length() < 0.35:
+			break
+		p.set_look(atan2(-d.x, -d.z), 0.0)
+		await get_tree().physics_frame
+	Input.action_release(&"move_forward")
 
 
 func _secondi(s: float) -> void:
