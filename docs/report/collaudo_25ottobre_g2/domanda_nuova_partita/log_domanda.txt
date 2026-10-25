@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+DOMANDA ok  1. senza salvataggio la domanda non compare e la partita parte (avviato true)
+DOMANDA ok  2. col salvataggio c'è Continua
+DOMANDA ok  2. la domanda compare col focus su No (focus: No)
+DOMANDA ok  2. testi: "RICOMINCIARE DA CAPO?" / "Il salvataggio verrà sostituito"
+DOMANDA ok  3. clic su No: si torna al titolo senza partire
+DOMANDA ok  3. clic su No: focus su Nuova partita (focus: NuovaPartita)
+DOMANDA ok  3. clic su No: il salvataggio è identico
+DOMANDA ok  3. Invio sul focus (No): si torna al titolo senza partire
+DOMANDA ok  3. Invio sul focus (No): focus su Nuova partita (focus: NuovaPartita)
+DOMANDA ok  3. Invio sul focus (No): il salvataggio è identico
+DOMANDA ok  3. A del joypad sul focus (No): si torna al titolo senza partire
+DOMANDA ok  3. A del joypad sul focus (No): focus su Nuova partita (focus: NuovaPartita)
+DOMANDA ok  3. A del joypad sul focus (No): il salvataggio è identico
+DOMANDA ok  3. Esc: si torna al titolo senza partire
+DOMANDA ok  3. Esc: focus su Nuova partita (focus: NuovaPartita)
+DOMANDA ok  3. Esc: il salvataggio è identico
+DOMANDA ok  3. B del joypad: si torna al titolo senza partire
+DOMANDA ok  3. B del joypad: focus su Nuova partita (focus: NuovaPartita)
+DOMANDA ok  3. B del joypad: il salvataggio è identico
+DOMANDA ok  4. doppio clic su Sì: la partita parte una volta sola (lettori dello spot avviati: 1)
+DOMANDA ok  5. doppio clic su Sì: dopo Sì il salvataggio è ancora lì, identico
+DOMANDA ok  5. doppio clic su Sì: tornando al titolo prima di un checkpoint c'è ancora Continua
+DOMANDA ok  4. Invio ripetuto su Sì: freccia su porta il focus su Sì
+DOMANDA ok  4. Invio ripetuto su Sì: la partita parte una volta sola (lettori dello spot avviati: 1)
+DOMANDA ok  5. Invio ripetuto su Sì: dopo Sì il salvataggio è ancora lì, identico
+DOMANDA ok  5. Invio ripetuto su Sì: tornando al titolo prima di un checkpoint c'è ancora Continua
+DOMANDA ok  4. A del joypad ripetuto su Sì: freccia su porta il focus su Sì
+DOMANDA ok  4. A del joypad ripetuto su Sì: la partita parte una volta sola (lettori dello spot avviati: 1)
+DOMANDA ok  5. A del joypad ripetuto su Sì: dopo Sì il salvataggio è ancora lì, identico
+DOMANDA ok  5. A del joypad ripetuto su Sì: tornando al titolo prima di un checkpoint c'è ancora Continua
+DOMANDA (F9: MenuProva <Freed Object>, figli del titolo ["WorldEnvironment", "Tempesta", "Luna", "Camera", "Statua", "NebbiaBassa", "Polvere", "LuceEmergenzaSinistra", "LuceEmergenzaDestra", "Sfondo", "Manifesto", "Interfaccia", "DomandaNuovaPartita"])
+DOMANDA ok  6. F9 > Inizio fa la stessa domanda
+DOMANDA ok  6. da F9, Esc torna al titolo col menu visibile
+DOMANDA RISULTATO: 32 ok, 0 KO
