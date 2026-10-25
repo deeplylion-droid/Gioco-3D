@@ -34,8 +34,8 @@ func capture(body: Node3D) -> void:
 	cam.fov = 90.0
 	cam.keep_aspect = Camera3D.KEEP_HEIGHT
 	cam.near = 0.05
-	# (e non lo strato 18, delle zone che il gioco prepara fuori vista: SalaTorre.STRATO_PREPARA)
-	cam.cull_mask = 0xFFFFF & ~(WaterBody.WATER_LAYER | (1 << 17))
+	# (e non lo strato 16, delle zone che il gioco prepara fuori vista: SalaTorre.STRATO_PREPARA)
+	cam.cull_mask = 0xFFFFF & ~(WaterBody.WATER_LAYER | (1 << 15))
 	vp.add_child(cam)
 	cam.current = true
 	var env: Environment

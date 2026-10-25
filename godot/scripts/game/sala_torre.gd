@@ -136,11 +136,11 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	pronta.emit()
 
 
-## Lo strato di disegno usato da [method prepara_materiali] e da RiscaldamentoShader (strato 18, "preparazione"): la
+## Lo strato di disegno usato da [method prepara_materiali] e da RiscaldamentoShader (strato 16, "preparazione"): la
 ## camera del giocatore e quelle dei riflessi dell'acqua non lo disegnano, e le luci messe lì non le illuminano. Era
 ## 1 << 19, lo stesso dell'acqua (WaterBody.WATER_LAYER) e di quello che il lampo della tempesta esclude, che la camera
 ## del giocatore disegna (collaudo del 25 ottobre).
-const STRATO_PREPARA := 1 << 17
+const STRATO_PREPARA := 1 << 15
 
 
 ## Disegna la sala una volta fuori vista (una camera sua in un SubViewport con le stesse impostazioni di
