@@ -311,6 +311,11 @@ func _zona_personale() -> void:
 	# spesso 30 cm): prima il corridoio andava da 48 a 51 ed entrava di 10 e 30 cm nei due muri
 	_corridoio(Vector3(x - 1.0, Y, CENTRO_INFERMERIA.z + I.L + 0.1), Vector3(x + 1.0, Y, CENTRO_FIUME.z + F.X0 - 0.3), 2.6, "",
 			{"o": [OBLO_PERSONALE, ObloLei.PIASTRA * 0.5, FORO_OBLO]})
+	# la soglia della porta del capannone: il pavimento anche nello spessore del suo muro (30 cm). Prima lì c'era una
+	# fessura, e da dentro si vedeva sotto il pavimento, fino nella vasca dell'oblò (D7 del collaudo degli oblò); dalla
+	# parte dell'infermeria il pavimento c'è già
+	var soglia := CENTRO_FIUME.z + F.X0 - 0.3
+	_box(Vector3(2.0, 0.2, 0.3), Vector3(x, Y - 0.1, soglia + 0.15), _mat_pav)
 	# l'oblò nel muro ovest, fra infermeria e capannone: la vasca è stretta (2,56 m, spostata verso il capannone) e
 	# sotto il pavimento dell'infermeria (1,8 m sotto il centro del vetro, 5 cm sotto la soletta, che arriva a y -5,65)
 	# si allarga di 1,6 m verso sud, dove ci sono le punte dei tentacoli di lei e il fianco di lei quando si stacca
