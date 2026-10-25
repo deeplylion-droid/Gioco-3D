@@ -9,6 +9,10 @@ extends Node
 ##   due scalini del gradino, in pochi secondi ("Se cadi nella piscinetta della stanza generatori non puoi uscire":
 ##   dall'acqua si esce sempre); sotto le gallerie di servizio, dove le due banchine sono crollate, si va a guado fino
 ##   alla fine del crollo; nella presa (il fondo più basso) e all'approdo (sotto il pontile) fino al gradino più vicino;
+## - di sbieco (collaudo di grafica-2 del 25 ottobre: camminando a 45° ci si fermava sugli scalini): da 18 punti a caso,
+##   (non sui gommoni né accanto a un crollo) verso la banchina più vicina a 30°, 45° e 60° dalla perpendicolare, in avanti e indietro, tenendo
+##   l'angolo con la riva anche in curva, si esce entro 4 s; non contano le uscite che finiscono contro un ostacolo di
+##   quella banchina (crollo, galleria, carico...: lì si guada);
 ## - aspirazione: dal canale e dalla banchina lo zaino si riempie dovunque, e l'acqua non finisce.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_guado.gd
 
@@ -16,6 +20,10 @@ const PLAYER := "res://scenes/player/player.tscn"
 ## Entro quanti secondi si deve essere fuori dall'acqua.
 const RISALITA_MAX := 6.0
 const PUNTI := 30
+## Di sbieco: quanti punti, gli angoli dalla perpendicolare alla banchina, entro quanti secondi si esce.
+const SBIECO_PUNTI := 18
+const SBIECO_ANGOLI := [30.0, 45.0, 60.0]
+const SBIECO_MAX := 4.0
 
 var sala: SalaSottomarino
 var p: Player
@@ -35,10 +43,16 @@ func _run() -> void:
 	p = (load(PLAYER) as PackedScene).instantiate() as Player
 	get_tree().root.add_child(p)
 	await _frames(10)
-	await _velocita()
-	await _salto()
-	await _risalita()
-	await _aspirazione()
+	if OS.get_environment("GUADO_SOLO") in ["", "velocita"]:
+		await _velocita()
+	if OS.get_environment("GUADO_SOLO") in ["", "salto"]:
+		await _salto()
+	if OS.get_environment("GUADO_SOLO") in ["", "risalita"]:
+		await _risalita()
+	if OS.get_environment("GUADO_SOLO") in ["", "sbieco"]:
+		await _sbieco()
+	if OS.get_environment("GUADO_SOLO") in ["", "aspirazione"]:
+		await _aspirazione()
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
 
@@ -260,6 +274,87 @@ func _risalita() -> void:
 	var peggio: float = tempi.back() if not tempi.is_empty() else -1.0
 	_controlla(bloccati.is_empty(), "da %d punti del canale (presa e approdo compresi) si risale camminando, senza saltare, in meno di %.0f s più il guado (peggiore %.1f s)%s" % [
 			PUNTI, RISALITA_MAX, peggio, "" if bloccati.is_empty() else "; bloccati a s " + str(bloccati)])
+
+
+# --- di sbieco ------------------------------------------------------------------------------------------------------
+
+## Vero se la banchina dal lato [param lato] fra [param a] e [param b] (più 1,5 m) ha un ostacolo: lì non si sale.
+func _ostacolo(lato: float, a: float, b: float) -> bool:
+	for o in sala.ostacoli:
+		if float(o["lato"]) == lato and float(o["s"]) < maxf(a, b) + 1.5 and float(o["s"]) + float(o["lungo"]) > minf(a, b) - 1.5:
+			return true
+	return false
+
+
+## Da [param da] (a [param s]) avanti verso la banchina dal lato [param lato], a [param ang] gradi dalla perpendicolare
+## alla riva ([param avanti] 1 in avanti lungo la strada, -1 indietro), tenendo l'angolo con la riva anche in curva, senza
+## saltare: il tempo per stare in piedi sulla banchina, o -1 dopo il doppio di [constant SBIECO_MAX] secondi.
+func _cammina_verso(da: Vector3, s: float, lato: float, ang: float, avanti: float) -> float:
+	var c := cos(deg_to_rad(ang))
+	var sn := sin(deg_to_rad(ang)) * avanti
+	p.teleport(da, _yaw(sala.destra(s) * lato * c + sala.direzione(s) * sn))
+	await _frames(6)
+	Input.action_press(&"move_forward")
+	var t := 0.0
+	var fuori := -1.0
+	var s_p := s
+	while t < SBIECO_MAX * 2.0:
+		s_p = float(sala.proietta_vicino(p.global_position, s_p)[0])
+		p.set_look(_yaw(sala.destra(s_p) * lato * c + sala.direzione(s_p) * sn), p.pitch)
+		await get_tree().physics_frame
+		t += 1.0 / 60.0
+		if p.is_on_floor() and p.global_position.y > sala.piano - 0.05:
+			fuori = t
+			break
+	_rilascia()
+	await _frames(10)
+	return fuori
+
+
+func _sbieco() -> void:
+	print("Uscite di sbieco")
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2525
+	var lung := sala.lunghezza()
+	var da_s := SalaSottomarino.PRESA_FINO + 8.0
+	var a_s := lung - SalaSottomarino.BALLATOIO - 10.0
+	var prove := 0
+	var voluti := 0
+	var peggio := 0.0
+	var bloccati: Array = []
+	var punti := 0
+	while punti < SBIECO_PUNTI:
+		var s := rng.randf_range(da_s, a_s)
+		var di_lato := rng.randf_range(-(sala.canale - SalaSottomarino.GRADINO_LARGO - 0.4), sala.canale - SalaSottomarino.GRADINO_LARGO - 0.4)
+		var lato := 1.0 if di_lato >= 0.0 else -1.0
+		# (dove la banchina più vicina è crollata si guada fino alla fine del crollo: lo prova la risalita)
+		if sala._lato(s, lato)["crollo"]:
+			continue
+		var da := _nel_canale(s, di_lato)
+		# (non dentro un gommone: lì si sale sul gommone)
+		var sul_gommone := false
+		for g in sala.find_children("Gommone", "AnimatableBody3D", true, false):
+			var gp := (g as Node3D).global_position
+			sul_gommone = sul_gommone or Vector2(gp.x - da.x, gp.z - da.z).length() < 2.5
+		if sul_gommone:
+			continue
+		punti += 1
+		var largo := sala.canale - di_lato * lato      # fino al bordo della banchina
+		for ang: float in SBIECO_ANGOLI:
+			for avanti: float in [1.0, -1.0]:
+				var arrivo := s + avanti * largo * tan(deg_to_rad(ang))
+				if _ostacolo(lato, s, arrivo):
+					voluti += 1
+					continue
+				prove += 1
+				var t := await _cammina_verso(da, s, lato, ang, avanti)
+				if t < 0.0 or t > SBIECO_MAX:
+					bloccati.append("s %.1f lato %+d %d° %s (%s, a %.2f sopra il fondo)" % [s, int(lato), int(ang), "avanti" if avanti > 0.0 else "indietro",
+							"%.1f s" % t if t > 0.0 else "fermo", p.global_position.y - sala.fondo])
+				else:
+					peggio = maxf(peggio, t)
+	_controlla(bloccati.is_empty(), "di sbieco (30°, 45°, 60°, avanti e indietro) da %d punti si esce camminando entro %.0f s: %d prove, peggiore %.1f s (%d contro un ostacolo della banchina, non contano)%s" % [
+			SBIECO_PUNTI, SBIECO_MAX, prove, peggio, voluti, "" if bloccati.is_empty() else "; bloccati: " + ", ".join(bloccati)])
 
 
 # --- aspirazione ---------------------------------------------------------------------------------------------------

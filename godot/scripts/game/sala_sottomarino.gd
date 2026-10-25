@@ -484,8 +484,9 @@ func _profilo(s: float, m: float) -> Array:
 ## [constant GRADINO_BASSO], l'alto a [constant GRADINO_SU] sopra il fondo, poi la banchina), che si salgono camminando
 ## (prima, decisione del coordinatore con enigmi del 24 ottobre, uno scalino solo che si saliva con due saltelli; dal 25
 ## ottobre nell'acqua del canale non si salta). Larghi in tutto [constant GRADINO_LARGO], stesso mosaico, gli spigoli
-## arrotondati. Scende fino a [param f] (nella presa il fondo è più basso).
-func _gradino(out: Array, lato: float, f: float) -> void:
+## arrotondati. Scende fino a [param f] (nella presa il fondo è più basso). Con [param vivo] gli spigoli vivi: è la
+## forma della collisione (sullo spigolo arrotondato il corpo del giocatore si appoggiava come su una rampa e non saliva).
+func _gradino(out: Array, lato: float, f: float, vivo := false) -> void:
 	var c := canale
 	var g2 := fondo + GRADINO_SU
 	var g1 := fondo + GRADINO_BASSO
@@ -496,11 +497,14 @@ func _gradino(out: Array, lato: float, f: float) -> void:
 	for naso in [[n1, g2, g1], [n2, g1, f]]:
 		var n: float = naso[0]
 		var g: float = naso[1]
-		pts.append(Vector2(n + rr, g))
-		for k in range(1, 4):
-			var a := PI * 0.5 * float(k) / 4.0
-			pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
-		pts.append(Vector2(n, g - rr))
+		if vivo:
+			pts.append(Vector2(n, g))
+		else:
+			pts.append(Vector2(n + rr, g))
+			for k in range(1, 4):
+				var a := PI * 0.5 * float(k) / 4.0
+				pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
+			pts.append(Vector2(n, g - rr))
 		pts.append(Vector2(n, naso[2]))
 	for k in pts.size() - 1:
 		var a: Vector2 = pts[k]
@@ -540,12 +544,23 @@ func _pezzo(s0: float, s1: float) -> void:
 			var v: Vector2 = a[3]
 			var verso := ra * v.x + Vector3.UP * v.y
 			_quad(st[a[2]], q, verso)
-			_facce_quad(facce, q)
+			if a[4] != "gradino":
+				_facce_quad(facce, q)
 			# il retro, spesso [member spessore]: muri e volta pieni (con una faccia sola l'illuminazione globale
 			# passava attraverso e faceva macchie scure sulla volta)
 			if a[4] == "muro" or a[4] == "volta":
 				var vn := verso.normalized()
 				_quad(st[a[2]], [q[0] - vn * spessore, q[1] - vn * spessore, q[2] - vn * spessore, q[3] - vn * spessore], -vn)
+		# il gradino nella collisione: a spigoli vivi
+		for lato: float in [-1.0, 1.0]:
+			if _lato(m, lato)["crollo"]:
+				continue
+			var ga: Array = []
+			var gb: Array = []
+			_gradino(ga, lato, fondo_a(s), true)
+			_gradino(gb, lato, fondo_a(t), true)
+			for k in ga.size():
+				_facce_quad(facce, [_al(pa, ra, ga[k][0]), _al(pa, ra, ga[k][1]), _al(pb, rb, gb[k][1]), _al(pb, rb, gb[k][0])])
 		# il bordo delle banchine verso il canale: la graniglia sporge di 4 cm sul canale, spessa 6 cm (sopra, davanti e
 		# sotto, così da sopra non si vede il retro)
 		for lato: float in [-1.0, 1.0]:
