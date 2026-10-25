@@ -80,6 +80,10 @@ func _run() -> void:
 			level.call(&"_metti_sottomarino", load(level.get(&"sala_sottomarino_scena")) as PackedScene, false)
 			var tunnel: Node = level.get(&"sala_sottomarino")
 			check(tunnel != null, "c'è il tunnel")
+			# (se il tunnel si stava già costruendo a pezzi dal caricamento nel thread, si aspetta che finisca)
+			var t2 := Time.get_ticks_msec()
+			while tunnel and not bool(tunnel.get(&"costruita")) and Time.get_ticks_msec() - t2 < 120000:
+				await get_tree().process_frame
 			tunnel.call(&"chiudi_portello")
 			var t1 := Time.get_ticks_msec()
 			while not bool(level.get(&"demo_finished")) and Time.get_ticks_msec() - t1 < 30000:

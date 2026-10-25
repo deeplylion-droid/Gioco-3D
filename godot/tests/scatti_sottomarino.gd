@@ -41,6 +41,16 @@ var SCATTI := {
 	"28_salvagente_vicino": [139.6, -0.95, 2.6, 140.6, -1.15, 2.7, 50.0],
 	"29_forziere": [142.5, -1.0, 1.6, 147.0, -1.0, 2.5, 70.0],
 	"30_palombaro": [184.0, 1.0, 1.6, 190.0, 1.0, 2.9, 70.0],
+	"41_crollo_74": [70.0, -1.0, 1.6, 78.0, -0.9, -0.6, 70.0],
+	"42_crollo_galleria": [199.0, 1.0, 1.6, 205.5, 0.9, -0.6, 70.0],
+	"43_fascia_bocca": [202.0, -1.0, 1.4, 204.3, -1.15, 1.4, 60.0],
+	"44_carico": [134.0, 1.0, 1.6, 139.8, 1.0, 0.9, 70.0],
+	"48_carico_s136": [136.0, 1.0, 1.6, 141.0, 1.0, 0.9, 70.0],
+	"49_carico_retro": [143.0, 1.0, 1.6, 138.0, 1.0, 0.9, 70.0],
+	"50_carico_dal_canale": [136.0, 0.3, 1.6, 139.5, 1.1, 0.9, 70.0],
+	"45_testa_dalla_porta": [2.0, -1.0, 1.6, -2.0, 0.0, 0.3, 75.0],
+	"46_staffe_ancora": [120.4, -0.95, 2.9, 121.6, -1.15, 3.0, 50.0],
+	"47_forziere_vicino": [144.8, -0.9, 2.3, 147.0, -1.15, 2.4, 55.0],
 	"33_corallo_mensola": [78.2, 0.95, 2.4, 79.2, 1.15, 2.3, 50.0],
 	"31_portello_cerniere": [551.4, 0.05, 4.4, 552.6, -0.2, 3.5, 55.0],
 	"32_portello_oblo": [551.3, -0.1, 4.3, 552.3, 0.0, 4.3, 50.0],
@@ -85,9 +95,14 @@ func _run() -> void:
 		mr.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		mr.cull_mode = BaseMaterial3D.CULL_FRONT
 		m.next_pass = mr if OS.get_environment("SCATTI_DEBUG") == "retro" else null
+		var m2 := m.duplicate() as StandardMaterial3D
+		m2.next_pass = null
+		m2.cull_mode = BaseMaterial3D.CULL_DISABLED
 		for mi in sala.find_children("*", "MeshInstance3D", true, false):
-			if (mi as MeshInstance3D).material_override:
-				(mi as MeshInstance3D).material_override = m
+			# (con "retro" su tutte le mesh, anche i modelli coi materiali loro: si vedono le facce rovesciate ovunque)
+			if (mi as MeshInstance3D).material_override or OS.get_environment("SCATTI_DEBUG") == "retro":
+				# (le mesh disegnate dalle due parti apposta non hanno un retro da mostrare)
+				(mi as MeshInstance3D).material_override = m if not mi.has_meta(&"doppia_faccia") else m2
 	var cam := Camera3D.new()
 	add_child(cam)
 	cam.current = true
