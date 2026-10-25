@@ -187,7 +187,7 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_parkour_gommoni.gd
 
-      - name: Test della distanza di lei negli attraversamenti sui gommoni (mai sotto gli 8 m finché non sbagli; se cadi in acqua ti prende)
+      - name: Test della distanza di lei nei passaggi obbligati del tunnel (gommoni e gallerie basse; mai sotto gli 8 m finché non sbagli, se cadi in acqua ti prende)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_attraversamenti.gd
 

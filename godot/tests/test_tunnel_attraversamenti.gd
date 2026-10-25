@@ -8,7 +8,8 @@ extends Node
 ##   (il getto arriva 1 s dopo l'atterraggio);
 ## - lento: si ferma 1,5 s su ogni gommone prima di saltare (3 s per salto), poi via di corsa.
 ## In tutti e tre all'atterraggio lei è almeno a 8 m e non lo prende. Se invece cade in acqua dal primo gommone e resta
-## lì, lei lo prende.
+## lì, lei lo prende. Lo stesso per le gallerie basse (a 205 e 425 m): entra accovacciato con lei a 17,9 m, esce con
+## lei ad almeno 8 m.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_attraversamenti.gd
 
 var ok := 0
@@ -48,6 +49,14 @@ func _run() -> void:
 		# chi cade in acqua dal primo gommone e resta lì viene preso
 		var caduto: bool = await _cade(gs)
 		_controlla(caduto, "attraversamento a %d m: se cadi in acqua e resti lì ti prende" % int(att[0]), ["preso %s" % caduto])
+	# le gallerie basse: entra accovacciato (2,3 m/s) con lei a 17,9 m, la attraversa senza fermarsi, esce e corre
+	for g in sala.ostacoli:
+		if g["tipo"] != "galleria":
+			continue
+		var r: Array = await _galleria(g)
+		_controlla(not preso and float(r[0]) >= 7.95 and float(r[1]) > sala.distanza_presa,
+				"galleria a %d m: all'uscita lei è almeno a 8 m e non ti prende" % int(g["s"]),
+				["all'uscita %.2f m, minimo dopo %.2f m, preso %s" % [r[0], r[1], preso]])
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
 
@@ -127,6 +136,53 @@ func _attraversa(s_ost: float, gs: Array, salto: float, pausa: float, dopo: floa
 		minimo = minf(minimo, sala._s_bersaglio - sala.lei_s)
 	print("    %s a %d m: all'atterraggio %.2f m, minimo dopo %.2f m" % [modo, int(s_ost), all_atterraggio, minimo])
 	return [all_atterraggio, minimo]
+
+
+## Una galleria bassa: sulla banchina fino alla bocca con lei 17,9 m dietro, dentro accovacciato a 2,3 m/s fino
+## all'altra bocca, fuori e via di corsa. Ritorna [distanza all'uscita, minima dopo].
+func _galleria(g: Dictionary) -> Array:
+	preso = false
+	var lato := float(g["lato"])
+	var s0 := float(g["s"]) - sala.GALLERIA_BOCCA
+	var s1 := float(g["s"]) + float(g["lungo"]) + sala.GALLERIA_BOCCA
+	var dentro := sala.muro + sala.spessore + 0.7
+	b.global_position = _banchina(s0, lato)
+	sala._s_bersaglio = s0
+	sala.insegui_da(s0 - 17.9)
+	# dalla banchina alla bocca (accovacciato, 0,8 s), lungo la galleria, fuori sulla banchina
+	var a := _banchina(s0, lato)
+	var c := _al_lato(s0, lato * dentro)
+	var t := 0.0
+	while t < 0.8 and not preso:
+		t += await _passo()
+		b.global_position = a.lerp(c, clampf(t / 0.8, 0.0, 1.0))
+	var s := s0
+	while s < s1 and not preso:
+		s += 2.3 * await _passo()
+		b.global_position = _al_lato(minf(s, s1), lato * dentro)
+	var all_uscita := sala._s_bersaglio - sala.lei_s
+	a = b.global_position
+	c = _banchina(s1, lato)
+	t = 0.0
+	while t < 0.8 and not preso:
+		t += await _passo()
+		b.global_position = a.lerp(c, clampf(t / 0.8, 0.0, 1.0))
+	var minimo := INF
+	t = 0.0
+	s = s1
+	while t < 6.0 and not preso:
+		var dt := await _passo()
+		t += dt
+		s += 5.8 * dt
+		b.global_position = _banchina(s, lato)
+		minimo = minf(minimo, sala._s_bersaglio - sala.lei_s)
+	print("    galleria a %d m: all'uscita %.2f m, minimo dopo %.2f m" % [int(g["s"]), all_uscita, minimo])
+	return [all_uscita, minimo]
+
+
+func _al_lato(s: float, u: float) -> Vector3:
+	var p := sala.punto(s) + sala.destra(s) * u
+	return Vector3(p.x, sala.piano, p.z)
 
 
 ## Salta sul primo gommone (con lei a 9 m), cade in acqua e resta lì: vero se lei lo prende entro 10 s.
