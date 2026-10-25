@@ -140,7 +140,7 @@ func _disegna() -> void:
 		if (Time.get_ticks_usec() - t0) / 1000.0 > 100.0:
 			print("RiscaldamentoShader: un fotogramma di %.0f ms (materiale %d)" % [(Time.get_ticks_usec() - t0) / 1000.0, i])
 	# lei dietro gli oblò (mascotte, 25 ottobre): le sue mesh con lo scheletro (le ossa cambiano il formato dei
-	# vertici: la sfera non basta), piena e poi trasparente come nella dissolvenza del distacco, con la sua luce rosa
+	# vertici: la sfera non basta), con la sua luce rosa
 	await _disegna_lei(sv)
 	await get_tree().process_frame
 	sv.queue_free()
@@ -153,7 +153,8 @@ func _disegna_lei(sv: SubViewport) -> void:
 		l.call(&"prepara", Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
 	l.mostra(Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
 	# un pezzo di lei per fotogramma (tutta insieme sono decine di pipeline in un fotogramma: secondi fermi, la
-	# misura col renderer software del 25 ottobre), prima pieno e poi trasparente, poi lo si rinasconde
+	# misura col renderer software del 25 ottobre), poi lo si rinasconde. (La dissolvenza del distacco scurisce al
+	# nero con gli stessi shader, mascotte 25 ottobre: niente varianti trasparenti da preparare.)
 	var pezzi: Array[GeometryInstance3D] = []
 	for g in l.find_children("*", "GeometryInstance3D", true, false):
 		var gi := g as GeometryInstance3D
@@ -162,17 +163,15 @@ func _disegna_lei(sv: SubViewport) -> void:
 			gi.visible = false
 	await get_tree().process_frame
 	for gi in pezzi:
-		for trasparenza: float in [0.0, 0.5]:
-			if not is_instance_valid(gi):
-				break
-			gi.transparency = trasparenza
-			gi.visible = true
-			await get_tree().process_frame
-			await get_tree().process_frame
-			if not is_inside_tree():
-				return
-			if is_instance_valid(gi):
-				gi.visible = false
+		if not is_instance_valid(gi):
+			continue
+		gi.visible = true
+		await get_tree().process_frame
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+		if is_instance_valid(gi):
+			gi.visible = false
 	l.queue_free()
 
 
