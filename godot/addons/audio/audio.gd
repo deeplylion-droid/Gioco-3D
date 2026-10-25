@@ -140,7 +140,8 @@ const LOOP_3D := {
 	&"riempie_loop": [-4.0, 3.0, 35.0],
 	&"scivolo_loop": [-4.0, 3.0, 40.0],
 	&"medusa_presenza_loop": [-2.0, 1.4, 8.0],
-	&"lei_tunnel_fiato_loop": [0.0, 3.0, 30.0],
+	# (25 ottobre sera, con il canto di sirena: "il respiro abbassato del 70%", x0,3)
+	&"lei_tunnel_fiato_loop": [-10.5, 3.0, 30.0],
 	&"zaino_impatto_loop": [-2.0, 2.5, 30.0],
 	&"zaino_impatto_acqua_loop": [-2.0, 2.5, 30.0],
 	&"pompe_ruggito_loop": [0.0, 6.0, 60.0],
@@ -1601,8 +1602,8 @@ class Statua:
 	const FIATO := &"lei_tunnel_fiato_loop"
 	const VERSO := &"lei_tunnel_verso"
 	const VERSO_OGNI := Vector2(4.0, 6.0)
-	## Il canto di sirena mentre insegue (richiesta dell'utente del 25 ottobre; la variante la sceglie lui, poi
-	## genera_canto_sirena.py gioco <A|B|C> scrive le frasi lei_tunnel_canto_NN): una frase di 4-8 s ogni 8-15 s,
+	## Il canto di sirena mentre insegue (richiesta dell'utente del 25 ottobre; scelta A, con il fiato a x0,3, il canto a
+	## x1,3 e senza i versi: genera_canto_sirena.py gioco A scrive le frasi lei_tunnel_canto_NN): una frase di 4-8 s ogni 8-15 s,
 	## mai la stessa due volte di fila, dalla sua bocca (più forte quando si avvicina); zitto quando si ritrae, prende,
 	## sbatte sul portello o sparisce. Parte solo quando le frasi sono nel catalogo. (Variabile: i test la cambiano.)
 	static var canto_nome := &"lei_tunnel_canto"
@@ -1709,7 +1710,9 @@ class Statua:
 		if fiato:
 			var vis := (n as Node3D).is_visible_in_tree()
 			fiato.volume = 0.0 if not vis else (1.0 if corsa else 0.3)
-		if corsa and Catalogo.SUONI.has(VERSO):
+		# (col canto di sirena niente versi: il loro ringhio raschiato ogni 4-6 s era il "grattamento" che l'utente ha
+		# chiesto di togliere, 25 ottobre sera)
+		if corsa and Catalogo.SUONI.has(VERSO) and not Catalogo.SUONI.has(canto_nome):
 			verso_t -= n.get_process_delta_time()
 			if verso_t <= 0.0:
 				if verso_t > -1.0:     # (non al primo giro: il primo verso dopo 4-6 s)

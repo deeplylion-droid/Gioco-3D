@@ -7,12 +7,14 @@ extends Node
 ##   la fine di una e l'inizio della successiva, dalla sua bocca (VoceLei);
 ## - tace quando si ritrae (getto), quando prende (la morte), quando sbatte sul portello e quando sparisce;
 ## - dopo la morte e la ripartenza da un checkpoint (sparita, poi riemerge e insegue) riparte, una frase alla volta;
-## - se lei sparisce dalla scena a metà frase, la frase si spegne.
+## - se lei sparisce dalla scena a metà frase, la frase si spegne;
+## - le frasi vere della variante A ci sono (10, mono); mentre canta niente versi, e il fiato è a x0,3 (scelta dell'utente).
 ## (Senza uscita audio i suoni sono finti e i lettori della riserva si riprendono subito: qui una frase può finire
 ## prima che nel gioco, dove il lettore suona davvero e non viene ripreso. La pausa conta dalla fine della frase.)
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_tunnel.gd
 
 const PROVA := &"lei_insegue_sb1"
+const Catalogo := preload("res://addons/audio/catalogo.gd")
 
 var lei: MedusaAffacciata
 var ap: AnimationPlayer
@@ -41,6 +43,13 @@ func _run() -> void:
 		_fine()
 		return
 
+	print("Le frasi vere (variante A)")
+	var frasi: Array = Catalogo.SUONI.get(&"lei_tunnel_canto", [])
+	check(frasi.size() == 10, "10 frasi del canto nel catalogo (%d)" % frasi.size())
+	var mono := frasi.all(func(f): return (load(f) as AudioStream) != null)
+	check(mono, "le frasi si caricano")
+	check(classe_statua.canto_nome == &"lei_tunnel_canto", "la voce canta lei_tunnel_canto")
+
 	print("Senza le frasi nel catalogo")
 	var vero: StringName = classe_statua.canto_nome
 	classe_statua.canto_nome = &"lei_tunnel_canto_che_non_c_e"
@@ -60,6 +69,13 @@ func _run() -> void:
 	ap.play(&"inseguimento/insegue_morde")
 	var morde := await _guarda(10.0)
 	check(morde.size() >= 1, "anche quando morde vicina (%d)" % morde.size())
+	# col canto niente versi (il "grattamento" che l'utente ha chiesto di togliere), e il fiato a x0,3
+	var versi_prima := int(Audio.conteggio.get(&"lei_tunnel_verso", 0))
+	ap.play(&"inseguimento/insegue_aperta")
+	await _guarda(12.0)
+	check(int(Audio.conteggio.get(&"lei_tunnel_verso", 0)) == versi_prima, "mentre canta niente versi (%d in 12 s)" % (int(Audio.conteggio.get(&"lei_tunnel_verso", 0)) - versi_prima))
+	var fiato = st.get(&"fiato")
+	check(fiato != null and absf(float(fiato.get(&"volume_db_base")) - (-10.5)) < 0.01, "il fiato a x0,3 (-10,5 dB)")
 
 	print("Quando tace")
 	for anim in [&"inseguimento/ritrae", &"inseguimento/presa", &"inseguimento/schianto"]:
