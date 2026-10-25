@@ -34,7 +34,7 @@ Poi, nella sala:
 
 - lo zaino parte dallo stanzino: `start_with_pack = false` nello script della sala e `start_equipped = false` sul `WaterPack` del giocatore; il nodo `PostazioneBagnini` della sala non serve più (lo zaino vero è `Interni/Zaino`);
 - le Polaroid P1, P2 e P3 sono negli interni (`Interni/Polaroid`, stessi `entry_id` p01-p03): togliere `Polaroid01-03` dalla sala;
-- i checkpoint degli interni hanno `order` da -10 a -5, quindi vengono prima di quelli della sala (da 0 in su): non serve rinumerare;
+- i checkpoint degli interni hanno `order` da -10 a -5, quindi vengono prima di quelli della sala (da 0 in su): non serve rinumerare. L'istantanea "inizio" di un livello nuovo sta sotto tutti (`GameState.ORDINE_INIZIO`, -1000; fino al 25 ottobre era -1 e i checkpoint degli interni si scartavano). Quello del risveglio conta solo a scena finita (`fai_risveglio`);
 - la scena del risveglio: dallo script della sala, `$Interni.fai_risveglio(GameState.player)` all'inizio del livello (solo se non si riparte da un checkpoint). È la scena del mostro-squalo (`Gioco/RisveglioSqualo`, `scripts/interni/risveglio_squalo.gd`);
 - `Interni` non crea un WorldEnvironment quando `giocatore_proprio = false`: vale quello della sala.
 

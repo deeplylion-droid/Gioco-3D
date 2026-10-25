@@ -2,7 +2,8 @@ extends Node3D
 ## Schermata del titolo, il "manifesto" del gioco: solo la statua della medusa sul monumento,
 ## nella nebbia, con i fari della galleria e i lampi lontani; la camera sale piano dal piedistallo
 ## fino al viso. Il nome del gioco è provvisorio (GDD), quindi non è scritto: sopra il menu c'è
-## solo, in piccolo, "Capitolo 1 · demo <versione>". Voci: Nuova partita (porta alla schermata di caricamento della sala), Opzioni
+## solo, in piccolo, "Capitolo 1 · demo <versione>". Voci: Continua (solo se c'è un salvataggio valido: riparte
+## dall'ultimo checkpoint, GameState.continue_from_disk), Nuova partita (porta alla schermata di caricamento della sala), Opzioni
 ## (menu dell'addon grafica), Comandi, Esci. Mouse, tastiera e joypad (azioni ui_*). F9 apre il menu di prova
 ## nascosto (MenuProva: partire da una parte del capitolo), che non è fra le voci.
 ## La calibrazione della luminosità del primo avvio la mostra Game, sopra il titolo.
@@ -42,6 +43,8 @@ var _lampo_finale := false
 var _avviato := false
 var _menu: VBoxContainer
 var _voci: Array[Button] = []
+var _voce_opzioni: Button
+var _voce_comandi: Button
 var _testata: Control
 var _logo: TextureRect
 var _sottomenu: CanvasLayer
@@ -117,12 +120,29 @@ func nuova_partita() -> void:
 	LettoreSpot.avvia(get_tree(), SCENA_CARICAMENTO)
 
 
+## Continua dall'ultimo checkpoint salvato su disco, con la schermata di caricamento.
+func continua() -> void:
+	if _avviato or is_instance_valid(_sottomenu) or not GameState.has_save():
+		return
+	_avviato = true
+	for v in _voci:
+		v.disabled = true
+	_audio(&"ferma_musica", [0.9])
+	await Dissolvenza.di(get_tree()).scurisci(0.6)
+	if not GameState.continue_from_disk():
+		# (il salvataggio si è guastato nel frattempo: si resta nel titolo)
+		_avviato = false
+		for v in _voci:
+			v.disabled = false
+		Dissolvenza.di(get_tree()).schiarisci(0.6)
+
+
 func apri_opzioni() -> void:
-	_apri(SCENA_OPZIONI, ^"Menu", _voci[1])
+	_apri(SCENA_OPZIONI, ^"Menu", _voce_opzioni)
 
 
 func apri_comandi() -> void:
-	_apri(SCENA_COMANDI, ^"Comandi", _voci[2])
+	_apri(SCENA_COMANDI, ^"Comandi", _voce_comandi)
 
 
 func esci() -> void:
@@ -293,9 +313,14 @@ func _costruisci_interfaccia() -> void:
 	_menu.custom_minimum_size.x = 400
 	_menu.add_theme_constant_override("separation", 4)
 	radice.add_child(_menu)
+	# Continua solo se c'è un salvataggio da cui ripartire: è la prima voce, sopra Nuova partita
+	if GameState.has_save():
+		_voci.append(_voce("Continua", "Continua", continua))
 	_voci.append(_voce("NuovaPartita", "Nuova partita", nuova_partita))
-	_voci.append(_voce("Opzioni", "Opzioni", apri_opzioni))
-	_voci.append(_voce("Comandi", "Comandi", apri_comandi))
+	_voce_opzioni = _voce("Opzioni", "Opzioni", apri_opzioni)
+	_voci.append(_voce_opzioni)
+	_voce_comandi = _voce("Comandi", "Comandi", apri_comandi)
+	_voci.append(_voce_comandi)
 	_voci.append(_voce("Esci", "Esci", esci))
 	StileMenu.collega_voci(_voci)
 

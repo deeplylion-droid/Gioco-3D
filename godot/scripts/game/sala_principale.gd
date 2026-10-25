@@ -127,8 +127,12 @@ func _ready() -> void:
 	var p := GameState.player
 	if p and p.water_pack:
 		p.water_pack.set_tank_amount(start_water)
-		if not start_with_pack and not p.has_item(&"zaino_pompa"):
-			p.water_pack.set_equipped(false, false)
+		if not start_with_pack:
+			# anche nelle ripartenze (GameState lo rimette a chi parte con lo zaino o l'ha preso): da un checkpoint degli
+			# interni prima dello stanzino non si riparte con lo zaino addosso
+			p.water_pack.start_equipped = false
+			if not p.has_item(&"zaino_pompa"):
+				p.water_pack.set_equipped(false, false)
 	# Con gli interni montati si parte dal risveglio nel corridoio (non quando si riparte da un
 	# checkpoint o da un salvataggio).
 	var interni := get_node_or_null(^"Interni")
