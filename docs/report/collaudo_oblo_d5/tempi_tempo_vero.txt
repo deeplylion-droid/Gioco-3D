@@ -1,0 +1,3 @@
+TEMPO fotogramma 8: 1.08 s di gioco, animazione inseguimento/oblo_occhio_stacca 0.94 s, luce 2.35, stato 3
+TEMPO fotogramma 16: 2.14 s di gioco, animazione inseguimento/oblo_occhio_stacca 2.01 s, luce 0.70, stato 3
+TEMPO fotogramma 24: 3.21 s di gioco, animazione - -1.00 s, luce -1.00, stato 4
