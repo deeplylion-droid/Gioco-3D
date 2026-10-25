@@ -57,7 +57,7 @@ func _run() -> void:
 			picco[k] = maxf(float(picco[k]), float(m[k]))
 		_stampa(f, m)
 		var sc := get_tree().current_scene
-		if nuova_da < 0 and sc and sc != vecchia and sc.name != &"Ripartenza" and GameState.player and is_instance_valid(GameState.player):
+		if nuova_da < 0 and sc and sc != vecchia and sc.name != Game.SCENA_VUOTA and GameState.player and is_instance_valid(GameState.player):
 			nuova_da = f
 		if nuova_da >= 0 and f - nuova_da >= 60:
 			break

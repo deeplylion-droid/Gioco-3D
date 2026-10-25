@@ -61,7 +61,7 @@ var _death_sequence: Node = null
 var _ripartenza_in_corso := false
 ## Secondi che l'ultima ripartenza ha aspettato i caricamenti nel thread (Game.aspetta_caricamenti).
 var attesa_ripartenza := 0.0
-## La ripartenza ricarica il livello in due tempi ([method _cambia_in_due_tempi]); falso solo per misurare la differenza.
+## La ripartenza ricarica il livello in due tempi (Game.cambia_scena_in_due_tempi); falso solo per misurare la differenza.
 var ricarica_in_due_tempi := true
 ## Il PackedScene del livello, tenuto per la ricarica in due tempi.
 var _pacchetto_livello: PackedScene
@@ -310,34 +310,15 @@ func respawn() -> void:
 	await _cambia_in_due_tempi(scene)
 
 
-## La ricarica in due tempi (richiesta del coordinatore del 25 ottobre, per le schede da 4 GB: la sala da sola ne usa
-## 2,2-2,4): prima una scena vuota per qualche fotogramma (resta il nero della sequenza di morte), finché la sala vecchia
-## è liberata del tutto, anche nel renderer; poi la sala nuova dal suo PackedScene, tenuto qui (le risorse restano in
-## cache e la ripartenza non si allunga). In un tempo solo, per un attimo, c'erano tutte e due: la nuova si costruiva
-## prima che la vecchia fosse liberata.
+## La ricarica in due tempi (Game.cambia_scena_in_due_tempi), dal PackedScene del livello tenuto qui: le risorse restano
+## in cache e la ripartenza non si allunga.
 func _cambia_in_due_tempi(scene: String) -> void:
 	if _pacchetto_livello == null or _pacchetto_livello.resource_path != scene:
 		_pacchetto_livello = load(scene) as PackedScene
 	if _pacchetto_livello == null:
 		get_tree().change_scene_to_file(scene)
 		return
-	var vuota := Node.new()
-	vuota.name = "Ripartenza"
-	var pacchetto_vuoto := PackedScene.new()
-	pacchetto_vuoto.pack(vuota)
-	vuota.free()
-	get_tree().change_scene_to_packed(pacchetto_vuoto)
-	for i in 2:
-		await get_tree().process_frame
-	for i in 2:
-		# (senza renderer, nei test headless, frame_post_draw non arriva)
-		if DisplayServer.get_name() == "headless":
-			await get_tree().process_frame
-		else:
-			await RenderingServer.frame_post_draw
-	if Game.uscendo or Game.tornando_al_titolo:
-		return
-	get_tree().change_scene_to_packed(_pacchetto_livello)
+	await Game.cambia_scena_in_due_tempi(_pacchetto_livello)
 
 
 # --- Collezionabili (per esempio le Polaroid) ----------------------------------------------

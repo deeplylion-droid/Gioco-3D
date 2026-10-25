@@ -16,6 +16,8 @@ signal paused_changed(is_paused: bool)
 const ATTESA_MASSIMA := 30.0
 ## Dopo quanti secondi di attesa dei caricamenti, prima di un cambio di scena, si mostra la spia del caricamento.
 const ATTESA_SPIA := 1.5
+## Il nome della scena vuota fra un livello e l'altro (cambia_scena_in_due_tempi).
+const SCENA_VUOTA := &"CambioDiScena"
 const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
 const SCENE_TITLE := "res://scenes/ui/menu_principale.tscn"
@@ -139,6 +141,30 @@ func aspetta_caricamenti(sala: Node = null, massimo := ATTESA_MASSIMA, disegnati
 		else:
 			await RenderingServer.frame_post_draw
 	return attesa
+
+
+## Cambia scena senza tenere insieme il livello vecchio e quello nuovo (richiesta del coordinatore del 25 ottobre, per le
+## schede da 4 GB: la sala da sola ne usa 2,2-2,4): prima una scena vuota per qualche fotogramma, finché il livello vecchio
+## è liberato del tutto, anche nel renderer (2 fotogrammi e 2 frame_post_draw), poi [param pacchetto]. In un tempo solo la
+## scena nuova si costruiva mentre la vecchia c'era ancora: memoria video della sala ridotta da 1789 a 2427 MB, in due tempi
+## al più 1887 (docs/report/crash_spavento). Chi la chiama tiene lo schermo nero.
+func cambia_scena_in_due_tempi(pacchetto: PackedScene) -> void:
+	var vuota := Node.new()
+	vuota.name = SCENA_VUOTA
+	var pacchetto_vuoto := PackedScene.new()
+	pacchetto_vuoto.pack(vuota)
+	vuota.free()
+	get_tree().change_scene_to_packed(pacchetto_vuoto)
+	for i in 2:
+		await get_tree().process_frame
+	for i in 2:
+		if DisplayServer.get_name() == "headless":
+			await get_tree().process_frame
+		else:
+			await RenderingServer.frame_post_draw
+	if uscendo:
+		return
+	get_tree().change_scene_to_packed(pacchetto)
 
 
 ## Nero sopra tutto, con la lucina rossa che pulsa e la scritta della schermata di caricamento.
@@ -303,9 +329,11 @@ func return_to_title() -> void:
 	if uscendo:
 		tornando_al_titolo = false
 		return
+	# (nero subito: il titolo entra dal nero; in mezzo la scena vuota, così la sala è liberata prima che il titolo si carichi)
+	Dissolvenza.di(get_tree()).nero()
 	set_paused(false)
 	GameState.reset_progress()
-	get_tree().change_scene_to_file(SCENE_TITLE)
+	await cambia_scena_in_due_tempi(load(SCENE_TITLE) as PackedScene)
 	# (fino al cambio di scena fatto: una ripartenza che finisce di aspettare adesso non ricarica il livello)
 	await get_tree().process_frame
 	await get_tree().process_frame
