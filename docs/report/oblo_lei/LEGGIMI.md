@@ -1,6 +1,6 @@
 # Oblò con Jilly dietro il vetro (Risalita)
 
-Tre oblò grossi nei corridoi della Risalita. Dietro ognuno c'è una vasca allagata, e Jilly è attaccata al vetro con la sua luce rosa. Compaiono solo dopo la sala pompe, al buio. Lei arriva quando il giocatore non guarda l'oblò e resta finché la vede. Si stacca piano quando il giocatore si avvicina troppo o guarda altrove, e in ogni corridoio succede una volta sola.
+Tre oblò grossi nei corridoi della Risalita. Dietro ognuno c'è una vasca allagata, e Jilly è attaccata al vetro con la sua luce rosa. Compaiono solo dopo la sala pompe, al buio. Lei arriva quando il giocatore non guarda l'oblò e resta finché la vede; lo segue con l'occhio, mentre la testa resta ferma nella posa. Si stacca piano quando il giocatore si avvicina troppo o guarda altrove, e in ogni corridoio succede una volta sola.
 
 | Oblò | Dove | Posa |
 |---|---|---|
@@ -38,6 +38,7 @@ xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vul
   - l'occhio segua il giocatore;
   - se ne vada se il giocatore guarda via o si avvicina, e lo faccia una volta sola;
   - lo stato si salvi;
-  - tutte le ossa di lei restino dentro la vasca e dietro il vetro.
+  - tutte le ossa di lei restino dentro la vasca e dietro il vetro;
+  - lo stesso valga per la pelle, cioè tutti i vertici di lei nella posa del momento, misurati dalla comparsa al distacco. Il margine peggiore è di 2-3 mm dal vetro, con i palmi a 6 mm.
 - Il controllo di posizionamento, zona `risalita`, ha uno stato `risalita_oblo` con lei ferma dietro i tre vetri: 0 casi da correggere.
 - Memoria: le texture sono quelle che il gioco ha già, e il modello e i materiali di lei sono condivisi con la sala. Lei esiste solo mentre si vede. Appena compare, fuori vista, una camera nascosta guarda il vetro per 4 fotogrammi, così la prima volta che il giocatore la vede il gioco non scatta.
