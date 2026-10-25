@@ -75,12 +75,26 @@ const FORMA := 0.3
 ## Dopo averla vista: il vetro oltre [member angolo_via] gradi per [member tempo_via] secondi e lei va via.
 @export var angolo_via := 35.0
 @export var tempo_via := 0.35
+## Il muro della stanza attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, il muro arriva
+## fino alla cornice tonda d'ottone): fasce orizzontali [{"materiale": Material, "da": y, "a": y, "uv": Transform2D}] in
+## coordinate del nodo; la faccia davanti della piastra prende il materiale della fascia (con "uv", le coordinate del
+## nodo (x, y) diventano quelle del materiale del muro; senza, il materiale è triplanare nel mondo; con "colore", il
+## colore dei vertici del muro). Vuoto: la piastra d'acciaio rivettata.
+@export var muro: Array = []
+## Vero: il muro della stanza ha già il suo foro tondo fino sotto la cornice (lo fa chi mette l'oblò, come i muri della
+## Risalita): niente faccia davanti, solo la flangia d'ottone sul muro.
+@export var muro_col_foro_tondo := false
 ## Falso: niente lei (per esempio prima del blackout lo decide chi mette l'oblò con [member pronto]).
 @export var attivo := true
 
 var stato := Stato.ATTESA
 ## La lei che sta dietro il vetro, se c'è.
 var lei: LeiOblo
+## Nel distacco lei si dissolve (la trasparenza delle sue mesh) mentre la sua luce si spegne: quando viene tolta non si
+## vede più (D5 del collaudo: alla fine spariva tutta insieme, ancora illuminata dall'ambiente; nella torre è vicina al
+## vetro anche alla fine). Si dissolve da questo punto del distacco (0-1) alla fine.
+const DISSOLVE_DA := 0.35
+var _dissolve: Tween
 var _t_vista := 0.0
 var _t_via := 0.0
 var _corpo: StaticBody3D
@@ -159,20 +173,28 @@ func _costruisci() -> void:
 	# la piastra rivettata, a filo delle due facce del muro, col buco tondo
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_piastra(st, _raggio_bordo() - 0.02)
+	var con_muro := not muro.is_empty() or muro_col_foro_tondo
+	_piastra(st, _raggio_bordo() - 0.02, not con_muro)
 	# (nella torre c'è anche un vetro piccolo, che l'occhio di lei riempie: meno rivetti, almeno 12)
 	var k_vetro := raggio_vetro / RAGGIO_VETRO
 	var rivetti := maxi(12, roundi(RIVETTI * k_vetro))
-	for k in rivetti:
-		var a := TAU * float(k) / rivetti
-		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
-	# e i rivetti lungo i lati (la piastra è chiodata al muro)
-	for k in 7:
-		var u := -piastra * 0.5 + 0.08 + (piastra - 0.16) * float(k) / 6.0
-		for v in [-piastra * 0.5 + 0.08, piastra * 0.5 - 0.08]:
-			_rivetto(st, Vector3(u, v, 0.0), 0.014)
-			if k > 0 and k < 6:
-				_rivetto(st, Vector3(v, u, 0.0), 0.014)
+	if not con_muro:
+		for k in rivetti:
+			var a := TAU * float(k) / rivetti
+			_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
+		# e i rivetti lungo i lati (la piastra è chiodata al muro)
+		for k in 7:
+			var u := -piastra * 0.5 + 0.08 + (piastra - 0.16) * float(k) / 6.0
+			for v in [-piastra * 0.5 + 0.08, piastra * 0.5 - 0.08]:
+				_rivetto(st, Vector3(u, v, 0.0), 0.014)
+				if k > 0 and k < 6:
+					_rivetto(st, Vector3(v, u, 0.0), 0.014)
+	else:
+		# il muro della stanza fino alla cornice, e la cornice d'ottone: una flangia tonda sottile sul muro coi rivetti
+		if not muro.is_empty():
+			_faccia_muro(_raggio_bordo() - 0.02)
+		# (poco più larga del vetro: 10 cm oltre il bordo d'ottone, i rivetti nel mezzo)
+		_flangia(_raggio_bordo() - 0.02, _raggio_bordo() + 0.1, rivetti, _raggio_bordo() + 0.05)
 	st.generate_normals()
 	var mp := MeshInstance3D.new()
 	mp.name = "struttura_piastra_oblo"
@@ -223,7 +245,7 @@ func _costruisci() -> void:
 
 ## La piastra quadrata col buco tondo di raggio [param r]: le due facce (davanti a z 0, dietro a -spessore), il
 ## bordo del buco e i quattro lati.
-func _piastra(st: SurfaceTool, r: float) -> void:
+func _piastra(st: SurfaceTool, r: float, davanti := true) -> void:
 	var n := 48
 	var h := piastra * 0.5
 	var dz := Vector3(0, 0, -spessore_muro)
@@ -234,7 +256,8 @@ func _piastra(st: SurfaceTool, r: float) -> void:
 		var c1 := Vector3(cos(a1), sin(a1), 0.0) * r
 		var q0 := _sul_quadrato(a0, h)
 		var q1 := _sul_quadrato(a1, h)
-		_quad(st, c0, q0, q1, c1, Vector3.BACK)                      # davanti
+		if davanti:
+			_quad(st, c0, q0, q1, c1, Vector3.BACK)                  # davanti
 		_quad(st, c0 + dz, q0 + dz, q1 + dz, c1 + dz, Vector3.FORWARD)  # dietro
 		_quad(st, c0, c1, c1 + dz, c0 + dz, -(c0 + c1))                 # il bordo del buco, verso il centro
 	var ang := [Vector3(-h, -h, 0), Vector3(h, -h, 0), Vector3(h, h, 0), Vector3(-h, h, 0)]
@@ -242,6 +265,73 @@ func _piastra(st: SurfaceTool, r: float) -> void:
 		var a: Vector3 = ang[k]
 		var b: Vector3 = ang[(k + 1) % 4]
 		_quad(st, a, b, b + dz, a + dz, a + b)                          # i lati, dentro il muro
+
+
+## La faccia davanti della piastra col muro della stanza ([member muro]): il quadrato meno il buco tondo di raggio
+## [param r], a fasce orizzontali, ognuna col suo materiale (tagliato in due a metà, così il buco sta sul bordo).
+func _faccia_muro(r: float) -> void:
+	var h := piastra * 0.5
+	var cerchio := PackedVector2Array()
+	for k in 64:
+		var a := TAU * float(k) / 64
+		cerchio.append(Vector2(cos(a), sin(a)) * r)
+	for fascia in muro:
+		var da := maxf(float(fascia.get("da", -INF)), -h)
+		var a_ := minf(float(fascia.get("a", INF)), h)
+		if a_ - da < 0.001:
+			continue
+		var uv: Transform2D = fascia.get("uv", Transform2D.IDENTITY)
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for meta in [PackedVector2Array([Vector2(-h, da), Vector2(0, da), Vector2(0, a_), Vector2(-h, a_)]),
+				PackedVector2Array([Vector2(0, da), Vector2(h, da), Vector2(h, a_), Vector2(0, a_)])]:
+			for poly in Geometry2D.clip_polygons(meta, cerchio):
+				if Geometry2D.is_polygon_clockwise(poly):
+					continue
+				var tri := Geometry2D.triangulate_polygon(poly)
+				for k in range(0, tri.size(), 3):
+					var t := [poly[tri[k]], poly[tri[k + 1]], poly[tri[k + 2]]]
+					# (davanti: verso +Z, in senso orario visto da lì)
+					if (t[1] - t[0]).cross(t[2] - t[0]) > 0.0:
+						t = [t[0], t[2], t[1]]
+					for q: Vector2 in t:
+						# (col colore dei vertici del muro, se il suo materiale lo usa come albedo: collaudo D1 della torre)
+						if fascia.has("colore"):
+							st.set_color(fascia["colore"])
+						st.set_normal(Vector3.BACK)
+						st.set_uv(uv * q)
+						st.add_vertex(Vector3(q.x, q.y, 0.0))
+		st.generate_tangents()
+		var mi := MeshInstance3D.new()
+		mi.name = "struttura_muro_oblo"
+		mi.mesh = st.commit()
+		mi.material_override = fascia["materiale"]
+		add_child(mi)
+
+
+## La cornice d'ottone sul muro: una flangia tonda spessa 6 mm da [param r0] a [param r1], coi rivetti sul cerchio
+## [param r_rivetti].
+func _flangia(r0: float, r1: float, rivetti: int, r_rivetti: float) -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var z := 0.006
+	var n := 64
+	for k in n:
+		var a0 := TAU * float(k) / n
+		var a1 := TAU * float(k + 1) / n
+		var d0 := Vector3(cos(a0), sin(a0), 0.0)
+		var d1 := Vector3(cos(a1), sin(a1), 0.0)
+		_quad(st, d0 * r0 + Vector3(0, 0, z), d0 * r1 + Vector3(0, 0, z), d1 * r1 + Vector3(0, 0, z), d1 * r0 + Vector3(0, 0, z), Vector3.BACK)
+		_quad(st, d0 * r1, d1 * r1, d1 * r1 + Vector3(0, 0, z), d0 * r1 + Vector3(0, 0, z), d0 + d1)
+	for k in rivetti:
+		var a := TAU * float(k) / rivetti
+		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * r_rivetti + Vector3(0, 0, z), 0.016)
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.name = "FlangiaOttone"
+	mi.mesh = st.commit()
+	mi.material_override = _mat_ottone()
+	add_child(mi)
 
 
 ## Il punto del bordo del quadrato di mezzo lato [param h] nella direzione [param a].
@@ -315,7 +405,7 @@ func _vasca() -> void:
 	var mi := MeshInstance3D.new()
 	mi.name = "struttura_vasca_oblo"
 	mi.mesh = st.commit()
-	mi.material_override = _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6)
+	mi.material_override = _mat_vasca()
 	add_child(mi)
 	# l'acqua torbida: veli che si vedono dal vetro, a pezzi come la vasca (una "superficie d'acqua" per i controlli)
 	var acqua := Node3D.new()
@@ -378,6 +468,16 @@ static func _mat_ottone() -> StandardMaterial3D:
 	return _materiali["ottone"]
 
 
+## La lamiera della vasca, che si vede da tutte e due le parti: da fuori, da una fessura qualunque (la soglia di una
+## porta, un giunto), si vede la lamiera scura e mai l'interno con lei (D7 del collaudo degli oblò).
+static func _mat_vasca() -> StandardMaterial3D:
+	if not _materiali.has("vasca"):
+		var m := _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6).duplicate() as StandardMaterial3D
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_materiali["vasca"] = m
+	return _materiali["vasca"]
+
+
 static func _mat_vetro() -> StandardMaterial3D:
 	if not _materiali.has("vetro"):
 		var m := StandardMaterial3D.new()
@@ -403,7 +503,7 @@ static func _mat_velo(alfa: float) -> StandardMaterial3D:
 
 ## I materiali dell'oblò (per il riscaldamento: si compilano prima, dove si costruisce la sala).
 static func materiali() -> Array:
-	return [_mat_lamiera(Color(0.42, 0.45, 0.46), 1.2), _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6), _mat_ottone(),
+	return [_mat_lamiera(Color(0.42, 0.45, 0.46), 1.2), _mat_vasca(), _mat_ottone(),
 			_mat_vetro(), _mat_velo(0.22), _mat_velo(0.3), _mat_velo(0.38)]
 
 
@@ -490,11 +590,30 @@ func _mostra() -> void:
 		lei.sparita.connect(_sparita)
 		lei.aggiungi_forme(forme())
 	lei.mostra(centro_vetro(), normale(), posa)
+	_abbassa_interno()
 	_t_vista = 0.0
 	_t_via = 0.0
 	stato = Stato.PRONTA
 	comparsa.emit()
 	_riscalda()
+
+
+## La struttura interna della campana di lei (Medusa_Interno) si accende da sola, con emissione 4 pensata per la sala.
+## Nel buio della vasca, vista attraverso la gelatina che la rifrange, quando la capovolta si stacca e la campana passa
+## nel vetro sembrava bruciata in giallo, a righe verticali (D4 del collaudo degli oblò): qui la si abbassa. Si cambia
+## una copia del materiale, quello della sala resta com'è. (Patch di enigmi.)
+const EMISSIONE_INTERNO := 0.6
+
+
+func _abbassa_interno() -> void:
+	for n in lei.find_children("Medusa_Interno", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for s in mi.mesh.get_surface_count():
+			var m := mi.get_active_material(s) as BaseMaterial3D
+			if m and m.emission_enabled and m.emission_energy_multiplier > EMISSIONE_INTERNO:
+				var copia := m.duplicate() as BaseMaterial3D
+				copia.emission_energy_multiplier = EMISSIONE_INTERNO
+				mi.set_surface_override_material(s, copia)
 
 
 ## Il riscaldamento (regola: niente scatti la prima volta che si vede qualcosa): appena lei è comparsa, col vetro fuori
@@ -524,10 +643,18 @@ func _riscalda() -> void:
 		cam.fov = cam_gioco.fov
 	cam.current = true
 	cam.look_at_from_position(global_transform * Vector3(0.3, 0.1, 1.6), global_transform * Vector3(0, -0.3, -1.0))
-	for i in 4:
+	# negli ultimi fotogrammi lei mezza trasparente: si compilano qui anche le varianti trasparenti dei suoi materiali,
+	# che servono alla dissolvenza del distacco (se no al primo distacco il gioco scatta)
+	var parti := _parti_lei()
+	for i in 7:
+		if i == 4:
+			_trasparenza(0.5, parti)
 		await get_tree().process_frame
 		if not is_inside_tree():
+			_trasparenza(0.0, parti)
 			return
+	if stato != Stato.VIA:
+		_trasparenza(0.0, parti)
 	vp.queue_free()
 
 
@@ -545,8 +672,29 @@ func _stacca() -> void:
 	staccata.emit()
 	if lei:
 		lei.stacca()
+		_dissolvi()
 	else:
 		_sparita()
+
+
+## La dissolvenza del distacco: dalla [constant DISSOLVE_DA] della sua durata alla fine (quando lei viene tolta).
+func _dissolvi() -> void:
+	var d: float = lei.call(&"_durata", "oblo_" + lei.posa + "_stacca") if lei.posa != "" else 2.6
+	if _dissolve:
+		_dissolve.kill()
+	_dissolve = create_tween()
+	_dissolve.tween_method(_trasparenza.bind(_parti_lei()), 0.0, 1.0, d * (1.0 - DISSOLVE_DA)).set_delay(d * DISSOLVE_DA)
+
+
+func _trasparenza(x: float, parti: Array) -> void:
+	for g in parti:
+		if is_instance_valid(g):
+			(g as GeometryInstance3D).transparency = x
+
+
+## Le mesh di lei (il modello, senza la luce).
+func _parti_lei() -> Array:
+	return lei.find_children("*", "GeometryInstance3D", true, false) if lei and is_instance_valid(lei) else []
 
 
 func _sparita() -> void:
@@ -556,6 +704,9 @@ func _sparita() -> void:
 
 
 func _togli_lei() -> void:
+	if _dissolve:
+		_dissolve.kill()
+		_dissolve = null
 	if lei and is_instance_valid(lei):
 		lei.queue_free()
 	lei = null
