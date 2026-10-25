@@ -1,7 +1,7 @@
 class_name LeiOblo
 extends Node3D
 ## Lei dietro un grosso oblò (gli oblò della risalita e della torre, 24 ottobre: "pose diverse di Jilly ogni volta"):
-## calma, a fauce chiusa, con la sua luce rosa, l'occhio e la testa che seguono il giocatore; poi si stacca e sparisce
+## calma, a fauce chiusa, con la sua luce rosa, l'occhio che segue il giocatore (la testa resta nella posa); poi si stacca e sparisce
 ## lenta nel buio dell'acqua (2,6 s, indietro e giù).
 ## Le pose sono quelle di tools/blender/medusa_inseguimento.py ("inseguimento/oblo_<posa>" in ciclo e
 ## "inseguimento/oblo_<posa>_stacca"):
@@ -114,7 +114,9 @@ func mostra(centro_vetro: Vector3, normale: Vector3, p := "schiacciata") -> void
 			morbidezza.aggiungi_scatola(f[0], f[1])
 		morbidezza.azzera()
 		morbidezza.accendi(true)
-	lei.segui_con_la_testa(1.0, 0.6)
+	# solo l'occhio segue il giocatore: la testa no (girando, il viso premuto contro il vetro ci entrerebbe, e nella posa
+	# dell'occhio la testa piegata indietro si raddrizzerebbe)
+	lei.segui_con_la_testa(0.0, 0.01)
 	if p == "occhio":
 		_anima("oblo_occhio_arriva", 0.0)
 		_ap.queue(StringName(ANIM + "oblo_occhio"))
@@ -130,7 +132,6 @@ func stacca() -> void:
 	if posa == "" or lei == null or not lei.visible or _staccando:
 		return
 	_staccando = true
-	lei.segui_con_la_testa(0.0, 0.8)
 	_anima("oblo_" + posa + "_stacca", 0.3)
 	var d := _durata("oblo_" + posa + "_stacca")
 	if _tw:
