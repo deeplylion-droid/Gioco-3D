@@ -499,7 +499,8 @@ proposta da ambienti-2). Tradotti: titolo, pausa, opzioni (audio compreso), cali
 caricamento e consigli, avvisi e azioni ("Pick up", "Open"...), oggetti, la domanda di Nuova partita, le scritte finali
 e i sottotitoli dello spot VHS. Restano uguali i nomi (Jilly Jubilee, Jubilee, Wonderwave Cruises, Splash Lagoon) e le
 scritte nel parco, che sono già solo disegni o nomi ("LIVE SHOW", "CAM 3", "● REC" e la data dei monitor). La voce
-dello speaker nello spot resta quella italiana, coi sottotitoli in inglese. Tecnica: `godot/lingue/testi.csv`
+dello speaker nello spot è già inglese (Kokoro, voce A): in inglese i sottotitoli dicono le stesse parole della voce
+(il testo approvato nella bozza), in italiano restano le traduzioni. Tecnica: `godot/lingue/testi.csv`
 (chiave = la frase italiana), autoload `Lingua`, test `godot/tests/test_lingua.gd`.
 Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzioni, comandi).
 
