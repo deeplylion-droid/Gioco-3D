@@ -27,7 +27,15 @@ enum Luci { PRIMA_DEL_RISVEGLIO, FLASH, BLACKOUT }
 
 const SAVE_PATH := "user://salvataggio.json"
 const SAVE_VERSION := 1
+## La sala (si apre passando dalla schermata di caricamento) e la schermata di caricamento.
+const SCENA_SALA := "res://scenes/sala_principale.tscn"
+const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 const DEATH_SEQUENCE_SCENE := "res://scenes/ui/death_sequence.tscn"
+## L'ordine dell'istantanea "inizio" di un livello nuovo: sotto tutti i checkpoint, anche quelli degli interni (da -10 a
+## -5, prima della sala). Era -1, e dal 15 ottobre i checkpoint degli interni non contavano (collaudo di Continua).
+const ORDINE_INIZIO := -1000
+## Secondi massimi che la ripartenza aspetta i caricamenti nel thread (se un caricamento non finisce mai).
+const ATTESA_RIPARTENZA := 60.0
 
 ## Scrive l'ultimo checkpoint su disco (per un futuro "Continua" nel menu).
 @export var save_to_disk := true
@@ -56,6 +64,13 @@ var _collected: Dictionary = {}     # collezione -> { voce: true }
 var _registry: Dictionary = {}      # collezione -> { voce: true }, tutte quelle viste
 var _restore_pending := false
 var _death_sequence: Node = null
+var _ripartenza_in_corso := false
+## Secondi che l'ultima ripartenza ha aspettato i caricamenti nel thread (Game.aspetta_caricamenti).
+var attesa_ripartenza := 0.0
+## La ripartenza ricarica il livello in due tempi (Game.cambia_scena_in_due_tempi); falso solo per misurare la differenza.
+var ricarica_in_due_tempi := true
+## Il PackedScene del livello, tenuto per la ricarica in due tempi.
+var _pacchetto_livello: PackedScene
 
 
 # --- Livello e giocatore ------------------------------------------------------------------
@@ -70,6 +85,12 @@ func _on_level_ready() -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	var scene := _scene_path()
+	# (il PackedScene del livello resta qui per la ricarica in due tempi, se è ancora in cache: niente da rileggere; quello
+	# di un altro livello si lascia andare)
+	if _pacchetto_livello and _pacchetto_livello.resource_path != scene:
+		_pacchetto_livello = null
+	if _pacchetto_livello == null and scene != "" and ResourceLoader.has_cached(scene):
+		_pacchetto_livello = load(scene) as PackedScene
 	if _restore_pending and snapshot.get("scene", "") == scene:
 		_restore_pending = false
 		_apply_snapshot(snapshot)
@@ -82,7 +103,7 @@ func _on_level_ready() -> void:
 		_removed.clear()
 		_parcheggiati.clear()
 		imposta_luci(Luci.PRIMA_DEL_RISVEGLIO)
-		capture_snapshot("inizio", -1, player.global_transform)
+		capture_snapshot("inizio", ORDINE_INIZIO, player.global_transform)
 
 
 ## Cambia le luci dell'acquapark (vedi [enum Luci]) e lo dice a chi ascolta.
@@ -129,7 +150,7 @@ func reach_checkpoint(cp: Checkpoint) -> void:
 	var key := persist_key(cp)
 	if snapshot.get("checkpoint", "") == key and snapshot.get("scene", "") == _scene_path():
 		return
-	if cp.order < int(snapshot.get("order", -1)) and snapshot.get("scene", "") == _scene_path():
+	if cp.order < int(snapshot.get("order", ORDINE_INIZIO)) and snapshot.get("scene", "") == _scene_path():
 		return
 	capture_snapshot(key, cp.order, cp.get_spawn_transform())
 	checkpoint_reached.emit(key)
@@ -166,7 +187,9 @@ func capture_snapshot(checkpoint_id: String, order: int, spawn: Transform3D) -> 
 		"luci": int(Luci.BLACKOUT if luci == Luci.FLASH else luci),
 		"time": Time.get_unix_time_from_system(),
 	}
-	if save_to_disk:
+	# su disco solo dal primo checkpoint vero: l'istantanea "inizio" di un livello nuovo (una nuova partita, anche solo
+	# per guardare lo spot) resta in memoria e non cancella il salvataggio di prima
+	if save_to_disk and checkpoint_id != "inizio":
 		_write_disk()
 
 
@@ -257,8 +280,22 @@ func _on_death_sequence_finished(_skipped: bool) -> void:
 
 ## Ricarica il livello e riparte dall'ultimo checkpoint. Non mentre si esce dal gioco (Game.esci): la sala
 ## ricaricata richiederebbe di nuovo la torre nel thread, e l'uscita la troverebbe a metà.
+## Prima, a schermo nero, la sala si ferma (non comincia altro) e si aspetta che i caricamenti nel thread e i suoi lavori
+## a metà siano finiti, più due fotogrammi disegnati (Game.aspetta_caricamenti; crash della v0.3.14 dopo il primo spavento).
 func respawn() -> void:
-	if Game.uscendo:
+	if Game.uscendo or _ripartenza_in_corso:
+		return
+	_ripartenza_in_corso = true
+	# (il giocatore della sala vecchia non vale più già adesso, come prima dell'attesa: chi aspetta il livello nuovo
+	# aspetta il giocatore nuovo)
+	player = null
+	var sala := get_tree().current_scene
+	attesa_ripartenza = await Game.aspetta_caricamenti(sala, ATTESA_RIPARTENZA)
+	_ripartenza_in_corso = false
+	if attesa_ripartenza > 0.05:
+		print("Ripartenza: aspettati i caricamenti nel thread per %.1f s" % attesa_ripartenza)
+	# (intanto si è usciti dal gioco o si è tornati al titolo: non si riparte)
+	if Game.uscendo or Game.tornando_al_titolo or not is_instance_valid(sala) or get_tree().current_scene != sala:
 		return
 	if not keep_collectibles_on_death:
 		_collected = _lists_to_collected(snapshot.get("collectibles", {}))
@@ -266,18 +303,30 @@ func respawn() -> void:
 	_removed.clear()
 	for k in snapshot.get("removed", []):
 		_removed[String(k)] = true
-	player = null
+	var scene: String = sala.scene_file_path
 	if snapshot.is_empty():
 		is_dying = false
-		get_tree().reload_current_scene()
-		return
-	_restore_pending = true
-	var scene: String = snapshot.get("scene", "")
-	var current := get_tree().current_scene
-	if current and current.scene_file_path == scene:
-		get_tree().reload_current_scene()
 	else:
+		_restore_pending = true
+		scene = snapshot.get("scene", "")
+	if not ricarica_in_due_tempi:
+		if sala.scene_file_path == scene:
+			get_tree().reload_current_scene()
+		else:
+			get_tree().change_scene_to_file(scene)
+		return
+	await _cambia_in_due_tempi(scene)
+
+
+## La ricarica in due tempi (Game.cambia_scena_in_due_tempi), dal PackedScene del livello tenuto qui: le risorse restano
+## in cache e la ripartenza non si allunga.
+func _cambia_in_due_tempi(scene: String) -> void:
+	if _pacchetto_livello == null or _pacchetto_livello.resource_path != scene:
+		_pacchetto_livello = load(scene) as PackedScene
+	if _pacchetto_livello == null:
 		get_tree().change_scene_to_file(scene)
+		return
+	await Game.cambia_scena_in_due_tempi(_pacchetto_livello)
 
 
 # --- Collezionabili (per esempio le Polaroid) ----------------------------------------------
@@ -302,7 +351,7 @@ func collect(collection: StringName, entry: StringName) -> void:
 	_collected[collection][entry] = true
 	if keep_collectibles_on_death and not snapshot.is_empty():
 		snapshot["collectibles"] = _collected_to_lists()
-		if save_to_disk:
+		if save_to_disk and String(snapshot.get("checkpoint", "")) != "inizio":
 			_write_disk()
 	collectible_collected.emit(collection, entry, get_collected_count(collection), get_total(collection))
 
@@ -336,26 +385,67 @@ func _lists_to_collected(data: Dictionary) -> Dictionary:
 # --- Disco ---------------------------------------------------------------------------------
 
 func _write_disk() -> void:
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	# prima su un file a parte, poi lo si rinomina: un crash a metà scrittura non lascia un salvataggio rotto
+	var tmp := SAVE_PATH + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
 		push_warning("Salvataggio non riuscito: %s" % error_string(FileAccess.get_open_error()))
 		return
 	f.store_string(JSON.stringify(snapshot, "\t"))
+	f.close()
+	var err := DirAccess.rename_absolute(tmp, SAVE_PATH)
+	if err != OK:
+		push_warning("Salvataggio non riuscito: %s" % error_string(err))
 
 
+## Vero se su disco c'è un salvataggio da cui si può ripartire (vedi [method salvataggio]).
 func has_save() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
+	return not salvataggio().is_empty()
 
 
-## Riprende dal salvataggio su disco (per un futuro "Continua" nel menu).
-func continue_from_disk() -> bool:
-	if not has_save():
-		return false
-	var data = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
+## Il salvataggio su disco, se è valido: della versione giusta, con la scena che esiste, un checkpoint e il posto del
+## giocatore. Altrimenti un dizionario vuoto. Se manca o è guasto ma c'è il file temporaneo, completo e valido, vale
+## quello e diventa il salvataggio: su Windows DirAccess.rename prima cancella il file di destinazione e poi rinomina, e
+## un crash fra le due cose lascia solo il temporaneo (collaudo di Continua di ambienti-1).
+func salvataggio() -> Dictionary:
+	var data := _leggi_salvataggio(SAVE_PATH)
+	if data.is_empty():
+		var tmp := SAVE_PATH + ".tmp"
+		data = _leggi_salvataggio(tmp)
+		if not data.is_empty():
+			var err := DirAccess.rename_absolute(tmp, SAVE_PATH)
+			if err != OK:
+				push_warning("Salvataggio ripreso dal file temporaneo, ma non rinominato: %s" % error_string(err))
+	return data
+
+
+func _leggi_salvataggio(percorso: String) -> Dictionary:
+	if not FileAccess.file_exists(percorso):
+		return {}
+	var data = JSON.parse_string(FileAccess.get_file_as_string(percorso))
 	if typeof(data) != TYPE_DICTIONARY or int(data.get("version", 0)) != SAVE_VERSION:
+		return {}
+	var scena := String(data.get("scene", ""))
+	if scena == "" or not ResourceLoader.exists(scena) or String(data.get("checkpoint", "")) == "":
+		return {}
+	var pl = data.get("player", {})
+	if typeof(pl) != TYPE_DICTIONARY or not (pl as Dictionary).has("position"):
+		return {}
+	return data
+
+
+## Continua dal salvataggio su disco (la voce Continua del titolo): si riparte dall'ultimo checkpoint salvato, con lo
+## stato, lo zaino, le Polaroid e le luci di quel momento; la sala passa dalla schermata di caricamento, come le
+## partenze del menu di prova. Falso se non c'è un salvataggio valido.
+func continue_from_disk() -> bool:
+	var data := salvataggio()
+	if data.is_empty():
 		return false
 	prepara_ripresa(data)
-	get_tree().change_scene_to_file(snapshot.get("scene", ""))
+	if String(data["scene"]) == SCENA_SALA:
+		get_tree().change_scene_to_file(SCENA_CARICAMENTO)
+	else:
+		get_tree().change_scene_to_file(String(data["scene"]))
 	return true
 
 
@@ -376,6 +466,7 @@ func prepara_ripresa(data: Dictionary) -> void:
 ## al primo checkpoint.
 func reset_progress() -> void:
 	snapshot = {}
+	_pacchetto_livello = null
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()

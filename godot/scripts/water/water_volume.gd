@@ -13,6 +13,10 @@ extends Area3D
 @export var velocita_guado := 0.0
 ## Come [member velocita_guado], accovacciati (m/s).
 @export var velocita_guado_accovacciato := 0.0
+## Con l'acqua sopra il ginocchio (come per [member velocita_guado]) non si salta: il canale del tunnel sottomarino
+## (richiesta dell'utente del 25 ottobre: "se finisci in acqua in quella sezione, non puoi saltare"; si esce dal
+## gradino camminando). Su un gommone, coi piedi fuori dall'acqua, si salta.
+@export var senza_salto := false
 
 
 func _init() -> void:

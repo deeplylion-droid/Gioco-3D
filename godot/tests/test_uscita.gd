@@ -39,7 +39,10 @@ func _run() -> void:
 			# a volte, mentre la sala si ricarica, la torre finisce di caricare prima dell'uscita
 			print("  (la torre aveva già finito di caricare: niente da aspettare)")
 		else:
-			check(testo.contains("Uscita: aspettati 1 caricamenti nel thread"), "all'uscita ha aspettato il caricamento")
+			# (con la torre si caricano nel thread anche i file dell'inseguimento: più caricamenti insieme, blocchi del
+			# 25 ottobre)
+			var aspettati := RegEx.create_from_string("Uscita: aspettati [1-9][0-9]* caricamenti nel thread")
+			check(aspettati.search(testo) != null, "all'uscita ha aspettato il caricamento")
 		check(not testo.contains("Parse Error: Failed"), "il caricamento non è stato troncato a metà")
 		check(not testo.contains("Resource file not found"), "niente caricamenti rotti mentre Godot si chiude")
 		if codice != 0 or _failed > 0:

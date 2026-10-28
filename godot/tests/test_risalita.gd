@@ -59,8 +59,17 @@ func _run() -> void:
 	var inf := ris.get_node(^"Infermeria") as Node3D
 	var tappe: Array[Vector3] = [porta.global_position + porta.global_basis.z * 0.8, porta.global_position - porta.global_basis.z * 1.5,
 		inf.to_global(Vector3(1.6, 0, 3.6)), inf.to_global(Vector3(1.8, 0, 1.6)), inf.to_global(Vector3(0.0, 0, 0.0)),
-		inf.to_global(Vector3(-2.2, 0, -2.4)), inf.to_global(Vector3(-2.2, 0, -3.8))]
-	check(await _cammina(tappe, 40.0), "dall'approdo si entra nell'infermeria e se ne esce a nord (%s)" % str(p.global_position))
+		inf.to_global(Vector3(-2.2, 0, -2.4))]
+	check(await _cammina(tappe, 40.0), "dall'approdo si entra nell'infermeria (%s)" % str(p.global_position))
+	# la porta nord resta chiusa finché non colpisci il pulsantone (richiesta dell'utente del 25 ottobre)
+	var fuori: Array[Vector3] = [inf.to_global(Vector3(-2.2, 0, -3.8))]
+	var uscito := await _cammina(fuori, 3.0)
+	check(not uscito and inf.to_local(p.global_position).z > -3.25, "la porta nord è chiusa: non si esce (%s)" % str(inf.to_local(p.global_position)))
+	print("  (scorciatoia: il pulsantone colpito col getto, lo prova test_infermeria_gioco)")
+	inf.get_node(^"Interruttore").set(&"powered", true)
+	for i in 3:
+		await get_tree().physics_frame
+	check(await _cammina(fuori, 20.0), "col pulsantone colpito la porta nord è aperta e se ne esce (%s)" % str(p.global_position))
 	var cima := ris.get_node(^"Marker/CimaScala") as Node3D
 	var c3 := ris.get_node(^"Marker/PortaC3") as Node3D
 	var scala: Array[Vector3] = [Vector3(p.global_position.x, 0, c3.global_position.z), cima.global_position, c3.global_position]
@@ -100,7 +109,9 @@ func _cammina(punti: Array, secondi: float) -> bool:
 
 
 func _aspetta_livello() -> void:
-	for i in 400:
+	# (a tempo: la ripartenza aspetta i caricamenti nel thread, anche qualche secondo)
+	var t_attesa := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_attesa < 90000:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player) and not GameState.is_dying:
 			break

@@ -24,6 +24,8 @@ func _ready() -> void:
 
 func _run() -> void:
 	Grafica.salva_su_disco = false
+	# il titolo senza salvataggio (senza la voce Continua): quello col salvataggio lo prova test_continua.gd
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(GameState.SAVE_PATH))
 	print("Il titolo")
 	check(ProjectSettings.get_setting("application/run/main_scene") == TITOLO, "il titolo è la scena principale del progetto")
 	get_tree().change_scene_to_file(TITOLO)

@@ -9,6 +9,10 @@ extends Interactable
 
 signal aperta
 signal scossa_bloccata
+## Il maniglione tirato con la zona dietro non ancora pronta (AttesaZone): la porta aspetta chiusa col motore che
+## lavora, poi si apre da sola.
+signal attesa_iniziata
+signal attesa_finita
 
 ## La porta del modello.
 @export var porta_path: NodePath
@@ -22,8 +26,15 @@ signal scossa_bloccata
 ## Se la porta del modello non ha una collisione sua, ne crea una (scatola come la mesh).
 @export var collisione_propria := false
 
+## La zona dietro la porta (AttesaZone; vuota: nessuna attesa).
+@export var zona := &""
+## Al più quanto aspetta la zona dietro (s): poi si apre lo stesso.
+const ATTESA_MASSIMA := 90.0
+
 var bloccata := true
 var is_open := false
+var in_attesa := false
+var _attesa_t := 0.0
 
 var _porta: Node3D
 var _riposo := Transform3D.IDENTITY
@@ -61,13 +72,19 @@ func _ready() -> void:
 
 
 func can_interact(_by: Node) -> bool:
-	return enabled and not is_open
+	return enabled and not is_open and not in_attesa
 
 
 func _on_interact(_by: Node) -> void:
 	if bloccata:
 		_scossa = 0.3
 		scossa_bloccata.emit()
+		return
+	if zona != &"" and not AttesaZone.passaggio_aperto(zona):
+		AttesaZone.attendi(zona)
+		in_attesa = true
+		_attesa_t = 0.0
+		attesa_iniziata.emit()
 		return
 	apri()
 
@@ -84,6 +101,12 @@ func apri() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if in_attesa:
+		_attesa_t += delta
+		if AttesaZone.passaggio_aperto(zona) or _attesa_t > ATTESA_MASSIMA:
+			in_attesa = false
+			attesa_finita.emit()
+			apri()
 	if _porta == null:
 		return
 	if is_open and _t < 1.0:
@@ -105,7 +128,8 @@ func _metti(ang: float) -> void:
 
 
 func save_state() -> Dictionary:
-	return {"aperta": is_open, "bloccata": bloccata}
+	# (in attesa della zona dietro conta come aperta: ripartendo la zona c'è già, si carica col checkpoint)
+	return {"aperta": is_open or in_attesa, "bloccata": bloccata}
 
 
 func load_state(data: Dictionary) -> void:

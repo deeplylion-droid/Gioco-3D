@@ -465,12 +465,30 @@ func _crea_giocatore() -> void:
 ## mostro-squalo"; scripts/interni/risveglio_squalo.gd). Senza la scena dello squalo: la camera parte
 ## sdraiata, guarda il soffitto e si rialza. Nelle prove automatiche (test, scatti) la scena dello squalo
 ## parte solo con [param con_squalo]: dura più di 13 secondi.
+## Il checkpoint del risveglio (lì dove ci si sveglia) conta solo a scena finita: chi esce durante la scena la rivede
+## da capo, chi riparte da lì no.
 func fai_risveglio(p: Player, con_squalo := not Game.is_automated()) -> void:
+	_checkpoint_risveglio(false)
 	var squalo := get_node_or_null(^"Gioco/RisveglioSqualo") as RisveglioSqualo
 	if squalo and con_squalo:
+		if not squalo.finito.is_connected(_fine_risveglio):
+			squalo.finito.connect(_fine_risveglio, CONNECT_ONE_SHOT)
 		squalo.avvia(p)
 		return
 	_risveglio_semplice(p)
+
+
+func _fine_risveglio() -> void:
+	_checkpoint_risveglio(true)
+
+
+func _checkpoint_risveglio(attivo: bool) -> void:
+	var cp := get_node_or_null(^"Gioco/CheckpointRisveglio") as Checkpoint
+	if cp == null:
+		return
+	cp.monitoring = attivo
+	if attivo:
+		GameState.reach_checkpoint(cp)
 
 
 func _risveglio_semplice(p: Player) -> void:
@@ -485,4 +503,6 @@ func _risveglio_semplice(p: Player) -> void:
 	t.chain().tween_property(cam, "rotation:z", 0.0, 2.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	t.tween_property(cam, "position:y", 0.0, 2.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	t.tween_method(func(a: float): p.set_look(yaw, a), deg_to_rad(70.0), 0.0, 2.4).set_trans(Tween.TRANS_SINE)
-	t.chain().tween_callback(func(): p.input_enabled = true)
+	t.chain().tween_callback(func():
+		p.input_enabled = true
+		_fine_risveglio())

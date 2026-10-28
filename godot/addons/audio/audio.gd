@@ -1146,6 +1146,21 @@ func _collega_portone_torre(n: Node) -> void:
 		var dove: Node3D = anta if anta is Node3D else (n as Node3D)
 		if dove:
 			suona(&"portone_torre_apre", dove.global_position + Vector3.UP * 2.0))
+	# in attesa della sala dietro (su un PC lento): il motore delle porte che lavora, finché non si apre
+	if n.has_signal(&"attesa_iniziata"):
+		var motore: Array[AudioLoop] = [null]
+		n.connect(&"attesa_iniziata", func():
+			if not is_instance_valid(n) or motore[0]:
+				return
+			var anta = n.get(&"anta")
+			motore[0] = crea_loop(&"porta_motore_loop", anta if anta is Node3D else n)
+			if motore[0]:
+				motore[0].position = Vector3.UP * 2.0
+				motore[0].volume = 1.0)
+		n.connect(&"attesa_finita", func():
+			if motore[0] and is_instance_valid(motore[0]):
+				motore[0].queue_free()
+			motore[0] = null)
 
 
 func _collega_portello(n: Node) -> void:
