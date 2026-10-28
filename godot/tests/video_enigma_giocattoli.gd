@@ -23,6 +23,7 @@ var piscina: PiscinaOnde
 var pulsante: WaterButton
 var portello: Node
 var _pipeline := {}
+var _nero: CanvasLayer
 
 
 func _ready() -> void:
@@ -41,63 +42,96 @@ func _run() -> void:
 		await get_tree().process_frame
 	level = get_tree().current_scene
 	p = level.get_node_or_null(^"Player") as Player
-	# (il giocatore della sala parte dove c'erano gli interni, tolti: fermo finché non è sul bordo della piscina)
+	# (il giocatore della sala parte dove c'erano gli interni, tolti: fermo finché non è nella piscina)
 	p.process_mode = Node.PROCESS_MODE_DISABLED
-	p.teleport(Vector3(8.4, 0.05, -0.4), _yaw_verso(Vector3(8.4, 0, -0.4), Vector3(-6.0, 0, 0.2)), -0.35)
 	enigma = level.get_node(^"Piscina/EnigmaGiocattoli") as EnigmaGiocattoli
 	vasca = level.get_node(^"Piscina/Pozza") as WaterTank
 	piscina = level.get_node(^"Piscina/SvuotaPiscina") as PiscinaOnde
 	pulsante = level.get_node(^"Piscina/PulsantePortello") as WaterButton
 	portello = level.get_node(^"Piscina/Portello")
+	await _metti(Vector3(-2.9, 0.0, -0.25), Vector3(-6.97, -0.85, -0.2))
 	for i in 90:
 		await get_tree().process_frame
 	p.process_mode = Node.PROCESS_MODE_INHERIT
-	p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
-	p.water_pack.set_equipped(true)
+	p.water_pack.set_equipped(true, false)
 	p.water_pack.set_tank_amount(20.0)
-	await _attendi(2.0)
+	var hud := p.get_node_or_null(^"HUD")
+	if hud and hud.has_method(&"show_hint"):
+		hud.call(&"show_hint", "", 0.01)
+	await _attendi(0.5)
 	_conta_pipeline("inizio")
 
+	# 1. il disegno dei bambini sul muro ovest, dall'acqua della parte profonda
 	print("FASE il disegno")
-	# giù in acqua dal bordo est e verso il muro ovest, a guardare il disegno dei bambini
-	await _cammina([Vector3(6.2, 0, -0.4), Vector3(0.5, 0, -1.6), Vector3(-2.9, 0, -0.9)])
-	await _guarda(Vector3(-6.97, -0.85, -0.2), 0.8)
+	await _attendi(1.0)
+	await _guarda(Vector3(-6.97, -0.75, -0.2), 1.2)
 	await _attendi(2.5)
 	_scatto("giocattoli_disegno")
 	_conta_pipeline("disegno")
 
-	print("FASE i giocattoli")
-	for i in [1, 0, 2]:
-		await _spingi(i)
-		_conta_pipeline("giocattolo %d" % i)
-	# i tre bordi accesi appena, coi giocattoli che galleggiano sopra
-	await _cammina([Vector3(0.4, 0, -1.2)])
-	await _guarda(Vector3(-0.5, -1.8, 2.4), 0.8)
-	await _attendi(1.5)
-	_scatto("giocattoli_sui_cerchi")
+	# 2. la spinta sull'acqua: il pallone rosso fino al suo cerchio
+	print("FASE la spinta sull'acqua")
+	await _taglio()
+	await _metti(_dietro(1, 2.4), enigma.giocattolo(1).global_position)
+	await _spingi(1)
+	await _attendi(1.0)
+	_scatto("giocattoli_spinta_acqua")
+	_conta_pipeline("spinta sull'acqua")
 
-	print("FASE lo svuotamento")
-	await _svuota()
-	_conta_pipeline("svuotata")
-	await _guarda(Vector3(-3.9, -2.0, 3.3), 0.9)
+	# (fuori scena: la paperella sul suo cerchio, galleggiando; la balena resta lontano, per la spinta sul fondo)
+	enigma.metti_al_posto_uno(0)
+
+	# 3. lo svuotamento, l'ultima parte: l'acqua cala, i giocattoli si posano e i due piatti scendono col tonfo
+	print("FASE i piatti")
+	await _taglio()
+	vasca.fill = minf(vasca.fill, 0.75)
+	await _metti(Vector3(0.6, 0.0, 1.6), Vector3(-3.9, -1.9, 3.3))
+	await _attendi(0.6)
+	await _guarda(Vector3(0.2, -2.0, 3.4), 0.6)
+	# (lo svuotamento vero è come prima: qui l'ultima parte, in pochi secondi)
+	var f0 := vasca.fill
+	for k in int(5.0 * Engine.physics_ticks_per_second):
+		vasca.fill = f0 * (1.0 - float(k + 1) / (5.0 * Engine.physics_ticks_per_second))
+		await get_tree().physics_frame
+	vasca.fill = 0.0
+	for k in 240:
+		if enigma.piatto_giu(0) and enigma.piatto_giu(1):
+			break
+		await get_tree().physics_frame
+	await _attendi(1.5)
+	_scatto("giocattoli_piatti_scesi")
+	_conta_pipeline("piatti scesi")
+
+	# 4. una spinta sul fondo vuoto: la balena fino al suo cerchio, il terzo piatto scende
+	print("FASE la spinta sul fondo")
+	await _taglio()
+	for k in 200:
+		if piscina.attivo:
+			break
+		await get_tree().physics_frame
+	await _metti(_dietro(2, 2.2), enigma.giocattolo(2).global_position)
+	await _spingi(2)
+	await _guarda(enigma.cerchio(2).global_position + Vector3(0, 0.2, 0), 0.5)
 	for k in 240:
 		if enigma.risolto_ok:
 			break
 		await get_tree().physics_frame
-	await _attendi(1.0)
-	_scatto("giocattoli_piatti_scesi")
-	_conta_pipeline("piatti scesi")
+	await _attendi(1.2)
+	_scatto("giocattoli_spinta_fondo")
+	_conta_pipeline("spinta sul fondo")
 
+	# 5. la luce verde del pulsante della botola, e la botola
 	print("FASE la botola")
-	await _cammina([Vector3(0.6, 0, 0.9)])
-	await _guarda(pulsante.global_position + Vector3(0, 0.25, 0), 0.8)
+	await _taglio()
+	await _metti(Vector3(0.6, 0.0, 0.9), pulsante.global_position + Vector3(0, 0.25, 0))
 	for k in 200:
 		if pulsante.enabled:
 			break
 		await get_tree().physics_frame
-	await _attendi(1.2)
+	await _attendi(2.0)
 	_scatto("giocattoli_luce_verde")
 	_conta_pipeline("luce verde")
+	p.water_pack.set_tank_amount(20.0)
 	await _spruzza_verso(pulsante.global_position + Vector3(0, 0.45, 0), 1.0)
 	for k in 240:
 		if bool(portello.get(&"is_open")):
@@ -109,6 +143,42 @@ func _run() -> void:
 	_conta_pipeline("botola aperta")
 	print("FINE risolto %s, botola aperta %s" % [enigma.risolto_ok, portello.get(&"is_open")])
 	get_tree().quit()
+
+
+## Un taglio del montaggio: mezzo secondo di nero (lo schermo coperto) mentre si cambia posto.
+func _taglio() -> void:
+	if _nero == null:
+		_nero = CanvasLayer.new()
+		_nero.layer = 120
+		var r := ColorRect.new()
+		r.color = Color.BLACK
+		r.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_nero.add_child(r)
+		add_child(_nero)
+	_nero.visible = true
+	await _attendi(0.4)
+
+
+## Mette il giocatore in [param dove] (sul fondo o nell'acqua) a guardare [param punto], e toglie il nero del taglio.
+func _metti(dove: Vector3, punto: Vector3) -> void:
+	var q := PhysicsRayQueryParameters3D.create(Vector3(dove.x, 1.0, dove.z), Vector3(dove.x, -4.0, dove.z), Layers.WORLD)
+	var h := (level as Node3D).get_world_3d().direct_space_state.intersect_ray(q)
+	var y: float = (h.position as Vector3).y + 0.05 if not h.is_empty() else dove.y
+	var piedi := Vector3(dove.x, y, dove.z)
+	var occhio := piedi + Vector3(0, 1.6, 0)
+	var d := punto - occhio
+	p.teleport(piedi, atan2(-d.x, -d.z), atan2(d.y, Vector2(d.x, d.z).length()))
+	await _attendi(0.3)
+	if _nero:
+		_nero.visible = false
+
+
+## Dietro il giocattolo [param i] rispetto al suo cerchio, a [param distanza] m (in pianta).
+func _dietro(i: int, distanza: float) -> Vector3:
+	var g := enigma.giocattolo(i).global_position
+	var c := enigma.cerchio(i).global_position
+	var dir := Vector2(c.x - g.x, c.z - g.z).normalized()
+	return Vector3(clampf(g.x - dir.x * distanza, -6.4, 6.4), 0.0, clampf(g.z - dir.y * distanza, -4.0, 3.9))
 
 
 # --- Il giocatore ----------------------------------------------------------------------------------------------------

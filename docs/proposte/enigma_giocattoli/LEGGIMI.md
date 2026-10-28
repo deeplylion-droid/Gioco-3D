@@ -54,6 +54,16 @@ Cosa è stato tenuto libero, e come:
 - **i giocattoli appoggiati sul fondo** non vanno sulla P5, al piede delle scalette, sulla ripartenza e sui gonfiabili: ne scivolano giù;
 - **galleggiando** ci passano sopra.
 
+## I gonfiabili d'arredo della parte profonda
+
+Perché l'enigma si legga bene, nella parte profonda restano solo i tre giocattoli (richiesta del coordinatore del 28 ottobre). Le due paperelle giganti e i quattro palloni da spiaggia, che erano sparsi sul fondo, sono spostati sulla spiaggia della piscina, dove ci sono già il delfino sgonfio, una ciambella e altre paperelle: lì li ha portati l'onda.
+- Le paperelle hanno il fondo piatto e stanno sulla pendenza della spiaggia, inclinate come lei.
+- I palloni sono rotolati giù per la spiaggia fino a fermarsi contro qualcosa: due contro le paperelle spostate, uno contro il delfino sgonfio, uno contro la paperella in cima alla spiaggia. Il punto l'ha trovato il motore, lanciando una sfera giù per la pendenza (`tests/collaudo/posa_oggetti_piscina.gd`).
+- Sul fondo restano le due ciambelle, il salvagente e i tubi galleggianti: non si confondono coi giocattoli, e nell'enigma sono ostacoli da girare.
+- Gli spostamenti sono nella scena della sala, sui nodi di `sala_oggetti.glb`; il GLB non cambia.
+
+<!-- PRIMA DOPO -->
+
 ## Scatti e video
 
 <!-- SCATTI -->

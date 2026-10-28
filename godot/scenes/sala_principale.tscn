@@ -221,6 +221,24 @@ dome_glass = ExtResource("3_qo5ie")
 
 [node name="Oggetti" type="Node3D" parent="Sala" unique_id=992748897 instance=ExtResource("9_fp7jj")]
 
+[node name="ogg_paperella_gigante_0" parent="Sala/Oggetti"]
+transform = Transform3D(0.76604443788528, 0.10567436367273, -0.63404166698456, 0.0, 0.9863937497139, 0.16440013051033, 0.64278757572174, -0.12593780457973, 0.75562143325806, -5.6, -0.9, -7.6)
+
+[node name="ogg_paperella_gigante_1" parent="Sala/Oggetti"]
+transform = Transform3D(-0.93358045816422, -0.05891475081444, 0.35349202156067, 0.0, 0.98639416694641, 0.16439738869667, -0.35836791992188, 0.15347819030285, -0.92087829113007, 5.3, -1.0, -7.0)
+
+[node name="ogg_pallone_spiaggia_2" parent="Sala/Oggetti"]
+transform = Transform3D(0.86602538824081, 0.0, -0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.86602538824081, -4.0, -1.2575016, -5.4132838)
+
+[node name="ogg_pallone_spiaggia_3" parent="Sala/Oggetti"]
+transform = Transform3D(0.1736483424902, 0.0, -0.98480772972107, 0.0, 1.0, 0.0, 0.98480772972107, 0.0, 0.1736483424902, 0.05, -0.7112684, -8.6924133)
+
+[node name="ogg_pallone_spiaggia_43" parent="Sala/Oggetti"]
+transform = Transform3D(-0.77488833665848, 0.0, -0.63209813833237, 0.0, 1.0, 0.0, 0.63209813833237, 0.0, -0.77488833665848, 5.25, -1.0999237, -6.3583751)
+
+[node name="ogg_pallone_spiaggia_71" parent="Sala/Oggetti"]
+transform = Transform3D(0.97769325971603, 0.0, -0.21003776788712, 0.0, 1.0, 0.0, 0.21003776788712, 0.0, 0.97769325971603, -5.65, -0.9894217, -7.0256352)
+
 [node name="Interattivi" type="Node3D" parent="Sala" unique_id=140742459 instance=ExtResource("10_7spwi")]
 
 [node name="VascaCentrale" type="Node3D" parent="Sala" unique_id=70160634 instance=ExtResource("11_pabah")]
@@ -1019,3 +1037,5 @@ attivo = false
 models = Array[PackedScene]([ExtResource("80_xkett"), ExtResource("81_ccseb")])
 spots = PackedVector3Array(-18.4, 4.3, -11.2, -18.6, 4.3, -9.7, -18.3, 4.3, -8.1, -18.5, 4.3, -6.6, -18.4, 4.3, -5)
 trigger = NodePath("../Gioco/SalitaTorre")
+
+[editable path="Sala/Oggetti"]

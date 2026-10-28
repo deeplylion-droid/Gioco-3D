@@ -741,6 +741,15 @@ func metti_al_posto() -> void:
 		_vel[i] = Vector2.ZERO
 
 
+## Scorciatoia per gli scatti: solo il giocattolo [param i] sul suo cerchio.
+func metti_al_posto_uno(i: int) -> void:
+	if _giu[i]:
+		return
+	_giocattoli[i].position.x = _cerchi[i].position.x
+	_giocattoli[i].position.z = _cerchi[i].position.z
+	_vel[i] = Vector2.ZERO
+
+
 ## I giocattoli (per i test e gli scatti).
 func giocattolo(i: int) -> AnimatableBody3D:
 	return _giocattoli[i]
