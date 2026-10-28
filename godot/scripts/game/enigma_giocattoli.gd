@@ -596,20 +596,51 @@ func _fondo(i: int) -> float:
 	return (h.position as Vector3).y
 
 
-## Dove si posa il giocattolo [param i] fermo sul fondo: sul punto più alto di quello che si vede sotto la sua
-## impronta (Posa, lo strumento comune: le mesh e le collisioni), come una cosa piatta in una conca, che poggia sui
-## bordi; [constant STACCO] sopra. Se sotto non trova niente, [param prima].
-func _quota_appoggio(i: int, escludi: Array[RID], prima: float) -> float:
+## Posa il giocattolo [param i] fermo sul fondo: sotto la sua impronta Posa (lo strumento comune: le mesh e le collisioni)
+## trova quello che si vede; il giocattolo si inclina come il piano che passa meglio per quei punti e scende finché il
+## più alto lo tocca ([constant STACCO] sopra), come una cosa piatta su un fondo curvo. Se sotto non trova niente,
+## resta a [param prima].
+func _posa_sul_fondo(i: int, escludi: Array[RID], prima: float) -> void:
 	var g := _giocattoli[i]
 	var e: Vector2 = IMPRONTE[i]
-	var piu_alto := -INF
+	var o := Vector3(g.global_position.x, prima, g.global_position.z)
+	var punti: Array[Vector3] = []
 	for k in 9:
 		var l := Vector3.ZERO if k == 8 else Vector3(cos(TAU * k / 8.0) * e.x, 0.0, sin(TAU * k / 8.0) * e.y)
-		var p := g.global_position + Basis(Vector3.UP, _yaw[i]) * l
+		var p := o + Basis(Vector3.UP, _yaw[i]) * l
 		var h: Dictionary = Posa._raggio(g, Vector3(p.x, prima + 0.4, p.z), Vector3(p.x, prima - 0.5, p.z), escludi)
 		if not h.is_empty():
-			piu_alto = maxf(piu_alto, (h.position as Vector3).y)
-	return piu_alto + STACCO if piu_alto > -INF else prima
+			punti.append(h.position)
+	if punti.size() < 5:
+		g.global_position.y = prima
+		return
+	# il piano y = a x + b z + c (ai minimi quadrati, attorno all'origine del giocattolo)
+	var sxx := 0.0
+	var szz := 0.0
+	var sxz := 0.0
+	var sxy := 0.0
+	var szy := 0.0
+	var sy := 0.0
+	for p in punti:
+		var r := p - o
+		sxx += r.x * r.x
+		szz += r.z * r.z
+		sxz += r.x * r.z
+		sxy += r.x * r.y
+		szy += r.z * r.y
+		sy += r.y
+	var det := sxx * szz - sxz * sxz
+	var n := Vector3.UP
+	if absf(det) > 0.000001:
+		n = Vector3(-(sxy * szz - szy * sxz) / det, 1.0, -(szy * sxx - sxy * sxz) / det).normalized()
+	if n.y < 0.85:
+		n = Vector3.UP
+	var m := -INF
+	for p in punti:
+		m = maxf(m, (p - o).dot(n))
+	g.global_basis = Basis(Quaternion(Vector3.UP, n)) * Basis(Vector3.UP, _yaw[i])
+	g.global_position = Vector3(o.x, o.y + (m + STACCO) / n.y, o.z)
+	_y[i] = g.global_position.y
 
 
 func _quota_bersaglio(i: int) -> float:
@@ -678,10 +709,12 @@ func _muovi(i: int, delta: float) -> void:
 			_assestato[i] = false
 		if not _assestato[i]:
 			_y[i] = maxf(bersaglio, _y[i] - 1.5 * delta) if _y[i] > bersaglio else bersaglio
-		g.global_position.y = _y[i]
-		# inclinato come la superficie sotto (il fondo della conca, un piatto inclinato come lei)
-		var su := g.global_basis.y.normalized().slerp(_normale[i], 1.0 - exp(-8.0 * delta))
-		g.global_basis = Basis(Quaternion(Vector3.UP, su)) * Basis(Vector3.UP, _yaw[i])
+			g.global_position.y = _y[i]
+		# mentre si muove, inclinato come la superficie sotto (il fondo della conca, un piatto); fermo lo posa
+		# _posa_sul_fondo e resta così finché non lo si spinge
+		if not _assestato[i]:
+			var su := g.global_basis.y.normalized().slerp(_normale[i], 1.0 - exp(-8.0 * delta))
+			g.global_basis = Basis(Quaternion(Vector3.UP, su)) * Basis(Vector3.UP, _yaw[i])
 		# fermo, già giù e a piscina vuota: lo appoggia Posa, una volta, sulla prima superficie che si vede sotto di lui
 		# (dove la collisione e la mesh non coincidono, come sul coperchio della botola, resterebbe sospeso o dentro)
 		if not _assestato[i] and v.length() < 0.02 and absf(_y[i] - bersaglio) < 0.002 \
@@ -690,8 +723,7 @@ func _muovi(i: int, delta: float) -> void:
 			var escludi: Array[RID] = []
 			for x in _giocattoli:
 				escludi.append(x.get_rid())
-			_y[i] = _quota_appoggio(i, escludi, bersaglio)
-			g.global_position.y = _y[i]
+			_posa_sul_fondo(i, escludi, bersaglio)
 
 
 ## I gonfiabili già sul fondo della parte profonda (x, z, raggio nel sistema del nodo): i MeshInstance3D "ogg_*" della
