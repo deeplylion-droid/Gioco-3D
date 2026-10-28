@@ -35,6 +35,10 @@ const COLORI := [Color(1.0, 0.82, 0.12), Color(0.86, 0.12, 0.1), Color(0.12, 0.3
 const RAGGI := [0.22, 0.25, 0.3]
 const ALTEZZE := [0.39, 0.5, 0.38]
 const PESCAGGI := [0.13, 0.17, 0.12]
+## L'impronta sul fondo (mezze misure in x e z, nel sistema del giocattolo): dove appoggia la base.
+const IMPRONTE := [Vector2(0.14, 0.2), Vector2(0.1, 0.1), Vector2(0.18, 0.3)]
+## Quanto sopra la superficie restano appoggiati (sotto i 5 mm del controllo di posizionamento: toccano).
+const STACCO := 0.003
 
 ## L'acqua della parte profonda (la Pozza).
 @export var vasca: WaterTank
@@ -411,7 +415,7 @@ func _appoggia() -> void:
 	_ostacoli = _ostacoli_fondo()
 	for i in 3:
 		# (sul piatto sceso la quota è quella del piatto; gli altri sul pelo dell'acqua o sul fondo)
-		_y[i] = _cerchi[i].global_position.y + sporgenza - corsa if _giu[i] else _quota_bersaglio(i)
+		_y[i] = _cerchi[i].global_position.y + sporgenza - corsa + STACCO if _giu[i] else _quota_bersaglio(i)
 		_giocattoli[i].global_position.y = _y[i]
 		if _giu[i]:
 			_giocattoli[i].global_basis = Basis(Quaternion(Vector3.UP, _cerchi[i].global_basis.y.normalized())) \
@@ -592,6 +596,22 @@ func _fondo(i: int) -> float:
 	return (h.position as Vector3).y
 
 
+## Dove si posa il giocattolo [param i] fermo sul fondo: sul punto più alto di quello che si vede sotto la sua
+## impronta (Posa, lo strumento comune: le mesh e le collisioni), come una cosa piatta in una conca, che poggia sui
+## bordi; [constant STACCO] sopra. Se sotto non trova niente, [param prima].
+func _quota_appoggio(i: int, escludi: Array[RID], prima: float) -> float:
+	var g := _giocattoli[i]
+	var e: Vector2 = IMPRONTE[i]
+	var piu_alto := -INF
+	for k in 9:
+		var l := Vector3.ZERO if k == 8 else Vector3(cos(TAU * k / 8.0) * e.x, 0.0, sin(TAU * k / 8.0) * e.y)
+		var p := g.global_position + Basis(Vector3.UP, _yaw[i]) * l
+		var h: Dictionary = Posa._raggio(g, Vector3(p.x, prima + 0.4, p.z), Vector3(p.x, prima - 0.5, p.z), escludi)
+		if not h.is_empty():
+			piu_alto = maxf(piu_alto, (h.position as Vector3).y)
+	return piu_alto + STACCO if piu_alto > -INF else prima
+
+
 func _quota_bersaglio(i: int) -> float:
 	var f := _fondo(i)
 	if vasca and vasca.fill > 0.0005:
@@ -670,9 +690,7 @@ func _muovi(i: int, delta: float) -> void:
 			var escludi: Array[RID] = []
 			for x in _giocattoli:
 				escludi.append(x.get_rid())
-			g.global_position.y = bersaglio + 0.3
-			if Posa.appoggia_a_terra(g, 0.0, false, escludi):
-				_y[i] = g.global_position.y
+			_y[i] = _quota_appoggio(i, escludi, bersaglio)
 			g.global_position.y = _y[i]
 
 
@@ -773,13 +791,14 @@ func _scendi(i: int, col_suono: bool) -> void:
 		var tw := create_tween().set_parallel()
 		tw.tween_method(func(h: float): _altezza_piatto(i, h), sporgenza, sporgenza - corsa, 0.18) \
 				.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
-		tw.tween_method(func(y: float): g.global_position.y = y, g.global_position.y, g.global_position.y - corsa, 0.18) \
+		var giu := _cerchi[i].global_position.y + sporgenza - corsa + STACCO
+		tw.tween_method(func(y: float): g.global_position.y = y, g.global_position.y, giu, 0.18) \
 				.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 		tw.tween_method(func(k: float): _bordo(_mat_cerchi[i], k), _acceso[i], 1.0, 0.5)
 		Audio.suona(&"saracinesca_fine", _cerchi[i].global_position, -4.0, 0.75)
 	else:
 		_metti_piatto(i, true)
-		g.global_position.y = _cerchi[i].global_position.y + sporgenza - corsa
+		g.global_position.y = _cerchi[i].global_position.y + sporgenza - corsa + STACCO
 		_bordo(_mat_cerchi[i], 1.0)
 	_y[i] = g.global_position.y
 	_acceso[i] = 1.0
