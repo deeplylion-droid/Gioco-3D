@@ -43,7 +43,7 @@ Per ognuna c'è uno scatto nel suo posto, dagli occhi del giocatore, e uno da vi
 ## Controlli
 
 - Posizionamento in locale (`tests/controllo_posizionamento.gd`): sala principale, con la risalita e gli acquari in tutti gli stati, e sala della torre. 0 casi nuovi e 0 da correggere.
-- Test: `test_sala` (10 Polaroid nella sala, appoggiate, e il totale), `test_risalita_tardi` (14 nel totale all'avvio), `test_risalita` (P13, P15 e P16 ci sono e sono appoggiate), `test_torre` (P12 c'è ed è appoggiata).
+- Test in locale, tutti verdi: `test_sala` 104/104 (10 Polaroid nella sala, appoggiate, e il totale), `test_risalita_tardi` 12/12 (14 nel totale all'avvio; la P16 appoggiata uguale anche col fiume caricato a gioco avviato), `test_risalita` 13/13 (P13, P15 e P16 ci sono e sono appoggiate), `test_torre` 94/94 (P12 c'è ed è appoggiata), `check_scripts` senza errori.
 - Il percorso delle partenze del menu di prova (`assets/prova/*.json`) non è rifatto: chi parte dalla torre o dal tunnel non ha le Polaroid nuove fra quelle raccolte. Si rifà con `tests/genera_partenze_prova.gd` quando l'utente approva.
 
 ## Da decidere con l'utente
