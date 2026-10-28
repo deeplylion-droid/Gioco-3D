@@ -1,0 +1,5 @@
+POLAROID: partenza risalita (checkpoint Tecnici/Logica/Checkpoint/CheckpointT7Inizio): Polaroid raccolte 9: p01, p02, p03, p04, p05, p06, p07, p08, p09
+POLAROID: partenza fiume (checkpoint Risalita/Fiume/Checkpoint/CheckpointIngresso): Polaroid raccolte 9: p01, p02, p03, p04, p05, p06, p07, p08, p09
+POLAROID: partenza torre (checkpoint SalaTorre/Checkpoint_portone): Polaroid raccolte 14: PolaroidPecora, p01, p02, p03, p04, p05, p06, p07, p08, p09, p13, p14, p15, p16
+POLAROID: partenza inseguimento (checkpoint SalaTorre/Checkpoint_fondo): Polaroid raccolte 16: Polaroid10, PolaroidPecora, p01, p02, p03, p04, p05, p06, p07, p08, p09, p12, p13, p14, p15, p16
+POLAROID: partenza tunnel (checkpoint SalaSottomarino/Checkpoint_6): Polaroid raccolte 16: Polaroid10, PolaroidPecora, p01, p02, p03, p04, p05, p06, p07, p08, p09, p12, p13, p14, p15, p16

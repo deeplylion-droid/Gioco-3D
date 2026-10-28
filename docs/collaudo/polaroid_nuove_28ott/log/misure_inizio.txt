@@ -1,0 +1,38 @@
+POLAROID: stato inizio, torre true, fiume true, totale della collezione 16, raccolte 0
+POLAROID: p01 P1 in (11.2, 0.004, 40.35), fondo 0.003, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto corridoio_statico,corridoio_statico,corridoio_statico,corridoio_statico,corridoio_statico, fra 1 mesh vicine: OK
+POLAROID: p02 P2 in (-6.226, 1.65, 33.82), fondo 1.596, distacco sotto centro e angoli (mm) 1596.5, 1596.5, 1596.5, 1596.5, 1596.5, sotto spogliatoi_statico,spogliatoi_statico,spogliatoi_statico,spogliatoi_statico,spogliatoi_statico, fra 6 mesh vicine: DA GUARDARE
+POLAROID: p03 P3 in (2.95, 1.3, 34.643), fondo 1.246, distacco sotto centro e angoli (mm) 13.3, 15.9, 467.7, 15.9, -221.5, sotto bacheca,bacheca,scrivania,bacheca,bacheca, fra 8 mesh vicine: DA GUARDARE
+POLAROID: p04 P4 in (-16.03, 1.242, -15.35), fondo 1.240, distacco sotto centro e angoli (mm) 2.2, 1.8, 2.6, 2.4, 3.1, sotto sala_struttura_gioco,sala_struttura_gioco,sala_struttura_gioco,sala_struttura_gioco,sala_struttura_gioco, fra 4 mesh vicine: OK
+POLAROID: p05 P5 in (1.2, -2.17, 2.9), fondo -2.171, distacco sotto centro e angoli (mm) 7.7, 7.2, 4.0, 11.4, 8.1, sotto sala_piscina_onde,sala_piscina_onde,sala_piscina_onde,sala_piscina_onde,sala_piscina_onde, fra 4 mesh vicine: DA GUARDARE
+POLAROID: p06 P6 in (-1.75, -9.046, 10.56), fondo -9.047, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto CAMERA_struttura,CAMERA_struttura,CAMERA_struttura,CAMERA_struttura,CAMERA_struttura, fra 3 mesh vicine: OK
+POLAROID: p07 P7 in (-3.23, -8.266001, 43.36), fondo -8.267, distacco sotto centro e angoli (mm) 3.8, 4.2, 3.6, 3.7, 3.8, sotto SCRIVANIA,SCRIVANIA,SCRIVANIA,SCRIVANIA,SCRIVANIA, fra 12 mesh vicine: OK
+POLAROID: p08 P8 in (-8.900001, 0.016, 6.6), fondo 0.015, distacco sotto centro e angoli (mm) 6.2, 4.4, 6.3, 6.2, 9.7, sotto arrivo_bordi,arrivo_bordi,arrivo_bordi,arrivo_bordi,arrivo_bordi, fra 9 mesh vicine: DA GUARDARE
+POLAROID: p09 P9 in (-9.900001, 0.004, -9.400001), fondo 0.003, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto sala_pavimento,sala_pavimento,sala_pavimento,sala_pavimento,sala_pavimento, fra 6 mesh vicine: OK
+POLAROID:  P10 in (23.593, -11.669, -22.407), fondo -11.669, distacco sotto centro e angoli (mm) 0.7, 9.8, 1.1, 10.8, 1.1, sotto prop_lettino_plastica_1,prop_lettino_plastica_1,prop_lettino_plastica_1,prop_lettino_plastica_1,prop_lettino_plastica_1, fra 6 mesh vicine: DA GUARDARE
+POLAROID:  P11 senza mesh visibile (in (-33.2, -4.339, 43.65))
+POLAROID: p12 P12 in (22.1, 0.004, -13.95), fondo 0.003, distacco sotto centro e angoli (mm) 13.5, 13.5, 13.5, 13.5, 13.5, sotto torre_A_grigliati,torre_A_grigliati,torre_A_grigliati,torre_A_grigliati,torre_A_grigliati, fra 3 mesh vicine: DA GUARDARE
+POLAROID: p13 P13 in (-4.06, -5.396, 58.4), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665, fra 3 mesh vicine: OK
+POLAROID: p14 P14 in (17.25, 0.004, -20.5), fondo 0.003, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto sala_pavimento,sala_pavimento,sala_pavimento,sala_pavimento,sala_pavimento, fra 4 mesh vicine: OK
+POLAROID: p15 P15 in (-34.16, -5.396, 50.52), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@136,@MeshInstance3D@136,@MeshInstance3D@136,@MeshInstance3D@136,@MeshInstance3D@136, fra 5 mesh vicine: OK
+POLAROID: p16 P16 in (-37.55, -5.396, 51.45), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@1727,@MeshInstance3D@1727,@MeshInstance3D@1727,@MeshInstance3D@1727,@MeshInstance3D@1727, fra 1 mesh vicine: OK
+POLAROID: oblò del fiume con lei comparsa (stato 0)
+POLAROID: p13 P13 in (-4.06, -5.396, 58.4), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665, fra 3 mesh vicine: OK
+POLAROID: P13 con lei all'oblò: 8 mesh dell'oblò visibili, quelle che toccano la Polaroid (2 cm): nessuna
+POLAROID: oblò del fiume, lei staccata (stato 3)
+POLAROID: p13 P13 in (-4.06, -5.396, 58.4), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665, fra 3 mesh vicine: OK
+POLAROID: p01 P1 raccolta true (collezione da 0 a 1), dal punto (11.98, 0.0, 40.8) il raggio trovava <Freed Object>
+POLAROID: p02 P2 raccolta false (collezione da 1 a 1), dal punto (-6.68, 1.94, 33.04) il raggio trovava <null>
+POLAROID: p03 P3 nessun posto libero a 0,9 m per raccoglierla
+POLAROID: p04 P4 raccolta true (collezione da 1 a 2), dal punto (-15.58, 1.17, -16.13) il raggio trovava <Freed Object>
+POLAROID: p05 P5 raccolta true (collezione da 2 a 3), dal punto (1.2, -2.13, 3.8) il raggio trovava <Freed Object>
+POLAROID: p06 P6 raccolta true (collezione da 3 a 4), dal punto (-1.75, -9.05, 11.46) il raggio trovava <Freed Object>
+POLAROID: p07 P7 raccolta true (collezione da 4 a 5), dal punto (-2.33, -8.099999, 43.36) il raggio trovava <Freed Object>
+POLAROID: p08 P8 raccolta true (collezione da 5 a 6), dal punto (-8.9, 0.01, 7.5) il raggio trovava <Freed Object>
+POLAROID: p09 P9 raccolta true (collezione da 6 a 7), dal punto (-9.9, 0.0, -8.5) il raggio trovava <Freed Object>
+POLAROID:  P10 raccolta false (collezione da 7 a 7), dal punto (23.59, -12.01, -21.51) il raggio trovava <null>
+POLAROID: p12 P12 raccolta true (collezione da 7 a 8), dal punto (22.1, -0.01, -14.85) il raggio trovava <Freed Object>
+POLAROID: p13 P13 raccolta true (collezione da 8 a 9), dal punto (-4.06, -5.4, 59.3) il raggio trovava <Freed Object>
+POLAROID: p14 P14 raccolta true (collezione da 9 a 10), dal punto (17.25, 0.0, -19.6) il raggio trovava <Freed Object>
+POLAROID: p15 P15 raccolta true (collezione da 10 a 11), dal punto (-34.16, -5.4, 49.62) il raggio trovava <Freed Object>
+POLAROID: p16 P16 raccolta true (collezione da 11 a 12), dal punto (-37.55, -5.4, 52.35) il raggio trovava <Freed Object>
+POLAROID: finito, raccolte 12 su 16
