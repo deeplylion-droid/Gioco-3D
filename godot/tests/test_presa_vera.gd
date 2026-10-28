@@ -166,6 +166,9 @@ func _run() -> void:
 	check(giro.fuori and p.is_on_floor() and absf(p.global_position.y + 5.4) < 0.15, "in barca fino all'approdo, giù sulla banchina (%s)" % p.global_position)
 	var porta := ris.get_node(^"Fiume/Marker/PortaPersonale") as Node3D
 	var inf := ris.get_node(^"Infermeria") as Node3D
+	# (la porta nord resta chiusa finché non colpisci il pulsantone: richiesta dell'utente del 25 ottobre)
+	print("  (scorciatoia: il pulsantone dell'infermeria colpito col getto, la porta nord si apre; lo prova test_infermeria_gioco)")
+	inf.get_node(^"Interruttore").set(&"powered", true)
 	await _vai("dall'approdo, porta di servizio, zona del personale, infermeria, porta nord", [
 		porta.global_position + porta.global_basis.z * 0.8, porta.global_position - porta.global_basis.z * 1.5,
 		inf.to_global(Vector3(1.6, 0, 3.6)), inf.to_global(Vector3(1.8, 0, 1.6)), inf.to_global(Vector3(0.0, 0, 0.0)),
