@@ -669,6 +669,28 @@ func prepara_materiali_lei(principale: Viewport, fotogrammi := 6) -> void:
 		vi.layers = SalaTorre.STRATO_PREPARA
 		# (la sua luce no: illumina e mette in ombra la vasca e il corridoio come nel gioco, così si compilano anche le
 		# pipeline delle ombre dei muri nella sua luce)
+	var sv := _vista_preparazione(principale)
+	var cam := sv.get_child(0) as Camera3D
+	# (da dove la vede il giocatore nel corridoio, larga: anche i muri intorno nella sua luce)
+	cam.look_at_from_position(global_transform * Vector3(0.2, 0.1, 2.6), global_transform * Vector3(0, -0.3, -1.0))
+	for i in fotogrammi + 1:
+		if i == fotogrammi / 2:
+			stacco_per_preparare()
+		await get_tree().process_frame
+		if not is_inside_tree():
+			break
+	sv.queue_free()
+	if is_inside_tree():
+		await giro_nella_sua_luce(principale)
+	for vi in strati:
+		if is_instance_valid(vi):
+			(vi as VisualInstance3D).layers = strati[vi]
+	fine_preparazione()
+
+
+## Una vista fuori schermo per la preparazione: un SubViewport con le impostazioni di [param principale] e lo stesso
+## mondo, con una camera larga che vede tutti gli strati (figlio di questo nodo; chi la usa la libera).
+func _vista_preparazione(principale: Viewport) -> SubViewport:
 	var sv := SubViewport.new()
 	sv.name = "PreparaLei"
 	sv.size = Vector2i(320, 180)
@@ -681,29 +703,76 @@ func prepara_materiali_lei(principale: Viewport, fotogrammi := 6) -> void:
 	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
 	sv.world_3d = principale.find_world_3d()
 	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	# (la camera vede tutto: anche la vasca, il vetro e il corridoio nella luce di lei)
 	var cam := Camera3D.new()
 	var cam_gioco := principale.get_camera_3d()
 	if cam_gioco:
 		cam.environment = cam_gioco.environment
 		cam.attributes = cam_gioco.attributes
+	cam.fov = 100.0
 	sv.add_child(cam)
 	add_child(sv)
 	cam.current = true
-	# (da dove la vede il giocatore nel corridoio, larga: anche i muri intorno nella sua luce)
-	cam.fov = 100.0
-	cam.look_at_from_position(global_transform * Vector3(0.2, 0.1, 2.6), global_transform * Vector3(0, -0.3, -1.0))
-	for i in fotogrammi + 1:
-		if i == fotogrammi / 2:
-			stacco_per_preparare()
-		await get_tree().process_frame
-		if not is_inside_tree():
-			break
+	return sv
+
+
+## Il giro nella sua luce (collaudo di grafica-2: alla comparsa, con la camera vera, 8 pipeline "draw" e 22 s di
+## fotogramma su llvmpipe). Nel blackout intorno all'oblò nessuna luce omni tocca i muri, il pavimento, la cornice o la
+## lancia in mano: il motore li disegna con le luci omni spente (una specializzazione), e quando si accende la luce rosa
+## di lei deve compilare quella con le luci accese. Qui, con lei mostrata e la sua luce accesa (sullo strato fuori
+## vista), una camera fuori schermo si gira intorno dal corridoio davanti al vetro (sei direzioni, larga), guarda dai
+## punti della [member zona], e poi guarda il modello in mano al giocatore sotto una luce di prova come la sua (sullo
+## stesso strato: il gioco non la usa).
+func giro_nella_sua_luce(principale: Viewport, fotogrammi := 2) -> void:
+	if lei == null or lei.lei == null or not lei.lei.visible or principale == null or not is_inside_tree():
+		return
+	var sv := _vista_preparazione(principale)
+	var cam := sv.get_child(0) as Camera3D
+	var centro := global_transform * Vector3(0.0, -0.4, 2.0)
+	var b := global_basis
+	for d: Vector3 in [Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT, Vector3.DOWN, Vector3.UP]:
+		var dove := (b * d).normalized()
+		cam.look_at_from_position(centro, centro + dove, Vector3.UP if absf(dove.y) < 0.9 else b * Vector3.FORWARD)
+		for i in fotogrammi:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				sv.queue_free()
+				return
+	# e dagli occhi del giocatore nei punti della zona da cui può vederla (il centro e i quattro angoli), verso il vetro
+	# e dalla parte opposta
+	if zona.size != Vector3.ZERO:
+		var vetro := centro_vetro()
+		var punti: Array[Vector3] = [zona.get_center()]
+		for sx in [0.15, 0.85]:
+			for sz in [0.15, 0.85]:
+				punti.append(zona.position + zona.size * Vector3(sx, 0.5, sz))
+		for p0 in punti:
+			var pt := Vector3(p0.x, zona.position.y + 1.6, p0.z)
+			for verso: float in [1.0, -1.0]:
+				var mira := pt + (vetro - pt) * verso
+				if mira.distance_to(pt) < 0.1:
+					continue
+				cam.look_at_from_position(pt, mira, Vector3.UP)
+				for i in fotogrammi:
+					await get_tree().process_frame
+					if not is_inside_tree():
+						sv.queue_free()
+						return
+	var gioc := GameState.player
+	if gioc and is_instance_valid(gioc) and gioc.camera and gioc.is_inside_tree():
+		var luce := OmniLight3D.new()
+		luce.layers = SalaTorre.STRATO_PREPARA   # (prima di entrare nell'albero: nessuno strato cambiato dopo)
+		luce.light_color = LeiOblo.ROSA
+		luce.light_energy = 4.0
+		luce.omni_range = 4.0
+		luce.shadow_enabled = true
+		luce.position = Vector3(0.0, 0.6, -1.5)
+		gioc.camera.add_child(luce)
+		cam.fov = gioc.camera.fov
+		cam.global_transform = gioc.camera.global_transform
+		for i in fotogrammi + 1:
+			await get_tree().process_frame
+		luce.queue_free()
 	sv.queue_free()
-	for vi in strati:
-		if is_instance_valid(vi):
-			(vi as VisualInstance3D).layers = strati[vi]
-	fine_preparazione()
 
 
 func _mostra() -> void:

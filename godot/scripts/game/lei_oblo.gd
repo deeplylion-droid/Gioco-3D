@@ -218,7 +218,10 @@ func stacca() -> void:
 	if posa == "" or lei == null or not lei.visible or _staccando:
 		return
 	_staccando = true
-	_anima("oblo_" + posa + "_stacca", 0.3)
+	# (nella capovolta niente fusione: l'osso radice è girato di 180° e il segno della rotazione cambia tra la posa e il
+	# distacco; a metà fusione lei compariva dritta e grande contro il vetro, collaudo di grafica-2. Le due pose
+	# all'attacco coincidono quasi, 2-3 cm di respiro)
+	_anima("oblo_" + posa + "_stacca", 0.0 if posa == "capovolta" else 0.3)
 	var d := _durata("oblo_" + posa + "_stacca")
 	if _tw:
 		_tw.kill()

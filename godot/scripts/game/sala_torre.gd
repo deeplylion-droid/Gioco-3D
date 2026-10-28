@@ -210,6 +210,9 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 		if not is_inside_tree():
 			break
 	sv.queue_free()
+	# il giro intorno all'oblò nella luce di lei (e la lancia in mano sotto una luce come la sua)
+	if oblo and is_instance_valid(oblo) and is_inside_tree():
+		await oblo.giro_nella_sua_luce(principale)
 	for vi in strati_lei:
 		if is_instance_valid(vi):
 			(vi as VisualInstance3D).layers = strati_lei[vi]
