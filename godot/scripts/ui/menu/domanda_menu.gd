@@ -42,8 +42,11 @@ func _ready() -> void:
 	col.custom_minimum_size.x = 520
 	col.add_theme_constant_override("separation", 10)
 	centro.add_child(col)
-	var titolo := StileMenu.etichetta(domanda.to_upper(), StileMenu.oswald(600, 4), 40)
+	var titolo := StileMenu.etichetta("", StileMenu.oswald(600, 4), 40)
 	titolo.name = "Titolo"
+	# (in maiuscolo nella lingua del gioco: vedi Lingua)
+	titolo.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	Lingua.segui(titolo, func(): titolo.text = Lingua.t(domanda).to_upper())
 	col.add_child(titolo)
 	var linea := ColorRect.new()
 	linea.color = StileMenu.ROSSO

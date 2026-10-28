@@ -30,7 +30,7 @@ func _remove_if_already_taken() -> void:
 
 
 func get_prompt(_by: Node) -> String:
-	return "%s %s" % [prompt, item_name]
+	return "%s %s" % [tr(prompt), tr(item_name)]
 
 
 func _on_interact(by: Node) -> void:
