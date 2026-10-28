@@ -1,0 +1,80 @@
+UNITO BASE efc7352f Versione 0.3.15 e le sue note (blocchi tolti, oblò leggeri, crash dopo
+IMPORT: 0
+== gioca_risalita: uscita 0; ; BUG 0
+CONTINUA: salvataggio su disco prima -, dopo Tecnici/Logica/Checkpoint/CheckpointRaccordo (riscritto true)
+== continua_risalita: uscita 0; ; BUG 0
+CONTINUA: voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"], focus su Continua
+CONTINUA: CONFRONTO risalita: checkpoint Tecnici/Logica/Checkpoint/CheckpointRaccordo / atteso Tecnici/Logica/Checkpoint/CheckpointRaccordo; distanza dal posto salvato 0.00 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
+CONTINUA: MORTE risalita: ripartito true dopo 4.6 s, checkpoint Tecnici/Logica/Checkpoint/CheckpointRaccordo (prima Tecnici/Logica/Checkpoint/CheckpointRaccordo), a 0.00 m dal posto salvato, in piedi true
+== gioca_torre: uscita 0; ; BUG 0
+CONTINUA: salvataggio su disco prima Tecnici/Logica/Checkpoint/CheckpointRaccordo, dopo SalaTorre/Checkpoint_NEm3 (riscritto true)
+== continua_torre: uscita 0; ; BUG 0
+CONTINUA: voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"], focus su Continua
+CONTINUA: CONFRONTO torre: checkpoint SalaTorre/Checkpoint_NEm3 / atteso SalaTorre/Checkpoint_NEm3; distanza dal posto salvato 0.01 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
+CONTINUA: MORTE torre: ripartito true dopo 7.8 s, checkpoint SalaTorre/Checkpoint_NEm3 (prima SalaTorre/Checkpoint_NEm3), a 0.01 m dal posto salvato, in piedi true
+== gioca_tunnel: uscita 137; ; BUG 0
+CONTINUA: salvataggio su disco prima SalaTorre/Checkpoint_NEm3, dopo SalaSottomarino/Checkpoint_160 (riscritto true)
+== continua_tunnel: uscita 0; ; BUG 0
+CONTINUA: voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"], focus su Continua
+CONTINUA: CONFRONTO tunnel: checkpoint SalaSottomarino/Checkpoint_160 / atteso SalaSottomarino/Checkpoint_160; distanza dal posto salvato 0.00 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
+CONTINUA: MORTE tunnel: ripartito true dopo 9.6 s, checkpoint SalaSottomarino/Checkpoint_160 (prima SalaSottomarino/Checkpoint_160), a 0.00 m dal posto salvato, in piedi true
+== f9_risalita: uscita 0; ; BUG 0
+BLOCCHI: partenza risalita arrivata dopo 8.1 s (Tecnici/Logica/Checkpoint/CheckpointT7Inizio)
+BLOCCHI: elenco risalita: mesh 2706, forme 1848, luci 192, checkpoint 26 (attivi 23), porte 2
+== f9_fiume: uscita 0; ; BUG 0
+BLOCCHI: partenza fiume arrivata dopo 7.6 s (Risalita/Fiume/Checkpoint/CheckpointIngresso)
+BLOCCHI: elenco fiume: mesh 2706, forme 1848, luci 190, checkpoint 26 (attivi 23), porte 2
+== f9_torre: uscita 0; ; BUG 0
+BLOCCHI: partenza torre arrivata dopo 7.5 s (SalaTorre/Checkpoint_portone)
+BLOCCHI: elenco torre: mesh 2599, forme 1731, luci 255, checkpoint 23 (attivi 23), porte 1
+== f9_inseguimento: uscita 0; ; BUG 0
+BLOCCHI: partenza inseguimento arrivata dopo 7.1 s (SalaTorre/Checkpoint_fondo)
+BLOCCHI: elenco inseguimento: mesh 2605, forme 1730, luci 259, checkpoint 23 (attivi 23), porte 1
+== f9_tunnel: uscita 0; ; BUG 0
+BLOCCHI: partenza tunnel arrivata dopo 7.7 s (SalaSottomarino/Checkpoint_6)
+BLOCCHI: elenco tunnel: mesh 2240, forme 1580, luci 60, checkpoint 23 (attivi 12), porte 1
+== test_continua: uscita 0; RISULTATO: 127 controlli ok, 0 falliti; BUG 0
+== test_infermeria_gioco: uscita 0; RISULTATO: 56 controlli ok, 0 falliti; BUG 0
+== test_infermeria: uscita 0; RISULTATO: 22 controlli ok, 0 falliti; BUG 0
+== test_menu: uscita 0; RISULTATO: 72 controlli ok, 0 falliti; BUG 0
+== test_partenze_prova: uscita 0; RISULTATO: 72 controlli ok, 0 falliti; BUG 0
+== test_scaletta_bacino: uscita 0; RISULTATO: 13 controlli ok, 0 falliti; BUG 0
+== test_fiume_gioco: uscita 0; RISULTATO: 31 controlli ok, 0 falliti; BUG 0
+== test_canto_tunnel: uscita 0; RISULTATO: 24 controlli ok, 0 falliti; BUG 0
+== test_guado: uscita 0; RISULTATO: 11 controlli ok, 0 falliti; BUG 0
+== test_luci_accese: uscita 1; RISULTATO: 0 controlli ok, 1 falliti; BUG 0
+== test_strati: uscita 0; RISULTATO: 5 controlli ok, 0 falliti; BUG 0
+== test_oblo_leggeri: uscita 1; RISULTATO: 0 controlli ok, 1 falliti; BUG 0
+  FALLITO c'è il renderer vero ()
+== test_fine_tunnel: uscita 0; RISULTATO: 14 controlli ok, 0 falliti; BUG 0
+  ok   la scritta sta sopra il nero e sotto il menu di pausa (livello 90)
+  ok   la scritta si vede: «FINE DEL CAPITOLO 1»
+  ok   dopo il tunnel solo «FINE DEL CAPITOLO 1», senza la riga della torre
+  ok   a 5 s di scritta è ancora la fine della demo
+  ok   finita la scritta, torna da solo al titolo (res://scenes/ui/menu_principale.tscn)
+== f9 menu: 0; BUG 0
+F9: scatto 0_titolo
+F9: menu aperto true
+F9: scatto 1_menu
+F9: voci ["Inizio  ·  nuova partita", "Risalita  ·  dopo la sala generatori", "Fiume lento  ·  all\'ingresso del fiume", "Torre degli scivoli  ·  oltre il portone", "Inseguimento  ·  le condotte,
+F9: dopo Esc il menu c'è ancora false
+F9: scatto 2_dopo_esc
+F9: scatto 3_di_nuovo_f9
+== partita tunnel: 0; BUG 0
+PARTITA: t 100.0 getto: lei respinta dal getto (gap 3.7)
+PARTITA: t 131.4 galleria_425: galleria 425: passata true, accovacciati true, in 18.2 s
+PARTITA: t 143.9 gommoni_484: attraversamento 484 fatto in 7.5 s
+PARTITA: t 144.7 getto: lei respinta dal getto (gap 4.2)
+PARTITA: t 156.4 corsa: fine corsa a s 546.1 (scala a 546.0), lato 1, in 145 s
+PARTITA: t 156.4 approdo: all'approdo sulla banchina DESTRA: la scala è a sinistra, si passa nel canale
+PARTITA: t 160.6 approdo: passato a sinistra in 4.1 s (y -30.00)
+PARTITA: t 165.6 approdo: approdo: tappe 5 di 5, in 5.1 s, y -27.00 (soglia -27.00)
+PARTITA: t 172.2 schianto: fine_demo
+PARTITA: t 172.2 schianto: fine_demo dopo 6.4 s: true
+PARTITA: t 186.2 nero: 14 s dopo la fine: scena res://scenes/test/sottomarino_prova.tscn
+PARTITA: t 186.2 nero: FINE PARTITA: morsi 8 prese 0 (virtuali 0) respinte 6 getti 6 cadute 0 ripartenze 0
+BUG in tutti i log: 0
+UNITO FINITO
+== test_oblo_leggeri (renderer vero): uscita 0; RISULTATO: 30 controlli ok, 0 falliti; BUG 0
+== test_luci_accese (renderer vero): uscita 0; RISULTATO: 1 controlli ok, 0 falliti; BUG 0
+UNITO VK FINITO
