@@ -120,12 +120,14 @@ func _run() -> void:
 		for lato in [-1.0, 1.0]:
 			if _ostacolo_qui(sala, s, lato) and not _ostacolo_qui(sala, s, lato, ["carico", "cancello", "macerie", "vetrina"]):
 				continue
-			var q: Vector3 = sala.punto(s) + sala.destra(s) * float(lato) * (sala.canale - SalaSottomarino.GRADINO_LARGO * 0.5)
-			var h := _giu(spazio, Vector3(q.x, sala.acqua + 0.3, q.z))
-			if h.is_empty() or absf((h.position as Vector3).y - (sala.fondo + SalaSottomarino.GRADINO_SU)) > 0.02:
-				senza_gradino.append("%.1f %+d" % [s, int(lato)])
+			# (i due scalini: l'alto vicino alla banchina, il basso verso l'acqua)
+			for sc in [[0.25, SalaSottomarino.GRADINO_SU], [0.75, SalaSottomarino.GRADINO_BASSO]]:
+				var q: Vector3 = sala.punto(s) + sala.destra(s) * float(lato) * (sala.canale - SalaSottomarino.GRADINO_LARGO * float(sc[0]))
+				var h := _giu(spazio, Vector3(q.x, sala.acqua + 0.3, q.z))
+				if h.is_empty() or absf((h.position as Vector3).y - (sala.fondo + float(sc[1]))) > 0.02:
+					senza_gradino.append("%.1f %+d %.2f" % [s, int(lato), float(sc[1])])
 		s += 1.0
-	_controlla(senza_gradino.is_empty(), "il gradino continuo per risalire dal canale c'è lungo tutte e due le rive", senza_gradino)
+	_controlla(senza_gradino.is_empty(), "il gradino continuo per risalire dal canale (due scalini) c'è lungo tutte e due le rive", senza_gradino)
 
 	# 5) il finale: dalla camera stagna si chiude il portello, il volantino gira restando attaccato, poi "FINE"
 	var fine := [false]

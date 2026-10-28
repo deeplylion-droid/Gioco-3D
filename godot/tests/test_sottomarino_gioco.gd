@@ -251,7 +251,8 @@ func _passi_1_6() -> void:
 	_lascia()
 	var v := Vector2(p.global_position.x - a.x, p.global_position.z - a.z).length() / 2.0
 	check(v < 2.3 and v > 0.5, "nel canale si va a guado, piano (%.2f m/s)" % v)
-	# dal gradino continuo si risale da qualunque punto: qui, sulla riva destra
+	# dal gradino continuo si risale da qualunque punto camminando, senza saltare (nel canale il salto non parte): qui,
+	# sulla riva destra
 	var sg := 103.0
 	var lato_g := 1.0
 	var davanti := sott.punto(sg) + sott.destra(sg) * lato_g * (sott.canale - 1.6)
@@ -261,12 +262,7 @@ func _passi_1_6() -> void:
 	p.look_at_point(Vector3(sopra.x, sott.piano + 1.6, sopra.z))
 	p.set_look(p.yaw, 0.0)
 	Input.action_press(&"move_forward")
-	for k in 5:
-		await _frames(20)
-		Input.action_press(&"jump")
-		await _frames(4)
-		Input.action_release(&"jump")
-	await _frames(20)
+	await _frames(120)
 	_lascia()
-	check(absf(p.global_position.y - sott.piano) < 0.15, "dal gradino continuo si risale sulla banchina (y %.2f)" % p.global_position.y)
+	check(absf(p.global_position.y - sott.piano) < 0.15, "dal gradino continuo si risale sulla banchina camminando (y %.2f)" % p.global_position.y)
 

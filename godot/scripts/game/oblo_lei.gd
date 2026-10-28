@@ -22,6 +22,12 @@ extends Node3D
 ##   "Dovrebbe restare finché non la vedi bene o ti avvicini";
 ## - se il giocatore se ne va senza averla vista, lei se ne va quando non la vede (e torna la volta dopo);
 ## - sparita, l'oblò resta vuoto: lo stato si salva coi checkpoint (gruppo "persist").
+##
+## Niente blocchi quando lei compare (riscontro dell'utente sulla v0.3.14): chi mette l'oblò chiama
+## [method prepara_lei] mentre costruisce la zona (lei nasce lì, nascosta e ferma, con le forme e l'interno abbassato) e
+## poi [method prepara_materiali_lei] (o lo fa SalaTorre.prepara_materiali), che la disegna fuori vista, così le
+## pipeline dei suoi materiali si compilano lì. Alla comparsa lei si mostra e basta; a fine distacco
+## si ripone (nascosta e ferma), non si libera. Senza preparazione si crea e si riscalda al momento, come prima.
 
 signal comparsa
 signal vista
@@ -96,6 +102,8 @@ var lei: LeiOblo
 const DISSOLVE_DA := 0.35
 var _dissolve: Tween
 var _t_vista := 0.0
+## Vero quando le pipeline di lei sono già compilate (disegnata fuori vista): alla comparsa niente riscaldamento.
+var _riscaldata := false
 var _t_via := 0.0
 var _corpo: StaticBody3D
 
@@ -581,21 +589,188 @@ func _vista_libera(cam: Camera3D) -> bool:
 	return spazio.intersect_ray(q).is_empty()
 
 
+## Crea lei adesso, nascosta e ferma dietro il vetro (con le forme, le ossa morbide, l'interno abbassato e le copie
+## dei materiali per lo scuro): da chiamare mentre si costruisce la zona, così alla comparsa non si istanzia niente.
+## Con [param fase] 0, 1, 2 una parte alla volta, in fotogrammi diversi (la costruzione a pezzi della torre): il
+## modello, le ossa morbide, i materiali. Senza, tutto insieme. Ogni parte una volta sola.
+func prepara_lei(fase := -1) -> void:
+	if Engine.has_meta(&"oblo_senza_preparazione"):
+		return
+	if fase <= 0 and lei == null:
+		_crea_lei()
+		lei.prepara(centro_vetro(), normale(), posa, false)
+	if lei == null or not lei.tieni:
+		return
+	if fase < 0 or fase == 1:
+		lei.prepara_morbidezza()
+	if (fase < 0 or fase == 2) and _scuri.is_empty():
+		_abbassa_interno()
+		_copie_scure()
+
+
+func _crea_lei() -> void:
+	lei = LeiOblo.new()
+	lei.name = "Lei"
+	lei.lato_sbircia = 1 if lato_sbircia >= 0.0 else -1
+	add_child(lei)
+	lei.sparita.connect(_sparita)
+	lei.aggiungi_forme(forme())
+
+
+## Lei vista dal corridoio per un attimo, per chi la disegna fuori vista (SalaTorre.prepara_materiali, o
+## [method prepara_materiali_lei]): visibile, ferma, nella sua posa. [method fine_preparazione] la rimette via.
+func mostra_per_preparare() -> void:
+	if lei == null or stato != Stato.ATTESA:
+		return
+	lei.mostra(centro_vetro(), normale(), posa)
+	if lei.lei:
+		lei.lei.process_mode = Node.PROCESS_MODE_DISABLED
+	# la sua luce accesa (nella posa "occhio" parte da spenta e si accende piano: qui il tween è fermo), così si
+	# compilano anche le ombre della zona nella sua luce
+	if lei._tw:
+		lei._tw.kill()
+	if lei._luce:
+		lei._luce.light_energy = 4.0
+
+
+## Per chi la disegna fuori vista: la mette nella posa del distacco, a [param frazione] della sua durata (staccata dal
+## vetro, più in fondo nella vasca: altre luci e altre ombre della zona).
+func stacco_per_preparare(frazione := 0.6) -> void:
+	if lei == null or lei.lei == null or lei._ap == null or stato != Stato.ATTESA or lei.posa == "":
+		return
+	var nome := "oblo_" + lei.posa + "_stacca"
+	lei._anima(nome, 0.0)
+	lei._ap.advance(lei._durata(nome) * frazione)
+
+
+func fine_preparazione() -> void:
+	if lei == null or stato != Stato.ATTESA:
+		return
+	lei.riponi()
+	_riscaldata = true
+
+
+## Disegna lei una volta fuori vista (una camera sua in un SubViewport con le impostazioni di [param principale] e lo
+## stesso mondo; lei e la sua luce su uno strato che la camera del gioco non disegna): le pipeline dei suoi materiali,
+## e quelle dell'oblò e del corridoio nella sua luce, si compilano adesso. Da chiamare dopo [method prepara_lei], a schermo nero o col vetro fuori vista.
+func prepara_materiali_lei(principale: Viewport, fotogrammi := 6) -> void:
+	if lei == null or principale == null or not is_inside_tree() or stato != Stato.ATTESA or _riscaldata:
+		return
+	if DisplayServer.get_name() == "headless":
+		_riscaldata = true
+		return
+	mostra_per_preparare()
+	# un pezzo di lei per volta, nel mondo della zona, sullo strato fuori vista (RiscaldamentoShader.disegna_a_pezzi; lo
+	# strato si cambia solo alle parti visibili e la sua luce resta accesa per tutti, così si compilano anche le ombre
+	# dei muri nella sua luce); poi tutta insieme nella posa del distacco e il giro intorno all'oblò nella sua luce
+	var alla_fine := func() -> void:
+		if is_inside_tree():
+			await giro_nella_sua_luce(principale)
+	await RiscaldamentoShader.disegna_a_pezzi(lei, principale, maxi(1, fotogrammi / 3), stacco_per_preparare, alla_fine)
+	fine_preparazione()
+
+
+## Una vista fuori schermo per la preparazione: un SubViewport con le impostazioni di [param principale] e lo stesso
+## mondo, con una camera larga che vede tutti gli strati (figlio di questo nodo; chi la usa la libera).
+func _vista_preparazione(principale: Viewport) -> SubViewport:
+	var sv := SubViewport.new()
+	sv.name = "PreparaLei"
+	sv.size = Vector2i(320, 180)
+	sv.msaa_3d = principale.msaa_3d
+	sv.screen_space_aa = principale.screen_space_aa
+	sv.use_taa = principale.use_taa
+	sv.use_debanding = principale.use_debanding
+	sv.use_hdr_2d = principale.use_hdr_2d
+	sv.positional_shadow_atlas_size = principale.positional_shadow_atlas_size
+	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
+	sv.world_3d = principale.find_world_3d()
+	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var cam := Camera3D.new()
+	var cam_gioco := principale.get_camera_3d()
+	if cam_gioco:
+		cam.environment = cam_gioco.environment
+		cam.attributes = cam_gioco.attributes
+	cam.fov = 100.0
+	sv.add_child(cam)
+	add_child(sv)
+	cam.current = true
+	return sv
+
+
+## Il giro nella sua luce (collaudo di grafica-2: alla comparsa, con la camera vera, 8 pipeline "draw" e 22 s di
+## fotogramma su llvmpipe). Nel blackout intorno all'oblò nessuna luce omni tocca i muri, il pavimento, la cornice o la
+## lancia in mano: il motore li disegna con le luci omni spente (una specializzazione), e quando si accende la luce rosa
+## di lei deve compilare quella con le luci accese. Qui, con lei mostrata e la sua luce accesa (sullo strato fuori
+## vista), una camera fuori schermo si gira intorno dal corridoio davanti al vetro (sei direzioni, larga), guarda dai
+## punti della [member zona], e poi guarda il modello in mano al giocatore sotto una luce di prova come la sua (sullo
+## stesso strato: il gioco non la usa).
+func giro_nella_sua_luce(principale: Viewport, fotogrammi := 2) -> void:
+	if lei == null or lei.lei == null or not lei.lei.visible or principale == null or not is_inside_tree():
+		return
+	var sv := _vista_preparazione(principale)
+	var cam := sv.get_child(0) as Camera3D
+	var centro := global_transform * Vector3(0.0, -0.4, 2.0)
+	var b := global_basis
+	for d: Vector3 in [Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT, Vector3.DOWN, Vector3.UP]:
+		var dove := (b * d).normalized()
+		cam.look_at_from_position(centro, centro + dove, Vector3.UP if absf(dove.y) < 0.9 else b * Vector3.FORWARD)
+		for i in fotogrammi:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				sv.queue_free()
+				return
+	# e dagli occhi del giocatore nei punti della zona da cui può vederla (il centro e i quattro angoli), verso il vetro
+	# e dalla parte opposta
+	if zona.size != Vector3.ZERO:
+		var vetro := centro_vetro()
+		var punti: Array[Vector3] = [zona.get_center()]
+		for sx in [0.15, 0.85]:
+			for sz in [0.15, 0.85]:
+				punti.append(zona.position + zona.size * Vector3(sx, 0.5, sz))
+		for p0 in punti:
+			var pt := Vector3(p0.x, zona.position.y + 1.6, p0.z)
+			for verso: float in [1.0, -1.0]:
+				var mira := pt + (vetro - pt) * verso
+				if mira.distance_to(pt) < 0.1:
+					continue
+				cam.look_at_from_position(pt, mira, Vector3.UP)
+				for i in fotogrammi:
+					await get_tree().process_frame
+					if not is_inside_tree():
+						sv.queue_free()
+						return
+	var gioc := GameState.player
+	if gioc and is_instance_valid(gioc) and gioc.camera and gioc.is_inside_tree():
+		var luce := OmniLight3D.new()
+		luce.layers = SalaTorre.STRATO_PREPARA   # (prima di entrare nell'albero: nessuno strato cambiato dopo)
+		luce.light_color = LeiOblo.ROSA
+		luce.light_energy = 4.0
+		luce.omni_range = 4.0
+		luce.shadow_enabled = true
+		luce.position = Vector3(0.0, 0.6, -1.5)
+		gioc.camera.add_child(luce)
+		cam.fov = gioc.camera.fov
+		cam.global_transform = gioc.camera.global_transform
+		for i in fotogrammi + 1:
+			await get_tree().process_frame
+		luce.queue_free()
+	sv.queue_free()
+
+
 func _mostra() -> void:
 	if lei == null:
-		lei = LeiOblo.new()
-		lei.name = "Lei"
-		lei.lato_sbircia = 1 if lato_sbircia >= 0.0 else -1
-		add_child(lei)
-		lei.sparita.connect(_sparita)
-		lei.aggiungi_forme(forme())
-	lei.mostra(centro_vetro(), normale(), posa)
-	_abbassa_interno()
+		_crea_lei()
+		lei.mostra(centro_vetro(), normale(), posa)
+		_abbassa_interno()
+	else:
+		lei.mostra(centro_vetro(), normale(), posa)
+	_scurisci(0.0)
 	_t_vista = 0.0
 	_t_via = 0.0
 	stato = Stato.PRONTA
 	comparsa.emit()
-	_riscalda()
+	if not _riscaldata:
+		_riscalda()
 
 
 ## La struttura interna della campana di lei (Medusa_Interno) si accende da sola, con emissione 4 pensata per la sala.
@@ -606,6 +781,8 @@ const EMISSIONE_INTERNO := 0.6
 
 
 func _abbassa_interno() -> void:
+	if lei == null:
+		return
 	for n in lei.find_children("Medusa_Interno", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		for s in mi.mesh.get_surface_count():
@@ -643,19 +820,12 @@ func _riscalda() -> void:
 		cam.fov = cam_gioco.fov
 	cam.current = true
 	cam.look_at_from_position(global_transform * Vector3(0.3, 0.1, 1.6), global_transform * Vector3(0, -0.3, -1.0))
-	# negli ultimi fotogrammi lei mezza trasparente: si compilano qui anche le varianti trasparenti dei suoi materiali,
-	# che servono alla dissolvenza del distacco (se no al primo distacco il gioco scatta)
-	var parti := _parti_lei()
 	for i in 7:
-		if i == 4:
-			_trasparenza(0.5, parti)
 		await get_tree().process_frame
 		if not is_inside_tree():
-			_trasparenza(0.0, parti)
 			return
-	if stato != Stato.VIA:
-		_trasparenza(0.0, parti)
 	vp.queue_free()
+	_riscaldata = true
 
 
 ## Lei va via adesso, col suo distacco lento, se è dietro il vetro (per chi la vuole altrove: nella torre prima che
@@ -677,19 +847,82 @@ func _stacca() -> void:
 		_sparita()
 
 
-## La dissolvenza del distacco: dalla [constant DISSOLVE_DA] della sua durata alla fine (quando lei viene tolta).
+## La dissolvenza del distacco: lei si scurisce fino al nero ([method _scurisci]) dalla [constant DISSOLVE_DA] della
+## sua durata alla fine (quando lei viene tolta).
 func _dissolvi() -> void:
 	var d: float = lei.call(&"_durata", "oblo_" + lei.posa + "_stacca") if lei.posa != "" else 2.6
 	if _dissolve:
 		_dissolve.kill()
 	_dissolve = create_tween()
-	_dissolve.tween_method(_trasparenza.bind(_parti_lei()), 0.0, 1.0, d * (1.0 - DISSOLVE_DA)).set_delay(d * DISSOLVE_DA)
+	_dissolve.tween_method(_scurisci, 0.0, 1.0, d * (1.0 - DISSOLVE_DA)).set_delay(d * DISSOLVE_DA)
 
 
-func _trasparenza(x: float, parti: Array) -> void:
-	for g in parti:
-		if is_instance_valid(g):
-			(g as GeometryInstance3D).transparency = x
+## Lo scuro del distacco, da 0 (com'è) a 1 (nera: niente colore, luce propria né riflessi). Prima era la trasparenza
+## dei nodi, ma le parti trasparenti si ordinavano male e la palpebra finiva sotto l'occhio ("quando Jilly va via
+## nell'oblò le si toglie la palpebra", riscontro dell'utente). Sulle copie dei materiali di lei ([method _copie_scure]),
+## col parametro "scurisci" per la campana e l'occhio: cambiano solo dei valori, nessuna pipeline nuova.
+func _scurisci(x: float) -> void:
+	if lei == null or not is_instance_valid(lei):
+		return
+	if _scuri.is_empty() and x > 0.0:
+		_copie_scure()
+	# (al quadrato: il corpo perde anche la luce rosa di lei, che si spegne insieme; l'occhio, che ha luce propria,
+	# così si spegne con lui e non resta acceso da solo)
+	var k := pow(1.0 - clampf(x, 0.0, 1.0), 2.0)
+	for m in _scuri_shader:
+		(m as ShaderMaterial).set_shader_parameter(&"scurisci", 1.0 - k)
+	for e in _scuri:
+		var m := e[0] as BaseMaterial3D
+		var da: Dictionary = e[1]
+		for prop in da:
+			var v = da[prop]
+			if v is Color:
+				var c: Color = v
+				m.set(prop, Color(c.r * k, c.g * k, c.b * k, c.a))
+			else:
+				m.set(prop, float(v) * k)
+
+
+## I valori dei materiali normali che lo scuro abbassa (tutti fino a 0).
+const _SCURI := [&"albedo_color", &"emission_energy_multiplier", &"metallic_specular", &"clearcoat", &"rim",
+		&"backlight", &"subsurf_scatter_strength", &"subsurf_scatter_transmittance_boost"]
+var _scuri: Array = []          # [copia del materiale, {proprietà: valore di partenza}]
+var _scuri_shader: Array = []   # i materiali della campana e dell'occhio di lei (col parametro "scurisci")
+
+
+## Le copie dei materiali di lei, sue (quelli della sala restano come sono). Gli shader con "scurisci" (la campana,
+## l'occhio) si copiano solo se sono quelli condivisi del file: la campana è già una copia della medusa (MedusaStatue
+## ci fa pulsare i canali), e resta quella. Una volta, quando lei nasce (in [method prepara_lei]; senza preparazione
+## al primo distacco).
+func _copie_scure() -> void:
+	_scuri.clear()
+	_scuri_shader.clear()
+	var copie := {}
+	for g in _parti_lei():
+		var mi := g as MeshInstance3D
+		if mi == null or mi.mesh == null:
+			continue
+		for s in mi.mesh.get_surface_count():
+			var m := mi.get_active_material(s)
+			if m is ShaderMaterial:
+				var sh := (m as ShaderMaterial).shader
+				if sh == null or not sh.code.contains("scurisci"):
+					continue
+				if not copie.has(m):
+					var c: ShaderMaterial = m.duplicate() if m.resource_path != "" else m
+					copie[m] = c
+					_scuri_shader.append(c)
+				if copie[m] != m:
+					mi.set_surface_override_material(s, copie[m])
+			elif m is BaseMaterial3D:
+				if not copie.has(m):
+					var c := m.duplicate() as BaseMaterial3D
+					copie[m] = c
+					var da := {}
+					for prop in _SCURI:
+						da[prop] = c.get(prop)
+					_scuri.append([c, da])
+				mi.set_surface_override_material(s, copie[m])
 
 
 ## Le mesh di lei (il modello, senza la luce).
@@ -708,6 +941,11 @@ func _togli_lei() -> void:
 		_dissolve.kill()
 		_dissolve = null
 	if lei and is_instance_valid(lei):
+		if lei.tieni:
+			# (preparata: si ripone, nascosta e ferma; liberarla costerebbe un attimo di fermo, e può servire ancora)
+			_scurisci(0.0)
+			lei.riponi()
+			return
 		lei.queue_free()
 	lei = null
 

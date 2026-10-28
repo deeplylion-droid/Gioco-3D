@@ -167,6 +167,8 @@ var _land_prev := 0.0
 var _land_vel := 0.0
 # Gradini: la camera resta indietro del dislivello appena fatto e lo recupera piano piano.
 var _step_offset := 0.0
+# La velocità voluta dal comando nell'ultimo passo a terra (per i gradini presi di sbieco).
+var _step_target := Vector3.ZERO
 var _step_prev := 0.0
 var _coyote := 0.0
 var _jump_buffer := 0.0
@@ -193,6 +195,8 @@ var _air_time := 0.0
 
 func _ready() -> void:
 	add_to_group(&"player")
+	# lo strato delle zone che si preparano fuori vista (SalaTorre.STRATO_PREPARA) non si vede
+	camera.cull_mask &= ~SalaTorre.STRATO_PREPARA
 	# I muri invisibili (per esempio il cordone intorno alla vasca della medusa) fermano il giocatore ma
 	# non il getto: stanno su un livello loro, che il getto non guarda.
 	collision_mask |= Layers.BARRIERS
@@ -375,7 +379,7 @@ func _move_on_ground(delta: float) -> void:
 		_jump_buffer = jump_buffer_time
 	else:
 		_jump_buffer -= delta
-	if _jump_buffer > 0.0 and _coyote > 0.0 and (can_jump_while_crouched or not is_crouching):
+	if _jump_buffer > 0.0 and _coyote > 0.0 and (can_jump_while_crouched or not is_crouching) and not in_acqua_senza_salto():
 		velocity.y = sqrt(2.0 * g * jump_height)
 		_jump_buffer = 0.0
 		_coyote = 0.0
@@ -384,6 +388,7 @@ func _move_on_ground(delta: float) -> void:
 	var input := _move_input()
 	var wish := Basis(Vector3.UP, yaw) * Vector3(input.x, 0.0, input.y)
 	var target := wish * _max_speed(input)
+	_step_target = target
 	var hv := Vector3(velocity.x, 0.0, velocity.z)
 	var rate: float
 	if on_floor:
@@ -444,6 +449,11 @@ func _step_up_after_move(from: Transform3D, wish_velocity: Vector3, delta: float
 	if into == Vector3.ZERO:
 		return
 	var motion := Vector3(wish_velocity.x, 0.0, wish_velocity.z) * delta
+	# Arrivando di sbieco, dopo il primo contatto la velocità striscia lungo il gradino e verso il gradino quasi non
+	# va (collaudo del 25 ottobre: dall'acqua del canale non si saliva il gradino a due scalini): il passo si prova
+	# nella direzione del comando, se va più verso il gradino.
+	if _step_target.dot(into) * delta > motion.dot(into):
+		motion = _step_target * delta
 	if motion.length() < 0.0005:
 		return
 	var hit := KinematicCollision3D.new()
@@ -467,7 +477,9 @@ func _step_up_after_move(from: Transform3D, wish_velocity: Vector3, delta: float
 	moved -= up_direction * moved.dot(up_direction)
 	var normal_move := global_position - from.origin
 	normal_move -= up_direction * normal_move.dot(up_direction)
-	if moved.length() <= normal_move.length() + 0.002:
+	# (conta quanto si va verso il gradino: di sbieco il passo normale striscia lungo il gradino e va lontano quasi
+	# quanto quello più su)
+	if moved.dot(into) <= normal_move.dot(into) + 0.002:
 		return  # anche più su non si passa: è un muro
 	var depth := up.length()
 	var down := _step_floor(t, depth, from)
@@ -889,3 +901,13 @@ func remove_item(item_id: StringName, amount := 1) -> bool:
 	if inventory[item_id] <= 0:
 		inventory.erase(item_id)
 	return true
+
+
+## Vero coi piedi nell'acqua del canale del tunnel sottomarino (WaterVolume.senza_salto), con l'acqua sopra il
+## ginocchio come per il guado: lì non si salta. Su un gommone, coi piedi sopra il pelo, no.
+func in_acqua_senza_salto() -> bool:
+	for area in sensor.get_overlapping_areas():
+		var wv := area as WaterVolume
+		if wv and wv.senza_salto and wv.get_surface_height() > global_position.y + GUADO_DA:
+			return true
+	return false

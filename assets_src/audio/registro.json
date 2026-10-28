@@ -1489,6 +1489,106 @@
   "lufs": -21.0,
   "lufs_max": -16.0
  },
+ "lei/lei_tunnel_canto_01": {
+  "file": "res://audio/lei/lei_tunnel_canto_01.ogg",
+  "canali": 1,
+  "durata": 6.272,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -17.2
+ },
+ "lei/lei_tunnel_canto_02": {
+  "file": "res://audio/lei/lei_tunnel_canto_02.ogg",
+  "canali": 1,
+  "durata": 7.845,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -17.0
+ },
+ "lei/lei_tunnel_canto_03": {
+  "file": "res://audio/lei/lei_tunnel_canto_03.ogg",
+  "canali": 1,
+  "durata": 7.762,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -15.7
+ },
+ "lei/lei_tunnel_canto_04": {
+  "file": "res://audio/lei/lei_tunnel_canto_04.ogg",
+  "canali": 1,
+  "durata": 9.161,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -16.3
+ },
+ "lei/lei_tunnel_canto_05": {
+  "file": "res://audio/lei/lei_tunnel_canto_05.ogg",
+  "canali": 1,
+  "durata": 6.644,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -15.5
+ },
+ "lei/lei_tunnel_canto_06": {
+  "file": "res://audio/lei/lei_tunnel_canto_06.ogg",
+  "canali": 1,
+  "durata": 5.969,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -18.3
+ },
+ "lei/lei_tunnel_canto_07": {
+  "file": "res://audio/lei/lei_tunnel_canto_07.ogg",
+  "canali": 1,
+  "durata": 6.364,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -17.1
+ },
+ "lei/lei_tunnel_canto_08": {
+  "file": "res://audio/lei/lei_tunnel_canto_08.ogg",
+  "canali": 1,
+  "durata": 5.87,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -17.7
+ },
+ "lei/lei_tunnel_canto_09": {
+  "file": "res://audio/lei/lei_tunnel_canto_09.ogg",
+  "canali": 1,
+  "durata": 7.092,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -15.4
+ },
+ "lei/lei_tunnel_canto_10": {
+  "file": "res://audio/lei/lei_tunnel_canto_10.ogg",
+  "canali": 1,
+  "durata": 6.797,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.6,
+  "lufs_max": -17.7
+ },
  "lei/lei_tunnel_fiato_loop": {
   "file": "res://audio/lei/lei_tunnel_fiato_loop.ogg",
   "canali": 1,
