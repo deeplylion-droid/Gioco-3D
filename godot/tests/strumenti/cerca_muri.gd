@@ -16,7 +16,7 @@ extends Node
 
 const SCENE := ["res://scenes/sala_principale.tscn", "res://scenes/sala/torre/sala_torre.tscn",
 		"res://scenes/sala/sottomarino/sala_sottomarino.tscn"]
-const USCITA := "res://../docs/proposte/scarabocchi/muri.json"
+var USCITA := "res://../docs/proposte/scarabocchi/muri_%s.json" % ("alti" if OS.get_environment("MODO") == "alti" else "bassi")
 const STRATO := 1 << 20
 const PASSO := 0.5
 const OCCHI := 1.6
@@ -25,7 +25,7 @@ const ARCHITETTURA := ["architettura", "struttura", "pavimento", "muro", "muri",
 const NON_TOCCARE := ["porta", "door", "portone", "portello", "saracinesca", "serranda", "tornello", "paratia",
 		"polaroid", "pulsante", "button", "leva", "valvola", "poster", "cartellone", "manifesto", "bagnino", "targa",
 		"insegna", "disegno", "schema", "tacche", "cassaforte", "cerchi", "lavagna", "negatoscopio", "lettore", "oblo",
-		"cartello", "freccia", "monitor", "quadro", "orologio"]
+		"cartello", "freccia", "monitor", "quadro", "orologio", "acquari"]
 ## I materiali (dipinti sul muro o di cose sul muro) da cui si sta lontani 0,6 m: cartelli, indizi, porte, quadri.
 const MATERIALI_VIETATI := ["schema", "disegno", "tacche", "poster", "cartell", "manifesto", "cassaforte", "cerchi",
 		"quadro", "monitor", "insegna", "targa", "freccia", "lavagna", "porta", "paratia", "tornello", "valvola", "leva",
@@ -34,7 +34,13 @@ const MATERIALI_VIETATI := ["schema", "disegno", "tacche", "poster", "cartell", 
 ## (anche bassi, all'altezza dei bambini, dentro la fascia di piastrelle dove sopra c'è l'intonaco)
 ## La luce minima sul muro (vedi _luce): sotto, al buio, gli scarabocchi non si vedrebbero.
 const LUCE_MIN := 0.04
-const RETTANGOLI := [[2.4, 1.4, 1.35], [2.4, 1.0, 0.85], [1.6, 1.0, 1.25], [1.6, 0.8, 0.75], [1.2, 0.7, 0.7]]
+## (scelta B del coordinatore per l'utente, 28 ottobre: quasi tutti all'altezza dei bambini, fra 30 cm e 1,3 m; uno o due
+## per zona in alto, a 2-2,5 m, dove un bambino non arriva: MODO=alti)
+const RETTANGOLI_BASSI := [[2.0, 0.9, 0.8], [1.6, 0.8, 0.75], [1.2, 0.7, 0.7]]
+const RETTANGOLI_ALTI := [[1.4, 0.5, 2.25], [1.0, 0.45, 2.25]]
+## Le zone dove non si mettono (scelta del coordinatore: interni e infermeria no).
+const ZONE_NO := ["interni", "infermeria"]
+var RETTANGOLI: Array = RETTANGOLI_ALTI if OS.get_environment("MODO") == "alti" else RETTANGOLI_BASSI
 
 var _radice: Node
 var _corpi := {}           # rid -> MeshInstance3D
@@ -213,7 +219,8 @@ func _segna_vietati() -> void:
 		var classe := String(n.get_script().get_global_name()) if n.get_script() else n.get_class()
 		var vietato := n is Decal or n is Interactable or NON_TOCCARE.any(func(w): return p.get_file().contains(w)) \
 				or classe in ["PolaroidPhoto", "Collectible", "Pickup", "WaterButton", "PoweredDoor", "HingedHatch", "Checkpoint"]
-		if not vietato or not _visibile(n):
+		# (gli acquari compaiono dopo: anche nascosti)
+		if not vietato or (not _visibile(n) and not p.contains("acquari")):
 			continue
 		var box := AABB((n as Node3D).global_position, Vector3.ZERO)
 		for m in [n] + n.find_children("*", "VisualInstance3D", true, false):
@@ -221,7 +228,8 @@ func _segna_vietati() -> void:
 				box = box.merge((m as VisualInstance3D).global_transform * (m as VisualInstance3D).get_aabb())
 		if box.size.length() > 30.0:
 			continue   # (un gruppo grande col nome giusto per caso)
-		_vietati.append([box.grow(1.0), String(_radice.get_path_to(n))])
+		# (gli acquari e il loro disegno: lontani 3 m, scelta del coordinatore)
+		_vietati.append([box.grow(3.0 if p.contains("acquari") else 1.0), String(_radice.get_path_to(n))])
 
 
 ## Il nome del materiale colpito da [param h] (un raggio sulle collisioni delle mesh).
@@ -363,7 +371,7 @@ func _candidati(spazio: PhysicsDirectSpaceState3D, punti: Array) -> Array:
 			if absf(n.y) > 0.12 or p.distance_to(h.position) < 1.5 or n.dot(-d) < 0.5:
 				continue
 			var mi: MeshInstance3D = _corpi.get(h.rid)
-			if mi == null or not _architettura(mi):
+			if mi == null or not _architettura(mi) or _zona(mi) in ZONE_NO:
 				continue
 			colpi.append([h.position, n.normalized(), mi])
 			_conta("colpi " + _zona(mi))

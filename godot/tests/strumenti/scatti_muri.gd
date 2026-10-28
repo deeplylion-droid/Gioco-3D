@@ -8,7 +8,7 @@ extends Node
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##        --script res://tests/run.gd -- res://tests/strumenti/scatti_muri.gd <cartella> [scena] [nomi separati da virgole]
 
-const MURI := "res://../docs/proposte/scarabocchi/muri.json"
+var MURI := OS.get_environment("MURI") if OS.get_environment("MURI") != "" else "res://../docs/proposte/scarabocchi/muri.json"
 const RAGGIO := 22.0
 
 var _cartella := "user://scatti_muri"
