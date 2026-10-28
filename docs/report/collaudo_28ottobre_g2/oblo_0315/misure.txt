@@ -8,3 +8,5 @@ OBLO ObloFiume DISTACCO (176 fotogrammi): pipeline nuove [0, 0, 0, 0], fotogramm
 OBLO ObloFiume DOPO: stato 4, parti di lei ancora visibili []
 OBLO ObloFiume RIPARTENZA: stato 0, parti di lei visibili []
 ObloPersonale: distacco fermato dal tempo massimo dopo il fotogramma 168 di 176 (rifatto dopo la torre)
+OBLO torre COMPARSA: pipeline nuove [draw, specialization, surface, mesh] [0, 0, 0, 0], fotogramma più lungo 3905 ms (medio 3515)
+torre: distacco fermato dal tempo massimo dopo il fotogramma 156 di 176 (llvmpipe 3,5 s a fotogramma)
