@@ -105,6 +105,8 @@ var _yaw_vel: Array[float] = [0.0, 0.0, 0.0]
 var _y: Array[float] = [0.0, 0.0, 0.0]
 var _acceso: Array[float] = [0.0, 0.0, 0.0]
 var _sopra: Array[bool] = [false, false, false]
+## Fermo sul fondo e appoggiato con Posa (sulla mesh che si vede, non solo sulla collisione).
+var _assestato: Array[bool] = [false, false, false]
 var _fondo_cerchi: Array[float] = [0.0, 0.0, 0.0]
 var _t := 0.0
 var _zaino_collegato: Node
@@ -292,13 +294,13 @@ func _materiale_cerchio(i: int) -> Material:
 	return m
 
 
-## Il giocattolo: un corpo che si muove da script (galleggia, si spinge, si appoggia), sullo strato degli oggetti
-## (il getto lo colpisce e il giocatore ci sbatte), col modello vero se c'è.
+## Il giocattolo: un corpo che si muove da script (galleggia, si spinge, si appoggia), solido come i gonfiabili già
+## sul fondo (strato del mondo: il giocatore ci sbatte e ci sale; il getto lo colpisce), col modello vero se c'è.
 func _giocattolo(i: int) -> AnimatableBody3D:
 	var g := AnimatableBody3D.new()
 	g.name = NOMI_GIOCATTOLI[i]
 	g.sync_to_physics = false
-	g.collision_layer = Layers.PROPS
+	g.collision_layer = Layers.WORLD | Layers.PROPS
 	g.collision_mask = 0
 	var vero: String = DIR + FILE_GIOCATTOLI[i]
 	var modello: Node3D
@@ -332,49 +334,34 @@ func _giocattolo(i: int) -> AnimatableBody3D:
 	return g
 
 
-## Segnaposto con le misure dei modelli (paperella 45x38 cm, pallone 50 cm, balena 75x35 cm): gomma colorata.
+## Segnaposto con le misure dei modelli (paperella 45x38 cm, pallone 50 cm, balena 75x35 cm): gomma colorata, una
+## mesh sola (un pezzo unico, come sarà il modello vero).
 func _segnaposto(i: int) -> Node3D:
-	var n := Node3D.new()
+	var mi := MeshInstance3D.new()
 	var gomma := StandardMaterial3D.new()
 	gomma.albedo_color = COLORI[i].darkened(0.1)
 	gomma.roughness = 0.55
-	var parti: Array = []
+	var sfera := SphereMesh.new()
+	sfera.radial_segments = 32
+	sfera.rings = 16
 	match i:
 		0:
-			parti = [[_sfera(0.2, 0.15), Vector3(0, 0.15, 0.03), Vector3(1.1, 1.0, 1.25)],
-				[_sfera(0.11, 0.11), Vector3(0, 0.3, -0.13), Vector3.ONE]]
-			var becco := MeshInstance3D.new()
-			var b := _sfera(0.05, 0.05)
-			becco.mesh = b
-			var arancio := StandardMaterial3D.new()
-			arancio.albedo_color = Color(1.0, 0.45, 0.05)
-			arancio.roughness = 0.5
-			becco.material_override = arancio
-			becco.position = Vector3(0, 0.29, -0.24)
-			becco.scale = Vector3(1.0, 0.5, 1.4)
-			n.add_child(becco)
+			sfera.radius = 0.2
+			sfera.height = 0.38
+			mi.scale = Vector3(1.1, 1.0, 1.2)
 		1:
-			parti = [[_sfera(0.25, 0.25), Vector3(0, 0.25, 0), Vector3.ONE]]
+			sfera.radius = 0.25
+			sfera.height = 0.5
 		2:
-			parti = [[_sfera(0.175, 0.175), Vector3(0, 0.175, 0), Vector3(1.0, 1.0, 2.1)],
-				[_sfera(0.09, 0.05), Vector3(0, 0.12, 0.42), Vector3(2.2, 1.0, 1.0)]]
-	for p in parti:
-		var mi := MeshInstance3D.new()
-		mi.mesh = p[0]
-		mi.material_override = gomma
-		mi.position = p[1]
-		mi.scale = p[2]
-		n.add_child(mi)
+			sfera.radius = 0.175
+			sfera.height = 0.35
+			mi.scale = Vector3(1.0, 1.0, 2.1)
+	mi.mesh = sfera
+	mi.material_override = gomma
+	mi.position.y = sfera.height * 0.5
+	var n := Node3D.new()
+	n.add_child(mi)
 	return n
-
-
-func _sfera(r: float, h: float) -> SphereMesh:
-	var s := SphereMesh.new()
-	s.radius = r
-	s.height = h * 2.0
-	s.radial_segments = 24
-	s.rings = 12
-	return s
 
 
 ## Il fondo sotto i cerchi (Posa, lo strumento comune) e i giocattoli sul pelo dell'acqua; poi il riscaldamento: tutto
@@ -400,8 +387,12 @@ func _appoggia() -> void:
 		_metti_piatto(i, _giu[i])
 	_ostacoli = _ostacoli_fondo()
 	for i in 3:
-		_y[i] = _quota_bersaglio(i)
+		# (sul piatto sceso la quota è quella del piatto; gli altri sul pelo dell'acqua o sul fondo)
+		_y[i] = _cerchi[i].global_position.y + sporgenza - corsa if _giu[i] else _quota_bersaglio(i)
 		_giocattoli[i].global_position.y = _y[i]
+		if _giu[i]:
+			_bordo(_mat_cerchi[i], 1.0)
+			_acceso[i] = 1.0
 	_pronto = true
 	if not Engine.is_editor_hint() and get_viewport():
 		await RiscaldamentoShader.disegna_fuori_vista(self, get_viewport(), 4, func(): _accendi_tutti(1.0))
@@ -515,7 +506,10 @@ func _galleggia(i: int) -> bool:
 func _fondo(i: int) -> float:
 	var g := _giocattoli[i]
 	var p := g.global_position
-	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, p.y + 1.2, p.z), Vector3(p.x, p.y - 3.0, p.z), Layers.WORLD)
+	var escludi: Array[RID] = []
+	for x in _giocattoli:
+		escludi.append(x.get_rid())
+	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, p.y + 1.2, p.z), Vector3(p.x, p.y - 3.0, p.z), Layers.WORLD, escludi)
 	var h := get_world_3d().direct_space_state.intersect_ray(q)
 	return (h.position as Vector3).y if not h.is_empty() else p.y
 
@@ -583,8 +577,22 @@ func _muovi(i: int, delta: float) -> void:
 		g.rotation.x = sin(_t * 0.9 + i) * 0.04
 		g.rotation.z = sin(_t * 1.1 + i * 1.7) * 0.04
 	else:
-		_y[i] = maxf(bersaglio, _y[i] - 1.5 * delta) if _y[i] > bersaglio else bersaglio
+		if v.length() > 0.03:
+			_assestato[i] = false
+		if not _assestato[i]:
+			_y[i] = maxf(bersaglio, _y[i] - 1.5 * delta) if _y[i] > bersaglio else bersaglio
 		g.global_position.y = _y[i]
+		# fermo e già giù: lo appoggia Posa, una volta (dove la collisione e la mesh del fondo non coincidono, come
+		# sul coperchio della botola, resterebbe sospeso di un paio di centimetri)
+		if not _assestato[i] and v.length() < 0.02 and absf(_y[i] - bersaglio) < 0.002:
+			_assestato[i] = true
+			var escludi: Array[RID] = []
+			for x in _giocattoli:
+				escludi.append(x.get_rid())
+			g.global_position.y = bersaglio + 0.04
+			if Posa.appoggia_a_terra(g, 0.0, false, escludi):
+				_y[i] = minf(g.global_position.y, bersaglio)
+			g.global_position.y = _y[i]
 		g.rotation.x = lerpf(g.rotation.x, 0.0, 1.0 - exp(-8.0 * delta))
 		g.rotation.z = lerpf(g.rotation.z, 0.0, 1.0 - exp(-8.0 * delta))
 
