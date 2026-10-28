@@ -26,12 +26,20 @@ const NON_TOCCARE := ["porta", "door", "portone", "portello", "saracinesca", "se
 		"polaroid", "pulsante", "button", "leva", "valvola", "poster", "cartellone", "manifesto", "bagnino", "targa",
 		"insegna", "disegno", "schema", "tacche", "cassaforte", "cerchi", "lavagna", "negatoscopio", "lettore", "oblo",
 		"cartello", "freccia", "monitor", "quadro", "orologio"]
+## I materiali (dipinti sul muro o di cose sul muro) da cui si sta lontani 0,6 m: cartelli, indizi, porte, quadri.
+const MATERIALI_VIETATI := ["schema", "disegno", "tacche", "poster", "cartell", "manifesto", "cassaforte", "cerchi",
+		"quadro", "monitor", "insegna", "targa", "freccia", "lavagna", "porta", "paratia", "tornello", "valvola", "leva",
+		"pulsante"]
 ## I rettangoli che si provano: [larghezza, altezza, altezza del centro sul pavimento].
 ## (anche bassi, all'altezza dei bambini, dentro la fascia di piastrelle dove sopra c'è l'intonaco)
+## La luce minima sul muro (vedi _luce): sotto, al buio, gli scarabocchi non si vedrebbero.
+const LUCE_MIN := 0.04
 const RETTANGOLI := [[2.4, 1.4, 1.35], [2.4, 1.0, 0.85], [1.6, 1.0, 1.25], [1.6, 0.8, 0.75], [1.2, 0.7, 0.7]]
 
 var _radice: Node
 var _corpi := {}           # rid -> MeshInstance3D
+var _superfici := {}       # MeshInstance3D -> [triangoli alla fine di ogni superficie]
+var _luci: Array = []      # [posizione, energia, portata, Light3D]
 var _oggetti_box: Array = []   # [AABB, percorso] delle mesh non architettura
 var _vietati: Array = []       # [AABB allargato, motivo]
 var _risultati := []
@@ -67,6 +75,7 @@ func _frames(n: int) -> void:
 
 func _scena(percorso: String) -> void:
 	var t0 := Time.get_ticks_msec()
+	GameState.imposta_luci(GameState.Luci.PRIMA_DEL_RISVEGLIO if percorso.ends_with("sala_principale.tscn") else GameState.Luci.BLACKOUT)
 	_radice = (load(percorso) as PackedScene).instantiate()
 	add_child(_radice)
 	await _frames(30)
@@ -88,6 +97,13 @@ func _scena(percorso: String) -> void:
 	_vietati.clear()
 	_crea_corpi()
 	_segna_vietati()
+	_luci.clear()
+	for l in _radice.find_children("*", "Light3D", true, false):
+		var lu := l as Light3D
+		if not lu.is_visible_in_tree() or lu.light_energy <= 0.01 or lu is DirectionalLight3D:
+			continue
+		var portata: float = (lu as OmniLight3D).omni_range if lu is OmniLight3D else (lu as SpotLight3D).spot_range
+		_luci.append([lu.global_position, lu.light_energy, portata, lu])
 	await _frames(3)
 	var spazio := get_viewport().world_3d.direct_space_state
 	var punti := _cammino(spazio)
@@ -167,6 +183,14 @@ func _crea_corpi() -> void:
 		var facce: PackedVector3Array = mi.mesh.get_faces()
 		if facce.is_empty():
 			continue
+		var fine := []
+		var conta := 0
+		for si in mi.mesh.get_surface_count():
+			var arr := mi.mesh.surface_get_arrays(si)
+			var idx = arr[Mesh.ARRAY_INDEX]
+			conta += ((idx as PackedInt32Array).size() if idx != null and (idx as PackedInt32Array).size() > 0 else (arr[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()) / 3
+			fine.append(conta)
+		_superfici[mi] = fine
 		var forma := ConcavePolygonShape3D.new()
 		forma.set_faces(mi.global_transform * facce)
 		forma.backface_collision = true
@@ -198,6 +222,46 @@ func _segna_vietati() -> void:
 		if box.size.length() > 30.0:
 			continue   # (un gruppo grande col nome giusto per caso)
 		_vietati.append([box.grow(1.0), String(_radice.get_path_to(n))])
+
+
+## Il nome del materiale colpito da [param h] (un raggio sulle collisioni delle mesh).
+func _materiale(h: Dictionary) -> String:
+	var mi: MeshInstance3D = _corpi.get(h.rid)
+	if mi == null or not _superfici.has(mi):
+		return ""
+	var f := int(h.get("face_index", -1))
+	var fine: Array = _superfici[mi]
+	for si in fine.size():
+		if f < int(fine[si]):
+			var m := mi.get_active_material(si)
+			return String(m.resource_name).to_lower() if m else ""
+	return ""
+
+
+## La luce che arriva su [param p] (normale [param n]) dalle lampade accese che lo vedono: la somma di energia per
+## attenuazione per coseno (1 è una lampada da 1 a 1-2 m).
+func _luce(spazio: PhysicsDirectSpaceState3D, p: Vector3, n: Vector3) -> float:
+	var tot := 0.0
+	for l in _luci:
+		var lp: Vector3 = l[0]
+		var d := p.distance_to(lp)
+		if d > float(l[2]) or d < 0.01:
+			continue
+		var cosn := n.dot((lp - p) / d)
+		if cosn <= 0.0:
+			continue
+		var att := pow(1.0 - d / float(l[2]), 2.0)
+		if l[3] is SpotLight3D:
+			var sp := l[3] as SpotLight3D
+			var dir := -sp.global_basis.z
+			if rad_to_deg(dir.angle_to((p - lp) / d)) > sp.spot_angle:
+				continue
+		# coperta? (il colpo vicino alla lampada è la sua lampada)
+		var h := _raggio(spazio, p + n * 0.05, lp)
+		if not h.is_empty() and (h.position as Vector3).distance_to(lp) > 0.5:
+			continue
+		tot += float(l[1]) * att * cosn
+	return tot
 
 
 # --- dove si cammina -----------------------------------------------------------------------------------------------
@@ -334,7 +398,7 @@ func _candidati(spazio: PhysicsDirectSpaceState3D, punti: Array) -> Array:
 			if voto < float(meglio[0]):
 				meglio = [voto, occhi]
 		m["vista"] = vista
-		m["punteggio"] = snappedf(float(vista) * float(m["largo"]) * float(m["alto"]), 0.1)
+		m["punteggio"] = snappedf(float(vista) * float(m["largo"]) * float(m["alto"]) * minf(float(m["luce"]), 1.0), 0.1)
 		m["occhi"] = _v(meglio[1])
 	muri = muri.filter(func(m): return int(m["vista"]) > 0)
 	muri.sort_custom(func(a, b): return float(a["punteggio"]) > float(b["punteggio"]))
@@ -351,7 +415,7 @@ func _candidati(spazio: PhysicsDirectSpaceState3D, punti: Array) -> Array:
 	var out := []
 	for m in muri:
 		var z: String = m["zona"]
-		if int(per_zona.get(z, 0)) >= 6:
+		if int(per_zona.get(z, 0)) >= 8:
 			continue
 		per_zona[z] = int(per_zona.get(z, 0)) + 1
 		m.erase("_pos")
@@ -399,6 +463,22 @@ func _rettangolo(spazio: PhysicsDirectSpaceState3D, pos: Vector3, n: Vector3, mi
 				break
 		if not buono:
 			continue
+		# niente cartelli o indizi dipinti sul muro (lo schema delle pompe è un materiale del muro): una griglia più larga
+		# di 0,6 m intorno
+		for iu in 9:
+			for iv in 6:
+				var q := centro + tang * ((w + 1.2) * (float(iu) / 8.0 - 0.5)) + Vector3.UP * ((h + 1.2) * (float(iv) / 5.0 - 0.5))
+				var hh := _raggio(spazio, q + n * 0.6, q - n * 0.2)
+				if not hh.is_empty():
+					var mat := _materiale(hh)
+					if MATERIALI_VIETATI.any(func(x): return mat.contains(x)):
+						buono = false
+						_conta("indizio dipinto %s %s" % [_zona(mi), mat])
+						break
+			if not buono:
+				break
+		if not buono:
+			continue
 		# niente oggetti davanti (0,5 m) né vicino, niente porte, Polaroid, interattivi o indizi entro 1 m
 		var lastra := AABB(centro, Vector3.ZERO)
 		for su in [-0.5, 0.5]:
@@ -412,6 +492,13 @@ func _rettangolo(spazio: PhysicsDirectSpaceState3D, pos: Vector3, n: Vector3, mi
 		if _vietati.any(func(o): return (o[0] as AABB).intersects(lastra)):
 			_conta("vietati %s %.1f" % [_zona(mi), w])
 			continue
-		return {"zona": _zona(mi), "centro": _v(centro), "normale": _v(n), "largo": w, "alto": h,
+		var luce := 0.0
+		for su in [-0.3, 0.0, 0.3]:
+			for la in [-0.3, 0.0, 0.3]:
+				luce += _luce(spazio, centro + tang * w * la + Vector3.UP * h * su, n) / 9.0
+		if luce < LUCE_MIN:
+			_conta("buio %s %.1f" % [_zona(mi), w])
+			continue
+		return {"zona": _zona(mi), "centro": _v(centro), "normale": _v(n), "largo": w, "alto": h, "luce": snappedf(luce, 0.01),
 				"mesh": String(_radice.get_path_to(mi)), "scena": _radice.scene_file_path, "_pos": centro, "_n": n}
 	return {}
