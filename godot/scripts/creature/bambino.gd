@@ -28,9 +28,12 @@ enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
 
 const ANIMAZIONI: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"si_gira"]
 const CICLICHE: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa"]
-## Velocità a cui sono fatte le animazioni di camminata e corsa (m/s, a velocità 1).
-const VEL_CAMMINATA_ANIM := 0.45
-const VEL_CORSA_ANIM := 2.2
+## Accelerazione della camminata e della corsa (m/s²): parte e si ferma con il passo, non di colpo.
+const ACCEL_CAMMINATA := 1.2
+const ACCEL_CORSA := 4.5
+## Quanto gira al massimo camminando e correndo (gradi al secondo): curve, non giri sul posto.
+const GIRO_CAMMINATA := 110.0
+const GIRO_CORSA := 260.0
 
 @export var modalita := Modalita.STATUA
 ## Comincia già rivelato (il cubo spaccato, l'agnellino con il muso aperto).
@@ -69,6 +72,12 @@ const VEL_CORSA_ANIM := 2.2
 ## Alla fine del percorso sparisce (per esempio dietro un angolo) invece di fermarsi a osservare.
 @export var sparisce_a_fine_percorso := false
 
+## Quanto avanzano i piedi a terra nelle animazioni di camminata e corsa (m/s, a velocità 1), misurato sugli
+## ossa dei piedi (tests/test_bambini_passi.gd): il corpo avanza alla stessa velocità e i piedi non scivolano.
+## L'agnellino ha le gambe più corte del bambino a cubo.
+@export var vel_camminata_anim := 0.45
+@export var vel_corsa_anim := 2.45
+
 @export_group("Fuga")
 ## Se il giocatore arriva più vicino di così, scappa (0 = mai).
 @export var distanza_fuga := 3.5
@@ -102,6 +111,7 @@ var _punti: Array[Vector3] = []
 var _in_fuga := 0.0
 var _fermo_a_fine_fuga := false
 var _influenza := 0.0
+var _vel := 0.0           # velocità del corpo adesso (m/s), verso dove guarda
 
 
 func _ready() -> void:
@@ -221,8 +231,8 @@ func cammina(punti: Array[Node3D]) -> void:
 		osserva()
 		return
 	_anima(&"cammina")
-	for ap in _player_anim:
-		ap.speed_scale = velocita_camminata / VEL_CAMMINATA_ANIM
+	_vel = 0.0
+	_passo_animazione(vel_camminata_anim)
 
 
 ## Scappa subito (lungo punti_fuga, oppure via dal giocatore) e poi sparisce.
@@ -247,9 +257,8 @@ func scappa_ora() -> void:
 		if via.length() < 0.01:
 			via = global_basis.z
 		_punti.append(global_position + via.normalized() * distanza_fuga_libera)
-	_anima(&"corsa", 0.25)
-	for ap in _player_anim:
-		ap.speed_scale = velocita_corsa / VEL_CORSA_ANIM
+	_anima(&"corsa", 0.3)
+	_passo_animazione(vel_corsa_anim)
 	scappa.emit()
 
 
@@ -298,7 +307,7 @@ func _process(delta: float) -> void:
 			if _deve_scappare(p):
 				scappa_ora()
 				return
-			if _segui_punti(velocita_camminata * delta, deg_to_rad(90.0) * delta):
+			if _segui_punti(delta, velocita_camminata, GIRO_CAMMINATA, ACCEL_CAMMINATA, vel_camminata_anim, true):
 				if sparisce_a_fine_percorso:
 					_sparisci()
 				else:
@@ -307,7 +316,7 @@ func _process(delta: float) -> void:
 					osserva()
 		Modalita.SCAPPA:
 			_in_fuga += delta
-			var arrivato := _segui_punti(velocita_corsa * delta, deg_to_rad(540.0) * delta)
+			var arrivato := _segui_punti(delta, velocita_corsa, GIRO_CORSA, ACCEL_CORSA, vel_corsa_anim, false)
 			if not sparisce_fuori_vista:
 				if arrivato:
 					_sparisci()
@@ -429,16 +438,41 @@ func _gira_verso(punto: Vector3, passo: float) -> void:
 	rotation.y = rotate_toward(rotation.y, voluto, passo)
 
 
-## Avanza verso il prossimo punto; true quando è arrivato all'ultimo.
-func _segui_punti(passo: float, giro: float) -> bool:
-	while not _punti.is_empty() and global_position.distance_to(_punti[0]) < 0.1:
+## Avanza verso il prossimo punto come si cammina davvero: accelera e rallenta ([param accel]), gira in curva al
+## massimo di [param giro] gradi al secondo (più piano quando deve girare molto), e va sempre dove guarda; l'animazione
+## va alla stessa velocità del corpo ([param vel_anim]: quanto avanzano i piedi a terra), così i piedi non
+## scivolano. Con [param ferma] rallenta fino a fermarsi sull'ultimo punto. True quando è arrivato all'ultimo.
+func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_anim: float, ferma: bool) -> bool:
+	while not _punti.is_empty() and global_position.distance_to(_punti[0]) < (0.12 if _punti.size() == 1 else 0.45):
 		_punti.pop_front()
 	if _punti.is_empty():
+		_vel = 0.0
 		return true
 	var prossimo := _punti[0]
-	_gira_verso(prossimo, giro)
-	global_position = global_position.move_toward(prossimo, passo)
+	var verso := prossimo - global_position
+	verso.y = 0.0
+	var errore := absf(angle_difference(rotation.y, atan2(verso.x, verso.z)))
+	_gira_verso(prossimo, deg_to_rad(giro) * delta)
+	# girandosi molto rallenta (non va di lato); se deve voltarsi (oltre 75 gradi, per esempio per scappare da chi
+	# guardava) prima si volta quasi sul posto, a passi lenti, e poi parte: non fa la curva larga dentro un muro.
+	# Vicino all'ultimo punto si ferma col passo
+	var voluta := vel_max * clampf(cos(errore), 0.2, 1.0) if errore < deg_to_rad(75.0) else 0.0
+	if ferma and _punti.size() == 1:
+		voluta = minf(voluta, sqrt(2.0 * accel * verso.length()))
+	_vel = move_toward(_vel, voluta, accel * delta)
+	var avanti := global_basis.z
+	avanti.y = 0.0
+	var passo := minf(_vel * delta, verso.length()) if _punti.size() == 1 else _vel * delta
+	global_position += avanti.normalized() * passo
+	_passo_animazione(vel_anim)
 	return false
+
+
+## L'animazione di camminata o corsa alla velocità del corpo (i piedi non scivolano); da fermo un passo minimo.
+func _passo_animazione(vel_anim: float) -> void:
+	var scala := clampf(_vel / maxf(vel_anim, 0.01), 0.25, 1.6)
+	for ap in _player_anim:
+		ap.speed_scale = scala
 
 
 func _sparisci() -> void:

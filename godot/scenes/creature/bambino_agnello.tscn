@@ -9,6 +9,8 @@
 
 [node name="BambinoAgnello" type="Node3D" groups=["bambini"]]
 script = ExtResource("1_bambino")
+vel_camminata_anim = 0.34
+vel_corsa_anim = 1.9
 
 [node name="Calmo" parent="." instance=ExtResource("2_calmo")]
 
