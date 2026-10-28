@@ -502,3 +502,5 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **Asset CC0**: texture da Poly Haven e ambientCG, modelli da Kenney e Quaternius.
 
 **Continua nel titolo** (richiesta dell'utente del 25 ottobre: "ciò non significa che non ci debba essere continua sul menu, ovviamente!!"): il primo pulsante del menu, che compare solo se c'è un salvataggio. Riparte dall'ultimo checkpoint salvato su disco, anche dopo una chiusura o un crash. Il menu di prova F9 resta nascosto.
+
+**Zone non ancora pronte sui PC lenti: A** (scelta dell'utente del 25 ottobre): se arrivi a una zona caricata dopo (risalita, torre, tunnel) prima che sia pronta, la sua porta resta chiusa col rumore del meccanismo finché la zona è pronta, poi si apre. Scartate B (la zona che compare a pezzi) e C (un attimo di nero con l'icona di caricamento). I caricamenti partono prima, quindi su un PC buono non dovrebbe capitare.

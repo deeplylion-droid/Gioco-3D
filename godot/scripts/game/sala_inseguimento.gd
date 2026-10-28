@@ -160,7 +160,7 @@ func _passi() -> Array:
 	for i in 4:
 		out.append(func(): _modello(i))
 	out.append(_tubi)
-	out.append_array([_acque, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea])
+	out.append_array([_acque, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
 	if crea_luci:
 		out.append_array(_passi_luci())
 	return out
@@ -513,25 +513,22 @@ const RISORSE_LEI := ["res://assets/models/medusa/medusa.glb", "res://assets/mod
 	"res://assets/models/medusa/medusa_tentacoli_bagnata.tres"]
 
 
+## Lei in tre passi della costruzione (il modello; la luce e il viso; il movimento secondario), così nessun fotogramma
+## li paga tutti insieme. Il modello e i materiali sono quelli di LeiOblo, caricati col thread della zona (preload).
 func _lei_crea() -> void:
 	lei = MedusaAffacciata.new()
 	lei.name = "Lei"
-	lei.model = load("res://assets/models/medusa/medusa.glb")
-	lei.bell_material = load("res://assets/models/medusa/medusa_campana.tres")
-	lei.material_map = {
-		"M_capelli": load("res://assets/models/medusa/medusa_capelli_bagnata.tres"),
-		"M_ciocche": load("res://assets/models/medusa/medusa_ciocche_bagnata.tres"),
-		"M_mani": load("res://assets/models/medusa/medusa_mani_bagnata.tres"),
-		"M_occhio_bulbo": load("res://assets/models/medusa/medusa_occhio.tres"),
-		"M_orbita": load("res://assets/models/medusa/medusa_orbita_bagnata.tres"),
-		"M_pelle": load("res://assets/models/medusa/medusa_pelle_bagnata.tres"),
-		"M_tentacoli": load("res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
-	}
+	lei.model = LeiOblo.MODELLO
+	lei.bell_material = LeiOblo.CAMPANA
+	lei.material_map = LeiOblo.MATERIALI.duplicate()
 	# le animazioni dell'inseguimento (tools/blender/medusa_inseguimento.py): portano anche il su e giù
 	lei.animazioni_inseguimento = true
 	lei.animazione = &"inseguimento/incombe"
 	lei.visible = false
 	add_child(lei)
+
+
+func _lei_parti() -> void:
 	_lei_luce = OmniLight3D.new()
 	_lei_luce.light_color = ROSA
 	_lei_luce.light_energy = 6.0
@@ -551,14 +548,17 @@ func _lei_crea() -> void:
 	_lei_testa.add_child(cs)
 	_lei_testa.position = Vector3(0, 3.4, 0.6)
 	lei.add_child(_lei_testa)
-	if not Engine.has_meta(&"morbidezza_spenta"):
-		_morbidezza = MorbidezzaLei.su(lei)
-		_forme_lei()   # (qui, con la sala: non quando lei sale, sarebbe un fotogramma lungo)
 	_lei_testa.water_hit.connect(func(litri: float, _p: Vector3, _d: Vector3):
 		if lei_stato == Lei.SU or lei_stato == Lei.SALE:
 			_getto_preso += litri
 			if _getto_preso >= getto_in_faccia and not _dove_scolo():
 				respingi())
+
+
+func _lei_morbida() -> void:
+	if not Engine.has_meta(&"morbidezza_spenta"):
+		_morbidezza = MorbidezzaLei.su(lei)
+		_forme_lei()   # (qui, con la sala: non quando lei sale, sarebbe un fotogramma lungo)
 
 
 ## Cambia la posa di lei (le animazioni del modello: "insegue", "affacciata").
