@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/models/enigma_giocattoli/cerchio_mosaico.gdshader" id="1_n5wky"]
+
+[resource]
+resource_name = "cerchio_giallo"
+render_priority = 0
+shader = ExtResource("1_n5wky")
+shader_parameter/colore = Color(0.86, 0.68, 0.12, 1)
+shader_parameter/bordo_acceso = null
+shader_parameter/energia_bordo = null
+shader_parameter/colore_luce = null
+shader_parameter/sporco = null
+shader_parameter/bagnato = null
