@@ -30,7 +30,21 @@ Non dicono come lei è diventata viva, né perché.
 
 ## Gli scatti dal motore
 
-Per ognuna c'è uno scatto nel suo posto, dagli occhi del giocatore, e uno da vicino. Sono in questa cartella (`p12_posto.jpg`, `p12_vicino.jpg` e così via) e li fa `godot/tests/scatti_polaroid_nuove.gd`. Le luci sono quelle del momento in cui ci si arriva, cioè il blackout con le luci rosse d'emergenza. La sala intera su llvmpipe non ci sta più in memoria: la P14 è scattata nella sala principale ridotta (`tests/scena_ridotta.gd`), senza gli ambienti che dagli acquari non si vedono.
+Per ognuna c'è uno scatto nel suo posto, dagli occhi del giocatore, e uno da vicino. Li fa `godot/tests/scatti_polaroid_nuove.gd`. Le luci sono quelle del momento in cui ci si arriva, cioè il blackout con le luci rosse d'emergenza. La sala intera su llvmpipe non ci sta più in memoria: la P14 è scattata nella sala principale ridotta (`tests/scena_ridotta.gd`, preset medio), senza gli interni, gli ambienti tecnici, la risalita, la torre degli scivoli esterna, l'area bimbi, i dettagli e la vasca di lei, con gli acquari pieni come al ritorno dal magazzino.
+
+| | Nel suo posto | Da vicino |
+|---|---|---|
+| P12 | ![](p12_posto.jpg) | ![](p12_vicino.jpg) |
+| P13 | ![](p13_posto.jpg) | ![](p13_vicino.jpg) |
+| P14 | ![](p14_posto.jpg) | ![](p14_vicino.jpg) |
+| P15 | ![](p15_posto.jpg) | ![](p15_vicino.jpg) |
+| P16 | ![](p16_posto.jpg) | ![](p16_vicino.jpg) |
+
+## Controlli
+
+- Posizionamento in locale (`tests/controllo_posizionamento.gd`): sala principale, con la risalita e gli acquari in tutti gli stati, e sala della torre. 0 casi nuovi e 0 da correggere.
+- Test: `test_sala` (10 Polaroid nella sala, appoggiate, e il totale), `test_risalita_tardi` (14 nel totale all'avvio), `test_risalita` (P13, P15 e P16 ci sono e sono appoggiate), `test_torre` (P12 c'è ed è appoggiata).
+- Il percorso delle partenze del menu di prova (`assets/prova/*.json`) non è rifatto: chi parte dalla torre o dal tunnel non ha le Polaroid nuove fra quelle raccolte. Si rifà con `tests/genera_partenze_prova.gd` quando l'utente approva.
 
 ## Da decidere con l'utente
 

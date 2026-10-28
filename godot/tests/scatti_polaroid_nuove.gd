@@ -27,13 +27,15 @@ const POSTI := {"acquari": [
 	["enigma_piscina_alto", Vector3(-3.0, 3.2, -1.0), Vector3(1.0, -2.0, 4.0)],
 ]}
 const DELLA_ZONA := {"risalita": ["Polaroid13", "Polaroid15", "Polaroid16"], "torre": ["Polaroid12"], "acquari": ["Polaroid14"]}
-## [nome, camera "posto" (occhi del giocatore, 1,6 m sopra il pavimento), camera "vicino"]
+## [nome, camera "posto" (occhi del giocatore, 1,6 m sopra il pavimento), camera "vicino", dove guarda la camera "posto"
+## rispetto alla Polaroid (se manca, la Polaroid)]
 const CAMERE := {
-	"Polaroid13": [Vector3(-1.1, 1.6, -2.4), Vector3(-0.3, 0.55, -0.25)],
+	"Polaroid13": [Vector3(-1.7, 1.2, -1.6), Vector3(-0.3, 0.55, -0.25)],
 	"Polaroid15": [Vector3(-1.3, 1.6, 1.4), Vector3(-0.35, 0.55, 0.2)],
 	"Polaroid16": [Vector3(1.9, 1.6, -1.4), Vector3(0.35, 0.55, -0.2)],
 	"Polaroid12": [Vector3(-1.1, 1.6, -1.55), Vector3(-0.3, 0.55, -0.25)],
-	"Polaroid14": [Vector3(-1.8, 1.6, 1.2), Vector3(-0.35, 0.55, 0.2)],
+	# (la P14 col disegno sul vetro dell'acquario giallo sopra: la camera guarda un po' più in alto e indietro)
+	"Polaroid14": [Vector3(-0.6, 1.6, 2.6), Vector3(-0.35, 0.55, 0.2), Vector3(0.1, 0.9, -1.2)],
 }
 
 
@@ -64,8 +66,21 @@ func _run() -> void:
 		while get_tree().current_scene == null or get_tree().current_scene == self:
 			await get_tree().process_frame
 		scena = get_tree().current_scene
+		# il giocatore della sala parte dove c'erano gli interni, tolti: cadrebbe, morirebbe e la sala si ricaricherebbe
+		var giocatore := scena.get_node_or_null(^"Player") as Node3D
+		if giocatore:
+			giocatore.process_mode = Node.PROCESS_MODE_DISABLED
+			giocatore.global_position = Vector3(12.0, 0.0, -18.0)
+			# (fermo, anche la riga dei comandi del suo HUD resterebbe a schermo)
+			var hud := giocatore.get_node_or_null(^"HUD")
+			if hud:
+				hud.set(&"visible", false)
 		we.queue_free()
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
+		# gli acquari come al ritorno dal magazzino, quando si trova la P14: pieni e con le lampadine del portone accese
+		var enigma := scena.get_node_or_null(^"Gioco/EnigmaAcquari")
+		if enigma:
+			enigma.call(&"_mostra", true)
 	else:
 		scena = (load(ZONE[zona]) as PackedScene).instantiate()
 		get_tree().root.add_child(scena)
@@ -97,7 +112,8 @@ func _run() -> void:
 		print("POLAROID %s in %s (sotto %s)" % [foto.name, foto.global_position, padre.name])
 		for k in 2:
 			var occhio: Vector3 = foto.global_position + su * (c[k] as Vector3)
-			cam.look_at_from_position(occhio, foto.global_position, Vector3.UP)
+			var guarda: Vector3 = foto.global_position + (su * (c[2] as Vector3) if k == 0 and c.size() > 2 else Vector3.ZERO)
+			cam.look_at_from_position(occhio, guarda, Vector3.UP)
 			for i in 40:
 				await get_tree().process_frame
 			await RenderingServer.frame_post_draw

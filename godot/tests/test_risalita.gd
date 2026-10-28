@@ -10,6 +10,7 @@ extends Node
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita.gd
 
 const SCENA := "res://tests/scene/risalita_prova.tscn"
+const POLAROID_LIBERE := preload("res://tests/polaroid_libere.gd")
 
 var level: Node
 var p: Player
@@ -53,6 +54,12 @@ func _run() -> void:
 	check(ev.fuori and not fiume.a_bordo(), "si arriva all'approdo e si scende")
 	await _secondi(0.5)
 	check(p.is_on_floor() and absf(p.global_position.y - (-5.4)) < 0.1, "sulla banchina dell'approdo (%s)" % str(p.global_position))
+	# le Polaroid nuove della proposta del 25 ottobre notte: nel corridoio verso il fiume, nella zona del personale e
+	# all'approdo, appoggiate (Posa) da 0 a 1 cm sopra quello che hanno sotto
+	for n in ["Polaroid13", "Polaroid15", "Polaroid16"]:
+		var f := ris.find_child(n, true, false) as Node3D
+		var h: float = POLAROID_LIBERE.appoggio(level, f) if f else INF
+		check(f != null and h > -0.002 and h < 0.012, "%s c'è ed è appoggiata (%.1f cm sopra quello che ha sotto)" % [n, h * 100.0])
 
 	print("3. Zona del personale, infermeria, scala di servizio")
 	var porta := ris.get_node(^"Fiume/Marker/PortaPersonale") as Node3D

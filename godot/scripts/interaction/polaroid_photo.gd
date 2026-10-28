@@ -51,8 +51,26 @@ static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float) -> Polar
 
 
 func _appoggia() -> void:
+	# (nelle stanze costruite a pezzi mentre si gioca, come il fiume, il pavimento può arrivare dopo: si aspetta la fine)
+	var n := get_parent()
+	while n:
+		while &"costruita" in n and not bool(n.get(&"costruita")) and is_inside_tree():
+			await get_tree().process_frame
+		n = n.get_parent()
+	if not is_inside_tree():
+		return
 	await get_tree().physics_frame
 	await get_tree().physics_frame
+	# (il fiume caricato a gioco avviato entra nella scena prima del suo pavimento: si riprova finché c'è, al massimo
+	# 20 secondi, poi Posa dice che non c'è niente sotto)
+	for i in 120:
+		if not is_inside_tree():
+			return
+		var da := global_position + Vector3.UP * 0.05
+		var q := PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * Posa.PORTATA, Posa.STRATI)
+		if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():
+			break
+		await get_tree().create_timer(0.17, false, true).timeout
 	if is_inside_tree():
 		Posa.appoggia_a_terra(self, 0.004)
 
