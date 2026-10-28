@@ -98,6 +98,12 @@ func _run() -> void:
 	var oggetti: Dictionary = GameState.snapshot.get("objects", {})
 	check(oggetti.get(chiave) == girata, "l'istantanea senza le stanze ha lo stato della paratia (%s)" % str(oggetti.get(chiave)))
 	p.teleport((ris.get_node(^"Marker/PortaFiume") as Node3D).global_position, 0.0, 0.0)
+	# (le stanze non si caricano più in un fotogramma: il thread e la costruzione a pezzi, al più qualche secondo;
+	# nel gioco la porta resta chiusa intanto, AttesaZone)
+	var attesa := 0.0
+	while not AttesaZone.e_pronta(&"risalita") and attesa < 30.0:
+		await _secondi(0.25)
+		attesa += 0.25
 	await _secondi(0.3)
 	par = level.get_node_or_null(NodePath(chiave))
 	check(par != null and par.call(&"save_state") == girata, "tornando, le stanze ci sono di nuovo con la paratia girata (%s)" % (str(par.call(&"save_state")) if par else "manca"))
@@ -133,8 +139,19 @@ func _impronta(ris: Node) -> Dictionary:
 	var out := {}
 	for radice in [ris.get_node(^"Fiume"), ris.get_node(^"Infermeria")]:
 		for n in [radice] + radice.find_children("*", "Node3D", true, false):
-			var k := _percorso(ris, n)
 			var t := (n as Node3D).global_transform
+			# le collisioni contano per forma e posto, non per corpo: riaccese a pezzi, un corpo statico con più forme
+			# grandi diventa un corpo per forma (AccensioneAPezzi, blocchi del 25 ottobre), uguali ma con altri nomi
+			if n is CollisionObject3D and not n is Area3D:
+				continue
+			if n is CollisionShape3D and not (n.get_parent() is Area3D):
+				var cs := n as CollisionShape3D
+				var kf := "forma %s %s pos=%s rot=%s strati=%d" % [cs.shape.get_class() if cs.shape else "-", cs.shape.resource_path if cs.shape else "",
+					t.origin.snapped(Vector3.ONE * 0.001), t.basis.get_euler().snapped(Vector3.ONE * 0.001),
+					(cs.get_parent() as CollisionObject3D).collision_layer if cs.get_parent() is CollisionObject3D else -1]
+				out[kf] = int(out.get(kf, 0)) + 1
+				continue
+			var k := _percorso(ris, n)
 			var v := "vis=%s pos=%s rot=%s scala=%s" % [(n as Node3D).is_visible_in_tree(), t.origin.snapped(Vector3.ONE * 0.001),
 				t.basis.get_euler().snapped(Vector3.ONE * 0.001), t.basis.get_scale().snapped(Vector3.ONE * 0.001)]
 			if n is Light3D:
@@ -174,7 +191,9 @@ func _mat(m: Material) -> String:
 
 
 func _aspetta_livello() -> void:
-	for i in 600:
+	# (a tempo: la ripartenza aspetta i caricamenti nel thread, anche qualche secondo)
+	var t_attesa := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_attesa < 90000:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player) and not GameState.is_dying and get_tree().current_scene:
 			break

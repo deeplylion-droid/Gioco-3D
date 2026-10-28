@@ -84,6 +84,9 @@ func _run() -> void:
 	var dopo := (a.nebbia.material as FogMaterial).density
 	_check(a_meta > 0.0 and a_meta < a.densita, "a metà la nebbia si sta diradando (%.2f)" % a_meta)
 	_check(dopo == 0.0 and a.luce.light_energy == 0.0 and a.bordo.light_energy == 0.0, "dopo 4 s la nebbia non c'è più (resta quella normale del gioco)")
+	for i in AtmosferaSqualo.FOTOGRAMMI_PRONTA + 2:
+		await get_tree().process_frame
+	_check(not a.nebbia.visible, "e il volume della nebbia è nascosto (a densità zero costava lo stesso, per tutto il gioco)")
 	_fine()
 
 

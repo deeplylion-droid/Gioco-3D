@@ -119,6 +119,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lei_voce.gd
 
+      - name: Test del canto di sirena di lei nel tunnel (solo mentre insegue, una frase alla volta, tace e riparte dopo la morte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_tunnel.gd
+
       - name: Test degli ambienti tecnici (camera delle onde, sala pompe)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tecnici.gd
@@ -134,6 +138,10 @@ jobs:
       - name: Test della tappa 8 (lei sbuca dal bordo, la strada verso la torre)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa8.gd
+
+      - name: Test dello spavento vero della tappa 8 (dalla serranda lei ti prende alla fossa, la sequenza intera senza saltarla, la sala si ricarica a caricamenti nel thread finiti, 30 s di gioco senza errori)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_presa_vera.gd
 
       - name: Test dei tentacoli morbidi di lei (affacciata e tuffo; collisioni bloccanti, costo solo stampato)
         if: steps.progetto.outputs.presente == 'si'
@@ -247,13 +255,31 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_posa.gd
 
-      - name: Test del primo uso e dell'ingresso nella torre (niente blocchi; renderer Vulkan software)
+      - name: Test del primo uso, dell'ingresso nella torre e di lei negli oblò (niente blocchi; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
-          xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
-          xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_oblo_leggeri.gd
+
+      - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
+
+      - name: Test degli strati di disegno (nessuno condiviso senza volerlo; quello della preparazione non si vede)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_strati.gd
+
+      - name: Test delle forme salvate del tunnel sottomarino (come quelle calcolate; l'involucro come tutte le facce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_forme_tunnel.gd
+
+      - name: Test delle posizioni del tunnel sottomarino (con e senza le scorciatoie dei blocchi, scarto sotto 1 mm)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_posizioni_tunnel.gd
 
       - name: Test del prototipo del fiume lento
         if: steps.progetto.outputs.presente == 'si'
@@ -295,6 +321,16 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_partenze_prova.gd
 
+      - name: Test della voce Continua del titolo (con e senza salvataggio, una ripresa per zona, checkpoint scritti su disco, morte e chiusura)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_continua.gd
+
+      - name: Continua dopo un crash vero (un processo raggiunge un checkpoint e si uccide, uno nuovo continua da lì)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_continua.gd crash_prima || true
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_continua.gd crash_dopo
+
       - name: Nessuna istanza di MultiMesh specchiata e facce dei MultiMesh nel verso giusto
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_multimesh_specchiati.gd
@@ -313,6 +349,8 @@ jobs:
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_pool_sala.gd 2>&1 | tee pool_sala.log || true
           rm -f godot/override.cfg
           grep -q "RISULTATO: [0-9]* controlli ok, 0 falliti" pool_sala.log
+          # e nessun errore interno del motore (tools/ci/senza_bug.sh)
+          ! grep -n "ERROR: BUG," pool_sala.log
 
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'

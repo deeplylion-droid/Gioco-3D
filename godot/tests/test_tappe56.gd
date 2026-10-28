@@ -446,6 +446,10 @@ func _run() -> void:
 	porta.interact(p)
 	for i in 120:
 		await get_tree().physics_frame
+	# (se le stanze della Risalita non sono ancora pronte la porta aspetta e si apre da sola: AttesaZone)
+	var t_porta := Time.get_ticks_msec()
+	while not porta.is_open and Time.get_ticks_msec() - t_porta < 90000:
+		await get_tree().physics_frame
 	check(porta.is_open, "col maniglione la porta si apre")
 	ok = true
 	for loc in [Vector3(47.4, 0, 1.4), Vector3(51.6, 0, 1.4), Vector3(51.6, 0, 0.6), Vector3(51.6, 3.625, -6.2),

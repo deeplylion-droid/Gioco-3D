@@ -16,11 +16,20 @@ extends Node3D
 signal apertura_iniziata
 signal aperto
 signal chiuso
+## Risolto l'enigma ma la sala dietro non è pronta: il portone aspetta chiuso (col motore che lavora).
+signal attesa_iniziata
+signal attesa_finita
 
 enum Apertura { ALL_ARRIVO, DOPO_TAPPA8, SOLO_ENIGMA }
 
 ## Quando si apre: di serie da solo dopo la tappa 8 (scelta dell'utente del 16 ottobre).
 @export var apertura := Apertura.DOPO_TAPPA8
+## La zona dietro il portone (AttesaZone).
+@export var zona := &"torre"
+## Al più quanto aspetta la sala dietro (s): poi si apre lo stesso.
+const ATTESA_MASSIMA := 90.0
+var in_attesa := false
+var _attesa_t := 0.0
 ## L'anta che scorre (sala_portone_torre del GLB della sala; la collisione è sua figlia).
 @export var anta: Node3D
 ## Dove scorre (direzione globale) e di quanto (m). Di serie si apre del tutto (prova del 19 ottobre):
@@ -110,6 +119,20 @@ func si_puo_aprire() -> bool:
 	return finita == null or tappa8.get(&"fase") == finita
 
 
+## L'enigma è risolto: il portone si apre appena la sala dietro è pronta (AttesaZone, scelta dell'utente del 25
+## ottobre: su un PC lento il portone resta chiuso col motore che lavora finché la torre non è caricata, costruita e
+## riscaldata; poi si apre come sempre). Con la sala già pronta si apre subito.
+func apri_quando_pronta() -> void:
+	if in_movimento or quanto >= 1.0 or in_attesa:
+		return
+	if AttesaZone.passaggio_aperto(zona):
+		apri()
+		return
+	in_attesa = true
+	_attesa_t = 0.0
+	attesa_iniziata.emit()
+
+
 ## Comincia ad aprirsi (se non è già aperto o in movimento).
 func apri() -> void:
 	if in_movimento or quanto >= 1.0:
@@ -148,6 +171,12 @@ func resta_chiuso() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if in_attesa:
+		_attesa_t += delta
+		if AttesaZone.passaggio_aperto(zona) or _attesa_t > ATTESA_MASSIMA:
+			in_attesa = false
+			attesa_finita.emit()
+			apri()
 	if _lampeggia:
 		_tl += delta
 		var tf := fmod(_tl, periodo_lampeggio)
@@ -216,10 +245,14 @@ func _accendi_vetro(k: float) -> void:
 # --- Checkpoint -------------------------------------------------------------------------------
 
 func save_state() -> Dictionary:
-	return {"aperto": (quanto >= 1.0 or in_movimento) and not chiuso_dietro, "chiuso_dietro": chiuso_dietro}
+	# (in attesa della sala dietro conta come aperto: ripartendo si apre, e la sala si carica come sempre)
+	return {"aperto": (quanto >= 1.0 or in_movimento or in_attesa) and not chiuso_dietro, "chiuso_dietro": chiuso_dietro}
 
 
 func load_state(data: Dictionary) -> void:
+	if in_attesa:
+		in_attesa = false
+		attesa_finita.emit()
 	in_movimento = false
 	_in_chiusura = false
 	_t = -1.0
