@@ -98,10 +98,6 @@ func _run() -> void:
 	var misure: Array = []
 	for i in MORTI:
 		var vecchio := GameState.player
-		var mb0 := Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0
-		for k in 300:
-			await get_tree().process_frame
-		print("   fermi 300 fotogrammi: %+.2f MB" % (Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0 - mb0))
 		GameState.kill_player()
 		await _aspetta_giocatore(vecchio)
 		var m := _misura()
