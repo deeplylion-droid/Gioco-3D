@@ -2,14 +2,14 @@ extends Node
 ## Dove spostare i gonfiabili d'arredo della parte profonda della piscina a onde (enigma dei giocattoli, coordinatore 28
 ## ottobre: nella parte profonda solo i tre giocattoli dell'enigma). Le due paperelle giganti sulla spiaggia, inclinate
 ## come la pendenza; i quattro palloni giù per la spiaggia fino a fermarsi contro qualcosa (una paperella, il delfino
-## sgonfio, la paperella in cima alla spiaggia), come farebbe un pallone vero. Stampa le trasformazioni da scrivere nella
+## sgonfio), come farebbe un pallone vero; e controlla che non finiscano sopra i dettagli senza collisione (fogli). Stampa le trasformazioni da scrivere nella
 ## scena (Sala/Oggetti, sala_oggetti.glb).
 
 ## [x, z, gradi di imbardata]
 const PAPERELLE := {"ogg_paperella_gigante_0": [-5.6, -7.6, 40.0], "ogg_paperella_gigante_1": [5.3, -7.0, -159.0]}
 ## [x, z da dove parte (in basso), chi lo ferma]
 const PALLONI := {"ogg_pallone_spiaggia_2": [-4.0, -4.7, "ogg_delfino_gonfiabile_sgonfio_8"],
-	"ogg_pallone_spiaggia_3": [0.05, -7.6, "ogg_paperella_gigante_57"],
+	"ogg_pallone_spiaggia_3": [-4.65, -4.7, "ogg_delfino_gonfiabile_sgonfio_8"],
 	"ogg_pallone_spiaggia_43": [5.25, -5.7, "ogg_paperella_gigante_1"],
 	"ogg_pallone_spiaggia_71": [-5.65, -6.4, "ogg_paperella_gigante_0"]}
 
@@ -24,22 +24,27 @@ func _run() -> void:
 	for i in 30:
 		await get_tree().physics_frame
 	var oggetti := s.get_node(^"Sala/Oggetti") as Node3D
+	# (la scala e l'inclinazione di partenza dal GLB: la scena le sovrascrive)
+	var glb := (load("res://assets/ambiente/sala/sala_oggetti.glb") as PackedScene).instantiate() as Node3D
 	var spazio := s.get_world_3d().direct_space_state
 	var fondo_rid: RID
 	for nome in PAPERELLE:
 		var v: Array = PAPERELLE[nome]
-		var h := _giu(spazio, Vector3(v[0], 3.0, v[1]), [])
+		var o := oggetti.get_node(NodePath(nome)) as Node3D
+		var h := _giu(spazio, Vector3(v[0], 3.0, v[1]), [(o.get_child(0) as CollisionObject3D).get_rid()])
 		fondo_rid = (h.collider as CollisionObject3D).get_rid()
 		var n: Vector3 = h.normal
-		var o := oggetti.get_node(NodePath(nome)) as Node3D
-		o.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, n)) * Basis(Vector3.UP, deg_to_rad(v[2])), h.position)
+		var scala := (glb.get_node(NodePath(nome)) as Node3D).scale
+		o.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, n)) * Basis(Vector3.UP, deg_to_rad(v[2])).scaled(scala), h.position)
 		_stampa(oggetti, o)
 	for i in 4:
 		await get_tree().physics_frame
 	for nome in PALLONI:
 		var v: Array = PALLONI[nome]
 		var o := oggetti.get_node(NodePath(nome)) as MeshInstance3D
-		var r := o.get_aabb().size.y * 0.5 * o.scale.y
+		var originale := glb.get_node(NodePath(nome)) as Node3D
+		o.transform = originale.transform
+		var r := o.get_aabb().size.y * 0.5 * originale.scale.y
 		var corpo := o.get_child(0) as CollisionObject3D
 		var h := _giu(spazio, Vector3(v[0], 3.0, v[1]), [corpo.get_rid()])
 		var n: Vector3 = h.normal
@@ -60,8 +65,13 @@ func _run() -> void:
 		q.motion = Vector3.ZERO
 		for hh in spazio.intersect_shape(q, 4):
 			contro += String((hh.collider as Node).get_parent().name) + " "
-		o.global_transform = Transform3D(Basis(Vector3.UP, o.rotation.y), c - Vector3(0.0, r, 0.0))
-		print("  %s: raggio %.3f, fermo dopo %.2f m contro %s (voluto %s)" % [nome, r, 3.0 * f[0], contro, v[2]])
+		o.global_transform = Transform3D(Basis(Vector3.UP, originale.rotation.y).scaled(originale.scale), c - Vector3(0.0, r, 0.0))
+		var vicini := []
+		for d in s.get_node(^"Sala/Dettagli").find_children("*", "MeshInstance3D", true, false):
+			var bb := (d as MeshInstance3D).global_transform * (d as MeshInstance3D).get_aabb()
+			if bb.grow(r + 0.05).has_point(c):
+				vicini.append(String(d.name))
+		print("  %s: raggio %.3f, fermo dopo %.2f m contro %s (voluto %s), dettagli vicini %s" % [nome, r, 3.0 * f[0], contro, v[2], vicini])
 		_stampa(oggetti, o)
 	get_tree().quit()
 

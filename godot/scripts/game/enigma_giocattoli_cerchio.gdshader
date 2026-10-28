@@ -27,6 +27,9 @@ float hash(vec2 p) {
 void fragment() {
 	vec2 p = pos_locale.xz;
 	float r = length(p);
+	if (r > raggio) {
+		discard;
+	}
 	// tesserine di 4 cm con le fughe
 	vec2 cella = floor(p / 0.04);
 	vec2 f = fract(p / 0.04);

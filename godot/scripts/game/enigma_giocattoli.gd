@@ -33,7 +33,7 @@ const COLORI := [Color(1.0, 0.82, 0.12), Color(0.86, 0.12, 0.1), Color(0.12, 0.3
 ## Le forme dei giocattoli per le collisioni fra loro e coi bordi: raggio in pianta, altezza, pescaggio (quanto
 ## affondano galleggiando: sono mezzi pieni d'acqua).
 const RAGGI := [0.22, 0.25, 0.3]
-const ALTEZZE := [0.38, 0.5, 0.35]
+const ALTEZZE := [0.39, 0.5, 0.38]
 const PESCAGGI := [0.13, 0.17, 0.12]
 
 ## L'acqua della parte profonda (la Pozza).
@@ -111,6 +111,9 @@ var _fondo_cerchi: Array[float] = [0.0, 0.0, 0.0]
 var _t := 0.0
 var _zaino_collegato: Node
 var _risucchio_t := -1.0
+## Quanto sono bagnati i cerchi (1 sott'acqua, poi si asciugano piano a piscina vuota) e quanto lo sono nel materiale.
+var _umido := 1.0
+var _bagnato := -1.0
 var _pronto := false
 
 
@@ -252,18 +255,31 @@ func _piatto(i: int) -> Node3D:
 	piatto.name = "Piatto"
 	piatto.collision_layer = Layers.WORLD
 	piatto.collision_mask = 0
+	# sopra il mosaico: un quadrato di 1 m con le UV 0..1 (lo shader dei cerchi disegna solo il cerchio)
 	var mi := MeshInstance3D.new()
 	mi.name = "Mosaico"
-	var disco := CylinderMesh.new()
-	disco.top_radius = raggio_cerchio
-	disco.bottom_radius = raggio_cerchio
-	disco.radial_segments = 48
-	disco.rings = 1
-	mi.mesh = disco
+	var quadro := PlaneMesh.new()
+	quadro.size = Vector2(raggio_cerchio * 2.0, raggio_cerchio * 2.0)
+	mi.mesh = quadro
 	var mat := _materiale_cerchio(i)
 	mi.material_override = mat
 	_mat_cerchi.append(mat)
 	piatto.add_child(mi)
+	# il fianco del piatto: cemento chiaro, appena sotto il mosaico
+	var fianco := MeshInstance3D.new()
+	fianco.name = "Fianco"
+	var disco := CylinderMesh.new()
+	disco.top_radius = raggio_cerchio - 0.003
+	disco.bottom_radius = raggio_cerchio - 0.003
+	disco.radial_segments = 48
+	disco.rings = 1
+	disco.cap_top = false
+	fianco.mesh = disco
+	var cemento := StandardMaterial3D.new()
+	cemento.albedo_color = Color(0.55, 0.55, 0.52)
+	cemento.roughness = 0.8
+	fianco.material_override = cemento
+	piatto.add_child(fianco)
 	var cs := CollisionShape3D.new()
 	var forma := CylinderShape3D.new()
 	forma.radius = raggio_cerchio
@@ -278,9 +294,11 @@ func _piatto(i: int) -> Node3D:
 func _altezza_piatto(i: int, h: float) -> void:
 	_dischi[i].height = h
 	_forme_piatti[i].height = h
-	for n in _piatti[i].get_children() if i < _piatti.size() else []:
+	if i >= _piatti.size():
+		return
+	for n in _piatti[i].get_children():
 		if n is Node3D:
-			(n as Node3D).position.y = h * 0.5
+			(n as Node3D).position.y = h if n.name == &"Mosaico" else h * 0.5
 
 
 ## Il materiale del cerchio: quello vero di ambienti-1 se c'è (uniform bordo_acceso e bagnato), se no il segnaposto.
@@ -383,6 +401,7 @@ func _appoggia() -> void:
 		for g in _giocattoli:
 			escludi.append(g.get_rid())
 		Posa.appoggia_a_terra(c, 0.0, false, escludi)
+		_inclina_come_il_fondo(c, escludi)
 		_fondo_cerchi[i] = c.global_position.y
 		_metti_piatto(i, _giu[i])
 	_ostacoli = _ostacoli_fondo()
@@ -397,6 +416,50 @@ func _appoggia() -> void:
 	if not Engine.is_editor_hint() and get_viewport():
 		await RiscaldamentoShader.disegna_fuori_vista(self, get_viewport(), 4, func(): _accendi_tutti(1.0))
 		_aggiorna_bordi(1.0)
+
+
+## Il fondo sotto un cerchio curva di 1-2 cm sul metro del disco (la conca della botola; misure di ambienti-1): il
+## piatto si inclina come il piano che passa meglio per il fondo sotto il suo bordo, e si alza quanto serve perché
+## nessun punto del bordo entri nel fondo (resta a filo, non sospeso).
+func _inclina_come_il_fondo(c: Node3D, escludi: Array[RID]) -> void:
+	var spazio := get_world_3d().direct_space_state
+	var punti: Array[Vector3] = []
+	for k in 8:
+		var a := TAU * k / 8.0
+		var d := Vector3(cos(a), 0.0, sin(a)) * (raggio_cerchio - 0.02)
+		var da := c.global_position + d + Vector3.UP * 0.3
+		var q := PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * 0.8, Layers.WORLD, escludi)
+		var h := spazio.intersect_ray(q)
+		if not h.is_empty():
+			punti.append(h.position)
+	if punti.size() < 6:
+		return
+	# il piano z = a x + b z + c, ai minimi quadrati, nelle coordinate relative al centro
+	var o := c.global_position
+	var sxx := 0.0
+	var szz := 0.0
+	var sxz := 0.0
+	var sxy := 0.0
+	var szy := 0.0
+	for p in punti:
+		var r := p - o
+		sxx += r.x * r.x
+		szz += r.z * r.z
+		sxz += r.x * r.z
+		sxy += r.x * r.y
+		szy += r.z * r.y
+	var det := sxx * szz - sxz * sxz
+	if absf(det) < 0.000001:
+		return
+	var a := (sxy * szz - szy * sxz) / det
+	var b := (szy * sxx - sxy * sxz) / det
+	var n := Vector3(-a, 1.0, -b).normalized()
+	c.global_basis = Basis(Quaternion(Vector3.UP, n)) * Basis(Vector3.UP, c.global_rotation.y)
+	# il punto del bordo più alto rispetto al piano decide la quota (niente dentro il fondo)
+	var su := 0.0
+	for p in punti:
+		su = maxf(su, (p - c.global_position).dot(n))
+	c.global_position += n * su
 
 
 func _accendi_tutti(k: float) -> void:
@@ -491,6 +554,12 @@ func _physics_process(delta: float) -> void:
 	_separa()
 	for i in 3:
 		_controlla_cerchio(i)
+	_umido = 1.0 if vasca == null or vasca.fill > 0.001 else maxf(0.0, _umido - delta / 45.0)
+	if absf(_umido - _bagnato) > 0.01 or (_umido == 0.0 and _bagnato != 0.0):
+		_bagnato = _umido
+		for m in _mat_cerchi:
+			if m is ShaderMaterial:
+				(m as ShaderMaterial).set_shader_parameter(&"bagnato", _bagnato)
 	if _risucchio_t >= 0.0:
 		_risucchio_t += delta
 		if _risucchio_t >= 0.7:
