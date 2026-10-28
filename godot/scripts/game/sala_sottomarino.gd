@@ -27,8 +27,11 @@ const PORTA_ALTA := 2.2
 const PORTA_S := 2.0
 ## La presa d'acqua profonda in testa: il canale scende fino a qui (lei sale da lì sotto).
 const PRESA_FONDO := -36.0
-const GRADINO_LARGO := 0.4   # il gradino continuo lungo il bordo del canale
-const GRADINO_SU := 0.45     # sopra il fondo (il pelo è a 0,5)
+# il gradino continuo lungo il bordo del canale: due scalini che si salgono camminando (al più Player.step_height,
+# 0,32; dall'acqua non si salta, richiesta dell'utente del 25 ottobre)
+const GRADINO_LARGO := 0.5   # i due scalini insieme
+const GRADINO_SU := 0.61     # lo scalino alto, sopra il fondo (il pelo è a 0,5; poi 0,31 fino alla banchina)
+const GRADINO_BASSO := 0.30  # lo scalino basso, sopra il fondo
 const GRADINO_R := 0.05      # lo spigolo arrotondato
 const PRESA_FINO := 6.0
 ## L'approdo (scelta 11A dell'utente): nel muro di fondo la porta del portello sta in alto, a [constant SOGLIA] sopra
@@ -132,6 +135,9 @@ const CORDA_LASCO := 0.012
 var dati := {}
 var _asse: Array = []          ## [{s, pos, dir, ambiente}]
 var _s: PackedFloat32Array
+## Le posizioni dell'asse ([member _asse] "pos"), pronte: [method proietta] le leggeva dal dizionario a ogni punto, e
+## in _occupati_muri degli arredi erano 200-330 ms in un passo. Stessi numeri, stessi risultati.
+var _posizioni: PackedVector3Array
 var piano := -30.0
 var acqua := -30.42
 var fondo := -30.92
@@ -148,6 +154,7 @@ var mat_acqua: Material
 
 ## Vero quando il tunnel è tutto costruito.
 var costruita := false
+## I passi ancora da fare: un passo può aggiungerne altri davanti ([method aggiungi_passi]).
 var _coda: Array = []
 
 
@@ -155,8 +162,11 @@ func _ready() -> void:
 	dati = JSON.parse_string(FileAccess.get_file_as_string(STRADA))
 	_asse = dati["asse"]
 	_s = PackedFloat32Array()
+	_posizioni = PackedVector3Array()
 	for p in _asse:
 		_s.append(float(p["s"]))
+		var a: Array = p["pos"]
+		_posizioni.append(Vector3(a[0], a[1], a[2]))
 	var q: Dictionary = dati["quote"]
 	piano = q["piano_banchine"]
 	acqua = q["acqua"]
@@ -176,25 +186,58 @@ func _ready() -> void:
 
 ## Costruisce tutto subito (scene di prova, test).
 func costruisci() -> void:
-	for passo in _passi():
-		(passo as Callable).call()
+	_coda = _passi()
+	while not _coda.is_empty():
+		(_coda.pop_front() as Callable).call()
 	costruita = true
+	# costruito tutto subito: la scaletta dopo SB1 si può aprire (nel gioco lo dice la sala, dopo il riscaldamento)
+	AttesaZone.pronta(&"tunnel")
+
+
+## Un passo lungo si divide: [param altri] si fanno subito dopo il passo che li aggiunge (uno per volta, nella
+## costruzione a pezzi).
+func aggiungi_passi(altri: Array) -> void:
+	_coda = altri + _coda
+
+
+## Fine dei passi della costruzione a pezzi (prima del riscaldamento e delle forme).
+signal passi_finiti
+var _costruendo := false
+var _ms_pezzo := 6.0
 
 
 ## Costruisce un passo per volta, senza superare [param ms_per_fotogramma] millisecondi per fotogramma (mentre
 ## si è ancora nella sala delle condotte).
+## Chiamata di nuovo mentre si costruisce (il giocatore è arrivato prima della fine) non ricomincia: alza i
+## millisecondi per fotogramma e aspetta la fine dei passi.
 func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
-	var passi := _passi()
+	if _costruendo:
+		_ms_pezzo = maxf(_ms_pezzo, ms_per_fotogramma)
+		await passi_finiti
+		return
+	_costruendo = true
+	_ms_pezzo = ms_per_fotogramma
+	_coda = _passi()
 	var t0 := Time.get_ticks_usec()
-	for passo in passi:
+	while not _coda.is_empty():
+		var passo: Callable = _coda.pop_front()
 		if not is_inside_tree():
+			_costruendo = false
 			return
-		(passo as Callable).call()
-		if (Time.get_ticks_usec() - t0) / 1000.0 > ms_per_fotogramma:
+		var tp := Time.get_ticks_usec()
+		passo.call()
+		if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 20000:
+			print("tunnel passo %s: %.1f ms" % [passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
+		if (Time.get_ticks_usec() - t0) / 1000.0 > _ms_pezzo:
 			await get_tree().process_frame
 			t0 = Time.get_ticks_usec()
 	costruita = true
+	_costruendo = false
+	passi_finiti.emit()
 	await _riscalda()
+	# lei del tunnel, a pezzi e nelle sue pose (LeiTunnel.prepara): quando riemerge dietro il giocatore non si ferma
+	if is_inside_tree() and lei_tunnel and is_instance_valid(lei_tunnel):
+		await lei_tunnel.prepara(get_viewport())
 	# le forme del tunnel per i tentacoli di lei (FormeTunnel di grafica, circa 1 s di calcolo a pezzi)
 	if is_inside_tree():
 		await FormeTunnel.prepara_a_pezzi(self)
@@ -384,9 +427,10 @@ func proietta(p: Vector3) -> Array:
 	var best := INF
 	var bs := 0.0
 	var i := 0
+	var pos := _posizioni
 	while i < _s.size() - 1:
-		var a := _pos(i)
-		var b := _pos(i + 1)
+		var a := pos[i]
+		var b := pos[i + 1]
 		var ab := Vector2(b.x - a.x, b.z - a.z)
 		var ap := Vector2(p.x - a.x, p.z - a.z)
 		var f := clampf(ap.dot(ab) / maxf(ab.length_squared(), 1e-9), 0.0, 1.0)
@@ -400,8 +444,7 @@ func proietta(p: Vector3) -> Array:
 
 
 func _pos(i: int) -> Vector3:
-	var a: Array = _asse[i]["pos"]
-	return Vector3(a[0], a[1], a[2])
+	return _posizioni[i]
 
 
 func _indice(s: float) -> int:
@@ -484,21 +527,32 @@ func _profilo(s: float, m: float) -> Array:
 	return out
 
 
-## Il gradino continuo lungo il bordo del canale, dal lato [param lato] (decisione del coordinatore con enigmi, 24
-## ottobre: dall'acqua si esce sempre, con due saltelli): largo [constant GRADINO_LARGO], [constant GRADINO_SU]
-## sopra il fondo (appena sotto il pelo), stesso mosaico, lo spigolo arrotondato. Scende fino a [param f] (nella
-## presa il fondo è più basso).
-func _gradino(out: Array, lato: float, f: float) -> void:
+## Il gradino continuo lungo il bordo del canale, dal lato [param lato]: due scalini (il basso a
+## [constant GRADINO_BASSO], l'alto a [constant GRADINO_SU] sopra il fondo, poi la banchina), che si salgono camminando
+## (prima, decisione del coordinatore con enigmi del 24 ottobre, uno scalino solo che si saliva con due saltelli; dal 25
+## ottobre nell'acqua del canale non si salta). Larghi in tutto [constant GRADINO_LARGO], stesso mosaico, gli spigoli
+## arrotondati. Scende fino a [param f] (nella presa il fondo è più basso). Con [param vivo] gli spigoli vivi: è la
+## forma della collisione (sullo spigolo arrotondato il corpo del giocatore si appoggiava come su una rampa e non saliva).
+func _gradino(out: Array, lato: float, f: float, vivo := false) -> void:
 	var c := canale
-	var g := fondo + GRADINO_SU
-	var n := c - GRADINO_LARGO                  # il naso del gradino
+	var g2 := fondo + GRADINO_SU
+	var g1 := fondo + GRADINO_BASSO
+	var n1 := c - GRADINO_LARGO * 0.5           # il naso dello scalino alto
+	var n2 := c - GRADINO_LARGO                 # il naso dello scalino basso
 	var rr := GRADINO_R
-	var pts := [Vector2(c, g), Vector2(n + rr, g)]
-	for k in range(1, 4):
-		var a := PI * 0.5 * float(k) / 4.0
-		pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
-	pts.append(Vector2(n, g - rr))
-	pts.append(Vector2(n, f))
+	var pts := [Vector2(c, g2)]
+	for naso in [[n1, g2, g1], [n2, g1, f]]:
+		var n: float = naso[0]
+		var g: float = naso[1]
+		if vivo:
+			pts.append(Vector2(n, g))
+		else:
+			pts.append(Vector2(n + rr, g))
+			for k in range(1, 4):
+				var a := PI * 0.5 * float(k) / 4.0
+				pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
+			pts.append(Vector2(n, g - rr))
+		pts.append(Vector2(n, naso[2]))
 	for k in pts.size() - 1:
 		var a: Vector2 = pts[k]
 		var b: Vector2 = pts[k + 1]
@@ -537,12 +591,23 @@ func _pezzo(s0: float, s1: float) -> void:
 			var v: Vector2 = a[3]
 			var verso := ra * v.x + Vector3.UP * v.y
 			_quad(st[a[2]], q, verso)
-			_facce_quad(facce, q)
+			if a[4] != "gradino":
+				_facce_quad(facce, q)
 			# il retro, spesso [member spessore]: muri e volta pieni (con una faccia sola l'illuminazione globale
 			# passava attraverso e faceva macchie scure sulla volta)
 			if a[4] == "muro" or a[4] == "volta":
 				var vn := verso.normalized()
 				_quad(st[a[2]], [q[0] - vn * spessore, q[1] - vn * spessore, q[2] - vn * spessore, q[3] - vn * spessore], -vn)
+		# il gradino nella collisione: a spigoli vivi
+		for lato: float in [-1.0, 1.0]:
+			if _lato(m, lato)["crollo"]:
+				continue
+			var ga: Array = []
+			var gb: Array = []
+			_gradino(ga, lato, fondo_a(s), true)
+			_gradino(gb, lato, fondo_a(t), true)
+			for k in ga.size():
+				_facce_quad(facce, [_al(pa, ra, ga[k][0]), _al(pa, ra, ga[k][1]), _al(pb, rb, gb[k][1]), _al(pb, rb, gb[k][0])])
 		# il bordo delle banchine verso il canale: la graniglia sporge di 4 cm sul canale, spessa 6 cm (sopra, davanti e
 		# sotto, così da sopra non si vede il retro)
 		for lato: float in [-1.0, 1.0]:
@@ -573,12 +638,13 @@ func _pezzo(s0: float, s1: float) -> void:
 					_al(p, r, Vector2(lato * muro, piano)), _al(p, r, Vector2(lato * canale, piano))]
 			_quad(st["graniglia"], q, verso)
 			_facce_quad(facce, q)
-			# (e la testa del gradino continuo, tagliato col crollo)
-			var g := fondo + GRADINO_SU
-			var qg := [_al(p, r, Vector2(lato * (canale - GRADINO_LARGO), fondo)), _al(p, r, Vector2(lato * canale, fondo)),
-					_al(p, r, Vector2(lato * canale, g)), _al(p, r, Vector2(lato * (canale - GRADINO_LARGO), g))]
-			_quad(st["mosaico"], qg, verso)
-			_facce_quad(facce, qg)
+			# (e la testa del gradino continuo, tagliato col crollo: i due scalini)
+			for sc_g in [[canale - GRADINO_LARGO, canale - GRADINO_LARGO * 0.5, fondo + GRADINO_BASSO],
+					[canale - GRADINO_LARGO * 0.5, canale, fondo + GRADINO_SU]]:
+				var qg := [_al(p, r, Vector2(lato * float(sc_g[0]), fondo)), _al(p, r, Vector2(lato * float(sc_g[1]), fondo)),
+						_al(p, r, Vector2(lato * float(sc_g[1]), float(sc_g[2]))), _al(p, r, Vector2(lato * float(sc_g[0]), float(sc_g[2])))]
+				_quad(st["mosaico"], qg, verso)
+				_facce_quad(facce, qg)
 	if s0 <= PORTA_S and PORTA_S < s1:
 		_passaggio_porta(st, facce)
 	for k in st:
@@ -617,15 +683,19 @@ func _sezioni(s0: float, s1: float) -> PackedFloat32Array:
 	return pulito
 
 
-## Il passaggio dalla porta del bacino (nel muro della sala delle condotte, x 40) al tunnel: pavimento, fianchi
+## Il passaggio dalla porta del bacino (nel muro della sala delle condotte, x 40,4) al tunnel: pavimento, fianchi
 ## e soffitto, lunghi quanto lo spessore fra i due muri.
+const MURO_CONDOTTE_X := 40.4
 func _passaggio_porta(st: Dictionary, facce: PackedVector3Array) -> void:
 	var p := punto(PORTA_S)
 	var r := destra(PORTA_S)
 	var d := direzione(PORTA_S)
 	var a := _al(p, r, Vector2(-muro, 0.0))                 # sul muro del tunnel
 	var verso_fuori := -r                                    # verso la sala delle condotte
-	var lungo := 40.0 - a.x if absf(verso_fuori.x) > 0.5 else 0.8
+	# (fino al muro ovest della sala delle condotte, che nel gioco sta a x 40,4: inseguimento_proposte.py, X0_GIOCO.
+	# Finiva a x 40: fra i due restavano 40 cm senza pavimento, soffitto e fianchi, e dalla porta si vedeva fuori dal
+	# livello; segnalazione dell'utente sulla v0.3.14)
+	var lungo := MURO_CONDOTTE_X - a.x if absf(verso_fuori.x) > 0.5 else 0.8
 	var b := a + verso_fuori * (lungo + 0.02)
 	var h := d * PORTA_LARGA * 0.5
 	var y0 := Vector3.UP * piano
@@ -688,6 +758,7 @@ func _acqua(nodo: Node3D, s0: float, s1: float) -> void:
 		vol.name = "Canale_%d" % int(m)
 		vol.velocita_guado = velocita_guado
 		vol.velocita_guado_accovacciato = VELOCITA_GUADO_ACCOVACCIATO
+		vol.senza_salto = true
 		var cs := CollisionShape3D.new()
 		var b := BoxShape3D.new()
 		b.size = Vector3(wl + wr, acqua - fondo_qui, t2 - s2 + 0.3)
@@ -1240,7 +1311,7 @@ func _mat_volantino() -> StandardMaterial3D:
 
 ## Il giocatore nella camera stagna chiude il portello (scelta 11A): il battente si chiude, il volantino gira per
 ## serrarlo restando attaccato, poi lei ci sbatte contro con la faccia sull'oblò e la bocca spalancata; nero e
-## "FINE DELLA DEMO" ([signal fine_demo]).
+## "FINE DEL CAPITOLO 1" ([signal fine_demo]).
 func chiudi_portello() -> void:
 	if finito:
 		return
@@ -1531,6 +1602,23 @@ var _lei_t := 0.0
 var _morso_tra := 1.5
 var _s_bersaglio := 0.0
 var checkpoint: Array[Checkpoint] = []
+
+
+## I file che la costruzione del tunnel carica (i modelli del fiume, le lampade, lo shader dell'oblò dell'abisso, lei):
+## la sala li chiede al thread insieme al tunnel, così i passi li trovano pronti (caricati lì erano passi da 0,2-1,4 s).
+## I modelli del tunnel (in [constant DIR_FIUME]).
+const MODELLI := ["corallo", "forziere", "pesce_vetroresina", "salvagente", "tartaruga", "ancora", "palombaro"]
+
+
+static func risorse() -> Array:
+	var out: Array = []
+	for nome in MODELLI:
+		out.append(DIR_FIUME + nome + ".glb")
+		out.append(DIR_FIUME + nome + FORME)
+	out.append_array(["res://assets/enigma_acquari/lampada_gabbia.glb", DIR_FIUME + "mat_cemento.tres",
+		DIR_FIUME + "mat_mosaico_blu.tres", DIR_FIUME + "mat_graniglia.tres", DIR_FIUME + "acqua_fiume.tres"])
+	out.append_array(SalaInseguimento.RISORSE_LEI)
+	return out.filter(func(p): return ResourceLoader.exists(p))
 
 
 func _lei_crea() -> void:
@@ -2687,13 +2775,61 @@ func _corda(mi: MeshInstance3D, pts: PackedVector3Array) -> void:
 ## Un modello Meshy del fiume (assets/fiume_lento) a [param pos], girato verso [param verso], scalato.
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
 	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	usa_forme_salvate(nome, n)
 	nodo.add_child(n)
 	n.global_transform = Transform3D(Basis.looking_at(verso, Vector3.UP).scaled(Vector3.ONE * scala), pos)
 	return n
 
 
+## Le forme convesse dei modelli del tunnel calcolate prima e salvate (tools/genera_forme_tunnel.gd): accanto al GLB,
+## "<nome>_forme.res", caricate nel thread con le altre [method risorse]. Calcolarle durante la costruzione costava
+## 40-180 ms per modello (il primo corallo, il forziere, il palombaro). Sono le stesse del motore (test_forme_tunnel.gd).
+const FORME := "_forme.res"
+
+
+## Mette nelle cache le forme salvate delle mesh di [param n] (il modello [param nome] appena istanziato): la forma
+## della collisione e l'involucro per sporgenze e appoggi. Si usano solo se la mesh è ancora quella (stesso AABB e
+## stesso numero di vertici): se il GLB cambia senza rigenerarle, si ricalcolano come prima.
+static func usa_forme_salvate(nome: String, n: Node3D) -> void:
+	var f := DIR_FIUME + nome + FORME
+	if senza_scorciatoie or not ResourceLoader.exists(f):
+		return
+	var r := load(f)
+	var d: Dictionary = r.get_meta(&"forme", {}) if r else {}
+	for x in n.find_children("*", "MeshInstance3D", true, false):
+		var mi := x as MeshInstance3D
+		var k := String(n.get_path_to(mi))
+		if mi.mesh == null or not d.has(k):
+			continue
+		var e: Array = d[k]
+		if e[2] != mi.mesh.get_aabb() or int(e[3]) != impronta(mi.mesh):
+			continue
+		if not _forme_convesse.has(mi.mesh):
+			_forme_convesse[mi.mesh] = e[0]
+		if not SottomarinoArrediA2._involucri.has(mi.mesh):
+			SottomarinoArrediA2._involucri[mi.mesh] = e[1]
+
+
+## Solo per i test (test_posizioni_tunnel.gd): niente forme salvate e sporgenze e appoggi su tutte le facce, come
+## prima delle scorciatoie dei blocchi al primo avvio, per provare che le posizioni restano le stesse.
+static var senza_scorciatoie := false
+
+
+## Il numero di vertici di [param m] (per riconoscere una mesh cambiata).
+static func impronta(m: Mesh) -> int:
+	var n := 0
+	if m is ArrayMesh:
+		for i in m.get_surface_count():
+			n += (m as ArrayMesh).surface_get_array_len(i)
+	return n
+
+
 ## La collisione di un modello: per ogni sua mesh la forma convessa (si sbatte contro la sua sagoma, non contro una
 ## scatola invisibile più grande).
+## Mesh -> la sua forma convessa semplificata (per [method _collisione_modello]).
+static var _forme_convesse := {}
+
+
 func _collisione_modello(n: Node3D) -> void:
 	var corpo := StaticBody3D.new()
 	corpo.name = "Collisione"
@@ -2702,7 +2838,10 @@ func _collisione_modello(n: Node3D) -> void:
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var cs := CollisionShape3D.new()
-		cs.shape = m.mesh.create_convex_shape(true, true)
+		# (la stessa forma per la stessa mesh, calcolata una volta: ogni corallo la rifaceva, 100 ms l'uno)
+		if not _forme_convesse.has(m.mesh):
+			_forme_convesse[m.mesh] = m.mesh.create_convex_shape(true, true)
+		cs.shape = _forme_convesse[m.mesh]
 		corpo.add_child(cs)
 		cs.global_transform = m.global_transform
 
@@ -2713,7 +2852,7 @@ func _appoggia(n: Node3D, quota: float) -> void:
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var xf := m.global_transform
-		for v in m.mesh.get_faces():
+		for v in SottomarinoArrediA2._involucro(m.mesh):
 			basso = minf(basso, (xf * v).y)
 	if basso < INF:
 		n.global_position.y += quota - basso
@@ -2748,7 +2887,7 @@ func _a_filo_del_muro(n: Node3D, fuori: Vector3) -> void:
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var xf := m.global_transform
-		for v in m.mesh.get_faces():
+		for v in SottomarinoArrediA2._involucro(m.mesh):
 			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(-fuori))
 	Posa.fissa_al_muro(n, fuori.normalized(), dietro)
 

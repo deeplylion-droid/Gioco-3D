@@ -25,6 +25,11 @@ static func camere() -> Dictionary:
 		"paratia1": [F.anello(45.0) + Vector3(0, 0.6, 0), F.anello(55.0) + Vector3(0, 1.0, 0)],
 		"paratia2": [F.anello(135.0) + Vector3(0, 0.6, 0), F.anello(145.0) + Vector3(0, 1.0, 0)],
 		"paratia3": [F.anello(222.0) + Vector3(0, 0.6, 0), F.anello(232.0) + Vector3(0, 1.0, 0)],
+		# dalla ciambella, la sponda interna prima del bivio 3: il buco nella roccia prima della colonna (chiuso, riscontro
+		# dell'utente sulla v0.3.14) e quello al disco (lasciato com'è)
+		"sponda_colonna": [F.anello(214.0) + Vector3(0, 0.6, 0), F.anello(224.4, 21.0) + Vector3(0, 1.4, 0)],
+		"sponda_colonna_vicino": [F.anello(220.0) + Vector3(0, 0.6, 0), F.anello(225.0, 21.0) + Vector3(0, 1.4, 0)],
+		"sponda_disco3": [F.anello(230.0) + Vector3(0, 0.6, 0), F.anello(237.0, 20.5) + Vector3(0, 1.4, 0)],
 		# da vicino, per il collaudo: la pila di ciambelle, il cartello dei tuffi, la catena di una lampada del capannone
 		# col suo attacco, il disco e il collare della paratia 1, il portale del cartello d'uscita 1Sx
 		"catena": [Vector3(-3.0, 6.0, -5.6), Vector3(-4.0, 6.42, -6.6)],
@@ -115,6 +120,16 @@ func _run() -> void:
 				var nome_g := "gabbia%02d_%s" % [k, "ab"[j]]
 				cam_tutte[nome_g] = [c + avanti * 0.45 + lato * (0.4 if j == 0 else -0.4) + Vector3(0, 0.15, 0), c - avanti * 0.08]
 				lista.append(nome_g)
+	# "giro": dalla ciambella lungo la strada giusta (anello da 20 a 266 gradi, ogni 8), guardando avanti, per trovare
+	# dove la roccia delle sponde si interrompe (riscontro dell'utente sulla v0.3.14)
+	if lista.has("giro"):
+		lista.remove_at(lista.find("giro"))
+		var g := 20.0
+		while g <= 266.0:
+			var nome_g := "giro_%03d" % int(g)
+			cam_tutte[nome_g] = [F.anello(g) + Vector3(0, 0.6, 0), F.anello(g + 12.0) + Vector3(0, 1.0, 0)]
+			lista.append(nome_g)
+			g += 8.0
 	for nome in lista:
 		var c: Array = cam_tutte[nome]
 		f.get_node("Tetto").visible = nome != "alto"

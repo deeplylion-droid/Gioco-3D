@@ -278,41 +278,62 @@ func _stella(r: float, giro: float) -> MeshInstance3D:
 func _buco_volta() -> void:
 	var nodo := _nodo("BucoVolta")
 	var sc := BUCO_S
-	var tri := _tri_tunnel(sc)
-	var mu := sala.muro
-	var ki := sala.chiave - sala.imposta
 	var n_ang := 28
-	var anelli := [1.0, 0.93, 0.85, 0.6, 0.3, 0.0]
-	var alzo := [-0.01, 0.04, 0.015, 0.015, 0.015, 0.015]
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 348
 	var raggio_j := PackedFloat32Array()
 	for j in n_ang:
 		raggio_j.append(1.0 + rng.randf_range(-0.16, 0.12) + 0.06 * sin(float(j) * 1.7))
-	# ogni vertice: (anello, spicchio) -> punto sulla volta vera e sua normale
-	var pv := []
-	var nv := []
-	for k in anelli.size():
-		var riga := []
-		var rn := []
-		for j in n_ang:
-			var a := TAU * float(j) / n_ang
-			var f: float = anelli[k] * raggio_j[j]
-			var s := sc + cos(a) * BUCO_MEZZO_S * f
-			var th := BUCO_THETA + sin(a) * BUCO_MEZZO_THETA * f
-			var p := sala.punto(s)
-			var r := sala.destra(s)
-			var su := Vector2(-cos(th) * mu, sala.imposta + sin(th) * ki)
-			var da := sala._al(p, r, Vector2(su.x * 0.8, sala.imposta + (su.y - sala.imposta) * 0.8))
-			var fino := sala._al(p, r, Vector2(su.x * 1.1, sala.imposta + (su.y - sala.imposta) * 1.1))
-			var h = _raggio(tri, da, fino, true)
-			if h == null:
-				push_warning("buco nella volta: niente volta a s %.2f" % s)
-				return
-			riga.append((h[0] as Vector3) + (h[1] as Vector3) * float(alzo[k]))
-			rn.append(h[1])
-		pv.append(riga)
-		nv.append(rn)
+	# ogni vertice: (anello, spicchio) -> punto sulla volta vera e sua normale; un anello per passo (tutti insieme erano
+	# 170-210 ms di gioco fermo nella costruzione a pezzi), poi la mesh
+	var b := {"nodo": nodo, "sc": sc, "tri": _tri_tunnel(sc), "n_ang": n_ang, "raggio_j": raggio_j,
+		"anelli": [1.0, 0.93, 0.85, 0.6, 0.3, 0.0], "alzo": [-0.01, 0.04, 0.015, 0.015, 0.015, 0.015],
+		"pv": [], "nv": [], "ok": true}
+	var passi: Array = []
+	for k in (b["anelli"] as Array).size():
+		passi.append(_buco_anello.bind(b, k))
+	passi.append(_buco_mesh.bind(b))
+	sala.aggiungi_passi(passi)
+
+
+func _buco_anello(b: Dictionary, k: int) -> void:
+	if not b["ok"]:
+		return
+	var sc: float = b["sc"]
+	var mu := sala.muro
+	var ki := sala.chiave - sala.imposta
+	var n_ang: int = b["n_ang"]
+	var riga := []
+	var rn := []
+	for j in n_ang:
+		var a := TAU * float(j) / n_ang
+		var f: float = b["anelli"][k] * b["raggio_j"][j]
+		var s := sc + cos(a) * BUCO_MEZZO_S * f
+		var th := BUCO_THETA + sin(a) * BUCO_MEZZO_THETA * f
+		var p := sala.punto(s)
+		var r := sala.destra(s)
+		var su := Vector2(-cos(th) * mu, sala.imposta + sin(th) * ki)
+		var da := sala._al(p, r, Vector2(su.x * 0.8, sala.imposta + (su.y - sala.imposta) * 0.8))
+		var fino := sala._al(p, r, Vector2(su.x * 1.1, sala.imposta + (su.y - sala.imposta) * 1.1))
+		var h = _raggio(b["tri"], da, fino, true)
+		if h == null:
+			push_warning("buco nella volta: niente volta a s %.2f" % s)
+			b["ok"] = false
+			return
+		riga.append((h[0] as Vector3) + (h[1] as Vector3) * float(b["alzo"][k]))
+		rn.append(h[1])
+	(b["pv"] as Array).append(riga)
+	(b["nv"] as Array).append(rn)
+
+
+func _buco_mesh(buco: Dictionary) -> void:
+	if not buco["ok"]:
+		return
+	var nodo: Node3D = buco["nodo"]
+	var n_ang: int = buco["n_ang"]
+	var anelli: Array = buco["anelli"]
+	var pv: Array = buco["pv"]
+	var nv: Array = buco["nv"]
 	var st_b := SurfaceTool.new()
 	st_b.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var st_i := SurfaceTool.new()
@@ -361,6 +382,8 @@ func _pesci() -> void:
 	var amb := _ambiente("pesci")
 	var occupati := _occupati_muri()
 	var k := 0
+	# (un pesce per passo: tutti insieme erano 0,6 s di gioco fermo nella costruzione a pezzi)
+	var pesci: Array = []
 	for lato: float in [-1.0, 1.0]:
 		var s := float(amb[0]) + 3.0 + (0.0 if lato < 0.0 else PESCI_OGNI * 0.5)
 		while s < float(amb[1]) - 2.0:
@@ -368,11 +391,12 @@ func _pesci() -> void:
 				s += 0.5
 				continue
 			if scelta_pesci == "A":
-				_pesce_mensola(nodo, s, lato, k)
+				pesci.append(_pesce_mensola.bind(nodo, s, lato, k))
 			else:
-				_pesce_appeso(nodo, s, lato, k)
+				pesci.append(_pesce_appeso.bind(nodo, s, lato, k))
 			k += 1
 			s += PESCI_OGNI
+	sala.aggiungi_passi(pesci)
 
 
 ## Scelta A: un pesce in piedi sul suo palo, su una mensola d'ottone a sbalzo dal muro (un cuneo pieno: in alto

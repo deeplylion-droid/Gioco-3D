@@ -1,6 +1,6 @@
 extends Node
 ## La fine vera della demo, in fondo all'inseguimento (SB1): il nero dell'inseguimento (SalaInseguimento._nero, livello
-## 80), la scritta "FINE DELLA DEMO" sopra il nero (l'HUD la mette su un livello suo, 90, sotto il menu di pausa a 100;
+## 80), la scritta "FINE DEL CAPITOLO 1" sopra il nero (l'HUD la mette su un livello suo, 90, sotto il menu di pausa a 100;
 ## prima stava sotto il nero e non si vedeva: collaudo della v0.3.13), e finita la scritta il gioco torna da solo al
 ## titolo (scelta 12A dell'utente, 24 ottobre). Il tempo della scritta si ferma con la pausa, e il ritorno al titolo
 ## non scatta una seconda volta.
@@ -108,11 +108,11 @@ func _run() -> void:
 	var scritta: Label = hud.call(&"banner_label") if hud else null
 	check(strato != null and nero != null and strato.layer > nero.layer and strato.layer < 100 and strato.visible,
 		"la scritta sta sopra il nero e sotto il menu di pausa (livello %d)" % (strato.layer if strato else -1))
-	check(scritta != null and scritta.is_visible_in_tree() and scritta.modulate.a > 0.9 and scritta.text.begins_with("FINE DELLA DEMO"),
+	check(scritta != null and scritta.is_visible_in_tree() and scritta.modulate.a > 0.9 and scritta.text.begins_with("FINE DEL CAPITOLO 1"),
 		"la scritta si vede: «%s»" % (scritta.text.replace("\n", " / ") if scritta else ""))
 	if OS.get_environment("FINE_TUNNEL") != "":
 		# (collaudo D4: dopo il tunnel solo la scritta, senza la riga della torre)
-		check(scritta != null and scritta.text == "FINE DELLA DEMO", "dopo il tunnel solo «FINE DELLA DEMO», senza la riga della torre")
+		check(scritta != null and scritta.text == "FINE DEL CAPITOLO 1", "dopo il tunnel solo «FINE DEL CAPITOLO 1», senza la riga della torre")
 	check(hud != null and (hud as CanvasLayer).layer < nero.layer, "il resto dell'interfaccia (mirino, zaino, messaggi) resta sotto il nero")
 	var file := OS.get_environment("FINE_SCATTO")
 	if file != "":

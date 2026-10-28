@@ -36,19 +36,27 @@ const FORZIERE := [147.0, -1.0, 1.1]
 const PALOMBARO := [190.0, 1.0, 1.0]
 
 
+## (i coralli uno per passo: tutti in un passo erano 1,4 s di gioco fermo nella costruzione a pezzi)
 static func passi(sala: SalaSottomarino) -> Array:
-	return [_coralli.bind(sala), _relitto.bind(sala), _palombaro.bind(sala)]
+	var out: Array = [_coralli.bind(sala)]
+	for c in CORALLI:
+		out.append(_corallo.bind(sala, c))
+	out.append_array([_relitto.bind(sala), _palombaro.bind(sala)])
+	return out
 
 
 static func _coralli(sala: SalaSottomarino) -> void:
 	var nodo := Node3D.new()
 	nodo.name = "Coralli"
 	sala.add_child(nodo)
-	for c in CORALLI:
-		var scala: float = c[2]
-		_mensola(sala, nodo, float(c[0]), float(c[1]), 0.75, 0.54 * scala + DAL_MURO + 0.06)
-		var n := _contro_il_muro(sala, nodo, "corallo", float(c[0]), float(c[1]), scala, float(c[3]), true)
-		n.name = "Corallo_%d" % int(c[0] * 10.0)
+
+
+static func _corallo(sala: SalaSottomarino, c: Array) -> void:
+	var nodo := sala.get_node(^"Coralli") as Node3D
+	var scala: float = c[2]
+	_mensola(sala, nodo, float(c[0]), float(c[1]), 0.75, 0.54 * scala + DAL_MURO + 0.06)
+	var n := _contro_il_muro(sala, nodo, "corallo", float(c[0]), float(c[1]), scala, float(c[3]), true)
+	n.name = "Corallo_%d" % int(c[0] * 10.0)
 
 
 static func _relitto(sala: SalaSottomarino) -> void:
@@ -133,19 +141,27 @@ static func _contro_il_muro(sala: SalaSottomarino, nodo: Node3D, nome: String, s
 	var r := sala.destra(s) * lato
 	var verso := (-r).rotated(Vector3.UP, deg_to_rad(giro))
 	var quota := sala.piano + MENSOLA_SU + (MENSOLA_SPESSA + 0.3 if sulla_mensola else 0.0)
+	var t0 := Time.get_ticks_usec()
 	var n := sala._modello(nodo, nome, sala._al(p, sala.destra(s), Vector2(lato * (sala.muro - 0.8), quota)), verso, scala)
+	var t1 := Time.get_ticks_usec()
 	# quanto sporge il retro del modello dietro l'origine, lungo la normale del muro
 	var dietro := 0.0
+	# (il punto più sporgente è sempre un vertice dell'involucro convesso: si cerca lì, poche centinaia di punti calcolati
+	# dal motore, invece che su tutte le facce in GDScript, che costava fino a 1,6 s per i coralli)
 	for m in n.find_children("*", "MeshInstance3D", true, false):
 		var mm := m as MeshInstance3D
 		var xf := mm.global_transform
-		for v in mm.mesh.get_faces():
+		for v in _involucro(mm.mesh):
 			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(r))
+	var t2 := Time.get_ticks_usec()
 	if not Posa.fissa_al_muro(n, -r, dietro + DAL_MURO if sulla_mensola else dietro, false):
 		push_warning("arredi sottomarino: %s a %.1f senza muro" % [nome, s])
 	if sulla_mensola and not Posa.appoggia_a_terra(n, 0.0, false):
 		push_warning("arredi sottomarino: %s a %.1f senza mensola" % [nome, s])
+	var t3 := Time.get_ticks_usec()
 	sala._collisione_modello(n)
+	if OS.has_environment("TORRE_TEMPI"):
+		print("  %s: modello %.0f, sporgenza %.0f, posa %.0f, collisione %.0f ms" % [nome, (t1 - t0) / 1000.0, (t2 - t1) / 1000.0, (t3 - t2) / 1000.0, (Time.get_ticks_usec() - t3) / 1000.0])
 	return n
 
 
@@ -256,3 +272,16 @@ static func _faretto(sala: SalaSottomarino, nodo: Node3D, mensola: Node3D, cosa:
 	nodo.add_child(sl)
 	sl.global_position = base + Vector3.UP * 0.075
 	sl.look_at(cosa.global_position + Vector3.UP * su, b.z if absf(b.z.dot(Vector3.UP)) < 0.9 else Vector3.RIGHT)
+
+
+## I vertici dell'involucro convesso di [param mesh] (calcolati una volta per mesh).
+static var _involucri := {}
+
+
+static func _involucro(mesh: Mesh) -> PackedVector3Array:
+	if SalaSottomarino.senza_scorciatoie:
+		return mesh.get_faces()
+	if not _involucri.has(mesh):
+		var forma := mesh.create_convex_shape(true, false)
+		_involucri[mesh] = forma.points if forma else mesh.get_faces()
+	return _involucri[mesh]

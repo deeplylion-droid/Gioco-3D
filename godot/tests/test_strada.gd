@@ -106,7 +106,11 @@ func _run() -> void:
 	await _frames(3)
 	maniglione.interact(p)
 	await _frames(120)
-	check(maniglione.is_open, "col maniglione la porta del ponte si apre")
+	# (se le stanze della Risalita non sono ancora pronte la porta aspetta e si apre da sola: AttesaZone)
+	var t_porta := Time.get_ticks_msec()
+	while not maniglione.is_open and Time.get_ticks_msec() - t_porta < 90000:
+		await _frames(10)
+	check(maniglione.is_open, "col maniglione la porta del ponte si apre (attesa delle stanze %.1f s)" % ((Time.get_ticks_msec() - t_porta) / 1000.0))
 	await _vai("dalla porta del ponte su per le due rampe del raccordo", [tec.to_global(Vector3(47.4, 0, 1.4)),
 		tec.to_global(Vector3(51.6, 0, 1.4)), tec.to_global(Vector3(51.6, 0, 0.6)), tec.to_global(Vector3(51.6, 3.625, -6.2)),
 		tec.to_global(Vector3(50.0, 3.625, -7.8)), tec.to_global(Vector3(44.6, 7.25, -7.8))])
@@ -137,6 +141,8 @@ func _run() -> void:
 	check(giro.fuori and p.is_on_floor() and absf(p.global_position.y + 5.4) < 0.15, "in barca fino all'approdo, giù sulla banchina (%s)" % p.global_position)
 	var porta := ris.get_node(^"Fiume/Marker/PortaPersonale") as Node3D
 	var inf := ris.get_node(^"Infermeria") as Node3D
+	print("  (scorciatoia: il pulsantone dell'infermeria colpito col getto, la porta nord si apre; lo prova test_infermeria_gioco)")
+	inf.get_node(^"Interruttore").set(&"powered", true)
 	await _vai("dall'approdo, porta di servizio, zona del personale, infermeria, porta nord", [
 		porta.global_position + porta.global_basis.z * 0.8, porta.global_position - porta.global_basis.z * 1.5,
 		inf.to_global(Vector3(1.6, 0, 3.6)), inf.to_global(Vector3(1.8, 0, 1.6)), inf.to_global(Vector3(0.0, 0, 0.0)),
