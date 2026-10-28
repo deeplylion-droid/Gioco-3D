@@ -1,0 +1,548 @@
+[
+	{
+		"alto": 1.0,
+		"centro": [
+			-8.1,
+			1.25,
+			20.0
+		],
+		"largo": 1.6,
+		"luce": 0.27,
+		"mesh": "Sala/Architettura/sala_pareti_basse",
+		"nome": "sala_1",
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"occhi": [
+			-8.0,
+			1.6,
+			15.4
+		],
+		"punteggio": 68.3,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 158,
+		"zona": "sala"
+	},
+	{
+		"alto": 1.0,
+		"centro": [
+			-20.0,
+			1.25,
+			7.4
+		],
+		"largo": 1.6,
+		"luce": 0.25,
+		"mesh": "Sala/Architettura/sala_pareti_basse",
+		"nome": "sala_2",
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			-15.5,
+			1.61,
+			7.1
+		],
+		"punteggio": 44.8,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 112,
+		"zona": "sala"
+	},
+	{
+		"alto": 0.7,
+		"centro": [
+			20.0,
+			0.7,
+			-22.57
+		],
+		"largo": 1.2,
+		"luce": 0.33,
+		"mesh": "Sala/Architettura/sala_pareti_basse",
+		"nome": "sala_3",
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			15.5,
+			1.6,
+			-22.5
+		],
+		"punteggio": 30.8,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 111,
+		"zona": "sala"
+	},
+	{
+		"alto": 0.7,
+		"centro": [
+			-20.0,
+			0.7,
+			-3.54
+		],
+		"largo": 1.2,
+		"luce": 0.13,
+		"mesh": "Sala/Architettura/sala_pareti_basse",
+		"nome": "sala_4",
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			-15.8,
+			1.6,
+			-4.5
+		],
+		"punteggio": 9.3,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 85,
+		"zona": "sala"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			-4.16,
+			-4.05,
+			48.2
+		],
+		"largo": 2.4,
+		"luce": 0.51,
+		"mesh": "Risalita/@MeshInstance3D@659",
+		"nome": "risalita_1",
+		"normale": [
+			0.0,
+			0.0,
+			1.0
+		],
+		"occhi": [
+			-5.4,
+			-3.8,
+			52.7
+		],
+		"punteggio": 42.8,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 25,
+		"zona": "risalita"
+	},
+	{
+		"alto": 0.8,
+		"centro": [
+			6.1,
+			-1.05,
+			49.25
+		],
+		"largo": 1.6,
+		"luce": 0.39,
+		"mesh": "Risalita/@MeshInstance3D@596",
+		"nome": "risalita_2",
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			3.6,
+			-0.38,
+			49.2
+		],
+		"punteggio": 3.5,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 7,
+		"zona": "risalita"
+	},
+	{
+		"alto": 0.7,
+		"centro": [
+			-5.9,
+			-4.7,
+			49.24
+		],
+		"largo": 1.2,
+		"luce": 0.34,
+		"mesh": "Risalita/@MeshInstance3D@663",
+		"nome": "risalita_3",
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			-1.4,
+			-3.62,
+			49.2
+		],
+		"punteggio": 2.9,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 10,
+		"zona": "risalita"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			8.2,
+			-7.7,
+			39.28
+		],
+		"largo": 2.4,
+		"luce": 0.29,
+		"mesh": "Tecnici/Ambienti/SalaPompe/SALA_struttura",
+		"nome": "tecnici_1",
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			3.5,
+			-7.45,
+			38.76
+		],
+		"punteggio": 48.7,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 50,
+		"zona": "tecnici"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			-20.16,
+			-4.05,
+			61.35
+		],
+		"largo": 2.4,
+		"luce": 0.32,
+		"mesh": "Risalita/Fiume/@MeshInstance3D@1397",
+		"nome": "fiume_1",
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"occhi": [
+			-19.5,
+			-3.8,
+			57.0
+		],
+		"punteggio": 187.1,
+		"scena": "res://scenes/sala_principale.tscn",
+		"vista": 174,
+		"zona": "fiume"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			40.4,
+			-32.65,
+			-0.6
+		],
+		"largo": 2.4,
+		"luce": 2.07,
+		"mesh": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
+		"nome": "inseguimento_1",
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			45.1,
+			-32.4,
+			-0.5
+		],
+		"punteggio": 349.4,
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"vista": 104,
+		"zona": "inseguimento"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			44.18,
+			-32.65,
+			2.0
+		],
+		"largo": 2.4,
+		"luce": 1.25,
+		"mesh": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
+		"nome": "inseguimento_2",
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"occhi": [
+			44.6,
+			-32.4,
+			-2.5
+		],
+		"punteggio": 272.2,
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"vista": 81,
+		"zona": "inseguimento"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			66.57,
+			-22.66,
+			-32.0
+		],
+		"largo": 2.4,
+		"luce": 0.94,
+		"mesh": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
+		"nome": "inseguimento_3",
+		"normale": [
+			0.0,
+			0.0,
+			1.0
+		],
+		"occhi": [
+			67.0,
+			-23.98,
+			-27.6
+		],
+		"punteggio": 148.4,
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"vista": 47,
+		"zona": "inseguimento"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			24.0,
+			-6.0,
+			-4.0
+		],
+		"largo": 2.4,
+		"luce": 1.88,
+		"mesh": "TorreStruttura/torre_A",
+		"nome": "torre_2",
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"occhi": [
+			23.09,
+			-7.41,
+			-8.05
+		],
+		"punteggio": 151.2,
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"vista": 45,
+		"zona": "torre"
+	},
+	{
+		"alto": 1.0,
+		"centro": [
+			20.24,
+			-9.65,
+			-21.66
+		],
+		"largo": 2.4,
+		"luce": 0.75,
+		"mesh": "TorreStruttura/torre_A",
+		"nome": "torre_4",
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			24.62,
+			-10.41,
+			-20.85
+		],
+		"punteggio": 82.8,
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"vista": 46,
+		"zona": "torre"
+	},
+	{
+		"alto": 1.0,
+		"centro": [
+			32.99,
+			-0.25,
+			-26.0
+		],
+		"largo": 1.6,
+		"luce": 1.96,
+		"mesh": "TorreStruttura/torre_A",
+		"nome": "torre_6",
+		"normale": [
+			0.0,
+			0.0,
+			1.0
+		],
+		"occhi": [
+			32.01,
+			-1.14,
+			-21.76
+		],
+		"punteggio": 70.4,
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"vista": 44,
+		"zona": "torre"
+	},
+	{
+		"alto": 0.7,
+		"centro": [
+			40.0,
+			-15.59,
+			-24.41
+		],
+		"largo": 1.2,
+		"luce": 0.6,
+		"mesh": "TorreStruttura/torre_A",
+		"nome": "torre_8",
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			36.39,
+			-18.4,
+			-23.85
+		],
+		"punteggio": 40.8,
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"vista": 81,
+		"zona": "torre"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			39.3,
+			-28.65,
+			76.35
+		],
+		"largo": 2.4,
+		"luce": 0.65,
+		"mesh": "Tunnel_072/struttura_mosaico",
+		"nome": "tunnel_2",
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			34.74,
+			-29.32,
+			76.08
+		],
+		"punteggio": 408.4,
+		"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn",
+		"vista": 187,
+		"zona": "tunnel"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			26.7,
+			-28.65,
+			84.11
+		],
+		"largo": 2.4,
+		"luce": 0.64,
+		"mesh": "Tunnel_096/struttura_mosaico",
+		"nome": "tunnel_3",
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			31.24,
+			-29.32,
+			84.58
+		],
+		"punteggio": 397.8,
+		"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn",
+		"vista": 185,
+		"zona": "tunnel"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			26.35,
+			-28.65,
+			30.84
+		],
+		"largo": 2.4,
+		"luce": 0.67,
+		"mesh": "Tunnel_024/struttura_mosaico",
+		"nome": "tunnel_4",
+		"normale": [
+			0.98,
+			0.0,
+			0.19
+		],
+		"occhi": [
+			30.76,
+			-29.32,
+			31.39
+		],
+		"punteggio": 387.2,
+		"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn",
+		"vista": 172,
+		"zona": "tunnel"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			-3.3,
+			-28.65,
+			8.38
+		],
+		"largo": 2.4,
+		"luce": 0.81,
+		"mesh": "Tunnel_264/struttura_mosaico",
+		"nome": "tunnel_6",
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			1.16,
+			-29.32,
+			8.4
+		],
+		"punteggio": 383.7,
+		"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn",
+		"vista": 141,
+		"zona": "tunnel"
+	},
+	{
+		"alto": 1.4,
+		"centro": [
+			-50.7,
+			-28.65,
+			84.11
+		],
+		"largo": 2.4,
+		"luce": 0.65,
+		"mesh": "Tunnel_480/struttura_mosaico",
+		"nome": "tunnel_7",
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"occhi": [
+			-54.99,
+			-29.32,
+			83.04
+		],
+		"punteggio": 380.0,
+		"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn",
+		"vista": 174,
+		"zona": "tunnel"
+	}
+]
