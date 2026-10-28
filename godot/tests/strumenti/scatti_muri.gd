@@ -32,7 +32,7 @@ func _run() -> void:
 	if a.size() > 1:
 		_cartella = a[1]
 	var scena := a[2] if a.size() > 2 else ""
-	var nomi: PackedStringArray = a[3].split(",") if a.size() > 3 else PackedStringArray()
+	var nomi: PackedStringArray = a[3].split(",", false) if a.size() > 3 else PackedStringArray()
 	DirAccess.make_dir_recursive_absolute(_cartella)
 	var muri: Array = JSON.parse_string(FileAccess.get_file_as_string(MURI))
 	var per_scena := {}
@@ -127,6 +127,9 @@ func _scena(percorso: String, muri: Array) -> void:
 		we.camera_attributes = look.attributi_camera
 		look.free()
 		_radice.add_child(we)
+	# con SCARABOCCHI=1 gli scarabocchi sui muri (godot/assets/ambiente/scarabocchi/scarabocchi.json), come nel gioco
+	if OS.get_environment("SCARABOCCHI") != "":
+		_radice.add_child(Scarabocchi.new())
 	var cam := Camera3D.new()
 	cam.near = 0.05
 	cam.far = 60.0
