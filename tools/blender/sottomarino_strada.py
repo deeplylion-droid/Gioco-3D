@@ -111,7 +111,7 @@ AMBIENTI = [
     dict(nome='abisso', titolo="gli oblò dell'abisso", fino=470.0,
          nota="la terza curva a U con gli oblò grandi e la luce blu scura; il secondo passaggio basso"),
     dict(nome='approdo', titolo="l'approdo", fino=1e9,
-         nota="l'ultimo rettilineo e l'approdo col portello da sottomarino (il volantino, FINE DELLA DEMO)"),
+         nota="l'ultimo rettilineo e l'approdo col portello da sottomarino (il volantino, FINE DEL CAPITOLO 1)"),
 ]
 
 

@@ -26,6 +26,12 @@ const VANO := 0.5
 const PORTA_SUD := 1.6
 const PORTA_NORD := -2.2
 const LARGO_PORTA := 1.0
+## Secondi per aprire la porta nord col pulsantone (il suono della porta del ponte dura 3,4 s).
+const DURATA_APERTURA_NORD := 2.6
+## Quanto l'anta nord, aprendosi, resta lontana dal giocatore (m).
+const MARGINE_ANTA := 0.05
+## Lo strato di disegno delle lampade d'emergenza (vedi [method _luci]).
+const STRATO_LAMPADA := 1 << 17
 ## Ordine dei checkpoint dei passi (tra l'approdo e il magazzino).
 @export var ordine_checkpoint := 12
 ## La luce dopo il pulsante. Vero (A, scelta dell'utente del 25 ottobre: resta buia): la luce principale è lo schermo
@@ -48,13 +54,47 @@ var keycard: Pickup
 var _listelli := []
 var radiografia: Pickup
 
+## Vero quando la porta nord è aperta (o si sta aprendo).
+var porta_nord_aperta := false
+# L'apertura col pulsantone in corso: da 0 a 1 (-1: ferma), le misure e il centro dell'anta, il suo suono.
+var _apertura_nord := -1.0
+var _misure_anta_nord := Vector3.ZERO
+var _centro_anta_nord := Vector3.ZERO
+var _suono_nord: AudioStreamPlayer3D
+
 var _collisioni: StaticBody3D
+## Il cardine dell'anta della porta nord.
+var _anta_nord: Node3D
 var _vetro_lampeggiante: StandardMaterial3D
 var _luce_lampeggiante: OmniLight3D
 var _t := 0.0
 
 
+## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un passo per fotogramma (la Risalita
+## caricata a gioco avviato: tutta insieme l'infermeria fermava il gioco 275 ms).
+var costruzione_a_pezzi := false
+var costruita := false
+
+
 func _ready() -> void:
+	if not costruzione_a_pezzi:
+		_costruisci()
+
+
+## Costruisce l'infermeria un passo per fotogramma: il nodo va messo nella scena con [member costruzione_a_pezzi]
+## vero, poi si aspetta questa.
+func costruisci_a_pezzi() -> void:
+	if not costruita:
+		await _costruisci()
+
+
+## Nella costruzione a pezzi, il passo dopo al fotogramma dopo. Altrimenti niente (tutto nello stesso fotogramma).
+func _pausa() -> void:
+	if costruzione_a_pezzi:
+		await get_tree().process_frame
+
+
+func _costruisci() -> void:
 	seed(1019)
 	mat_piastrelle = _mat("piastrelle_piccole", Color(0.7, 0.92, 0.85), 1.2)
 	mat_muro = _mat("intonaco", Color(1.0, 0.8, 0.84), 0.5)
@@ -64,15 +104,23 @@ func _ready() -> void:
 	_collisioni.name = "Collisioni"
 	add_child(_collisioni)
 	_stanza()
+	await _pausa()
 	_arredi()
+	await _pausa()
 	_negatoscopio()
+	await _pausa()
 	_schedari()
+	await _pausa()
 	_cassaforte()
+	await _pausa()
 	_luci()
+	await _pausa()
 	_bambini()
+	await _pausa()
 	_metti_listelli()
 	_checkpoint()
 	_marker()
+	costruita = true
 
 
 # --- materiali e aiuti -----------------------------------------------------------------------------
@@ -248,7 +296,9 @@ func _stanza() -> void:
 			_forma(Vector3(w, H, 0.1), Vector3(cx, H * 0.5, z))
 		# sopra la porta
 		_box(Vector3(LARGO_PORTA, H - 2.15, 0.1), Vector3(xp, 2.15 + (H - 2.15) * 0.5, z), mat_muro, self, true)
-		_telaio(Vector3(xp, 0, z - lato * 0.05), 0.0 if lato < 0.0 else 180.0)
+		var cardine := _telaio(Vector3(xp, 0, z - lato * 0.05), 0.0 if lato < 0.0 else 180.0, lato < 0.0)
+		if lato < 0.0:
+			_anta_nord = cardine
 	_box(Vector3(0.1, FASCIA, 2 * L), Vector3(-L - 0.05, FASCIA * 0.5, 0), mat_piastrelle)
 	_box(Vector3(0.1, H - FASCIA, 2 * L), Vector3(-L - 0.05, FASCIA + (H - FASCIA) * 0.5, 0), mat_muro)
 	_listelli.append([Vector3(0.04, 0.05, 2 * L), Vector3(-L + 0.02, FASCIA, 0), listello])
@@ -287,8 +337,10 @@ func _muro_col_vano(x: float, y0: float, y1: float, m: Material, spessore := 0.1
 				_box(Vector3(spessore, hi - lo, b - a), Vector3(x, (lo + hi) * 0.5, (a + b) * 0.5), m)
 
 
-## Il telaio della porta di servizio e l'anta aperta, appoggiata al muro dentro la stanza.
-func _telaio(pos: Vector3, rot: float) -> void:
+## Il telaio della porta di servizio e l'anta aperta, appoggiata al muro dentro la stanza. Con [param chiusa] (la porta
+## nord) l'anta parte chiusa nel telaio, con la sua collisione che si muove con lei, e si apre col pulsantone
+## ([method _apri_porta_nord]). Restituisce il cardine dell'anta.
+func _telaio(pos: Vector3, rot: float, chiusa := false) -> Node3D:
 	var n := Node3D.new()
 	n.position = pos
 	n.rotation_degrees.y = rot
@@ -308,13 +360,44 @@ func _telaio(pos: Vector3, rot: float) -> void:
 	cardine.position = Vector3(LARGO_PORTA * 0.5, 0, 0.07)
 	cardine.rotation_degrees.y = 180.0
 	n.add_child(cardine)
-	_box(Vector3(0.88, 2.04, 0.05), Vector3(-0.44, 1.03, -0.025), anta, cardine)
+	# la porta nord chiusa: l'anta sta fra gli stipiti (filo interno a 0,44 m dall'asse, 2 mm di gioco per lato) e sotto la
+	# traversa (5 mm), coi cardini sul filo interno dello stipite verso la stanza (8 mm fuori dalla sua faccia, così i perni
+	# non entrano nello stipite né chiusa né aperta): aperta a 180 gradi resta tutta fuori dal vano, davanti allo stipite e
+	# al muro, come la sud
+	var largo := 0.88
+	var alto := 2.04
+	if chiusa:
+		largo = LARGO_PORTA - 0.12 - 0.004
+		alto = 2.075
+		cardine.position = Vector3(largo * 0.5, 0, 0.078)
+		cardine.rotation_degrees.y = 0.0
+	var centro := Vector3(-largo * 0.5, 0.01 + alto * 0.5, -0.025)
+	_box(Vector3(largo, alto, 0.05), centro, anta, cardine)
 	_box(Vector3(0.14, 0.03, 0.05), Vector3(-0.78, 1.05, 0.02), _colore(Color(0.7, 0.7, 0.7), 0.9, 0.3), cardine)
-	var xf := n.transform * cardine.transform
-	_forma(Vector3(0.88, 2.04, 0.05), xf * Vector3(-0.44, 1.03, -0.025), rot + cardine.rotation_degrees.y)
+	if chiusa:
+		_misure_anta_nord = Vector3(largo, alto, 0.05)
+		_centro_anta_nord = centro
+		# la collisione si muove con l'anta: segue il cardine che ruota (con sync_to_physics il corpo rimetteva a posto la sua
+		# posizione quando a muoversi è il padre, e restava chiuso), anche con la stanza ferma (i controlli)
+		var corpo := AnimatableBody3D.new()
+		corpo.name = "AntaNord"
+		corpo.sync_to_physics = false
+		corpo.collision_layer = _collisioni.collision_layer
+		corpo.collision_mask = 0
+		var f := CollisionShape3D.new()
+		var b := BoxShape3D.new()
+		b.size = Vector3(largo, alto, 0.05)
+		f.shape = b
+		f.position = centro
+		corpo.add_child(f)
+		cardine.add_child(corpo)
+	else:
+		var xf := n.transform * cardine.transform
+		_forma(Vector3(largo, alto, 0.05), xf * centro, rot + cardine.rotation_degrees.y)
 	# i cardini: due perni sull'asse, nello spigolo dell'anta, accanto allo stipite (non dentro)
 	for y in [0.35, 1.75]:
 		_box(Vector3(0.025, 0.1, 0.025), Vector3(-0.0126, y, -0.0063), telaio, cardine)
+	return cardine
 
 
 # --- arredi --------------------------------------------------------------------------------------
@@ -835,7 +918,12 @@ func _luci() -> void:
 	for p in [[Vector3(PORTA_SUD, 2.55, L), Vector3(0, -0.5, -1)], [Vector3(L, 2.5, -1.05), Vector3(-1, -0.7, 0)]]:
 		var l := LampadaMuro.monta(self, p[0], p[1])
 		# (più deboli dal 24 ottobre: l'utente la vuole più buia, coi faretti sul negatoscopio e sulla cassaforte)
-		_luce(l.position + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 0.9, 6.0, true)
+		var luce := _luce(l.position + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 0.9, 6.0, true)
+		# il corpo della lampada non fa ombra con la sua luce (sul soffitto restava la sua ombra nera, collaudo del 25
+		# ottobre): la lampada sta nel suo strato, che la sua luce non prende fra chi fa ombra; le altre luci sì
+		for g in l.find_children("*", "GeometryInstance3D", true, false):
+			(g as GeometryInstance3D).layers = STRATO_LAMPADA
+		luce.shadow_caster_mask = 0xFFFFF & ~STRATO_LAMPADA
 	# il cartello d'uscita verde sopra la porta della scala, acceso (luce d'emergenza a batteria)
 	var mf := StandardMaterial3D.new()
 	mf.albedo_texture = load("res://assets/fiume_lento/texture/uscita_faccia.jpg")
@@ -917,8 +1005,95 @@ func _checkpoint() -> void:
 		n.add_child(cp)
 		_cp.append(cp)
 	interruttore.powered_changed.connect(func(on: bool): if on: _raggiunto(0))
+	# la porta nord: si apre da sola quando colpisci il pulsantone; acceso senza colpo (l'istantanea di un checkpoint, il
+	# Continua, le partenze F9) è già aperta. Al colpo powered_changed arriva prima di pressed: l'apertura senza
+	# animazione aspetta la fine del fotogramma, e a quel punto l'anta si sta già aprendo.
+	interruttore.pressed.connect(func(): if interruttore.powered: _apri_porta_nord(true))
+	interruttore.powered_changed.connect(func(on: bool): if on: _apri_porta_nord.call_deferred(false))
+	if interruttore.powered:
+		_apri_porta_nord(false)
 	radiografia.interacted.connect(func(_by): _raggiunto(1))
 	negatoscopio.radiografia_appoggiata.connect(func(): _raggiunto(2))
+
+
+## La porta nord (l'uscita verso la scala di servizio) è chiusa finché non colpisci il pulsantone (richiesta dell'utente del
+## 25 ottobre): con [param animata] (il colpo) si apre da sola fino al muro, col suono della porta del ponte della sala
+## pompe ([method _physics_process]); senza, è subito aperta.
+func _apri_porta_nord(animata: bool) -> void:
+	if _anta_nord == null or porta_nord_aperta:
+		return
+	porta_nord_aperta = true
+	if not animata:
+		_apertura_nord = -1.0
+		_anta_nord.rotation_degrees.y = 180.0
+		return
+	_apertura_nord = 0.0
+
+
+## L'apertura col pulsantone, un passo per fotogramma della fisica: l'anta va avanti solo se nella posizione nuova non
+## tocca il giocatore (con 5 cm di margine). Se il giocatore è dove gira l'anta, l'anta si ferma prima di toccarlo e il suo
+## suono si mette in pausa; appena lui si sposta riparte da lì, e alla fine è sempre aperta contro il muro. (Collaudo di
+## ambienti-1 del 25 ottobre: girata da un tween, l'anta spingeva il giocatore fermo nel suo arco di 0,56-1,72 m e lo
+## attraversava, con la camera dentro l'anta.)
+func _physics_process(delta: float) -> void:
+	if _apertura_nord < 0.0 or _anta_nord == null:
+		return
+	var k := minf(_apertura_nord + delta / DURATA_APERTURA_NORD, 1.0)
+	var angolo := 180.0 * (0.5 - 0.5 * cos(PI * k))
+	if _anta_tocca_giocatore(angolo):
+		_suono_porta_nord(false)
+		return
+	_apertura_nord = k
+	_anta_nord.rotation_degrees.y = angolo
+	_suono_porta_nord(true)
+	if k >= 1.0:
+		_apertura_nord = -1.0
+
+
+## Vero se l'anta nord girata di [param angolo] gradi (allargata di [constant MARGINE_ANTA]) tocca il giocatore.
+func _anta_tocca_giocatore(angolo: float) -> bool:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p) or not p.is_inside_tree() or not is_inside_tree():
+		return false
+	var cardine := (_anta_nord.get_parent() as Node3D).global_transform * Transform3D(Basis(Vector3.UP, deg_to_rad(angolo)), _anta_nord.position)
+	var forma := BoxShape3D.new()
+	forma.size = _misure_anta_nord + Vector3(2.0, 0.0, 2.0) * MARGINE_ANTA
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = forma
+	q.transform = cardine * Transform3D(Basis.IDENTITY, _centro_anta_nord)
+	q.collision_mask = p.collision_layer
+	q.collide_with_areas = false
+	for r in get_world_3d().direct_space_state.intersect_shape(q, 8):
+		if r.get("collider") == p:
+			return true
+	return false
+
+
+## Il suono dell'anta nord segue l'anta: parte quando comincia a muoversi, in pausa quando si ferma, riprende da dove era.
+## Un suono suo (lo stesso della porta del ponte, con la sua taratura in Audio): quelli di Audio, in pausa, verrebbero
+## presi per un altro suono.
+func _suono_porta_nord(muove: bool) -> void:
+	if _suono_nord == null:
+		if not muove:
+			return
+		var audio := get_node_or_null(^"/root/Audio")
+		if audio == null:
+			return
+		_suono_nord = AudioStreamPlayer3D.new()
+		_suono_nord.name = "SuonoPortaNord"
+		_suono_nord.stream = audio.call(&"stream_di", &"porta_ponte_apre")
+		var t: Array = audio.call(&"taratura", &"porta_ponte_apre")
+		_suono_nord.bus = t[0]
+		_suono_nord.volume_db = float(t[1])
+		_suono_nord.unit_size = float(t[2])
+		_suono_nord.max_distance = float(t[3])
+		_anta_nord.get_parent().add_child(_suono_nord)
+		_suono_nord.position = Vector3(0.0, 1.0, 0.1)
+		_suono_nord.play()
+		var conteggio: Dictionary = audio.get(&"conteggio")
+		conteggio[&"porta_ponte_apre"] = int(conteggio.get(&"porta_ponte_apre", 0)) + 1
+		return
+	_suono_nord.stream_paused = not muove
 
 
 func _raggiunto(i: int) -> void:

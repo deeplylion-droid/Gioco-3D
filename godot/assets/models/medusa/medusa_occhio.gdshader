@@ -6,6 +6,8 @@
 // texture e stringe l'iride intorno, il bordo dell'iride resta dov'e'), "vene" (0..1, come venatura; vale la piu' alta)
 // e "sorriso" (0..1): la palpebra di sotto sale a mezzaluna, col bordo ad arco piu' alto al centro (l'occhio "^" delle
 // mascotte, scelta dell'utente del 23 ottobre per lo spot), del colore della palpebra di sopra.
+// "scurisci" (0..1, su una copia del materiale): l'occhio si scurisce fino al nero, colore, luce propria e riflessi (lei che si
+// stacca da un oblò e sparisce nel buio, ObloLei: al posto della trasparenza, che metteva la palpebra sotto l'occhio).
 shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
 
@@ -17,6 +19,7 @@ uniform float luce_propria : hint_range(0.0, 2.0) = 0.22;
 instance uniform float pupilla : hint_range(0.5, 2.0) = 1.0;
 instance uniform float vene : hint_range(0.0, 1.0) = 0.0;
 instance uniform float sorriso : hint_range(0.0, 1.0) = 0.0;
+uniform float scurisci : hint_range(0.0, 1.0) = 0.0;
 // il colore della palpebra (medusa_palpebre.tres)
 uniform vec4 colore_palpebra : source_color = vec4(0.514, 0.581, 0.880, 1.0);
 
@@ -53,6 +56,8 @@ void fragment() {
 	vec3 pelle = colore_palpebra.rgb * mix(0.8, 1.0, smoothstep(bordo, bordo + 0.08, UV.y));
 	ALBEDO = mix(c, pelle, palpebra);
 	ROUGHNESS = mix(ruvidita, 0.24, palpebra);
-	SPECULAR = 0.5;
-	EMISSION = c * luce_propria * (1.0 - palpebra);
+	float luce = 1.0 - clamp(scurisci, 0.0, 1.0);
+	ALBEDO *= luce;
+	SPECULAR = 0.5 * luce;
+	EMISSION = c * luce_propria * (1.0 - palpebra) * luce;
 }

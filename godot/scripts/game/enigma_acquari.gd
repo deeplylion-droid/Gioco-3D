@@ -203,7 +203,9 @@ func _valuta() -> void:
 	if giusto:
 		stato = Stato.RISOLTO
 		_misto.set_mix(WaterMix.pura(WaterMix.VERDE))
-		if portone and portone.has_method(&"apri"):
+		if portone and portone.has_method(&"apri_quando_pronta"):
+			portone.call(&"apri_quando_pronta")
+		elif portone and portone.has_method(&"apri"):
 			portone.call(&"apri")
 		risolto.emit()
 	else:

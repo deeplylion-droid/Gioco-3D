@@ -190,7 +190,7 @@ func _run() -> void:
 		if finita[0]:
 			break
 		await get_tree().process_frame
-	check(finita[0] and o.lei == null, "dopo il distacco l'oblò resta vuoto")
+	check(finita[0] and _vuoto(o), "dopo il distacco l'oblò resta vuoto")
 	check(_pelle_volte > 0 and _pelle_max <= 0.0, "posa %s: la pelle di lei sempre dentro la cisterna e dietro il vetro, dalla comparsa al distacco (%d misure, peggio %.3f m: %s; per stato %s)" % [o.posa, _pelle_volte, _pelle_max, _pelle_dove, _pelle_per_stato])
 	p.teleport(lontano)
 	await _frames(5)
@@ -198,6 +198,11 @@ func _run() -> void:
 	await _frames(30)
 	p.look_at_point(centro)
 	await _frames(30)
-	check(o.stato == ObloLei.Stato.FINITA and o.lei == null, "tornando al fondo lei non ricompare")
+	check(o.stato == ObloLei.Stato.FINITA and _vuoto(o), "tornando al fondo lei non ricompare")
 	check(bool(o.save_state().get("finito", false)), "lo stato si salva coi checkpoint (finito)")
 	_fine()
+
+
+## Lei non si vede: tolta, o (preparata con la torre, ObloLei.prepara_lei) riposta nascosta.
+func _vuoto(o: ObloLei) -> bool:
+	return o.lei == null or not is_instance_valid(o.lei) or o.lei.lei == null or not o.lei.lei.visible
