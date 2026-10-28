@@ -80,6 +80,15 @@
    ],
    "aperta": true
   },
+  "Risalita/ObloPersonale": {
+   "finito": false
+  },
+  "Risalita/ObloServizio": {
+   "finito": false
+  },
+  "Risalita/ObloFiume": {
+   "finito": false
+  },
   "Interni": {
    "tornello": true,
    "docce": true,
@@ -115,11 +124,11 @@
    "mix": {}
   },
   "Vasche/VascaBimbi1": {
-   "fill": 0.674449612015727,
+   "fill": 0.675937984083991,
    "mix": {}
   },
   "Vasche/VascaBimbi2": {
-   "fill": 0.488403100387862,
+   "fill": 0.489891472456129,
    "mix": {}
   },
   "Tecnici/AgnellinoScala": {
@@ -194,6 +203,9 @@
    "mix": {
     "blu": 1.0
    }
+  },
+  "SalaTorre/ObloLei": {
+   "finito": false
   }
  },
  "removed": [
@@ -213,10 +225,15 @@
    "p06",
    "p07",
    "PolaroidPecora",
-   "Polaroid10"
+   "p13",
+   "p15",
+   "p16",
+   "p14",
+   "Polaroid10",
+   "p12"
   ]
  },
  "luci": 2,
- "time": 1792873990.48252,
+ "time": 1793223874.65107,
  "partenza_prova": "tunnel"
 }
