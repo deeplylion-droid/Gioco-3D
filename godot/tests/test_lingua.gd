@@ -320,6 +320,14 @@ func _a_schermo() -> void:
 	var testi_com := _a_video(com).map(func(t): return t[0])
 	check("CONTROLS" in testi_com and "Move" in testi_com and "Space" in testi_com and "hold" in testi_com, "i comandi in inglese (titolo, righe, tasti, note)", testi_com.slice(0, 12))
 	com.queue_free()
+	# la domanda di Nuova partita con un salvataggio
+	var dom: CanvasLayer = (load("res://scripts/ui/menu/domanda_menu.gd") as GDScript).new("Ricominciare da capo?", "Il salvataggio verrà sostituito")
+	add_child(dom)
+	await _frames(3)
+	_controlla_inglese(dom, "la domanda di Nuova partita")
+	var tit := dom.find_child("Titolo", true, false) as Label
+	check(tit != null and tit.text == "START OVER?", "la domanda in inglese e in maiuscolo", tit.text if tit else null)
+	dom.queue_free()
 	# la pausa
 	Game.set_paused(true)
 	await _frames(3)
