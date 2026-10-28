@@ -5,9 +5,9 @@ from mathutils import Vector
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.join(QUI, '..', '..')
-DIR = os.path.join(REPO, 'godot', 'assets', 'enigma_giocattoli')
+DIR = os.path.join(REPO, 'godot', 'assets', 'models', 'enigma_giocattoli')
 OUT = os.path.join(REPO, 'docs', 'proposte', 'enigma_giocattoli')
-nomi = [a for a in sys.argv[1:] if not a.startswith('-')] or ['paperella', 'palla_rossa', 'balena_blu']
+nomi = [a for a in sys.argv[1:] if not a.startswith('-')] or ['paperella', 'pallone', 'balena']
 GIRO = float(os.environ.get('GIRO', '0'))
 for nome in nomi:
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -31,7 +31,8 @@ for nome in nomi:
     cam = bpy.context.active_object; bpy.context.scene.camera = cam
     cam.data.lens = 50
     d = max(o.dimensions) * 2.6
-    cam.location = Vector((d * 0.55, -d * 0.8, alto * 0.5 + d * 0.42))
+    cam.location = Vector((d * 0.55, d * 0.8,   # (davanti: il muso guarda +Y di Blender, -Z di Godot)
+                            alto * 0.5 + d * 0.42))
     cam.rotation_euler = (Vector((0, 0, alto * 0.45)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
     sc = bpy.context.scene
     sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'; sc.cycles.samples = 96; sc.cycles.use_denoising = True

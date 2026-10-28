@@ -1,76 +1,98 @@
 # Enigma "I giocattoli al loro posto": i modelli (ambienti-1, 28 ottobre)
 
-Per la squadra enigmi (logica su `lavoro/enigma-giocattoli`). Tutto in `godot/assets/enigma_giocattoli/`; le
-sorgenti e gli script sono in `assets_src/enigma_giocattoli/`.
+Per la squadra enigmi (logica su `lavoro/enigma-giocattoli`), secondo l'accordo passato dal coordinatore. Tutto è in
+`godot/assets/models/enigma_giocattoli/`; le sorgenti e gli script sono in `assets_src/enigma_giocattoli/`.
 
-## I tre giocattoli
+## I tre giocattoli (GLB, niente collisioni)
 
-Gomma piena, pesante, mezza piena d'acqua, un po' scolorita e sporca. Ognuno è una scena `RigidBody3D` con il modello
-(`Modello`) e una collisione semplice (`Collisione`). **Origine in basso al centro** (appoggiato sul fondo con y = 0),
-**davanti verso +Z** (becco e muso). Misure in metri, X × altezza × Z.
+Gomma piena un po' vecchia, scolorita e sporca. I giocattoli sono pesanti e mezzi pieni d'acqua.
 
-| scena | modello | misure | collisione | massa |
-|---|---|---|---|---|
-| `paperella.tscn` | `paperella.glb` (8341 triangoli) | 0,44 × 0,50 × 0,62 | involucro convesso del modello | 24 kg |
-| `palla_rossa.tscn` | `palla_rossa.glb` (3140 triangoli) | diametro 0,55 | sfera r 0,275 con centro a y 0,275 | 45 kg |
-| `balena_blu.tscn` | `balena_blu.glb` (8346 triangoli) | 0,44 × 0,38 × 0,66 | involucro convesso del modello | 22 kg |
+Per tutti e tre:
+- scala in metri;
+- origine al centro della base, col punto che tocca terra a y = 0;
+- muso verso -Z;
+- una sola mesh, con texture da 1024 (colore, metallo/ruvidezza, normali).
 
-- La paperella è `paperella_gigante` degli oggetti in alta qualità (`assets_src/ambiente/oggetti_hq/`): la stessa
-  già nella sala e nelle Polaroid, solo portata a 62 cm e sporcata.
-- Palla e balena sono nuove (Meshy, `genera_giocattoli.py`).
-- Sui corpi: `linear_damp` 0,6, `angular_damp` 1,5, attrito 0,7, rimbalzo 0,05. Sono valori di partenza: il galleggiamento
-  sull'acqua e la spinta del getto li tarate voi.
-- Le texture sono di 2048 px. I preset alto e basso le prendono come tutti gli altri modelli (import di Godot), quindi
-  non c'è niente da fare a parte.
-- Per rifarli: `prepara_giocattoli.py` (Blender: misura, origine, sporco), poi `genera_risorse.gd` (scene,
-  materiali, disegno).
-
-## Il cerchio a mosaico
-
-- `cerchio_mosaico.tscn`: un piano di 1,1 × 1,1 m, 2 mm sopra l'origine, da mettere sul fondo. Di serie ha il
-  materiale giallo: per gli altri colori si cambia il materiale (`material_override` o `mesh.material`).
-- Materiali: `cerchio_giallo.tres`, `cerchio_rosso.tres`, `cerchio_blu.tres`, tutti sullo shader
-  `cerchio_mosaico.gdshader`.
-- Disegno: un disco di tessere da 2,5 cm del colore del giocattolo (diametro 0,90 m), poi un anello di due file di
-  tessere fosforescenti fino a 1,04 m. Fuori dal cerchio non si disegna niente (discard), quindi sotto si vede il fondo.
-
-Parametri dello shader (con `set_shader_parameter`; un materiale per cerchio, così si accendono uno alla volta):
-
-| parametro | di serie | cosa fa |
+| file | misure (X × altezza × Z) | triangoli |
 |---|---|---|
-| `luce_bordo` | 0 | 0 = bordo spento (tessere color crema); 1 = appena acceso (verdino, non una lampada) |
-| `energia_bordo` | 1,2 | quanta emissione a `luce_bordo` = 1 |
-| `colore_luce` | verdino (0,55; 1; 0,62) | il colore del fosforo |
+| `paperella.glb` | 0,32 × 0,39 × 0,45 | 4714 |
+| `pallone.glb` | diametro 0,50 | 3140 |
+| `balena.glb` | 0,50 × 0,38 × 0,75 | 4703 |
+
+- **Paperella:** è la paperella di gomma classica, piccola e liscia, come quella che galleggia nella Polaroid P04.
+  - Non è la `paperella_gigante` gonfiabile d'arredo: forma diversa, gomma piena, niente valvola.
+  - Ha gli stessi colori: giallo pallido e becco arancione.
+- **Pallone:** pieno, rosso, con la buccia ruvida e una riga di stampo; non è a spicchi come i palloni da spiaggia.
+- **Balena:** per stare vicina ai 35 cm d'altezza dell'accordo l'ho abbassata a 0,38 m. Ancora più bassa si schiaccia
+  troppo: se serve proprio 0,35, si può scalare in Y a 0,92 nella scena.
+
+Per rifarli:
+1. `genera_giocattoli.py` (Meshy);
+2. `prepara_giocattoli.py` (Blender: misura, origine, verso, decimazione sotto i 4800 triangoli, texture a 1024, sporco).
+
+## Il materiale dei cerchi
+
+- Lo shader è `cerchio_mosaico.gdshader`, con un materiale per colore: `cerchio_giallo.tres`, `cerchio_rosso.tres`,
+  `cerchio_blu.tres`.
+- Va sul vostro disco di 1 m, con le UV 0..1 sul quadrato del disco. Fuori dal cerchio non si disegna niente (discard).
+- Dentro: tessere da 2,5 cm del colore del cerchio fino a 0,88 m di diametro. Intorno, un bordo di due file di tessere
+  fosforescenti largo 6 cm.
+
+Parametri dello shader (con `set_shader_parameter`):
+
+| uniform | di serie | cosa fa |
+|---|---|---|
+| `bordo_acceso` | 0 | 0 = bordo spento (tessere crema); 1 = acceso, verde-giallino fosforescente |
+| `energia_bordo` | 1,5 | l'emissione a `bordo_acceso` = 1 |
+| `colore_luce` | (0,72; 1; 0,38) | il colore del fosforo |
 | `colore` | giallo, rosso o blu | il colore delle tessere |
 | `sporco` | 0,55 | chiazze e fughe annerite |
-| `bagnato` | 0 | 1 = più scuro e lucido (per il fondo appena svuotato) |
+| `bagnato` | 0 | 1 = più scuro e lucido |
 
-## Il disegno dei bambini
+**Attenzione al fondo.** Il fondo della parte profonda non è piano a -2,05: è una conca. Nei vostri tre punti l'ho
+misurato con un raggio sul modello `sala_piscina.glb`.
 
-- `disegno_giocattoli.tscn`: un `MeshInstance3D` con la mesh `disegno_giocattoli.res`.
-- È un foglio di 30 × 40 cm (come quello degli acquari) con quattro pezzi di nastro di carta agli angoli. Il foglio sta
-  1 mm davanti al muro e il nastro 2 mm.
-- Origine al centro del foglio, sulla faccia del muro. Il foglio guarda verso +Z.
-- La texture è `disegno_giocattoli.jpg` (variante v2 in `assets_src/enigma_giocattoli/disegno/`; la v1, coi cerchi
-  solo contornati, resta lì).
-- Cosa mostra: la piscina vista dall'alto con la parte fonda in alto, la scaletta in alto a destra, il cerchio rosso
-  con la palla in alto al centro, il giallo con la paperella in basso a sinistra e il blu con la balena in basso a
-  destra. Niente scritte.
-- **Questa disposizione l'ho proposta io al coordinatore**: se i cerchi nel gioco vanno messi diversamente, il disegno
-  si rifà (circa 6 crediti).
+| cerchio | quota al centro | quota ai bordi del disco (x+, x-, z+, z-) |
+|---|---|---|
+| giallo (-3,9; 3,3) | -2,009 | -2,028; -2,001; -2,005; -2,013 |
+| rosso (3,9; 3,3) | -2,008 | -2,001; -2,027; -2,004; -2,012 |
+| blu (-3,9; -0,1) | -2,001 | -2,011; -2,000; -2,005; -2,000 |
 
-Posto provato negli scatti, sul muro della parte fonda (z = 5, guarda verso la spiaggia):
+- A -2,05 il disco finisce sotto il fondo e non si vede.
+- Nei miei scatti il disco sta a 3 mm sopra il punto trovato col raggio ed è inclinato come la normale del fondo.
+- Su 1 m il fondo curva di 1-2 cm, quindi un disco piatto ne tocca un pezzo appena: meglio 1 cm più su, o un disco che
+  segua il fondo.
+- Lo stesso vale per i giocattoli: vanno appoggiati sul fondo vero.
 
-- Il centro del foglio è a (-2,5; -0,42; 4,997), con rotation.y = 180°.
-- In altezza sta sopra le bocchette delle onde (arrivano a y -0,77), fra due griglie, e lontano dal pulsante del
-  portello (x 2,25).
-- A piscina piena, se l'acqua arriva a circa -1,5, il disegno resta fuori dall'acqua.
+## Il disegno a pastello
 
-## Immagini
+- `disegno_piscina.png`: 1200 × 900, con trasparenza, per il decal da 1,2 × 0,9 m sul muro ovest della parte
+  profonda (x -6,97; centro z -0,2, y -0,8; guarda a est).
+- La carta è tolta: si vede il pastello dritto sulle piastrelle.
+- Orientamento come nell'accordo: in alto l'ovest (x -7), in basso l'est (x 7), a sinistra il muro sud della parte
+  fonda (z 5), a destra la spiaggia a nord (z -13).
+- Cosa c'è disegnato:
+  - la parte profonda in blu, con la botola grigia al centro in (0; 2);
+  - il cerchio giallo con la paperella in (-3,9; 3,3), il rosso col pallone in (3,9; 3,3) e il blu con la balena
+    in (-3,9; -0,1), ognuno col bordo verdino;
+  - poi l'acqua chiara e la sabbia.
+- Niente scritte.
+- I cerchi sono disegnati più grandi del vero (circa 1,9 m in scala), come li farebbe un bambino.
+- Le posizioni vengono da uno schema esatto (`disegno/schema_disegno.py`), ridisegnato a pastello da Meshy
+  (`genera_disegno_muro.py`, variante `muro_v2`) e scontornato (`scontorna.py`).
 
-- Render dei modelli veri (Blender, Cycles): `render_paperella.jpg`, `render_palla_rossa.jpg`, `render_balena_blu.jpg`.
-- Scatti dal motore: `disegno_da_vicino.jpg`, `disegno_dal_fondo.jpg` e `cerchi_e_giocattoli.jpg`.
-  - Gli scatti sono fatti col solo modello della piscina a onde, vuota, al buio, con una torcia sulla camera
-    (`godot/tests/scatti_giocattoli.gd`).
-  - Nello scatto dei cerchi il bordo è spento sul giallo, a metà sul rosso e acceso sul blu.
-  - La disposizione dei cerchi in quello scatto serve solo alla foto.
+Nei miei scatti il decal è così (lo fa enigmi nella scena):
+
+```
+Decal.size = Vector3(1.2, 0.1, 0.9)
+global_transform = Transform3D(Basis(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, -1, 0)), Vector3(-6.97, -0.8, -0.2))
+```
+
+## Immagini per la pagina del mattino
+
+- Render dei modelli veri (Blender, Cycles): `render_paperella.jpg`, `render_pallone.jpg`, `render_balena.jpg`.
+- Scatti dal motore (`godot/tests/scatti_giocattoli.gd`): `disegno_vicino.jpg`, `disegno_muro.jpg`,
+  `disegno_e_cerchi.jpg`, `giocattoli_vicino.jpg`, `pallone_vicino.jpg`.
+  - Sono fatti col solo modello della piscina a onde, vuota, al buio, con una torcia sulla camera.
+  - Il bordo è spento sul giallo, a metà sul rosso e acceso sul blu.
+  - Nella piscina vera ci sono anche i gonfiabili d'arredo, che in questi scatti non si vedono.

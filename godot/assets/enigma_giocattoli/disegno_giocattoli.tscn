@@ -1,7 +1,0 @@
-[gd_scene format=3]
-
-[ext_resource type="ArrayMesh" path="res://assets/enigma_giocattoli/disegno_giocattoli.res" id="1_j7ra1"]
-
-[node name="DisegnoGiocattoli" type="MeshInstance3D" unique_id=739258478]
-cast_shadow = 0
-mesh = ExtResource("1_j7ra1")

@@ -1,6 +1,7 @@
 """Giocattoli di gomma dell'enigma "I giocattoli al loro posto" (piscina a onde, 28 ottobre): con la stessa pipeline
 degli oggetti in qualità alta (assets_src/ambiente/oggetti_hq/genera_hq.py: immagine di riferimento solo interna in
-rif/, poi image-to-3d meshy-7.1). La paperella non si rifà: è paperella_gigante degli oggetti hq, la stessa del gioco.
+rif/, poi image-to-3d meshy-7.1). La paperella è la paperella di gomma classica delle Polaroid (P04), diversa dalla
+paperella_gigante gonfiabile della sala (richiesta del coordinatore, 28 ottobre).
 Misura, perno e collisioni le mette prepara_giocattoli.py.
 Uso: python3 assets_src/enigma_giocattoli/genera_giocattoli.py [--immagini] [nome ...]
 La chiave è in MESHY_API_KEY (mai nel repository)."""
@@ -14,6 +15,10 @@ g.QUI = QUI
 GOMMA = ('Solid thick rubber vinyl squeeze toy, heavy, not inflatable, slightly faded colour, a little dirty with grime in '
          'the creases and a few scuffs.')
 g.OGGETTI = {
+    'paperella': ('A classic rubber duck toy like the small one floating in the old Polaroid photos: simple rounded '
+                  'body sitting on the water, round head, short flat orange beak, small painted black eyes, short tail '
+                  'raised at the back, bright yellow gone a little pale. Not inflatable, no seams, no valve. ' + GOMMA,
+                  g.DAVANTI, 4500),
     'palla_rossa': ('A big round red rubber playground ball, classic pebbled grip texture, one thin moulded seam line '
                     'around the middle, slightly faded red. ' + GOMMA, g.DAVANTI, 3000),
     'balena_blu': ('A big cute cartoon whale bath toy sitting upright on its flat belly: chunky rounded body, tail fin '

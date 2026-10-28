@@ -1,22 +1,24 @@
-"""Dai GLB di Meshy ai modelli per Godot (godot/assets/enigma_giocattoli/): scala alla misura del gioco, origine in
-basso al centro (appoggiati sul fondo), il davanti verso -Z di Godot, texture 2K in JPG. Stampa le misure (finiscono
-nel README, docs/proposte/enigma_giocattoli/modelli.md) e le salva in misure.json.
-- paperella: paperella_gigante degli oggetti hq (la stessa del gioco e delle Polaroid), lunga 0,62 m;
-- palla_rossa: diametro 0,55 m;
-- balena_blu: lunga 0,66 m.
+"""Dai GLB di Meshy ai modelli per Godot (godot/assets/models/enigma_giocattoli/), secondo l'accordo con enigmi del
+28 ottobre: misure in metri, origine al centro della base (il punto che tocca terra a y = 0), muso verso -Z di Godot,
+meno di 5000 triangoli (decimate), texture 1024 in JPG, gomma un po' scolorita e sporca. Niente collisioni (le fa
+enigmi). Stampa le misure (finiscono nel LEGGIMI, docs/proposte/enigma_giocattoli/modelli.md) e le salva in misure.json.
+- paperella: la paperella di gomma classica delle Polaroid (P04), lunga 0,45 m e alta circa 0,38;
+- pallone: pieno, rosso, diametro 0,50 m;
+- balena: lunga 0,75 m, abbassata a 0,38 di altezza (alta circa 0,35 nell'accordo; più bassa si schiaccia troppo).
 Uso: blender-venv/bin/python prepara_giocattoli.py"""
 import bpy, json, os, sys
 from mathutils import Vector, Matrix
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.join(QUI, '..', '..')
-OUT = os.path.join(REPO, 'godot', 'assets', 'enigma_giocattoli')
-# nome: (sorgente, misura, asse della misura ('lungo' = il lato orizzontale più lungo, 'd' = diametro), giro in gradi
-# attorno a Z per mettere il davanti (il becco, la faccia) verso -Y di Blender, cioè +Z in Godot)
+OUT = os.path.join(REPO, 'godot', 'assets', 'models', 'enigma_giocattoli')
+MAX_TRIANGOLI = 4800
+# nome: (sorgente, misura, asse della misura ('lungo' = il lato orizzontale più lungo, 'd' = diametro), altezza massima
+# (None = proporzioni del modello), giro in gradi attorno a Z per mettere il muso verso +Y di Blender, cioè -Z in Godot)
 GIOCATTOLI = {
-    'paperella': (os.path.join(REPO, 'assets_src', 'ambiente', 'oggetti_hq', 'paperella_gigante.glb'), 0.62, 'lungo', 0),
-    'palla_rossa': (os.path.join(QUI, 'palla_rossa.glb'), 0.55, 'd', 0),
-    'balena_blu': (os.path.join(QUI, 'balena_blu.glb'), 0.66, 'lungo', 0),
+    'paperella': (os.path.join(QUI, 'paperella.glb'), 0.45, 'lungo', None, 180),
+    'pallone': (os.path.join(QUI, 'palla_rossa.glb'), 0.50, 'd', None, 0),
+    'balena': (os.path.join(QUI, 'balena_blu.glb'), 0.75, 'lungo', 0.38, 180),
 }
 sys.path.insert(0, os.path.join(REPO, 'assets_src', 'ambiente', 'oggetti_hq'))
 os.makedirs(OUT, exist_ok=True)
@@ -73,7 +75,7 @@ def sporca(glb, seme):
         f.write(struct.pack('<II', len(nb), 0x004E4942)); f.write(nb)
 
 
-for nome, (src, misura, asse, giro) in GIOCATTOLI.items():
+for nome, (src, misura, asse, alto_max, giro) in GIOCATTOLI.items():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=src)
     obs = [o for o in bpy.data.objects if o.type == 'MESH']
@@ -93,8 +95,14 @@ for nome, (src, misura, asse, giro) in GIOCATTOLI.items():
     mx = Vector([max(v[i] for v in vs) for i in range(3)])
     dim = mx - mn
     s = misura / (max(dim.x, dim.y) if asse == 'lungo' else max(dim))
-    o.data.transform(Matrix.Diagonal((s, s, s, 1)) @ Matrix.Translation((-(mn.x + mx.x) / 2, -(mn.y + mx.y) / 2, -mn.z)))
+    sz = min(s, alto_max / dim.z) if alto_max else s
+    o.data.transform(Matrix.Diagonal((s, s, sz, 1)) @ Matrix.Translation((-(mn.x + mx.x) / 2, -(mn.y + mx.y) / 2, -mn.z)))
     o.data.update()
+    tri = sum(len(p.vertices) - 2 for p in o.data.polygons)
+    if tri > MAX_TRIANGOLI:
+        dec = o.modifiers.new('dec', 'DECIMATE')
+        dec.ratio = MAX_TRIANGOLI / tri * 0.98
+        bpy.ops.object.modifier_apply(modifier='dec')
     o.name = nome
     o.data.name = nome
     vs = [v.co for v in o.data.vertices]
@@ -107,7 +115,7 @@ for nome, (src, misura, asse, giro) in GIOCATTOLI.items():
     dst = os.path.join(OUT, nome + '.glb')
     bpy.ops.export_scene.gltf(filepath=dst + '.tmp.glb', export_format='GLB', export_yup=True, use_selection=False)
     import genera_hq
-    genera_hq.riduci(dst + '.tmp.glb', dst, 2048, 88)
+    genera_hq.riduci(dst + '.tmp.glb', dst, 1024, 88)
     os.remove(dst + '.tmp.glb')
     sporca(dst, sum(map(ord, nome)))
 json.dump(misure, open(os.path.join(QUI, 'misure.json'), 'w'), indent=1)
