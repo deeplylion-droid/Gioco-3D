@@ -109,6 +109,8 @@ func _run() -> void:
 		if piscina.attivo:
 			break
 		await get_tree().physics_frame
+	# (nel taglio lo zaino si riempie a una vasca vicina: a piscina vuota lì sotto non c'è acqua)
+	p.water_pack.set_tank_amount(20.0)
 	await _metti(_dietro(2, 2.2), enigma.giocattolo(2).global_position)
 	await _spingi(2)
 	await _guarda(enigma.cerchio(2).global_position + Vector3(0, 0.2, 0), 0.5)
@@ -234,7 +236,10 @@ func _spruzza_verso(punto: Vector3, secondi: float) -> void:
 
 ## Se lo zaino è quasi vuoto lo riempie dall'acqua davanti (nella pozza).
 func _riempi() -> void:
-	if p.water_pack.tank_amount > 7.0 or vasca.fill <= 0.01:
+	if p.water_pack.tank_amount > 7.0:
+		return
+	if vasca.fill <= 0.01:
+		push_warning("video: zaino quasi vuoto a piscina vuota (%.1f l)" % p.water_pack.tank_amount)
 		return
 	var davanti := p.global_position + Vector3(-sin(p.yaw), 0, -cos(p.yaw)) * 1.4
 	await _guarda(Vector3(davanti.x, vasca.get_surface_global_y(), davanti.z), 0.4)
@@ -251,7 +256,7 @@ func _riempi() -> void:
 func _spingi(i: int) -> void:
 	var g := enigma.giocattolo(i)
 	var c := enigma.cerchio(i).global_position
-	for colpo in 12:
+	for colpo in 20:
 		var gp := g.global_position
 		var d := Vector2(c.x - gp.x, c.z - gp.z)
 		if enigma.piatto_giu(i) or (d.length() < 0.1 and enigma.velocita(i) < 0.05):
