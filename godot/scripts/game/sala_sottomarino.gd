@@ -232,6 +232,9 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 	_costruendo = false
 	passi_finiti.emit()
 	await _riscalda()
+	# lei del tunnel, a pezzi e nelle sue pose (LeiTunnel.prepara): quando riemerge dietro il giocatore non si ferma
+	if is_inside_tree() and lei_tunnel and is_instance_valid(lei_tunnel):
+		await lei_tunnel.prepara(get_viewport())
 	# le forme del tunnel per i tentacoli di lei (FormeTunnel di grafica, circa 1 s di calcolo a pezzi)
 	if is_inside_tree():
 		await FormeTunnel.prepara_a_pezzi(self)
