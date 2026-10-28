@@ -7,9 +7,9 @@ extends Node
 
 ## [x, z, gradi di imbardata]
 const PAPERELLE := {"ogg_paperella_gigante_0": [-5.6, -7.6, 40.0], "ogg_paperella_gigante_1": [5.3, -7.0, -159.0]}
-## [x, z da dove parte (in basso), chi lo ferma]
+## [x, z da dove parte (in basso), chi lo ferma, quanto scende ancora perché la mesh appoggi (m)]
 const PALLONI := {"ogg_pallone_spiaggia_2": [-4.0, -4.7, "ogg_delfino_gonfiabile_sgonfio_8"],
-	"ogg_pallone_spiaggia_3": [-4.65, -4.7, "ogg_delfino_gonfiabile_sgonfio_8"],
+	"ogg_pallone_spiaggia_3": [-4.65, -4.7, "ogg_delfino_gonfiabile_sgonfio_8", 0.007],
 	"ogg_pallone_spiaggia_43": [5.25, -5.7, "ogg_paperella_gigante_1"],
 	"ogg_pallone_spiaggia_71": [-5.65, -6.4, "ogg_paperella_gigante_0"]}
 
@@ -59,7 +59,8 @@ func _run() -> void:
 		q.collision_mask = Layers.WORLD
 		q.exclude = [corpo.get_rid(), (h.collider as CollisionObject3D).get_rid()]
 		var f := spazio.cast_motion(q)
-		var c := c0 + su * 3.0 * f[0]
+		# (e giù sulla spiaggia di quanto serve perché la mesh appoggi: v[3], dal controllo di posizionamento)
+		var c := c0 + su * 3.0 * f[0] - n * (float(v[3]) if v.size() > 3 else 0.0)
 		var contro := ""
 		q.transform = Transform3D(Basis(), c + su * 0.02)
 		q.motion = Vector3.ZERO

@@ -43,7 +43,7 @@ const PESCAGGI := [0.13, 0.17, 0.12]
 ## I centri dei tre cerchi (giallo, rosso, blu), nel sistema del nodo: x e z; la quota la trova Posa sul fondo.
 @export var cerchi: Array[Vector3] = [Vector3(-3.9, 0, 3.3), Vector3(3.9, 0, 3.3), Vector3(-3.9, 0, -0.1)]
 ## Dove galleggiano i giocattoli all'inizio (x, z) e come sono girati (y, in gradi), nel sistema del nodo.
-@export var partenze: Array[Vector3] = [Vector3(0.3, 30, 2.5), Vector3(4.4, 0, -0.6), Vector3(-0.2, 120, -0.8)]
+@export var partenze: Array[Vector3] = [Vector3(0.4, 30, 0.6), Vector3(4.4, 0, -0.6), Vector3(-0.2, 120, -0.8)]
 ## Dove possono andare i giocattoli in pianta (la parte profonda, già tolto un margine dai muri): x e z minimi,
 ## larghezza e lunghezza, nel sistema del nodo.
 @export var area := Rect2(-6.6, -3.6, 13.2, 8.15)
@@ -107,6 +107,9 @@ var _acceso: Array[float] = [0.0, 0.0, 0.0]
 var _sopra: Array[bool] = [false, false, false]
 ## Fermo sul fondo e appoggiato con Posa (sulla mesh che si vede, non solo sulla collisione).
 var _assestato: Array[bool] = [false, false, false]
+## L'imbardata di ogni giocattolo (a parte: appoggiato si inclina come la superficie sotto) e quella superficie.
+var _yaw: Array[float] = [0.0, 0.0, 0.0]
+var _normale: Array[Vector3] = [Vector3.UP, Vector3.UP, Vector3.UP]
 var _fondo_cerchi: Array[float] = [0.0, 0.0, 0.0]
 var _t := 0.0
 var _zaino_collegato: Node
@@ -143,6 +146,7 @@ func _costruisci() -> void:
 			radice_g.add_child(g)
 		g.position = Vector3(partenze[i].x, 0.0, partenze[i].z)
 		g.rotation_degrees.y = partenze[i].y
+		_yaw[i] = g.rotation.y
 		_giocattoli.append(g)
 	if get_node_or_null(^"Disegno") == null:
 		add_child(_disegno())
@@ -410,6 +414,8 @@ func _appoggia() -> void:
 		_y[i] = _cerchi[i].global_position.y + sporgenza - corsa if _giu[i] else _quota_bersaglio(i)
 		_giocattoli[i].global_position.y = _y[i]
 		if _giu[i]:
+			_giocattoli[i].global_basis = Basis(Quaternion(Vector3.UP, _cerchi[i].global_basis.y.normalized())) \
+				* Basis(Vector3.UP, _yaw[i])
 			_bordo(_mat_cerchi[i], 1.0)
 			_acceso[i] = 1.0
 	_pronto = true
@@ -580,7 +586,10 @@ func _fondo(i: int) -> float:
 		escludi.append(x.get_rid())
 	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, p.y + 1.2, p.z), Vector3(p.x, p.y - 3.0, p.z), Layers.WORLD, escludi)
 	var h := get_world_3d().direct_space_state.intersect_ray(q)
-	return (h.position as Vector3).y if not h.is_empty() else p.y
+	if h.is_empty():
+		return p.y
+	_normale[i] = h.normal if (h.normal as Vector3).y > 0.85 else Vector3.UP
+	return (h.position as Vector3).y
 
 
 func _quota_bersaglio(i: int) -> float:
@@ -637,33 +646,34 @@ func _muovi(i: int, delta: float) -> void:
 	g.position.x = pos.x
 	g.position.z = pos.y
 	_yaw_vel[i] *= exp(-1.5 * delta)
-	g.rotation.y += _yaw_vel[i] * delta
+	_yaw[i] += _yaw_vel[i] * delta
 	# la quota: sul pelo dell'acqua (col dondolio) o appoggiato sul fondo
 	var bersaglio := _quota_bersaglio(i)
 	if a_galla:
 		_y[i] = lerpf(_y[i], bersaglio, 1.0 - exp(-5.0 * delta))
 		g.global_position.y = _y[i] + sin(_t * 1.3 + i * 2.1) * 0.012
-		g.rotation.x = sin(_t * 0.9 + i) * 0.04
-		g.rotation.z = sin(_t * 1.1 + i * 1.7) * 0.04
+		g.rotation = Vector3(sin(_t * 0.9 + i) * 0.04, _yaw[i], sin(_t * 1.1 + i * 1.7) * 0.04)
 	else:
 		if v.length() > 0.03:
 			_assestato[i] = false
 		if not _assestato[i]:
 			_y[i] = maxf(bersaglio, _y[i] - 1.5 * delta) if _y[i] > bersaglio else bersaglio
 		g.global_position.y = _y[i]
-		# fermo e già giù: lo appoggia Posa, una volta (dove la collisione e la mesh del fondo non coincidono, come
-		# sul coperchio della botola, resterebbe sospeso di un paio di centimetri)
-		if not _assestato[i] and v.length() < 0.02 and absf(_y[i] - bersaglio) < 0.002:
+		# inclinato come la superficie sotto (il fondo della conca, un piatto inclinato come lei)
+		var su := g.global_basis.y.normalized().slerp(_normale[i], 1.0 - exp(-8.0 * delta))
+		g.global_basis = Basis(Quaternion(Vector3.UP, su)) * Basis(Vector3.UP, _yaw[i])
+		# fermo, già giù e a piscina vuota: lo appoggia Posa, una volta, sulla prima superficie che si vede sotto di lui
+		# (dove la collisione e la mesh non coincidono, come sul coperchio della botola, resterebbe sospeso o dentro)
+		if not _assestato[i] and v.length() < 0.02 and absf(_y[i] - bersaglio) < 0.002 \
+				and (vasca == null or vasca.fill <= 0.0005):
 			_assestato[i] = true
 			var escludi: Array[RID] = []
 			for x in _giocattoli:
 				escludi.append(x.get_rid())
-			g.global_position.y = bersaglio + 0.04
+			g.global_position.y = bersaglio + 0.3
 			if Posa.appoggia_a_terra(g, 0.0, false, escludi):
-				_y[i] = minf(g.global_position.y, bersaglio)
+				_y[i] = g.global_position.y
 			g.global_position.y = _y[i]
-		g.rotation.x = lerpf(g.rotation.x, 0.0, 1.0 - exp(-8.0 * delta))
-		g.rotation.z = lerpf(g.rotation.z, 0.0, 1.0 - exp(-8.0 * delta))
 
 
 ## I gonfiabili già sul fondo della parte profonda (x, z, raggio nel sistema del nodo): i MeshInstance3D "ogg_*" della
@@ -757,6 +767,8 @@ func _scendi(i: int, col_suono: bool) -> void:
 	var g := _giocattoli[i]
 	g.position.x = _cerchi[i].position.x
 	g.position.z = _cerchi[i].position.z
+	# sul piatto: inclinato come lui
+	g.global_basis = Basis(Quaternion(Vector3.UP, _cerchi[i].global_basis.y.normalized())) * Basis(Vector3.UP, _yaw[i])
 	if col_suono:
 		var tw := create_tween().set_parallel()
 		tw.tween_method(func(h: float): _altezza_piatto(i, h), sporgenza, sporgenza - corsa, 0.18) \
@@ -847,7 +859,7 @@ func velocita(i: int) -> float:
 func save_state() -> Dictionary:
 	var pos := []
 	for g in _giocattoli:
-		pos.append([g.position.x, g.position.z, g.rotation.y])
+		pos.append([g.position.x, g.position.z, _yaw[_giocattoli.find(g)]])
 	return {"pos": pos, "giu": _giu.duplicate(), "risolto": risolto_ok}
 
 
@@ -861,7 +873,8 @@ func load_state(data: Dictionary) -> void:
 		if i < pos.size():
 			_giocattoli[i].position.x = float(pos[i][0])
 			_giocattoli[i].position.z = float(pos[i][1])
-			_giocattoli[i].rotation.y = float(pos[i][2])
+			_yaw[i] = float(pos[i][2])
+			_giocattoli[i].rotation.y = _yaw[i]
 		var su_giu := tutto or (i < giu.size() and bool(giu[i]))
 		if su_giu and not _giu[i]:
 			if _pronto:
