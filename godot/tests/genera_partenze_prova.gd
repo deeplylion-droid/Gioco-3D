@@ -23,6 +23,7 @@ const FATTI := {
 		"Piscina/PulsantePortello": {"powered": true},
 		"Piscina/SvuotaPiscina": {"attivo": true},
 		"Piscina/Portello": {"open": true},
+		"Piscina/EnigmaGiocattoli": {"risolto": true},
 	},
 	"tecnici": {
 		"Tecnici/AgnellinoScala": {"fatto": true},

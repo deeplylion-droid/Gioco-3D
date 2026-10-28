@@ -88,6 +88,7 @@
 [ext_resource type="Script" path="res://scripts/mechanisms/lettore_tessera.gd" id="84_lettore"]
 [ext_resource type="Script" path="res://scripts/risalita/lettore_vero.gd" id="85_lettore_vero"]
 [ext_resource type="Script" path="res://scripts/environment/mascotte_sala.gd" id="83_mascotte"]
+[ext_resource type="Script" path="res://scripts/game/enigma_giocattoli.gd" id="86_giocattoli"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5tb5"]
 resource_name = "M_acqua_vasca"
@@ -357,12 +358,21 @@ enabled = false
 radius = 0.26
 show_model = false
 
-[node name="SvuotaPiscina" type="Node3D" parent="Piscina" unique_id=59963506 node_paths=PackedStringArray("vasca", "pulsante", "scarico", "vetro_lampeggiante")]
+[node name="SvuotaPiscina" type="Node3D" parent="Piscina" unique_id=59963506 node_paths=PackedStringArray("vasca", "pulsante", "serratura", "scarico", "vetro_lampeggiante")]
 script = ExtResource("48_kuq0o")
 vasca = NodePath("../Pozza")
 pulsante = NodePath("../PulsantePortello")
+serratura = NodePath("../EnigmaGiocattoli")
 scarico = NodePath("../../Sala/Interattivi/sala_portello_scarico")
 vetro_lampeggiante = NodePath("../../Sala/Interattivi/sala_lampeggiante_portello")
+
+[node name="EnigmaGiocattoli" type="Node3D" parent="Piscina" unique_id=1418806202 node_paths=PackedStringArray("vasca", "piscina", "polaroid", "sala")]
+editor_description = "L'enigma dei giocattoli (scelte del 28 ottobre, idea A): tre giocattoli da spingere col getto sui loro cerchi di mosaico attorno alla botola, sull'acqua o sul fondo vuoto; scesi i tre piatti il pulsante della botola funziona."
+script = ExtResource("86_giocattoli")
+vasca = NodePath("../Pozza")
+piscina = NodePath("../SvuotaPiscina")
+polaroid = NodePath("../../Polaroid/Polaroid05")
+sala = NodePath("../../Sala")
 
 [node name="Portello" type="Node3D" parent="Piscina" unique_id=1794286053 node_paths=PackedStringArray("sources")]
 script = ExtResource("49_f6mwb")

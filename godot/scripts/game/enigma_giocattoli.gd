@@ -1,0 +1,796 @@
+class_name EnigmaGiocattoli
+extends Node3D
+## L'enigma dei giocattoli nella piscina a onde (tappa 5; GDD, scelte del 28 ottobre: idea A "I giocattoli al loro
+## posto", docs/proposte/enigma_nuovo/ e docs/proposte/enigma_giocattoli/). Sul fondo della parte profonda, attorno
+## alla botola, ci sono tre cerchi di mosaico (giallo, rosso, blu): sono piatti che scendono col peso, la serratura
+## della botola. Nella pozza galleggiano tre giocattoli grandi, di gomma e mezzi pieni d'acqua: la paperella gialla,
+## il pallone rosso e la balena blu. Il disegno a pastello dei bambini sul muro della parte profonda mostra ognuno nel
+## suo cerchio.
+## - Col getto li spingi: sull'acqua e, a piscina vuota, anche sul fondo, un po' più piano (nota dell'utente: "ma
+##   facciamo che puoi spingere i giocattoli anche una volta che hai svuotato la piscina"). Più sei vicino più spinge.
+##   Vicino al suo cerchio un giocattolo ci scivola dentro da solo.
+## - Un giocattolo sul suo cerchio lo accende appena (il bordo fosforescente); appoggiato sul fondo asciutto il piatto
+##   scende col tonfo e il bordo si accende tutto, e il giocattolo resta lì.
+## - L'ordine è libero: prima i giocattoli e poi lo svuotamento (scendono quando l'acqua cala) o il contrario.
+## - Scesi tutti e tre, un risucchio lungo dagli scarichi e la luce del pulsante della botola passa da gialla a verde:
+##   colpito col getto, la botola si apre come prima (PiscinaOnde, [member PiscinaOnde.serratura]).
+## Lo stato (posti dei giocattoli e piatti scesi) si salva con i checkpoint.
+## I nodi figli hanno nomi fissi: Cerchi/CerchioGiallo, Cerchi/CerchioRosso, Cerchi/CerchioBlu, Giocattoli/Paperella,
+## Giocattoli/Pallone, Giocattoli/Balena, Disegno. I modelli e i materiali veri (ambienti-1, lavoro/enigma-giocattoli-
+## modelli) sono in [constant DIR]: finché non ci sono, segnaposto semplici con le stesse misure.
+
+signal piatto_sceso(indice: int)
+signal risolto
+## Un giocattolo è arrivato sul suo cerchio (galleggiando o sul fondo): il bordo si accende appena.
+signal cerchio_acceso(indice: int)
+
+const DIR := "res://assets/models/enigma_giocattoli/"
+const NOMI_CERCHI := ["CerchioGiallo", "CerchioRosso", "CerchioBlu"]
+const NOMI_GIOCATTOLI := ["Paperella", "Pallone", "Balena"]
+const FILE_GIOCATTOLI := ["paperella.glb", "pallone.glb", "balena.glb"]
+const FILE_CERCHI := ["cerchio_giallo.tres", "cerchio_rosso.tres", "cerchio_blu.tres"]
+const COLORI := [Color(1.0, 0.82, 0.12), Color(0.86, 0.12, 0.1), Color(0.12, 0.36, 0.9)]
+## Le forme dei giocattoli per le collisioni fra loro e coi bordi: raggio in pianta, altezza, pescaggio (quanto
+## affondano galleggiando: sono mezzi pieni d'acqua).
+const RAGGI := [0.22, 0.25, 0.3]
+const ALTEZZE := [0.38, 0.5, 0.35]
+const PESCAGGI := [0.13, 0.17, 0.12]
+
+## L'acqua della parte profonda (la Pozza).
+@export var vasca: WaterTank
+## La piscina a onde (svuotamento, pulsante e lampeggiante della botola).
+@export var piscina: PiscinaOnde
+## I centri dei tre cerchi (giallo, rosso, blu), nel sistema del nodo: x e z; la quota la trova Posa sul fondo.
+@export var cerchi: Array[Vector3] = [Vector3(-3.9, 0, 3.3), Vector3(3.9, 0, 3.3), Vector3(-3.9, 0, -0.1)]
+## Dove galleggiano i giocattoli all'inizio (x, z) e come sono girati (y, in gradi), nel sistema del nodo.
+@export var partenze: Array[Vector3] = [Vector3(0.3, 30, 2.5), Vector3(4.4, 0, -0.6), Vector3(-0.2, 120, -0.8)]
+## Dove possono andare i giocattoli in pianta (la parte profonda, già tolto un margine dai muri): x e z minimi,
+## larghezza e lunghezza, nel sistema del nodo.
+@export var area := Rect2(-6.6, -3.6, 13.2, 8.15)
+## Posti da lasciare liberi sul fondo (x, z, raggio, nel sistema del nodo): il piede delle scalette, la ripartenza del
+## checkpoint della pozza vuota. La P5 la si tiene libera da sola finché c'è ([member polaroid]), e i gonfiabili già
+## sul fondo (i MeshInstance3D "ogg_*" della sala nella parte profonda) sono ostacoli ([method _ostacoli_fondo]).
+## Valgono solo per i giocattoli appoggiati sul fondo: galleggiando ci passano sopra.
+@export var liberi: Array[Vector3] = [Vector3(-6.3, 2.2, 0.7), Vector3(6.3, 3.2, 0.7), Vector3(1.4, 0.4, 0.45)]
+## La sala (per trovare i gonfiabili sul fondo).
+@export var sala: Node3D
+## La Polaroid sul fondo (P5): finché c'è, i giocattoli non ci vanno sopra.
+@export var polaroid: Node3D
+
+## Il disegno dei bambini sul muro ovest della parte profonda (un decal di 1,2 x 0,9 m che guarda a est), visto da
+## est: a destra è nord, in alto è ovest (la piscina dall'alto come la vede chi guarda il muro).
+@export var disegno_posizione := Vector3(-6.97, -0.8, -0.2)
+@export var disegno_misura := Vector2(1.2, 0.9)
+
+@export_group("Spinta")
+## Accelerazione data dal getto che colpisce un giocattolo (m/s² con lo zaino a 4 m).
+@export var spinta_diretta := 2.6
+## Il getto che colpisce l'acqua o il fondo vicino a un giocattolo lo spinge anche lui (l'onda), dove va il getto; un
+## muro colpito vicino lo respinge via dal muro: fino a questa distanza, sempre meno.
+@export var raggio_corrente := 1.4
+@export var spinta_corrente := 2.2
+## Sul fondo vuoto si spingono un po' più piano, ma non molto (strisciano sulle piastrelle).
+@export var spinta_sul_fondo := 0.85
+## Più sei vicino più spinge: a 2 m il 130%, a 10 m il 60%.
+@export var vicino_m := 2.0
+@export var lontano_m := 10.0
+@export var attrito_acqua := 1.1
+@export var attrito_fondo := 1.2
+@export var velocita_max := 2.4
+
+@export_group("Cerchi")
+## Il raggio dei cerchi (1 m di diametro) e quanto sporgono i piatti prima di scendere.
+@export var raggio_cerchio := 0.5
+@export var sporgenza := 0.03
+@export var corsa := 0.025
+## Entro questa distanza dal centro del suo cerchio un giocattolo lento ci scivola dentro da solo.
+@export var raggio_aggancio := 0.42
+## Entro questa distanza dal centro (e fermo sul fondo) il piatto scende.
+@export var tolleranza := 0.22
+## Il bordo che si accende appena col giocattolo sopra, e tutto col piatto sceso.
+@export var bordo_appena := 0.35
+
+## Vero quando i tre piatti sono scesi (resta vero).
+var risolto_ok := false
+var _giu: Array[bool] = [false, false, false]
+var _cerchi: Array[Node3D] = []
+var _piatti: Array[Node3D] = []
+var _dischi: Array[CylinderMesh] = []
+var _forme_piatti: Array[CylinderShape3D] = []
+var _ostacoli: Array[Vector3] = []
+var _mat_cerchi: Array[Material] = []
+var _giocattoli: Array[AnimatableBody3D] = []
+var _vel: Array[Vector2] = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
+var _yaw_vel: Array[float] = [0.0, 0.0, 0.0]
+var _y: Array[float] = [0.0, 0.0, 0.0]
+var _acceso: Array[float] = [0.0, 0.0, 0.0]
+var _sopra: Array[bool] = [false, false, false]
+var _fondo_cerchi: Array[float] = [0.0, 0.0, 0.0]
+var _t := 0.0
+var _zaino_collegato: Node
+var _risucchio_t := -1.0
+var _pronto := false
+
+
+func _ready() -> void:
+	add_to_group(&"persist")
+	_costruisci()
+	_appoggia.call_deferred()
+
+
+## I cerchi e i giocattoli (i figli coi nomi fissi; quelli che mancano si fanno qui).
+func _costruisci() -> void:
+	var radice_c := _figlio(self, "Cerchi")
+	var radice_g := _figlio(self, "Giocattoli")
+	for i in 3:
+		var c := _figlio(radice_c, NOMI_CERCHI[i])
+		c.position = Vector3(cerchi[i].x, 0.0, cerchi[i].z)
+		_cerchi.append(c)
+		var piatto := c.get_node_or_null(^"Piatto") as Node3D
+		if piatto == null:
+			piatto = _piatto(i)
+			c.add_child(piatto)
+		_piatti.append(piatto)
+		_altezza_piatto(i, sporgenza)
+		var g := radice_g.get_node_or_null(NOMI_GIOCATTOLI[i]) as AnimatableBody3D
+		if g == null:
+			g = _giocattolo(i)
+			radice_g.add_child(g)
+		g.position = Vector3(partenze[i].x, 0.0, partenze[i].z)
+		g.rotation_degrees.y = partenze[i].y
+		_giocattoli.append(g)
+	if get_node_or_null(^"Disegno") == null:
+		add_child(_disegno())
+
+
+## Il disegno: il decal col disegno vero di ambienti-1 se c'è (disegno_piscina.png), se no un segnaposto fatto qui con
+## la piscina dall'alto, la botola e i tre giocattoli nei loro cerchi (solo disegni, niente scritte).
+func _disegno() -> Decal:
+	var d := Decal.new()
+	d.name = "Disegno"
+	d.size = Vector3(disegno_misura.x, 0.3, disegno_misura.y)
+	# guarda a est: lo strato -Y del decal va dentro il muro (ovest), la x del disegno verso nord, la z verso il basso
+	d.basis = Basis(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, -1, 0))
+	d.position = disegno_posizione
+	var vero := DIR + "disegno_piscina.png"
+	d.texture_albedo = load(vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
+	d.upper_fade = 0.0
+	d.lower_fade = 0.0
+	d.cull_mask = 1
+	return d
+
+
+## Il segnaposto del disegno: la piscina vista dall'alto (da est: a destra nord, in alto ovest), segni a pastello.
+func _disegno_segnaposto() -> Texture2D:
+	var w := 480
+	var h := 360
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	# la piscina: da z = 5 (sinistra) a z = -13 (destra), da x = -7 (in alto) a x = 7 (in basso)
+	var a_px := func(x: float, z: float) -> Vector2: return Vector2(remap(z, 5.5, -13.5, 20, w - 20), remap(x, -7.5, 7.5, 20, h - 20))
+	var azzurro := Color(0.35, 0.65, 0.95, 0.9)
+	_rettangolo(img, a_px.call(-7.0, 5.0), a_px.call(7.0, -13.0), azzurro, 3)
+	# la botola (grigia, con la croce)
+	var b0: Vector2 = a_px.call(-0.7, 2.7)
+	var b1: Vector2 = a_px.call(0.7, 1.3)
+	_rettangolo(img, b0, b1, Color(0.4, 0.4, 0.42, 0.95), 3)
+	_linea(img, b0, b1, Color(0.4, 0.4, 0.42, 0.95), 2)
+	_linea(img, Vector2(b0.x, b1.y), Vector2(b1.x, b0.y), Color(0.4, 0.4, 0.42, 0.95), 2)
+	for i in 3:
+		var c: Vector2 = a_px.call(cerchi[i].x, cerchi[i].z)
+		var r := 26.0
+		_cerchio(img, c, r, COLORI[i], 3)
+		match i:
+			0:
+				_disco(img, c + Vector2(-3, 4), 11, COLORI[0])
+				_disco(img, c + Vector2(7, -7), 7, COLORI[0])
+				_disco(img, c + Vector2(14, -6), 3, Color(1.0, 0.45, 0.05))
+			1:
+				_disco(img, c, 13, COLORI[1])
+				_linea(img, c + Vector2(-12, 0), c + Vector2(12, 0), Color(1, 1, 1, 0.9), 2)
+			2:
+				_disco(img, c + Vector2(-3, 0), 9, COLORI[2])
+				_disco(img, c + Vector2(6, 0), 9, COLORI[2])
+				_linea(img, c + Vector2(13, 0), c + Vector2(19, -7), COLORI[2], 3)
+				_linea(img, c + Vector2(13, 0), c + Vector2(19, 7), COLORI[2], 3)
+				_linea(img, c + Vector2(-2, -10), c + Vector2(-2, -18), azzurro, 2)
+	return ImageTexture.create_from_image(img)
+
+
+func _linea(img: Image, a: Vector2, b: Vector2, col: Color, spessore: int) -> void:
+	var n := int(a.distance_to(b)) + 1
+	for k in n + 1:
+		var p := a.lerp(b, float(k) / float(n))
+		# (a pastello: il segno trema un po' e lascia dei buchi)
+		var t := p + Vector2(sin(k * 0.7) * 0.8, cos(k * 0.5) * 0.8)
+		for dx in range(-spessore / 2, spessore / 2 + 1):
+			for dy in range(-spessore / 2, spessore / 2 + 1):
+				var x := int(t.x) + dx
+				var y := int(t.y) + dy
+				if x >= 0 and y >= 0 and x < img.get_width() and y < img.get_height() and (x * 7 + y * 13) % 11 != 0:
+					img.set_pixel(x, y, col)
+
+
+func _rettangolo(img: Image, a: Vector2, b: Vector2, col: Color, spessore: int) -> void:
+	_linea(img, Vector2(a.x, a.y), Vector2(b.x, a.y), col, spessore)
+	_linea(img, Vector2(b.x, a.y), Vector2(b.x, b.y), col, spessore)
+	_linea(img, Vector2(b.x, b.y), Vector2(a.x, b.y), col, spessore)
+	_linea(img, Vector2(a.x, b.y), Vector2(a.x, a.y), col, spessore)
+
+
+func _cerchio(img: Image, c: Vector2, r: float, col: Color, spessore: int) -> void:
+	var n := 40
+	for k in n:
+		var a1 := TAU * k / n
+		var a2 := TAU * (k + 1) / n
+		_linea(img, c + Vector2(cos(a1), sin(a1)) * r, c + Vector2(cos(a2), sin(a2)) * r, col, spessore)
+
+
+func _disco(img: Image, c: Vector2, r: float, col: Color) -> void:
+	for y in range(int(c.y - r), int(c.y + r) + 1):
+		for x in range(int(c.x - r), int(c.x + r) + 1):
+			if Vector2(x, y).distance_to(c) <= r and x >= 0 and y >= 0 and x < img.get_width() and y < img.get_height() \
+					and (x * 3 + y * 5) % 7 != 0:
+				img.set_pixel(x, y, col)
+
+
+func _figlio(padre: Node, nome: String) -> Node3D:
+	var n := padre.get_node_or_null(NodePath(nome)) as Node3D
+	if n == null:
+		n = Node3D.new()
+		n.name = nome
+		padre.add_child(n)
+	return n
+
+
+## Il piatto: un disco di mosaico di 1 m appoggiato sul fondo, alto [member sporgenza], che si cammina (strato del
+## mondo). Scendendo si abbassa di [member corsa] restando appoggiato (il disco si accorcia: niente dentro il fondo).
+func _piatto(i: int) -> Node3D:
+	var piatto := StaticBody3D.new()
+	piatto.name = "Piatto"
+	piatto.collision_layer = Layers.WORLD
+	piatto.collision_mask = 0
+	var mi := MeshInstance3D.new()
+	mi.name = "Mosaico"
+	var disco := CylinderMesh.new()
+	disco.top_radius = raggio_cerchio
+	disco.bottom_radius = raggio_cerchio
+	disco.radial_segments = 48
+	disco.rings = 1
+	mi.mesh = disco
+	var mat := _materiale_cerchio(i)
+	mi.material_override = mat
+	_mat_cerchi.append(mat)
+	piatto.add_child(mi)
+	var cs := CollisionShape3D.new()
+	var forma := CylinderShape3D.new()
+	forma.radius = raggio_cerchio
+	cs.shape = forma
+	piatto.add_child(cs)
+	_dischi.append(disco)
+	_forme_piatti.append(forma)
+	return piatto
+
+
+## Il piatto alto [param h] sopra il fondo (da [member sporgenza] a [member sporgenza] - [member corsa]).
+func _altezza_piatto(i: int, h: float) -> void:
+	_dischi[i].height = h
+	_forme_piatti[i].height = h
+	for n in _piatti[i].get_children() if i < _piatti.size() else []:
+		if n is Node3D:
+			(n as Node3D).position.y = h * 0.5
+
+
+## Il materiale del cerchio: quello vero di ambienti-1 se c'è (uniform bordo_acceso e bagnato), se no il segnaposto.
+func _materiale_cerchio(i: int) -> Material:
+	var vero: String = DIR + FILE_CERCHI[i]
+	if ResourceLoader.exists(vero):
+		return (load(vero) as Material).duplicate() as Material
+	var m := ShaderMaterial.new()
+	m.shader = load("res://scripts/game/enigma_giocattoli_cerchio.gdshader") as Shader
+	m.set_shader_parameter(&"colore", COLORI[i])
+	return m
+
+
+## Il giocattolo: un corpo che si muove da script (galleggia, si spinge, si appoggia), sullo strato degli oggetti
+## (il getto lo colpisce e il giocatore ci sbatte), col modello vero se c'è.
+func _giocattolo(i: int) -> AnimatableBody3D:
+	var g := AnimatableBody3D.new()
+	g.name = NOMI_GIOCATTOLI[i]
+	g.sync_to_physics = false
+	g.collision_layer = Layers.PROPS
+	g.collision_mask = 0
+	var vero: String = DIR + FILE_GIOCATTOLI[i]
+	var modello: Node3D
+	if ResourceLoader.exists(vero):
+		modello = (load(vero) as PackedScene).instantiate() as Node3D
+	else:
+		modello = _segnaposto(i)
+	modello.name = "Modello"
+	g.add_child(modello)
+	var cs := CollisionShape3D.new()
+	cs.name = "Forma"
+	match i:
+		1:
+			var s := SphereShape3D.new()
+			s.radius = RAGGI[i]
+			cs.shape = s
+			cs.position.y = RAGGI[i]
+		_:
+			var c := CylinderShape3D.new()
+			c.radius = RAGGI[i] * (0.9 if i == 0 else 0.6)
+			c.height = ALTEZZE[i]
+			cs.shape = c
+			cs.position.y = ALTEZZE[i] * 0.5
+			if i == 2:
+				var cap := CapsuleShape3D.new()
+				cap.radius = ALTEZZE[i] * 0.5
+				cap.height = RAGGI[i] * 2.4
+				cs.shape = cap
+				cs.rotation_degrees.x = 90.0
+	g.add_child(cs)
+	return g
+
+
+## Segnaposto con le misure dei modelli (paperella 45x38 cm, pallone 50 cm, balena 75x35 cm): gomma colorata.
+func _segnaposto(i: int) -> Node3D:
+	var n := Node3D.new()
+	var gomma := StandardMaterial3D.new()
+	gomma.albedo_color = COLORI[i].darkened(0.1)
+	gomma.roughness = 0.55
+	var parti: Array = []
+	match i:
+		0:
+			parti = [[_sfera(0.2, 0.15), Vector3(0, 0.15, 0.03), Vector3(1.1, 1.0, 1.25)],
+				[_sfera(0.11, 0.11), Vector3(0, 0.3, -0.13), Vector3.ONE]]
+			var becco := MeshInstance3D.new()
+			var b := _sfera(0.05, 0.05)
+			becco.mesh = b
+			var arancio := StandardMaterial3D.new()
+			arancio.albedo_color = Color(1.0, 0.45, 0.05)
+			arancio.roughness = 0.5
+			becco.material_override = arancio
+			becco.position = Vector3(0, 0.29, -0.24)
+			becco.scale = Vector3(1.0, 0.5, 1.4)
+			n.add_child(becco)
+		1:
+			parti = [[_sfera(0.25, 0.25), Vector3(0, 0.25, 0), Vector3.ONE]]
+		2:
+			parti = [[_sfera(0.175, 0.175), Vector3(0, 0.175, 0), Vector3(1.0, 1.0, 2.1)],
+				[_sfera(0.09, 0.05), Vector3(0, 0.12, 0.42), Vector3(2.2, 1.0, 1.0)]]
+	for p in parti:
+		var mi := MeshInstance3D.new()
+		mi.mesh = p[0]
+		mi.material_override = gomma
+		mi.position = p[1]
+		mi.scale = p[2]
+		n.add_child(mi)
+	return n
+
+
+func _sfera(r: float, h: float) -> SphereMesh:
+	var s := SphereMesh.new()
+	s.radius = r
+	s.height = h * 2.0
+	s.radial_segments = 24
+	s.rings = 12
+	return s
+
+
+## Il fondo sotto i cerchi (Posa, lo strumento comune) e i giocattoli sul pelo dell'acqua; poi il riscaldamento: tutto
+## disegnato una volta fuori vista (strato 1<<15), così a metà enigma non si compila niente.
+func _appoggia() -> void:
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	if not is_inside_tree():
+		return
+	for i in 3:
+		var c := _cerchi[i]
+		# (Posa guarda in giù da appena sopra il nodo: si parte sotto il pelo dell'acqua, se no si appoggia lì)
+		if vasca:
+			c.global_position.y = vasca.get_floor_global_y() + 0.4
+		var escludi: Array[RID] = []
+		for p in _piatti:
+			if p is CollisionObject3D:
+				escludi.append((p as CollisionObject3D).get_rid())
+		for g in _giocattoli:
+			escludi.append(g.get_rid())
+		Posa.appoggia_a_terra(c, 0.0, false, escludi)
+		_fondo_cerchi[i] = c.global_position.y
+		_metti_piatto(i, _giu[i])
+	_ostacoli = _ostacoli_fondo()
+	for i in 3:
+		_y[i] = _quota_bersaglio(i)
+		_giocattoli[i].global_position.y = _y[i]
+	_pronto = true
+	if not Engine.is_editor_hint() and get_viewport():
+		await RiscaldamentoShader.disegna_fuori_vista(self, get_viewport(), 4, func(): _accendi_tutti(1.0))
+		_aggiorna_bordi(1.0)
+
+
+func _accendi_tutti(k: float) -> void:
+	for m in _mat_cerchi:
+		_bordo(m, k)
+
+
+func _bordo(m: Material, k: float) -> void:
+	if m is ShaderMaterial:
+		(m as ShaderMaterial).set_shader_parameter(&"bordo_acceso", k)
+
+
+func _metti_piatto(i: int, giu: bool) -> void:
+	_altezza_piatto(i, sporgenza - corsa if giu else sporgenza)
+
+
+# --- Il getto -----------------------------------------------------------------------------------------------------
+
+func _collega_zaino() -> void:
+	var p := GameState.player
+	var z: Node = p.water_pack if p and is_instance_valid(p) and p.water_pack else null
+	if z == _zaino_collegato:
+		return
+	if is_instance_valid(_zaino_collegato) and _zaino_collegato.is_connected(&"jet_hit", _su_getto):
+		_zaino_collegato.disconnect(&"jet_hit", _su_getto)
+	_zaino_collegato = z
+	if z:
+		z.connect(&"jet_hit", _su_getto)
+
+
+## Il getto arriva in [param punto]: se colpisce un giocattolo lo spinge lungo il getto; se colpisce l'acqua o il fondo
+## vicino a un giocattolo lo spinge anche lui, meno (la corrente).
+func _su_getto(collider: Object, punto: Vector3, normale: Vector3) -> void:
+	if risolto_ok or not _pronto:
+		return
+	var p := GameState.player
+	if p == null or not is_instance_valid(p):
+		return
+	var dt := get_physics_process_delta_time()
+	var occhio: Vector3 = p.get_eye_position()
+	var dir3 := punto - occhio
+	var dir := Vector2(dir3.x, dir3.z)
+	if dir.length() < 0.05:
+		return
+	dir = dir.normalized()
+	for i in 3:
+		if _giu[i]:
+			continue
+		var g := _giocattoli[i]
+		var gp := g.global_position
+		var k := 0.0
+		var verso := dir
+		if collider == g:
+			k = spinta_diretta
+		else:
+			if absf(punto.y - (gp.y + ALTEZZE[i] * 0.5)) > 0.9:
+				continue
+			var d := Vector2(gp.x - punto.x, gp.z - punto.z)
+			var dist := maxf(d.length() - RAGGI[i], 0.0)
+			if dist > raggio_corrente:
+				continue
+			k = spinta_corrente * (1.0 - dist / raggio_corrente)
+			# l'acqua colpita lo porta dove va il getto (davanti o un po' oltre lui, sempre lontano da chi spruzza); un
+			# muro colpito lo respinge via dal muro (di sponda: così lo si stacca da un muro)
+			if absf(normale.y) < 0.5 and d.length() > 0.01:
+				verso = d.normalized()
+		var lontano := Vector2(gp.x - occhio.x, gp.z - occhio.z).length()
+		k *= remap(clampf(lontano, vicino_m, lontano_m), vicino_m, lontano_m, 1.3, 0.6)
+		if not _galleggia(i):
+			k *= spinta_sul_fondo
+		_vel[i] += _a_locale(verso) * k * dt
+		# (un colpo di lato lo fa anche girare un po')
+		var lato := Vector2(punto.x - gp.x, punto.z - gp.z)
+		_yaw_vel[i] += clampf(lato.cross(dir), -0.4, 0.4) * k * dt * 2.0
+
+
+## Una direzione orizzontale del mondo nel sistema del nodo (in pianta).
+func _a_locale(v: Vector2) -> Vector2:
+	var l := global_basis.inverse() * Vector3(v.x, 0.0, v.y)
+	return Vector2(l.x, l.z)
+
+
+# --- Il movimento ---------------------------------------------------------------------------------------------------
+
+func _physics_process(delta: float) -> void:
+	if not _pronto:
+		return
+	_t += delta
+	_collega_zaino()
+	for i in 3:
+		_muovi(i, delta)
+	_separa()
+	for i in 3:
+		_controlla_cerchio(i)
+	if _risucchio_t >= 0.0:
+		_risucchio_t += delta
+		if _risucchio_t >= 0.7:
+			_risucchio_t = -1.0
+			_fine()
+
+
+func _galleggia(i: int) -> bool:
+	return vasca != null and vasca.fill > 0.0005 and vasca.get_surface_global_y() - PESCAGGI[i] > _fondo(i) + 0.005
+
+
+## La quota del fondo sotto il giocattolo (il fondo della piscina o un piatto), senza i giocattoli.
+func _fondo(i: int) -> float:
+	var g := _giocattoli[i]
+	var p := g.global_position
+	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, p.y + 1.2, p.z), Vector3(p.x, p.y - 3.0, p.z), Layers.WORLD)
+	var h := get_world_3d().direct_space_state.intersect_ray(q)
+	return (h.position as Vector3).y if not h.is_empty() else p.y
+
+
+func _quota_bersaglio(i: int) -> float:
+	var f := _fondo(i)
+	if vasca and vasca.fill > 0.0005:
+		return maxf(f, vasca.get_surface_global_y() - PESCAGGI[i])
+	return f
+
+
+func _muovi(i: int, delta: float) -> void:
+	var g := _giocattoli[i]
+	if _giu[i]:
+		return
+	var a_galla := _galleggia(i)
+	var v := _vel[i]
+	v *= exp(-(attrito_acqua if a_galla else attrito_fondo) * delta)
+	# vicino al suo cerchio, se va piano, ci scivola dentro (non serve la precisione al centimetro)
+	var c := Vector2(_cerchi[i].position.x, _cerchi[i].position.z)
+	var pos := Vector2(g.position.x, g.position.z)
+	var al_centro := c - pos
+	if al_centro.length() < raggio_aggancio and v.length() < 0.7:
+		v += al_centro * 4.0 * delta
+		v *= exp(-2.5 * delta)
+	if v.length() > velocita_max:
+		v = v.normalized() * velocita_max
+	pos += v * delta
+	# dentro la parte profonda, fuori dai posti da lasciare liberi
+	if pos.x < area.position.x:
+		pos.x = area.position.x
+		v.x = absf(v.x) * 0.3
+	elif pos.x > area.end.x:
+		pos.x = area.end.x
+		v.x = -absf(v.x) * 0.3
+	if pos.y < area.position.y:
+		pos.y = area.position.y
+		v.y = absf(v.y) * 0.3
+	elif pos.y > area.end.y:
+		pos.y = area.end.y
+		v.y = -absf(v.y) * 0.3
+	if not a_galla:
+		# sul fondo: i gonfiabili e i posti liberi lo respingono (morbidi: chi ci arriva sopra calando l'acqua ne
+		# scivola giù in mezzo secondo)
+		for l in _posti_liberi():
+			var d := pos - Vector2(l.x, l.y)
+			var minimo: float = l.z + RAGGI[i]
+			if d.length() < minimo and d.length() > 0.0001:
+				var n := d.normalized()
+				var dentro := minimo - d.length()
+				pos += n * minf(dentro, maxf(dentro * 8.0 * delta, 0.004))
+				var vn := v.dot(n)
+				if vn < 0.0:
+					v -= n * vn * 1.3
+	_vel[i] = v
+	g.position.x = pos.x
+	g.position.z = pos.y
+	_yaw_vel[i] *= exp(-1.5 * delta)
+	g.rotation.y += _yaw_vel[i] * delta
+	# la quota: sul pelo dell'acqua (col dondolio) o appoggiato sul fondo
+	var bersaglio := _quota_bersaglio(i)
+	if a_galla:
+		_y[i] = lerpf(_y[i], bersaglio, 1.0 - exp(-5.0 * delta))
+		g.global_position.y = _y[i] + sin(_t * 1.3 + i * 2.1) * 0.012
+		g.rotation.x = sin(_t * 0.9 + i) * 0.04
+		g.rotation.z = sin(_t * 1.1 + i * 1.7) * 0.04
+	else:
+		_y[i] = maxf(bersaglio, _y[i] - 1.5 * delta) if _y[i] > bersaglio else bersaglio
+		g.global_position.y = _y[i]
+		g.rotation.x = lerpf(g.rotation.x, 0.0, 1.0 - exp(-8.0 * delta))
+		g.rotation.z = lerpf(g.rotation.z, 0.0, 1.0 - exp(-8.0 * delta))
+
+
+## I gonfiabili già sul fondo della parte profonda (x, z, raggio nel sistema del nodo): i MeshInstance3D "ogg_*" della
+## sala che stanno lì sotto. I lunghi (i tubi) diventano due cerchi.
+func _ostacoli_fondo() -> Array[Vector3]:
+	var out: Array[Vector3] = []
+	if sala == null:
+		return out
+	for n in sala.find_children("ogg_*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if not mi.is_visible_in_tree():
+			continue
+		var bb := mi.global_transform * mi.get_aabb()
+		var c := to_local(bb.get_center())
+		if bb.position.y > -1.2 or not area.grow(0.5).has_point(Vector2(c.x, c.z)):
+			continue
+		var sx := bb.size.x * 0.5
+		var sz := bb.size.z * 0.5
+		if maxf(sx, sz) > 1.4 * minf(sx, sz):
+			var lungo := Vector3(sx * 0.5, 0, 0) if sx > sz else Vector3(0, 0, sz * 0.5)
+			for k in [-1.0, 1.0]:
+				out.append(Vector3(c.x + lungo.x * k, c.z + lungo.z * k, minf(sx, sz) * 1.05))
+		else:
+			out.append(Vector3(c.x, c.z, maxf(sx, sz) * 0.95))
+	return out
+
+
+## I posti da lasciare liberi sul fondo (x, z, raggio nel sistema del nodo): quelli fissi, i gonfiabili, la P5 finché
+## c'è e i cerchi con i giocattoli già scesi.
+func _posti_liberi() -> Array[Vector3]:
+	var out: Array[Vector3] = liberi.duplicate()
+	out.append_array(_ostacoli)
+	if is_instance_valid(polaroid) and polaroid.is_inside_tree():
+		var l := to_local(polaroid.global_position)
+		out.append(Vector3(l.x, l.z, 0.35))
+	# e gli altri cerchi, coi giocattoli già scesi
+	for j in 3:
+		if _giu[j]:
+			out.append(Vector3(_cerchi[j].position.x, _cerchi[j].position.z, RAGGI[j]))
+	return out
+
+
+## I giocattoli non si compenetrano: si separano e si scambiano un po' di velocità.
+func _separa() -> void:
+	for a in 3:
+		for b in range(a + 1, 3):
+			var ga := _giocattoli[a]
+			var gb := _giocattoli[b]
+			var d := Vector2(gb.position.x - ga.position.x, gb.position.z - ga.position.z)
+			var minimo: float = RAGGI[a] + RAGGI[b]
+			if d.length() >= minimo or d.length() < 0.0001:
+				continue
+			var n := d.normalized()
+			var dentro := minimo - d.length()
+			var fa := 0.0 if _giu[a] else (0.5 if not _giu[b] else 1.0)
+			var fb := 0.0 if _giu[b] else (0.5 if not _giu[a] else 1.0)
+			ga.position.x -= n.x * dentro * fa
+			ga.position.z -= n.y * dentro * fa
+			gb.position.x += n.x * dentro * fb
+			gb.position.z += n.y * dentro * fb
+			var rel := (_vel[b] - _vel[a]).dot(n)
+			if rel < 0.0:
+				_vel[a] += n * rel * 0.6 * fa * 2.0
+				_vel[b] -= n * rel * 0.6 * fb * 2.0
+
+
+# --- I cerchi -------------------------------------------------------------------------------------------------------
+
+func _controlla_cerchio(i: int) -> void:
+	if _giu[i]:
+		return
+	var g := _giocattoli[i]
+	var c := Vector2(_cerchi[i].position.x, _cerchi[i].position.z)
+	var d := Vector2(g.position.x, g.position.z).distance_to(c)
+	var sopra := d < raggio_cerchio - 0.1
+	if sopra and not _sopra[i]:
+		cerchio_acceso.emit(i)
+	_sopra[i] = sopra
+	_acceso[i] = move_toward(_acceso[i], bordo_appena if sopra else 0.0, get_physics_process_delta_time() * 0.8)
+	_bordo(_mat_cerchi[i], _acceso[i])
+	# fermo e appoggiato sul piatto, a piscina vuota: il piatto scende
+	if d < tolleranza and not _galleggia(i) and _vel[i].length() < 0.3 and absf(_y[i] - _fondo(i)) < 0.01 \
+			and (vasca == null or vasca.fill <= 0.0005):
+		_scendi(i, true)
+
+
+func _scendi(i: int, col_suono: bool) -> void:
+	_giu[i] = true
+	_vel[i] = Vector2.ZERO
+	_yaw_vel[i] = 0.0
+	var g := _giocattoli[i]
+	g.position.x = _cerchi[i].position.x
+	g.position.z = _cerchi[i].position.z
+	if col_suono:
+		var tw := create_tween().set_parallel()
+		tw.tween_method(func(h: float): _altezza_piatto(i, h), sporgenza, sporgenza - corsa, 0.18) \
+				.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+		tw.tween_method(func(y: float): g.global_position.y = y, g.global_position.y, g.global_position.y - corsa, 0.18) \
+				.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+		tw.tween_method(func(k: float): _bordo(_mat_cerchi[i], k), _acceso[i], 1.0, 0.5)
+		Audio.suona(&"saracinesca_fine", _cerchi[i].global_position, -4.0, 0.75)
+	else:
+		_metti_piatto(i, true)
+		g.global_position.y = _cerchi[i].global_position.y + sporgenza - corsa
+		_bordo(_mat_cerchi[i], 1.0)
+	_y[i] = g.global_position.y
+	_acceso[i] = 1.0
+	piatto_sceso.emit(i)
+	if not risolto_ok and _giu.count(true) == 3:
+		if col_suono:
+			_risucchio_t = 0.0
+		else:
+			_fine(false)
+
+
+## Scesi tutti e tre: il risucchio lungo dagli scarichi e la serratura della botola si apre.
+func _fine(col_suono := true) -> void:
+	if risolto_ok:
+		return
+	risolto_ok = true
+	if col_suono and piscina:
+		Audio.suona(&"piscina_vuota", piscina.call(&"_centro_scarico") if piscina.has_method(&"_centro_scarico") else global_position, 2.0, 0.6)
+	risolto.emit()
+
+
+## Vero quando la serratura della botola è aperta (PiscinaOnde lo chiede per il pulsante).
+func aperta() -> bool:
+	return risolto_ok
+
+
+func _aggiorna_bordi(k: float) -> void:
+	for i in 3:
+		_bordo(_mat_cerchi[i], 1.0 if _giu[i] else _acceso[i] * k)
+
+
+## Scorciatoia per i test e le partenze di prova: i giocattoli sui loro cerchi (galleggiando, se c'è l'acqua); a
+## piscina vuota i piatti scendono da soli al prossimo passo.
+func metti_al_posto() -> void:
+	for i in 3:
+		if _giu[i]:
+			continue
+		_giocattoli[i].position.x = _cerchi[i].position.x
+		_giocattoli[i].position.z = _cerchi[i].position.z
+		_vel[i] = Vector2.ZERO
+
+
+## I giocattoli (per i test e gli scatti).
+func giocattolo(i: int) -> AnimatableBody3D:
+	return _giocattoli[i]
+
+
+func cerchio(i: int) -> Node3D:
+	return _cerchi[i]
+
+
+func piatto_giu(i: int) -> bool:
+	return _giu[i]
+
+
+## Quanto è acceso il bordo del cerchio [param i] (0..1).
+func cerchio_acceso_quanto(i: int) -> float:
+	return 1.0 if _giu[i] else _acceso[i]
+
+
+## La velocità del giocattolo [param i] in pianta (m/s).
+func velocita(i: int) -> float:
+	return _vel[i].length()
+
+
+# --- Checkpoint -----------------------------------------------------------------------------------------------------
+
+func save_state() -> Dictionary:
+	var pos := []
+	for g in _giocattoli:
+		pos.append([g.position.x, g.position.z, g.rotation.y])
+	return {"pos": pos, "giu": _giu.duplicate(), "risolto": risolto_ok}
+
+
+func load_state(data: Dictionary) -> void:
+	var pos: Array = data.get("pos", [])
+	var giu: Array = data.get("giu", [])
+	var tutto := bool(data.get("risolto", false))
+	for i in 3:
+		_vel[i] = Vector2.ZERO
+		_yaw_vel[i] = 0.0
+		if i < pos.size():
+			_giocattoli[i].position.x = float(pos[i][0])
+			_giocattoli[i].position.z = float(pos[i][1])
+			_giocattoli[i].rotation.y = float(pos[i][2])
+		var su_giu := tutto or (i < giu.size() and bool(giu[i]))
+		if su_giu and not _giu[i]:
+			if _pronto:
+				_scendi(i, false)
+			else:
+				_giu[i] = true
+				_giocattoli[i].position.x = _cerchi[i].position.x
+				_giocattoli[i].position.z = _cerchi[i].position.z
+		elif not su_giu and _giu[i]:
+			_giu[i] = false
+			_metti_piatto(i, false)
+	if tutto or _giu.count(true) == 3:
+		risolto_ok = true
+	if _pronto:
+		for i in 3:
+			if not _giu[i]:
+				_y[i] = _quota_bersaglio(i)
+				_giocattoli[i].global_position.y = _y[i]
