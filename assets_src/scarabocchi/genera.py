@@ -38,7 +38,7 @@ def sole(p, cx, cy, r, colore='giallo', raggi=10):
 
 def omino(p, x, y, alto, colore, braccia_su=False):
     """Un bambino stilizzato coi piedi in (x, y)."""
-    testa = alto * 0.18
+    testa = alto * 0.1
     collo = y - alto * 0.64
     p.ovale(x, collo - testa, testa, testa, colore)
     p.linea((x, collo), (x, y - alto * 0.3), colore)

@@ -48,7 +48,7 @@ class Pastello:
         self.livelli.append((colore, im))
         return im
 
-    def tratto(self, pts, colore, larg_mm=14.0, volte=2, trem=1.0, pressione=220):
+    def tratto(self, pts, colore, larg_mm=17.0, volte=2, trem=1.0, pressione=235):
         """Un segno di pastello lungo [pts] (in pixel), largo [larg_mm], ripassato [volte] volte un po' spostato."""
         im = self._livello(colore)
         d = ImageDraw.Draw(im)
