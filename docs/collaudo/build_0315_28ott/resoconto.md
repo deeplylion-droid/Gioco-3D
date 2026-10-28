@@ -10,7 +10,7 @@ Squadra collaudo. Build unita `lavoro/godot` **efc7352f** (versione 0.3.15). Con
 | Continua dalla torre | Checkpoint_NEm3, a 0,01 m, tutto uguale. Morte e ripartenza da lì (7,8 s) |
 | Continua dal tunnel dopo un crash vero (SIGKILL) | Checkpoint_160, a 0,00 m, tutto uguale. Morte e ripartenza da lì (9,6 s) |
 | Partenze F9: risalita, fiume, torre, inseguimento, tunnel | Tutte arrivano in 7-8 s al loro checkpoint, senza errori. Elenco dei pezzi come nel collaudo dei blocchi, più una forma e una luce nella risalita (porta e lampade dell'infermeria) |
-| Menu F9 dal titolo, col renderer vero | Si apre, Esc lo chiude, F9 lo riapre (`fogli/0_titolo.jpg` e seguenti) |
+| Menu F9 dal titolo, col renderer vero | Si apre, Esc lo chiude, F9 lo riapre (`fogli/menu_0_titolo.jpg` e seguenti) |
 | test_continua | 127/127 |
 | test_infermeria_gioco | 56/56 |
 | test_infermeria | 22/22 |
