@@ -55,7 +55,9 @@ var _base_luci: Array = []          # [Light3D, energia] applicate in questo fot
 var _base_materiali: Array = []     # [BaseMaterial3D, emissione]
 var _base_gi: Array = []            # [VoxelGIData, energia]
 var _collegato := false
-var _geometrie: Array[GeometryInstance3D] = []   # per rileggere i materiali (cambiano anche senza nodi nuovi)
+# per rileggere i materiali (cambiano anche senza nodi nuovi). Senza tipo: tiene anche le geometrie appena liberate,
+# finché _process non le dimentica (in un Array tipizzato spostarle dava "invalid (previously freed?) object instance")
+var _geometrie: Array = []
 var _prossima := 0
 # Quello che si dimentica quando un nodo viene liberato (morte e ripartenza, zone scaricate): senza, a ogni ripartenza
 # restavano 2.400 geometrie, 287 luci e 89 materiali della sala vecchia, +4 MB e +91 oggetti per morte
@@ -102,12 +104,12 @@ func _process(_delta: float) -> void:
 		if _geometrie.is_empty():
 			break
 		_prossima = (_prossima + 1) % _geometrie.size()
-		var g := _geometrie[_prossima]
+		var g = _geometrie[_prossima]
 		if not is_instance_valid(g):
 			_dimentica(_prossima)
 			continue
 		# (fuori dall'albero, per esempio la sala vecchia mentre si ricarica, la posizione non si legge)
-		if g.is_inside_tree():
+		if (g as GeometryInstance3D).is_inside_tree():
 			_materiali_di(g)
 	# le luci liberate (applica le toglie solo quando si disegna)
 	for i in range(_luci.size() - 1, -1, -1):
