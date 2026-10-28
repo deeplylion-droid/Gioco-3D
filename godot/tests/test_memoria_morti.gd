@@ -55,6 +55,27 @@ func _connessioni() -> Dictionary:
 	return out
 
 
+## Le dimensioni di array e dizionari degli autoload e delle cache statiche (per trovare cosa cresce).
+func _contenitori() -> Dictionary:
+	var out := {}
+	for n in get_tree().root.get_children():
+		if n == get_tree().current_scene or n == self:
+			continue
+		for pr in n.get_property_list():
+			if pr["type"] == TYPE_ARRAY or pr["type"] == TYPE_DICTIONARY:
+				var v = n.get(pr["name"])
+				if v != null:
+					out["%s.%s" % [n.name, pr["name"]]] = (v as Variant).size()
+	for c in [Posa, FormeTunnel, SalaSottomarino, SottomarinoArrediA2, ObloLei, RiscaldamentoShader, AttesaZone]:
+		var scr := c as Script
+		for pr in scr.get_script_property_list():
+			if pr["type"] == TYPE_ARRAY or pr["type"] == TYPE_DICTIONARY:
+				var v = scr.get(pr["name"])
+				if v != null:
+					out["%s.%s" % [scr.resource_path.get_file(), pr["name"]]] = (v as Variant).size()
+	return out
+
+
 func _misura() -> Dictionary:
 	return {
 		"mb": Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0,
@@ -63,6 +84,7 @@ func _misura() -> Dictionary:
 		"orfani": Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT),
 		"risorse": Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT),
 		"connessioni": _connessioni(),
+		"contenitori": _contenitori(),
 	}
 
 
@@ -76,6 +98,10 @@ func _run() -> void:
 	var misure: Array = []
 	for i in MORTI:
 		var vecchio := GameState.player
+		var mb0 := Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0
+		for k in 300:
+			await get_tree().process_frame
+		print("   fermi 300 fotogrammi: %+.2f MB" % (Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0 - mb0))
 		GameState.kill_player()
 		await _aspetta_giocatore(vecchio)
 		var m := _misura()
@@ -89,8 +115,11 @@ func _run() -> void:
 			for k in m["connessioni"]:
 				if int(m["connessioni"][k]) != int(a["connessioni"].get(k, 0)):
 					cambiate.append("%s %+d" % [k, int(m["connessioni"][k]) - int(a["connessioni"].get(k, 0))])
+			for k in m["contenitori"]:
+				if int(m["contenitori"][k]) != int(a["contenitori"].get(k, 0)):
+					cambiate.append("%s %+d" % [k, int(m["contenitori"][k]) - int(a["contenitori"].get(k, 0))])
 			if not cambiate.is_empty():
-				diff += " connessioni: " + ", ".join(cambiate)
+				diff += " cambiati: " + ", ".join(cambiate)
 		print("MORTE %d: %.2f MB, %d oggetti, %d nodi, %d orfani, %d risorse%s" % [i + 1, m["mb"], m["oggetti"], m["nodi"], m["orfani"], m["risorse"], diff])
 	var primo: Dictionary = misure[0]
 	var ultimo: Dictionary = misure[-1]

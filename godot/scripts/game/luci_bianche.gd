@@ -57,6 +57,12 @@ var _base_gi: Array = []            # [VoxelGIData, energia]
 var _collegato := false
 var _geometrie: Array[GeometryInstance3D] = []   # per rileggere i materiali (cambiano anche senza nodi nuovi)
 var _prossima := 0
+# Quello che si dimentica quando un nodo viene liberato (morte e ripartenza, zone scaricate): senza, a ogni ripartenza
+# restavano 2.400 geometrie, 287 luci e 89 materiali della sala vecchia, +4 MB e +91 oggetti per morte
+# (test_memoria_morti, 28 ottobre). Ogni geometria si ricorda i materiali che ha messo in [member _materiali], e un
+# materiale si toglie quando non lo usa più nessuna geometria viva.
+var _mat_di := {}                   # geometria (instance id) -> instance id dei suoi materiali raccolti
+var _usi := {}                      # materiale (instance id) -> quante geometrie vive lo usano
 
 
 func _ready() -> void:
@@ -93,11 +99,67 @@ func _process(_delta: float) -> void:
 	# lampada accesa dopo): si rileggono 300 geometrie per fotogramma, a giro
 	var n := mini(300, _geometrie.size())
 	for k in n:
+		if _geometrie.is_empty():
+			break
 		_prossima = (_prossima + 1) % _geometrie.size()
 		var g := _geometrie[_prossima]
+		if not is_instance_valid(g):
+			_dimentica(_prossima)
+			continue
 		# (fuori dall'albero, per esempio la sala vecchia mentre si ricarica, la posizione non si legge)
-		if is_instance_valid(g) and g.is_inside_tree():
+		if g.is_inside_tree():
 			_materiali_di(g)
+	# le luci liberate (applica le toglie solo quando si disegna)
+	for i in range(_luci.size() - 1, -1, -1):
+		if not is_instance_valid(_luci[i]):
+			_luci.remove_at(i)
+	for id in _luci_morte():
+		_visti.erase(id)
+		_esclusi_cache.erase(id)
+
+
+## Gli id delle luci raccolte che non ci sono più (si tengono a parte: un oggetto liberato non ha più il suo id).
+var _id_luci := {}                  # luce (instance id) -> true
+
+
+func _luci_morte() -> Array:
+	var morte: Array = []
+	if _id_luci.size() == _luci.size():
+		return morte
+	var vive := {}
+	for l in _luci:
+		vive[l.get_instance_id()] = true
+	for id in _id_luci:
+		if not vive.has(id):
+			morte.append(id)
+	for id in morte:
+		_id_luci.erase(id)
+	return morte
+
+
+## Dimentica la geometria liberata in [param i] di [member _geometrie] (al suo posto va l'ultima) e i materiali che
+## non usa più nessuno.
+func _dimentica(i: int) -> void:
+	var id := _id_geometrie[i]
+	_geometrie[i] = _geometrie[-1]
+	_id_geometrie[i] = _id_geometrie[-1]
+	_geometrie.remove_at(_geometrie.size() - 1)
+	_id_geometrie.remove_at(_id_geometrie.size() - 1)
+	_visti.erase(id)
+	_esclusi_cache.erase(id)
+	for mid in _mat_di.get(id, []):
+		_usi[mid] = int(_usi.get(mid, 1)) - 1
+		if int(_usi[mid]) <= 0:
+			_usi.erase(mid)
+			_visti.erase(mid)
+			for j in range(_materiali.size() - 1, -1, -1):
+				if _materiali[j] == null or _materiali[j].get_instance_id() == mid:
+					_materiali.remove_at(j)
+	_mat_di.erase(id)
+
+
+## Gli id di [member _geometrie], nello stesso ordine (una geometria liberata non ha più il suo).
+var _id_geometrie: Array[int] = []
 
 
 ## Prima del disegno: le bianche a base × fattore.
@@ -173,6 +235,7 @@ func _raccogli(radice: Node) -> void:
 			if not _visti.has(n.get_instance_id()):
 				_visti[n.get_instance_id()] = true
 				_geometrie.append(n)
+				_id_geometrie.append(n.get_instance_id())
 			_materiali_di(n)
 		elif n is VoxelGI:
 			var d := (n as VoxelGI).data
@@ -192,9 +255,14 @@ func _materiali_di(g: GeometryInstance3D) -> void:
 				mats.append(mi.get_surface_override_material(s))
 				mats.append(mi.mesh.surface_get_material(s))
 	var di_lampada := -1          # -1: non ancora guardato (si guarda solo se c'è un materiale che si accende)
+	var gid := g.get_instance_id()
 	for m in mats:
 		var b := m as BaseMaterial3D
-		if b == null or _visti.has(b.get_instance_id()):
+		if b == null:
+			continue
+		if _visti.has(b.get_instance_id()):
+			# (già raccolto da un'altra geometria: questa lo usa anche lei)
+			_usa(gid, b.get_instance_id())
 			continue
 		if not b.emission_enabled or b.emission_energy_multiplier < EMISSIONE_MINIMA:
 			continue
@@ -205,6 +273,19 @@ func _materiali_di(g: GeometryInstance3D) -> void:
 		if di_lampada == 1 or _nome_da_lampada(b.resource_name) or _anche(b.resource_name) or _anche(g.name):
 			_visti[b.get_instance_id()] = true
 			_materiali.append(b)
+			_usa(gid, b.get_instance_id())
+
+
+## La geometria [param gid] usa il materiale raccolto [param mid] (una volta sola per coppia).
+func _usa(gid: int, mid: int) -> void:
+	if not _usi.has(mid) and not _visti.has(mid):
+		return
+	var l: Array = _mat_di.get(gid, [])
+	if mid in l:
+		return
+	l.append(mid)
+	_mat_di[gid] = l
+	_usi[mid] = int(_usi.get(mid, 0)) + 1
 
 
 var _esclusi_cache := {}
@@ -288,6 +369,8 @@ func _aggiungi(lista: Array, o: Object) -> void:
 	if not _visti.has(o.get_instance_id()):
 		_visti[o.get_instance_id()] = true
 		lista.append(o)
+		if lista == _luci:
+			_id_luci[o.get_instance_id()] = true
 
 
 ## Per i test e per l'elenco: le luci raccolte, divise in bianche e colorate.
