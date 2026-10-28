@@ -521,3 +521,12 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **Per allungare il capitolo 1** (approvati come proposte, da guardare prima di metterli nel gioco): i bambini visti di sfuggita (il bambino col cubo e l'agnellino lontani in 3-4 punti nuovi; nota: "attenzione alle animazioni. falle bene."), 4-6 Polaroid nuove nascoste nelle zone che ci sono, 2-3 idee per un enigma nuovo in una zona che c'è già. Bocciato un altro spavento con lei.
 - **Capitolo 2: non ancora** (D): prima si finisce bene il capitolo 1.
 - **Il gioco anche in inglese: sì**, con la lingua nelle opzioni; nota: "anche eventuali scritte sui disegni o nel videoclip sono da tradurre".
+
+**Scelte del 28 ottobre** (pagina "Proposte del 28 ottobre", con gli scatti, il video e i suoni fatti nel motore):
+- **Cuore e ritmo nell'inseguimento: A, tutti e due**, come negli esempi sentiti (sotto il canto, più fitti quando lei è vicina, zitti quando prende o sparisce).
+- **Effetti quando è vicina: sì**, come nel video: bordi scuri sotto gli 8 m (fino ai 3 m), tremito di meno di mezzo grado a ogni morso a vuoto (niente se l'oscillazione della camera è spenta), la sua luce rosa 7 m davanti al giocatore.
+- **Inglese**: le schermate vanno bene. **Voce dello spot: B**, una voce inglese nuova, da far sentire prima di metterla nel gioco. **Lingua alla prima partenza: A**, l'inglese solo se Windows è in inglese, se no l'italiano.
+- **Polaroid nuove P12-P16: tutte e cinque approvate**, foto e posti come negli scatti (P12 torre, P13 risalita sotto l'oblò, P14 sala davanti all'acquario giallo, P15 zona del personale, P16 approdo del fiume lento). Il totale passa a 16.
+- **Enigma nuovo: A, "I giocattoli al loro posto"** nella piscina a onde, con la nota: "ma facciamo che puoi spingere i giocattoli anche una volta che hai svuotato la piscina". I giocattoli si spingono col getto sia sull'acqua della pozza sia sul fondo vuoto, quindi l'ordine (prima i giocattoli o prima lo svuotamento) è libero. Scartate B (disegni a cera) e C (telecamera).
+- **Lavoro della notte: A**, tutte le squadre insieme, accettando il rischio di un altro fermo per il limite settimanale.
+- **Prossima build: B**, niente 0.3.16 al mattino: al mattino solo le cose nuove da guardare, e la build quando la chiede l'utente.
