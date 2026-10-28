@@ -428,7 +428,7 @@ func _collega_zaino() -> void:
 
 
 ## Il getto arriva in [param punto]: se colpisce un giocattolo lo spinge lungo il getto; se colpisce l'acqua o il fondo
-## vicino a un giocattolo lo spinge anche lui, meno (la corrente).
+## vicino a un giocattolo lo spinge anche lui, meno (l'onda), e un muro colpito vicino lo respinge via dal muro.
 func _su_getto(collider: Object, punto: Vector3, normale: Vector3) -> void:
 	if risolto_ok or not _pronto:
 		return
