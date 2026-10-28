@@ -45,7 +45,7 @@ const VARCHI := [
 		[Vector3(-4.9, -5.4, 49.2), Vector3(-4.9, -5.4, 66.0), Vector3(-7.6, -5.4, 66.0)]],
 	["risalita: dall'approdo all'infermeria (porta di servizio, porta sud)", "inizio",
 		[Vector3(-35.0, -5.4, 54.0), Vector3(-35.0, -5.4, 46.6)]],   # (1 m dentro l'infermeria, prima del carrello)
-	["risalita: dalla porta nord dell'infermeria alla scala di servizio", "inizio",
+	["risalita: dalla porta nord dell'infermeria alla scala di servizio (si apre col pulsantone)", "aperte",
 		[Vector3(-38.8, -5.4, 43.0), Vector3(-38.8, -5.4, 39.0)]],
 	["risalita: dalla cima della scala alla porta di C3", "inizio",
 		[Vector3(-26.9, 0, 38.45), Vector3(-15.4, 0, 38.45)]],
@@ -151,6 +151,12 @@ func _apri_tutto(level: Node) -> void:
 		paratia.call(&"load_state", {"chiusa": false, "aperta": true})
 	for portone in level.find_children("*", "PortoneTorre", true, false):
 		portone.call(&"load_state", {"aperto": true, "chiuso_dietro": false})
+	# la porta nord dell'infermeria si apre col pulsantone (25 ottobre)
+	var inter := level.get_node_or_null(^"Risalita/Infermeria/Interruttore")
+	if inter:
+		inter.set(&"powered", true)
+	else:
+		push_warning("controllo dei varchi: l'interruttore dell'infermeria non c'è ancora")
 
 
 ## Il punto sul pavimento vero sotto (o poco sopra) [param p]: il corpo segue rampe e gradini come il giocatore.

@@ -46,7 +46,7 @@ func show_hint(text: String, seconds := 8.0) -> void:
 	_hint_left = seconds
 
 
-## Scritta grande al centro (per esempio "Fine della demo"). I testi di show_hint, show_banner e show_message si
+## Scritta grande al centro (per esempio "Fine del capitolo 1"). I testi di show_hint, show_banner e show_message si
 ## traducono qui (vedi Lingua).
 ## La scritta grande, la sua etichetta (per i test).
 func banner_label() -> Label:
@@ -123,7 +123,7 @@ func _build() -> void:
 	_prompt = _label(root, 0.56, 20)
 	_message = _label(root, 0.82, 22)
 	_message.modulate.a = 0.0
-	# la scritta grande (la fine della demo) su un livello suo, sopra il nero delle fini (l'inseguimento lo mette al
+	# la scritta grande (la fine del capitolo 1) su un livello suo, sopra il nero delle fini (l'inseguimento lo mette al
 	# livello 80) e sotto il menu di pausa (100): prima stava qui, al livello 1, e alla fine dell'inseguimento restava
 	# sotto il nero (collaudo della v0.3.13). Il resto dell'interfaccia resta sotto.
 	strato_scritta = CanvasLayer.new()

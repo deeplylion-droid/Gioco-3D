@@ -501,7 +501,9 @@ func _run() -> void:
 	var seq := GameState.get_children().filter(func(x): return x is DeathSequence)
 	if not seq.is_empty():
 		seq[0].skip()
-	for i in 400:
+	# (a tempo: la ripartenza aspetta i caricamenti nel thread, anche qualche secondo)
+	var t_attesa := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_attesa < 90000:
 		await get_tree().process_frame
 		var g = GameState.player
 		if is_instance_valid(g) and g.get_instance_id() != vecchio and not GameState.is_dying:

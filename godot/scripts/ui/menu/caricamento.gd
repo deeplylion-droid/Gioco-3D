@@ -41,6 +41,10 @@ var _stato: Label
 var _consiglio: Label
 var _torna: Button
 var _pausa_fuoco := true
+## Gli shader delle zone che si caricano a gioco avviato, creati e disegnati intanto (RiscaldamentoShader).
+var _riscaldamento: RiscaldamentoShader
+## L'avanzamento del caricamento della sala (0..1), da solo.
+var _vero_sala := 0.0
 
 
 func _ready() -> void:
@@ -52,6 +56,9 @@ func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	_costruisci()
+	if scena == SCENA_SALA:
+		_riscaldamento = RiscaldamentoShader.new()
+		add_child(_riscaldamento)
 	var err := Game.carica_in_thread(scena, "PackedScene")
 	if err != OK:
 		_riserva()
@@ -79,16 +86,22 @@ func _process(delta: float) -> void:
 	var p := []
 	var st := ResourceLoader.load_threaded_get_status(scena, p)
 	if not p.is_empty():
-		_vero = maxf(_vero, float(p[0]))
+		_vero_sala = maxf(_vero_sala, float(p[0]))
 	match st:
 		ResourceLoader.THREAD_LOAD_LOADED:
-			_vero = 1.0
+			_vero_sala = 1.0
 		ResourceLoader.THREAD_LOAD_FAILED, ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 			if _pacchetto == null:
 				_riserva()
 			if _pacchetto == null:
 				return
 			st = ResourceLoader.THREAD_LOAD_LOADED
+	# la barra: la sala e il riscaldamento degli shader insieme; si entra quando ci sono tutti e due
+	_vero = _vero_sala
+	if _riscaldamento:
+		_vero = _vero_sala * 0.75 + _riscaldamento.avanzamento() * 0.25
+		if not _riscaldamento.concluso:
+			_vero = minf(_vero, 0.99)
 	# Al massimo il 60% al secondo: la barra scorre senza salti.
 	avanzamento = move_toward(avanzamento, _vero, delta * 0.6)
 	_barra.value = avanzamento
@@ -105,7 +118,7 @@ func _riserva() -> void:
 	if _pacchetto == null:
 		_errore("Il caricamento della sala non è riuscito.")
 	else:
-		_vero = 1.0
+		_vero_sala = 1.0
 
 
 func _entra() -> void:

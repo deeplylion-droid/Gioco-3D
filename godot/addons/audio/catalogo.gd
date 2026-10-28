@@ -38,6 +38,7 @@ const SUONI := {
 	&"lei_insegue_sb1": ["res://audio/lei/lei_insegue_sb1.ogg"],
 	&"lei_sbuca": ["res://audio/lei/lei_sbuca.ogg"],
 	&"lei_scivola_sotto": ["res://audio/lei/lei_scivola_sotto.ogg"],
+	&"lei_tunnel_canto": ["res://audio/lei/lei_tunnel_canto_01.ogg", "res://audio/lei/lei_tunnel_canto_02.ogg", "res://audio/lei/lei_tunnel_canto_03.ogg", "res://audio/lei/lei_tunnel_canto_04.ogg", "res://audio/lei/lei_tunnel_canto_05.ogg", "res://audio/lei/lei_tunnel_canto_06.ogg", "res://audio/lei/lei_tunnel_canto_07.ogg", "res://audio/lei/lei_tunnel_canto_08.ogg", "res://audio/lei/lei_tunnel_canto_09.ogg", "res://audio/lei/lei_tunnel_canto_10.ogg"],
 	&"lei_tunnel_fiato_loop": ["res://audio/lei/lei_tunnel_fiato_loop.ogg"],
 	&"lei_tunnel_verso": ["res://audio/lei/lei_tunnel_verso_01.ogg", "res://audio/lei/lei_tunnel_verso_02.ogg", "res://audio/lei/lei_tunnel_verso_03.ogg", "res://audio/lei/lei_tunnel_verso_04.ogg"],
 	&"lei_urlo": ["res://audio/lei/lei_urlo.ogg"],

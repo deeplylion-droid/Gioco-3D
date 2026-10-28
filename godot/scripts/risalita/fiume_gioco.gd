@@ -1052,8 +1052,24 @@ func _rocce_buchi(rocce: Array) -> void:
 			rocce.append([q, c[1]])
 			messe += 1
 	_testa_muro_piazza(rocce)
+	_roccia_prima_colonna(rocce)
 	_zone_libere = zone
 	print("rocce nei buchi: %d" % messe)
+
+
+## Sulla sponda interna, appena prima della colonna del bivio 3, la zona tenuta libera per la colonna lasciava un
+## buco nella roccia fra 222,5 e 226 gradi (dalla ciambella si vedeva attraverso, fino alle rocce dall'altra parte):
+## riscontro dell'utente sulla v0.3.14, "va chiuso". Un pannello stretto sulla fila della roccia, da 220,9 a 228 gradi:
+## la parte dopo i 226 sta dietro la colonna. Il buco dopo la colonna, al disco, resta com'è (all'utente va bene).
+const PRIMA_COLONNA := 224.4
+const LARGO_PRIMA_COLONNA := 2.6
+
+
+func _roccia_prima_colonna(rocce: Array) -> void:
+	var q := anello(PRIMA_COLONNA, R - W * 0.5 - BANCA - 0.05)
+	var rot := 180.0 - PRIMA_COLONNA
+	_roccia(q, rot, true, LARGO_PRIMA_COLONNA / 4.2)
+	rocce.append([q, rot])
 
 
 ## La testa del muro della piazza (x [constant MURO_PIAZZA]) sporgeva di [constant TESTA_MURO] davanti alla fila della

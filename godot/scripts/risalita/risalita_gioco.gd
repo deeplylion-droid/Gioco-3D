@@ -92,6 +92,10 @@ var _richiesti: PackedStringArray = []
 var _tenuti: Array[Resource] = []
 # il capannone che si sta costruendo a pezzi (fiume resta vuoto finché non è finito)
 var _fiume_nuovo: Node3D
+## Vero: il giocatore è arrivato prima che le stanze fossero pronte, si costruiscono a pezzi più grandi.
+var _accelerata := false
+## Le stanze si stanno riaccendendo a pezzi.
+var _riaccendendo := false
 var _campioni: Array = []
 var _corpo: StaticBody3D
 var _mat_cemento: StandardMaterial3D
@@ -428,7 +432,22 @@ func _oblo(nome: String, centro: Vector3, normale: Vector3, posa: String, zona: 
 		o.set(k, opzioni[k])
 	o.transform = Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
 	add_child(o)
+	# lei nasce adesso, nascosta e ferma, e si disegna una volta fuori vista appena c'è la camera (la sala si apre a
+	# schermo nero): quando compare non si istanzia e non si compila niente (riscontro della v0.3.14)
+	o.prepara_lei()
+	_prepara_materiali_oblo.call_deferred(o)
 	return o
+
+
+func _prepara_materiali_oblo(o: ObloLei) -> void:
+	for i in 600:
+		if not is_instance_valid(o) or not o.is_inside_tree():
+			return
+		if get_viewport() and get_viewport().get_camera_3d():
+			break
+		await get_tree().process_frame
+	if is_instance_valid(o) and o.is_inside_tree():
+		await o.prepara_materiali_lei(get_viewport())
 
 
 ## Una rampa di [param n] gradini che sale verso est da [param lo] (angolo basso a ovest-nord):
@@ -526,6 +545,7 @@ func _metti_infermeria(scena_infermeria: PackedScene, f: Node3D, dopo: bool) -> 
 	move_child(infermeria, f.get_index() + 1)
 	fiume = f
 	_tenuti.clear()
+	AttesaZone.pronta(&"risalita")
 	if dopo:
 		UnificaMateriali.unifica(fiume)
 		UnificaMateriali.unifica(infermeria)
@@ -543,6 +563,8 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 	f.name = "Fiume"
 	f.transform = Transform3D(Basis(Vector3.UP, -PI * 0.5), CENTRO_FIUME)
 	f.set(&"costruzione_a_pezzi", true)
+	if _accelerata:
+		f.call(&"accelera")
 	f.visible = false
 	f.process_mode = Node.PROCESS_MODE_DISABLED
 	_fiume_nuovo = f
@@ -563,8 +585,15 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 	inf.visible = false
 	inf.process_mode = Node.PROCESS_MODE_DISABLED
 	GameState.in_costruzione(inf)
+	inf.set(&"costruzione_a_pezzi", true)
 	add_child(inf)
 	move_child(inf, f.get_index() + 1)
+	# (anche l'infermeria un passo per fotogramma: tutta insieme erano 275 ms)
+	await inf.call(&"costruisci_a_pezzi")
+	if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
+		if is_instance_valid(inf):
+			inf.queue_free()
+		return
 	for n in [f, inf]:
 		await get_tree().process_frame
 		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
@@ -572,14 +601,36 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 				inf.queue_free()
 			return
 		UnificaMateriali.unifica(n)
+	# disegnate una volta fuori vista: le pipeline dei loro materiali si compilano adesso, non al primo sguardo
+	for n in [f, inf]:
+		await RiscaldamentoShader.disegna_fuori_vista(n, get_viewport())
+		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
+			if is_instance_valid(inf):
+				inf.queue_free()
+			return
 	_fiume_nuovo = null
 	fiume = f
 	infermeria = inf
 	_tenuti.clear()
+	_accelerata = false
+	_riaccendendo = true
 	for n in [f, inf]:
-		n.process_mode = Node.PROCESS_MODE_INHERIT
+		# (riaccese a pezzi: tutte insieme fermavano il gioco)
+		await AccensioneAPezzi.accendi(n)
+		if not is_instance_valid(n) or not n.is_inside_tree():
+			_riaccendendo = false
+			return
 		GameState.ripristina.call_deferred(n)
+	_riaccendendo = false
+	# costruite, disegnate fuori vista e riaccese: la porta del ponte si può aprire
+	AttesaZone.pronta(&"risalita")
 	_aggiorna_visibilita()
+
+
+## Vero mentre le stanze si costruiscono, si disegnano fuori vista o si riaccendono a pezzi: prima di liberare la sala
+## (ripartenza, ritorno al titolo) si aspetta che finiscano (Game.aspetta_caricamenti, SalaPrincipale.lavori_in_corso).
+func lavori_in_corso() -> bool:
+	return is_instance_valid(_fiume_nuovo) or _riaccendendo
 
 
 ## Le stanze via, con lo stato dei loro oggetti messo da parte in GameState.
@@ -598,6 +649,7 @@ func _togli_stanze() -> void:
 			n.queue_free()
 	fiume = null
 	infermeria = null
+	AttesaZone.non_pronta(&"risalita")
 
 
 ## Distanza del punto dalle zone delle stanze (0 dentro).
@@ -641,7 +693,7 @@ func _process(_delta: float) -> void:
 		var serve := _serve(pos)
 		if fiume == null and serve:
 			if _dentro(pos):
-				_carica_subito()
+				_urgente()
 			elif not _in_caricamento and _fiume_nuovo == null:
 				_richiedi_tutto()
 		elif fiume and not serve and _distanza(pos) > LONTANO:
@@ -671,13 +723,13 @@ func _richiedi_tutto() -> void:
 ## thread non ha caricato lo carica la costruzione stessa.
 func _controlla_thread() -> void:
 	for percorso in _richiesti:
-		if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		if Game.stato_thread(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 			return
 	_in_caricamento = false
 	var scene: Array[PackedScene] = []
 	for percorso in _richiesti:
 		var r: Resource = null
-		if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_LOADED:
+		if Game.stato_thread(percorso) == ResourceLoader.THREAD_LOAD_LOADED:
 			r = ResourceLoader.load_threaded_get(percorso)
 		if r == null:
 			push_warning("Risalita: %s non caricato nel thread" % percorso)
@@ -696,7 +748,22 @@ func _controlla_thread() -> void:
 		_carica_subito()
 
 
-## Le stanze servono adesso: si aspetta il thread (se è partito) o si caricano qui, e si costruiscono subito.
+## Il giocatore è già dove le stanze si vedono e non sono pronte: niente blocchi (prima qui si aspettava il thread
+## e si costruiva tutto in un fotogramma: 17 s nella misura del 25 ottobre). Il thread finisce da solo, la
+## costruzione resta a pezzi ma più grandi; cosa si vede intanto lo decide AttesaZone.
+func _urgente() -> void:
+	if fiume:
+		return
+	AttesaZone.attendi(&"risalita")
+	_accelerata = true
+	if _fiume_nuovo:
+		_fiume_nuovo.call(&"accelera")
+	elif not _in_caricamento:
+		_richiedi_tutto()
+
+
+## Le stanze servono adesso: si aspetta il thread (se è partito) o si caricano qui, e si costruiscono subito
+## (strumenti, prove, la ripartenza dietro lo schermo nero, o il thread fallito).
 func _carica_subito() -> void:
 	if fiume:
 		return

@@ -73,12 +73,12 @@ func _run() -> void:
 			await _shot("titolo_lampo", 0)
 		if _want("comandi"):
 			await _al_tempo(menu, durata * 0.62)
-			(menu.call(&"voci")[2] as Button).pressed.emit()
+			(menu.find_child("Comandi", true, false) as Button).pressed.emit()
 			await _shot("comandi")
 			(menu.call(&"sottomenu").get_node("Comandi") as SchermataComandi).chiudi()
 			await _frames(3)
 		if _want("opzioni"):
-			(menu.call(&"voci")[1] as Button).pressed.emit()
+			(menu.find_child("Opzioni", true, false) as Button).pressed.emit()
 			await _shot("opzioni")
 			(menu.call(&"sottomenu").get_node("Menu") as MenuOpzioni).chiudi_menu()
 			await _frames(3)
