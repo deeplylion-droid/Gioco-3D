@@ -1,7 +1,7 @@
 extends Node
 ## Misura: la sala principale messa e tolta tre volte, ogni volta senza uno dei suoi figli diretti: il figlio senza il
 ## quale la memoria non cresce più è quello che la trattiene (test_memoria_morti del 28 ottobre).
-## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/misura_ricariche_sala.gd
+## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/misura_ricariche_sala.gd [nodo]
 
 const SALA := "res://scenes/sala_principale.tscn"
 const GIRI := 3
@@ -39,8 +39,12 @@ func _run() -> void:
 	var pacchetto := load(SALA) as PackedScene
 	var prova := pacchetto.instantiate()
 	var figli: Array[String] = []
-	for c in prova.get_children():
-		figli.append(String(c.name))
+	# con un argomento (per esempio Tecnici) si prova senza ognuno dei figli di quel nodo
+	var args := OS.get_cmdline_user_args()
+	var sotto := args[1] if args.size() > 1 else ""
+	var base: Node = prova.get_node(sotto) if sotto != "" else prova
+	for c in base.get_children():
+		figli.append(String(prova.get_path_to(c)))
 	prova.free()
 	print("RICARICA intera: %+.2f MB per giro" % await _giri(pacchetto, ""))
 	for f in figli:

@@ -443,6 +443,16 @@ func _carica_torre() -> void:
 func _precarica_torre() -> void:
 	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "" or Game.uscendo:
 		return
+	# già caricata prima di una ripartenza (GameState.tieni): niente thread, si prepara subito
+	var tenuta := GameState.tenuta(sala_torre_scena) as PackedScene
+	if tenuta:
+		_torre_fallita = false
+		for r in SalaInseguimento.risorse():
+			if not ResourceLoader.has_cached(r):
+				Game.carica_in_thread(r)
+		_torre_pronta = tenuta
+		_prepara_torre.call_deferred()
+		return
 	if Game.carica_in_thread(sala_torre_scena, "PackedScene") == OK:
 		_torre_in_caricamento = true
 		_torre_fallita = false
@@ -462,6 +472,11 @@ func _process(_delta: float) -> void:
 	if stato == ResourceLoader.THREAD_LOAD_LOADED:
 		_torre_in_caricamento = false
 		var scena := ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
+		# tenuta per le ripartenze, con i file dell'inseguimento già arrivati (vedi GameState.tieni)
+		GameState.tieni(sala_torre_scena, scena)
+		for r in SalaInseguimento.risorse():
+			if ResourceLoader.has_cached(r):
+				GameState.tieni(r, load(r))
 		# (con la riserva già in sala la copia del thread non serve: si lascia andare)
 		if sala_torre == null:
 			_torre_pronta = scena
