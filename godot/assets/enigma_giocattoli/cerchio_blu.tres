@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/enigma_giocattoli/cerchio_mosaico.gdshader" id="1_tk5dl"]
+
+[resource]
+resource_name = "cerchio_blu"
+render_priority = 0
+shader = ExtResource("1_tk5dl")
+shader_parameter/colore = Color(0.13, 0.32, 0.7, 1)
+shader_parameter/luce_bordo = null
+shader_parameter/energia_bordo = null
+shader_parameter/colore_luce = null
+shader_parameter/sporco = null
+shader_parameter/bagnato = null

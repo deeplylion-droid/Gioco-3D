@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/enigma_giocattoli/palla_rossa.glb" id="1_cboy1"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0nugu"]
+friction = 0.7
+bounce = 0.05
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_g1r4h"]
+radius = 0.275
+
+[node name="PallaRossa" type="RigidBody3D" unique_id=1387945064]
+mass = 45.0
+physics_material_override = SubResource("PhysicsMaterial_0nugu")
+linear_damp = 0.6
+angular_damp = 1.5
+
+[node name="Modello" type="Node3D" parent="." unique_id=135654292 instance=ExtResource("1_cboy1")]
+
+[node name="Collisione" type="CollisionShape3D" parent="." unique_id=1653666037]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.275, 0)
+shape = SubResource("SphereShape3D_g1r4h")

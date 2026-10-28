@@ -1,0 +1,20 @@
+{
+ "paperella": {
+  "x": 0.443,
+  "alto": 0.497,
+  "z": 0.62,
+  "triangoli": 8341
+ },
+ "palla_rossa": {
+  "x": 0.55,
+  "alto": 0.55,
+  "z": 0.548,
+  "triangoli": 3140
+ },
+ "balena_blu": {
+  "x": 0.443,
+  "alto": 0.376,
+  "z": 0.66,
+  "triangoli": 8346
+ }
+}
