@@ -80,6 +80,15 @@
    ],
    "aperta": false
   },
+  "Risalita/ObloPersonale": {
+   "finito": false
+  },
+  "Risalita/ObloServizio": {
+   "finito": false
+  },
+  "Risalita/ObloFiume": {
+   "finito": false
+  },
   "Interni": {
    "tornello": true,
    "docce": true,
@@ -209,6 +218,6 @@
   ]
  },
  "luci": 2,
- "time": 1792873588.0384,
+ "time": 1793223843.21507,
  "partenza_prova": "risalita"
 }

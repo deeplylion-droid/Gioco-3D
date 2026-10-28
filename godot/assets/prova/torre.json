@@ -80,21 +80,19 @@
    ],
    "aperta": true
   },
+  "Risalita/ObloPersonale": {
+   "finito": false
+  },
+  "Risalita/ObloServizio": {
+   "finito": false
+  },
+  "Risalita/ObloFiume": {
+   "finito": false
+  },
   "Interni": {
    "tornello": true,
    "docce": true,
    "armadietto": true
-  },
-  "Interni/Acqua/VascaLavapiedi": {
-   "fill": 0.75,
-   "mix": {}
-  },
-  "Interni/Meccanismi/PulsanteTornello": {
-   "powered": true
-  },
-  "Interni/Meccanismi/Saracinesca": {
-   "latched": true,
-   "open": 1.0
   },
   "Piscina/Pozza": {
    "fill": 0.0,
@@ -115,55 +113,12 @@
    "mix": {}
   },
   "Vasche/VascaBimbi1": {
-   "fill": 0.841178291412757,
+   "fill": 0.680806201057273,
    "mix": {}
   },
   "Vasche/VascaBimbi2": {
-   "fill": 0.655131779784913,
+   "fill": 0.494759689429419,
    "mix": {}
-  },
-  "Tecnici/AgnellinoScala": {
-   "fatto": true
-  },
-  "Tecnici/Acqua/VascaRaccolta": {
-   "fill": 0.9118,
-   "mix": {}
-  },
-  "Tecnici/Logica/SalaPompe/Pompa3": {
-   "stato": 2
-  },
-  "Tecnici/Logica/SalaPompe/Pompa1": {
-   "stato": 2
-  },
-  "Tecnici/Logica/SalaPompe/Pompa2": {
-   "stato": 2
-  },
-  "Tecnici/Logica/SalaPompe/Leva": {
-   "abbassata": true
-  },
-  "Tecnici/Logica/SalaPompe/Paratia1": {
-   "chiusa": true,
-   "aperta": false
-  },
-  "Tecnici/Logica/SalaPompe/Paratia2": {
-   "chiusa": true,
-   "aperta": false
-  },
-  "Tecnici/Logica/SalaPompe/Maniglione": {
-   "aperta": true,
-   "bloccata": false
-  },
-  "Tecnici/Logica/SalaPompe/Risveglio": {
-   "avviate": 3,
-   "finito": true
-  },
-  "Tecnici/Logica/SerrandaMagazzino": {
-   "latched": true,
-   "open": 1.0,
-   "aperta": true
-  },
-  "Tecnici/Logica/LettoreTessera": {
-   "aperto": true
   },
   "Gioco/PortaSalaPompeInterni": {
    "aperta": true,
@@ -194,6 +149,9 @@
    "mix": {
     "blu": 1.0
    }
+  },
+  "SalaTorre/ObloLei": {
+   "finito": false
   }
  },
  "removed": [
@@ -212,10 +170,14 @@
    "p09",
    "p06",
    "p07",
-   "PolaroidPecora"
+   "PolaroidPecora",
+   "p13",
+   "p15",
+   "p16",
+   "p14"
   ]
  },
  "luci": 2,
- "time": 1792873637.32619,
+ "time": 1793223857.47605,
  "partenza_prova": "torre"
 }
