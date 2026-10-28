@@ -25,6 +25,9 @@ uniform float bagliore_dentro : hint_range(0.0, 2.0) = 0.25;  // la luce dei can
 uniform float pulsazione_al_secondo = 0.4;                    // 0 = canali fissi (statua spenta)
 uniform float pulsazione_ampiezza : hint_range(0.0, 1.0) = 0.3;
 uniform float rugosita : hint_range(0.0, 1.0) = 0.08;
+// 0..1: la campana si spegne (colore, canali, riflessi) e diventa del tutto trasparente, si vede solo quello che sta
+// dietro (lei che si stacca da un oblò e sparisce nel buio, ObloLei: al posto della trasparenza del nodo)
+uniform float scurisci : hint_range(0.0, 1.0) = 0.0;
 
 void fragment() {
 	vec4 c = texture(tex_colore, UV);
@@ -43,9 +46,10 @@ void fragment() {
 	tinta_c = mx > 0.02 ? tinta_c / mx : tinta_canali_base;
 	vec3 canali = canale * tinta_c * luce_canali * pulsa;
 	vec3 sparsa = textureLod(tex_canali, UV, 5.0).rgb * bagliore_dentro * luce_canali * pulsa;
-	ALBEDO = colore * op;
+	float luce = 1.0 - clamp(scurisci, 0.0, 1.0);
+	ALBEDO = colore * op * luce;
 	ROUGHNESS = rugosita;
-	SPECULAR = 0.6;
-	EMISSION = canali + sparsa + dietro * (1.0 - op);
+	SPECULAR = 0.6 * luce;
+	EMISSION = (canali + sparsa) * luce + dietro * (1.0 - op * luce);
 	ALPHA = 1.0;
 }

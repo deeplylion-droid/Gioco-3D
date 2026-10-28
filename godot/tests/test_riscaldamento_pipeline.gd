@@ -147,6 +147,58 @@ func _run() -> void:
 		posti += 1
 		x += 15.0
 	check(dove.is_empty(), "lungo il tunnel (%d punti) nessuna compilazione che blocca%s" % [posti, "" if dove.is_empty() else ": " + ", ".join(dove.slice(0, 8))])
+
+	print("4. Nel tunnel col giocatore vero: a s 133 ti giri, lei riemerge dietro e la spruzzi")
+	# (misura del 28 ottobre, prima di LeiTunnel.prepara: 16 "draw" quando riemergeva)
+	var g := (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as Player
+	add_child(g)
+	await get_tree().process_frame
+	var zaini := g.find_children("*", "WaterPack", true, false)
+	var pack: WaterPack = zaini[0] if not zaini.is_empty() else null
+	if pack:
+		pack.set_equipped(true, false)
+		pack.set_tank_amount(pack.tank_capacity)
+	g.input_enabled = true
+	(g.find_children("*", "Camera3D", true, false)[0] as Camera3D).make_current()
+	var s0 := 133.0
+	var piedi := sala._al(sala.punto(s0), sala.destra(s0), Vector2(-(sala.canale + sala.banchina * 0.5), sala.piano + 0.1))
+	var avanti := sala.direzione(s0)
+	g.teleport(piedi, atan2(-avanti.x, -avanti.z))
+	for i in 20:
+		await get_tree().process_frame
+	var lt := sala.lei_tunnel
+	var dietro := sala.punto(s0 - 8.0)
+	dietro.y = sala.acqua
+	prima = _conta()
+	lt.riemergi(dietro, avanti)
+	# girato verso di lei, lo sguardo sul viso
+	var viso := lt.find_child("Viso", true, false) as Node3D
+	var occhi_g := g.global_position + Vector3.UP * 1.6
+	for i in 40:
+		var dir_lei := viso.global_position - occhi_g
+		g.teleport(piedi, atan2(-dir_lei.x, -dir_lei.z), atan2(dir_lei.y, Vector2(dir_lei.x, dir_lei.z).length()))
+		await get_tree().process_frame
+	c = _conta()
+	check(int(c[0] - prima[0]) == 0 and int(c[1] - prima[1]) == 0,
+		"ti giri e lei riemerge dietro: nessuna compilazione che blocca (surface %d, draw %d; in sottofondo %d)" % [c[0] - prima[0], c[1] - prima[1], c[2] - prima[2]])
+	var colpi := [0.0]
+	(viso as WaterHitbox).water_hit.connect(func(l: float, _p: Vector3, _d: Vector3) -> void: colpi[0] += l)
+	var spruzzava := false
+	prima = _conta()
+	Input.action_press("spray")
+	for i in 120:
+		var dir_lei := viso.global_position - occhi_g
+		g.teleport(piedi, atan2(-dir_lei.x, -dir_lei.z), atan2(dir_lei.y, Vector2(dir_lei.x, dir_lei.z).length()))
+		await get_tree().process_frame
+		spruzzava = spruzzava or (pack != null and pack.is_spraying)
+	Input.action_release("spray")
+	for i in 10:
+		await get_tree().process_frame
+	c = _conta()
+	check(spruzzava and colpi[0] > 0.0, "il getto parte e la colpisce (%.1f litri sul viso)" % colpi[0])
+	check(int(c[0] - prima[0]) == 0 and int(c[1] - prima[1]) == 0,
+		"spruzzandola nessuna compilazione che blocca (surface %d, draw %d; in sottofondo %d)" % [c[0] - prima[0], c[1] - prima[1], c[2] - prima[2]])
+	g.queue_free()
 	_fine()
 
 

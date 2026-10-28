@@ -106,6 +106,86 @@ func _ready() -> void:
 			if lei.get_model_instance() else null
 
 
+## La disegna una volta fuori vista mentre il tunnel si prepara (RiscaldamentoShader.disegna_a_pezzi: un pezzo per
+## fotogramma sullo strato di preparazione, nella sua luce rosa con le ombre), anche le parti che compaiono dopo (la
+## bocca dei morsi) e nelle pose della riemersione, dell'inseguimento, della presa e della ritratta: quando riemerge
+## alle spalle del giocatore non compila più niente (prima 16 "draw" in un fotogramma, misura_tunnel_lei del 28
+## ottobre). Alla fine torna com'era: nascosta, nella posa dell'inseguimento.
+func prepara(principale: Viewport) -> void:
+	if lei == null or principale == null or not is_inside_tree() or DisplayServer.get_name() == "headless":
+		return
+	var nascosti: Array[GeometryInstance3D] = []
+	for g in lei.find_children("*", "GeometryInstance3D", true, false):
+		if not (g as GeometryInstance3D).visible:
+			nascosti.append(g)
+			(g as GeometryInstance3D).visible = true
+	var era := lei.visible
+	lei.visible = true
+	var pose := func() -> void:
+		for nome in ["riemerge", "insegue_aperta", "presa", "ritrae"]:
+			_anima(nome, 0.0)
+			for i in 2:
+				await get_tree().process_frame
+		await _giro_nella_sua_luce(principale)
+	await RiscaldamentoShader.disegna_a_pezzi(self, principale, 2, Callable(), pose)
+	if not is_instance_valid(lei):
+		return
+	lei.visible = era
+	for g in nascosti:
+		if is_instance_valid(g):
+			g.visible = false
+	_anima("insegue_aperta", 0.0)
+
+
+## Il giro nella sua luce, come agli oblò (ObloLei.giro_nella_sua_luce di mascotte): lei nel canale a metà tunnel, con
+## la sua luce rosa accesa (sullo strato di preparazione), e una camera fuori schermo che vede tutti gli strati dalla
+## banchina, davanti e dietro, e da lei verso i muri, l'acqua e la volta. Così muri, banchine e acqua compilano adesso
+## la variante con la sua luce (dopo la sola preparazione a pezzi restavano 6 "draw" quando riemergeva, test del 28
+## ottobre). Poi torna dov'era.
+func _giro_nella_sua_luce(principale: Viewport, fotogrammi := 2) -> void:
+	var sala := get_parent() as SalaSottomarino
+	if sala == null or not is_inside_tree():
+		return
+	var era := global_transform
+	var s := minf(60.0, sala.lunghezza() * 0.5)
+	var p := sala.punto(s)
+	p.y = sala.acqua
+	global_position = sala.to_global(p) + Vector3.UP * QUOTA
+	var sv := SubViewport.new()
+	sv.name = "PreparaLeiTunnel"
+	sv.size = Vector2i(320, 180)
+	RiscaldamentoShader.copia_viewport(sv, principale)
+	sv.world_3d = principale.find_world_3d()
+	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var cam := Camera3D.new()
+	var cam_gioco := principale.get_camera_3d()
+	if cam_gioco:
+		cam.environment = cam_gioco.environment
+		cam.attributes = cam_gioco.attributes
+		cam.fov = cam_gioco.fov
+	sv.add_child(cam)
+	add_child(sv)
+	cam.current = true
+	var viso := global_position + Vector3.UP * 4.0
+	var punti: Array = []
+	for ds: float in [8.0, 3.0, -6.0]:
+		for lato: float in [-1.0, 1.0]:
+			var q := sala.punto(s + ds)
+			punti.append([sala.to_global(sala._al(q, sala.destra(s + ds), Vector2(lato * (sala.canale + sala.banchina * 0.5), sala.piano + 1.6))), viso])
+	for d: Vector3 in [Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT, Vector3.DOWN, Vector3.UP]:
+		punti.append([viso, viso + d])
+	for pt in punti:
+		var su := Vector3.UP if absf(((pt[1] as Vector3) - (pt[0] as Vector3)).normalized().y) < 0.9 else Vector3.FORWARD
+		cam.look_at_from_position(pt[0], pt[1], su)
+		for i in fotogrammi:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				sv.queue_free()
+				return
+	sv.queue_free()
+	global_transform = era
+
+
 ## Risale dal canale nel punto [param pos] (sul pelo dell'acqua) guardando lungo [param verso], e comincia a
 ## inseguire. [param profondita]: quanto c'è d'acqua sotto (l'animazione parte da 5 m sotto: con meno parte già a
 ## metà salita, sempre con l'inizio sott'acqua).

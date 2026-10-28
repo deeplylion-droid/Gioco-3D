@@ -299,18 +299,26 @@ func _disegna_oblo(sv: SubViewport) -> void:
 ## Gli strati si cambiano solo ai nodi visibili, con la radice già resa visibile (nello stesso fotogramma: la camera del
 ## gioco non la vede mai), e si rimettono prima di rinasconderla: cambiati a mesh nascoste il motore non le staccava
 ## dalle luci ("BUG, indexing did not unpair geometries from light", poi il crash all'uscita; mascotte, 25 ottobre).
-static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi := 4) -> void:
+## [param a_meta] (se c'è) si chiama a metà dei fotogrammi e [param alla_fine] (se c'è) si aspetta prima di rimettere
+## gli strati, con la zona ancora sullo strato fuori vista: per esempio lei dietro l'oblò nella posa del distacco e il
+## giro nella sua luce (ObloLei, mascotte).
+static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi := 4, a_meta := Callable(),
+		alla_fine := Callable()) -> void:
 	if principale == null or not radice.is_inside_tree():
 		return
 	var stato := _fuori_vista(radice)
 	var sv := _camera(radice, principale, stato["aabb"])
 	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
 	for i in fotogrammi + 1:
+		if i == fotogrammi / 2 and a_meta.is_valid():
+			a_meta.call()
 		await radice.get_tree().process_frame
 		if not is_instance_valid(radice) or not radice.is_inside_tree():
 			break
 	if is_instance_valid(sv):
 		sv.queue_free()
+	if alla_fine.is_valid() and is_instance_valid(radice) and radice.is_inside_tree():
+		await alla_fine.call()
 	_rimetti(radice, stato)
 
 
@@ -319,7 +327,9 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 ## sua zona (con la sua luce globale, la sua nebbia e le sue luci), un pezzo ogni [param fotogrammi] fotogrammi, così
 ## le pipeline si compilano poche per volta e quando la si mostra davvero non se ne compila nessuna; alla fine tutti
 ## insieme, come quando compare davvero. I pezzi si tolgono dalla camera con lo strato (0), non con visible.
-static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 2) -> void:
+## [param a_meta] e [param alla_fine] come in [method disegna_fuori_vista]: a_meta prima dei pezzi tutti insieme.
+static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 2, a_meta := Callable(),
+		alla_fine := Callable()) -> void:
 	if principale == null or not radice.is_inside_tree():
 		return
 	var stato := _fuori_vista(radice)
@@ -343,6 +353,8 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 	# e alla fine tutti insieme, come quando compare davvero: un pezzo per volta, lei mostrata intera compilava ancora
 	# 8 "draw" al primo fotogramma (test_riscaldamento_pipeline del 25 ottobre)
 	if vivo.call():
+		if a_meta.is_valid():
+			a_meta.call()
 		for gi in pezzi:
 			if is_instance_valid(gi):
 				gi.layers = SalaTorre.STRATO_PREPARA
@@ -350,6 +362,8 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 			await radice.get_tree().process_frame
 	if is_instance_valid(sv):
 		sv.queue_free()
+	if alla_fine.is_valid() and vivo.call():
+		await alla_fine.call()
 	_rimetti(radice, stato)
 
 
