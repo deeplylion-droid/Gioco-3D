@@ -555,10 +555,17 @@ func _portellone_diretto() -> void:
 		var scatto := 0.0
 		var prima := partenza
 		var minimo := 99.0
+		var gia := false
+		var prec := g.global_position
 		for f in 240:
 			# (come fa il getto: aggiunge velocità, non la impone, così lo scivolamento del gioco resta)
 			enigma._vel[1] += -via * 4.0 / 60.0
 			await get_tree().physics_frame
+			if not gia and g.global_position.y < -2.4:
+				gia = true
+				print("    CADUTA da %.0f gradi al fotogramma %d: da %s a %s; fondo da 1 m sotto il punto di prima %s, sotto quello di ora %s" % [rad_to_deg(ang), f,
+					prec.snapped(Vector3.ONE * 0.001), g.global_position.snapped(Vector3.ONE * 0.001), _colpo_giu(prec, 1.0, -6.0, esclusi), _colpo_giu(g.global_position, 1.0, -6.0, esclusi)])
+			prec = g.global_position
 			su = maxf(su, _sopra(g, esclusi))
 			var ora := Vector2(g.position.x, g.position.z)
 			scatto = maxf(scatto, ora.distance_to(prima))
