@@ -32,6 +32,8 @@ func _run() -> void:
 		await _gonfiabile()
 	if "portellone" in _parti:
 		await _portellone()
+	if "portellone_diretto" in _parti:
+		await _portellone_diretto()
 	_fine()
 
 
@@ -517,4 +519,48 @@ func _portellone() -> void:
 func _morto(causa: StringName) -> void:
 	var gp: Vector3 = GameState.player.global_position if GameState.player and is_instance_valid(GameState.player) else Vector3.ZERO
 	printerr("  MORTO il giocatore (causa %s) in %s" % [causa, gp.snapped(Vector3.ONE * 0.01)])
+
+
+## Come _portellone, ma la spinta è data direttamente al giocattolo (la sua velocità verso il portellone, per 4 s, come
+## un getto continuo che lo colpisce in pieno): prova solo come il gioco lo fa scivolare e a che quota lo tiene, senza
+## dipendere da dove il robot riesce a stare e a mirare.
+func _portellone_diretto() -> void:
+	print("9. Il pallone spinto direttamente contro il portellone")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	var botola := Vector2(0.0, 2.0)
+	var esclusi: Array = []
+	for k in 3:
+		esclusi.append(enigma.giocattolo(k).get_rid())
+	for ang in [PI, PI * 0.5, PI * 1.5, 0.0, PI * 0.75, PI * 1.25, PI * 0.25, PI * 1.75]:
+		var via := Vector2(cos(ang), sin(ang))
+		var pos := botola + via * 1.6
+		var stato: Dictionary = enigma.save_state()
+		stato["pos"][1] = [pos.x, pos.y, 0.0]
+		stato["pos"][0] = [-4.5, -2.5, 0.0]
+		stato["pos"][2] = [4.5, -2.5, 0.0]
+		enigma.load_state(stato)
+		await _frames(120)
+		var g := enigma.giocattolo(1)
+		var partenza := Vector2(g.position.x, g.position.z)
+		var su := 0.0
+		var scatto := 0.0
+		var prima := partenza
+		var minimo := 99.0
+		for f in 240:
+			# (come fa il getto: aggiunge velocità, non la impone, così lo scivolamento del gioco resta)
+			enigma._vel[1] += -via * 4.0 / 60.0
+			await get_tree().physics_frame
+			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
+			var ora := Vector2(g.position.x, g.position.z)
+			scatto = maxf(scatto, ora.distance_to(prima))
+			prima = ora
+			minimo = minf(minimo, ora.distance_to(botola))
+		for f in 120:
+			await get_tree().physics_frame
+			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
+		var fine := Vector2(g.position.x, g.position.z)
+		check(su <= 0.01, "spinto dritto verso il portellone da %.0f gradi: mai più di 1 cm sopra il fondo (%.3f m)" % [rad_to_deg(ang), su])
+		check(fine.distance_to(partenza) > 0.5 and scatto < 0.05, "da %.0f gradi ci scivola attorno senza scatti: si sposta di %.2f m, al massimo %.3f m in un fotogramma, mai più vicino di %.2f m al centro della botola (a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), scatto, minimo, fine.snapped(Vector2.ONE * 0.01)])
 
