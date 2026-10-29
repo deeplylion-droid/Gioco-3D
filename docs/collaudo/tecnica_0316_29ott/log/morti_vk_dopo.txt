@@ -1,0 +1,11 @@
+MORTI: 6, renderer llvmpipe (LLVM 20.1.2, 256 bits), scena user://scena_ridotta_sala_principale.tscn
+MORTI: morte | statica MB | RSS MB | video MB | oggetti | nodi | orfani | picco video | errori | ripartenza s
+MORTI:    0 |   260.29 |  11998 |   1789 |    5224 |   1678 |     0 |   1789 |    0 | 0.0
+MORTI:    1 |   261.72 |  12482 |   1789 |    5270 |   1678 |     0 |   1887 |    0 | 19.0
+MORTI:    2 |   261.77 |  12487 |   1789 |    5270 |   1678 |     0 |   1887 |    0 | 19.2
+MORTI:    3 |   261.98 |  12519 |   1789 |    5270 |   1678 |     0 |   1887 |    0 | 19.0
+MORTI:    4 |   262.29 |  12544 |   1789 |    5271 |   1678 |     0 |   1887 |    0 | 19.0
+MORTI:    5 |   262.34 |  12545 |   1789 |    5270 |   1678 |     0 |   1887 |    0 | 18.9
+MORTI:    6 |   262.37 |  12549 |   1789 |    5271 |   1678 |     0 |   1887 |    0 | 18.9
+MORTI: crescita media per morte dalla seconda: statica +0.13 MB, RSS +13.4 MB, video +0.0 MB, oggetti +0.2, nodi +0.0, orfani +0.0
+MORTI: errori del motore e degli script in tutte le morti: 0

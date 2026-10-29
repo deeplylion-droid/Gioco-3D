@@ -1,0 +1,11 @@
+MORTI: 6, renderer , scena res://scenes/sala_principale.tscn
+MORTI: morte | statica MB | RSS MB | video MB | oggetti | nodi | orfani | picco video | errori | ripartenza s
+MORTI:    0 |  1633.63 |   1710 |      0 |   14532 |   5916 |     0 |      0 |    0 | 0.0
+MORTI:    1 |  1638.44 |   1760 |      0 |   14717 |   5916 |     0 |      0 |    0 | 3.0
+MORTI:    2 |  1642.37 |   1768 |      0 |   14796 |   5916 |     0 |      0 |    0 | 3.0
+MORTI:    3 |  1646.64 |   1774 |      0 |   14879 |   5916 |     0 |      0 |    0 | 3.0
+MORTI:    4 |  1650.46 |   1778 |      0 |   14949 |   5916 |     0 |      0 |    0 | 2.9
+MORTI:    5 |  1654.45 |   1781 |      0 |   15019 |   5916 |     0 |      0 |    0 | 2.9
+MORTI:    6 |  1658.56 |   1785 |      0 |   15089 |   5916 |     0 |      0 |    0 | 3.0
+MORTI: crescita media per morte dalla seconda: statica +4.02 MB, RSS +5.0 MB, video +0.0 MB, oggetti +74.4, nodi +0.0, orfani +0.0
+MORTI: errori del motore e degli script in tutte le morti: 0

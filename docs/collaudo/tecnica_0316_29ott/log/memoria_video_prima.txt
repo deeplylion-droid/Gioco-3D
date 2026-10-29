@@ -1,0 +1,4 @@
+ZONA tutto: texture 1640 MB (1158 uniche), mesh 177 MB (1930 uniche), totale 1817 MB
+ZONA sala: texture 1059 MB (806 uniche), mesh 111 MB (1203 uniche), totale 1170 MB
+ZONA torre: texture 531 MB (249 uniche), mesh 42 MB (368 uniche), totale 573 MB
+ZONA inseguimento: texture 231 MB (127 uniche), mesh 18 MB (103 uniche), totale 249 MB

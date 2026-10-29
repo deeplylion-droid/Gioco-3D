@@ -1,0 +1,16 @@
+SQUALO: preset basso, ombre 0
+  ok  la luce viola e la nebbia ci sono già col livello (pronte prima della scena)
+  ok  prima della scena sono spente
+  ok  durante la scena la luce viola è accesa, fortissima e con l'ombra (28)
+  ok  la luce sta dietro la porta, più in là dello squalo
+  ok  la luce punta verso il giocatore (lo squalo in controluce)
+  ok  la nebbia del corridoio è densa (0.30)
+  ok  la nebbia è più fitta verso la porta
+  ok  la controluce dietro lo squalo è accesa e illumina solo lui
+  ok  a porta chiusa la luce viola è spenta
+  ok  la nebbia resta finché il giocatore non riprende il controllo
+  ok  il giocatore riprende il controllo
+  ok  a metà la nebbia si sta diradando (0.15)
+  ok  dopo 4 s la nebbia non c'è più (resta quella normale del gioco)
+  ok  e il volume della nebbia è nascosto (a densità zero costava lo stesso, per tutto il gioco)
+RISULTATO: 14 controlli ok, 0 falliti
