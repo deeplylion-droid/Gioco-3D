@@ -9,6 +9,7 @@ uniform float tinta = 0.9;
 uniform float contrasto = 0.45;
 uniform float saturazione = 1.0;
 uniform float vignetta = 0.5;
+uniform float quanto = 1.0;   // 0..1: il colore che sale entrando nella zona
 
 const vec3 LUMA = vec3(0.2126, 0.7152, 0.0722);
 
@@ -23,12 +24,13 @@ vec3 tono_colore(vec3 c) {
 }
 
 void fragment() {
-	vec3 x = clamp(texture(schermo, SCREEN_UV).rgb, 0.0, 1.0);
+	vec3 x0 = texture(schermo, SCREEN_UV).rgb;
+	vec3 x = clamp(x0, 0.0, 1.0);
 	float l = dot(x, LUMA);
 	x = clamp(mix(vec3(l), x, saturazione), 0.0, 1.0);
 	x = mix(x, x * x * (3.0 - 2.0 * x), contrasto);
 	x = mix(x, tono_colore(x), tinta);
 	vec2 d = SCREEN_UV - 0.5;
 	x *= mix(1.0, smoothstep(0.85, 0.25, length(d * vec2(1.0, 0.75))), vignetta);
-	COLOR = vec4(x, 1.0);
+	COLOR = vec4(mix(x0, x, quanto), 1.0);
 }

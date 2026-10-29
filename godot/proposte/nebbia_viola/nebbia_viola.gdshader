@@ -25,6 +25,7 @@ uniform vec3 vento = vec3(0.06, 0.01, -0.035);
 uniform vec3 aria = vec3(0.02, 0.018, 0.055);
 uniform vec3 raggi = vec3(0.24, 0.2, 0.42);
 uniform float particelle = 0.35;
+uniform float quanto = 1.0;       // 0..1: la nebbia che sale entrando nella zona (0 spenta)
 uniform float forza = 1.0;        // tutta la luce della nebbia (l'originale è tarato su AgX con esposizione 2,6)
 uniform vec3 luci_pos[4];
 uniform vec3 luci_col[4];         // il colore per la forza
@@ -73,6 +74,7 @@ void fragment() {
 		float n = fbm(p * vec3(scala, scala * 1.8, scala) + vento * TIME);
 		float d = (densita + strato * exp(-max(p.y - quota, 0.0) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
 		d /= 1.0 + max(t - oltre, 0.0) * cala;
+		d *= quanto;
 		vec3 luce = aria;
 		for (int k = 0; k < 4; k++) {
 			if (k >= n_luci) {
