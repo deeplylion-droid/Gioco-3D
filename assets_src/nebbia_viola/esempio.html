@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nebbia viola</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; }
+  #nota { position: fixed; left: 16px; bottom: 14px; font: 13px/1.4 ui-monospace, monospace; color: #c9c3e6; text-shadow: 0 1px 2px #000; }
+</style>
+<!-- Three.js dalla rete (la stessa versione del gioco); in un progetto con npm: "three" e "three/addons/" -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="nota">Nebbia viola · trascina per guardarti attorno · N toglie e rimette la nebbia</div>
+<script type="module">
+// Una stanza semplice (6 x 2,8 x 6 metri) con una finestra a quattro vetri sul muro di fondo, il sole che entra di
+// sbieco e una lampadina nuda: la stessa luce della stanza del medico di NotHuman, per vedere la nebbia viola com'e'
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { NebbiaViola, ColoreViola } from "./nebbia_viola.js";
+
+const renderer = new THREE.WebGLRenderer({ antialias: false });
+renderer.setPixelRatio(1);
+renderer.toneMapping = THREE.AgXToneMapping;
+renderer.toneMappingExposure = 2.6; // come nel gioco: i colori della nebbia sono tarati su questa esposizione
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+document.body.append(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+const camera = new THREE.PerspectiveCamera(62, 16 / 9, 0.05, 40);
+camera.position.set(0.9, 1.62, 2.2);
+
+// la stanza: pavimento di assi scure, muri verde salvia, soffitto; il muro di fondo ha il buco della finestra
+const mat = (color, roughness = 0.85) => new THREE.MeshStandardMaterial({ color, roughness });
+const assi = mat(0x2a1a12, 0.7), muro = mat(0x6f7a62), soffitto = mat(0x9a958a), legno = mat(0x3b2618, 0.6);
+const blocco = (w, h, d, m, x, y, z) => {
+  const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+  b.position.set(x, y, z);
+  b.castShadow = b.receiveShadow = true;
+  scene.add(b);
+  return b;
+};
+blocco(6, 0.1, 6, assi, 0, -0.05, 0);
+blocco(6, 0.1, 6, soffitto, 0, 2.85, 0);
+blocco(0.1, 2.8, 6, muro, -3.05, 1.4, 0);
+blocco(0.1, 2.8, 6, muro, 3.05, 1.4, 0);
+blocco(6, 2.8, 0.1, muro, 0, 1.4, 3.05);
+// il muro di fondo attorno alla finestra (da x -1.3 a -0.1, da y 1.0 a 2.3)
+blocco(1.7, 2.8, 0.1, muro, -2.15, 1.4, -3.05);
+blocco(3.1, 2.8, 0.1, muro, 1.45, 1.4, -3.05);
+blocco(1.2, 1.0, 0.1, muro, -0.7, 0.5, -3.05);
+blocco(1.2, 0.5, 0.1, muro, -0.7, 2.55, -3.05);
+// il telaio: il montante e la traversa
+blocco(0.06, 1.3, 0.08, legno, -0.7, 1.65, -3.05);
+blocco(1.2, 0.06, 0.08, legno, -0.7, 1.65, -3.05);
+// fuori: il cielo chiaro
+const cielo = new THREE.Mesh(new THREE.PlaneGeometry(4, 3), new THREE.MeshBasicMaterial({ color: new THREE.Color(1.6, 1.55, 1.7) }));
+cielo.position.set(-0.7, 1.6, -3.6);
+scene.add(cielo);
+// qualche mobile: il tavolo, l'armadio, una sedia
+blocco(1.4, 0.06, 0.8, legno, 0.9, 0.78, -1.2);
+for (const [x, z] of [[0.3, -1.5], [1.5, -1.5], [0.3, -0.9], [1.5, -0.9]]) blocco(0.06, 0.75, 0.06, legno, x, 0.375, z);
+blocco(1.0, 2.1, 0.6, legno, -2.4, 1.05, 0.6);
+blocco(0.45, 0.05, 0.45, legno, 1.2, 0.46, -0.3);
+blocco(0.45, 0.5, 0.05, legno, 1.2, 0.73, -0.08);
+
+// la luce: il sole che entra dalla finestra (le ombre dei muri lasciano passare solo quella dai vetri), un po' di cielo,
+// la lampadina nuda al centro
+const SOLE = new THREE.Vector3(0.472, -0.377, 0.797).normalize(); // dove va la luce: verso la stanza e in basso
+const sole = new THREE.DirectionalLight(0xfff1e0, 3);
+sole.position.copy(SOLE).multiplyScalar(-8).add(new THREE.Vector3(-0.7, 1.6, -3));
+sole.target.position.set(-0.7, 1.6, -3).add(SOLE);
+sole.castShadow = true;
+sole.shadow.mapSize.set(2048, 2048);
+Object.assign(sole.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 0.5, far: 20 });
+scene.add(sole, sole.target);
+scene.add(new THREE.HemisphereLight(0x8c8aa8, 0x2a1d14, 0.6));
+const LAMPADINA = [0, 2.37, 0.3];
+const lampadina = new THREE.PointLight(0xffc89a, 6, 0, 2);
+lampadina.position.fromArray(LAMPADINA);
+scene.add(lampadina);
+const vetro = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), new THREE.MeshBasicMaterial({ color: new THREE.Color(6, 4.2, 2.6) }));
+vetro.position.fromArray(LAMPADINA);
+scene.add(vetro);
+
+// il disegno: la scena in luce vera con la profondita', la nebbia, l'alone delle luci forti, il tone mapping, il colore
+const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+rt.depthTexture = new THREE.DepthTexture(1, 1);
+const composer = new EffectComposer(renderer, rt);
+composer.addPass(new RenderPass(scene, camera));
+const nebbia = new NebbiaViola(camera, {
+  sole: { direzione: SOLE.toArray(), forza: 1 },
+  // la finestra sul muro di fondo: l'angolo in basso a sinistra, i due lati, i quattro vetri (in metri dall'angolo)
+  finestra: { origine: [-1.3, 1.0, -3.0], u: [1, 0, 0], v: [0, 1, 0],
+    vetri: [[0.0, 0.0, 0.57, 0.62], [0.63, 0.0, 1.2, 0.62], [0.0, 0.68, 0.57, 1.3], [0.63, 0.68, 1.2, 1.3]] },
+  luci: [{ posizione: LAMPADINA, forza: 0.18 }],
+});
+composer.addPass(nebbia);
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.22, 0.4, 2.2)); // facoltativo, come nel gioco
+composer.addPass(new OutputPass());
+const colore = new ColoreViola();
+composer.addPass(colore);
+
+const controlli = new OrbitControls(camera, renderer.domElement);
+controlli.target.set(-0.6, 1.25, -2.6);
+controlli.enableDamping = true;
+controlli.update();
+
+function misura() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  composer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+addEventListener("resize", misura);
+misura();
+addEventListener("keydown", (e) => {
+  if (e.code !== "KeyN") return;
+  nebbia.enabled = !nebbia.enabled;
+  colore.enabled = nebbia.enabled;
+});
+if (location.hash === "#senza") nebbia.enabled = colore.enabled = false;
+
+renderer.setAnimationLoop(() => {
+  controlli.update();
+  composer.render();
+});
+</script>
+</body>
+</html>
