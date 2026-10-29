@@ -50,6 +50,8 @@ Sono le correzioni che l'utente ci ha già fatto, con le sue parole. Il 24 ottob
 
 - **Niente scatti la prima volta che succede qualcosa.** "la prima volta che ho usato sia il risucchio d'acqua, sia lo sparo... mi ha laggato il gioco per 1 secondo di freeze." I materiali e gli effetti nuovi si precaricano, come nella risalita (`tests/aggiorna_risorse_risalita.gd`).
 - **Memoria video nel budget**: texture compresse (`tools/godot_vram_textures.py`) e misura con `godot/tests/collaudo/memoria_video.gd`.
+- **Le texture del gioco si importano compresse per la scheda e con le mipmap, mai "Lossless".** Godot senza editor importa le immagini nuove in Lossless senza mipmap, e `tools/godot_vram_textures.py` converte solo quelle estratte dai GLB. Così il 29 ottobre le foto delle Polaroid P11-P16 si decodificavano sulla CPU nel fotogramma in cui entravano: il passo delle Polaroid nella torre a pezzi passava da 9 a 331 ms e test_attesa_zone era rosso. La P11 era già così nella 0.3.15. Chi aggiunge un'immagine al gioco la importa VRAM Compressed con le mipmap (le normal map come normal map); Lossless resta solo per interfaccia e scritte a schermo.
+- **I collaudi costruiscono le zone come il gioco**: a pezzi e col riscaldamento (`RISCALDA=1` per la schermata di caricamento, `RISCALDA=tunnel` per il tunnel). Il 29 ottobre le 10-15 compilazioni "alla prima curva" del tunnel e la pipeline rimasta all'oblò del personale c'erano solo nelle prove che costruivano tutto subito senza riscaldamento: nel gioco vero erano 0, e si è perso tempo a cercarle.
 
 ## Consegne
 
