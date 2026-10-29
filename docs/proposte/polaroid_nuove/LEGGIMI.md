@@ -8,6 +8,7 @@ Richiesta approvata dall'utente per allungare il capitolo 1: 4-6 Polaroid in pi�
 - **Niente scritte**: solo immagini. Le versioni con lettere sono state scartate, per esempio la P14 di nano-banana-pro con "Wave Pool" sul bordo della vasca.
 - **La regola delle Polaroid** (`docs/livello/capitolo1.md`): non mostrano mai il mostro che prende la bambola, né spiegano perché. La prima P14 mostrava i tentacoli che salivano sulla statua ed è stata rifatta: ora c'è solo l'indizio, la mattina dopo.
 - Nel gioco sono `PolaroidPhoto` con `photo` da 12 a 16 e id `p12`-`p16`. Le mette da codice `PolaroidPhoto.metti()`, e le appoggia sulla superficie vera Posa, lo strumento comune. Nella collezione il totale passa da 11 a 16.
+- **Le texture delle foto** (`Pxx.jpg`, `Pxx_rugosita.jpg`) si importano compresse per la scheda video e con le mipmap, come P01-P10: `compress/mode=2` e `mipmaps/generate=true`, scritti nel `.import`. Senza editor Godot le importa lossless e senza mipmap. Allora si decodificano sulla CPU nel fotogramma in cui la foto entra in scena: la P12 faceva 85-107 ms nel passo della torre a pezzi, contro 9 ms così (29 ottobre; anche la P11 era così). `tools/godot_vram_textures.py` della CI non le tocca, perché converte solo le texture estratte dai GLB.
 
 ## Le cinque, in ordine di storia
 
