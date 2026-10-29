@@ -61,14 +61,15 @@ Cosa è stato tenuto libero, e come:
    - i gonfiabili hanno la loro misura vera: i tubi diventano una fila di cerchi lungo l'asse;
    - chi arriva da fuori non ci entra più di 1 cm;
    - un giocattolo spostato da fermo si riassesta sul fondo e non resta più per aria;
-   - posato sopra un gonfiabile dall'acqua che cala, ne scivola giù.
+   - posato sopra un gonfiabile dall'acqua che cala, ne scivola giù;
+   - spinto dritto contro un gonfiabile ci scivola attorno, dalla parte del suo cerchio, invece di fermarsi (ritocco chiesto dopo il ricontrollo). I tubi contano come un segmento col bordo liscio, e due gonfiabili più vicini di un giocattolo sono uniti: fra il salvagente e la ciambella la tacca di 34 cm fermava il pallone.
 
 `test_enigma_giocattoli` prova anche questi casi:
 - da ogni angolo e da sotto le due scalette, a piscina vuota e piena, si riporta il giocattolo al suo cerchio col getto;
-- il pallone spinto 4 s contro ogni gonfiabile non ci entra e non ci sale;
+- il pallone spinto 4 s contro ogni gonfiabile non ci entra, non ci sale e ci scivola attorno (di lato almeno 1,1 m);
 - la paperella posata sulla ciambella calando l'acqua ne scivola giù.
 
-In locale: test_enigma_giocattoli 63/63, test_sala 105/105, test_tappe56 100/100.
+In locale: test_enigma_giocattoli 64/64, test_sala 105/105, test_tappe56 100/100.
 
 ## I gonfiabili d'arredo della parte profonda
 
