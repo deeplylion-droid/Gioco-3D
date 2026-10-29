@@ -26,6 +26,8 @@ func _run() -> void:
 		await _sbaglio()
 	if "morte" in _parti:
 		await _morte()
+	if "sponda" in _parti:
+		await _sponda()
 	_fine()
 
 
@@ -224,3 +226,54 @@ func _confronta(al_cp: Dictionary, quando: String) -> void:
 			check(_sul_piatto(i), "%s il giocattolo %d è sul suo piatto sceso" % [quando, i])
 	check(vasca != null and vasca.fill <= 0.001, "%s la piscina è vuota" % quando)
 	check(pulsante != null and not pulsante.enabled, "%s il pulsante non si preme (due piatti su tre)" % quando)
+
+
+## Come farebbe un giocatore con un giocattolo fermo contro il muro di una scaletta o in un angolo (i casi dove la spinta
+## automatica, che spara al giocattolo o all'acqua dietro di lui, non lo stacca): si spara sul muro proprio accanto a
+## lui, dai due lati, e l'onda lo respinge via dal muro; poi la spinta normale.
+## I casi: SPONDA=<giocattolo>:<x>:<z>[;...] (sistema del nodo), a piscina vuota.
+func _sponda() -> void:
+	print("6. Staccare dal muro, sparando sul muro accanto")
+	for caso in OS.get_environment("SPONDA").split(";", false):
+		var v := caso.split(":")
+		var i := int(v[0])
+		await _carica()
+		await _svuota()
+		await _frames(120)
+		var stato: Dictionary = enigma.save_state()
+		stato["pos"][i] = [float(v[1]), float(v[2]), 0.0]
+		enigma.load_state(stato)
+		await _frames(150)
+		var g := enigma.giocattolo(i)
+		var gp := g.global_position
+		var r: float = EnigmaGiocattoli.RAGGI[i]
+		# il muro più vicino (est o ovest, nord o sud) e il punto accanto al giocattolo, dai due lati
+		var ar: Rect2 = enigma.area
+		var verso_muro := Vector3(-1, 0, 0) if gp.x < 0 else Vector3(1, 0, 0)
+		if minf(absf(gp.z - ar.position.y), absf(gp.z - ar.end.y)) < minf(absf(gp.x - ar.position.x), absf(gp.x - ar.end.x)):
+			verso_muro = Vector3(0, 0, -1) if gp.z < (ar.position.y + ar.end.y) / 2.0 else Vector3(0, 0, 1)
+		var lato := verso_muro.cross(Vector3.UP)
+		var staccato := false
+		for tentativo in 6:
+			var s := 1.0 if tentativo % 2 == 0 else -1.0
+			var mira := gp + verso_muro * (r + 0.45) + lato * s * (r + 0.15) + Vector3(0, 0.3, 0)
+			var stand := gp - verso_muro * 2.0 + lato * s * 1.2
+			stand.y = _fondo_sotto(stand, []) + 0.05
+			p.teleport(stand, 0.0, 0.0)
+			await _frames(4)
+			p.water_pack.set_tank_amount(20.0)
+			Input.action_press(&"spray")
+			for f in 50:
+				p.look_at_point(mira)
+				await get_tree().physics_frame
+			Input.action_release(&"spray")
+			await _frames(90)
+			var ora := g.global_position
+			print("    sponda %d: giocattolo %d da %s a %s" % [tentativo, i, gp.snapped(Vector3.ONE * 0.01), ora.snapped(Vector3.ONE * 0.01)])
+			if (ora - gp).dot(-verso_muro) > 0.5:
+				staccato = true
+				break
+			gp = ora
+		check(staccato, "giocattolo %d in %s: sparando sul muro accanto si stacca dal muro" % [i, caso])
+		if staccato:
+			check(await _spingi_misura(i, "dopo la sponda %s" % caso, 25), "giocattolo %d in %s: poi arriva al suo cerchio (%s)" % [i, caso, _dove(i)])
