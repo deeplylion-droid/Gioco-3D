@@ -463,6 +463,8 @@ func _compenetrazioni(quando: String) -> void:
 func _portellone() -> void:
 	print("8. Il pallone contro il portellone della botola")
 	await _carica()
+	if not GameState.player_died.is_connected(_morto):
+		GameState.player_died.connect(_morto)
 	await _svuota()
 	await _frames(120)
 	var r: float = EnigmaGiocattoli.RAGGI[1]
@@ -500,4 +502,9 @@ func _portellone() -> void:
 		var fine := Vector2(g.position.x, g.position.z)
 		check(su <= 0.01, "spinto verso il portellone da %.0f gradi: mai più di 1 cm sopra il fondo che ha sotto (%.3f m)" % [rad_to_deg(ang), su])
 		check(fine.distance_to(partenza) > 0.5, "da %.0f gradi ci scivola attorno: si sposta di %.2f m (a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), fine.snapped(Vector2.ONE * 0.01)])
+
+
+func _morto(causa: StringName) -> void:
+	var gp: Vector3 = GameState.player.global_position if GameState.player and is_instance_valid(GameState.player) else Vector3.ZERO
+	printerr("  MORTO il giocatore (causa %s) in %s" % [causa, gp.snapped(Vector3.ONE * 0.01)])
 

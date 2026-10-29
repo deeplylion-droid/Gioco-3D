@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+7. Il pallone spinto a lungo contro il gonfiabile
+  ok    c'è l'enigma dei giocattoli nella piscina
+  gonfiabile: { "a": (-0.994883, 0.407823), "b": (-0.994883, 0.407823), "r": 0.42396759986877 }
+  ok    spinto 8 s contro il gonfiabile da 180 gradi: non ci sale (sopra il fondo che ha sotto al massimo 0.003 m) e non ci entra (0.000 m)
+  ok    da 180 gradi ci scivola attorno: si sposta di 3.84 m (da (-1.72, 0.41) a (-0.22, 3.94))
+  ok    senza scatti: al massimo 0.026 m in un fotogramma (velocità massima 0.040)
+  ok    resta nella parte profonda ((-0.22, 3.94))
+  ok    dopo la spinta da 180 gradi i giocattoli non si compenetrano fra loro (0.000 m)
+  ok    dopo la spinta da 180 gradi nessun giocattolo dentro un gonfiabile (0.000 m)
+  ok    spinto 8 s contro il gonfiabile da 135 gradi: non ci sale (sopra il fondo che ha sotto al massimo 0.009 m) e non ci entra (0.000 m)
+  ok    da 135 gradi ci scivola attorno: si sposta di 4.80 m (da (-1.51, 0.92) a (0.78, -3.3))
+  ok    senza scatti: al massimo 0.032 m in un fotogramma (velocità massima 0.040)
+  ok    resta nella parte profonda ((0.78, -3.3))
+  ok    dopo la spinta da 135 gradi i giocattoli non si compenetrano fra loro (0.000 m)
+  ok    dopo la spinta da 135 gradi nessun giocattolo dentro un gonfiabile (0.000 m)
+  ok    spinto 8 s contro il gonfiabile da 225 gradi: non ci sale (sopra il fondo che ha sotto al massimo 0.004 m) e non ci entra (0.000 m)
+  ok    da 225 gradi ci scivola attorno: si sposta di 3.74 m (da (-1.51, -0.1) a (1.55, 2.04))
+  ok    senza scatti: al massimo 0.030 m in un fotogramma (velocità massima 0.040)
+  ok    resta nella parte profonda ((1.55, 2.04))
+  ok    dopo la spinta da 225 gradi i giocattoli non si compenetrano fra loro (0.000 m)
+  ok    dopo la spinta da 225 gradi nessun giocattolo dentro un gonfiabile (0.000 m)
+8. Il pallone contro il portellone della botola
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    spinto verso il portellone da 180 gradi: mai più di 1 cm sopra il fondo che ha sotto (0.004 m)
+  ok    da 180 gradi ci scivola attorno: si sposta di 5.03 m (a (3.04, 3.95))
+  ok    spinto verso il portellone da 90 gradi: mai più di 1 cm sopra il fondo che ha sotto (0.003 m)
+  ok    da 90 gradi ci scivola attorno: si sposta di 0.80 m (a (0.63, 3.1))
+SCRIPT ERROR: Invalid access to property or key 'global_position' on a base object of type 'previously freed'.
+          at: _portellone (res://tests/collaudo/collaudo_giocattoli.gd:495)
+          GDScript backtrace (most recent call first):
+              [0] _portellone (res://tests/collaudo/collaudo_giocattoli.gd:495)
+
+RISULTATO: 24 controlli ok, 0 falliti
+WARNING: 879 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 502 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: 2 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 136 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 48 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 71 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 191 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
