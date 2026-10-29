@@ -129,9 +129,12 @@ Gli scatti, presi dal video:
 ## Cosa manca e da decidere
 
 1. **Il disegno ha un filo di luce propria**, come se fosse fatto coi pastelli fosforescenti (come il bordo dei cerchi), con intensità 0,12 (scatto 1).
-   - Senza luce, al buio della piscina, da 4 m non si legge: si vede solo un rettangolo scuro.
+   - Senza luce, al buio della piscina, da 4 m non si legge: si vede solo un rettangolo scuro (scatto qui sotto, dal punto del video di prima, un po' più lontano).
    - A 0,3 sembra uno schermo acceso.
    - L'alternativa è una lampada sul bordo, sopra il disegno.
+
+   ![senza luce](disegno_senza_luce.jpg)
+   ![con la luce](scatto_1_disegno.jpg)
 2. **I suoni sono provvisori**, presi fra quelli che ci sono già:
    - il tonfo del piatto è la fine della saracinesca, più grave;
    - il risucchio dagli scarichi è lo svuotamento della piscina, rallentato.
