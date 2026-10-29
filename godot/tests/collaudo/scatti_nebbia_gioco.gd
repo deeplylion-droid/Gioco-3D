@@ -42,7 +42,21 @@ func _run() -> void:
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("medio")
 	n = Grafica.nebbia_viola
-	# il riscaldamento della schermata di caricamento
+	# il riscaldamento della schermata di caricamento (non per la sala: con tutti i materiali del gioco caricati la sala,
+	# anche ridotta, non ci sta nella memoria della macchina di prova; le pipeline si contano nel tunnel e nell'infermeria)
+	if parte != "sala":
+		await _riscalda()
+	match parte:
+		"sala":
+			await _sala()
+		"infermeria":
+			await _infermeria()
+		"tunnel":
+			await _tunnel()
+	get_tree().quit()
+
+
+func _riscalda() -> void:
 	var env := WorldEnvironment.new()
 	env.environment = RiscaldamentoShader.ambiente()
 	add_child(env)
@@ -53,14 +67,6 @@ func _run() -> void:
 	r.queue_free()
 	env.queue_free()
 	await _frames(5)
-	match parte:
-		"sala":
-			await _sala()
-		"infermeria":
-			await _infermeria()
-		"tunnel":
-			await _tunnel()
-	get_tree().quit()
 
 
 func _camera() -> void:
