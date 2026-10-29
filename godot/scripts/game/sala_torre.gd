@@ -180,6 +180,9 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 ## Stanno sotto l'oblò, quindi la preparazione della torre (prepara_materiali) le disegna con lui.
 @export var oblo_rosso := 3.5
 @export var oblo_rosso_faccia := 0.0
+## La nebbia della luce rossa della vasca: il rosso dell'acqua dietro di lei, nella 0.3.15, era la nebbia accesa dalla
+## lampada.
+@export var oblo_rosso_nebbia := 0.0
 ## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
 const OBLO_ROSSO_POSTO := Vector3(-1.3, 1.7, -0.5)
 const OBLO_ROSSO_FACCIA := Vector3(0.0, 0.3, -0.15)
@@ -195,7 +198,7 @@ func _rosso_vasca() -> void:
 		o.light_energy = oblo_rosso
 		o.omni_range = 6.0
 		o.shadow_enabled = true
-		o.light_volumetric_fog_energy = 0.0
+		o.light_volumetric_fog_energy = oblo_rosso_nebbia
 		o.set_meta(&"risveglio_ignora", true)
 		o.position = OBLO_ROSSO_POSTO
 		oblo.add_child(o)

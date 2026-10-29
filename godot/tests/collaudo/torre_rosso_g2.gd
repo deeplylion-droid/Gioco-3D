@@ -25,7 +25,7 @@ func _ready() -> void:
 	if a.size() > 3:
 		for t in a[3].split(";"):
 			var pe := t.split(",")
-			prove.append([float(pe[0]), float(pe[1])])
+			prove.append([float(pe[0]), float(pe[1]), float(pe[2]) if pe.size() > 2 else 0.0])
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -96,7 +96,8 @@ func _run() -> void:
 			if faccia:
 				faccia.light_energy = e[1]
 				faccia.visible = e[1] > 0.0
-			nome = "_%s_%s" % [e[0], e[1]]
+			rosso.light_volumetric_fog_energy = e[2]
+			nome = "_%s_%s_%s" % [e[0], e[1], e[2]]
 		elif rosso:
 			rosso.light_energy = float(e)
 		p.teleport(POSTO_TORRE)
