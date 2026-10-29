@@ -183,9 +183,17 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_sbuca.gd
 
+      - name: Test dei tentacoli morbidi di lei che sbuca a 60 fps (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_sbuca.gd
+
       - name: Test dei tentacoli morbidi nell'inseguimento (collisioni bloccanti, costo solo stampato)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+
+      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata e a scolo_2 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: SOLO=scolo_2,grata godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
       - name: Test della vista subacquea (con la testa sopra il pelo di ogni acqua resta normale, anche con due acque sovrapposte)
         if: steps.progetto.outputs.presente == 'si'

@@ -85,6 +85,12 @@ var fossa_pianta := PackedVector2Array():
 	set(v):
 		fossa_pianta = v
 		_fossa_dentro = PackedVector2Array()
+		_fossa_centro = Vector2.ZERO
+		for q in v:
+			_fossa_centro += q / v.size()
+## Vero se [member fossa_pianta] è un foro nel pavimento (lei sale attraverso il pavimento): lì dentro un punto non
+## esce mai di sotto, sotto il pavimento, ma verso il centro del foro.
+var fossa_foro := false
 ## Tubi ([da, a, raggio]) dove le forme non contano: per esempio il condotto, chiuso dalla parete di collisione.
 var tunnel: Array = []
 ## Le vasche (WaterTank) il cui pelo conta; vuoto: quelle entro 8 m, cercate all'inizio.
@@ -140,6 +146,7 @@ var _bers: Array = []                      # per catena: i bersagli della molla 
 var _bers_posa: Array = []
 var _trattieni_k := 0.0
 var _fossa_dentro := PackedVector2Array()
+var _fossa_centro := Vector2.ZERO
 var _dt_acc := PackedFloat32Array()        # per catena: il tempo da quando si è simulata l'ultima volta
 var _fotogrammi := 0
 var _vp: Array[PackedVector3Array] = []     # la velocità della posa, media
@@ -649,9 +656,10 @@ func _process_modification() -> void:
 ## Gli aiuti: i tentacoli si calcolano in parallelo, sui thread del WorkerThreadPool e su questo, ognuno in un aiuto
 ## (un'altra MorbidezzaLei fuori dall'albero, con i suoi conti a parte e le forme di questa, che legge e basta); le
 ## ossa si scrivono qui, dopo. Il tentacolo k va sempre all'aiuto k % numero di aiuti, che ne tiene le forme vicine
-## come le terrebbe lei: i conti sono gli stessi, identici, di quando si facevano uno dopo l'altro. Gli aiuti sono il
-## doppio dei thread: ogni thread prende il prossimo libero, così finiscono insieme (test_morbidezza_inseguimento del
-## 29 ottobre: alla grata il costo medio da 5,7 a 3,3 ms, sui 4 thread del sandbox).
+## come le terrebbe lei: i conti sono gli stessi, identici, di quando si facevano uno dopo l'altro. Un aiuto per
+## tentacolo: ogni thread prende il prossimo libero, così finiscono insieme anche quando un thread è rallentato dai
+## caricamenti (test_morbidezza_inseguimento del 29 ottobre: alla grata il costo medio da 5,7 a 3,3 ms, sui 4 thread
+## del sandbox; con aiuti di tre tentacoli il principale aspettava fino a 9 ms nel tunnel).
 ## Nei conti degli aiuti niente AABB, Basis e Transform3D: Godot le tiene in un allocatore con un lucchetto, e con più
 ## thread ognuno aspettava gli altri (provato: 5 volte più lento che da solo). Le scatole sono inizio e fine (Vector3),
 ## coi conti di AABB (aabb.h) e gli stessi risultati: has_point è p.clamp(inizio, fine) == p; intersects è
@@ -666,10 +674,15 @@ var _lavori: Array = []                    # (in un aiuto) i tentacoli da fare i
 var _thread := 1
 var _prossimo := 0
 var _presa := Mutex.new()
+var _finiti := Semaphore.new()
+var _giro := 0
+var _presi_altri := 0
+var _task: Array[int] = []
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
+		_raccogli_task(true)
 		for a in _aiuti:
 			if is_instance_valid(a):
 				(a as Object).free()
@@ -680,7 +693,7 @@ func _notification(what: int) -> void:
 func _esegui_lavori(lavori: Array) -> void:
 	if _aiuti.is_empty():
 		_thread = clampi(OS.get_processor_count(), 1, _AIUTI)
-		for i in 2 * _thread if _thread > 1 else 1:
+		for i in maxi(_catene.size(), 1) if _thread > 1 else 1:
 			_aiuti.append((get_script() as GDScript).new())
 	# (la griglia delle forme si fa qui: gli aiuti la usano insieme, senza cambiarla)
 	if _forme.size() > 24:
@@ -689,13 +702,23 @@ func _esegui_lavori(lavori: Array) -> void:
 		_prepara_aiuto(a)
 	for lv in lavori:
 		(_aiuti[int(lv[0]) % _aiuti.size()] as MorbidezzaLei)._lavori.append(lv)
+	# (questo thread lavora anche lui, e alla fine aspetta solo i thread che hanno preso un aiuto: i task che il pool
+	# fa partire tardi, occupato per esempio dai caricamenti nel thread, trovano tutto fatto ed escono. Aspettarli
+	# tutti erano i fotogrammi isolati di 17-26 ms: ricontrollo del 29 ottobre)
+	_presa.lock()
 	_prossimo = 0
-	if _thread == 1:
-		_lavora(0)
-	else:
-		var id := WorkerThreadPool.add_group_task(_lavora, _thread - 1, -1, true, "morbidezza")
-		_lavora(0)
-		WorkerThreadPool.wait_for_group_task_completion(id)
+	_giro += 1
+	_presi_altri = 0
+	_presa.unlock()
+	_raccogli_task(false)
+	for t in _thread - 1:
+		_task.append(WorkerThreadPool.add_task(_lavora.bind(_giro, false), true, "morbidezza"))
+	_lavora(_giro, true)
+	_presa.lock()
+	var presi := _presi_altri
+	_presa.unlock()
+	for j in presi:
+		_finiti.wait()
 	for a: MorbidezzaLei in _aiuti:
 		a._lavori.clear()
 		for chiave in a.parti_usec:
@@ -703,18 +726,32 @@ func _esegui_lavori(lavori: Array) -> void:
 			a.parti_usec[chiave] = 0
 
 
-## Un thread: prende un aiuto alla volta, finché ce ne sono.
-func _lavora(_i: int) -> void:
+## Un thread: prende un aiuto alla volta, finché ce ne sono in questo giro ([param giro]: un task partito tardi, a
+## giro finito, esce subito).
+func _lavora(giro: int, principale: bool) -> void:
 	while true:
 		_presa.lock()
+		if giro != _giro or _prossimo >= _aiuti.size():
+			_presa.unlock()
+			return
 		var i := _prossimo
 		_prossimo += 1
+		if not principale:
+			_presi_altri += 1
 		_presa.unlock()
-		if i >= _aiuti.size():
-			return
 		var a: MorbidezzaLei = _aiuti[i]
 		for lv in a._lavori:
 			a._fai_lavoro(lv)
+		if not principale:
+			_finiti.post()
+
+
+## Chiude i task finiti dei giri passati (con [param tutti], aspetta anche gli altri).
+func _raccogli_task(tutti: bool) -> void:
+	for j in range(_task.size() - 1, -1, -1):
+		if tutti or WorkerThreadPool.is_task_completed(_task[j]):
+			WorkerThreadPool.wait_for_task_completion(_task[j])
+			_task.remove_at(j)
 
 
 ## Dà all'aiuto [param a] quello che serve ai conti.
@@ -744,6 +781,7 @@ func _prepara_aiuto(a: MorbidezzaLei) -> void:
 	a._sez = _sez
 	if a.fossa_pianta != fossa_pianta:
 		a.fossa_pianta = fossa_pianta
+	a.fossa_foro = fossa_foro
 	a.tunnel = tunnel
 	# (le forme, la griglia e quelle che si muovono, già messe a posto qui, gli aiuti le leggono e basta)
 	a._forme = _forme
@@ -1096,7 +1134,10 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			var k := clampf(sotto / 0.5, 0.0, 1.0) * _trattieni_k
 			out[i] = Vector3(lerpf(q.x, c.x, k), q.y, lerpf(q.z, c.y, k))
 	for i in range(1, n + 1):
+		_nc_posa = out[i]
+		_nc_radice = out[0]
 		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true, i)
+	_nc_posa = Vector3.INF
 	for i in range(1, n + 1):
 		# (prima la scatola, allargata di VICINO: un tratto che non la tocca non passa dentro la forma. Senza AABB, vedi
 		# _AIUTI; si rifà quando i capi salgono)
@@ -1377,7 +1418,8 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 	var sl := 2 * scatola + 3    # (dove stanno inizio e fine di quella scatola nella forma)
 	for giro in 2:
 		var mosso := false
-		if p.y < pavimento_y + r_su and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
+		if p.y < pavimento_y + r_su and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)) \
+				and not _sul_bordo_del_buco(p, pavimento_y + r_su - p.y, rmax):
 			p.y = pavimento_y + r_su
 			mosso = true
 		for fo in (_forme_in(p, forme) if ip >= 0 and not forme.is_empty() else forme):
@@ -1451,11 +1493,43 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 					meglio = cima
 					rf = _sup(meglio.normal, ip) if ip >= 0 else r
 					dm = meglio.distance_to(p)
+			# dentro un foro nel pavimento ([member fossa_foro]) un punto non si spinge in giù, sotto il pavimento: esce
+			# dalla faccia verso il centro del foro. Uscendo di sotto restava sotto il bordo e poi lo passava in un
+			# fotogramma (scolo_2, mentre sale: test del 29 ottobre)
+			if fossa_foro and meglio.normal.y < -0.5 and fossa_pianta.size() >= 3 \
+					and Geometry2D.is_point_in_polygon(Vector2(p.x, p.z), fossa_pianta):
+				var verso := Vector3(_fossa_centro.x - p.x, 0.0, _fossa_centro.y - p.z).normalized()
+				var dv := -INF
+				for pl: Plane in fo[0]:
+					if pl.normal.dot(verso) > dv:
+						dv = pl.normal.dot(verso)
+						meglio = pl
+				rf = _sup(meglio.normal, ip) if ip >= 0 else r
+				dm = meglio.distance_to(p)
 			p += meglio.normal * (rf - dm)
 			mosso = true
 		if not mosso:
 			break
 	return p
+
+
+# (per _da_sopra, da _bersagli: il punto della posa; INF: la regola non vale)
+var _nc_posa := Vector3.INF
+var _nc_radice := Vector3.INF
+
+
+## Vero se [param p], che salirebbe di [param su] sul pavimento, è ben sotto il pavimento e fuori dal buco di meno della
+## pelle ([param r]): è nel muro del buco, e lo spingono fuori di lato le forme del muro. In sbuca un punto vicino alla
+## radice usciva di pochi millimetri dal bordo della fossa, 50 cm sotto il pavimento, e saliva di 63 cm in un
+## fotogramma, ogni 20 (test del 29 ottobre).
+func _sul_bordo_del_buco(p: Vector3, su: float, r: float) -> bool:
+	if su <= SPINTA_GRANDE or not buco_pavimento.has_area():
+		return false
+	var q := Vector2(p.x, p.z)
+	return q.clamp(buco_pavimento.position, buco_pavimento.end).distance_to(q) < r
+
+
+const SPINTA_GRANDE := 0.25
 
 
 ## Le forme basse (il bordo, alto 45 cm) si lasciano da sopra: un punto a meno di mezzo metro sotto la cima esce in
@@ -1467,6 +1541,13 @@ func _da_sopra(fo: Array, p: Vector3, meglio: Plane) -> Plane:
 	if i < 0:
 		return meglio
 	var cima: Plane = fo[0][i]
+	# (non se la posa passa sotto la forma, più giù del suo fondo, e la radice è accanto, fra il fondo e la cima: una
+	# forma staccata da terra accanto alla radice, il punto resta di lato. Alla grata la posa di un tentacolo passa sotto
+	# un tubo basso accanto alla radice: uscendo da sopra, a ogni colpo dei palmi il tentacolo lo scavalcava di 70 cm in
+	# un fotogramma. Test del 29 ottobre. Dove lei sale da sotto il pavimento la radice è più giù del fondo: lì no)
+	var fondo: float = (fo[7] as Vector3).y
+	if _nc_posa != Vector3.INF and _nc_posa.y < fondo and _nc_radice.y > fondo and cima.distance_to(_nc_radice) < 0.0:
+		return meglio
 	if cima.distance_to(p) > -0.5:
 		return cima
 	return meglio

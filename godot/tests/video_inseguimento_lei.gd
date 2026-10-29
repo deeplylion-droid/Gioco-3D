@@ -3,12 +3,13 @@ extends Node
 ## giocatore, per confrontare prima e dopo il movimento secondario di tentacoli e campana (MorbidezzaLei):
 ##   "vasca_0": il giocatore nella vasca 1, lei sale accanto e incombe;
 ##   "sb1": il giocatore nel bacino, lei sbuca dal pozzo di scarico e lo guarda;
-##   "grata": il giocatore dietro la grata, lei sale dal pozzetto e la colpisce.
+##   "grata": il giocatore dietro la grata, lei sale dal pozzetto e la colpisce;
+##   "scolo_0", "scolo_1", "scolo_2": il giocatore a 3,5 m dallo scolo, lei sale dal foro nel pavimento.
 ##   "prima": senza la morbidezza (Engine meta morbidezza_spenta); "dopo": com'è nel gioco.
 ## Lei sale a 0,8 s; il video dura 5 s.
 ## Uso (sotto /home/user/tools/render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://tests/video_inseguimento_lei.gd <prima|dopo> <vasca_0|sb1|grata> [preset]
+##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://tests/video_inseguimento_lei.gd <prima|dopo> <vasca_0|sb1|grata|scolo_N> [preset]
 
 const LEVEL := "res://scenes/test/inseguimento_prova.tscn"
 const RISCALDA := 60
@@ -58,6 +59,9 @@ func _avvia() -> void:
 		var r: Array = sala.dati["pozzo"]["rett"]
 		var c := SalaInseguimento.b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0 - 4.5, float(sala.dati["bacino"]["fondo"])])
 		p.teleport(c + Vector3.UP * 0.05, 0.0, 0.0)
+	elif dove.begins_with("scolo"):
+		var su: Vector3 = sala.call(&"_posto_scolo", int(dove[-1]))
+		p.teleport(su + Vector3(0.0, 0.3, 3.5), 0.0, 0.0)
 	elif dove == "grata":
 		# dietro la grata, 3,5 m dal perno, dalla parte opposta a lei
 		var g: Dictionary = sala.dati["grata"]
@@ -73,6 +77,10 @@ func _avvia() -> void:
 
 
 func _testa() -> Vector3:
+	# (GUARDA=x,y,z: la camera guarda sempre quel punto, per esempio la base di lei)
+	if OS.has_environment("GUARDA"):
+		var g := OS.get_environment("GUARDA").split_floats(",")
+		return Vector3(g[0], g[1], g[2])
 	if sala.lei.visible:
 		var o: Vector3 = sala.lei.get_eye_position()
 		if o != Vector3.ZERO:
@@ -97,6 +105,8 @@ func _process(_delta: float) -> void:
 			sala.call(&"_lei_sale", "sb1", sala.call(&"_posto_sb1"), 1.3)
 		elif dove == "grata":
 			sala.call(&"_lei_alla_grata")
+		elif dove.begins_with("scolo"):
+			sala.call(&"_lei_sale", dove, sala.call(&"_posto_scolo", int(dove[-1])), 1.2)
 		else:
 			sala.call(&"_lei_sale", "vasca_0", sala.call(&"_posto_vasca", 0), 1.6)
 	var m := MorbidezzaLei.su(sala.lei) if sala.lei else null
