@@ -105,7 +105,7 @@ Gli scatti, presi dal video:
 
 **Pipeline** (contate nel motore, `Performance`, durante il video): a metà enigma non si compilano pipeline nuove che fermano il disegno (draw) nel disegno, nei piatti che scendono, sul fondo vuoto, nella luce verde e nella botola.
 - Nella spinta sull'acqua se ne compilano 4. Ma nel video lo zaino si usa lì per la prima volta, mentre nel gioco si usa già negli interni.
-- Rifatto usando prima getto e aspirazione sull'acqua (`video_enigma_giocattoli.gd ... adesca`), ne resta 1. È probabilmente il getto che colpisce un oggetto solido, che nel gioco succede già negli interni: lo verifico prima dell'unione.
+- Rifatto usando prima getto e aspirazione sull'acqua e il getto su un muro, come nel gioco (`video_enigma_giocattoli.gd ... adesca`), nella spinta sull'acqua se ne compilano 0: venivano tutte dal primo uso dello zaino, non dall'enigma.
 - Le pipeline di specializzazione (fino a 9) si compilano in sottofondo e non fermano il disegno.
 
 ## Cosa cambia nel gioco
