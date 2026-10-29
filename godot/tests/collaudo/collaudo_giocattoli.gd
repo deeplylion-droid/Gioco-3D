@@ -506,6 +506,8 @@ func _portellone() -> void:
 			await get_tree().physics_frame
 			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
 		var fine := Vector2(g.position.x, g.position.z)
+		print("    da %.0f gradi: giocatore in %s, colpi %s" % [rad_to_deg(ang), p.global_position.snapped(Vector3.ONE * 0.01), _colpi])
+		_colpi.clear()
 		check(su <= 0.01, "spinto verso il portellone da %.0f gradi: mai più di 1 cm sopra il fondo che ha sotto (%.3f m)" % [rad_to_deg(ang), su])
 		check(fine.distance_to(partenza) > 0.5, "da %.0f gradi ci scivola attorno: si sposta di %.2f m (a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), fine.snapped(Vector2.ONE * 0.01)])
 
