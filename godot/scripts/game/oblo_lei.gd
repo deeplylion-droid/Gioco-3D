@@ -96,6 +96,10 @@ const FORMA := 0.3
 ## si è sempre visto (scelta dell'utente del 29 ottobre); la torre li abbassa (SalaTorre._oblo_lei: con quelli di serie
 ## la luce passava dagli spigoli sottili della cisterna e faceva righe rosa nella sala delle condotte).
 @export var bias_ombre := Vector2(0.1, 1.0)
+## Se più di 0: attorno alla vasca, appena fuori, un guscio spesso tanto (m) che fa solo ombra (non si vede), chiuso
+## agli spigoli. La luce di lei resta dentro anche dove fuori c'è una lamiera sottile da una faccia sola (la cisterna
+## dell'oblò della torre, nel GLB delle condotte: dai suoi spigoli in alto passava una riga rosa).
+@export var guscio_ombra := 0.0
 
 var stato := Stato.ATTESA
 ## La lei che sta dietro il vetro, se c'è.
@@ -419,6 +423,8 @@ func _vasca() -> void:
 	mi.mesh = st.commit()
 	mi.material_override = _mat_vasca()
 	add_child(mi)
+	if guscio_ombra > 0.0:
+		_guscio_ombra(pz, z0, z1)
 	# l'acqua torbida: veli che si vedono dal vetro, a pezzi come la vasca (una "superficie d'acqua" per i controlli)
 	var acqua := Node3D.new()
 	acqua.name = "AcquaTorbida"
@@ -439,6 +445,42 @@ func _vasca() -> void:
 			v.material_override = _mat_velo(0.22 + 0.08 * k)
 			v.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			acqua.add_child(v)
+
+
+## Il guscio che fa solo ombra attorno alla vasca ([member guscio_ombra]): il fondo, il soffitto, il pavimento e i due
+## lati, 2 mm fuori dalla vasca, che si sovrappongono agli spigoli; davanti c'è il muro.
+func _guscio_ombra(pz: Array, z0: float, z1: float) -> void:
+	var x0 := INF
+	var x1 := -INF
+	for r in pz:
+		x0 = minf(x0, float(r[0]))
+		x1 = maxf(x1, float(r[1]))
+	var y0 := -vasca_sotto
+	var y1 := vasca_sopra
+	var t := guscio_ombra
+	const E := 0.002
+	var dietro := z1 - E - t
+	var lastre := [
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x1 + E + t, y1 + E + t, z1 - E)],    # il fondo
+		[Vector3(x0 - E - t, y1 + E, dietro), Vector3(x1 + E + t, y1 + E + t, z0)],           # il soffitto
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x1 + E + t, y0 - E, z0)],           # il pavimento
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x0 - E, y1 + E + t, z0)],           # un lato
+		[Vector3(x1 + E, y0 - E - t, dietro), Vector3(x1 + E + t, y1 + E + t, z0)],           # l'altro
+	]
+	var guscio := Node3D.new()
+	guscio.name = "GuscioOmbra"
+	add_child(guscio)
+	for l in lastre:
+		var a: Vector3 = l[0]
+		var b: Vector3 = l[1]
+		var m := MeshInstance3D.new()
+		var bx := BoxMesh.new()
+		bx.size = (b - a).abs()
+		m.mesh = bx
+		m.position = (a + b) * 0.5
+		m.material_override = _mat_vasca()
+		m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+		guscio.add_child(m)
 
 
 static func _quad(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, verso: Vector3) -> void:

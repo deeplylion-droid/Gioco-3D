@@ -141,6 +141,8 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 ## 1 << 19, lo stesso dell'acqua (WaterBody.WATER_LAYER) e di quello che il lampo della tempesta esclude, che la camera
 ## del giocatore disegna (collaudo del 25 ottobre).
 const STRATO_PREPARA := 1 << 15
+## Il muro est della torre, in comune con la sala delle condotte (x, come X0 di tools/blender/inseguimento_proposte.py).
+const MURO_CONDOTTE_X := 40.0
 
 
 ## Disegna la sala una volta fuori vista (una camera sua in un SubViewport con le stesse impostazioni di
@@ -717,6 +719,9 @@ func _oblo_lei() -> void:
 	# (le ombre della luce di lei più strette che negli altri oblò: con i bias di serie passava dagli spigoli sottili
 	# della cisterna, righe rosa nella sala delle condotte, collaudo finale del 25 ottobre)
 	oblo.bias_ombre = Vector2(0.03, 0.2)
+	# (e attorno alla vasca il guscio che fa solo ombra: la cisterna fuori, nel GLB delle condotte, è di lamiere da una
+	# faccia sola, e dal suo spigolo in alto passava ancora una riga rosa; ricontrollo del 29 ottobre)
+	oblo.guscio_ombra = 0.03
 	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
 	var v: Array = dati["vasca_fondo"]["rett"]
 	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
@@ -1103,6 +1108,9 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	l.light_energy = 3.5
 	l.omni_range = 7.5
 	l.light_volumetric_fog_energy = 1.5
+	# sul muro est, quello in comune con la sala delle condotte, con l'ombra: senza, la luce passava il muro e faceva
+	# una riga rossa su uno spigolo delle condotte accanto alla cisterna dell'oblò (ricontrollo del 29 ottobre)
+	l.shadow_enabled = absf(p.x - MURO_CONDOTTE_X) < 1.0
 	radice.add_child(l)
 	l.global_position = p + verso * 0.4
 
