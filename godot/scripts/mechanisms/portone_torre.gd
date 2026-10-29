@@ -240,13 +240,14 @@ func _strada(t: float) -> float:
 
 
 ## Il muro invisibile sulla soglia (vedi [member _soglia]): le forme di collisione dell'anta, copiate dove sta l'anta
-## chiusa, sullo stesso strato. Senza collisioni nell'anta, una scatola grande come le sue mesh.
+## chiusa, sullo strato delle barriere. Senza collisioni nell'anta, una scatola grande come le sue mesh.
 func _chiudi_soglia() -> void:
 	if _soglia or anta == null:
 		return
 	_soglia = StaticBody3D.new()
 	_soglia.name = "SogliaChiusa"
-	_soglia.collision_layer = Layers.WORLD
+	# (un muro invisibile: ferma il giocatore ma non il getto, come le altre barriere)
+	_soglia.collision_layer = Layers.BARRIERS
 	_soglia.collision_mask = 0
 	add_child(_soglia)
 	_soglia.global_transform = Transform3D.IDENTITY
@@ -256,9 +257,6 @@ func _chiudi_soglia() -> void:
 		var cs := f as CollisionShape3D
 		if cs.shape == null or cs.disabled:
 			continue
-		var corpo := cs.get_parent() as CollisionObject3D
-		if corpo:
-			_soglia.collision_layer = corpo.collision_layer
 		var copia := CollisionShape3D.new()
 		copia.shape = cs.shape
 		_soglia.add_child(copia)
