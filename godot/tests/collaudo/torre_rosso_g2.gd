@@ -24,9 +24,8 @@ func _ready() -> void:
 		energie = Array(a[2].split(",")).map(func(x): return float(x))
 	if a.size() > 3:
 		for t in a[3].split(";"):
-			var pe := t.split("@")
-			var xyz := pe[0].split(":")
-			prove.append([Vector3(float(xyz[0]), float(xyz[1]), float(xyz[2])), float(pe[1])])
+			var pe := t.split(",")
+			prove.append([float(pe[0]), float(pe[1])])
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -50,6 +49,8 @@ func _run() -> void:
 	var campioni := SalaTorre.materiali_campione()
 	var torre := (load("res://scenes/sala/torre/sala_torre.tscn") as PackedScene).instantiate() as SalaTorre
 	torre.costruzione_a_pezzi = true
+	if not prove.is_empty() and &"oblo_rosso_faccia" in torre:
+		torre.set(&"oblo_rosso_faccia", 0.5)     # (il faretto c'è, le prove ne cambiano l'energia)
 	torre.visible = false
 	torre.process_mode = Node.PROCESS_MODE_DISABLED
 	add_child(torre)
@@ -62,6 +63,7 @@ func _run() -> void:
 	campioni.clear()
 	var o := torre.oblo
 	var rosso := o.get_node_or_null(^"RossoVasca") as Light3D
+	var faccia := o.get_node_or_null(^"RossoFaccia") as Light3D
 	await _fotogrammi(20)
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
@@ -90,9 +92,11 @@ func _run() -> void:
 		var e = lista[k]
 		var nome := "" if e == null else "_%s" % str(e)
 		if e is Array:
-			rosso.position = e[0]
-			rosso.light_energy = e[1]
-			nome = "_%s_%s_%s@%s" % [e[0].x, e[0].y, e[0].z, e[1]]
+			rosso.light_energy = e[0]
+			if faccia:
+				faccia.light_energy = e[1]
+				faccia.visible = e[1] > 0.0
+			nome = "_%s_%s" % [e[0], e[1]]
 		elif rosso:
 			rosso.light_energy = float(e)
 		p.teleport(POSTO_TORRE)

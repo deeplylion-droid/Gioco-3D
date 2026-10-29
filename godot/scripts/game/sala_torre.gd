@@ -172,31 +172,45 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 
 
 ## Il rosso dentro la vasca dell'oblò (scelta B dell'utente del 29 ottobre, "com'era prima: si rimette un po' di rosso
-## solo dentro la vasca"). Fino alla 0.3.15 lei e l'acqua dietro di lei prendevano il rosso della lampada d'emergenza
-## del muro est, che senza ombra passava il muro (e faceva la riga rossa nelle condotte) e le illuminava la faccia da
-## davanti; ora quella lampada fa ombra, e il suo rosso lo rimette un faretto debole nel foro del muro, davanti al vetro,
-## puntato dentro la vasca: le illumina la faccia come prima, la torre resta com'è (punta via da lei), e la vasca e il
-## guscio d'ombra tengono la luce dentro. Con l'ombra, senza nebbia (dalla cisterna passerebbe, come quella di lei).
-## Sta sotto l'oblò, quindi la preparazione della torre (prepara_materiali) lo disegna con lui.
-@export var oblo_rosso := 1.5
+## solo dentro la vasca"). Fino alla 0.3.15 tutta la vasca (l'acqua dietro di lei, il fondo, lei) prendeva il rosso della
+## lampada d'emergenza del muro est, che senza ombra passava il muro (e faceva la riga rossa nelle condotte); ora quella
+## lampada fa ombra, e il suo rosso lo rimette una luce dentro la vasca, in alto dalla stessa parte della lampada, con
+## l'ombra (la vasca e il guscio d'ombra la tengono dentro), più se serve un faretto debole nel foro del muro puntato
+## dentro, per la faccia. Senza nebbia: dalla cisterna passerebbe, come quella di lei.
+## Stanno sotto l'oblò, quindi la preparazione della torre (prepara_materiali) le disegna con lui.
+@export var oblo_rosso := 3.5
+@export var oblo_rosso_faccia := 0.0
 ## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
-const OBLO_ROSSO_POSTO := Vector3(0.0, 0.3, -0.15)
+const OBLO_ROSSO_POSTO := Vector3(-1.3, 1.7, -0.5)
+const OBLO_ROSSO_FACCIA := Vector3(0.0, 0.3, -0.15)
 
 
 func _rosso_vasca() -> void:
-	if oblo_rosso <= 0.0 or oblo == null:
+	if oblo == null:
 		return
-	var l := SpotLight3D.new()
-	l.name = "RossoVasca"
-	l.light_color = ROSSO
-	l.light_energy = oblo_rosso
-	l.spot_range = 4.0
-	l.spot_angle = 55.0
-	l.shadow_enabled = true
-	l.light_volumetric_fog_energy = 0.0
-	l.set_meta(&"risveglio_ignora", true)
-	l.position = OBLO_ROSSO_POSTO     # (guarda lungo -z: dentro la vasca)
-	oblo.add_child(l)
+	if oblo_rosso > 0.0:
+		var o := OmniLight3D.new()
+		o.name = "RossoVasca"
+		o.light_color = ROSSO
+		o.light_energy = oblo_rosso
+		o.omni_range = 6.0
+		o.shadow_enabled = true
+		o.light_volumetric_fog_energy = 0.0
+		o.set_meta(&"risveglio_ignora", true)
+		o.position = OBLO_ROSSO_POSTO
+		oblo.add_child(o)
+	if oblo_rosso_faccia > 0.0:
+		var l := SpotLight3D.new()
+		l.name = "RossoFaccia"
+		l.light_color = ROSSO
+		l.light_energy = oblo_rosso_faccia
+		l.spot_range = 4.0
+		l.spot_angle = 55.0
+		l.shadow_enabled = true
+		l.light_volumetric_fog_energy = 0.0
+		l.set_meta(&"risveglio_ignora", true)
+		l.position = OBLO_ROSSO_FACCIA     # (guarda lungo -z: dentro la vasca)
+		oblo.add_child(l)
 
 
 ## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
