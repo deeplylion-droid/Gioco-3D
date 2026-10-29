@@ -63,13 +63,21 @@ Cosa è stato tenuto libero, e come:
    - un giocattolo spostato da fermo si riassesta sul fondo e non resta più per aria;
    - posato sopra un gonfiabile dall'acqua che cala, ne scivola giù;
    - spinto dritto contro un gonfiabile ci scivola attorno, dalla parte del suo cerchio, invece di fermarsi (ritocco chiesto dopo il ricontrollo). I tubi contano come un segmento col bordo liscio, e due gonfiabili più vicini di un giocattolo sono uniti: fra il salvagente e la ciambella la tacca di 34 cm fermava il pallone.
+4. **Staccato dal fondo, scendendo dal portellone della botola** (secondo ricontrollo, su f1096e53). Il portellone sta 7 cm sopra la conca: il pallone ci saliva sopra e, sceso dal bordo, calava a 1,5 m/s, fino a 7 cm sopra il fondo. La conca invece è dolce (8%) e lì non c'era ritardo. Ora:
+   - il portellone è un posto libero, come i gonfiabili: i giocattoli ci scivolano attorno e non coprono la botola;
+   - sul fondo che scende, anche da un piatto, un giocattolo lo segue subito; cade solo da più di 12 cm, cioè giù da un gonfiabile;
+   - galleggiando dove l'acqua è bassa dondola meno, e quando tocca il fondo resta giù.
+
+   Fermo sulla pendenza nord, un giocattolo sta 9 mm sopra le collisioni: poggia sulla rosa dei venti a mosaico, che è 6 mm più alta, più i 3 mm di sempre. Tocca quello che si vede.
 
 `test_enigma_giocattoli` prova anche questi casi:
 - da ogni angolo e da sotto le due scalette, a piscina vuota e piena, si riporta il giocattolo al suo cerchio col getto;
 - il pallone spinto 4 s contro ogni gonfiabile non ci entra, non ci sale e ci scivola attorno (di lato almeno 1,1 m);
-- la paperella posata sulla ciambella calando l'acqua ne scivola giù.
+- spinto 8 s da tre lati contro il gonfiabile vicino alla botola ci scivola attorno (come nel ricontrollo di ambienti-2);
+- la paperella posata sulla ciambella calando l'acqua ne scivola giù;
+- ogni fotogramma, a piscina vuota e piena: chi si muove sul fondo non sta mai più di 1 cm sopra il fondo che ha sotto (al massimo 0,5 cm).
 
-In locale: test_enigma_giocattoli 64/64, test_sala 105/105, test_tappe56 100/100.
+In locale: test_enigma_giocattoli 68/68, test_sala 105/105, test_tappe56 100/100. La prova del ricontrollo di ambienti-2 (`collaudo_giocattoli.gd gonfiabile`) passa 19/19: da 180 gradi il pallone sta al massimo 3 mm sopra il fondo.
 
 ## I gonfiabili d'arredo della parte profonda
 
@@ -131,7 +139,7 @@ Gli scatti, presi dal video:
   - I cerchi li appoggia sul fondo Posa, lo strumento comune.
   - Quello che si vede si disegna una volta fuori vista appena la sala è pronta, sullo strato 1<<15 (`RiscaldamentoShader.disegna_fuori_vista`), così a metà enigma non si compilano pipeline nuove.
   - Lo stato si salva coi checkpoint: dove sono i giocattoli e quali piatti sono scesi.
-  - Il disegno ha un filo di luce propria (`luce_disegno`, 0,12; da approvare, vedi sotto).
+  - Il disegno ha un filo di luce propria (`luce_disegno`, 0,12; approvato dall'utente il 29 ottobre).
   - La texture del disegno (`assets/models/enigma_giocattoli/disegno_piscina.png`) è importata VRAM Compressed con le mipmap, come le altre del gioco: prima era Lossless senza mipmap. Negli scatti ravvicinati dal punto del giocatore le linee fini e i cerchi colorati restano uguali. La differenza media è di 1-2 livelli su 255; si rifà con `tests/scatti_disegno_vicino.gd`.
 
 ![import vicino](import_disegno_vicino.jpg)
@@ -150,6 +158,8 @@ Gli scatti, presi dal video:
 - **Partenze del menu di prova**: `genera_partenze_prova.gd` mette l'enigma risolto nella parte della piscina. Le partenze si rifanno dopo l'unione con le Polaroid nuove, per non far litigare i file.
 
 ## Cosa manca e da decidere
+
+L'utente ha approvato l'enigma il 29 ottobre. Il disegno resta col filo di luce propria (punto 1) e i suoni restano questi (punto 2).
 
 1. **Il disegno ha un filo di luce propria**, come se fosse fatto coi pastelli fosforescenti (come il bordo dei cerchi), con intensità 0,12 (scatto 1).
    - Senza luce, al buio della piscina, da 4 m non si legge: si vede solo un rettangolo scuro (scatto qui sotto, dal punto del video di prima, un po' più lontano).
