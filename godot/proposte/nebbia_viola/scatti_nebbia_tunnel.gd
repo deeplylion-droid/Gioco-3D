@@ -16,7 +16,7 @@ const B := [1.2, 4.5, 1.8, 0.8]
 ## (come tests/scatti_sottomarino.gd: lato -1 la banchina sinistra, 1 la destra, frazioni del canale fra -1 e 1).
 const VISTE := {
 	"1_inizio": [4.0, -1.0, 1.6, 20.0, -0.3, 1.0, 75.0, -1.0],
-	"2_gommoni_lei": [74.0, -1.0, 1.6, 60.0, 0.0, 1.2, 75.0, 61.0],
+	"2_gommoni_lei": [74.0, -1.0, 1.6, 64.0, 0.0, 1.2, 75.0, 69.0],
 	"3_galleria": [199.0, -1.0, 1.6, 203.8, -1.0, 0.6, 70.0, -1.0],
 }
 
@@ -32,6 +32,7 @@ func _frames(n: int) -> void:
 
 func _run() -> void:
 	var out: String = OS.get_cmdline_user_args()[1]
+	var solo: PackedStringArray = OS.get_cmdline_user_args()[2].split(",", false) if OS.get_cmdline_user_args().size() > 2 else PackedStringArray()
 	DirAccess.make_dir_recursive_absolute(out)
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
@@ -67,6 +68,8 @@ func _run() -> void:
 	var occhi := Node3D.new()
 	add_child(occhi)
 	for nome in VISTE:
+		if not solo.is_empty() and not solo.has(nome):
+			continue
 		var v: Array = VISTE[nome]
 		cam.fov = v[6]
 		cam.look_at_from_position(_occhio(sala, v[0], v[1], v[2]), _occhio(sala, v[3], v[4], v[5]))
