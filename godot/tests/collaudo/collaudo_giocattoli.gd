@@ -530,6 +530,7 @@ func _portellone_diretto() -> void:
 	await _svuota()
 	await _frames(120)
 	var botola := Vector2(0.0, 2.0)
+	_senza_fondo = 0
 	var esclusi: Array = []
 	for k in 3:
 		esclusi.append(enigma.giocattolo(k).get_rid())
@@ -552,15 +553,29 @@ func _portellone_diretto() -> void:
 			# (come fa il getto: aggiunge velocità, non la impone, così lo scivolamento del gioco resta)
 			enigma._vel[1] += -via * 4.0 / 60.0
 			await get_tree().physics_frame
-			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
+			su = maxf(su, _sopra(g, esclusi))
 			var ora := Vector2(g.position.x, g.position.z)
 			scatto = maxf(scatto, ora.distance_to(prima))
 			prima = ora
 			minimo = minf(minimo, ora.distance_to(botola))
 		for f in 120:
 			await get_tree().physics_frame
-			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
+			su = maxf(su, _sopra(g, esclusi))
 		var fine := Vector2(g.position.x, g.position.z)
+		if _senza_fondo > 0:
+			print("    (in %d fotogrammi sotto il pallone il raggio non ha trovato il fondo: non contati)" % _senza_fondo)
+			_senza_fondo = 0
 		check(su <= 0.01, "spinto dritto verso il portellone da %.0f gradi: mai più di 1 cm sopra il fondo (%.3f m)" % [rad_to_deg(ang), su])
 		check(fine.distance_to(partenza) > 0.5 and scatto < 0.05, "da %.0f gradi ci scivola attorno senza scatti: si sposta di %.2f m, al massimo %.3f m in un fotogramma, mai più vicino di %.2f m al centro della botola (a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), scatto, minimo, fine.snapped(Vector2.ONE * 0.01)])
 
+
+
+var _senza_fondo := 0
+
+
+func _sopra(g: Node3D, esclusi: Array) -> float:
+	var f := _fondo_sotto(g.global_position, esclusi)
+	if f < -50.0:
+		_senza_fondo += 1
+		return 0.0
+	return g.global_position.y - f
