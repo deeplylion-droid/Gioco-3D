@@ -285,21 +285,38 @@ func _sponda() -> void:
 
 ## La spinta di test_enigma_giocattoli.gd, con una correzione per il collaudo: se dietro al giocattolo alla distanza
 ## voluta c'è il muro, il giocatore si avvicina invece di passare subito alla sponda (che spara lontano dal giocattolo).
+var _ultima_d := 99.0
+var _fermo := 0
+
+
 func _spingi(i: int, max_colpi := 40) -> bool:
 	var g := enigma.giocattolo(i)
 	var c := enigma.cerchio(i).global_position
+	_ultima_d = 99.0
+	_fermo = 0
 	for colpo in max_colpi:
 		var gp := g.global_position
 		var d := Vector2(c.x - gp.x, c.z - gp.z)
 		if enigma.piatto_giu(i) or (d.length() < 0.1 and enigma.velocita(i) < 0.05):
 			return true
 		var dir := d.normalized()
+		# (collaudo: come un giocatore, se spingendo dritto non si muove, per esempio contro un gonfiabile sulla linea,
+		# lo si spinge di lato per un colpo e poi si riprova)
+		if _ultima_d - d.length() < 0.05:
+			_fermo += 1
+		else:
+			_fermo = 0
+		_ultima_d = d.length()
+		if _fermo >= 2:
+			dir = dir.rotated(1.1 * (1.0 if colpo % 2 == 0 else -1.0))
+			_fermo = 0
 		var dietro := clampf(1.6 + d.length() * 0.3, 1.8, 3.0)
 		var voluto := Vector2(gp.x - dir.x * dietro, gp.z - dir.y * dietro)
 		# dove si sta: nella parte profonda, non troppo vicino al muro sud (lì c'è la cassetta del pulsante, che
 		# prenderebbe il getto). Se dietro di lui non ci si sta (è contro un muro), lo si spinge di sponda: davanti a lui,
 		# colpendo il muro o l'acqua alle sue spalle l'onda lo manda verso il cerchio (e verso chi spruzza)
-		var dove_si_sta := Rect2(-6.4, -4.0, 12.8, 7.9)
+		# (collaudo: tutta la parte profonda, fino a 40 cm dai muri: anche a nord dei cerchi, dove un giocatore ci sta)
+		var dove_si_sta := Rect2(-6.6, -4.0, 13.2, 8.6)
 		# (collaudo: se dietro di lui alla distanza voluta non ci si sta, ci si avvicina, fino a 1,2 m, come farebbe un
 		# giocatore; di sponda solo se nemmeno così)
 		if not dove_si_sta.has_point(voluto):
