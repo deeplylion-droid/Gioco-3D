@@ -1,0 +1,6 @@
+0.3.15: rosso medio per zona: acqua 48, capelli 97, corpo 99, mani 47, muro torre 76
+ora (lavoro/godot): rosso medio per zona: acqua 31, capelli 70, corpo 70, mani 25, muro torre 76
+dopo (0c1518ed): rosso medio per zona: acqua 67, capelli 95, corpo 92, mani 62, muro torre 76
+condotte 0.3.15: riga alta R 59, riga bassa R 157, parete R 7.4
+condotte ora: riga alta R 27, riga bassa R 18, parete R 7.1
+condotte dopo: riga alta R 27, riga bassa R 18, parete R 7.1
