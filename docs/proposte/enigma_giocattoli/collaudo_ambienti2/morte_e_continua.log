@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+5. Morte e Continua a metà enigma
+  ok    c'è l'enigma dei giocattoli nella piscina
+  al checkpoint: { "pos": [[-3.89999222755432, 3.29999732971191, -0.64486808075406], [3.89999508857727, 3.29999804496765, -0.97558800586878], [-1.7665513753891, 0.1293557882309, 0.0]], "giu": [true, true, false], "risolto": false }
+  ok    al checkpoint due piatti sono scesi
+  ok    dopo il checkpoint anche il terzo piatto scende
+  ok    dopo la morte c'è l'enigma
+  dopo la morte: { "pos": [[-3.89999222755432, 3.29999732971191, -0.64486808075406], [3.89999508857727, 3.29999804496765, -0.97558800586878], [-1.7665513753891, 0.1293557882309, 0.0]], "giu": [true, true, false], "risolto": false }
+  ok    dopo la morte i piatti sono come al checkpoint ([true, true, false])
+  ok    dopo la morte il giocattolo 0 è dov'era al checkpoint ([-3.89999222755432, 3.29999732971191, -0.64486808075406] / [-3.89999222755432, 3.29999732971191, -0.64486808075406])
+  ok    dopo la morte il giocattolo 0 è sul suo piatto sceso
+  ok    dopo la morte il giocattolo 1 è dov'era al checkpoint ([3.89999508857727, 3.29999804496765, -0.97558800586878] / [3.89999508857727, 3.29999804496765, -0.97558800586878])
+  ok    dopo la morte il giocattolo 1 è sul suo piatto sceso
+  ok    dopo la morte il giocattolo 2 è dov'era al checkpoint ([-1.7665513753891, 0.1293557882309, 0.0] / [-1.7665513753891, 0.1293557882309, 0.0])
+  ok    dopo la morte il giocattolo 2 è appoggiato sul fondo (-2.094, fondo -2.098)
+  ok    dopo la morte la piscina è vuota
+  ok    dopo la morte il pulsante non si preme (due piatti su tre)
+  Continua dopo una chiusura
+  ok    c'è il salvataggio su disco
+  ok    con Continua c'è l'enigma
+  con Continua: { "pos": [[-3.89999222755432, 3.29999732971191, -0.64486808075406], [3.89999508857727, 3.29999804496765, -0.97558800586879], [-1.7665513753891, 0.1293557882309, 0.0]], "giu": [true, true, false], "risolto": false }
+  ok    con Continua i piatti sono come al checkpoint ([true, true, false])
+  ok    con Continua il giocattolo 0 è dov'era al checkpoint ([-3.89999222755432, 3.29999732971191, -0.64486808075406] / [-3.89999222755432, 3.29999732971191, -0.64486808075406])
+  ok    con Continua il giocattolo 0 è sul suo piatto sceso
+  ok    con Continua il giocattolo 1 è dov'era al checkpoint ([3.89999508857727, 3.29999804496765, -0.97558800586879] / [3.89999508857727, 3.29999804496765, -0.97558800586878])
+  ok    con Continua il giocattolo 1 è sul suo piatto sceso
+  ok    con Continua il giocattolo 2 è dov'era al checkpoint ([-1.7665513753891, 0.1293557882309, 0.0] / [-1.7665513753891, 0.1293557882309, 0.0])
+  ok    con Continua il giocattolo 2 è appoggiato sul fondo (-2.094, fondo -2.098)
+  ok    con Continua la piscina è vuota
+  ok    con Continua il pulsante non si preme (due piatti su tre)
+
+RISULTATO: 24 controlli ok, 0 falliti
+WARNING: 992 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+ERROR: 542 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+ERROR: 2 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 173 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 65 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 76 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 208 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 5 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
+ERROR: 2 RID allocations of type 'PN18TextServerAdvanced27FontAdvancedLinkedVariationE' were leaked at exit.
