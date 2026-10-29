@@ -82,6 +82,9 @@ func _run() -> void:
 				for sc: AABB in scatole:
 					var vicino := Vector2(clampf(c.x, sc.position.x, sc.end.x), clampf(c.z, sc.position.z, sc.end.z))
 					if sc.end.y <= yf + 0.02 and sc.end.y > yf - 0.6 and vicino.distance_to(Vector2(c.x, c.z)) < FORO:
+						# (tagliata intorno al cerchio, non tolta tutta: fuori dal foro il pavimento resta. Togliendola
+						# tutta, a scolo_2 la pelle entrava di 4-6 cm nel pavimento a 79 cm dal centro: test del 29 ottobre)
+						tenute.append_array(_fuori_dal_foro(sc, c, FORO))
 						continue
 					tenute.append(sc)
 				scatole = tenute
@@ -279,6 +282,35 @@ func _gruppi(punti: Array) -> Array:
 						coda.append(v)
 		if r.size.x >= PASSO * 0.5 or r.size.y >= PASSO * 0.5:
 			out.append(r.grow(PASSO * 0.5))
+	return out
+
+
+## I pezzi della scatola [param sc] fuori dal cerchio (in pianta) di centro [param c] e raggio [param raggio]: le parti
+## prima e dopo il cerchio lungo z intere, e in mezzo strisce di [constant PASSO] m lungo z, tagliate in x dove la
+## striscia tocca il cerchio (nel punto della striscia più vicino al centro: le strisce non entrano mai nel cerchio).
+func _fuori_dal_foro(sc: AABB, c: Vector3, raggio: float) -> Array:
+	var out := []
+	var y := sc.position.y
+	var sy := sc.size.y
+	var z0 := sc.position.z
+	var z1 := sc.end.z
+	if z0 < c.z - raggio:
+		out.append(AABB(Vector3(sc.position.x, y, z0), Vector3(sc.size.x, sy, minf(c.z - raggio, z1) - z0)))
+	if z1 > c.z + raggio:
+		var za := maxf(c.z + raggio, z0)
+		out.append(AABB(Vector3(sc.position.x, y, za), Vector3(sc.size.x, sy, z1 - za)))
+	var z := maxf(z0, c.z - raggio)
+	var zb := minf(z1, c.z + raggio)
+	while z < zb - 1e-6:
+		var ze := minf(z + PASSO, zb)
+		var dz := 0.0 if z <= c.z and c.z <= ze else minf(absf(z - c.z), absf(ze - c.z))
+		var w := sqrt(maxf(raggio * raggio - dz * dz, 0.0))
+		if sc.position.x < c.x - w - 0.01:
+			out.append(AABB(Vector3(sc.position.x, y, z), Vector3(minf(c.x - w, sc.end.x) - sc.position.x, sy, ze - z)))
+		if sc.end.x > c.x + w + 0.01:
+			var xa := maxf(c.x + w, sc.position.x)
+			out.append(AABB(Vector3(xa, y, z), Vector3(sc.end.x - xa, sy, ze - z)))
+		z = ze
 	return out
 
 

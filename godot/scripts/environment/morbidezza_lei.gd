@@ -85,6 +85,9 @@ var fossa_pianta := PackedVector2Array():
 	set(v):
 		fossa_pianta = v
 		_fossa_dentro = PackedVector2Array()
+		_fossa_centro = Vector2.ZERO
+		for q in v:
+			_fossa_centro += q / v.size()
 ## Tubi ([da, a, raggio]) dove le forme non contano: per esempio il condotto, chiuso dalla parete di collisione.
 var tunnel: Array = []
 ## Le vasche (WaterTank) il cui pelo conta; vuoto: quelle entro 8 m, cercate all'inizio.
@@ -140,6 +143,7 @@ var _bers: Array = []                      # per catena: i bersagli della molla 
 var _bers_posa: Array = []
 var _trattieni_k := 0.0
 var _fossa_dentro := PackedVector2Array()
+var _fossa_centro := Vector2.ZERO
 var _dt_acc := PackedFloat32Array()        # per catena: il tempo da quando si è simulata l'ultima volta
 var _fotogrammi := 0
 var _vp: Array[PackedVector3Array] = []     # la velocità della posa, media
@@ -1454,6 +1458,19 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 					meglio = cima
 					rf = _sup(meglio.normal, ip) if ip >= 0 else r
 					dm = meglio.distance_to(p)
+			# dentro la pianta della fossa (il foro dove lei sale) un punto non si spinge in giù, sotto il pavimento: esce
+			# dalla faccia verso il centro del foro. Uscendo di sotto restava sotto il bordo e poi lo passava in un
+			# fotogramma (scolo_2, mentre sale: test del 29 ottobre)
+			if meglio.normal.y < -0.5 and fossa_pianta.size() >= 3 \
+					and Geometry2D.is_point_in_polygon(Vector2(p.x, p.z), fossa_pianta):
+				var verso := Vector3(_fossa_centro.x - p.x, 0.0, _fossa_centro.y - p.z).normalized()
+				var dv := -INF
+				for pl: Plane in fo[0]:
+					if pl.normal.dot(verso) > dv:
+						dv = pl.normal.dot(verso)
+						meglio = pl
+				rf = _sup(meglio.normal, ip) if ip >= 0 else r
+				dm = meglio.distance_to(p)
 			p += meglio.normal * (rf - dm)
 			mosso = true
 		if not mosso:
