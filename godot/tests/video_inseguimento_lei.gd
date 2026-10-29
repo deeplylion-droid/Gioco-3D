@@ -64,6 +64,11 @@ func _avvia() -> void:
 		var perno := SalaInseguimento.b(g["perno"])
 		var n := SalaInseguimento.b(g["verso"]).normalized()
 		p.teleport(perno - Vector3(n.x, 0.0, n.z).normalized() * 3.5 + Vector3.UP * 0.3, 0.0, 0.0)
+	elif dove.begins_with("scolo"):
+		# (collaudo della morbidezza leggera) nella vasca di scolo, dove lei ti prende: al centro, sul fondo
+		var v: Dictionary = sala.dati["scolo"][int(dove[-1])]
+		var r: Array = v["rett"]
+		p.teleport(SalaInseguimento.b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, float(v["fondo"])]) + Vector3.UP * 0.05, 0.0, 0.0)
 	else:
 		# nella vasca 1, verso il lato sud, così il tubo giallo sul bordo nord non copre lei
 		var v: Dictionary = sala.dati["vasche"][0]
@@ -89,7 +94,7 @@ func _process(_delta: float) -> void:
 	_f += 1
 	if _f == 0:
 		print("INIZIO frame ", Engine.get_frames_drawn())
-	var t := _f / 30.0
+	var t := _f * get_process_delta_time()
 	p.look_at_point(_testa())
 	if t >= 0.8 and not _partito:
 		_partito = true
@@ -97,6 +102,8 @@ func _process(_delta: float) -> void:
 			sala.call(&"_lei_sale", "sb1", sala.call(&"_posto_sb1"), 1.3)
 		elif dove == "grata":
 			sala.call(&"_lei_alla_grata")
+		elif dove.begins_with("scolo"):
+			sala.call(&"_lei_sale", dove, sala.call(&"_posto_scolo", int(dove[-1])), 1.2)
 		else:
 			sala.call(&"_lei_sale", "vasca_0", sala.call(&"_posto_vasca", 0), 1.6)
 	var m := MorbidezzaLei.su(sala.lei) if sala.lei else null

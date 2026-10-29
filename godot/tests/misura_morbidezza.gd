@@ -149,6 +149,12 @@ func inizia() -> void:
 
 func ferma() -> void:
 	_attiva = false
+	# (collaudo della morbidezza leggera: i punti di ogni fotogramma su file, per confrontare prima e dopo al bit)
+	if OS.has_environment("MORB_DUMP"):
+		var f := FileAccess.open(OS.get_environment("MORB_DUMP"), FileAccess.READ_WRITE if FileAccess.file_exists(OS.get_environment("MORB_DUMP")) else FileAccess.WRITE)
+		f.seek_end()
+		f.store_var(uscita)
+		f.close()
 	if _prima and _prima.modification_processed.is_connected(_su_entrata):
 		_prima.modification_processed.disconnect(_su_entrata)
 	if m.modification_processed.is_connected(_su_uscita):
