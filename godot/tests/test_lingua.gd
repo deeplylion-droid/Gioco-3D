@@ -358,3 +358,19 @@ func _cambia_lingua() -> void:
 	var cfg := ConfigFile.new()
 	cfg.load(Lingua.PERCORSO)
 	check(String(cfg.get_value(Lingua.SEZIONE, "lingua", "")) == "it", "la scelta della lingua si salva")
+	# nelle opzioni aperte anche il testo del FOV cambia subito (collaudo del 28 ottobre: restava "horiz." in italiano)
+	var opz := MenuOpzioni.new()
+	add_child(opz)
+	await _frames(3)
+	var fov := (opz.get(&"_controlli") as Dictionary).get("fov") as HSlider
+	var etichetta: Label = fov.get_meta("etichetta") if fov else null
+	var prima := etichetta.text if etichetta else ""
+	Lingua.imposta("en")
+	await _frames(2)
+	var dopo := etichetta.text if etichetta else ""
+	Lingua.imposta("it")
+	await _frames(2)
+	check(prima.ends_with("orizz.)") and dopo.ends_with("horiz.)") and etichetta.text == prima,
+			"nelle opzioni il testo del FOV cambia lingua subito, avanti e indietro", [prima, dopo, etichetta.text if etichetta else ""])
+	opz.queue_free()
+	await _frames(2)

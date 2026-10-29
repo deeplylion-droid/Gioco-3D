@@ -243,6 +243,8 @@ func _cursore(c: Control, titolo: String, chiave: String, minimo: float, massimo
 	h.add_child(s)
 	h.add_child(l)
 	_controlli[chiave] = s
+	# il testo (il FOV ha "orizz." dentro) cambia subito anche quando cambia la lingua, non solo quando si muove il cursore
+	Lingua.segui(l, func(): l.text = _testo(chiave, formato, s.value * scala_testo))
 
 
 ## Testo accanto al cursore; il FOV mostra anche i gradi orizzontali.
