@@ -63,8 +63,9 @@ const TARATURA := {
 	# il canto di sirena di lei nel tunnel: dalla sua bocca, più forte quando si avvicina (25 ottobre)
 	&"lei_tunnel_canto": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
 	# l'inseguimento nel tunnel (25 ottobre sera): il cuore del giocatore dentro la testa (niente riverbero), il ritmo nello
-	# scafo; tutti e due non posizionali
-	&"cuore_battito": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.25],
+	# scafo; tutti e due non posizionali. Il cuore -5 dB (collaudo del 29 ottobre): nel gioco arrivava al livello del canto,
+	# nell'esempio approvato (inseguimento_esempio_36s) stava 4,6-5,5 dB sotto
+	&"cuore_battito": [BUS_INTERFACCIA, -5.0, 0.0, 0.0, 0.25],
 	&"inseguimento_colpo": [BUS_EFFETTI, 0.0, 0.0, 0.0, 0.4],
 	&"passo_piastrelle": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
 	&"passo_bagnato": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],

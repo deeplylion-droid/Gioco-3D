@@ -6,6 +6,7 @@ extends Node
 ## - mentre insegue: lontana (18 m) il cuore a circa 72 battiti al minuto e il ritmo rado, vicina (8 m) il cuore a circa
 ##   128 e il ritmo fitto, e più forti;
 ## - mentre si ritrae dal getto il cuore rallenta e il ritmo si dirada; quando prende o sparisce tacciono;
+## - il cuore sta 5 dB sotto il canto, come nell'esempio approvato (collaudo del 29 ottobre);
 ## - cuore_attivo e ritmo_attivo spengono l'uno o l'altro (per la scelta dell'utente).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento_suoni.gd
 
@@ -71,6 +72,8 @@ func _run() -> void:
 	check(lontana[1] >= 10 and lontana[1] <= 19, "lontana il ritmo rado (%d colpi in 20 s)" % lontana[1])
 	check(vicina[1] >= 28 and vicina[1] <= 50, "vicina il ritmo fitto (%d colpi in 20 s)" % vicina[1])
 	check(vol_vicina[0] > vol_lontana[0] + 6.0, "vicina il cuore più forte (%.1f contro %.1f dB)" % [vol_vicina[0], vol_lontana[0]])
+	# sotto il canto come nell'esempio approvato: a 8 m il battito a -5 dB, il canto (lei_tunnel_canto) a 0 (29 ottobre)
+	check(vol_vicina[0] <= -5.0 and vol_vicina[0] >= -6.0, "vicina il cuore 5 dB sotto il canto, come nell'esempio (%.1f dB)" % vol_vicina[0])
 
 	print("Il getto: si ritrae")
 	ap.play(&"inseguimento/ritrae")
