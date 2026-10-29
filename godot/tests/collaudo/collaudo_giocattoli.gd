@@ -489,7 +489,8 @@ func _portellone() -> void:
 		# (il raggio parte da sopra il bordo: dove il fondo sale verso la parte bassa, partendo dalla quota del pallone non
 		# lo trovava e il giocatore finiva a -99)
 		stand.y = _fondo_sotto(Vector3(stand.x, 1.0, stand.z), []) + 0.05
-		p.teleport(stand, 0.0, 0.0)
+		# (girato verso il pallone, come in test_enigma: con l'imbardata a 0 il getto finiva sul fondo davanti)
+		p.teleport(stand, atan2(-(g.global_position.x - stand.x), -(g.global_position.z - stand.z)), 0.0)
 		await _frames(20)
 		p.water_pack.set_tank_amount(30.0)
 		var su := 0.0
