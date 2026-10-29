@@ -48,14 +48,16 @@ const STACCO := 0.003
 @export var cerchi: Array[Vector3] = [Vector3(-3.9, 0, 3.3), Vector3(3.9, 0, 3.3), Vector3(-3.9, 0, -0.1)]
 ## Dove galleggiano i giocattoli all'inizio (x, z) e come sono girati (y, in gradi), nel sistema del nodo.
 @export var partenze: Array[Vector3] = [Vector3(0.4, 30, 0.6), Vector3(4.4, 0, -0.6), Vector3(-0.2, 120, -0.8)]
-## Dove possono andare i giocattoli in pianta (la parte profonda, già tolto un margine dai muri): x e z minimi,
-## larghezza e lunghezza, nel sistema del nodo.
-@export var area := Rect2(-6.6, -3.6, 13.2, 8.15)
-## Posti da lasciare liberi sul fondo (x, z, raggio, nel sistema del nodo): il piede delle scalette, la ripartenza del
-## checkpoint della pozza vuota. La P5 la si tiene libera da sola finché c'è ([member polaroid]), e i gonfiabili già
-## sul fondo (i MeshInstance3D "ogg_*" della sala nella parte profonda) sono ostacoli ([method _ostacoli_fondo]).
-## Valgono solo per i giocattoli appoggiati sul fondo: galleggiando ci passano sopra.
-@export var liberi: Array[Vector3] = [Vector3(-6.3, 2.2, 0.7), Vector3(6.3, 3.2, 0.7), Vector3(1.4, 0.4, 0.45)]
+## Dove possono andare i giocattoli in pianta (la parte profonda): x e z minimi, larghezza e lunghezza, nel sistema del
+## nodo. Lontano dai muri (x ±7, z 5) quanto basta perché il giocatore si metta fra il giocattolo e il muro e lo
+## spinga via: arrivava a 40 cm dai muri, e negli angoli e sotto le scalette un giocattolo restava incastrato (collaudo
+## di ambienti-2, 29 ottobre). A nord è la pendenza verso la spiaggia, dove si cammina.
+@export var area := Rect2(-5.9, -3.5, 11.8, 7.45)
+## Posti da lasciare liberi sul fondo (x, z, raggio, nel sistema del nodo): la ripartenza del checkpoint della pozza
+## vuota (le scalette sono fuori dall'[member area]). La P5 la si tiene libera da sola finché c'è ([member polaroid]), e
+## i gonfiabili già sul fondo (i MeshInstance3D "ogg_*" della sala nella parte profonda) sono ostacoli
+## ([method _ostacoli_fondo]). Valgono solo per i giocattoli appoggiati sul fondo: galleggiando ci passano sopra.
+@export var liberi: Array[Vector3] = [Vector3(1.4, 0.4, 0.45)]
 ## La sala (per trovare i gonfiabili sul fondo).
 @export var sala: Node3D
 ## La Polaroid sul fondo (P5): finché c'è, i giocattoli non ci vanno sopra.
@@ -105,6 +107,8 @@ var _piatti: Array[Node3D] = []
 var _dischi: Array[CylinderMesh] = []
 var _forme_piatti: Array[CylinderShape3D] = []
 var _ostacoli: Array[Vector3] = []
+## Le collisioni dei gonfiabili sul fondo (per i test: la quota del fondo vero sotto un giocattolo).
+var _rid_gonfiabili: Array[RID] = []
 var _mat_cerchi: Array[Material] = []
 var _giocattoli: Array[AnimatableBody3D] = []
 var _vel: Array[Vector2] = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
@@ -114,6 +118,8 @@ var _acceso: Array[float] = [0.0, 0.0, 0.0]
 var _sopra: Array[bool] = [false, false, false]
 ## Fermo sul fondo e appoggiato con Posa (sulla mesh che si vede, non solo sulla collisione).
 var _assestato: Array[bool] = [false, false, false]
+## Dov'era (in pianta) quando si è assestato: se qualcosa lo sposta (un gonfiabile, un altro giocattolo) si riassesta.
+var _fermo_in: Array[Vector2] = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
 ## L'imbardata di ogni giocattolo (a parte: appoggiato si inclina come la superficie sotto) e quella superficie.
 var _yaw: Array[float] = [0.0, 0.0, 0.0]
 var _normale: Array[Vector3] = [Vector3.UP, Vector3.UP, Vector3.UP]
@@ -541,6 +547,9 @@ func _su_getto(collider: Object, punto: Vector3, normale: Vector3) -> void:
 			# muro colpito lo respinge via dal muro (di sponda: così lo si stacca da un muro)
 			if absf(normale.y) < 0.5 and d.length() > 0.01:
 				verso = d.normalized()
+			# l'acqua o il fondo colpiti non lo spingono contro il bordo dell'area se ci è già contro (prima il getto che
+			# cadeva davanti al muro lo rimandava sotto la scaletta, collaudo di ambienti-2)
+			verso = _non_verso_il_bordo(g, verso)
 		var lontano := Vector2(gp.x - occhio.x, gp.z - occhio.z).length()
 		k *= remap(clampf(lontano, vicino_m, lontano_m), vicino_m, lontano_m, 1.3, 0.6)
 		if not _galleggia(i):
@@ -549,6 +558,19 @@ func _su_getto(collider: Object, punto: Vector3, normale: Vector3) -> void:
 		# (un colpo di lato lo fa anche girare un po')
 		var lato := Vector2(punto.x - gp.x, punto.z - gp.z)
 		_yaw_vel[i] += clampf(lato.cross(dir), -0.4, 0.4) * k * dt * 2.0
+
+
+## [param verso] (in pianta, nel mondo) senza la parte che porta il giocattolo [param g] fuori dall'[member area], se è a
+## meno di 40 cm dal bordo.
+func _non_verso_il_bordo(g: Node3D, verso: Vector2) -> Vector2:
+	var l := _a_locale(verso)
+	var pos := Vector2(g.position.x, g.position.z)
+	if (pos.x < area.position.x + 0.4 and l.x < 0.0) or (pos.x > area.end.x - 0.4 and l.x > 0.0):
+		l.x = 0.0
+	if (pos.y < area.position.y + 0.4 and l.y < 0.0) or (pos.y > area.end.y - 0.4 and l.y > 0.0):
+		l.y = 0.0
+	var m := global_basis * Vector3(l.x, 0.0, l.y)
+	return Vector2(m.x, m.z)
 
 
 ## Una direzione orizzontale del mondo nel sistema del nodo (in pianta).
@@ -666,6 +688,7 @@ func _muovi(i: int, delta: float) -> void:
 	var c := Vector2(_cerchi[i].position.x, _cerchi[i].position.z)
 	var pos := Vector2(g.position.x, g.position.z)
 	var al_centro := c - pos
+	var prima := pos
 	if al_centro.length() < raggio_aggancio and v.length() < 0.7:
 		v += al_centro * 4.0 * delta
 		v *= exp(-2.5 * delta)
@@ -675,26 +698,34 @@ func _muovi(i: int, delta: float) -> void:
 	# dentro la parte profonda, fuori dai posti da lasciare liberi
 	if pos.x < area.position.x:
 		pos.x = area.position.x
-		v.x = absf(v.x) * 0.3
+		v.x = absf(v.x) * 0.2
 	elif pos.x > area.end.x:
 		pos.x = area.end.x
-		v.x = -absf(v.x) * 0.3
+		v.x = -absf(v.x) * 0.2
 	if pos.y < area.position.y:
 		pos.y = area.position.y
-		v.y = absf(v.y) * 0.3
+		v.y = absf(v.y) * 0.2
 	elif pos.y > area.end.y:
 		pos.y = area.end.y
-		v.y = -absf(v.y) * 0.3
+		v.y = -absf(v.y) * 0.2
 	if not a_galla:
 		# sul fondo: i gonfiabili e i posti liberi lo respingono (morbidi: chi ci arriva sopra calando l'acqua ne
 		# scivola giù in mezzo secondo)
 		for l in _posti_liberi():
 			var d := pos - Vector2(l.x, l.y)
 			var minimo: float = l.z + RAGGI[i]
-			if d.length() < minimo and d.length() > 0.0001:
-				var n := d.normalized()
+			if d.length() < minimo:
+				# (proprio nel centro, come posato dall'acqua nel mezzo di una ciambella: scivola verso il centro dell'area)
+				var n := d.normalized() if d.length() > 0.0001 else (area.get_center() - pos).normalized()
 				var dentro := minimo - d.length()
 				pos += n * minf(dentro, maxf(dentro * 8.0 * delta, 0.004))
+				# chi ci arriva da fuori spinto dal getto non entra più di 1 cm (il getto continuo vinceva la spinta morbida:
+				# il pallone entrava 20 cm nella ciambella e ci saliva sopra, collaudo di ambienti-2); chi ci arriva sopra
+				# calando l'acqua ne scivola giù in mezzo secondo
+				if minimo - (prima - Vector2(l.x, l.y)).length() <= 0.01:
+					var dopo := minimo - (pos - Vector2(l.x, l.y)).length()
+					if dopo > 0.01:
+						pos += n * (dopo - 0.01)
 				var vn := v.dot(n)
 				if vn < 0.0:
 					v -= n * vn * 1.3
@@ -710,7 +741,9 @@ func _muovi(i: int, delta: float) -> void:
 		g.global_position.y = _y[i] + sin(_t * 1.3 + i * 2.1) * 0.012
 		g.rotation = Vector3(sin(_t * 0.9 + i) * 0.04, _yaw[i], sin(_t * 1.1 + i * 1.7) * 0.04)
 	else:
-		if v.length() > 0.03:
+		# (spostato anche da fermo, da un gonfiabile o da un altro giocattolo: si riassesta, se no resta alla quota di
+		# prima, anche per aria)
+		if v.length() > 0.03 or (_assestato[i] and pos.distance_to(_fermo_in[i]) > 0.003):
 			_assestato[i] = false
 		if not _assestato[i]:
 			_y[i] = maxf(bersaglio, _y[i] - 1.5 * delta) if _y[i] > bersaglio else bersaglio
@@ -725,6 +758,7 @@ func _muovi(i: int, delta: float) -> void:
 		if not _assestato[i] and v.length() < 0.02 and absf(_y[i] - bersaglio) < 0.002 \
 				and (vasca == null or vasca.fill <= 0.0005):
 			_assestato[i] = true
+			_fermo_in[i] = pos
 			var escludi: Array[RID] = []
 			for x in _giocattoli:
 				escludi.append(x.get_rid())
@@ -732,9 +766,12 @@ func _muovi(i: int, delta: float) -> void:
 
 
 ## I gonfiabili già sul fondo della parte profonda (x, z, raggio nel sistema del nodo): i MeshInstance3D "ogg_*" della
-## sala che stanno lì sotto. I lunghi (i tubi) diventano due cerchi.
+## sala che stanno lì sotto, con la loro misura vera (il riquadro della mesh girato con lei: col riquadro del mondo una
+## ciambella girata contava 10 cm in più e i tubi di traverso meno del vero). I lunghi (i tubi) diventano una fila di
+## cerchi lungo l'asse, fino in fondo. Raccoglie anche le loro collisioni ([member _rid_gonfiabili]).
 func _ostacoli_fondo() -> Array[Vector3]:
 	var out: Array[Vector3] = []
+	_rid_gonfiabili.clear()
 	if sala == null:
 		return out
 	for n in sala.find_children("ogg_*", "MeshInstance3D", true, false):
@@ -745,14 +782,25 @@ func _ostacoli_fondo() -> Array[Vector3]:
 		var c := to_local(bb.get_center())
 		if bb.position.y > -1.2 or not area.grow(0.5).has_point(Vector2(c.x, c.z)):
 			continue
-		var sx := bb.size.x * 0.5
-		var sz := bb.size.z * 0.5
-		if maxf(sx, sz) > 1.4 * minf(sx, sz):
-			var lungo := Vector3(sx * 0.5, 0, 0) if sx > sz else Vector3(0, 0, sz * 0.5)
-			for k in [-1.0, 1.0]:
-				out.append(Vector3(c.x + lungo.x * k, c.z + lungo.z * k, minf(sx, sz) * 1.05))
-		else:
-			out.append(Vector3(c.x, c.z, maxf(sx, sz) * 0.95))
+		for co in mi.find_children("*", "CollisionObject3D", true, false):
+			_rid_gonfiabili.append((co as CollisionObject3D).get_rid())
+		# i due lati in pianta della mesh, girati come lei, nel sistema del nodo
+		var la := mi.get_aabb()
+		var b := global_basis.inverse() * mi.global_basis
+		var ax := Vector2(b.x.x, b.x.z) * la.size.x * 0.5
+		var az := Vector2(b.z.x, b.z.z) * la.size.z * 0.5
+		var lungo := ax if ax.length() >= az.length() else az
+		var corto := az if ax.length() >= az.length() else ax
+		var r := corto.length()
+		if lungo.length() <= r * 1.2:
+			out.append(Vector3(c.x, c.z, lungo.length()))
+			continue
+		var asse := lungo.normalized()
+		var meta := lungo.length() - r
+		var passi := maxi(1, ceili(meta / (r * 0.5)))
+		for k in passi + 1:
+			var q := Vector2(c.x, c.z) + asse * lerpf(-meta, meta, float(k) / passi)
+			out.append(Vector3(q.x, q.y, r))
 	return out
 
 
@@ -883,6 +931,11 @@ func metti_al_posto_uno(i: int) -> void:
 	_vel[i] = Vector2.ZERO
 	# (spostato senza spinta: si riposa sul piatto, se no resta alla quota di prima, anche dentro la conca)
 	_assestato[i] = false
+
+
+## Vero se il giocattolo [param i] galleggia (per i test).
+func galleggia(i: int) -> bool:
+	return _galleggia(i)
 
 
 ## I giocattoli (per i test e gli scatti).
