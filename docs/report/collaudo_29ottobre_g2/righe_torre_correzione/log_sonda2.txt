@@ -1,0 +1,19 @@
+SONDA luce di lei a (40.95, -20.27, -13.7) vetro (40.4, -18.25, -13.7) normale (-1.0, 0.0, 0.0)
+SONDA riga alta pixel 650,122: punto (40.0, -17.57865, -13.66595) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 650,126: punto (40.0, -17.59211, -13.66595) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 650,130: punto (40.0, -17.60558, -13.66595) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 750,122: punto (40.0, -17.59817, -13.33461) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 750,126: punto (40.0, -17.61131, -13.33461) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 750,130: punto (40.0, -17.62445, -13.33461) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 850,122: punto (40.0, -17.61677, -13.01903) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 850,126: punto (40.0, -17.62959, -13.01903) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA riga alta pixel 850,130: punto (40.0, -17.64242, -13.01903) su /root/TestRunner/SalaTorre/ObloLei/Corpo (normale (-1.0, 0.0, -0.0))
+SONDA base                         riga alta R  30  riga bassa R  15  parete R 5.7 G 1.0 B 8.2
+SONDA struttura_due_facce          riga alta R  43  riga bassa R  20  parete R 8.8 G 1.5 B 10.8
+SONDA lei_senza_ombre              riga alta R 123  riga bassa R  53  parete R 10.4 G 1.7 B 11.9
+SONDA nebbia_di_lei_0              riga alta R  36  riga bassa R   0  parete R 0.0 G 0.1 B 2.0
+SONDA nebbia_tolta_condotte        riga alta R  32  riga bassa R   0  parete R 0.0 G 0.0 B 1.0
+SONDA lei_spenta                   riga alta R  28  riga bassa R   0  parete R 0.0 G 0.1 B 2.0
+SONDA torre_base                   riga alta R 106  riga bassa R  90  parete R 60.8 G 31.8 B 34.2
+SONDA torre_nebbia_di_lei_0        riga alta R 104  riga bassa R  79  parete R 52.8 G 29.0 B 26.9
+SONDA torre_nebbia_tolta_condotte  riga alta R 106  riga bassa R  89  parete R 59.6 G 31.4 B 33.6
