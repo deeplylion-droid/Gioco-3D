@@ -1,7 +1,7 @@
 extends Node
 ## Test automatico: i bambini (Bambino, bambino_cubo e bambino_agnello) camminano e corrono senza far scivolare i
 ## piedi (nota dell'utente sui bambini visti di sfuggita: "attenzione alle animazioni. falle bene"). Su un pavimento
-## piatto, in camminata e in fuga (anche in curva, con la partenza da fermo), si guarda ogni fotogramma il piede che
+## piatto, in camminata e in fuga (anche in curva, con la partenza da fermo, e voltandosi sul posto per scappare), si guarda ogni fotogramma il piede che
 ## sta a terra (il più basso, entro 1,5 cm dal suo punto più basso e senza salire o scendere): nel mondo deve stare fermo, cioè la sua velocità
 ## in orizzontale deve restare sotto [constant SCIVOLA_MAX] m/s in media. E i piedi toccano il pavimento: il punto più
 ## basso dei piedi sta entro [constant TERRA_MAX] m dal pavimento.
@@ -12,6 +12,8 @@ const SCENE := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creatur
 ## camminando e a 0,9 m/s correndo.
 const SCIVOLA_MAX := 0.12
 const SCIVOLA_MAX_CORSA := 0.35
+## Voltandosi sul posto per scappare (collaudo del 29 ottobre: prima il piede piantato strisciava a 0,8-2 m/s).
+const SCIVOLA_MAX_SVOLTA := 0.15
 const TERRA_MAX := 0.06
 
 var _passed := 0
@@ -44,6 +46,8 @@ func _run() -> void:
 		print(scena.get_file())
 		await _prova(scena, "cammina")
 		await _prova(scena, "corsa")
+		await _prova(scena, "svolta")
+		await _prova(scena, "svolta svelta")
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
@@ -58,9 +62,16 @@ func _prova(scena: String, cosa: String) -> void:
 	b.visible = true
 	b.global_position = Vector3.ZERO
 	b.rotation.y = 0.0
-	# un percorso con una curva a 60 gradi a metà, da fermo
+	# un percorso con una curva a 60 gradi a metà, da fermo; "svolta": scappa dalla parte opposta a dove guarda (si
+	# volta sul posto, poi parte), "svolta svelta" come l'agnellino della scala C2 (si volta di scatto)
+	var strada := [Vector3(0, 0, 3.0), Vector3(2.6, 0, 4.5), Vector3(5.0, 0, 6.0)]
+	if cosa.begins_with("svolta"):
+		strada = [Vector3(0.3, 0, -3.0), Vector3(0.3, 0, -8.0)]
+	if cosa == "svolta svelta":
+		b.giro_corsa = 600.0
+		b.accel_corsa = 9.0
 	var punti: Array[Node3D] = []
-	for q in [Vector3(0, 0, 3.0), Vector3(2.6, 0, 4.5), Vector3(5.0, 0, 6.0)]:
+	for q in strada:
 		var m := Marker3D.new()
 		add_child(m)
 		m.global_position = q
@@ -92,18 +103,20 @@ func _prova(scena: String, cosa: String) -> void:
 			basso_piede = minf(basso_piede, pos[o].y)
 		for o in punte:
 			minimo = minf(minimo, (sk.global_transform * sk.get_bone_global_pose(o).origin).y)
-		# il piede più basso è quello a terra; solo dopo il primo mezzo secondo (la partenza fonde dal fermo)
+		# il piede più basso è quello a terra; solo dopo il primo mezzo secondo (la partenza fonde dal fermo), e nella
+		# svolta proprio nel primo secondo, mentre si volta e parte
 		var basso: int = piedi[0] if pos[piedi[0]].y < pos[piedi[1]].y else piedi[1]
 		_piede_min = minf(_piede_min, basso_piede)
+		var conta := t > 0.5 if not cosa.begins_with("svolta") else t < 1.0
 		# a terra: vicino al punto più basso e senza salire o scendere (il piede in volo che passa basso non conta)
-		if t > 0.5 and prima.has(basso) and pos[basso].y < _piede_min + 0.015:
+		if conta and prima.has(basso) and pos[basso].y < _piede_min + 0.015:
 			var d: Vector3 = pos[basso] - prima[basso]
 			if absf(d.y) / dt < 0.25:
 				somma += Vector2(d.x, d.z).length() / dt
 				n += 1
 		prima = pos
 	var media := somma / maxf(n, 1)
-	var limite := SCIVOLA_MAX if cosa == "cammina" else SCIVOLA_MAX_CORSA
+	var limite := SCIVOLA_MAX if cosa == "cammina" else (SCIVOLA_MAX_SVOLTA if cosa.begins_with("svolta") else SCIVOLA_MAX_CORSA)
 	check(n > 10 and media < limite, "%s: il piede a terra scivola in media di %.2f m/s (al più %.2f; %d campioni)" % [cosa, media, limite, n])
 	check(absf(minimo) < TERRA_MAX, "%s: le punte dei piedi toccano terra (la più bassa a %+.3f m dal pavimento)" % [cosa, minimo])
 	b.queue_free()

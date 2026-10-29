@@ -81,8 +81,8 @@ const OBLO_PERSONALE := Vector3(-36.0, Y + 1.5, 49.6)
 const OBLO_SERVIZIO := Vector3(-21.5, 1.5, 37.45)
 const ALZATA := 0.18
 const PEDATA := 0.28
-## L'agnellino dei bambini visti di sfuggita (preload: si carica col thread della zona).
-const BAMBINO_AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
+## Il bambino col cubo dei bambini visti di sfuggita, nel corridoio del fiume (preload: si carica col thread della zona).
+const BAMBINO_CUBO := preload("res://scenes/creature/bambino_cubo.tscn")
 
 ## Falso: le stanze si caricano subito in _ready e restano sempre, come prima (strumenti e test che le vogliono
 ## sempre). Lo stesso con Engine.set_meta(&"risalita_subito", true).
@@ -428,15 +428,15 @@ func _scala_fiume() -> void:
 
 
 ## Il bambino visto di sfuggita del corridoio del fiume (proposta approvata dall'utente il 25 ottobre, "i bambini visti
-## di sfuggita"): l'agnellino in fondo al corridoio, a destra della porta del capannone, girato verso la scala. Compare
-## mentre il giocatore è sul pianerottolo in fondo alla scala o nel corridoio (mai sotto i suoi occhi, e non mentre lei
-## è dietro il vetro dell'oblò), ti guarda inclinando la testa, poi corre nella porta aperta del capannone e gira a
+## di sfuggita"): il bambino col cubo in fondo al corridoio, a destra della porta del capannone, girato verso la
+## scala. Compare mentre il giocatore è sul pianerottolo in fondo alla scala o nel corridoio (mai sotto i suoi occhi, e
+## solo dopo lei all'oblò, mai insieme), ti guarda inclinando la testa, poi corre nella porta aperta del capannone e gira a
 ## sinistra, nella rientranza fra la porta e il muro dell'approdo: lì dal corridoio non si vede più, e sparisce.
 func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, porta0: float, porta1: float, fine: float,
 		oblo: ObloLei) -> void:
 	var b := BambinoSfuggita.new()
 	b.name = "BambinoCorridoioFiume"
-	b.scena = BAMBINO_AGNELLO
+	b.scena = BAMBINO_CUBO
 	b.position = Vector3(xc + 1.1, Y, fine - 0.6)
 	b.rotation.y = PI                          # guarda verso sud, verso la scala
 	b.zona = AABB(Vector3(xc, Y - 0.2, z0), Vector3(x_fondo - xc, 3.0, porta0 - 2.5 - z0))

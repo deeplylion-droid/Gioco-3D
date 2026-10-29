@@ -58,6 +58,7 @@ func _run() -> void:
 	var tempo_anim := 0.0
 	var tempo_atteso := 0.0
 	var compenetra := ""
+	var piedi_sotto := INF
 	Input.action_press(&"move_forward")
 	Input.action_press(&"sprint")
 	var tappa := 0
@@ -84,6 +85,9 @@ func _run() -> void:
 				tempo_atteso = clampf(b._vel / b.vel_corsa_anim, 0.25, 1.6)
 				if compenetra == "":
 					compenetra = _compenetra(b)
+				# i piedi a terra, anche piegandosi per il buco (collaudo del 29 ottobre: entravano nel pavimento)
+				var pav := tec.to_global(Vector3(0, ag.posizione.y, 0)).y
+				piedi_sotto = minf(piedi_sotto, b.piedi_piu_in_basso() - pav)
 		await get_tree().physics_frame
 		_corso += 1
 	Input.action_release(&"move_forward")
@@ -93,6 +97,7 @@ func _run() -> void:
 			"corre piano (%.1f m/s), con l'animazione a tempo (velocità %.2f)" % [ag.velocita_corsa, tempo_anim])
 	check(_sparito_a >= 0, "si infila nel buco e sparisce (dopo %d frame di corsa)" % _sparito_a)
 	check(_sparito_a >= 0 and not _fuori_dalla_cavita, "quando sparisce è tutto dentro la cavità, al buio")
+	check(piedi_sotto > -0.02, "correndo e piegandosi i piedi non entrano nel pavimento (il punto più basso a %+.3f m)" % piedi_sotto)
 	check(compenetra == "", "correndo e infilandosi non passa attraverso muri, pavimento e roba accatastata %s" % compenetra)
 	check(minima > 1.2, "correndo non lo si raggiunge (il più vicino: %.1f m)" % minima)
 	await _frames(10)

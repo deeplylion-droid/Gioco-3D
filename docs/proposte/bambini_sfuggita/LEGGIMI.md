@@ -2,16 +2,17 @@
 
 Proposta approvata dall'utente la sera del 25 ottobre (GDD, scelte della sera del 25 ottobre), con la nota:
 "attenzione alle animazioni. falle bene". Il bambino a cubo o l'agnellino compare per un attimo, lontano, sta fermo a
-guardarti e scappa dietro un angolo prima che tu ci arrivi. Niente aggressioni.
+guardarti e scappa dietro un angolo prima che tu ci arrivi. Niente aggressioni. Ci sono tutti e due: il bambino col
+cubo nel corridoio del fiume (la porta del capannone è alta), l'agnellino nella galleria bassa del tunnel.
 
 Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspetta l'ok dell'utente.**
 
 ## I punti
 
-### 1. Il corridoio del fiume (risalita)
+### 1. Il corridoio del fiume (risalita): il bambino col cubo
 
-- **Dove**: il corridoio di 17 m che dal fondo della scala porta al capannone del fiume lento. L'agnellino sta in
-  fondo, sul pavimento del corridoio, a destra della porta aperta del capannone, girato verso la scala.
+- **Dove**: il corridoio di 17 m che dal fondo della scala porta al capannone del fiume lento. Il bambino col cubo sta
+  in fondo, sul pavimento del corridoio, a destra della porta aperta del capannone, girato verso la scala.
 - **Quando compare**: col giocatore sul pianerottolo in fondo alla scala o nel primo tratto del corridoio, e solo
   mentre non può vederlo (si mette al suo posto fuori vista). Mai insieme a lei all'oblò dello stesso corridoio:
   compare solo dopo che lei è stata vista ed è andata via. Se il giocatore passa senza vederla, lei torna la volta
@@ -23,12 +24,12 @@ Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspe
 - **Quando non si vede più**: appena lo stipite della porta lo nasconde sparisce (dal corridoio dove va non si vede:
   la rientranza fra la porta e il muro dell'approdo). Una volta sola: lo stato si salva coi checkpoint.
 
-### 2. La galleria del tunnel sottomarino
+### 2. La galleria del tunnel sottomarino: l'agnellino
 
 - **Dove**: sulla banchina sinistra del tunnel, davanti alla bocca della prima galleria di servizio (a 203 m dalla
   presa), girato verso chi arriva.
 - **Quando compare**: mentre si scappa da lei lungo la banchina sinistra, fra 34 e 8 m dalla galleria. Lì si corre
-  guardando avanti, quindi il bambino compare lontano, oltre i 26 m, nel buio del tunnel.
+  guardando avanti, quindi l'agnellino compare lontano, oltre i 26 m: si vede a circa 32 m, sulla banchina illuminata.
 - **Cosa fa**: ti guarda; quando lo guardi o ti avvicini sotto i 12 m entra nella bocca della galleria (è piccolo, ci
   sta in piedi: la galleria è alta 1,25 m) e va dietro il muro.
 - **Quando non si vede più**: dietro il muro della galleria; poi il giocatore passa nella stessa galleria e non c'è più.
@@ -44,15 +45,16 @@ se l'utente vuole un terzo punto (per esempio al bivio 2, lungo la banchina del 
 
 Per tutti i bambini del gioco (`scripts/creature/bambino.gd`):
 
-- **piedi che non scivolano**: il corpo avanza alla velocità dei piedi a terra misurata sulle animazioni (il bambino
-  a cubo 0,45 m/s camminando e 2,45 correndo, l'agnellino, che ha le gambe più corte, 0,34 e 1,9; prima avevano la
-  stessa e l'agnellino scivolava); l'animazione va alla velocità del corpo;
+- **piedi che non scivolano**: il piede che tocca terra resta fermo nel mondo e il corpo avanza e gira attorno a lui,
+  come in un passo vero; solo con tutti e due i piedi in aria (la corsa) il corpo va per conto suo, alla velocità dei
+  piedi misurata sulle animazioni (il bambino a cubo 0,45 m/s camminando e 2,45 correndo, l'agnellino, che ha le gambe
+  più corte, 0,34 e 1,9). L'animazione va alla velocità del corpo;
 - **partenza e arresto col passo**: il corpo accelera e rallenta, non parte di colpo;
 - **curve, non giri sul posto**: gira al massimo di 110 gradi al secondo camminando e 260 correndo, e rallenta nelle
-  curve strette; quando deve voltarsi per scappare (chi lo guardava è dietro di lui) prima si volta quasi sul posto, a
-  passi lenti, poi parte;
-- **lo stare fermo**: respira, segue con la testa e ogni 3-4 secondi la inclina piano.
-
+  curve strette; quando deve voltarsi per scappare (chi lo guardava è dietro di lui) prima si volta sul posto coi
+  passi della camminata, girando solo quando il piede libero è sollevato, poi parte (collaudo del 29 ottobre: prima
+  il piede piantato strisciava a 0,8-2 m/s, ora 0,01-0,04);
+- **lo stare fermo**: respira, segue con la testa e ogni 3-4 secondi la inclina piano;
 - **curve strette**: prima di una curva di più di 45 gradi rallenta e la fa col passo, senza tagliare lo spigolo;
   non va mai più veloce di quanto serve per prendere il punto girando.
 
@@ -63,11 +65,15 @@ giocatore lo raggiungeva. Ora (test_agnellino verde):
 
 - quello che si vede resta uguale: compare in cima alla scala, ti guarda, scappa nella corsia, si piega e si infila
   nel buco;
-- si volta di scatto (600 gradi al secondo) e parte più svelto, perché la corsia è stretta e il giocatore gli corre
-  dietro;
+- si volta di scatto (fino a 900 gradi al secondo, coi passi: gira solo quando il piede libero è sollevato) e parte
+  più svelto, perché la corsia è stretta e il giocatore gli corre dietro (il più vicino che gli arriva: 1,2 m, come
+  chiede il test; prima 1,4);
 - scappa quando ti avvicini sotto i 9 m invece dei 7 di prima (per girarsi col passo gli serve quel mezzo secondo);
 - comincia a piegarsi per entrare nel buco a 1,4 m dal muro invece di 1,15, e ci arriva già piegato a 0,85 m invece
-  di 0,75, così la testa resta lontana dal bordo alto;
+  di 0,75, così la testa resta lontana dal bordo alto; si piega senza scatti, anche entrando di lato nella striscia
+  davanti al buco;
+- piegandosi si alza quanto serve perché i piedi restino sopra il pavimento (collaudo del 29 ottobre: le ossa dei piedi
+  scendevano fino a 14 cm sotto; ora al più 3 mm, controllato da test_agnellino);
 - la curva in fondo alla corsia la fa da sé, col passo; poi si raddrizza verso il buco come prima.
 
 Il bambino si muove sempre in coordinate del mondo (`top_level`), così il nodo che lo mette al suo posto può essere
@@ -83,7 +89,8 @@ girato.
 ## I test
 
 - `godot/tests/test_bambini_passi.gd`: i due bambini camminano e corrono (con una curva, da fermi): il piede a terra
-  nel mondo scivola in media 0,06 e 0,11 m/s camminando, 0,15 e 0,21 m/s correndo; le punte dei piedi toccano terra.
+  nel mondo scivola in media 0,00-0,01 m/s camminando e correndo, 0,01-0,04 voltandosi sul posto per scappare (anche
+  di scatto come l'agnellino della scala); le punte dei piedi toccano terra.
 - `godot/tests/test_bambini_sfuggita.gd` (39 controlli verdi): per ogni punto, poggia a terra, al suo posto non entra
   in niente, la strada della fuga è libera e ha il pavimento, passa lontano dalle Polaroid e fermo non ne copre
   nessuna, con lei all'oblò ancora da vedere non compare, dove sparisce non si vede da nessun punto della zona,
