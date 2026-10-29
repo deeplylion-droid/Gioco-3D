@@ -25,7 +25,7 @@ RES = 'res://assets/ambiente/scarabocchi'
 # pixel per metro (2,4 mm per pixel: il tratto grosso di un pastello, 12-16 mm, è largo 5-7 pixel)
 PPM = 420
 # le zone bagnate: la cera sbiadisce e si stacca a macchie
-BAGNATE = {'fiume': 0.55, 'tunnel': 0.6, 'inseguimento': 0.5, 'piscina': 0.45}
+BAGNATE = {'fiume': 0.35, 'tunnel': 0.35, 'inseguimento': 0.3, 'piscina': 0.3}
 
 
 # ------------------------------------------------------------------ i disegni per muro

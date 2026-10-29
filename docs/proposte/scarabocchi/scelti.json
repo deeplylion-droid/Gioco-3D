@@ -237,32 +237,6 @@
 		"zona": "tunnel"
 	},
 	{
-		"alto": 0.9,
-		"centro": [
-			-23.28,
-			-29.2,
-			48.17
-		],
-		"largo": 2.0,
-		"luce": 0.46,
-		"mesh": "Tunnel_336/struttura_mosaico",
-		"nome": "tunnel_6",
-		"normale": [
-			-0.94,
-			0.0,
-			-0.35
-		],
-		"occhi": [
-			-27.61,
-			-29.32,
-			47.5
-		],
-		"punteggio": 144.9,
-		"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn",
-		"vista": 175,
-		"zona": "tunnel"
-	},
-	{
 		"alto": 0.5,
 		"centro": [
 			26.7,
