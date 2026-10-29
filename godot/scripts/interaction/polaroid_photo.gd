@@ -9,7 +9,9 @@ extends Collectible
 const TEX_DIR := "res://assets/models/polaroid/texture/"
 const VIEWER := preload("res://scripts/ui/photo_viewer.gd")
 const SCENA := "res://scenes/props/polaroid.tscn"
-## I punti dell'impronta della foto (8,8 x 10,7 cm) per Posa.appoggia_su_impronta: il centro, gli angoli e i lati.
+## I punti dell'impronta della foto (8,8 x 10,7 cm) per Posa.appoggia_su_impronta, negli strumenti e nei test (a gioco
+## avviato, con le stanze che si costruiscono a pezzi, i raggi sotto tutta la foto fanno fotogrammi lunghi): il centro,
+## gli angoli e i lati.
 const IMPRONTA: Array[Vector3] = [Vector3(0, 0, 0), Vector3(0.04, 0, 0.05), Vector3(-0.04, 0, 0.05), Vector3(0.04, 0, -0.05),
 	Vector3(-0.04, 0, -0.05), Vector3(0.04, 0, 0), Vector3(-0.04, 0, 0), Vector3(0, 0, 0.05), Vector3(0, 0, -0.05)]
 
@@ -39,8 +41,10 @@ func _ready() -> void:
 
 ## Una Polaroid messa da codice sotto [param padre]: [param pos] (locale, appena sopra il sostegno) e girata di
 ## [param gradi]. Due fotogrammi di fisica dopo, Posa (lo strumento comune) la appoggia sulla superficie che si vede
-## sotto, 4 mm sopra come lo snap di sempre. L'id nella collezione è "pNN".
-static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float) -> PolaroidPhoto:
+## sotto, 4 mm sopra come lo snap di sempre. Con [param posata] [param pos] è già il posto giusto, calcolato una volta
+## sola con uno strumento (la P12 sul grigliato della torre, tests/posa_polaroid12.gd): niente raggi a gioco avviato.
+## L'id nella collezione è "pNN".
+static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float, posata := false) -> PolaroidPhoto:
 	var p := (load(SCENA) as PackedScene).instantiate() as PolaroidPhoto
 	p.name = "Polaroid%02d" % foto
 	p.photo = foto
@@ -49,7 +53,8 @@ static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float) -> Polar
 	p.position = pos
 	p.rotation_degrees.y = gradi
 	padre.add_child(p)
-	p._appoggia.call_deferred()
+	if not posata:
+		p._appoggia.call_deferred()
 	return p
 
 
@@ -75,8 +80,7 @@ func _appoggia() -> void:
 			break
 		await get_tree().create_timer(0.17, false, true).timeout
 	if is_inside_tree():
-		# (sotto tutta la foto: su un grigliato un raggio solo passava in un buco, P12 nel collaudo del 28 ottobre)
-		Posa.appoggia_su_impronta(self, IMPRONTA, 0.004)
+		Posa.appoggia_a_terra(self, 0.004)
 
 
 func get_texture() -> Texture2D:
