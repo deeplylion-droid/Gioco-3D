@@ -7,7 +7,7 @@ extends Node
 ## nell'albero ancora qualche fotogramma. Qui, 5 volte di fila, per lampade d'emergenza (fissa, pulsante, rotante) e neon:
 ## - si liberano a pezzi con fotogrammi in mezzo (un figlio alla volta);
 ## - si liberano a pezzi tutte insieme, poi si chiude il gioco con le ultime ancora nell'albero;
-## e nessun errore "Lambda capture" né altri errori dello script dell'audio.
+## e nessun errore "Lambda capture", nessun "previously freed" né altri errori degli script dell'audio e delle luci.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio_chiusura.gd
 
 class Errori extends Logger:
@@ -58,13 +58,15 @@ func _crea() -> Array[Node3D]:
 	return out
 
 
-## Gli errori nuovi che vengono dall'audio (o dalle catture delle lambda).
+## Gli errori nuovi che vengono dall'audio (o dalle catture delle lambda) e dalle luci che usano figli già liberati
+## ("previously freed", come luce_emergenza.gd fino al 29 ottobre).
 func _errori_audio(da: int) -> PackedStringArray:
 	var out := PackedStringArray()
 	var tutti := _errori.copia()
 	for i in range(da, tutti.size()):
 		var r := tutti[i]
-		if r.contains("Lambda capture") or r.contains("addons/audio"):
+		if r.contains("Lambda capture") or r.contains("addons/audio") or r.contains("previously freed") \
+				or r.contains("addons/grafica"):
 			out.append(r)
 	return out
 
@@ -92,7 +94,7 @@ func _run() -> void:
 			AccensioneAPezzi.libera(n, 0.0)
 		await _frames(20)
 		var e := _errori_audio(da)
-		check(e.is_empty(), "giro %d: liberate a pezzi, nessun errore dell'audio" % (giro + 1), e)
+		check(e.is_empty(), "giro %d: liberate a pezzi, nessun errore dell'audio né delle luci" % (giro + 1), e)
 	# e la chiusura vera con le lampade ancora accese e una liberazione a pezzi a metà
 	var da_fine := _errori.copia().size()
 	var ultime := _crea()
@@ -101,7 +103,7 @@ func _run() -> void:
 	await _frames(1)
 	print("")
 	var e := _errori_audio(da_fine)
-	check(e.is_empty(), "chiusura con le lampade accese: nessun errore dell'audio", e)
+	check(e.is_empty(), "chiusura con le lampade accese: nessun errore dell'audio né delle luci", e)
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
 

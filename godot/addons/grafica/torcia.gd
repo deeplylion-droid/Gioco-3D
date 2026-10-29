@@ -138,6 +138,9 @@ func ricarica(quanto := 1.0) -> void:
 
 
 func _process(delta: float) -> void:
+	# (la luce è figlia: quando la scena si libera dalle foglie, AccensioneAPezzi.libera, sparisce prima della torcia)
+	if not is_instance_valid(luce):
+		return
 	_t += delta
 	# Segue lo sguardo; con [member ritardo] in modo morbido (esponenziale, indipendente dagli FPS).
 	var target := global_basis.get_rotation_quaternion()
