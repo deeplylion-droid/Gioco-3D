@@ -94,7 +94,7 @@ func _run() -> void:
 		var da := cam.project_ray_origin(Vector2(x, 643))
 		var dir := cam.project_ray_normal(Vector2(x, 643))
 		var q := PhysicsRayQueryParameters3D.create(da, da + dir * 30.0)
-		var h := get_world_3d().direct_space_state.intersect_ray(q)
+		var h: Dictionary = p.get_world_3d().direct_space_state.intersect_ray(q)
 		if h:
 			print("SONDA riga bassa pixel %d: punto %s su %s (normale %s)" % [x, h.position, (h.collider as Node).get_path(), h.normal])
 			hits.append(h.position)
