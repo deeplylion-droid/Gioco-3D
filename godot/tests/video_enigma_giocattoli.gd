@@ -66,7 +66,7 @@ func _run() -> void:
 	await _attendi(1.0)
 	await _guarda(Vector3(-6.97, -0.75, -0.2), 1.2)
 	await _attendi(2.5)
-	_scatto("giocattoli_disegno")
+	await _scatto("giocattoli_disegno")
 	_conta_pipeline("disegno")
 
 	# 2. la spinta sull'acqua: il pallone rosso fino al suo cerchio
@@ -75,7 +75,7 @@ func _run() -> void:
 	await _metti(_dietro(1, 2.4), enigma.giocattolo(1).global_position)
 	await _spingi(1)
 	await _attendi(1.0)
-	_scatto("giocattoli_spinta_acqua")
+	await _scatto("giocattoli_spinta_acqua")
 	_conta_pipeline("spinta sull'acqua")
 
 	# (fuori scena: la paperella sul suo cerchio, galleggiando; la balena resta lontano, per la spinta sul fondo)
@@ -99,7 +99,7 @@ func _run() -> void:
 			break
 		await get_tree().physics_frame
 	await _attendi(1.5)
-	_scatto("giocattoli_piatti_scesi")
+	await _scatto("giocattoli_piatti_scesi")
 	_conta_pipeline("piatti scesi")
 
 	# 4. una spinta sul fondo vuoto: la balena fino al suo cerchio, il terzo piatto scende
@@ -119,7 +119,7 @@ func _run() -> void:
 			break
 		await get_tree().physics_frame
 	await _attendi(1.2)
-	_scatto("giocattoli_spinta_fondo")
+	await _scatto("giocattoli_spinta_fondo")
 	_conta_pipeline("spinta sul fondo")
 
 	# 5. la luce verde del pulsante della botola, e la botola
@@ -131,7 +131,7 @@ func _run() -> void:
 			break
 		await get_tree().physics_frame
 	await _attendi(2.0)
-	_scatto("giocattoli_luce_verde")
+	await _scatto("giocattoli_luce_verde")
 	_conta_pipeline("luce verde")
 	p.water_pack.set_tank_amount(20.0)
 	await _spruzza_verso(pulsante.global_position + Vector3(0, 0.45, 0), 1.0)
@@ -141,7 +141,7 @@ func _run() -> void:
 		await get_tree().physics_frame
 	await _guarda(Vector3(0.0, -2.2, 2.1), 1.0)
 	await _attendi(2.5)
-	_scatto("giocattoli_botola_aperta")
+	await _scatto("giocattoli_botola_aperta")
 	_conta_pipeline("botola aperta")
 	print("FINE risolto %s, botola aperta %s" % [enigma.risolto_ok, portello.get(&"is_open")])
 	get_tree().quit()
@@ -285,7 +285,7 @@ func _spingi(i: int) -> void:
 			if enigma.velocita(i) < 0.05:
 				break
 		if colpo == 0 and i == 0:
-			_scatto("giocattoli_spinta")
+			await _scatto("giocattoli_spinta")
 	print("  giocattolo %d a %.2f m dal suo cerchio" % [i, Vector2(c.x - g.global_position.x, c.z - g.global_position.z).length()])
 
 
