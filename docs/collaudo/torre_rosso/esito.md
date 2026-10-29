@@ -69,3 +69,54 @@ ObloPersonale, ObloServizio e ObloFiume sono identici alla 0.3.15: i loro veli e
 - Condotte, oblò della risalita, pipeline ed errori: a posto.
 - Il rosso da lontano: a posto.
 - Da vicino non somiglia alla 0.3.15: velo rosa piatto sul vetro e lei slavata. Da ritoccare (vetro meno acceso).
+
+# Secondo ricontrollo: lavoro/torre-rosso aff0a946 (29 ottobre sera)
+
+Cosa è cambiato in aff0a946:
+- un faretto rosso corto (1,8 m) con l'ombra, appena fuori dal foro;
+- i veli a 0,15 e il vetro spento;
+- la lampada del muro est senza l'ombra del suo corpo e l'ombra della condotta sfocata.
+
+Stesso script, stessa camera. I fogli hanno il prefisso `aff0a946_`; le misure sono in `misure_aff0a946.txt`.
+
+## Lei da 2 e 1,2 m: rossa, satura, con le ombre. Il velo latteo non c'è più
+
+`aff0a946_lei_1_2m_ingrandita.jpg`, la 0.3.15 a sinistra:
+- Lei somiglia molto alla 0.3.15: rossa, con le ombre e il fondo della vasca scuro dietro.
+- È un po' più accesa e più calda della 0.3.15, come illuminata da davanti:
+  - capelli R 159 contro 112, saturazione 100 contro 61;
+  - più rosa-arancio.
+- **Le mani si vedono più di prima:** R 129 contro 92, rosa chiaro invece che scure. Nella 0.3.15 restavano quasi in
+  ombra.
+- Se si vuole identica: il faretto un po' più debole, o puntato più in alto, così da lasciare le mani in ombra.
+
+## Il muro sopra l'oblò accanto alla lampada: c'è ancora un'ombra netta
+
+`aff0a946_muro_sopra_oblo.jpg`, sopra la 0.3.15 e sotto aff0a946:
+- A sinistra della lampada c'è ancora una fascia scura orizzontale col bordo basso netto. È l'ombra di quello che sta
+  sopra (la condotta), e non sembra sfocata.
+- Lì il muro è R 40 contro R 74 della 0.3.15, dove era acceso di rosso.
+- A destra della lampada il muro è uguale (R 42 contro 47).
+
+## Da 9, 6 e 3,5 m: uguale alla 0.3.15
+
+Vetro R 95/92/84 contro 96/92/82.
+
+## Un puntino rosso nel vetro a vasca vuota
+
+Nello scatto `prima_vuota`, prima che lei compaia, al centro del vetro si vede un puntino rosso acceso: probabilmente
+è il faretto visto attraverso il foro. Nella 0.3.15 non c'è. Si vede poco, ma a vasca vuota attira l'occhio.
+
+## Condotte, oblò della risalita, pipeline
+
+- Condotte: nessuna riga, buie come prima della correzione.
+- Oblò della risalita (Personale, Servizio, Fiume): identici alla 0.3.15.
+- Pipeline +0 alla comparsa di lei; +0 in tutti gli scatti e nel distacco.
+- Nessuna riga "ERROR: BUG,".
+
+## In breve
+
+- Lei da vicino e il resto: a posto per la build. Lei è un po' più accesa e le mani più chiare della 0.3.15.
+- Da sistemare:
+  - l'ombra netta a sinistra della lampada sopra l'oblò;
+  - il puntino rosso nel vetro a vasca vuota.
