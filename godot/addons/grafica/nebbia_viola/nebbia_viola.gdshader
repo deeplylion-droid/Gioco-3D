@@ -1,14 +1,15 @@
 // La nebbia viola di NotHuman (assets_src/nebbia_viola/nebbia_viola.js, dell'utente), tradotta per Godot 4.7 Forward+:
-// un quad a schermo intero davanti alla camera (NebbiaViola) che legge lo schermo prima del tone mapping e la
-// profondità. Per ogni punto dello schermo si cammina lungo il raggio dall'occhio alla cosa vista per [passi] passi (con
+// un quad a schermo intero davanti alla camera (NebbiaViola), disegnato dopo tutto il resto e prima del tone mapping,
+// che legge la profondità e si mescola con quello che c'è già (luce di dietro × T + luce della nebbia): non ricopia lo
+// schermo, così l'acqua, i vetri e le medusine trasparenti disegnati prima restano (collaudo del 29 ottobre).
+// Per ogni punto dello schermo si cammina lungo il raggio dall'occhio alla cosa vista per [passi] passi (con
 // l'inizio sfalsato), e a ogni passo la nebbia toglie un po' della luce di dietro e ci mette la sua: l'aria viola,
 // l'alone delle lampade e la polvere nella luce. È più fitta in basso e fatta a ciuffi che vanno col vento.
 // Il sole e la finestra dell'originale non ci sono (nelle zone del gioco non servono). I valori sono quelli della B
 // (scelta dell'utente del 29 ottobre): li mette NebbiaViola.
 shader_type spatial;
-render_mode unshaded, depth_draw_never, depth_test_disabled, cull_disabled, fog_disabled, shadows_disabled;
+render_mode unshaded, blend_premul_alpha, depth_draw_never, depth_test_disabled, cull_disabled, fog_disabled, shadows_disabled;
 
-uniform sampler2D schermo : hint_screen_texture, filter_linear, repeat_disable;
 uniform sampler2D profondita : hint_depth_texture, filter_nearest, repeat_disable;
 uniform sampler2D rumore_tex : filter_linear, repeat_enable;
 
@@ -51,7 +52,6 @@ void vertex() {
 }
 
 void fragment() {
-	vec3 col = texture(schermo, SCREEN_UV).rgb;
 	float z = texture(profondita, SCREEN_UV).x;
 	vec2 ndc = SCREEN_UV * 2.0 - 1.0;
 	// la direzione dal piano vicino; la distanza dalla profondità (0 è lontanissimo: niente dietro, fino a "lontano")
@@ -91,6 +91,7 @@ void fragment() {
 		S += T * (1.0 - tr) * luce * forza;
 		T *= tr;
 	}
-	ALBEDO = col * T + S;
-	ALPHA = 1.0;
+	// (premoltiplicato: lo schermo diventa schermo × T + S)
+	ALBEDO = S;
+	ALPHA = 1.0 - T;
 }
