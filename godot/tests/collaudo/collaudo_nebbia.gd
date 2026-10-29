@@ -18,6 +18,12 @@ func _run() -> void:
 	n = Grafica.nebbia_viola
 	if "mappa" in _parti:
 		await _mappa()
+	if "soglie_infermeria" in _parti:
+		await _carica_tutto()
+		if not GameState.player_died.is_connected(_morto):
+			GameState.player_died.connect(_morto)
+		await _passeggia("dall'infermeria al fiume (esce)", [Vector3(-36.0, -5.3, 45.4), Vector3(-35.0, -5.3, 54.8)])
+		await _passeggia("dal fiume nell'infermeria (entra)", [Vector3(-35.0, -5.3, 54.8), Vector3(-36.0, -5.3, 45.4)])
 	if "soglie" in _parti:
 		await _soglie()
 	if "ripartenze" in _parti:
@@ -77,7 +83,8 @@ func _passeggia(nome: String, tappe: Array) -> void:
 	if not is_instance_valid(p):
 		return
 	var da: Vector3 = tappe[0]
-	da.y = _fondo_sotto(da + Vector3.UP * 1.5, []) + 0.05
+	var f0 := _fondo_sotto(da + Vector3.UP * 1.5, [])
+	da.y = (f0 if f0 > -50.0 else da.y) + 0.05
 	await _vai(da, 3.5)
 	var inizio := n.quanto
 	var salto := 0.0
