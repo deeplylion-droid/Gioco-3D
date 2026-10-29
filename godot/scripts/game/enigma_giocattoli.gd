@@ -65,6 +65,9 @@ const STACCO := 0.003
 ## est: a destra è nord, in alto è ovest (la piscina dall'alto come la vede chi guarda il muro).
 @export var disegno_posizione := Vector3(-6.97, -0.8, -0.2)
 @export var disegno_misura := Vector2(1.2, 0.9)
+## Un filo di luce propria del disegno (pastelli fosforescenti, come il bordo dei cerchi): al buio della piscina, senza,
+## da 4 m non si legge (prove del 29 ottobre: a 0,3 sembra uno schermo acceso). Da approvare con l'enigma.
+@export_range(0.0, 1.0) var luce_disegno := 0.12
 
 @export_group("Spinta")
 ## Accelerazione data dal getto che colpisce un giocattolo (m/s² con lo zaino a 4 m).
@@ -167,6 +170,8 @@ func _disegno() -> Decal:
 	d.position = disegno_posizione
 	var vero := DIR + "disegno_piscina.png"
 	d.texture_albedo = load(vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
+	d.texture_emission = d.texture_albedo
+	d.emission_energy = luce_disegno
 	d.upper_fade = 0.0
 	d.lower_fade = 0.0
 	d.cull_mask = 1

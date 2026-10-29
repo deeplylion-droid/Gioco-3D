@@ -6,7 +6,8 @@ extends Node
 ## stampa le pipeline compilate in ogni fase (dopo il riscaldamento a metà enigma non se ne devono compilare).
 ## Uso: xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##        --fixed-fps 30 --write-movie <file.avi> --script res://tests/run.gd -- res://tests/video_enigma_giocattoli.gd <cartella>
-##        [adesca]   (senza --write-movie: prima usa getto e aspirazione, così le pipeline contate sono solo dell'enigma)
+##        [adesca]   (senza --write-movie: prima usa getto e aspirazione, così le pipeline contate sono solo dell'enigma;
+##                    si ferma dopo la spinta sull'acqua)
 
 const SCENA := "res://scenes/sala_principale.tscn"
 const TOGLI := ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata",
@@ -52,7 +53,7 @@ func _run() -> void:
 	piscina = level.get_node(^"Piscina/SvuotaPiscina") as PiscinaOnde
 	pulsante = level.get_node(^"Piscina/PulsantePortello") as WaterButton
 	portello = level.get_node(^"Piscina/Portello")
-	await _metti(Vector3(-2.9, 0.0, -0.25), Vector3(-6.97, -0.85, -0.2))
+	await _metti(Vector3(-3.6, 0.0, -0.25), Vector3(-6.97, -0.85, -0.2))
 	for i in 90:
 		await get_tree().process_frame
 	p.process_mode = Node.PROCESS_MODE_INHERIT
@@ -64,7 +65,8 @@ func _run() -> void:
 	await _attendi(0.5)
 	# con "adesca" (per contare solo le pipeline dell'enigma): prima il getto e l'aspirazione, lontano dai giocattoli,
 	# come nel gioco dove lo zaino si usa già dagli interni
-	if a.size() > 2 and a[2] == "adesca":
+	var adesca := a.size() > 2 and a[2] == "adesca"
+	if adesca:
 		await _guarda(Vector3(-3.0, -1.5, -3.5), 0.3)
 		Input.action_press(&"spray")
 		await _attendi(1.5)
@@ -92,6 +94,10 @@ func _run() -> void:
 	await _attendi(1.0)
 	await _scatto("giocattoli_spinta_acqua")
 	_conta_pipeline("spinta sull'acqua")
+	if adesca:
+		print("FINE adesca")
+		get_tree().quit()
+		return
 
 	# (fuori scena: la paperella sul suo cerchio, galleggiando; la balena resta lontano, per la spinta sul fondo)
 	enigma.metti_al_posto_uno(0)
