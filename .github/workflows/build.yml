@@ -195,6 +195,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_riserva.gd
 
+      - name: Test del portone della torre alle spalle (tornando indietro di corsa si resta nella torre, appoggiati alla soglia non si resta incastrati, dopo una morte si riparte col portone chiuso)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_portone_torre.gd
+
       - name: Test del guado nel canale del tunnel sottomarino (velocità, risalita, aspirazione)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_guado.gd

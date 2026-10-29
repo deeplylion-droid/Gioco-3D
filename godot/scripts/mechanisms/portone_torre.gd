@@ -73,6 +73,11 @@ var _mat_vetro: BaseMaterial3D
 var _emissione_vetro := 0.0
 var _lampeggia := false
 var _tl := 0.0
+## Il muro invisibile sulla soglia, da quando il portone si richiude alle spalle: chi è entrato non torna nella sala
+## grande mentre l'anta scorre (prima, nei 3 s della chiusura, si tornava indietro di corsa e si restava chiusi fuori con
+## gli ambienti già scaricati: sonda del 29 ottobre). È la collisione dell'anta ferma dove l'anta è chiusa: l'anta che
+## scorre resta nello stesso spessore, e non spinge chi ci sta appoggiato.
+var _soglia: StaticBody3D
 
 
 func _ready() -> void:
@@ -152,6 +157,7 @@ func chiudi() -> void:
 	if chiuso_dietro:
 		return
 	chiuso_dietro = true
+	_chiudi_soglia()
 	in_movimento = false
 	_in_chiusura = true
 	apertura_iniziata.emit()  # il suono del motore
@@ -160,6 +166,7 @@ func chiudi() -> void:
 ## Chiuso subito (ripartendo da un checkpoint dentro la torre).
 func resta_chiuso() -> void:
 	chiuso_dietro = true
+	_chiudi_soglia()
 	_in_chiusura = false
 	in_movimento = false
 	quanto = 0.0
@@ -232,6 +239,49 @@ func _strada(t: float) -> float:
 	return minf(s + v * tf - 0.5 * dec * tf * tf, corsa)
 
 
+## Il muro invisibile sulla soglia (vedi [member _soglia]): le forme di collisione dell'anta, copiate dove sta l'anta
+## chiusa, sullo stesso strato. Senza collisioni nell'anta, una scatola grande come le sue mesh.
+func _chiudi_soglia() -> void:
+	if _soglia or anta == null:
+		return
+	_soglia = StaticBody3D.new()
+	_soglia.name = "SogliaChiusa"
+	_soglia.collision_layer = Layers.WORLD
+	_soglia.collision_mask = 0
+	add_child(_soglia)
+	_soglia.global_transform = Transform3D.IDENTITY
+	# dall'anta dov'è adesso all'anta chiusa
+	var da_anta := _chiuso_xf * anta.global_transform.affine_inverse()
+	for f in anta.find_children("*", "CollisionShape3D", true, false):
+		var cs := f as CollisionShape3D
+		if cs.shape == null or cs.disabled:
+			continue
+		var corpo := cs.get_parent() as CollisionObject3D
+		if corpo:
+			_soglia.collision_layer = corpo.collision_layer
+		var copia := CollisionShape3D.new()
+		copia.shape = cs.shape
+		_soglia.add_child(copia)
+		copia.global_transform = da_anta * cs.global_transform
+	if _soglia.get_child_count() > 0:
+		return
+	var box := AABB()
+	var prima := true
+	for m in anta.find_children("*", "VisualInstance3D", true, false):
+		var vi := m as VisualInstance3D
+		var b: AABB = (da_anta * vi.global_transform) * vi.get_aabb()
+		box = b if prima else box.merge(b)
+		prima = false
+	if prima:
+		return
+	var forma := CollisionShape3D.new()
+	var scatola := BoxShape3D.new()
+	scatola.size = box.size
+	forma.shape = scatola
+	_soglia.add_child(forma)
+	forma.global_position = box.get_center()
+
+
 func _metti(k: float) -> void:
 	if anta:
 		anta.global_transform = Transform3D(_chiuso_xf.basis, _chiuso_xf.origin + direzione.normalized() * corsa * k)
@@ -256,7 +306,10 @@ func load_state(data: Dictionary) -> void:
 	in_movimento = false
 	_in_chiusura = false
 	_t = -1.0
-	if bool(data.get("chiuso_dietro", false)):
+	# chiuso alle spalle resta chiuso: ripartendo da un checkpoint della torre la sala lo chiude prima che arrivi lo stato
+	# salvato, e al checkpoint del portone (appena oltre la soglia) era ancora aperto (sonda del 29 ottobre: si ripartiva
+	# col portone aperto e si tornava nella sala senza interni e tecnici)
+	if chiuso_dietro or bool(data.get("chiuso_dietro", false)):
 		resta_chiuso()
 		return
 	if bool(data.get("aperto", false)):
