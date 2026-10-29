@@ -28,7 +28,7 @@
 	{
 		"alto": 0.9,
 		"centro": [
-			35.6,
+			35.8,
 			-4.64,
 			-4.0
 		],
@@ -50,7 +50,7 @@
 		"scena": "res://scenes/sala/torre/sala_torre.tscn",
 		"vista": 36,
 		"zona": "torre",
-		"nota": "spostato di 40 cm verso il muro libero: a 36 m le scale ne coprivano un pezzo"
+		"nota": "spostato di 20 cm verso il muro libero: a 36 m le scale ne coprivano un pezzo"
 	},
 	{
 		"alto": 0.45,
@@ -80,10 +80,10 @@
 		"alto_su": true
 	},
 	{
-		"alto": 0.9,
+		"alto": 0.7,
 		"centro": [
 			40.4,
-			-33.2,
+			-32.85,
 			-0.6
 		],
 		"largo": 2.0,
@@ -103,7 +103,8 @@
 		"punteggio": 124.2,
 		"scena": "res://scenes/sala/torre/sala_torre.tscn",
 		"vista": 69,
-		"zona": "inseguimento"
+		"zona": "inseguimento",
+		"nota": "alzato sopra l'acqua allagata (pelo -33,40): bordo basso a -33,20 (collaudo di ambienti-1)"
 	},
 	{
 		"alto": 0.9,
@@ -291,10 +292,10 @@
 		"alto_su": true
 	},
 	{
-		"alto": 0.8,
+		"alto": 0.6,
 		"centro": [
 			-9.65,
-			0.75,
+			0.85,
 			20.0
 		],
 		"largo": 1.6,
@@ -314,7 +315,8 @@
 		"punteggio": 32.8,
 		"scena": "res://scenes/sala_principale.tscn",
 		"vista": 160,
-		"zona": "sala"
+		"zona": "sala",
+		"nota": "pi\u00f9 piccolo e pi\u00f9 alto, sulla parte piatta delle piastrelle (collaudo di ambienti-1)"
 	},
 	{
 		"alto": 0.5,
@@ -346,11 +348,11 @@
 	{
 		"alto": 0.45,
 		"centro": [
-			-19.55,
+			-19.4,
 			2.25,
 			-24.0
 		],
-		"largo": 1.0,
+		"largo": 0.8,
 		"luce": 1.26,
 		"mesh": "Sala/Architettura/sala_pareti_basse",
 		"nome": "alto_sala_3",
@@ -368,7 +370,8 @@
 		"scena": "res://scenes/sala_principale.tscn",
 		"vista": 64,
 		"zona": "sala",
-		"alto_su": true
+		"alto_su": true,
+		"nota": "pi\u00f9 stretto e spostato via dall'angolo (collaudo di ambienti-1)"
 	},
 	{
 		"alto": 0.8,
