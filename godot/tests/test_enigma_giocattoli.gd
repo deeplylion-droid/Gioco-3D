@@ -203,6 +203,8 @@ func _run() -> void:
 			su_max = maxf(su_max, g1.global_position.y - _fondo_sotto(g1.global_position, esclusi))
 		Input.action_release(&"spray")
 		di_lato_min = minf(di_lato_min, di_lato)
+		print("    contro %s: di lato %.2f m, il pallone in %s" % [o.snapped(Vector3.ONE * 0.01), di_lato,
+			Vector2(g1.position.x, g1.position.z).snapped(Vector2.ONE * 0.01)])
 		await _frames(90)
 		var esclusi := rids.duplicate()
 		esclusi.append(g1.get_rid())
