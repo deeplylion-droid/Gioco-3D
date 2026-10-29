@@ -200,6 +200,9 @@ func _rosso_vasca() -> void:
 	l.spot_angle = 70.0
 	l.shadow_enabled = true
 	l.light_volumetric_fog_energy = 0.0
+	# (senza riflessi: sul vetro dell'oblò, liscio, il faretto faceva un puntino rosso acceso al centro, a vasca vuota;
+	# ricontrollo di ambienti-1 del 29 ottobre)
+	l.light_specular = 0.0
 	l.set_meta(&"risveglio_ignora", true)
 	l.position = OBLO_ROSSO_FACCIA     # (guarda lungo -z: dentro la vasca)
 	oblo.add_child(l)
