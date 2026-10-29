@@ -21,8 +21,8 @@
 		"nome": "scarabocchio_torre_3",
 		"zona": "torre",
 		"centro": [
-			35.8,
-			-4.64,
+			35.4,
+			-4.84,
 			-4.0
 		],
 		"normale": [
@@ -30,8 +30,8 @@
 			0.0,
 			-1.0
 		],
-		"largo": 1.6,
-		"alto": 0.9,
+		"largo": 1.4,
+		"alto": 0.7,
 		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_torre_3.png",
 		"sbiadito": 0.0
 	},

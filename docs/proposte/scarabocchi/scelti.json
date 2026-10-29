@@ -26,13 +26,13 @@
 		"zona": "torre"
 	},
 	{
-		"alto": 0.9,
+		"alto": 0.7,
 		"centro": [
-			35.8,
-			-4.64,
+			35.4,
+			-4.84,
 			-4.0
 		],
-		"largo": 1.6,
+		"largo": 1.4,
 		"luce": 1.45,
 		"mesh": "TorreStruttura/torre_A",
 		"nome": "torre_3",
@@ -50,7 +50,7 @@
 		"scena": "res://scenes/sala/torre/sala_torre.tscn",
 		"vista": 36,
 		"zona": "torre",
-		"nota": "spostato di 20 cm verso il muro libero: a 36 m le scale ne coprivano un pezzo"
+		"nota": "spostato e rimpicciolito via dalle scale: la verifica fitta passa anche 10-20 cm pi\u00f9 in l\u00e0 da tutte e due le parti"
 	},
 	{
 		"alto": 0.45,
