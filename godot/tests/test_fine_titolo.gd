@@ -4,7 +4,9 @@ extends Node
 ## prima stava sotto il nero e non si vedeva: collaudo della v0.3.13), e finita la scritta il gioco torna da solo al
 ## titolo (scelta 12A dell'utente, 24 ottobre). Il tempo della scritta si ferma con la pausa, e il ritorno al titolo
 ## non scatta una seconda volta.
-## Con FINE_SCATTO=<file.jpg> (e un renderer vero) salva lo schermo col nero e la scritta.
+## Con FINE_SCATTO=<file.jpg> (e un renderer vero) salva lo schermo col nero e la scritta: la strada è ridotta (senza
+## torre e senza tunnel, che col renderer software non entrano in memoria), con lo stesso nero e la stessa fine (del tunnel
+## con FINE_TUNNEL, se no della torre); la scritta si controlla come nella strada intera, il ritorno al titolo no.
 ## Con FINE_TUNNEL=1 la fine è quella del tunnel del viaggio sottomarino (il portello chiuso, lo schianto, il nero).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fine_titolo.gd
 
@@ -53,8 +55,11 @@ func _run() -> void:
 		r.set_anchors_preset(Control.PRESET_FULL_RECT)
 		nero.add_child(r)
 		level.add_child(nero)
-		level.call(&"_on_fine_torre")
+		# la fine che si prova: quella del tunnel (FINE_TUNNEL) o quella della torre, come le chiamano il portello del
+		# tunnel e il nero dell'inseguimento (prima qui c'era sempre la torre, e con FINE_TUNNEL il controllo D4 falliva)
+		level.call(&"_on_fine_tunnel" if OS.get_environment("FINE_TUNNEL") != "" else &"_on_fine_torre")
 		await _secondi(1.0)
+		check(bool(level.get(&"demo_finished")), "la fine %s finisce la demo" % ("del tunnel" if OS.get_environment("FINE_TUNNEL") != "" else "della torre"))
 	else:
 		# come nel gioco: alla torre si arriva col blackout, il portone la fa caricare
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
@@ -113,6 +118,11 @@ func _run() -> void:
 	if OS.get_environment("FINE_TUNNEL") != "":
 		# (collaudo D4: dopo il tunnel solo la scritta, senza la riga della torre)
 		check(scritta != null and scritta.text == "FINE DEL CAPITOLO 1", "dopo il tunnel solo «FINE DEL CAPITOLO 1», senza la riga della torre")
+	else:
+		# e alla fine della torre la scritta ha anche la sua riga (quella che dopo il tunnel non ci va)
+		var riga := String(level.get(&"fine_torre_testo"))
+		check(scritta != null and riga != "" and scritta.text == "FINE DEL CAPITOLO 1\n" + riga,
+			"alla fine della torre la scritta ha anche la riga della torre")
 	check(hud != null and (hud as CanvasLayer).layer < nero.layer, "il resto dell'interfaccia (mirino, zaino, messaggi) resta sotto il nero")
 	var file := OS.get_environment("FINE_SCATTO")
 	if file != "":
