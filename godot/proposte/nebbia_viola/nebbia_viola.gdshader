@@ -13,6 +13,8 @@ uniform sampler2D rumore_tex : filter_linear, repeat_enable;
 
 const int PASSI = 20;
 uniform float lontano = 14.0;     // fin dove si calcola, in metri
+uniform float oltre = 100.0;      // da qui (metri dall'occhio) la nebbia si dirada...
+uniform float cala = 0.0;         // ...di tanto per metro (0: uguale dappertutto)
 uniform float quota = 0.0;        // l'altezza del pavimento
 uniform float densita = 0.08;     // la nebbia dappertutto, per metro
 uniform float strato = 0.8;       // in più vicino al pavimento...
@@ -70,6 +72,7 @@ void fragment() {
 		vec3 p = occhio + rd * t;
 		float n = fbm(p * vec3(scala, scala * 1.8, scala) + vento * TIME);
 		float d = (densita + strato * exp(-max(p.y - quota, 0.0) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
+		d /= 1.0 + max(t - oltre, 0.0) * cala;
 		vec3 luce = aria;
 		for (int k = 0; k < 4; k++) {
 			if (k >= n_luci) {

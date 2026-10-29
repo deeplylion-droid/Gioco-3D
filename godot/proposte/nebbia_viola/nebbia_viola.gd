@@ -67,6 +67,11 @@ func su(camera: Camera3D) -> void:
 	attiva = attiva
 
 
+## Un valore dello shader della nebbia (lontano, oltre, cala, densita, strato...).
+func imposta(nome: StringName, valore: Variant) -> void:
+	_mat.set_shader_parameter(nome, valore)
+
+
 ## Le lampade (fino a 4): [posizione, colore, forza]; senza colore, il rosa caldo dell'originale.
 func imposta_luci(luci: Array) -> void:
 	var pos := PackedVector3Array()

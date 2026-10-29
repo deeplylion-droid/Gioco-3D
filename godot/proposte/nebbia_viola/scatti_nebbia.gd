@@ -21,7 +21,11 @@ func _run() -> void:
 	var a := OS.get_cmdline_user_args()
 	var out := a[1]
 	var stato: String = a[2] if a.size() > 2 else "chiusa"
-	var forze: Array = Array((a[3] if a.size() > 3 else "2.2").split(",")).map(func(x): return float(x))
+	# le varianti: "nome:forza:lontano:oltre:cala" separate da virgole (lontano in metri; oltre e cala: dove e quanto si dirada)
+	var varianti: Array = []
+	for t in (a[3] if a.size() > 3 else "1.2:1.2:14:100:0").split(","):
+		var v := t.split(":")
+		varianti.append([v[0], float(v[1]), float(v[2]), float(v[3]), float(v[4])])
 	DirAccess.make_dir_recursive_absolute(out)
 	Grafica.applica_preset("alto")
 	Grafica.imposta("antialiasing", 2)
@@ -73,13 +77,16 @@ func _run() -> void:
 		nebbia.attiva = false
 		var senza := await _misura(vp)
 		await _scatto(out.path_join("%s_ora.jpg" % nome))
-		for fz in forze:
-			nebbia.forza = fz
+		for v in varianti:
+			nebbia.forza = v[1]
+			nebbia.imposta(&"lontano", v[2])
+			nebbia.imposta(&"oltre", v[3])
+			nebbia.imposta(&"cala", v[4])
 			nebbia.attiva = true
 			var con := await _misura(vp)
-			await _scatto(out.path_join("%s_nebbia_%s.jpg" % [nome, str(fz)]))
-			print("NEBBIA %s forza %.2f: disegno senza %.1f ms, con %.1f ms (la nebbia costa %.1f ms; renderer software)" % [
-					nome, fz, senza, con, con - senza])
+			await _scatto(out.path_join("%s_nebbia_%s.jpg" % [nome, v[0]]))
+			print("NEBBIA %s %s (forza %.2f, lontano %.1f, oltre %.1f, cala %.2f): disegno senza %.1f ms, con %.1f ms (costa %.1f ms; renderer software)" % [
+					nome, v[0], v[1], v[2], v[3], v[4], senza, con, con - senza])
 	get_tree().quit()
 
 
