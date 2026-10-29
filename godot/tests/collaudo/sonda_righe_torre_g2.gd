@@ -70,54 +70,60 @@ func _run() -> void:
 	p.look_at_point(dietro - lato * 1.6)
 	print("SONDA luce di lei a ", luce.global_position, " vetro ", c, " normale ", n)
 	var interno := o.find_child("struttura_vasca_oblo", true, false) as GeometryInstance3D
+	# la riga alta: dove sta nel mondo
+	var cam := p.camera
+	for x in [650, 750, 850]:
+		for y in [122, 126, 130]:
+			var da := cam.project_ray_origin(Vector2(x, y))
+			var dir := cam.project_ray_normal(Vector2(x, y))
+			var q := PhysicsRayQueryParameters3D.create(da, da + dir * 30.0)
+			var h: Dictionary = p.get_world_3d().direct_space_state.intersect_ray(q)
+			if h:
+				print("SONDA riga alta pixel %d,%d: punto %s su %s (normale %s)" % [x, y, h.position, (h.collider as Node).get_path(), h.normal])
+	var struttura: Array = []
+	for n2 in torre.find_children("*", "MeshInstance3D", true, false):
+		if String(n2.get_path()).contains("InseguimentoStruttura"):
+			struttura.append(n2)
+	var nebbia := FogVolume.new()
+	nebbia.size = Vector3(12, 10, 12)
+	var fm := FogMaterial.new()
+	fm.density = -1.0
+	nebbia.material = fm
+	add_child(nebbia)
+	nebbia.global_position = dietro - n * 4.0
+	nebbia.visible = false
 	var varianti := [
 		["base", func(): pass, func(): pass],
+		["struttura_due_facce", func(): _ombra(struttura, GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED),
+			func(): _ombra(struttura, GeometryInstance3D.SHADOW_CASTING_SETTING_ON)],
+		["lei_senza_ombre", func(): luce.shadow_enabled = false, func(): luce.shadow_enabled = true],
 		["nebbia_di_lei_0", func(): luce.light_volumetric_fog_energy = 0.0, func(): luce.light_volumetric_fog_energy = 2.0],
-		["nebbia_spenta", func(): env.environment.volumetric_fog_enabled = false, func(): env.environment.volumetric_fog_enabled = true],
-		["paraboloide", func(): luce.omni_shadow_mode = OmniLight3D.SHADOW_DUAL_PARABOLOID, func(): luce.omni_shadow_mode = OmniLight3D.SHADOW_CUBE],
-		["bias_serie", func(): luce.shadow_bias = 0.1; luce.shadow_normal_bias = 1.0, func(): luce.shadow_bias = 0.03; luce.shadow_normal_bias = 0.2],
-		["bias_0", func(): luce.shadow_bias = 0.0; luce.shadow_normal_bias = 0.0, func(): luce.shadow_bias = 0.03; luce.shadow_normal_bias = 0.2],
-		["interno_senza_ombra", func(): interno.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF, func(): interno.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON],
-		["interno_due_facce", func(): interno.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED, func(): interno.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON],
+		["nebbia_tolta_condotte", func(): nebbia.visible = true, func(): nebbia.visible = false],
 		["lei_spenta", func(): luce.visible = false, func(): luce.visible = true],
-		["lei_spenta_nebbia_spenta", func(): luce.visible = false; env.environment.volumetric_fog_enabled = false, func(): luce.visible = true; env.environment.volumetric_fog_enabled = true],
 	]
 	for v in varianti:
 		(v[1] as Callable).call()
 		await _fotogrammi(40)
 		await _misura(v[0])
 		(v[2] as Callable).call()
-	# la riga bassa: dove sta nel mondo e le luci vicine
-	var cam := p.camera
-	var hits: Array = []
-	for x in [200, 400, 600]:
-		var da := cam.project_ray_origin(Vector2(x, 643))
-		var dir := cam.project_ray_normal(Vector2(x, 643))
-		var q := PhysicsRayQueryParameters3D.create(da, da + dir * 30.0)
-		var h: Dictionary = p.get_world_3d().direct_space_state.intersect_ray(q)
-		if h:
-			print("SONDA riga bassa pixel %d: punto %s su %s (normale %s)" % [x, h.position, (h.collider as Node).get_path(), h.normal])
-			hits.append(h.position)
-	if hits.is_empty():
-		print("SONDA riga bassa: nessun punto colpito")
-		get_tree().quit()
-		return
-	var centro: Vector3 = hits[hits.size() / 2]
-	var luci: Array = []
-	for l in get_tree().root.find_children("*", "Light3D", true, false):
-		var li := l as Light3D
-		if li.is_visible_in_tree() and not (li is DirectionalLight3D) and li.global_position.distance_to(centro) < 14.0 and li != luce:
-			luci.append(li)
-	luci.sort_custom(func(a, b): return a.global_position.distance_to(centro) < b.global_position.distance_to(centro))
-	for li in luci:
-		print("SONDA luce vicina %s a %.1f m: colore %s energia %.2f ombre %s pos %s" % [li.get_path(), li.global_position.distance_to(centro), li.light_color, li.light_energy, li.shadow_enabled, li.global_position])
-	luce.visible = false
-	for li in luci.slice(0, 12):
-		(li as Light3D).visible = false
-		await _fotogrammi(30)
-		await _misura("senza_" + String((li as Node).name).validate_node_name())
-		(li as Light3D).visible = true
+	# dalla torre: lei con la nebbia della sua luce a 0 (si vede diversa?)
+	p.teleport(POSTO_TORRE)
+	p.look_at_point(c)
+	await _fotogrammi(40)
+	await _misura("torre_base")
+	luce.light_volumetric_fog_energy = 0.0
+	await _fotogrammi(40)
+	await _misura("torre_nebbia_di_lei_0")
+	luce.light_volumetric_fog_energy = 2.0
+	nebbia.visible = true
+	await _fotogrammi(40)
+	await _misura("torre_nebbia_tolta_condotte")
 	get_tree().quit()
+
+
+func _ombra(lista: Array, modo: GeometryInstance3D.ShadowCastingSetting) -> void:
+	for m in lista:
+		(m as GeometryInstance3D).cast_shadow = modo
 
 
 func _misura(nome: String) -> void:
