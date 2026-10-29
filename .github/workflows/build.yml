@@ -277,6 +277,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
 
+      - name: Test della memoria a ogni morte (6 ripartenze di fila, niente che cresce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_memoria_morti.gd
+
       - name: Test degli strati di disegno (nessuno condiviso senza volerlo; quello della preparazione non si vede)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_strati.gd

@@ -323,6 +323,10 @@ func _forme_in(p: Vector3, forme: Array) -> Array:
 		return forme
 	_fai_griglia()
 	var cella: Array = _griglia.get(Vector3i((p / CELLA).floor()), [])
+	# (se quelle date sono meno della cella, bastano quelle: sono già le vicine al tentacolo, mobili comprese. Alla
+	# grata la cella di 1 m ha decine di sbarre, e ogni punto e ogni tratto le guardava tutte: test del 28 ottobre)
+	if forme.size() < cella.size():
+		return forme
 	if _mobili_qui.is_empty():
 		return cella
 	var out := cella.duplicate()
@@ -332,8 +336,36 @@ func _forme_in(p: Vector3, forme: Array) -> Array:
 	return out
 
 
-## Le forme la cui scatola tocca [param zona] (con tante forme, dalla griglia), più quelle che si muovono.
-func _forme_zona(zona: AABB) -> Array:
+## Le forme ferme vicine al tentacolo [param k], tenute da un fotogramma all'altro: si cercano nella griglia per una
+## zona più larga di [constant ZONA_IN_PIU] e si riusano finché il tentacolo resta dentro (cercarle a ogni fotogramma
+## era 1,5 ms alla grata, con 296 forme: test_morbidezza_inseguimento del 28 ottobre). Sono le stesse più qualcuna
+## vicina: chi le usa guarda comunque le scatole. Più quelle che si muovono, sempre nuove.
+const ZONA_IN_PIU := 0.6
+var _zone_k := {}            # tentacolo -> [zona larga, forme ferme, _versione_forme]
+var _versione_forme := 0
+
+
+func _forme_zona_di(k: int, zona: AABB) -> Array:
+	var e: Array = _zone_k.get(k, [])
+	var ferme: Array
+	if not e.is_empty() and int(e[2]) == _versione_forme and (e[0] as AABB).encloses(zona):
+		ferme = e[1]
+	else:
+		var larga := zona.grow(ZONA_IN_PIU)
+		ferme = _forme_zona(larga, false)
+		_zone_k[k] = [larga, ferme, _versione_forme]
+	if _mobili_qui.is_empty():
+		return ferme
+	var out := ferme.duplicate()
+	for mo in _mobili_qui:
+		if (mo[3][1] as AABB).intersects(zona):
+			out.append(mo[3])
+	return out
+
+
+## Le forme la cui scatola tocca [param zona] (con tante forme, dalla griglia), più quelle che si muovono (con
+## [param mobili]).
+func _forme_zona(zona: AABB, mobili := true) -> Array:
 	var out: Array = []
 	if _forme.size() <= 24:
 		for fo in _forme:
@@ -351,9 +383,10 @@ func _forme_zona(zona: AABB) -> Array:
 						if not visti.has(fo[6]) and (fo[1] as AABB).intersects(zona):
 							visti[fo[6]] = true
 							out.append(fo)
-	for mo in _mobili_qui:
-		if (mo[3][1] as AABB).intersects(zona):
-			out.append(mo[3])
+	if mobili:
+		for mo in _mobili_qui:
+			if (mo[3][1] as AABB).intersects(zona):
+				out.append(mo[3])
 	return out
 
 
@@ -518,7 +551,9 @@ func _process_modification() -> void:
 				zona = zona.expand(q)
 		# (le punte in un fotogramma si muovono al più qualche decina di cm: oltre non serve guardare)
 		zona = zona.grow(VICINO + 0.25)
-		var forme := _forme_zona(zona)
+		var u_z := Time.get_ticks_usec()
+		var forme := _forme_zona_di(k, zona)
+		parti_usec["zona"] = int(parti_usec.get("zona", 0)) + Time.get_ticks_usec() - u_z
 		# partenza dalla posa, o la posa è saltata (ripartenza, teletrasporto)
 		if (_x[k] as PackedVector3Array).is_empty() or tg[0].distance_to(_radici_prima[k]) > 1.0:
 			# (accendendosi piano, al più 9 catene per fotogramma: le altre restano la posa, che è quasi tutto)
@@ -541,7 +576,9 @@ func _process_modification() -> void:
 		_radici_prima[k] = tg[0]
 		var x: PackedVector3Array = _x[k]
 		var v: PackedVector3Array = _v[k]
+		var u_s := Time.get_ticks_usec()
 		_sezioni_qui(k, n, g, tg, x)
+		parti_usec["sezioni"] = int(parti_usec.get("sezioni", 0)) + Time.get_ticks_usec() - u_s
 		# vicino al mondo, nei movimenti veloci (lo strappo del tuffo) un passo non deve portare un punto più in là di
 		# 12 cm: se no passerebbe il bordo da parte a parte (è largo 30 cm). Lì il fotogramma si divide, fino a 3 passi
 		if not forme.is_empty():
@@ -907,6 +944,7 @@ func _piani_da_punti(punti: PackedVector3Array) -> Array[Plane]:
 func togli_forme_mondo() -> void:
 	_forme.clear()
 	_griglia_ok = false
+	_versione_forme += 1
 	for k in _bers.size():
 		_bers[k] = PackedVector3Array()
 		_bers_posa[k] = PackedVector3Array()
@@ -920,6 +958,7 @@ func aggiungi_piani(piani: Array[Plane], bb: AABB) -> void:
 	# (la scatola allargata di VICINO, per cercare le forme vicine, e di 8 e 13 cm per i punti con la pelle più sottile)
 	_forme.append([piani, bb, _sopra(piani, bb), bb.grow(VICINO), bb.grow(0.08), bb.grow(0.13), _forme.size()])
 	_griglia_ok = false
+	_versione_forme += 1
 
 
 ## La faccia di sopra, se c'è (orizzontale): da lì si esce dalle forme basse, come il bordo; -1 per le forme alte (le
