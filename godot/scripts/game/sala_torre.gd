@@ -714,6 +714,9 @@ func _oblo_lei() -> void:
 	# la cisterna profonda 3,6 m (mascotte: la posa "occhio" arrivando e staccandosi va fino a 3,4 m dietro il vetro);
 	# il fuori è nel GLB delle condotte (inseguimento_proposte.py, OBLO_VASCA)
 	oblo.vasca_fonda = 3.6
+	# (le ombre della luce di lei più strette che negli altri oblò: con i bias di serie passava dagli spigoli sottili
+	# della cisterna, righe rosa nella sala delle condotte, collaudo finale del 25 ottobre)
+	oblo.bias_ombre = Vector2(0.03, 0.2)
 	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
 	var v: Array = dati["vasca_fondo"]["rett"]
 	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])

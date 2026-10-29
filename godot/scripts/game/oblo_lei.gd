@@ -92,6 +92,10 @@ const FORMA := 0.3
 @export var muro_col_foro_tondo := false
 ## Falso: niente lei (per esempio prima del blackout lo decide chi mette l'oblò con [member pronto]).
 @export var attivo := true
+## I bias delle ombre della luce di lei (shadow_bias, shadow_normal_bias). Di serie 0,1 e 1,0, come l'occhio di lei
+## si è sempre visto (scelta dell'utente del 29 ottobre); la torre li abbassa (SalaTorre._oblo_lei: con quelli di serie
+## la luce passava dagli spigoli sottili della cisterna e faceva righe rosa nella sala delle condotte).
+@export var bias_ombre := Vector2(0.1, 1.0)
 
 var stato := Stato.ATTESA
 ## La lei che sta dietro il vetro, se c'è.
@@ -611,6 +615,7 @@ func prepara_lei(fase := -1) -> void:
 func _crea_lei() -> void:
 	lei = LeiOblo.new()
 	lei.name = "Lei"
+	lei.bias_ombre = bias_ombre
 	lei.lato_sbircia = 1 if lato_sbircia >= 0.0 else -1
 	add_child(lei)
 	lei.sparita.connect(_sparita)
