@@ -1,0 +1,78 @@
+stato risolto
+  polaroid: prima 16, dopo 16
+  pozze: prima 0, dopo 0
+  galleggianti: prima 0, dopo 0
+  medusine: prima 1, dopo 1
+  bava: prima 6, dopo 6
+  nodi: prima 11308, dopo 11308
+  P01  spostamento 0.000 mm, rotazione 0.00000
+  P02  spostamento 0.000 mm, rotazione 0.00000
+  P03  spostamento 0.000 mm, rotazione 0.00000
+  P04  spostamento 0.000 mm, rotazione 0.00000
+  P05  spostamento 0.000 mm, rotazione 0.00000
+  P06  spostamento 0.000 mm, rotazione 0.00000
+  P07  spostamento 0.000 mm, rotazione 0.00000
+  P08  spostamento 0.000 mm, rotazione 0.00000
+  P09  spostamento 0.000 mm, rotazione 0.00000
+  P10  spostamento 0.000 mm, rotazione 0.00000
+  P11 (nascosta) spostamento 0.000 mm, rotazione 0.00000
+  P12  spostamento 0.000 mm, rotazione 0.00000
+  P13  spostamento 0.000 mm, rotazione 0.00000
+  P14  spostamento 0.000 mm, rotazione 0.00000
+  P15  spostamento 0.000 mm, rotazione 0.00000
+  P16  spostamento 0.000 mm, rotazione 0.00000
+  medusine Piscina/SvuotaPiscina/Medusine: griglia 57x39 (2223 punti), g_min [-7.0, -4.30000019073486] / [-7.0, -4.30000019073486], profondo [0.0, 2.69999980926514] -> [0.0, 2.69999980926514]
+    punti diversi sopra 1 mm: 0
+  bava Gioco/RitornoAlBuio/Scia/BavaBordoFossa: 246 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaBordoVasca: 66 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaIntornoFossa: 402 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaMuroVasca: 72 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaScia: 1782 vertici, diversi sopra 1 mm 0
+  bava SalaTorre/SalaInseguimento/Luci/@Node3D@3123: 264 vertici, diversi sopra 1 mm 0
+  nodi mossi sopra 1 mm (senza il rumore): 53
+    19738.7 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1260  [14.0, 11.4, -9.0] -> [1.20728, 11.07333, 6.02846]
+    10616.8 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1252  [1.17632, -0.14222, 6.01414] -> [6.47107, -2.09221, -2.97918]
+    9742.3 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1259  [14.0, 11.4, -9.0] -> [14.02322, 1.65778, -8.98048]
+    9604.7 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1242  [6.5, 11.4, -3.0] -> [14.0, 11.4, -9.0]
+    6300.2 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1239  [6.52796, 4.65778, -3.02491] -> [6.47128, -1.64221, -3.02391]
+    4650.0 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1251  [1.2389, 5.85778, 5.97704] -> [1.23802, 1.20778, 5.98004]
+    4050.4 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1245  [-9.01226, 6.90778, 4.49182] -> [-8.98696, 2.85778, 4.53949]
+    2695.1 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1258  [14.01336, 8.705, -9.02048] -> [14.0, 11.4, -9.0]
+    301.9 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1257  [14.01289, 0.15778, -9.03517] -> [13.97875, -0.14222, -9.03332]
+    122.5 mm  Gioco/RitornoAlBuio/Scia/@Node3D@1752/@MeshInstance3D@1753  [0.44031, 0.28117, 12.25507] -> [0.44031, 0.15867, 12.25507]
+    48.8 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1240  [6.49562, 11.35917, -2.97357] -> [6.5, 11.4, -3.0]
+    44.2 mm  LuciSala/@Node3D@1238/@GPUParticles3D@1243  [6.50416, -1.99, -3.00504] -> [6.47155, -1.99, -3.03482]
+    29.8 mm  LuciSala/@Node3D@1250/@GPUParticles3D@1255  [1.20103, 0.01, 5.98738] -> [1.1797, 0.01, 6.00821]
+    23.9 mm  LuciSala/@Node3D@1244/@GPUParticles3D@1249  [-8.98032, 0.01, 4.50318] -> [-8.96767, 0.01, 4.48293]
+    23.9 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1246  [-8.98032, -0.14222, 4.50318] -> [-8.96767, -0.14222, 4.48293]
+    15.2 mm  Tecnici/Ambienti/SalaPompe/POMPA_1  [2.20641, -9.04591, 38.66366] -> [2.196, -9.04902, 38.65303]
+    15.2 mm  Tecnici/Ambienti/SalaPompe/POMPA_2  [2.20641, -9.04591, 38.66366] -> [2.196, -9.04902, 38.65303]
+    15.2 mm  Tecnici/Ambienti/SalaPompe/POMPA_3  [2.20641, -9.04591, 38.66366] -> [2.196, -9.04902, 38.65303]
+    15.2 mm  Tecnici/Ambienti/SalaPompe/POMPA_3_modello  [5.05641, -8.74591, 42.16366] -> [5.046, -8.74902, 42.15303]
+    1.9 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/@MeshInstance3D@4174  [23.47476, -30.20015, 124.66444] -> [23.47563, -30.20189, 124.66444]
+    1.9 mm  SalaSottomarino/Gommoni/Gommone_130/Gommone/@MeshInstance3D@4155  [27.20125, -30.20015, 120.35801] -> [27.20192, -30.20189, 120.35746]
+    1.7 mm  SalaSottomarino/Gommoni/Gommone_130/Gommone/@MeshInstance3D@4156  [25.82021, -30.19554, 120.97598] -> [25.82123, -30.19683, 120.9762]
+    1.7 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/@MeshInstance3D@4175  [22.01414, -30.19554, 124.26981] -> [22.01479, -30.19683, 124.27062]
+    1.4 mm  SalaSottomarino/Gommoni/Gommone_130/Gommone/@MeshInstance3D@4154  [27.35662, -30.19554, 118.85301] -> [27.35646, -30.19683, 118.85238]
+    1.4 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/@MeshInstance3D@4173  [24.54685, -30.19554, 123.59683] -> [24.54712, -30.19683, 123.59624]
+    1.4 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/@MeshInstance3D@4117  [30.43879, -30.19705, 57.27014] -> [30.43929, -30.19571, 57.27029]
+    1.3 mm  SalaSottomarino/Gommoni/Gommone_259/Gommone/@MeshInstance3D@4212  [1.5379, -30.16564, 13.40004] -> [1.53779, -30.16457, 13.39924]
+    1.3 mm  SalaSottomarino/Gommoni/Gommone_334/Gommone/@MeshInstance3D@4250  [-27.09067, -30.18831, 25.08344] -> [-27.09033, -30.18708, 25.08377]
+    1.3 mm  SalaSottomarino/Gommoni/Gommone_264/Gommone/@MeshInstance3D@4231  [2.34485, -30.18831, 8.68867] -> [2.34494, -30.18708, 8.68821]
+    1.3 mm  SalaSottomarino/Gommoni/Gommone_344/Gommone/@MeshInstance3D@4288  [-27.26649, -30.18831, 35.28136] -> [-27.26604, -30.18708, 35.28126]
+    1.3 mm  SalaSottomarino/Gommoni/Gommone_259/Gommone/@MeshInstance3D@4213  [1.96161, -30.18059, 11.94766] -> [1.96227, -30.17967, 11.94709]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_130/Gommone/@MeshInstance3D@4150  [26.1994, -30.35783, 119.97243] -> [26.19978, -30.35895, 119.97237]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_130/Gommone/Sedile5  [26.1994, -30.35783, 119.97243] -> [26.19978, -30.35895, 119.97237]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/@MeshInstance3D@4169  [22.94251, -30.35783, 123.73219] -> [22.94283, -30.35895, 123.7324]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/Sedile5  [22.94251, -30.35783, 123.73219] -> [22.94283, -30.35895, 123.7324]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_259/Gommone/@MeshInstance3D@4211  [2.58366, -30.18059, 14.49335] -> [2.58297, -30.17967, 14.49311]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_470/Gommone/@MeshInstance3D@4323  [-58.59076, -30.14693, 102.96635] -> [-58.59096, -30.14606, 102.96559]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_470/Gommone/@MeshInstance3D@4324  [-58.22115, -30.1627, 101.49928] -> [-58.22057, -30.16187, 101.49871]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/@MeshInstance3D@4168  [23.47406, -30.35783, 123.59095] -> [23.47431, -30.35895, 123.59086]
+    1.2 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/Sedile4  [23.47406, -30.35783, 123.59095] -> [23.47431, -30.35895, 123.59086]
+  tempi prima: fotogrammi 360, più lunghi 892, 150, 145, 122, 108, 106, 96, 91, 90, 83
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 9.04, 9.18, 9.79, 9.04, 9.41
+    snap Polaroid: 6, totale 0.06 ms, il più lento 0.04 ms; spostamento rifacendolo max 0.000 mm
+  tempi dopo: fotogrammi 362, più lunghi 1207, 239, 169, 144, 123, 121, 118, 106, 98, 95
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 15.50, 15.20, 15.14, 15.04, 14.90
+    snap Polaroid: 6, totale 0.16 ms, il più lento 0.09 ms; spostamento rifacendolo max 0.000 mm

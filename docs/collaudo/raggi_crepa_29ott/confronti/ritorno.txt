@@ -1,0 +1,57 @@
+stato ritorno
+  polaroid: prima 16, dopo 16
+  pozze: prima 0, dopo 0
+  galleggianti: prima 0, dopo 0
+  medusine: prima 1, dopo 1
+  bava: prima 6, dopo 6
+  nodi: prima 11308, dopo 11308
+  P01  spostamento 0.000 mm, rotazione 0.00000
+  P02  spostamento 0.000 mm, rotazione 0.00000
+  P03  spostamento 0.000 mm, rotazione 0.00000
+  P04  spostamento 0.000 mm, rotazione 0.00000
+  P05  spostamento 0.000 mm, rotazione 0.00000
+  P06  spostamento 0.000 mm, rotazione 0.00000
+  P07  spostamento 0.000 mm, rotazione 0.00000
+  P08  spostamento 0.000 mm, rotazione 0.00000
+  P09  spostamento 0.000 mm, rotazione 0.00000
+  P10  spostamento 0.000 mm, rotazione 0.00000
+  P11 (nascosta) spostamento 0.000 mm, rotazione 0.00000
+  P12  spostamento 0.000 mm, rotazione 0.00000
+  P13  spostamento 0.000 mm, rotazione 0.00000
+  P14  spostamento 0.000 mm, rotazione 0.00000
+  P15  spostamento 0.000 mm, rotazione 0.00000
+  P16  spostamento 0.000 mm, rotazione 0.00000
+  medusine Piscina/SvuotaPiscina/Medusine: griglia 57x39 (2223 punti), g_min [-7.0, -4.30000019073486] / [-7.0, -4.30000019073486], profondo [0.0, 2.69999980926514] -> [0.0, 2.69999980926514]
+    punti diversi sopra 1 mm: 0
+  bava Gioco/RitornoAlBuio/Scia/BavaBordoFossa: 246 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaBordoVasca: 66 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaIntornoFossa: 402 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaMuroVasca: 72 vertici, diversi sopra 1 mm 0
+  bava Gioco/RitornoAlBuio/Scia/BavaScia: 1782 vertici, diversi sopra 1 mm 0
+  bava SalaTorre/SalaInseguimento/Luci/@Node3D@3123: 264 vertici, diversi sopra 1 mm 0
+  nodi mossi sopra 1 mm (senza il rumore): 19
+    5250.1 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1258  [13.96193, 5.70778, -8.98087] -> [13.99224, 0.45778, -8.97768]
+    4800.3 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1240  [6.49707, 2.70778, -2.9656] -> [6.52598, -2.09221, -3.00942]
+    3751.4 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1242  [6.5, 11.4, -3.0] -> [6.50587, 7.64878, -2.9682]
+    2400.2 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1245  [-9.01915, 2.25778, 4.50871] -> [-9.02828, -0.14222, 4.53595]
+    1851.6 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1252  [1.20352, 8.19867, 6.00695] -> [1.1761, 10.04978, 6.03721]
+    1438.0 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1248  [-9.0, 11.4, 4.5] -> [-8.969, 9.96267, 4.47099]
+    844.1 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1257  [13.96996, 10.51528, -8.99689] -> [13.96103, 11.35917, -9.01367]
+    196.0 mm  Gioco/RitornoAlBuio/Scia/@Node3D@1752/@MeshInstance3D@1753  [0.44031, 0.02528, 12.25507] -> [0.44031, 0.22128, 12.25507]
+    54.1 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1246  [-9.00126, -0.14222, 4.52314] -> [-9.02042, -0.14222, 4.4725]
+    47.1 mm  LuciSala/@Node3D@1238/@GPUParticles3D@1243  [6.49447, -1.99, -2.97442] -> [6.52598, -1.99, -3.00942]
+    29.9 mm  LuciSala/@Node3D@1244/@GPUParticles3D@1249  [-9.00126, 0.01, 4.52314] -> [-9.02828, 0.01, 4.53595]
+    24.6 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1239  [6.49447, -2.09221, -2.97442] -> [6.48684, -2.09221, -2.99777]
+    23.3 mm  LuciSala/@Node3D@1256/@GPUParticles3D@1261  [13.99702, 0.01, -9.01347] -> [14.01242, 0.01, -8.99596]
+    12.0 mm  LuciSala/@Node3D@1250/@GPUParticles3D@1255  [1.17765, 0.01, 6.03368] -> [1.18719, 0.01, 6.02642]
+    12.0 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1251  [1.17765, -0.14222, 6.03368] -> [1.18719, -0.14222, 6.02642]
+    11.7 mm  Tecnici/Ambienti/SalaPompe/POMPA_1  [2.19514, -9.05408, 38.66257] -> [2.2019, -9.04642, 38.65685]
+    11.7 mm  Tecnici/Ambienti/SalaPompe/POMPA_2  [2.19514, -9.05408, 38.66257] -> [2.2019, -9.04642, 38.65685]
+    11.7 mm  Tecnici/Ambienti/SalaPompe/POMPA_3  [2.19514, -9.05408, 38.66257] -> [2.2019, -9.04642, 38.65685]
+    11.7 mm  Tecnici/Ambienti/SalaPompe/POMPA_3_modello  [5.04514, -8.75408, 42.16257] -> [5.0519, -8.74643, 42.15685]
+  tempi prima: fotogrammi 364, più lunghi 768, 164, 163, 132, 117, 113, 110, 101, 101, 89
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 8.90, 8.51, 9.88, 12.37, 12.35
+    snap Polaroid: 6, totale 0.06 ms, il più lento 0.04 ms; spostamento rifacendolo max 0.000 mm
+  tempi dopo: fotogrammi 361, più lunghi 998, 147, 136, 134, 129, 128, 127, 125, 117, 112
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 10.78, 10.86, 11.57, 10.90, 11.58
+    snap Polaroid: 6, totale 0.05 ms, il più lento 0.03 ms; spostamento rifacendolo max 0.000 mm

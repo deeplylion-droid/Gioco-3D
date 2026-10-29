@@ -1,0 +1,73 @@
+stato inizio
+  polaroid: prima 16, dopo 16
+  pozze: prima 0, dopo 0
+  galleggianti: prima 0, dopo 0
+  medusine: prima 1, dopo 1
+  bava: prima 1, dopo 1
+  nodi: prima 11255, dopo 11255
+  P01  spostamento 0.000 mm, rotazione 0.00000
+  P02  spostamento 0.000 mm, rotazione 0.00000
+  P03  spostamento 0.000 mm, rotazione 0.00000
+  P04  spostamento 0.000 mm, rotazione 0.00000
+  P05  spostamento 0.000 mm, rotazione 0.00000
+  P06  spostamento 0.000 mm, rotazione 0.00000
+  P07  spostamento 0.000 mm, rotazione 0.00000
+  P08  spostamento 0.000 mm, rotazione 0.00000
+  P09  spostamento 0.000 mm, rotazione 0.00000
+  P10  spostamento 0.000 mm, rotazione 0.00000
+  P11 (nascosta) spostamento 0.000 mm, rotazione 0.00000
+  P12  spostamento 0.000 mm, rotazione 0.00000
+  P13  spostamento 0.000 mm, rotazione 0.00000
+  P14  spostamento 0.000 mm, rotazione 0.00000
+  P15  spostamento 0.000 mm, rotazione 0.00000
+  P16  spostamento 0.000 mm, rotazione 0.00000
+  medusine Piscina/SvuotaPiscina/Medusine: griglia 57x39 (2223 punti), g_min [-7.0, -4.30000019073486] / [-7.0, -4.30000019073486], profondo [0.0, 2.69999980926514] -> [0.0, 2.69999980926514]
+    punti diversi sopra 1 mm: 0
+  bava SalaTorre/SalaInseguimento/Luci/@Node3D@3085: 264 vertici, diversi sopra 1 mm 0 (numero diverso: 0)
+  nodi mossi sopra 1 mm (senza il rumore): 591
+    16557.4 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1260  [14.0, 11.4, -9.0] -> [6.48455, -2.09221, -3.03117]
+    15454.3 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1254  [1.2, 11.4, 6.0] -> [-8.96571, -0.14222, 4.49274]
+    11542.2 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1253  [1.2, 11.4, 6.0] -> [1.19181, -0.14222, 6.00864]
+    10309.7 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1248  [-9.0, 11.4, 4.5] -> [1.2, 11.4, 6.0]
+    9600.1 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1242  [6.5, 11.4, -3.0] -> [13.97351, 11.2775, -9.02448]
+    7479.4 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1252  [1.17122, 9.587, 6.00244] -> [1.20518, 2.10778, 5.9641]
+    5242.3 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1247  [-9.0, 11.4, 4.5] -> [-9.00062, 6.15778, 4.46907]
+    2100.2 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1245  [-8.99332, 1.95778, 4.48907] -> [-9.00996, -0.14222, 4.46834]
+    914.7 mm  Vasca/Medusa/@Node3D@86/@MeshInstance3D@87  [0.59253, -0.0455, 12.30708] -> [0.59253, 0.86917, 12.30708]
+    457.4 mm  Vasca/Medusa/@Node3D@118/@MeshInstance3D@119  [-1.48204, 0.42833, 12.30375] -> [-1.47547, -0.029, 12.2983]
+    454.7 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1258  [13.96189, 0.30778, -9.02754] -> [14.02668, -0.14222, -9.03229]
+    417.8 mm  LuciSala/@Node3D@1244/@MeshInstance3D@1246  [-8.97594, 10.9835, 4.47714] -> [-9.0, 11.4, 4.5]
+    197.8 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1239  [6.48993, 11.02978, -2.96778] -> [6.53703, 11.22033, -2.99218]
+    180.6 mm  LuciSala/@Node3D@1256/@MeshInstance3D@1257  [14.00793, 11.22033, -8.98358] -> [14.0, 11.4, -9.0]
+    65.6 mm  LuciSala/@Node3D@1244/@GPUParticles3D@1249  [-8.98246, 0.01, 4.52786] -> [-9.00996, 0.01, 4.46834]
+    38.5 mm  Tecnici/Acqua/VascaRaccolta/Graybox/Superficie  [-0.9, -9.21947, 37.86] -> [-0.9, -9.181, 37.86]
+    38.5 mm  Piscina/Pozza/Graybox/Superficie  [0.0, -1.51953, 0.35] -> [0.0, -1.48106, 0.35]
+    38.5 mm  Vasca/VascaCentrale/Graybox/Superficie  [0.0, 0.86047, 10.0] -> [0.0, 0.89894, 10.0]
+    38.5 mm  Vasche/VascaArrivo/Graybox/Superficie  [-12.5, -0.23953, 2.0] -> [-12.5, -0.20106, 2.0]
+    35.9 mm  Vasche/VascaBimbi1/Graybox/Superficie  [-12.6, 0.28177, -9.6] -> [-12.6, 0.31768, -9.6]
+    34.4 mm  LuciSala/@Node3D@1256/@GPUParticles3D@1261  [13.99728, 0.01, -9.01441] -> [14.02668, 0.01, -9.03229]
+    27.0 mm  LuciSala/@Node3D@1250/@GPUParticles3D@1255  [1.20716, 0.01, 5.97993] -> [1.1805, 0.01, 5.98423]
+    27.0 mm  LuciSala/@Node3D@1250/@MeshInstance3D@1251  [1.20716, -0.14222, 5.97993] -> [1.1805, -0.14222, 5.98423]
+    25.7 mm  Vasche/VascaBimbi2/Graybox/Superficie  [-9.6, 0.20698, -18.2] -> [-9.6, 0.23263, -18.2]
+    24.7 mm  LuciSala/@Node3D@1238/@MeshInstance3D@1240  [6.50656, -2.09221, -2.99121] -> [6.52304, -2.09221, -2.97277]
+    19.3 mm  Atmosfera/GocceNellaPozza/@GPUParticles3D@1189  [0.8805, -1.49, 2.57035] -> [0.89972, -1.49, 2.57198]
+    19.3 mm  Atmosfera/GocceNellaPozza/@MeshInstance3D@1183  [0.8805, -1.51883, 2.57035] -> [0.89972, -1.51883, 2.57198]
+    19.2 mm  Interni/Acqua/VascaLavapiedi/Graybox/Superficie  [0.0, -0.05977, 27.5] -> [0.0, -0.04053, 27.5]
+    18.3 mm  Vasca/Medusa/@Node3D@126/@GPUParticles3D@133  [1.4708, 0.01, 12.29144] -> [1.47316, 0.01, 12.30954]
+    18.3 mm  Vasca/Medusa/@Node3D@126/@MeshInstance3D@127  [1.4708, -0.029, 12.29144] -> [1.47316, -0.029, 12.30954]
+    15.5 mm  Vasca/Medusa/@Node3D@110/@GPUParticles3D@117  [0.37333, 1.01, 11.98862] -> [0.38858, 1.01, 11.98612]
+    15.5 mm  Vasca/Medusa/@Node3D@110/@MeshInstance3D@111  [0.37333, 0.99417, 11.98862] -> [0.38858, 0.99417, 11.98612]
+    12.9 mm  LuciSala/@Node3D@1238/@GPUParticles3D@1243  [6.50656, -1.99, -2.99121] -> [6.50153, -1.99, -3.00304]
+    9.7 mm  Vasca/Medusa/Gocce/@GPUParticles3D@85  [-0.59492, 0.01, 12.30433] -> [-0.60351, 0.01, 12.30878]
+    9.7 mm  Vasca/Medusa/Gocce/@MeshInstance3D@79  [-0.59492, -0.0455, 12.30433] -> [-0.60351, -0.0455, 12.30878]
+    8.4 mm  Vasca/Medusa/@Node3D@86/@GPUParticles3D@93  [0.59253, 0.01, 12.30708] -> [0.59796, 0.01, 12.30064]
+    7.9 mm  Vasca/Medusa/FacciaMedusa  [-0.05709, 1.4743, 11.74411] -> [-0.0571, 1.47763, 11.73694]
+    7.9 mm  Vasca/Medusa/FacciaMedusa/@CollisionShape3D@1538  [-0.05709, 1.4743, 11.74411] -> [-0.0571, 1.47763, 11.73694]
+    4.9 mm  SalaSottomarino/Gommoni/Gommone_130/Gommone/@MeshInstance3D@4118  [27.19989, -30.19661, 120.35912] -> [27.20159, -30.20102, 120.35773]
+    4.9 mm  SalaSottomarino/Gommoni/Gommone_135/Gommone/@MeshInstance3D@4137  [23.47301, -30.19661, 124.66443] -> [23.4752, -30.20102, 124.66444]
+  tempi prima: fotogrammi 831, più lunghi 973, 182, 143, 142, 97, 96, 93, 89, 89, 87
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 9.40, 8.52, 8.57, 8.83, 8.55
+    snap Polaroid: 6, totale 0.05 ms, il più lento 0.04 ms; spostamento rifacendolo max 0.000 mm
+  tempi dopo: fotogrammi 724, più lunghi 1198, 240, 150, 140, 134, 131, 124, 109, 104, 99
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 12.57, 12.44, 12.59, 12.53, 12.49
+    snap Polaroid: 6, totale 0.08 ms, il più lento 0.04 ms; spostamento rifacendolo max 0.000 mm

@@ -1,0 +1,66 @@
+stato inizio
+  polaroid: prima 16, dopo 16
+  pozze: prima 0, dopo 0
+  galleggianti: prima 0, dopo 0
+  medusine: prima 1, dopo 1
+  bava: prima 1, dopo 1
+  nodi: prima 11255, dopo 11255
+  P01  spostamento 0.000 mm, rotazione 0.00000
+  P02  spostamento 0.000 mm, rotazione 0.00000
+  P03  spostamento 0.000 mm, rotazione 0.00000
+  P04  spostamento 0.000 mm, rotazione 0.00000
+  P05  spostamento 0.000 mm, rotazione 0.00000
+  P06  spostamento 0.000 mm, rotazione 0.00000
+  P07  spostamento 0.000 mm, rotazione 0.00000
+  P08  spostamento 0.000 mm, rotazione 0.00000
+  P09  spostamento 0.000 mm, rotazione 0.00000
+  P10  spostamento 0.000 mm, rotazione 0.00000
+  P11 (nascosta) spostamento 0.000 mm, rotazione 0.00000
+  P12  spostamento 0.000 mm, rotazione 0.00000
+  P13  spostamento 0.000 mm, rotazione 0.00000
+  P14  spostamento 0.000 mm, rotazione 0.00000
+  P15  spostamento 0.000 mm, rotazione 0.00000
+  P16  spostamento 0.000 mm, rotazione 0.00000
+  medusine Piscina/SvuotaPiscina/Medusine: griglia 57x39 (2223 punti), g_min [-7.0, -4.30000019073486] / [-7.0, -4.30000019073486], profondo [0.0, 2.69999980926514] -> [0.0, 2.69999980926514]
+    punti diversi sopra 1 mm: 0
+  bava SalaTorre/SalaInseguimento/Luci/@Node3D@3085: 264 vertici, diversi sopra 1 mm 0 (numero diverso: 0)
+  gruppi di nodi che si muovono già fra due giri dello stesso commit: 412
+  nodi mossi sopra 1 mm (senza il rumore): 32
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Sedile3  [30.17655, -30.36849, 58.85784] -> [30.17654, -30.36735, 58.85776]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Fondo  [30.71699, -30.55849, 58.75569] -> [30.717, -30.55735, 58.75574]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare0  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare1  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare10  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare11  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare12  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare13  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare14  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare15  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare16  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare17  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare18  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare19  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare2  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare20  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare21  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare22  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare23  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare3  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare4  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare5  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare6  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare7  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare8  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_66/Gommone/Tubolare9  [30.71697, -30.58849, 58.7556] -> [30.71697, -30.58735, 58.7556]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_334/Gommone/Sedile1  [-27.54081, -30.32786, 27.04215] -> [-27.54141, -30.32709, 27.04255]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_264/Gommone/Sedile1  [4.23626, -30.32786, 8.00916] -> [4.23692, -30.32709, 8.00945]
+    1.1 mm  SalaSottomarino/Gommoni/Gommone_344/Gommone/Sedile1  [-25.86845, -30.32786, 36.72519] -> [-25.86844, -30.32709, 36.72591]
+    1.0 mm  SalaSottomarino/Gommoni/Gommone_339/Gommone/Sedile2  [-27.07827, -30.36199, 32.14461] -> [-27.07809, -30.36297, 32.14489]
+    1.0 mm  SalaSottomarino/Gommoni/Gommone_339/Gommone/Sedile1  [-26.56817, -30.36199, 31.93894] -> [-26.56802, -30.36297, 31.93915]
+  tempi prima: fotogrammi 831, più lunghi 973, 182, 143, 142, 97, 96, 93, 89, 89, 87
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 9.40, 8.52, 8.57, 8.83, 8.55
+    snap Polaroid: 6, totale 0.05 ms, il più lento 0.04 ms; spostamento rifacendolo max 0.000 mm
+  tempi dopo: fotogrammi 778, più lunghi 926, 139, 127, 110, 103, 103, 102, 100, 95, 89
+    griglia_medusine_ms Piscina/SvuotaPiscina/Medusine: 10.16, 10.19, 10.20, 9.96, 10.23
+    snap Polaroid: 6, totale 0.06 ms, il più lento 0.04 ms; spostamento rifacendolo max 0.000 mm

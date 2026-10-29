@@ -1,0 +1,749 @@
+passo 0 (<anonymous lambda>): 2.2 ms
+passo 1 (<anonymous lambda>): 0.0 ms
+passo 2 (<anonymous lambda>): 0.0 ms
+passo 3 (<anonymous lambda>): 0.0 ms
+passo 4 (<anonymous lambda>): 0.0 ms
+passo 5 (<anonymous lambda>): 0.0 ms
+passo 6 (<anonymous lambda>): 0.0 ms
+passo 7 (<anonymous lambda>): 0.0 ms
+passo 8 (<anonymous lambda>): 0.0 ms
+passo 9 (<anonymous lambda>): 0.0 ms
+passo 10 (<anonymous lambda>): 0.1 ms
+passo 11 (<anonymous lambda>): 0.0 ms
+passo 12 (<anonymous lambda>): 0.0 ms
+passo 13 (<anonymous lambda>): 0.0 ms
+passo 14 (<anonymous lambda>): 0.0 ms
+passo 15 (<anonymous lambda>): 0.0 ms
+passo 16 (<anonymous lambda>): 0.0 ms
+passo 17 (<anonymous lambda>): 0.0 ms
+passo 18 (<anonymous lambda>): 0.0 ms
+passo 19 (<anonymous lambda>): 0.0 ms
+passo 20 (<anonymous lambda>): 0.0 ms
+passo 21 (<anonymous lambda>): 0.0 ms
+passo 22 (<anonymous lambda>): 0.0 ms
+passo 23 (<anonymous lambda>): 0.0 ms
+passo 24 (<anonymous lambda>): 0.0 ms
+passo 25 (<anonymous lambda>): 0.0 ms
+passo 26 (<anonymous lambda>): 0.0 ms
+passo 27 (<anonymous lambda>): 0.0 ms
+passo 28 (<anonymous lambda>): 0.0 ms
+passo 29 (<anonymous lambda>): 0.0 ms
+passo 30 (<anonymous lambda>): 0.0 ms
+passo 31 (<anonymous lambda>): 2.0 ms
+passo 32 (<anonymous lambda>): 0.0 ms
+passo 33 (<anonymous lambda>): 0.0 ms
+passo 34 (<anonymous lambda>): 0.0 ms
+passo 35 (<anonymous lambda>): 0.0 ms
+passo 36 (<anonymous lambda>): 0.0 ms
+passo 37 (<anonymous lambda>): 0.0 ms
+passo 38 (<anonymous lambda>): 0.0 ms
+passo 39 (<anonymous lambda>): 0.0 ms
+passo 40 (<anonymous lambda>): 0.0 ms
+passo 41 (<anonymous lambda>): 0.1 ms
+passo 42 (<anonymous lambda>): 0.0 ms
+passo 43 (<anonymous lambda>): 0.0 ms
+passo 44 (<anonymous lambda>): 0.0 ms
+passo 45 (<anonymous lambda>): 0.0 ms
+passo 46 (<anonymous lambda>): 0.0 ms
+passo 47 (<anonymous lambda>): 0.0 ms
+passo 48 (<anonymous lambda>): 0.3 ms
+passo 49 (<anonymous lambda>): 0.1 ms
+passo 50 (<anonymous lambda>): 0.0 ms
+passo 51 (<anonymous lambda>): 0.0 ms
+passo 52 (<anonymous lambda>): 0.0 ms
+passo 53 (<anonymous lambda>): 0.0 ms
+passo 54 (<anonymous lambda>): 0.0 ms
+passo 55 (<anonymous lambda>): 0.0 ms
+passo 56 (<anonymous lambda>): 0.0 ms
+passo 57 (<anonymous lambda>): 0.0 ms
+passo 58 (<anonymous lambda>): 0.0 ms
+passo 59 (<anonymous lambda>): 0.0 ms
+passo 60 (<anonymous lambda>): 0.0 ms
+passo 61 (<anonymous lambda>): 0.0 ms
+passo 62 (<anonymous lambda>): 0.1 ms
+passo 63 (<anonymous lambda>): 0.0 ms
+passo 64 (<anonymous lambda>): 0.0 ms
+passo 65 (<anonymous lambda>): 0.0 ms
+passo 66 (<anonymous lambda>): 0.0 ms
+passo 67 (<anonymous lambda>): 0.0 ms
+passo 68 (<anonymous lambda>): 0.0 ms
+passo 69 (<anonymous lambda>): 0.0 ms
+passo 70 (<anonymous lambda>): 0.0 ms
+passo 71 (<anonymous lambda>): 0.0 ms
+passo 72 (<anonymous lambda>): 0.0 ms
+passo 73 (<anonymous lambda>): 0.0 ms
+passo 74 (<anonymous lambda>): 1.1 ms
+passo 75 (<anonymous lambda>): 0.0 ms
+passo 76 (<anonymous lambda>): 0.0 ms
+-- fine fotogramma dopo il passo 76 (8 ms di passi)
+passo 77 (<anonymous lambda>): 0.0 ms
+passo 78 (<anonymous lambda>): 0.1 ms
+passo 79 (<anonymous lambda>): 0.0 ms
+passo 80 (<anonymous lambda>): 0.0 ms
+passo 81 (<anonymous lambda>): 0.0 ms
+passo 82 (<anonymous lambda>): 0.0 ms
+passo 83 (<anonymous lambda>): 0.0 ms
+passo 84 (<anonymous lambda>): 0.0 ms
+passo 85 (<anonymous lambda>): 0.0 ms
+passo 86 (<anonymous lambda>): 0.0 ms
+passo 87 (<anonymous lambda>): 0.0 ms
+passo 88 (<anonymous lambda>): 0.0 ms
+passo 89 (<anonymous lambda>): 0.0 ms
+passo 90 (<anonymous lambda>): 0.0 ms
+passo 91 (<anonymous lambda>): 0.0 ms
+passo 92 (<anonymous lambda>): 0.0 ms
+passo 93 (<anonymous lambda>): 0.0 ms
+passo 94 (<anonymous lambda>): 0.4 ms
+passo 95 (<anonymous lambda>): 0.0 ms
+passo 96 (<anonymous lambda>): 0.1 ms
+passo 97 (<anonymous lambda>): 0.0 ms
+passo 98 (<anonymous lambda>): 0.0 ms
+passo 99 (<anonymous lambda>): 0.0 ms
+passo 100 (<anonymous lambda>): 0.0 ms
+passo 101 (<anonymous lambda>): 0.0 ms
+passo 102 (<anonymous lambda>): 0.0 ms
+passo 103 (<anonymous lambda>): 0.0 ms
+passo 104 (<anonymous lambda>): 0.0 ms
+passo 105 (<anonymous lambda>): 0.0 ms
+passo 106 (<anonymous lambda>): 0.0 ms
+passo 107 (<anonymous lambda>): 0.0 ms
+passo 108 (<anonymous lambda>): 0.0 ms
+passo 109 (<anonymous lambda>): 0.0 ms
+passo 110 (<anonymous lambda>): 0.0 ms
+passo 111 (<anonymous lambda>): 0.0 ms
+passo 112 (<anonymous lambda>): 0.0 ms
+passo 113 (<anonymous lambda>): 0.0 ms
+passo 114 (<anonymous lambda>): 0.0 ms
+passo 115 (<anonymous lambda>): 0.0 ms
+passo 116 (<anonymous lambda>): 0.0 ms
+passo 117 (<anonymous lambda>): 0.0 ms
+passo 118 (<anonymous lambda>): 0.0 ms
+passo 119 (<anonymous lambda>): 0.0 ms
+passo 120 (<anonymous lambda>): 0.0 ms
+passo 121 (<anonymous lambda>): 0.0 ms
+passo 122 (<anonymous lambda>): 0.0 ms
+passo 123 (<anonymous lambda>): 0.0 ms
+passo 124 (<anonymous lambda>): 0.0 ms
+passo 125 (<anonymous lambda>): 0.0 ms
+passo 126 (<anonymous lambda>): 0.0 ms
+passo 127 (<anonymous lambda>): 0.0 ms
+passo 128 (<anonymous lambda>): 0.0 ms
+passo 129 (<anonymous lambda>): 0.1 ms
+passo 130 (<anonymous lambda>): 0.0 ms
+passo 131 (<anonymous lambda>): 0.0 ms
+passo 132 (<anonymous lambda>): 0.3 ms
+passo 133 (<anonymous lambda>): 0.0 ms
+passo 134 (<anonymous lambda>): 0.0 ms
+passo 135 (<anonymous lambda>): 0.0 ms
+passo 136 (<anonymous lambda>): 0.0 ms
+passo 137 (<anonymous lambda>): 0.0 ms
+passo 138 (<anonymous lambda>): 0.0 ms
+passo 139 (<anonymous lambda>): 0.0 ms
+passo 140 (<anonymous lambda>): 0.0 ms
+passo 141 (<anonymous lambda>): 0.0 ms
+passo 142 (_prepara_dati): 3.2 ms
+passo 143 (<anonymous lambda>): 0.1 ms
+passo 144 (<anonymous lambda>): 0.0 ms
+passo 145 (<anonymous lambda>): 0.0 ms
+passo 146 (<anonymous lambda>): 0.0 ms
+passo 147 (<anonymous lambda>): 0.0 ms
+passo 148 (<anonymous lambda>): 0.0 ms
+passo 149 (<anonymous lambda>): 0.0 ms
+passo 150 (<anonymous lambda>): 0.3 ms
+passo 151 (<anonymous lambda>): 0.0 ms
+passo 152 (<anonymous lambda>): 0.0 ms
+passo 153 (<anonymous lambda>): 0.0 ms
+passo 154 (<anonymous lambda>): 0.0 ms
+passo 155 (<anonymous lambda>): 0.0 ms
+passo 156 (<anonymous lambda>): 0.0 ms
+passo 157 (<anonymous lambda>): 0.0 ms
+passo 158 (<anonymous lambda>): 0.0 ms
+passo 159 (<anonymous lambda>): 0.0 ms
+passo 160 (<anonymous lambda>): 0.0 ms
+passo 161 (<anonymous lambda>): 0.0 ms
+passo 162 (<anonymous lambda>): 0.0 ms
+passo 163 (<anonymous lambda>): 0.0 ms
+passo 164 (<anonymous lambda>): 0.0 ms
+passo 165 (<anonymous lambda>): 0.0 ms
+passo 166 (<anonymous lambda>): 0.0 ms
+passo 167 (<anonymous lambda>): 0.0 ms
+passo 168 (<anonymous lambda>): 0.0 ms
+passo 169 (<anonymous lambda>): 0.0 ms
+passo 170 (<anonymous lambda>): 0.0 ms
+passo 171 (<anonymous lambda>): 0.0 ms
+passo 172 (<anonymous lambda>): 0.0 ms
+passo 173 (<anonymous lambda>): 0.0 ms
+passo 174 (<anonymous lambda>): 0.0 ms
+passo 175 (<anonymous lambda>): 0.0 ms
+passo 176 (<anonymous lambda>): 0.0 ms
+passo 177 (<anonymous lambda>): 0.0 ms
+passo 178 (<anonymous lambda>): 0.0 ms
+passo 179 (<anonymous lambda>): 0.0 ms
+passo 180 (<anonymous lambda>): 0.0 ms
+passo 181 (<anonymous lambda>): 0.0 ms
+passo 182 (<anonymous lambda>): 0.0 ms
+passo 183 (<anonymous lambda>): 0.0 ms
+passo 184 (<anonymous lambda>): 0.0 ms
+passo 185 (<anonymous lambda>): 0.0 ms
+passo 186 (<anonymous lambda>): 0.0 ms
+passo 187 (<anonymous lambda>): 0.0 ms
+passo 188 (<anonymous lambda>): 0.0 ms
+passo 189 (<anonymous lambda>): 0.0 ms
+passo 190 (<anonymous lambda>): 0.0 ms
+passo 191 (<anonymous lambda>): 0.0 ms
+passo 192 (<anonymous lambda>): 0.0 ms
+passo 193 (<anonymous lambda>): 0.0 ms
+passo 194 (<anonymous lambda>): 0.0 ms
+passo 195 (<anonymous lambda>): 0.0 ms
+passo 196 (<anonymous lambda>): 0.0 ms
+passo 197 (<anonymous lambda>): 0.0 ms
+passo 198 (<anonymous lambda>): 0.0 ms
+passo 199 (<anonymous lambda>): 0.0 ms
+passo 200 (<anonymous lambda>): 0.0 ms
+passo 201 (<anonymous lambda>): 0.0 ms
+passo 202 (<anonymous lambda>): 0.0 ms
+passo 203 (<anonymous lambda>): 0.0 ms
+passo 204 (<anonymous lambda>): 0.0 ms
+passo 205 (<anonymous lambda>): 0.0 ms
+passo 206 (<anonymous lambda>): 0.0 ms
+passo 207 (<anonymous lambda>): 0.0 ms
+passo 208 (<anonymous lambda>): 0.0 ms
+passo 209 (<anonymous lambda>): 0.0 ms
+passo 210 (<anonymous lambda>): 0.0 ms
+passo 211 (<anonymous lambda>): 0.0 ms
+passo 212 (<anonymous lambda>): 0.0 ms
+passo 213 (<anonymous lambda>): 0.0 ms
+passo 214 (<anonymous lambda>): 0.0 ms
+passo 215 (<anonymous lambda>): 0.0 ms
+passo 216 (<anonymous lambda>): 0.0 ms
+passo 217 (<anonymous lambda>): 0.0 ms
+passo 218 (<anonymous lambda>): 0.0 ms
+passo 219 (<anonymous lambda>): 0.0 ms
+passo 220 (<anonymous lambda>): 0.0 ms
+passo 221 (<anonymous lambda>): 0.0 ms
+passo 222 (<anonymous lambda>): 0.0 ms
+passo 223 (<anonymous lambda>): 0.0 ms
+passo 224 (<anonymous lambda>): 0.0 ms
+passo 225 (<anonymous lambda>): 0.0 ms
+passo 226 (<anonymous lambda>): 0.0 ms
+passo 227 (<anonymous lambda>): 0.0 ms
+passo 228 (<anonymous lambda>): 0.0 ms
+passo 229 (<anonymous lambda>): 0.0 ms
+passo 230 (<anonymous lambda>): 0.0 ms
+passo 231 (<anonymous lambda>): 0.0 ms
+passo 232 (<anonymous lambda>): 0.0 ms
+passo 233 (<anonymous lambda>): 0.0 ms
+passo 234 (<anonymous lambda>): 0.0 ms
+passo 235 (<anonymous lambda>): 0.0 ms
+passo 236 (<anonymous lambda>): 0.0 ms
+passo 237 (<anonymous lambda>): 0.0 ms
+passo 238 (<anonymous lambda>): 0.0 ms
+passo 239 (<anonymous lambda>): 0.0 ms
+passo 240 (<anonymous lambda>): 0.0 ms
+passo 241 (<anonymous lambda>): 0.0 ms
+passo 242 (<anonymous lambda>): 0.0 ms
+passo 243 (<anonymous lambda>): 0.0 ms
+passo 244 (<anonymous lambda>): 0.0 ms
+passo 245 (<anonymous lambda>): 0.0 ms
+passo 246 (<anonymous lambda>): 0.0 ms
+passo 247 (<anonymous lambda>): 0.0 ms
+passo 248 (<anonymous lambda>): 0.0 ms
+passo 249 (<anonymous lambda>): 0.0 ms
+passo 250 (<anonymous lambda>): 0.0 ms
+passo 251 (<anonymous lambda>): 0.0 ms
+passo 252 (<anonymous lambda>): 0.0 ms
+passo 253 (<anonymous lambda>): 0.0 ms
+passo 254 (<anonymous lambda>): 0.0 ms
+passo 255 (<anonymous lambda>): 0.0 ms
+passo 256 (<anonymous lambda>): 0.0 ms
+passo 257 (<anonymous lambda>): 0.0 ms
+passo 258 (<anonymous lambda>): 0.0 ms
+passo 259 (<anonymous lambda>): 0.0 ms
+passo 260 (<anonymous lambda>): 0.0 ms
+passo 261 (<anonymous lambda>): 0.0 ms
+passo 262 (<anonymous lambda>): 0.0 ms
+passo 263 (<anonymous lambda>): 0.0 ms
+passo 264 (<anonymous lambda>): 0.0 ms
+passo 265 (<anonymous lambda>): 0.0 ms
+passo 266 (<anonymous lambda>): 0.0 ms
+passo 267 (<anonymous lambda>): 0.0 ms
+passo 268 (<anonymous lambda>): 0.0 ms
+passo 269 (<anonymous lambda>): 0.0 ms
+passo 270 (<anonymous lambda>): 0.0 ms
+passo 271 (<anonymous lambda>): 0.0 ms
+passo 272 (<anonymous lambda>): 0.0 ms
+passo 273 (<anonymous lambda>): 0.0 ms
+passo 274 (<anonymous lambda>): 0.0 ms
+passo 275 (<anonymous lambda>): 0.0 ms
+passo 276 (<anonymous lambda>): 0.0 ms
+passo 277 (<anonymous lambda>): 0.0 ms
+passo 278 (<anonymous lambda>): 0.0 ms
+passo 279 (<anonymous lambda>): 0.0 ms
+passo 280 (<anonymous lambda>): 0.0 ms
+passo 281 (<anonymous lambda>): 0.0 ms
+passo 282 (<anonymous lambda>): 0.0 ms
+passo 283 (<anonymous lambda>): 0.0 ms
+passo 284 (<anonymous lambda>): 0.0 ms
+passo 285 (<anonymous lambda>): 0.0 ms
+passo 286 (<anonymous lambda>): 0.0 ms
+passo 287 (<anonymous lambda>): 0.0 ms
+passo 288 (<anonymous lambda>): 0.0 ms
+passo 289 (<anonymous lambda>): 0.0 ms
+passo 290 (<anonymous lambda>): 0.0 ms
+passo 291 (<anonymous lambda>): 0.0 ms
+passo 292 (<anonymous lambda>): 0.0 ms
+passo 293 (<anonymous lambda>): 0.0 ms
+passo 294 (<anonymous lambda>): 0.0 ms
+passo 295 (<anonymous lambda>): 0.0 ms
+passo 296 (<anonymous lambda>): 0.0 ms
+passo 297 (<anonymous lambda>): 0.0 ms
+passo 298 (<anonymous lambda>): 0.0 ms
+passo 299 (<anonymous lambda>): 0.0 ms
+passo 300 (<anonymous lambda>): 0.0 ms
+passo 301 (<anonymous lambda>): 0.0 ms
+passo 302 (<anonymous lambda>): 0.0 ms
+passo 303 (<anonymous lambda>): 0.0 ms
+passo 304 (<anonymous lambda>): 0.0 ms
+passo 305 (<anonymous lambda>): 0.0 ms
+passo 306 (<anonymous lambda>): 0.0 ms
+passo 307 (<anonymous lambda>): 0.0 ms
+passo 308 (<anonymous lambda>): 0.0 ms
+passo 309 (<anonymous lambda>): 0.0 ms
+passo 310 (<anonymous lambda>): 0.0 ms
+passo 311 (<anonymous lambda>): 0.0 ms
+passo 312 (<anonymous lambda>): 0.0 ms
+passo 313 (<anonymous lambda>): 0.0 ms
+passo 314 (<anonymous lambda>): 0.0 ms
+passo 315 (<anonymous lambda>): 0.0 ms
+passo 316 (<anonymous lambda>): 0.0 ms
+passo 317 (<anonymous lambda>): 0.0 ms
+passo 318 (<anonymous lambda>): 0.0 ms
+passo 319 (<anonymous lambda>): 0.0 ms
+passo 320 (<anonymous lambda>): 0.0 ms
+passo 321 (<anonymous lambda>): 0.0 ms
+passo 322 (<anonymous lambda>): 0.0 ms
+passo 323 (<anonymous lambda>): 0.0 ms
+passo 324 (<anonymous lambda>): 0.0 ms
+passo 325 (<anonymous lambda>): 0.0 ms
+-- fine fotogramma dopo il passo 325 (8 ms di passi)
+passo 326 (<anonymous lambda>): 0.0 ms
+passo 327 (<anonymous lambda>): 0.0 ms
+passo 328 (<anonymous lambda>): 0.0 ms
+passo 329 (<anonymous lambda>): 0.0 ms
+passo 330 (<anonymous lambda>): 0.0 ms
+passo 331 (<anonymous lambda>): 0.0 ms
+passo 332 (<anonymous lambda>): 0.0 ms
+passo 333 (<anonymous lambda>): 0.0 ms
+passo 334 (<anonymous lambda>): 0.0 ms
+passo 335 (<anonymous lambda>): 0.0 ms
+passo 336 (<anonymous lambda>): 0.0 ms
+passo 337 (<anonymous lambda>): 0.0 ms
+passo 338 (<anonymous lambda>): 0.0 ms
+passo 339 (<anonymous lambda>): 0.0 ms
+passo 340 (<anonymous lambda>): 0.0 ms
+passo 341 (<anonymous lambda>): 0.0 ms
+passo 342 (<anonymous lambda>): 0.0 ms
+passo 343 (<anonymous lambda>): 0.0 ms
+passo 344 (<anonymous lambda>): 0.0 ms
+passo 345 (<anonymous lambda>): 0.0 ms
+passo 346 (<anonymous lambda>): 0.0 ms
+passo 347 (<anonymous lambda>): 0.0 ms
+passo 348 (<anonymous lambda>): 0.0 ms
+passo 349 (<anonymous lambda>): 0.0 ms
+passo 350 (<anonymous lambda>): 0.0 ms
+passo 351 (<anonymous lambda>): 0.0 ms
+passo 352 (<anonymous lambda>): 0.0 ms
+passo 353 (<anonymous lambda>): 0.0 ms
+passo 354 (<anonymous lambda>): 0.0 ms
+passo 355 (<anonymous lambda>): 0.0 ms
+passo 356 (<anonymous lambda>): 0.0 ms
+passo 357 (<anonymous lambda>): 0.0 ms
+passo 358 (<anonymous lambda>): 0.0 ms
+passo 359 (<anonymous lambda>): 0.0 ms
+passo 360 (<anonymous lambda>): 0.0 ms
+passo 361 (<anonymous lambda>): 0.0 ms
+passo 362 (<anonymous lambda>): 0.0 ms
+passo 363 (<anonymous lambda>): 0.0 ms
+passo 364 (<anonymous lambda>): 0.0 ms
+passo 365 (<anonymous lambda>): 0.0 ms
+passo 366 (<anonymous lambda>): 0.0 ms
+passo 367 (<anonymous lambda>): 0.0 ms
+passo 368 (<anonymous lambda>): 0.0 ms
+passo 369 (<anonymous lambda>): 0.0 ms
+passo 370 (<anonymous lambda>): 0.0 ms
+passo 371 (<anonymous lambda>): 0.0 ms
+passo 372 (<anonymous lambda>): 0.0 ms
+passo 373 (<anonymous lambda>): 0.0 ms
+passo 374 (<anonymous lambda>): 0.0 ms
+passo 375 (<anonymous lambda>): 0.0 ms
+passo 376 (<anonymous lambda>): 0.0 ms
+passo 377 (<anonymous lambda>): 0.0 ms
+passo 378 (<anonymous lambda>): 0.0 ms
+passo 379 (<anonymous lambda>): 0.0 ms
+passo 380 (<anonymous lambda>): 0.0 ms
+passo 381 (<anonymous lambda>): 0.0 ms
+passo 382 (<anonymous lambda>): 0.0 ms
+passo 383 (<anonymous lambda>): 0.0 ms
+passo 384 (<anonymous lambda>): 0.0 ms
+passo 385 (<anonymous lambda>): 0.0 ms
+passo 386 (<anonymous lambda>): 0.0 ms
+passo 387 (<anonymous lambda>): 0.0 ms
+passo 388 (<anonymous lambda>): 0.0 ms
+passo 389 (<anonymous lambda>): 0.0 ms
+passo 390 (<anonymous lambda>): 0.0 ms
+passo 391 (<anonymous lambda>): 0.0 ms
+passo 392 (<anonymous lambda>): 0.0 ms
+passo 393 (<anonymous lambda>): 0.0 ms
+passo 394 (<anonymous lambda>): 0.0 ms
+passo 395 (<anonymous lambda>): 0.0 ms
+passo 396 (<anonymous lambda>): 0.0 ms
+passo 397 (<anonymous lambda>): 0.0 ms
+passo 398 (<anonymous lambda>): 0.0 ms
+passo 399 (<anonymous lambda>): 0.0 ms
+passo 400 (<anonymous lambda>): 0.0 ms
+passo 401 (<anonymous lambda>): 0.0 ms
+passo 402 (<anonymous lambda>): 0.0 ms
+passo 403 (<anonymous lambda>): 0.0 ms
+passo 404 (<anonymous lambda>): 0.0 ms
+passo 405 (<anonymous lambda>): 0.0 ms
+passo 406 (<anonymous lambda>): 0.0 ms
+passo 407 (<anonymous lambda>): 0.0 ms
+passo 408 (<anonymous lambda>): 0.0 ms
+passo 409 (<anonymous lambda>): 0.0 ms
+passo 410 (<anonymous lambda>): 0.0 ms
+passo 411 (<anonymous lambda>): 0.0 ms
+passo 412 (<anonymous lambda>): 0.0 ms
+passo 413 (<anonymous lambda>): 0.0 ms
+passo 414 (<anonymous lambda>): 0.0 ms
+passo 415 (<anonymous lambda>): 0.0 ms
+passo 416 (<anonymous lambda>): 0.0 ms
+passo 417 (<anonymous lambda>): 0.0 ms
+passo 418 (<anonymous lambda>): 0.0 ms
+passo 419 (<anonymous lambda>): 0.0 ms
+passo 420 (<anonymous lambda>): 0.0 ms
+passo 421 (<anonymous lambda>): 0.0 ms
+passo 422 (<anonymous lambda>): 0.0 ms
+passo 423 (<anonymous lambda>): 0.0 ms
+passo 424 (<anonymous lambda>): 0.0 ms
+passo 425 (<anonymous lambda>): 0.0 ms
+passo 426 (<anonymous lambda>): 0.0 ms
+passo 427 (<anonymous lambda>): 0.0 ms
+passo 428 (<anonymous lambda>): 0.0 ms
+passo 429 (<anonymous lambda>): 0.0 ms
+passo 430 (<anonymous lambda>): 0.0 ms
+passo 431 (<anonymous lambda>): 0.0 ms
+passo 432 (<anonymous lambda>): 0.0 ms
+passo 433 (<anonymous lambda>): 0.0 ms
+passo 434 (<anonymous lambda>): 0.0 ms
+passo 435 (<anonymous lambda>): 0.0 ms
+passo 436 (<anonymous lambda>): 0.0 ms
+passo 437 (<anonymous lambda>): 0.0 ms
+passo 438 (<anonymous lambda>): 0.0 ms
+passo 439 (<anonymous lambda>): 0.0 ms
+passo 440 (<anonymous lambda>): 0.0 ms
+passo 441 (<anonymous lambda>): 0.0 ms
+passo 442 (<anonymous lambda>): 0.0 ms
+passo 443 (<anonymous lambda>): 0.0 ms
+passo 444 (<anonymous lambda>): 0.0 ms
+passo 445 (<anonymous lambda>): 0.0 ms
+passo 446 (<anonymous lambda>): 0.0 ms
+passo 447 (<anonymous lambda>): 0.0 ms
+passo 448 (<anonymous lambda>): 0.0 ms
+passo 449 (<anonymous lambda>): 0.0 ms
+passo 450 (<anonymous lambda>): 0.0 ms
+passo 451 (<anonymous lambda>): 0.0 ms
+passo 452 (<anonymous lambda>): 0.0 ms
+passo 453 (<anonymous lambda>): 0.0 ms
+passo 454 (<anonymous lambda>): 0.0 ms
+passo 455 (<anonymous lambda>): 0.0 ms
+passo 456 (<anonymous lambda>): 0.0 ms
+passo 457 (<anonymous lambda>): 0.0 ms
+passo 458 (<anonymous lambda>): 0.0 ms
+passo 459 (<anonymous lambda>): 0.0 ms
+passo 460 (<anonymous lambda>): 0.0 ms
+passo 461 (<anonymous lambda>): 0.0 ms
+passo 462 (<anonymous lambda>): 0.0 ms
+passo 463 (<anonymous lambda>): 0.0 ms
+passo 464 (<anonymous lambda>): 0.0 ms
+passo 465 (<anonymous lambda>): 0.0 ms
+passo 466 (<anonymous lambda>): 0.0 ms
+passo 467 (<anonymous lambda>): 0.0 ms
+passo 468 (<anonymous lambda>): 0.0 ms
+passo 469 (<anonymous lambda>): 0.0 ms
+passo 470 (<anonymous lambda>): 0.0 ms
+passo 471 (<anonymous lambda>): 0.0 ms
+passo 472 (<anonymous lambda>): 0.0 ms
+passo 473 (<anonymous lambda>): 0.0 ms
+passo 474 (<anonymous lambda>): 0.0 ms
+passo 475 (<anonymous lambda>): 0.0 ms
+passo 476 (<anonymous lambda>): 0.0 ms
+passo 477 (<anonymous lambda>): 0.0 ms
+passo 478 (<anonymous lambda>): 0.0 ms
+passo 479 (<anonymous lambda>): 0.0 ms
+passo 480 (<anonymous lambda>): 0.0 ms
+passo 481 (<anonymous lambda>): 0.0 ms
+passo 482 (<anonymous lambda>): 0.0 ms
+passo 483 (<anonymous lambda>): 0.0 ms
+passo 484 (<anonymous lambda>): 0.0 ms
+passo 485 (<anonymous lambda>): 0.0 ms
+passo 486 (<anonymous lambda>): 0.0 ms
+passo 487 (<anonymous lambda>): 0.3 ms
+passo 488 (<anonymous lambda>): 0.0 ms
+passo 489 (<anonymous lambda>): 0.0 ms
+passo 490 (<anonymous lambda>): 0.0 ms
+passo 491 (<anonymous lambda>): 0.0 ms
+passo 492 (<anonymous lambda>): 0.0 ms
+passo 493 (<anonymous lambda>): 0.0 ms
+passo 494 (<anonymous lambda>): 0.0 ms
+passo 495 (<anonymous lambda>): 0.0 ms
+passo 496 (<anonymous lambda>): 0.0 ms
+passo 497 (<anonymous lambda>): 0.0 ms
+passo 498 (<anonymous lambda>): 0.0 ms
+passo 499 (<anonymous lambda>): 0.0 ms
+passo 500 (<anonymous lambda>): 0.0 ms
+passo 501 (<anonymous lambda>): 0.0 ms
+passo 502 (<anonymous lambda>): 0.0 ms
+passo 503 (<anonymous lambda>): 0.0 ms
+passo 504 (<anonymous lambda>): 0.0 ms
+passo 505 (<anonymous lambda>): 0.0 ms
+passo 506 (<anonymous lambda>): 0.0 ms
+passo 507 (<anonymous lambda>): 0.0 ms
+passo 508 (<anonymous lambda>): 0.0 ms
+passo 509 (<anonymous lambda>): 0.0 ms
+passo 510 (<anonymous lambda>): 0.0 ms
+passo 511 (<anonymous lambda>): 0.0 ms
+passo 512 (<anonymous lambda>): 0.0 ms
+passo 513 (<anonymous lambda>): 0.0 ms
+passo 514 (<anonymous lambda>): 0.0 ms
+passo 515 (<anonymous lambda>): 0.0 ms
+passo 516 (<anonymous lambda>): 0.0 ms
+passo 517 (<anonymous lambda>): 0.0 ms
+passo 518 (<anonymous lambda>): 0.0 ms
+passo 519 (<anonymous lambda>): 0.0 ms
+passo 520 (<anonymous lambda>): 0.0 ms
+passo 521 (<anonymous lambda>): 0.0 ms
+passo 522 (<anonymous lambda>): 0.0 ms
+passo 523 (<anonymous lambda>): 0.0 ms
+passo 524 (<anonymous lambda>): 0.0 ms
+passo 525 (<anonymous lambda>): 0.0 ms
+passo 526 (<anonymous lambda>): 0.0 ms
+passo 527 (<anonymous lambda>): 0.0 ms
+passo 528 (<anonymous lambda>): 0.0 ms
+passo 529 (<anonymous lambda>): 0.0 ms
+passo 530 (<anonymous lambda>): 0.0 ms
+passo 531 (<anonymous lambda>): 0.0 ms
+passo 532 (<anonymous lambda>): 0.0 ms
+passo 533 (<anonymous lambda>): 0.0 ms
+passo 534 (<anonymous lambda>): 0.0 ms
+passo 535 (<anonymous lambda>): 0.0 ms
+passo 536 (<anonymous lambda>): 0.0 ms
+passo 537 (<anonymous lambda>): 0.0 ms
+passo 538 (<anonymous lambda>): 0.0 ms
+passo 539 (<anonymous lambda>): 0.0 ms
+passo 540 (<anonymous lambda>): 0.0 ms
+passo 541 (<anonymous lambda>): 0.0 ms
+passo 542 (<anonymous lambda>): 0.0 ms
+passo 543 (<anonymous lambda>): 0.0 ms
+passo 544 (<anonymous lambda>): 0.0 ms
+passo 545 (<anonymous lambda>): 0.6 ms
+passo 546 (<anonymous lambda>): 0.7 ms
+passo 547 (<anonymous lambda>): 0.4 ms
+passo 548 (<anonymous lambda>): 0.6 ms
+passo 549 (<anonymous lambda>): 0.4 ms
+passo 550 (<anonymous lambda>): 0.3 ms
+passo 551 (<anonymous lambda>): 0.0 ms
+passo 552 (<anonymous lambda>): 0.0 ms
+passo 553 (<anonymous lambda>): 0.0 ms
+passo 554 (<anonymous lambda>): 0.0 ms
+passo 555 (<anonymous lambda>): 0.0 ms
+passo 556 (<anonymous lambda>): 0.0 ms
+passo 557 (<anonymous lambda>): 0.0 ms
+passo 558 (<anonymous lambda>): 0.0 ms
+passo 559 (<anonymous lambda>): 0.0 ms
+passo 560 (<anonymous lambda>): 0.0 ms
+passo 561 (<anonymous lambda>): 0.0 ms
+passo 562 (<anonymous lambda>): 0.0 ms
+passo 563 (<anonymous lambda>): 0.0 ms
+passo 564 (<anonymous lambda>): 0.0 ms
+passo 565 (<anonymous lambda>): 0.0 ms
+passo 566 (<anonymous lambda>): 0.0 ms
+passo 567 (<anonymous lambda>): 0.0 ms
+passo 568 (<anonymous lambda>): 0.0 ms
+passo 569 (<anonymous lambda>): 0.0 ms
+passo 570 (<anonymous lambda>): 0.0 ms
+passo 571 (<anonymous lambda>): 0.0 ms
+passo 572 (<anonymous lambda>): 0.0 ms
+passo 573 (<anonymous lambda>): 0.0 ms
+passo 574 (<anonymous lambda>): 0.0 ms
+passo 575 (<anonymous lambda>): 0.0 ms
+passo 576 (<anonymous lambda>): 0.0 ms
+passo 577 (<anonymous lambda>): 0.0 ms
+passo 578 (<anonymous lambda>): 0.0 ms
+passo 579 (<anonymous lambda>): 0.0 ms
+passo 580 (<anonymous lambda>): 0.0 ms
+passo 581 (<anonymous lambda>): 0.0 ms
+passo 582 (<anonymous lambda>): 0.0 ms
+passo 583 (<anonymous lambda>): 0.0 ms
+passo 584 (<anonymous lambda>): 0.0 ms
+passo 585 (<anonymous lambda>): 0.0 ms
+passo 586 (<anonymous lambda>): 0.0 ms
+passo 587 (<anonymous lambda>): 0.0 ms
+passo 588 (<anonymous lambda>): 0.0 ms
+passo 589 (<anonymous lambda>): 0.0 ms
+passo 590 (<anonymous lambda>): 0.0 ms
+passo 591 (<anonymous lambda>): 0.0 ms
+passo 592 (<anonymous lambda>): 0.0 ms
+passo 593 (<anonymous lambda>): 0.0 ms
+passo 594 (<anonymous lambda>): 0.0 ms
+passo 595 (<anonymous lambda>): 0.0 ms
+passo 596 (<anonymous lambda>): 0.0 ms
+passo 597 (<anonymous lambda>): 0.0 ms
+passo 598 (<anonymous lambda>): 0.0 ms
+passo 599 (<anonymous lambda>): 0.0 ms
+passo 600 (<anonymous lambda>): 0.0 ms
+passo 601 (<anonymous lambda>): 0.0 ms
+passo 602 (<anonymous lambda>): 0.0 ms
+passo 603 (<anonymous lambda>): 0.0 ms
+passo 604 (<anonymous lambda>): 0.0 ms
+passo 605 (<anonymous lambda>): 0.0 ms
+passo 606 (<anonymous lambda>): 0.0 ms
+passo 607 (<anonymous lambda>): 0.0 ms
+passo 608 (<anonymous lambda>): 0.0 ms
+passo 609 (_prepara_imbocchi): 0.3 ms
+passo 610 (_checkpoint): 0.3 ms
+passo 611 (_raccolta): 0.3 ms
+passo 612 (_polaroid): 12.7 ms
+-- fine fotogramma dopo il passo 612 (18 ms di passi)
+passo 613 (<anonymous lambda>): 63.4 ms
+-- fine fotogramma dopo il passo 613 (63 ms di passi)
+passo 614 (<anonymous lambda>): 38.6 ms
+-- fine fotogramma dopo il passo 614 (39 ms di passi)
+passo 615 (<anonymous lambda>): 1.7 ms
+passo 616 (<anonymous lambda>): 2.3 ms
+passo 617 (_lampo_balconata): 0.1 ms
+passo 618 (_vasca_fondo): 0.0 ms
+passo 619 (_oblo_lei): 9.5 ms
+-- fine fotogramma dopo il passo 619 (14 ms di passi)
+passo 620 (<anonymous lambda>): 4.9 ms
+passo 621 (<anonymous lambda>): 0.0 ms
+passo 622 (<anonymous lambda>): 1.5 ms
+passo 623 (<anonymous lambda>): 0.0 ms
+passo 624 (<anonymous lambda>): 3.2 ms
+-- fine fotogramma dopo il passo 624 (10 ms di passi)
+passo 625 (<anonymous lambda>): 2.4 ms
+passo 626 (<anonymous lambda>): 2.0 ms
+passo 627 (<anonymous lambda>): 2.0 ms
+passo 628 (<anonymous lambda>): 1.9 ms
+-- fine fotogramma dopo il passo 628 (8 ms di passi)
+passo 629 (<anonymous lambda>): 2.0 ms
+passo 630 (<anonymous lambda>): 1.9 ms
+passo 631 (<anonymous lambda>): 1.1 ms
+passo 632 (<anonymous lambda>): 0.4 ms
+passo 633 (<anonymous lambda>): 0.3 ms
+passo 634 (<anonymous lambda>): 0.4 ms
+passo 635 (<anonymous lambda>): 0.3 ms
+passo 636 (<anonymous lambda>): 0.3 ms
+passo 637 (<anonymous lambda>): 0.4 ms
+passo 638 (<anonymous lambda>): 0.3 ms
+passo 639 (<anonymous lambda>): 0.5 ms
+-- fine fotogramma dopo il passo 639 (8 ms di passi)
+passo 640 (<anonymous lambda>): 0.5 ms
+passo 641 (<anonymous lambda>): 0.4 ms
+passo 642 (<anonymous lambda>): 0.4 ms
+passo 643 (<anonymous lambda>): 0.5 ms
+passo 644 (<anonymous lambda>): 0.4 ms
+passo 645 (<anonymous lambda>): 0.4 ms
+passo 646 (<anonymous lambda>): 0.4 ms
+passo 647 (<anonymous lambda>): 0.4 ms
+passo 648 (<anonymous lambda>): 0.5 ms
+passo 649 (<anonymous lambda>): 0.3 ms
+passo 650 (<anonymous lambda>): 0.2 ms
+passo 651 (<anonymous lambda>): 0.2 ms
+passo 652 (<anonymous lambda>): 0.2 ms
+passo 653 (<anonymous lambda>): 0.2 ms
+passo 654 (<anonymous lambda>): 2.1 ms
+passo 655 (<anonymous lambda>): 2.4 ms
+-- fine fotogramma dopo il passo 655 (10 ms di passi)
+passo 656 (_luce_lei): 0.6 ms
+passo 657 (_aggiungi_inseguimento): 0.7 ms
+passo 658 (_fuori_dal_blackout): 0.3 ms
+inseguimento passo 0 (_modello(struttura)): 176.6 ms
+inseguimento passo 1 (<anonymous lambda>): 0.0 ms
+inseguimento passo 2 (<anonymous lambda>): 0.0 ms
+inseguimento passo 3 (<anonymous lambda>): 0.0 ms
+inseguimento passo 4 (<anonymous lambda>): 0.0 ms
+inseguimento passo 5 (<anonymous lambda>): 0.0 ms
+inseguimento passo 6 (<anonymous lambda>): 0.0 ms
+inseguimento passo 7 (<anonymous lambda>): 0.0 ms
+inseguimento passo 8 (<anonymous lambda>): 0.0 ms
+inseguimento passo 9 (<anonymous lambda>): 0.0 ms
+inseguimento passo 10 (<anonymous lambda>): 0.0 ms
+inseguimento passo 11 (<anonymous lambda>): 0.0 ms
+inseguimento passo 12 (_modello(tubi)): 0.2 ms
+inseguimento passo 13 (<anonymous lambda>): 0.0 ms
+inseguimento passo 14 (<anonymous lambda>): 0.0 ms
+inseguimento passo 15 (<anonymous lambda>): 0.0 ms
+inseguimento passo 16 (<anonymous lambda>): 0.0 ms
+inseguimento passo 17 (<anonymous lambda>): 0.0 ms
+inseguimento passo 18 (<anonymous lambda>): 0.0 ms
+inseguimento passo 19 (<anonymous lambda>): 0.0 ms
+inseguimento passo 20 (_modello(prop)): 0.2 ms
+inseguimento passo 21 (<anonymous lambda>): 0.1 ms
+inseguimento passo 22 (<anonymous lambda>): 0.0 ms
+inseguimento passo 23 (<anonymous lambda>): 0.0 ms
+inseguimento passo 24 (<anonymous lambda>): 0.0 ms
+inseguimento passo 25 (<anonymous lambda>): 0.0 ms
+inseguimento passo 26 (_modello(mobili)): 0.2 ms
+inseguimento passo 27 (<anonymous lambda>): 0.0 ms
+inseguimento passo 28 (<anonymous lambda>): 0.0 ms
+inseguimento passo 29 (<anonymous lambda>): 0.0 ms
+inseguimento passo 30 (<anonymous lambda>): 0.0 ms
+inseguimento passo 31 (<anonymous lambda>): 0.0 ms
+inseguimento passo 32 (<anonymous lambda>): 0.0 ms
+inseguimento passo 33 (<anonymous lambda>): 0.0 ms
+inseguimento passo 34 (_tubi): 9.4 ms
+inseguimento passo 35 (_acque): 0.3 ms
+inseguimento passo 36 (_paratie): 0.2 ms
+inseguimento passo 37 (_grata): 0.0 ms
+inseguimento passo 38 (_scala): 0.1 ms
+inseguimento passo 39 (_checkpoint): 0.1 ms
+inseguimento passo 40 (_scolo_zone): 0.1 ms
+inseguimento passo 41 (_bacino): 0.0 ms
+inseguimento passo 42 (_lei_crea): 1.6 ms
+inseguimento passo 43 (_lei_parti): 0.1 ms
+inseguimento passo 44 (_lei_morbida): 6.6 ms
+inseguimento passo 45 (_luci): 34.3 ms
+inseguimento passo 46 (<anonymous lambda>): 1.9 ms
+inseguimento passo 47 (<anonymous lambda>): 0.3 ms
+inseguimento passo 48 (<anonymous lambda>): 0.4 ms
+inseguimento passo 49 (<anonymous lambda>): 0.5 ms
+inseguimento passo 50 (<anonymous lambda>): 0.1 ms
+inseguimento passo 51 (<anonymous lambda>): 0.1 ms
+inseguimento passo 52 (<anonymous lambda>): 0.2 ms
+inseguimento passo 53 (<anonymous lambda>): 0.1 ms
+inseguimento passo 54 (<anonymous lambda>): 0.2 ms
+inseguimento passo 55 (<anonymous lambda>): 0.2 ms
+inseguimento passo 56 (<anonymous lambda>): 0.1 ms
+inseguimento passo 57 (<anonymous lambda>): 0.1 ms
+inseguimento passo 58 (<anonymous lambda>): 0.1 ms
+inseguimento passo 59 (<anonymous lambda>): 0.1 ms
+inseguimento passo 60 (<anonymous lambda>): 0.1 ms
+inseguimento passo 61 (<anonymous lambda>): 0.2 ms
+inseguimento passo 62 (<anonymous lambda>): 0.1 ms
+inseguimento passo 63 (<anonymous lambda>): 0.2 ms
+inseguimento passo 64 (<anonymous lambda>): 0.1 ms
+inseguimento passo 65 (<anonymous lambda>): 0.1 ms
+inseguimento passo 66 (<anonymous lambda>): 0.1 ms
+inseguimento passo 67 (<anonymous lambda>): 0.1 ms
+inseguimento passo 68 (<anonymous lambda>): 0.1 ms
+inseguimento passo 69 (<anonymous lambda>): 0.1 ms
+inseguimento passo 70 (<anonymous lambda>): 0.1 ms
+inseguimento passo 71 (<anonymous lambda>): 0.1 ms
+inseguimento passo 72 (<anonymous lambda>): 0.1 ms
+inseguimento passo 73 (<anonymous lambda>): 0.1 ms
+inseguimento passo 74 (<anonymous lambda>): 0.1 ms
+inseguimento passo 75 (<anonymous lambda>): 0.1 ms
+inseguimento passo 76 (<anonymous lambda>): 0.1 ms
+inseguimento passo 77 (<anonymous lambda>): 0.1 ms
+inseguimento passo 78 (<anonymous lambda>): 0.1 ms
+TORRE: costruita in 0.5 s, il fotogramma più carico della torre 63 ms
