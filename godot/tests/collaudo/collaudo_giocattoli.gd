@@ -268,7 +268,9 @@ func _sponda() -> void:
 			var s := 1.0 if tentativo % 2 == 0 else -1.0
 			var mira := gp + verso_muro * (r + 0.45) + lato * s * (r + 0.15) + Vector3(0, 0.3, 0)
 			var stand := gp - verso_muro * 2.0 + lato * s * 1.2
-			stand.y = _fondo_sotto(stand, []) + 0.05
+			# (il raggio parte da sopra il bordo: dove il fondo sale verso la parte bassa, partendo dalla quota del pallone non
+			# lo trovava e il giocatore finiva a -99)
+			stand.y = _fondo_sotto(Vector3(stand.x, 1.0, stand.z), []) + 0.05
 			p.teleport(stand, 0.0, 0.0)
 			await _frames(4)
 			p.water_pack.set_tank_amount(20.0)
@@ -398,7 +400,9 @@ func _gonfiabile() -> void:
 		var g := enigma.giocattolo(1)
 		var y0 := g.global_position.y
 		var stand := g.global_position + Vector3(via.x, 0, via.y) * 2.0
-		stand.y = _fondo_sotto(stand, []) + 0.05
+		# (il raggio parte da sopra il bordo: dove il fondo sale verso la parte bassa, partendo dalla quota del pallone non
+		# lo trovava e il giocatore finiva a -99)
+		stand.y = _fondo_sotto(Vector3(stand.x, 1.0, stand.z), []) + 0.05
 		p.teleport(stand, 0.0, 0.0)
 		await _frames(4)
 		p.water_pack.set_tank_amount(30.0)
@@ -482,7 +486,9 @@ func _portellone() -> void:
 		var g := enigma.giocattolo(1)
 		var partenza := Vector2(g.position.x, g.position.z)
 		var stand := g.global_position + Vector3(via.x, 0, via.y) * 1.8
-		stand.y = _fondo_sotto(stand, []) + 0.05
+		# (il raggio parte da sopra il bordo: dove il fondo sale verso la parte bassa, partendo dalla quota del pallone non
+		# lo trovava e il giocatore finiva a -99)
+		stand.y = _fondo_sotto(Vector3(stand.x, 1.0, stand.z), []) + 0.05
 		p.teleport(stand, 0.0, 0.0)
 		await _frames(4)
 		p.water_pack.set_tank_amount(30.0)
