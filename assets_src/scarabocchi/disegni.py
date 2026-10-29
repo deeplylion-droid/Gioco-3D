@@ -1,5 +1,5 @@
 """I disegni degli scarabocchi (scelte consigliate dal coordinatore all'utente, 28 ottobre: C, C, B):
-- **cosa**: tutti e due, misti. Scarabocchi (spirali, un cerchio, righe, cancellature fitte); disegnini da bambini (la
+- **cosa**: tutti e due, misti. Scarabocchi (spirali, un cerchio, macchie colorate forte, cancellature fitte); disegnini da bambini (la
   nave, i pesci, il sole, i bambini che si tengono per mano, Jilly sorridente come sui poster); qua e là qualcuno che
   mette a disagio (tante manine che salgono verso l'alto, Jilly col suo occhio solo, i bambini sott'acqua con lei). Mai
   lei che prende qualcuno, niente che spieghi cosa è successo (la regola delle Polaroid).
@@ -103,10 +103,13 @@ def spirale(p, cx, cy, r, colore, giri=5):
     p.tratto(pts, colore, volte=1)
 
 
-def righe(p, x0, y0, x1, y1, colore, quante=6):
-    for i in range(quante):
-        y = y0 + (y1 - y0) * i / max(1, quante - 1)
-        p.linea((x0 + p.rng.normal(0, 8), y), (x1 + p.rng.normal(0, 8), y + p.rng.normal(0, 10)), colore, curva=p.rng.normal(0, 0.04))
+def macchia(p, cx, cy, rx, ry, colore):
+    """Una macchia colorata forte, a va e vieni fitto in tutte le direzioni: non ci sono segni da contare (righe in fila
+    sembrerebbero tacche, come quelle di un indizio)."""
+    forma = [(cx + rx * (0.75 + 0.25 * p.rng.random()) * math.cos(a), cy + ry * (0.75 + 0.25 * p.rng.random()) * math.sin(a))
+             for a in [i * 2 * math.pi / 14 for i in range(14)]]
+    for ang in (0.5, 1.6, 2.6):
+        p.riempi(forma, colore, larg_mm=13, passo_mm=9, ang=ang + p.rng.normal(0, 0.2))
 
 
 def cancellatura(p, x0, y0, x1, y1, colore='nero'):
@@ -139,7 +142,7 @@ def jilly_e_pesci(p, w, h):
 
 def scarabocchi_misti(p, w, h):
     spirale(p, w * 0.2, h * 0.45, h * 0.3, 'verde')
-    righe(p, w * 0.42, h * 0.25, w * 0.68, h * 0.75, 'viola', quante=5)
+    macchia(p, w * 0.55, h * 0.5, w * 0.06, h * 0.4, 'viola')
     scarabocchio(p, w * 0.83, h * 0.5, h * 0.28, 'marrone')
 
 

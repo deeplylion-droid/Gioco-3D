@@ -21,8 +21,8 @@
 		"nome": "scarabocchio_torre_3",
 		"zona": "torre",
 		"centro": [
-			35.6,
-			-4.64,
+			35.4,
+			-4.84,
 			-4.0
 		],
 		"normale": [
@@ -30,8 +30,8 @@
 			0.0,
 			-1.0
 		],
-		"largo": 1.6,
-		"alto": 0.9,
+		"largo": 1.4,
+		"alto": 0.7,
 		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_torre_3.png",
 		"sbiadito": 0.0
 	},
@@ -58,7 +58,7 @@
 		"zona": "inseguimento",
 		"centro": [
 			40.4,
-			-33.2,
+			-32.85,
 			-0.6
 		],
 		"normale": [
@@ -67,7 +67,7 @@
 			0.0
 		],
 		"largo": 2.0,
-		"alto": 0.9,
+		"alto": 0.7,
 		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_inseguimento_1.png",
 		"sbiadito": 0.0
 	},
@@ -202,7 +202,7 @@
 		"zona": "sala",
 		"centro": [
 			-9.65,
-			0.75,
+			0.85,
 			20.0
 		],
 		"normale": [
@@ -211,7 +211,7 @@
 			-1.0
 		],
 		"largo": 1.6,
-		"alto": 0.8,
+		"alto": 0.6,
 		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_sala_1.png",
 		"sbiadito": 0.0
 	},
@@ -237,7 +237,7 @@
 		"nome": "scarabocchio_alto_sala_3",
 		"zona": "sala",
 		"centro": [
-			-19.55,
+			-19.4,
 			2.25,
 			-24.0
 		],
@@ -246,7 +246,7 @@
 			0.0,
 			1.0
 		],
-		"largo": 1.0,
+		"largo": 0.8,
 		"alto": 0.45,
 		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_sala_3.png",
 		"sbiadito": 0.0
