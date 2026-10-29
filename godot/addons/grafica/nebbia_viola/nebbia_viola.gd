@@ -56,6 +56,7 @@ var _strato: CanvasLayer
 ## Le zone in cui è il giocatore adesso (a pezzi possono sovrapporsi): la nebbia c'è se ce n'è almeno una.
 var _zone: Array[Node] = []
 var _ultima_pos := Vector3.INF
+var _ultima_cam := 0
 var _fotogramma_salto := -100
 ## Le 4 luci dell'alone: [luce, peso 0..1].
 var _slot: Array = [[null, 0.0], [null, 0.0], [null, 0.0], [null, 0.0]]
@@ -138,11 +139,20 @@ func _obiettivo() -> float:
 func _process(delta: float) -> void:
 	var cam := get_viewport().get_camera_3d()
 	if cam:
+		# (il salto si guarda sul giocatore, se c'è: la camera può seguirlo un fotogramma dopo)
 		var pos := cam.global_position
-		if _ultima_pos != Vector3.INF and pos.distance_to(_ultima_pos) > SALTO:
+		var p := GameState.player
+		if p and is_instance_valid(p) and p.is_inside_tree():
+			pos = p.global_position
+		# un salto (checkpoint, Continua, caricamento) o una camera nuova: dove è il giocatore lo dicono subito le zone
+		# con la loro geometria, e la nebbia è già quella giusta
+		if (_ultima_pos != Vector3.INF and pos.distance_to(_ultima_pos) > SALTO) or cam.get_instance_id() != _ultima_cam:
 			_fotogramma_salto = Engine.get_process_frames()
+			for z in get_tree().get_nodes_in_group(ZonaNebbiaViola.GRUPPO):
+				(z as ZonaNebbiaViola).controlla_subito()
 			quanto = _obiettivo()
 		_ultima_pos = pos
+		_ultima_cam = cam.get_instance_id()
 	quanto = move_toward(quanto, _obiettivo(), delta / DURATA)
 	if quanto > 0.0 and cam:
 		_aggiorna_luci(cam, delta)

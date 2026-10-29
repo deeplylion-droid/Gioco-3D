@@ -65,20 +65,31 @@ func _run() -> void:
 			"uscendo scende piano e si spegne", [scende, n.quanto])
 
 	# checkpoint dentro la zona: subito piena
+	# (al primo fotogramma dopo il salto, senza aspettare la fisica: collaudo del 29 ottobre, Continua dentro la sala)
 	corpo.global_position = Vector3(0, 0, -20)
-	await _per(0.15)
-	_controlla(n.quanto == 1.0, "ripartendo da un checkpoint dentro è subito piena", [n.quanto])
+	await get_tree().process_frame
+	_controlla(n.quanto == 1.0, "ripartendo da un checkpoint dentro è piena dal primo fotogramma", [n.quanto])
 	corpo.global_position = Vector3(0, 0, 40)
-	await _per(0.15)
-	_controlla(n.quanto == 0.0, "ripartendo fuori è subito spenta", [n.quanto])
+	await get_tree().process_frame
+	_controlla(n.quanto == 0.0, "ripartendo fuori è spenta dal primo fotogramma", [n.quanto])
 
 	# zona costruita col giocatore già dentro
 	z1.queue_free()
 	z2.queue_free()
 	await _per(0.1)
 	var z3 := _zona(Vector3(0, 0, 40), Vector3(8, 6, 8))
-	await _per(0.15)
-	_controlla(n.quanto == 1.0, "una zona che nasce col giocatore dentro è subito piena", [n.quanto])
+	_controlla(n.quanto == 1.0, "una zona che nasce col giocatore dentro (Continua, caricamento) è piena subito, prima del fotogramma", [n.quanto])
+	# una camera nuova (la scena caricata con la sua camera) dentro la zona: piena dal primo fotogramma
+	n.quanto = 0.0
+	var cam2 := Camera3D.new()
+	add_child(cam2)
+	cam2.global_position = corpo.global_position + Vector3.UP * 1.6
+	cam2.make_current()
+	await get_tree().process_frame
+	_controlla(n.quanto == 1.0, "con una camera nuova dentro la zona è piena dal primo fotogramma", [n.quanto])
+	cam.make_current()
+	cam2.queue_free()
+	await get_tree().process_frame
 	z3.queue_free()
 	await _per(0.2)
 	_controlla(n.quanto < 1.0, "togliendo la zona scende", [n.quanto])

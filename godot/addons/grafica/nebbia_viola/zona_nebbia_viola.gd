@@ -3,7 +3,10 @@ extends Area3D
 ## Un ambiente con la nebbia viola (NebbiaViola): quando il giocatore entra la nebbia sale piano, quando esce scende.
 ## La forma è quella delle sue CollisionShape3D, coi bordi sulle porte e sui passaggi; più zone insieme (ambienti
 ## costruiti a pezzi) valgono come una. Se il giocatore c'è già quando la zona nasce (ripartenza da un checkpoint,
-## caricamento), la nebbia è subito piena.
+## caricamento, Continua), e dopo ogni salto della camera, la zona lo vede subito con la sua geometria ([method contiene]),
+## senza aspettare la fisica dell'Area3D: la nebbia è piena dal primo fotogramma visibile (collaudo del 29 ottobre).
+
+const GRUPPO := &"zone_nebbia_viola"
 
 ## Il pavimento della zona (y): la nebbia è più fitta lì vicino.
 @export var quota := 0.0
@@ -18,6 +21,8 @@ func _ready() -> void:
 	collision_mask = 2   # il giocatore
 	body_entered.connect(_entra.bind(true))
 	body_exited.connect(_entra.bind(false))
+	add_to_group(GRUPPO)
+	controlla_subito()
 	_controlla_subito.call_deferred()
 
 
@@ -41,12 +46,34 @@ func _entra(corpo: Node3D, dentro: bool, subito := false) -> void:
 		n.zona(self, dentro, subito)
 
 
-## Dopo due fotogrammi di fisica: il giocatore già dentro conta subito.
+## Vero se [param p] (nel mondo) è dentro una delle scatole della zona.
+func contiene(p: Vector3) -> bool:
+	for c in get_children():
+		var cs := c as CollisionShape3D
+		if cs == null or not (cs.shape is BoxShape3D) or cs.disabled:
+			continue
+		var loc := cs.global_transform.affine_inverse() * p
+		var h := (cs.shape as BoxShape3D).size * 0.5
+		if absf(loc.x) <= h.x and absf(loc.y) <= h.y and absf(loc.z) <= h.z:
+			return true
+	return false
+
+
+## Il giocatore adesso, con la geometria: dentro o fuori subito, senza dissolvenza.
+func controlla_subito() -> void:
+	var p := GameState.player
+	if not is_inside_tree() or p == null or not is_instance_valid(p) or not p.is_inside_tree():
+		return
+	var n := Grafica.nebbia_viola
+	if n:
+		# (fuori: solo se c'era; la dissolvenza la decide la nebbia, che dopo un salto la salta da sé)
+		var dentro := contiene(p.global_position + Vector3.UP)
+		n.zona(self, dentro, dentro)
+
+
+## Anche alla fine del fotogramma in cui nasce (il giocatore messo al suo posto dopo, nello stesso fotogramma).
 func _controlla_subito() -> void:
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	if is_inside_tree() and is_instance_valid(GameState.player) and overlaps_body(GameState.player):
-		_entra(GameState.player, true, true)
+	controlla_subito()
 
 
 func _exit_tree() -> void:
