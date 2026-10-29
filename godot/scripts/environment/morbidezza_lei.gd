@@ -1096,7 +1096,10 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			var k := clampf(sotto / 0.5, 0.0, 1.0) * _trattieni_k
 			out[i] = Vector3(lerpf(q.x, c.x, k), q.y, lerpf(q.z, c.y, k))
 	for i in range(1, n + 1):
+		_nc_radice = out[0]
+		_nc_prima = out[i - 1]
 		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true, i)
+	_nc_radice = Vector3.INF
 	for i in range(1, n + 1):
 		# (prima la scatola, allargata di VICINO: un tratto che non la tocca non passa dentro la forma. Senza AABB, vedi
 		# _AIUTI; si rifà quando i capi salgono)
@@ -1458,6 +1461,11 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 	return p
 
 
+# (per _da_sopra, da _bersagli: la radice e il punto prima nella catena; INF: la regola non vale)
+var _nc_radice := Vector3.INF
+var _nc_prima := Vector3.INF
+
+
 ## Le forme basse (il bordo, alto 45 cm) si lasciano da sopra: un punto a meno di mezzo metro sotto la cima esce in
 ## alto, così un tentacolo che nella posa passa sotto il bordo ci si appoggia sopra (spingendo di lato resterebbe
 ## a cavallo, da tutte e due le parti). Vale per i bersagli della molla e per la partenza, non per i punti: la molla
@@ -1467,6 +1475,12 @@ func _da_sopra(fo: Array, p: Vector3, meglio: Plane) -> Plane:
 	if i < 0:
 		return meglio
 	var cima: Plane = fo[0][i]
+	# (non se il tentacolo parte da sotto la cima: se la radice e il punto prima nella catena sono tutti e due più giù
+	# della cima, il punto resta di lato. Alla grata la radice di un tentacolo è accanto a un tubo basso, più giù della
+	# sua cima, e la posa ci passa sotto: uscendo da sopra, a ogni colpo dei palmi il tentacolo lo scavalcava di 70 cm in
+	# un fotogramma. Test del 29 ottobre)
+	if _nc_radice != Vector3.INF and cima.distance_to(_nc_radice) < 0.0 and cima.distance_to(_nc_prima) < 0.0:
+		return meglio
 	if cima.distance_to(p) > -0.5:
 		return cima
 	return meglio
