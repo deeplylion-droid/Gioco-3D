@@ -41,6 +41,9 @@ const IMPRONTE := [Vector2(0.14, 0.2), Vector2(0.1, 0.1), Vector2(0.18, 0.3)]
 const STACCO := 0.003
 ## Fin qui un giocattolo sul fondo segue subito il fondo che scende sotto di lui; da più in alto cade.
 const GRADINO := 0.12
+## Dove si cerca il fondo sotto un giocattolo: un raggio al centro e, se non trova niente (proprio sulla giunzione fra due
+## triangoli del fondo, a x = 0, un raggio può passare in mezzo), due spostati di pochi millimetri.
+const SCOSTAMENTI := [Vector2.ZERO, Vector2(0.003, 0.002), Vector2(-0.002, -0.003)]
 
 ## L'acqua della parte profonda (la Pozza).
 @export var vasca: WaterTank
@@ -127,6 +130,12 @@ var _fermo_in: Array[Vector2] = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
 ## L'imbardata di ogni giocattolo (a parte: appoggiato si inclina come la superficie sotto) e quella superficie.
 var _yaw: Array[float] = [0.0, 0.0, 0.0]
 var _normale: Array[Vector3] = [Vector3.UP, Vector3.UP, Vector3.UP]
+## L'ultimo fondo trovato sotto ogni giocattolo ([method _fondo]), e da quanti fotogrammi non lo trova.
+var _ultimo_fondo: Array[float] = [0.0, 0.0, 0.0]
+var _trovato: Array[bool] = [true, true, true]
+var _senza_fondo: Array[int] = [0, 0, 0]
+## L'animazione del piatto che scende col suo giocattolo ([method _scendi]).
+var _discese: Array[Tween] = [null, null, null]
 var _fondo_cerchi: Array[float] = [0.0, 0.0, 0.0]
 var _t := 0.0
 var _zaino_collegato: Node
@@ -591,6 +600,7 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	_collega_zaino()
 	for i in 3:
+		_rete(i)
 		_muovi(i, delta)
 	_separa()
 	for i in 3:
@@ -612,19 +622,74 @@ func _galleggia(i: int) -> bool:
 	return vasca != null and vasca.fill > 0.0005 and vasca.get_surface_global_y() - PESCAGGI[i] > _fondo(i) + 0.005
 
 
-## La quota del fondo sotto il giocattolo (il fondo della piscina o un piatto), senza i giocattoli.
+## La quota del fondo sotto il giocattolo (il fondo della piscina, un piatto, un gonfiabile), senza i giocattoli.
+## Si cerca dall'alto, da sopra il bordo della piscina (il nodo) fino a poco sotto il fondo più basso della vasca: mai
+## il soffitto della camera delle onde sotto la piscina (a -4,55). Prima il raggio partiva dal giocattolo: dove non
+## trovava il fondo (la giunzione a x = 0) prendeva quel soffitto, il giocattolo ci cadeva e da lì non risaliva più
+## (ricontrollo di ambienti-2). Se non trova niente resta dov'è ([member _trovato] falso).
 func _fondo(i: int) -> float:
 	var g := _giocattoli[i]
 	var p := g.global_position
 	var escludi: Array[RID] = []
 	for x in _giocattoli:
 		escludi.append(x.get_rid())
-	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, p.y + 1.2, p.z), Vector3(p.x, p.y - 3.0, p.z), Layers.WORLD, escludi)
-	var h := get_world_3d().direct_space_state.intersect_ray(q)
-	if h.is_empty():
-		return p.y
-	_normale[i] = h.normal if (h.normal as Vector3).y > 0.85 else Vector3.UP
-	return (h.position as Vector3).y
+	var alto := global_position.y + 0.5
+	var basso := (vasca.get_floor_global_y() if vasca else global_position.y - 2.3) - 0.6
+	var spazio := get_world_3d().direct_space_state
+	for o: Vector2 in SCOSTAMENTI:
+		var q := PhysicsRayQueryParameters3D.create(Vector3(p.x + o.x, alto, p.z + o.y), Vector3(p.x + o.x, basso, p.z + o.y),
+			Layers.WORLD, escludi)
+		var h := spazio.intersect_ray(q)
+		if not h.is_empty():
+			_normale[i] = h.normal if (h.normal as Vector3).y > 0.85 else Vector3.UP
+			_trovato[i] = true
+			_ultimo_fondo[i] = (h.position as Vector3).y
+			return _ultimo_fondo[i]
+	_trovato[i] = false
+	return p.y
+
+
+## Rete di sicurezza (ricontrollo di ambienti-2): un giocattolo finito sotto il fondo della piscina, fuori dall'area o
+## che da mezzo secondo non trova il fondo sotto di sé torna alla sua partenza, appena il giocatore non guarda né lui
+## né la partenza. Non dovrebbe servire mai: se serve, lo scrive.
+func _rete(i: int) -> void:
+	if _giu[i]:
+		return
+	var g := _giocattoli[i]
+	_senza_fondo[i] = 0 if _trovato[i] else _senza_fondo[i] + 1
+	var pos := Vector2(g.position.x, g.position.z)
+	var perso := not area.grow(0.3).has_point(pos) or _senza_fondo[i] > 30 \
+		or (_trovato[i] and g.global_position.y < _ultimo_fondo[i] - 0.05)
+	if not perso:
+		return
+	var su := Vector3(0.0, ALTEZZE[i] * 0.5, 0.0)
+	var partenza := (g.get_parent() as Node3D).to_global(Vector3(partenze[i].x, 0.0, partenze[i].z))
+	partenza.y = g.global_position.y
+	if _visto(g.global_position + su) or _visto(partenza + su):
+		return
+	print("EnigmaGiocattoli: %s perso in %s (fondo %s), torna alla partenza" % [g.name, g.global_position,
+		_ultimo_fondo[i] if _trovato[i] else "non trovato"])
+	_alla_partenza(i)
+
+
+## Vero se il punto [param p] è nell'inquadratura della camera.
+func _visto(p: Vector3) -> bool:
+	var cam := get_viewport().get_camera_3d()
+	return cam != null and cam.is_position_in_frustum(p)
+
+
+func _alla_partenza(i: int) -> void:
+	var g := _giocattoli[i]
+	g.position.x = partenze[i].x
+	g.position.z = partenze[i].z
+	_yaw[i] = deg_to_rad(partenze[i].y)
+	g.global_basis = Basis(Vector3.UP, _yaw[i])
+	_vel[i] = Vector2.ZERO
+	_yaw_vel[i] = 0.0
+	_assestato[i] = false
+	_senza_fondo[i] = 0
+	_y[i] = _quota_bersaglio(i)
+	g.global_position.y = _y[i]
 
 
 ## Posa il giocattolo [param i] fermo sul fondo: sotto la sua impronta Posa (lo strumento comune: le mesh e le collisioni)
@@ -931,6 +996,7 @@ func _scendi(i: int, col_suono: bool) -> void:
 	g.global_basis = Basis(Quaternion(Vector3.UP, _cerchi[i].global_basis.y.normalized())) * Basis(Vector3.UP, _yaw[i])
 	if col_suono:
 		var tw := create_tween().set_parallel()
+		_discese[i] = tw
 		tw.tween_method(func(h: float): _altezza_piatto(i, h), sporgenza, sporgenza - corsa, 0.18) \
 				.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 		var giu := _cerchi[i].global_position.y + sporgenza - corsa + STACCO
@@ -1034,9 +1100,20 @@ func load_state(data: Dictionary) -> void:
 	for i in 3:
 		_vel[i] = Vector2.ZERO
 		_yaw_vel[i] = 0.0
+		# un piatto che stava scendendo finisce subito: se no la sua animazione continuava a mettere il giocattolo alla
+		# quota del piatto anche dopo averlo spostato, e sulla pendenza nord lo lasciava 30 cm sotto il fondo
+		if _discese[i] and _discese[i].is_valid():
+			_discese[i].kill()
+			if _giu[i]:
+				_metti_piatto(i, true)
+				_giocattoli[i].global_position.y = _cerchi[i].global_position.y + sporgenza - corsa + STACCO
+				_y[i] = _giocattoli[i].global_position.y
+				_bordo(_mat_cerchi[i], 1.0)
+		_discese[i] = null
 		if i < pos.size():
-			_giocattoli[i].position.x = float(pos[i][0])
-			_giocattoli[i].position.z = float(pos[i][1])
+			# (mai fuori dall'area: un salvataggio vecchio o rovinato non lo mette dove non si riprende)
+			_giocattoli[i].position.x = clampf(float(pos[i][0]), area.position.x, area.end.x)
+			_giocattoli[i].position.z = clampf(float(pos[i][1]), area.position.y, area.end.y)
 			_yaw[i] = float(pos[i][2])
 			_giocattoli[i].rotation.y = _yaw[i]
 		var su_giu := tutto or (i < giu.size() and bool(giu[i]))
@@ -1055,6 +1132,9 @@ func load_state(data: Dictionary) -> void:
 	if _pronto:
 		for i in 3:
 			if not _giu[i]:
+				# (la quota dal fondo cercato dall'alto: mai sotto il fondo; dove non lo trova, alla partenza)
 				_y[i] = _quota_bersaglio(i)
 				_giocattoli[i].global_position.y = _y[i]
 				_assestato[i] = false
+				if not _trovato[i]:
+					_alla_partenza(i)
