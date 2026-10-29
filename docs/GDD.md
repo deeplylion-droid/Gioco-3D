@@ -551,3 +551,4 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Meno nebbia lontano: "riducila un po' nella visuale lontana della stanza, è troppa". Scelta la **B**, che arriva fino a 4,5 m e si dirada da 1,8 m.
 - "Potremmo anche tenerla solo in alcuni ambienti", e "assicurati solo di farla apparire gradualmente quando entri negli ambienti dove ci sarà".
 - Nella prossima build va in infermeria, sala principale e inseguimento nel tunnel sottomarino. Compare piano entrando nella zona e svanisce uscendo.
+- Nelle opzioni c'è la voce "Nebbia viola: sì/no", accesa di serie ("sì e sì" dell'utente, 29 ottobre).
