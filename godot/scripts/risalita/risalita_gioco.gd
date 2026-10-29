@@ -443,7 +443,7 @@ func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, p
 	b.aspetta = oblo
 	var pm := (porta0 + porta1) * 0.5
 	b.via = PackedVector3Array([Vector3(xc + 0.7, Y, pm), Vector3(xc - 0.9, Y, pm), Vector3(xc - 2.0, Y, porta0 - 0.7),
-			Vector3(xc - 2.2, Y, porta0 - 2.6)])
+			Vector3(xc - 2.2, Y, porta0 - 3.3)])
 	b.da_dove = Vector3(xc + 1.0, Y + 1.6, z1 + 2.0)
 	add_child(b)
 

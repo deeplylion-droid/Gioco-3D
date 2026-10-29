@@ -21,8 +21,8 @@ Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspe
   (sta 8 m fuori dalla linea fra il giocatore e lei). La P15 è nella zona del personale, non in questo corridoio.
 - **Cosa fa**: fermo, respira, ti segue con la testa e ogni tanto la inclina piano. Quando lo hai guardato per poco più
   di un secondo, o ti avvicini sotto i 9 m, aspetta ancora un attimo, si volta e corre nella porta del capannone.
-- **Quando non si vede più**: appena lo stipite della porta lo nasconde sparisce (dal corridoio dove va non si vede:
-  la rientranza fra la porta e il muro dell'approdo). Una volta sola: lo stato si salva coi checkpoint.
+- **Quando non si vede più**: corre nella rientranza fra la porta e il muro dell'approdo e sparisce lì in fondo, a
+  3,3 m dalla porta, coperto del tutto dallo stipite (collaudo del 29 ottobre: prima, a 2,6 m, era al limite). Una volta sola: lo stato si salva coi checkpoint.
 
 ### 2. La galleria del tunnel sottomarino: l'agnellino
 
@@ -52,8 +52,8 @@ Per tutti i bambini del gioco (`scripts/creature/bambino.gd`):
 - **partenza e arresto col passo**: il corpo accelera e rallenta, non parte di colpo;
 - **curve, non giri sul posto**: gira al massimo di 110 gradi al secondo camminando e 260 correndo, e rallenta nelle
   curve strette; quando deve voltarsi per scappare (chi lo guardava è dietro di lui) prima si volta sul posto coi
-  passi della camminata, girando solo quando il piede libero è sollevato, poi parte (collaudo del 29 ottobre: prima
-  il piede piantato strisciava a 0,8-2 m/s, ora 0,01-0,04);
+  passi della camminata, girando quando il piede libero (tallone e punta) è sollevato, poi parte (collaudo del 29
+  ottobre: prima il piede piantato strisciava a 0,8-2 m/s, ora 0,02-0,09);
 - **lo stare fermo**: respira, segue con la testa e ogni 3-4 secondi la inclina piano;
 - **curve strette**: prima di una curva di più di 45 gradi rallenta e la fa col passo, senza tagliare lo spigolo;
   non va mai più veloce di quanto serve per prendere il punto girando.
@@ -66,18 +66,27 @@ giocatore lo raggiungeva. Ora (test_agnellino verde):
 - quello che si vede resta uguale: compare in cima alla scala, ti guarda, scappa nella corsia, si piega e si infila
   nel buco;
 - si volta di scatto (fino a 900 gradi al secondo, coi passi: gira solo quando il piede libero è sollevato) e parte
-  più svelto, perché la corsia è stretta e il giocatore gli corre dietro (il più vicino che gli arriva: 1,2 m, come
-  chiede il test; prima 1,4);
+  più svelto, perché la corsia è stretta e il giocatore gli corre dietro; si accorge di essere guardato dopo 0,3 s
+  invece di 0,5, così voltarsi coi passi veri non gli fa perdere terreno (il più vicino che gli arriva il giocatore:
+  1,6 m; prima 1,4);
 - scappa quando ti avvicini sotto i 9 m invece dei 7 di prima (per girarsi col passo gli serve quel mezzo secondo);
 - comincia a piegarsi per entrare nel buco a 1,4 m dal muro invece di 1,15, e ci arriva già piegato a 0,85 m invece
   di 0,75, così la testa resta lontana dal bordo alto; si piega senza scatti, anche entrando di lato nella striscia
   davanti al buco;
 - piegandosi si alza quanto serve perché i piedi restino sopra il pavimento (collaudo del 29 ottobre: le ossa dei piedi
-  scendevano fino a 14 cm sotto; ora al più 3 mm, controllato da test_agnellino);
+  scendevano fino a 14 cm sotto; ora al più 5 mm, controllato da test_agnellino);
+- gli ultimi passi davanti al buco diventano un tuffo: più si piega più si stacca da terra (fino a 4 cm), così la
+  corsa piegata non trascina i piedi sul pavimento (collaudo del 29 ottobre: il piede scorreva a 2,4-4 m/s; ora
+  nessun fotogramma col piede a terra che scorre). Per dei passi veri da piegato servirebbe un'animazione apposta
+  (corsa accucciata o a carponi);
 - la curva in fondo alla corsia la fa da sé, col passo; poi si raddrizza verso il buco come prima.
 
 Il bambino si muove sempre in coordinate del mondo (`top_level`), così il nodo che lo mette al suo posto può essere
 girato.
+
+Il bambino col cubo da fermo ha le ossa delle punte a 2,4 cm da terra, l'agnellino a 0,5-0,9 cm: è dove stanno le
+ossa nei due modelli. La suola vera (il vertice più basso della mesh con la pelle, `tests/sonda_piedi_bambini.gd`)
+tocca terra in tutti e due: -2,6 mm il cubo, -2,4 mm l'agnellino. Abbassarlo lo farebbe entrare nel pavimento.
 
 ## Le regole tecniche
 

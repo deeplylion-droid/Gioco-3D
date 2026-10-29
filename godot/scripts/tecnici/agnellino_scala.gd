@@ -83,7 +83,9 @@ func _piega(delta: float) -> void:
 	var basso := bambino.piedi_piu_in_basso()
 	var voluta := 0.0
 	if bambino.rotation.x > 0.01 and basso < INF:
-		voluta = clampf(_alza + pavimento + 0.005 - basso, 0.0, 0.45)
+		# (e più si piega più si stacca da terra: gli ultimi passi diventano un tuffo nel buco, coi piedi in aria;
+		# piegato e coi piedi a terra la corsa li trascinerebbe sul pavimento)
+		voluta = clampf(_alza + pavimento + 0.005 + 0.035 * k - basso, 0.0, 0.45)
 	# (su subito, giù piano: non sobbalza a ogni passo)
 	_alza = voluta if voluta > _alza else lerpf(_alza, voluta, 0.15)
 	var su := bambino.global_basis.inverse() * Vector3.UP * _alza
@@ -114,7 +116,7 @@ func compari() -> void:
 	bambino.name = "Agnellino"
 	bambino.modalita = Bambino.Modalita.STATUA
 	bambino.reazione = Bambino.Reazione.INCLINA_TESTA
-	bambino.tempo_per_vederlo = 0.5
+	bambino.tempo_per_vederlo = 0.3
 	bambino.distanza_fuga = distanza_fuga
 	bambino.velocita_corsa = velocita_corsa
 	# (si volta di scatto e parte svelto: la corsia è stretta e il giocatore gli corre dietro)

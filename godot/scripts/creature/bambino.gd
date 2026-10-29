@@ -111,6 +111,7 @@ var _piedi: Array = []
 ## Il piede tenuto fermo a terra mentre si volta sul posto o parte piano (osso e punto nel mondo; -1: nessuno).
 var _perno_osso := -1
 var _perno_pos := Vector3.ZERO
+var _perno_y := 0.0
 ## Si sta voltando sul posto (coi passi della camminata).
 var _svolta := false
 var _player_anim: Array[AnimationPlayer] = []
@@ -509,9 +510,9 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 			ap.speed_scale = clampf(giro / 150.0, 1.2, 2.5)
 		_blocca_piede()
 		return false
-	# camminando o andando piano (partendo, finendo di voltarsi) il piede a terra resta fermo nel mondo e il corpo gira e avanza
-	# attorno a lui, come un passo vero (sennò il piede piantato striscia); già lanciato, col corpo piegato (l'agnellino
-	# che entra nel buco) o con tutti e due i piedi in aria va alla sua velocità, che è quella dei piedi
+	# camminando o andando piano (partendo, finendo di voltarsi) il piede a terra resta fermo nel mondo e il corpo gira
+	# e avanza attorno a lui, come un passo vero (sennò il piede piantato striscia); già lanciato, piegato in avanti
+	# (l'agnellino che entra nel buco) o con tutti e due i piedi in aria va alla sua velocità, che è quella dei piedi
 	if (_vel < vel_anim * 0.8 or modalita == Modalita.CAMMINA) and absf(rotation.x) < 0.01 and _blocca_piede():
 		_passo_animazione(vel_anim)
 		return false
@@ -539,25 +540,29 @@ func _blocca_piede() -> bool:
 	else:
 		_perno_osso = basso[0]
 		_perno_pos = basso[1]
+		_perno_y = (basso[1] as Vector3).y
 	return true
 
 
 ## Quanto girare voltandosi sul posto, secondo quanto è sollevato il piede che non fa da perno: 1 da un paio di
-## centimetri in su, rasoterra meno (0,4: la svolta non si ferma, ma lo trascina poco).
+## centimetri in su (tallone e punta), rasoterra poco (0,25: la svolta non si ferma, ma lo trascina appena).
 func _piede_libero_alzato() -> float:
 	for x in _piedi:
 		if not (x[0] as Node3D).visible or _perno_osso < 0:
 			continue
 		var sk := x[1] as Skeleton3D
 		var ossa: Array = x[2]
-		var a := (sk.global_transform * sk.get_bone_global_pose(ossa[0]).origin).y
-		var b := (sk.global_transform * sk.get_bone_global_pose(ossa[1]).origin).y
-		var libero := b - a if _perno_osso == ossa[0] else a - b
-		return clampf((libero - 0.006) / 0.014, 0.4, 1.0)
+		var i := 0 if _perno_osso == ossa[0] else 1
+		var y := func(o: int) -> float: return (sk.global_transform * sk.get_bone_global_pose(o).origin).y
+		var libero: float = y.call(ossa[1 - i]) - y.call(ossa[i])
+		# (anche la punta: alzando il tallone resta a terra ancora un po')
+		if ossa[2] >= 0 and ossa[3] >= 0:
+			libero = minf(libero, y.call(ossa[3 - i]) - y.call(ossa[2 + i]))
+		return clampf((libero - 0.006) / 0.014, 0.25, 1.0)
 	return 1.0
 
 
-## [osso, punto nel mondo] del piede più basso del modello che si vede (vuoto se non ci sono le ossa).
+## [osso, punto nel mondo] del piede a terra del modello che si vede (vuoto se non ci sono le ossa).
 func _piede_basso() -> Array:
 	for x in _piedi:
 		if not (x[0] as Node3D).visible:
@@ -569,26 +574,34 @@ func _piede_basso() -> Array:
 		# (il piede che fa da perno resta lui finché l'altro non è più basso di un millimetro: da fermo sono tutti e due a terra
 		# e cambiare a ogni fotogramma vorrebbe dire non tenerne fermo nessuno)
 		# (e lo lascia appena comincia ad alzarsi, se l'altro è più basso: quello è il piede che appoggia)
-		var alzato := _perno_osso >= 0 and (a if _perno_osso == ossa[0] else b).y > _perno_pos.y + 0.004
+		var alzato := _perno_osso >= 0 and (a if _perno_osso == ossa[0] else b).y > _perno_y + 0.004
+		var i := 0 if a.y < b.y else 1
 		if _perno_osso == ossa[0] and a.y < b.y + (0.0 if alzato else 0.001):
-			return [ossa[0], a]
-		if _perno_osso == ossa[1] and b.y < a.y + (0.0 if alzato else 0.001):
-			return [ossa[1], b]
-		return [ossa[0], a] if a.y < b.y else [ossa[1], b]
+			i = 0
+		elif _perno_osso == ossa[1] and b.y < a.y + (0.0 if alzato else 0.001):
+			i = 1
+		return [ossa[i], a if i == 0 else b]
 	return []
 
 
-## Il punto più basso dei piedi e delle punte (nel mondo) del modello che si vede; INF se non ci sono le ossa.
+## L'altezza del punto più basso dei piedi e delle punte (nel mondo) del modello che si vede; INF se non ci sono le ossa.
 func piedi_piu_in_basso() -> float:
-	var y := INF
+	return punto_piu_in_basso().y
+
+
+## Il punto più basso dei piedi e delle punte (nel mondo) del modello che si vede; y INF se non ci sono le ossa.
+func punto_piu_in_basso() -> Vector3:
+	var q := Vector3(0, INF, 0)
 	for x in _piedi:
 		if not (x[0] as Node3D).visible:
 			continue
 		var sk := x[1] as Skeleton3D
 		for o: int in x[2]:
 			if o >= 0:
-				y = minf(y, (sk.global_transform * sk.get_bone_global_pose(o).origin).y)
-	return y
+				var w := sk.global_transform * sk.get_bone_global_pose(o).origin
+				if w.y < q.y:
+					q = w
+	return q
 
 
 ## Dopo il prossimo punto la strada gira di più di 45 gradi.
