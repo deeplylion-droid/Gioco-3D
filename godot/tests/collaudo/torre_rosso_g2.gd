@@ -12,6 +12,8 @@ const PLAYER := "res://scenes/player/player.tscn"
 const POSTO_TORRE := Vector3(38.0, -19.98, -13.4)
 var cartella := ""
 var energie: Array = [0.0, 0.3, 0.6, 1.0]
+## Le prove: "x:y:z@energia" separate da ";" (posizione della luce nell'oblò); vuoto: solo le energie, al suo posto.
+var prove: Array = []
 var p: Player
 
 
@@ -20,6 +22,11 @@ func _ready() -> void:
 	cartella = a[1]
 	if a.size() > 2:
 		energie = Array(a[2].split(",")).map(func(x): return float(x))
+	if a.size() > 3:
+		for t in a[3].split(";"):
+			var pe := t.split("@")
+			var xyz := pe[0].split(":")
+			prove.append([Vector3(float(xyz[0]), float(xyz[1]), float(xyz[2])), float(pe[1])])
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -77,10 +84,16 @@ func _run() -> void:
 	var dietro := c - n * 1.8
 	var condotte := [dietro - lato * 3.6 - Vector3.UP * 1.6, dietro - lato * 1.6]
 	var lista: Array = energie if rosso else [null]
+	if rosso and not prove.is_empty():
+		lista = prove
 	for k in lista.size():
 		var e = lista[k]
 		var nome := "" if e == null else "_%s" % str(e)
-		if rosso:
+		if e is Array:
+			rosso.position = e[0]
+			rosso.light_energy = e[1]
+			nome = "_%s_%s_%s@%s" % [e[0].x, e[0].y, e[0].z, e[1]]
+		elif rosso:
 			rosso.light_energy = float(e)
 		p.teleport(POSTO_TORRE)
 		p.look_at_point(o.global_position + Vector3.DOWN * 0.15)
@@ -115,6 +128,8 @@ func _scatto(nome: String, vetro: bool) -> void:
 		# il riquadro del vetro (lei e l'acqua dietro), dove lo vede la camera
 		var cam := p.camera
 		var centro := cam.unproject_position((get_tree().root.find_child("ObloLei", true, false) as ObloLei).centro_vetro())
+		if nome.begins_with("fronte") and nome.length() < 12:
+			print("TORRE centro del vetro sullo schermo ", centro)
 		var s := Color(0, 0, 0)
 		var k := 0
 		for y in range(int(centro.y) - 110, int(centro.y) + 110, 3):
@@ -123,6 +138,15 @@ func _scatto(nome: String, vetro: bool) -> void:
 					s += img.get_pixel(x, y)
 					k += 1
 		s /= maxf(k, 1)
-		print("TORRE %-12s vetro: R %.1f G %.1f B %.1f" % [nome, s.r * 255, s.g * 255, s.b * 255])
+		# e il muro intorno all'oblò (sopra il vetro, fuori dalla cornice): quanto cambia la torre
+		var m := Color(0, 0, 0)
+		var km := 0
+		for y in range(int(centro.y) - 330, int(centro.y) - 230, 4):
+			for x in range(int(centro.x) - 200, int(centro.x) + 200, 4):
+				if x >= 0 and y >= 0 and x < img.get_width() and y < img.get_height():
+					m += img.get_pixel(x, y)
+					km += 1
+		m /= maxf(km, 1)
+		print("TORRE %-28s vetro: R %.1f G %.1f B %.1f   muro sopra: R %.1f G %.1f B %.1f" % [nome, s.r * 255, s.g * 255, s.b * 255, m.r * 255, m.g * 255, m.b * 255])
 	else:
 		print("TORRE scatto ", nome)
