@@ -138,7 +138,8 @@ func _run() -> void:
 	_log = FileAccess.open(cart.path_join("registro.txt"), FileAccess.WRITE)
 	Game.pause_on_focus_loss = false
 	# come nel gioco (RISCALDA=1): prima il riscaldamento della schermata di caricamento, e poi il tunnel costruito a
-	# pezzi col suo riscaldamento (e lei del tunnel preparata), non tutto subito
+	# pezzi col suo riscaldamento (e lei del tunnel preparata), non tutto subito. Con RISCALDA=tunnel solo il tunnel a
+	# pezzi (il riscaldamento dell'avvio più la partita su llvmpipe superano i 15 GB della macchina di prova)
 	if OS.get_environment("RISCALDA") == "1":
 		var r := RiscaldamentoShader.new()
 		add_child(r)
@@ -156,7 +157,7 @@ func _run() -> void:
 	p = GameState.player
 	ins = level.get_node("SalaInseguimento") as SalaInseguimento
 	sott = level.get_node("SalaSottomarino") as SalaSottomarino
-	if OS.get_environment("RISCALDA") == "1":
+	if OS.get_environment("RISCALDA") in ["1", "tunnel"]:
 		await sott.costruisci_a_pezzi()
 	else:
 		sott.costruisci()
