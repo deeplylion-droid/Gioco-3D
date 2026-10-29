@@ -1,50 +1,72 @@
 # Scarabocchi a pastelli a cera sui muri più vuoti
 
 Richiesta dell'utente del 28 ottobre: "nei muri più vuoti, di aggiungermi degli scarabocchi a pastelli a cera, tratto
-grosso". Il contenuto (cosa disegnano, i colori, l'altezza) lo sceglie l'utente; qui la parte tecnica, i muri e, dopo
-le risposte, i disegni. **Niente entra nel gioco senza l'ok dell'utente** (branch `lavoro/scarabocchi`).
+grosso". Scelte dell'utente, quelle consigliate: C, C, B.
+- **Cosa.** Scarabocchi e disegnini da bambini mescolati, più qualcuno che mette a disagio. Mai lei che prende
+  qualcuno, e niente che spieghi cosa è successo.
+- **Colori.** I disegnini coi colori dei pastelli, sbiaditi dall'umidità; quelli a disagio in nero e rosso.
+- **Altezza.** Quasi tutti fra 30 cm e 1,3 m; uno o due per zona a 2-2,5 m, dove un bambino non arriva.
 
-## I muri
+Branch `lavoro/scarabocchi`. **Niente si unisce senza l'ok dell'utente.**
 
-Li trova `godot/tests/strumenti/cerca_muri.gd`:
-- dove si cammina: dai checkpoint, una griglia di 0,5 m sul pavimento (gradini fino a 35 cm, 2 m d'aria sopra);
-- dai punti della strada, all'altezza degli occhi, i muri fra 1,5 e 10 m;
-- su ogni muro un rettangolo libero: piatto, architettura, senza oggetti davanti o vicino;
-- lontano almeno 1 m da porte, Polaroid, pulsanti, interattivi, poster e indizi; lontano 0,6 m da cartelli e indizi
-  dipinti sul muro (lo schema delle pompe è un materiale del muro);
-- illuminato: il buio vero non serve, gli scarabocchi non si vedrebbero.
+## Cosa guardare
 
-L'elenco completo, 37 muri, è in `muri.json`; gli scatti dal motore sono in `muri/`, dagli occhi del giocatore e da
-vicino. I muri scelti, 21, sono in `scelti.json`, e i fogli per zona in `fogli/`. Ho scartato quelli al buio, quelli
-coperti alla vista e quelli dietro le ringhiere della torre.
+- `fogli/<zona>.jpg`: per ogni muro, a sinistra lo scatto dagli occhi del giocatore e a destra quello da vicino.
+  Sono scatti del motore, con gli scarabocchi veri.
+- `scatti/<muro>_occhi.jpg` e `scatti/<muro>_vicino.jpg`: gli stessi scatti a grandezza piena.
 
-| zona | muri | dove |
-|---|---|---|
-| sala | 4 | la fascia di piastrelle sotto gli oblò, in basso (1,2-1,6 m di larghezza) |
-| risalita | 3 | i corridoi rossi della zona del personale |
-| tecnici | 1 | la sala pompe, il muro di piastrelle a nord (lontano dallo schema) |
-| fiume | 1 | il muro di roccia sotto la lampada, fra le rive |
-| inseguimento | 3 | le condotte, i muri sopra le vasche |
-| torre | 4 | i muri chiari fra le scale |
-| tunnel | 5 | il mosaico sopra le banchine, sotto le lampade |
+| zona | muri | in basso | in alto (2-2,5 m) |
+|---|---|---|---|
+| torre | 3 | la nave col sole; i bambini per mano con Jilly sorridente | le manine che salgono |
+| inseguimento | 3 | i pesci sotto le onde; Jilly coi pesci | l'occhio solo |
+| tunnel | 5 | spirale, righe e scarabocchio; la nave; l'omino cancellato e il tondo verde | i bambini sott'acqua; le manine |
+| sala | 3 | Jilly coi pesci (sulla fascia di piastrelle) | l'occhio solo; i bambini sott'acqua |
+| risalita | 2 | spirale, righe e scarabocchio; l'omino cancellato | |
+| tecnici | 1 | la nave col sole | |
+| fiume | 1 | i pesci sotto le onde | |
 
-**Interni e infermeria: nessun muro adatto.** Negli interni i muri liberi sono al buio o coperti dagli armadietti;
-nell'infermeria i muri sono pieni (poster, armadietti, tende, negatoscopio, cassaforte). Se l'utente li vuole lì,
-si sceglie a mano un punto.
+**Interni e infermeria no**, come chiesto. In sala gli scarabocchi stanno a più di 3 m dagli acquari e dal loro disegno.
 
-## Il tratto e come si mettono
+**Da sapere.**
+- Nei corridoi rossi della risalita e nel fiume i disegni **si vedono appena**: la luce rossa e il buio si mangiano i
+  colori dei pastelli. Si possono lasciare così (si scoprono avvicinandosi), toglierli, o farli più chiari solo lì.
+- Ho tolto 4 muri dove non si vedeva niente: uno nella risalita, uno nei tecnici, uno nel fiume e uno nel tunnel.
 
-- `assets_src/scarabocchi/pastello.py`: il pastello a cera, nello stesso spirito del pannello dell'infermeria di
-  grafica-2. Cera opaca che copre il muro, la grana che lascia vedere il muro sotto, i bordi irregolari, i segni
-  ripassati 2-3 volte. Dove il posto è bagnato (fiume, tunnel, condotte) è sbiadito e staccato a macchie.
-  Tratto grosso: 12-16 mm.
-- `assets_src/scarabocchi/genera.py`: i disegni per muro (dopo le risposte dell'utente), le texture in
-  `godot/assets/ambiente/scarabocchi/` e `scarabocchi.json`.
-- Nel gioco, `godot/scripts/environment/scarabocchi.gd` (Scarabocchi): una **Decal** per scarabocchio, proiettata sul
-  muro.
-  - Segue le piastrelle e il loro rilievo, non sta sospesa e non tocca niente fuori dal muro: la scatola è profonda
-    ±12 cm e davanti non ci sono oggetti per 50 cm.
-  - Le texture le mette Godot nel suo atlante delle decal.
-  - Le decal nel Forward+ sono già nello shader di ogni superficie, quindi niente pipeline nuove (da contare
-    prima/dopo).
-- Regole: niente lettere né numeri, niente frecce, niente cerchi colorati in fila, niente che sembri un indizio.
+## Le regole controllate
+
+- Niente lettere, numeri o frecce.
+- Niente cerchi gialli, rossi e blu in fila, che sembrerebbero l'enigma delle onde: un tondo è sempre da solo.
+- I disegni a disagio sono solo in alto. Lei non prende mai nessuno: nei bambini sott'acqua sta in mezzo, staccata da
+  loro.
+- **Pipeline: nessuna nuova.** Per ognuna delle 36 viste lo scatto conta le pipeline compilate prima senza
+  scarabocchi e poi con (`RenderingServer`, draw, specializzazione, superficie e mesh): **0 nuove in tutte**.
+  - Le decal nel Forward+ sono già nello shader di ogni superficie.
+  - Alla prima vista di due zone si compila ancora qualcosa con gli scarabocchi spenti (11 in sala, 23 nel fiume):
+    è il caricamento della scena, non loro.
+  - I totali di fine giro sono uguali senza e con:
+    - torre [50, 95, 251, 134];
+    - tunnel [18, 20, 153, 42];
+    - sala a parti [118, 242, 466, 244].
+- **Controllo di posizionamento verde**: `RISULTATO: 2 controlli ok, 0 falliti`, 0 da correggere, con il nodo
+  Scarabocchi nella sala.
+  - Le decal non sono oggetti: sono proiettate sul muro e seguono le piastrelle.
+  - La loro scatola è profonda ±12 cm e davanti al muro non c'è niente per 50 cm, quindi non stanno sospese e non
+    toccano altro.
+
+## Come funziona
+
+- **I muri** li trova `godot/tests/strumenti/cerca_muri.gd`, poi li ho scelti uno per uno dagli scatti dei candidati
+  (`candidati/`, `candidati.json`).
+  - Dove si cammina: da un muro piatto e libero, l'architettura vera.
+  - Lontano almeno 1 m da porte, Polaroid, pulsanti e poster, e 3 m dagli acquari, anche da quelli nascosti.
+  - Illuminato.
+  - I muri scelti sono in `scelti.json`. La ricerca vecchia, fatta prima delle risposte, è in `vecchi/`.
+- **Il tratto** è `assets_src/scarabocchi/pastello.py`.
+  - Cera opaca, la grana del muro, bordi irregolari, ogni segno ripassato 2-3 volte, tratto da 12-17 mm.
+  - Dove è bagnato (tunnel, fiume, inseguimento) è sbiadito a macchie.
+- **I disegni** sono in `assets_src/scarabocchi/disegni.py`. Li mette `genera.py`, a turno per tutto il gioco, così
+  non ce ne sono due uguali di fila. Le texture vanno in `godot/assets/ambiente/scarabocchi/`.
+- **Nel gioco** c'è il nodo `Scarabocchi` (`godot/scripts/environment/scarabocchi.gd`) nella sala principale: una
+  Decal per muro, nelle coordinate della sala, comprese torre e tunnel che si aggiungono lì.
+- **Gli scatti** si rifanno con `godot/tests/strumenti/scatti_muri.gd`, con `MURI=…/scelti.json SCARABOCCHI=1`. La
+  sala si monta a parti perché intera non ci sta in memoria.
