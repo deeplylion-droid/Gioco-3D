@@ -9,6 +9,9 @@ extends Collectible
 const TEX_DIR := "res://assets/models/polaroid/texture/"
 const VIEWER := preload("res://scripts/ui/photo_viewer.gd")
 const SCENA := "res://scenes/props/polaroid.tscn"
+## I punti dell'impronta della foto (8,8 x 10,7 cm) per Posa.appoggia_su_impronta: il centro, gli angoli e i lati.
+const IMPRONTA: Array[Vector3] = [Vector3(0, 0, 0), Vector3(0.04, 0, 0.05), Vector3(-0.04, 0, 0.05), Vector3(0.04, 0, -0.05),
+	Vector3(-0.04, 0, -0.05), Vector3(0.04, 0, 0), Vector3(-0.04, 0, 0), Vector3(0, 0, 0.05), Vector3(0, 0, -0.05)]
 
 ## Numero della foto (1-10, 11 la pecora che brilla dell'infermeria, 12-16 le nuove): texture Pxx.jpg.
 @export_range(1, 16) var photo := 1:
@@ -72,7 +75,8 @@ func _appoggia() -> void:
 			break
 		await get_tree().create_timer(0.17, false, true).timeout
 	if is_inside_tree():
-		Posa.appoggia_a_terra(self, 0.004)
+		# (sotto tutta la foto: su un grigliato un raggio solo passava in un buco, P12 nel collaudo del 28 ottobre)
+		Posa.appoggia_su_impronta(self, IMPRONTA, 0.004)
 
 
 func get_texture() -> Texture2D:
