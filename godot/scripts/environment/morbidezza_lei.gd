@@ -1496,11 +1496,12 @@ func _da_sopra(fo: Array, p: Vector3, meglio: Plane) -> Plane:
 	if i < 0:
 		return meglio
 	var cima: Plane = fo[0][i]
-	# (non se la posa passa sotto la forma, più giù del suo fondo, e la radice è più giù della cima: una forma staccata da
-	# terra accanto alla radice, il punto resta di lato. Alla grata la posa di un tentacolo passa sotto un tubo basso
-	# accanto alla radice: uscendo da sopra, a ogni colpo dei palmi il tentacolo lo scavalcava di 70 cm in un
-	# fotogramma. Test del 29 ottobre)
-	if _nc_posa != Vector3.INF and _nc_posa.y < (fo[7] as Vector3).y and cima.distance_to(_nc_radice) < 0.0:
+	# (non se la posa passa sotto la forma, più giù del suo fondo, e la radice è accanto, fra il fondo e la cima: una
+	# forma staccata da terra accanto alla radice, il punto resta di lato. Alla grata la posa di un tentacolo passa sotto
+	# un tubo basso accanto alla radice: uscendo da sopra, a ogni colpo dei palmi il tentacolo lo scavalcava di 70 cm in
+	# un fotogramma. Test del 29 ottobre. Dove lei sale da sotto il pavimento la radice è più giù del fondo: lì no)
+	var fondo: float = (fo[7] as Vector3).y
+	if _nc_posa != Vector3.INF and _nc_posa.y < fondo and _nc_radice.y > fondo and cima.distance_to(_nc_radice) < 0.0:
 		return meglio
 	if cima.distance_to(p) > -0.5:
 		return cima
