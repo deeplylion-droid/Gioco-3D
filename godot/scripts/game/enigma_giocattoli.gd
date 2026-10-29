@@ -728,7 +728,13 @@ func _muovi(i: int, delta: float) -> void:
 						pos += n * (dopo - 0.01)
 				var vn := v.dot(n)
 				if vn < 0.0:
+					# spinto contro, ci scivola attorno invece di fermarsi (va dove andava già di lato o, se ci arriva proprio
+					# di fronte, dalla parte del suo cerchio): non serve aggirarlo col giocatore (ritocco del collaudo di ambienti-2)
+					var t := Vector2(-n.y, n.x)
+					var vt := v.dot(t)
+					var lato := signf(vt) if absf(vt) > 0.05 else (1.0 if (c - Vector2(l.x, l.y)).dot(t) >= 0.0 else -1.0)
 					v -= n * vn * 1.3
+					v += t * lato * (-vn) * 0.5
 	_vel[i] = v
 	g.position.x = pos.x
 	g.position.z = pos.y

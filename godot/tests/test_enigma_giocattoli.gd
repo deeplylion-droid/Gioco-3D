@@ -7,8 +7,8 @@ extends Node
 ## scesi tutti e tre, verde, e colpito col getto la botola si apre. E i cerchi sul fondo (Posa), i giocattoli che
 ## galleggiano, i posti liberi (P5, scalette), il salvataggio coi checkpoint. E i posti dove un giocattolo restava
 ## incastrato (collaudo di ambienti-2, 29 ottobre): dagli angoli dell'area e da sotto le scalette si riporta al suo
-## cerchio col getto; spinto a lungo contro un gonfiabile non ci entra e non ci sale; posato dall'acqua sopra un
-## gonfiabile ne scivola giù.
+## cerchio col getto; spinto a lungo contro un gonfiabile non ci entra e non ci sale, e ci scivola attorno; posato
+## dall'acqua sopra un gonfiabile ne scivola giù.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_enigma_giocattoli.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -169,13 +169,14 @@ func _run() -> void:
 		check(ok, "%s, %s: il giocattolo %d si stacca dal bordo e col getto torna al suo cerchio (%s)" % [
 			"a piscina vuota" if caso[2] else "a piscina piena", caso[3], i, _dove(i)])
 
-	print("6. Spinto a lungo contro un gonfiabile, non ci entra e non ci sale sopra")
+	print("6. Spinto a lungo contro un gonfiabile, non ci entra, non ci sale sopra e ci scivola attorno")
 	vasca.fill = 0.0
 	var ostacoli: Array = enigma.get(&"_ostacoli")
 	var rids: Array = enigma.get(&"_rid_gonfiabili")
 	check(ostacoli.size() >= 4 and rids.size() >= 4, "i gonfiabili sul fondo con la loro forma (%d cerchi, %d collisioni)" % [ostacoli.size(), rids.size()])
 	var dentro_max := 0.0
 	var su_max := 0.0
+	var di_lato_min := INF
 	var g1 := enigma.giocattolo(1)
 	for o: Vector3 in ostacoli:
 		var c2 := Vector2(o.x, o.y)
@@ -183,6 +184,8 @@ func _run() -> void:
 		# il pallone dalla parte del centro dell'area (dietro di lui c'è posto per chi spruzza), spinto contro il gonfiabile
 		var u := (Vector2(0.0, -1.5) - c2).normalized()
 		await _metti(1, c2 + u * (r + 0.15))
+		var partenza := Vector2(g1.position.x, g1.position.z)
+		var di_lato := 0.0
 		var stand2 := c2 + u * (r + 1.9)
 		var stand := Vector3(stand2.x, _fondo_sotto(Vector3(stand2.x, 0.0, stand2.y), [g1.get_rid()]) + 0.05, stand2.y)
 		p.teleport(stand, atan2(-(g1.global_position.x - stand.x), -(g1.global_position.z - stand.z)), 0.0)
@@ -194,16 +197,19 @@ func _run() -> void:
 			p.look_at_point(g1.global_position + Vector3(0, 0.35, 0))
 			await get_tree().physics_frame
 			dentro_max = maxf(dentro_max, r - Vector2(g1.position.x, g1.position.z).distance_to(c2))
+			di_lato = maxf(di_lato, absf((Vector2(g1.position.x, g1.position.z) - partenza).dot(Vector2(-u.y, u.x))))
 			var esclusi := rids.duplicate()
 			esclusi.append(g1.get_rid())
 			su_max = maxf(su_max, g1.global_position.y - _fondo_sotto(g1.global_position, esclusi))
 		Input.action_release(&"spray")
+		di_lato_min = minf(di_lato_min, di_lato)
 		await _frames(90)
 		var esclusi := rids.duplicate()
 		esclusi.append(g1.get_rid())
 		su_max = maxf(su_max, g1.global_position.y - _fondo_sotto(g1.global_position, esclusi))
 	check(dentro_max < 0.02, "il pallone spinto 4 s contro ognuno non ci entra (al più %.1f cm)" % (dentro_max * 100.0))
 	check(su_max < 0.03, "e resta sul fondo, non ci sale sopra (al più %.1f cm sopra il fondo)" % (su_max * 100.0))
+	check(di_lato_min > 0.3, "spinto dritto contro, ci scivola attorno invece di fermarsi (di lato almeno %.2f m)" % di_lato_min)
 
 	print("7. Calando l'acqua sopra un gonfiabile, il giocattolo ne scivola giù")
 	var vicina: Vector3 = ostacoli[0]
