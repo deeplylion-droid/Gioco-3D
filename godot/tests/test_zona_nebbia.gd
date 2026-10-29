@@ -187,7 +187,7 @@ func _zone_del_gioco() -> void:
 	_controlla(sala != null and sala.NEBBIA_SALA.has_point(Vector3(0, 1, 19)) and sala.NEBBIA_SALA.has_point(Vector3(0, 1, 10))
 			and not sala.NEBBIA_SALA.has_point(Vector3(-9.7, 1, 40)) and not sala.NEBBIA_SALA.has_point(Vector3(30, 1, -15))
 			and (sala as GDScript).source_code.contains("_nebbia_viola()"),
-			"la sala principale ha la zona della nebbia viola (dentro l'ingresso e la vasca, fuori gli interni e la torre)")
+			"la sala principale ha la zona della nebbia viola (dentro l'ingresso e la vasca, fuori gli interni e la torre)", [])
 
 
 func _in_zona(z: ZonaNebbiaViola, p: Vector3) -> bool:
