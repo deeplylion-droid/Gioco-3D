@@ -49,7 +49,8 @@ func _physics_process(_delta: float) -> void:
 	var space := get_world_3d().direct_space_state
 	var from := global_position + Vector3.UP * 0.5
 	var q := PhysicsRayQueryParameters3D.create(from, from + Vector3.DOWN * 2.5)
-	var hit := space.intersect_ray(q)
+	# (senza passare dalle crepe fra due triangoli, dove un raggio solo trova il pavimento sotto)
+	var hit := RaggioSicuro.interseca(space, q)
 	if hit:
 		global_position.y = (hit["position"] as Vector3).y
 
