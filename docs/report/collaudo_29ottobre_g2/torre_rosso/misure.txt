@@ -1,0 +1,18 @@
+0.3.15: TORRE pipeline alla comparsa di lei: disegno +0, specializzazione +0 (luce rossa nella vasca: false)
+0.3.15: TORRE fronte       vetro: R 101.6 G 51.9 B 53.3
+0.3.15: TORRE scatto condotte
+0.3.15: TORRE pipeline dopo la comparsa, in tutti gli scatti: disegno +0, specializzazione +0
+branch: TORRE pipeline alla comparsa di lei: disegno +0, specializzazione +0 (luce rossa nella vasca: true)
+branch: TORRE centro del vetro sullo schermo (654.7115, 321.8422)
+branch: TORRE fronte_0.0                   vetro: R 68.7 G 47.1 B 51.0   muro sopra: R 76.0 G 35.2 B 29.7
+branch: TORRE scatto condotte_0.0
+branch: TORRE centro del vetro sullo schermo (654.7115, 321.8422)
+branch: TORRE fronte_1.0                   vetro: R 92.8 G 53.8 B 58.3   muro sopra: R 77.0 G 35.7 B 31.1
+branch: TORRE centro del vetro sullo schermo (654.7115, 321.8422)
+branch: TORRE fronte_1.5                   vetro: R 99.0 G 56.3 B 60.3   muro sopra: R 77.0 G 35.7 B 31.1
+branch: TORRE centro del vetro sullo schermo (654.7115, 321.8422)
+branch: TORRE fronte_2.2                   vetro: R 104.3 G 58.6 B 61.9   muro sopra: R 77.0 G 35.7 B 31.1
+branch: TORRE centro del vetro sullo schermo (654.7115, 321.8422)
+branch: TORRE fronte_3.0                   vetro: R 107.7 G 60.6 B 62.7   muro sopra: R 77.0 G 35.7 B 31.2
+branch: TORRE scatto condotte_3.0
+branch: TORRE pipeline dopo la comparsa, in tutti gli scatti: disegno +0, specializzazione +0
