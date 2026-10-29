@@ -148,13 +148,17 @@ func _scena(percorso: String, muri: Array) -> void:
 			cam.look_at(c, Vector3.UP)
 			_accendi(cam.global_position, c)
 			if scarabocchi:
+				# (senza, due volte: quello che si compila ancora senza scarabocchi è il caricamento della scena, non loro)
 				scarabocchi.visible = false
+				await _frames(40)
+				var prima := _pipeline()
 				await _frames(25)
 				var senza := _pipeline()
 				scarabocchi.visible = true
 				await _frames(25)
 				var con := _pipeline()
-				print("PIPELINE %s %s senza %s con %s nuove %d" % [m["nome"], vista[0], senza, con, _somma(con) - _somma(senza)])
+				print("PIPELINE %s %s senza %s con %s caricamento %d nuove %d" % [m["nome"], vista[0], senza, con,
+						_somma(senza) - _somma(prima), _somma(con) - _somma(senza)])
 			else:
 				await _frames(25)
 			if OS.has_environment("DIAG"):
