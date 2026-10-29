@@ -1,0 +1,112 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  ok    dopo il risveglio nel corridoio si gioca ((4.8, 0.0, 39.6))
+Gli interni: corridoio, spogliatoi, lo stanzino del bagnino con lo zaino
+  ok    dal corridoio del risveglio agli spogliatoi
+  ok    dagli spogliatoi dentro lo stanzino
+  (zaino in (4.837, 0.72, 32.47), il raggio trova Prendi:<Area3D#358160015089>)
+  ok    nello stanzino si prende lo zaino-pompa dalla rastrelliera (in (3.49, 0.0, 32.47), il raggio trova <null>)
+  ok    dallo stanzino al lavapiedi, fino al tornello
+  (scorciatoia: il tornello sbloccato col getto, lo prova test_interni)
+  ok    il tornello
+  (scorciatoia: la saracinesca aperta con la turbina, lo prova test_interni)
+  ok    sotto la saracinesca, nella sala, fino alla statua
+La sala: la piscina a onde e il pozzo
+  (scorciatoia: la piscina vuota e il portello aperto, la tappa 5 la prova test_tappe56)
+  ok    giù per la scala del pozzo fino alla camera delle onde (y -9.05)
+  ok    la camera delle onde: le paratie si aprono al passaggio, il tunnel fino alla sala pompe
+La sala pompe, il risveglio e il raccordo
+  (scorciatoia: le pompe avviate e la leva tirata, li prova test_tappe56)
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: 108 colonne, 379 unità, 2495 scatole di cartone e 757 colorate
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:536)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:510)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _pausa (res://scripts/risalita/infermeria_gioco.gd:94)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:536)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:510)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _pausa (res://scripts/risalita/infermeria_gioco.gd:94)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:536)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:510)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _pausa (res://scripts/risalita/infermeria_gioco.gd:94)
+  ok    nella sala pompe fino alla porta del ponte inferiore
+  ok    col maniglione la porta del ponte si apre
+  ok    dalla porta del ponte su per le due rampe del raccordo
+ERROR: Parameter "material" is null.
+  ok    il corridoio C2 fino alla porta di servizio
+La Risalita: la scala verso il fiume, il capannone, la barca, l'infermeria, la scala di servizio
+  ok    dalla porta di servizio giù per la scala fino al capannone
+  ok    le stanze della Risalita sono caricate (nel thread, dalla sala pompe)
+  ok    nel capannone fino all'imbarco
+  (scorciatoia: le paratie girate per il giro giusto, lo prova test_risalita)
+  ok    in barca fino all'approdo, giù sulla banchina ((-35.0, -5.399141, 54.8))
+  (scorciatoia: il pulsantone dell'infermeria colpito col getto, la porta nord si apre; lo prova test_infermeria_gioco)
+  ok    dall'approdo, porta di servizio, zona del personale, infermeria, porta nord
+  ok    su per la scala di servizio fino alla porta di C3
+C3, il magazzino, la serranda, la sala
+  ok    da C3 al magazzino dei gonfiabili
+  (scorciatoia: la keycard della cassaforte, la provano test_infermeria_gioco e test_risalita)
+  ok    la keycard nel lettore col tasto E: verde
+  ok    sotto la serranda, nella sala
+La sala al buio: lungo la scia fino alla fossa dell'area bimbi, lei ti prende
+  [stato alla serranda, 69.1 s] thread: sala_torre.tscn in corso, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf in corso, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento true, pronta false, nascosta <null>, in sala false | pipeline draw 0 spec 0 | memoria statica 1656 MB, oggetti 14989, nodi 5986, orfani 32
+  ok    lungo la scia, alla fossa, lei ti prende (in (-16.21, 0.0, -5.54))
+  [stato presa, 72.9 s] thread: sala_torre.tscn in corso, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf in corso, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento true, pronta false, nascosta <null>, in sala false | pipeline draw 0 spec 0 | memoria statica 1688 MB, oggetti 15119, nodi 6009, orfani 32
+  ok    parte la sequenza di morte di lei, che non si salta
+  ok    con il jumpscare (glitch e urlo)
+Ripartenza: aspettati i caricamenti nel thread per 41.2 s
+  (sala ricaricata dopo 22400 fotogrammi, 43.0 s; finita la sequenza, 41.3 s fino alla sala nuova)
+  [stato ricaricata, 115.9 s] thread: sala_torre.tscn caricato, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf caricato, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento <null>, pronta false, nascosta <null>, in sala false | pipeline draw 0 spec 0 | memoria statica 1876 MB, oggetti 7446, nodi 116, orfani 0
+  ok    la sequenza va fino in fondo (5 s) e poi la sala si ricarica
+  ok    la sala si ricarica solo a caricamenti nel thread finiti (la torre, dalla serranda)
+  (la ripartenza ha aspettato i caricamenti per 41.2 s)
+  ok    se l'attesa è lunga si vede la spia del caricamento (41.2 s, spia true)
+  ok    si riparte dal checkpoint e si gioca (CheckpointAreaBimbi)
+30 s di gioco dopo la ripartenza
+WARNING: Posa: nessun muro dietro @MeshInstance3D@4553 ((31.0, -2.5, -4.08), verso (0.0, 0.0, -1.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@4555 ((31.0, -8.0, -25.92), verso (0.0, 0.0, 1.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@4557 ((20.28, -12.0, -10.0), verso (1.0, 0.0, 0.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@4559 ((39.92, -16.5, -15.0), verso (-1.0, 0.0, 0.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+  [stato dopo 5 s, 122.8 s] thread: sala_torre.tscn caricato, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf caricato, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#3814618838538>, in sala false | pipeline draw 0 spec 0 | memoria statica 2048 MB, oggetti 17705, nodi 7007, orfani 320
+  [stato dopo 10 s, 124.9 s] thread: sala_torre.tscn caricato, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf caricato, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#3814618838538>, in sala false | pipeline draw 0 spec 0 | memoria statica 2048 MB, oggetti 17674, nodi 7001, orfani 320
+  [stato dopo 15 s, 126.9 s] thread: sala_torre.tscn caricato, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf caricato, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#3814618838538>, in sala false | pipeline draw 0 spec 0 | memoria statica 2048 MB, oggetti 17657, nodi 6998, orfani 320
+  [stato dopo 20 s, 128.8 s] thread: sala_torre.tscn caricato, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf caricato, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#3814618838538>, in sala false | pipeline draw 0 spec 0 | memoria statica 2048 MB, oggetti 17626, nodi 6992, orfani 320
+  [stato dopo 25 s, 130.8 s] thread: sala_torre.tscn caricato, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf caricato, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#3814618838538>, in sala false | pipeline draw 0 spec 0 | memoria statica 2048 MB, oggetti 17625, nodi 6992, orfani 320
+  [stato dopo 30 s, 132.7 s] thread: sala_torre.tscn caricato, medusa.glb caricato, medusa_campana.tres caricato, medusa_capelli_bagnata.tres caricato, medusa_ciocche_bagnata.tres caricato, medusa_mani_bagnata.tres caricato, medusa_occhio.tres caricato, medusa_orbita_bagnata.tres caricato, medusa_pelle_bagnata.tres caricato, medusa_tentacoli_bagnata.tres caricato, sala_pompe.gltf caricato, detriti.gltf caricato, elettrico.gltf caricato, tubi.gltf caricato, cartelli.gltf caricato, lampade.gltf caricato, cavi.gltf caricato, catene_corde.gltf caricato, altri 261 finiti | torre: in caricamento false, pronta true, nascosta SalaTorre:<Node3D#3814618838538>, in sala false | pipeline draw 0 spec 0 | memoria statica 2048 MB, oggetti 17625, nodi 6992, orfani 320
+  ok    dopo 30 s si gioca ancora (14.9 s veri)
+  ok    dalla presa a 30 s dopo la ripartenza nessun errore del motore o degli script (0)
+
+RISULTATO: 31 controlli ok, 0 falliti
