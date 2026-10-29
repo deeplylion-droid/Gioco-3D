@@ -25,7 +25,7 @@ func _ready() -> void:
 	if a.size() > 3:
 		for t in a[3].split(";"):
 			var pe := t.split(",")
-			prove.append([float(pe[0]), float(pe[1]), float(pe[2]) if pe.size() > 2 else 0.0, float(pe[3]) if pe.size() > 3 else 0.0])
+			prove.append([float(pe[0]), float(pe[1]), float(pe[2]) if pe.size() > 2 else 0.0, float(pe[3]) if pe.size() > 3 else 0.0, float(pe[4]) if pe.size() > 4 else 0.0])
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -52,6 +52,7 @@ func _run() -> void:
 	if not prove.is_empty() and &"oblo_rosso_faccia" in torre:
 		torre.set(&"oblo_rosso_faccia", 0.5)     # (il faretto c'è, le prove ne cambiano l'energia)
 		torre.set(&"oblo_veli_rossi", Color(0.01, 0.0, 0.0))   # (e i veli accesi: le prove ne cambiano il colore)
+		torre.set(&"oblo_vetro_rosso", Color(0.01, 0.0, 0.0))  # (e il vetro)
 	torre.visible = false
 	torre.process_mode = Node.PROCESS_MODE_DISABLED
 	add_child(torre)
@@ -102,7 +103,10 @@ func _run() -> void:
 				var mv := (v as MeshInstance3D).material_override as StandardMaterial3D
 				if mv and mv.emission_enabled:
 					mv.emission = Color(1.0, 0.035, 0.02) * e[3]
-			nome = "_%s_%s_%s_%s" % [e[0], e[1], e[2], e[3]]
+			var mvetro := (o.find_child("Vetro", true, false) as MeshInstance3D).material_override as StandardMaterial3D
+			if mvetro and mvetro.emission_enabled:
+				mvetro.emission = Color(1.0, 0.035, 0.02) * e[4]
+			nome = "_%s_%s_%s_%s_%s" % [e[0], e[1], e[2], e[3], e[4]]
 		elif rosso:
 			rosso.light_energy = float(e)
 		p.teleport(POSTO_TORRE)

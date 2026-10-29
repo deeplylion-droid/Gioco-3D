@@ -104,6 +104,9 @@ const FORMA := 0.3
 ## illuminata da una luce che sta fuori (l'oblò della torre: il rosso della lampada d'emergenza, scelta B dell'utente
 ## del 29 ottobre). La luce resta nei veli: non passa da nessuna parte.
 @export var veli_colore := Color.BLACK
+## Lo stesso per il vetro (davanti a lei): un velo di colore su tutto quello che si vede dall'oblò, come la nebbia accesa
+## nella vasca davanti a lei (l'oblò della torre, 0.3.15).
+@export var vetro_colore := Color.BLACK
 
 var stato := Stato.ATTESA
 ## La lei che sta dietro il vetro, se c'è.
@@ -246,7 +249,7 @@ func _costruisci() -> void:
 	vetro.mesh = cm
 	vetro.rotation_degrees.x = 90.0
 	vetro.position.z = -spessore_muro + 0.015
-	vetro.material_override = _mat_vetro()
+	vetro.material_override = _mat_vetro(vetro_colore)
 	vetro.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF   # la luce rosa di lei passa
 	add_child(vetro)
 	# il corpo: piastra e vetro chiudono il buco del muro
@@ -538,15 +541,19 @@ static func _mat_vasca() -> StandardMaterial3D:
 	return _materiali["vasca"]
 
 
-static func _mat_vetro() -> StandardMaterial3D:
-	if not _materiali.has("vetro"):
+static func _mat_vetro(colore := Color.BLACK) -> StandardMaterial3D:
+	var chiave := "vetro" if colore == Color.BLACK else "vetro_%s" % colore.to_html()
+	if not _materiali.has(chiave):
 		var m := StandardMaterial3D.new()
 		m.albedo_color = Color(0.4, 0.6, 0.6, 0.16)
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		m.roughness = 0.05
 		m.cull_mode = BaseMaterial3D.CULL_DISABLED
-		_materiali["vetro"] = m
-	return _materiali["vetro"]
+		if colore != Color.BLACK:
+			m.emission_enabled = true
+			m.emission = colore
+		_materiali[chiave] = m
+	return _materiali[chiave]
 
 
 static func _mat_velo(alfa: float, colore := Color.BLACK) -> StandardMaterial3D:

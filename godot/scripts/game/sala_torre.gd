@@ -186,6 +186,9 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 ## E l'acqua dietro di lei: i veli dell'acqua torbida della vasca appena accesi di rosso (ObloLei.veli_colore). Nella
 ## 0.3.15 era la nebbia accesa dalla lampada; la nebbia della luce passa la cisterna e la torre, i veli no.
 @export var oblo_veli_rossi := Color(0.0, 0.0, 0.0)
+## E davanti a lei: il vetro appena acceso di rosso (ObloLei.vetro_colore), come la nebbia accesa davanti a lei nella
+## 0.3.15 (le sue mani, scure, ci sparivano dentro).
+@export var oblo_vetro_rosso := Color(0.0, 0.0, 0.0)
 ## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
 const OBLO_ROSSO_POSTO := Vector3(-1.3, 1.7, -0.5)
 const OBLO_ROSSO_FACCIA := Vector3(0.0, 0.3, -0.15)
@@ -775,6 +778,7 @@ func _oblo_lei() -> void:
 	# faccia sola, e dal suo spigolo in alto passava ancora una riga rosa; ricontrollo del 29 ottobre)
 	oblo.guscio_ombra = 0.03
 	oblo.veli_colore = oblo_veli_rossi
+	oblo.vetro_colore = oblo_vetro_rosso
 	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
 	var v: Array = dati["vasca_fondo"]["rett"]
 	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
