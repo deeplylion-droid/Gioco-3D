@@ -32,14 +32,14 @@ const AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
 ## Il muro col buco (x della faccia sul corridoio) e il centro del buco.
 @export var muro_x := 45.5
 @export var buco_z := 4.9
-@export var distanza_fuga := 7.0
+@export var distanza_fuga := 9.0
 ## Quanto corre (il giocatore corre a 5,8 m/s): l'animazione di corsa va a tempo con questa velocità.
 @export var velocita_corsa := 3.0
 ## Per entrare nel buco si piega in avanti fino a tanto, cominciando a [member piega_da] m dal muro e finendo
 ## a [member piega_a] m (misurati dai piedi): così la testa passa sotto il bordo del buco.
 @export var piega_max := 75.0
-@export var piega_da := 1.15
-@export var piega_a := 0.75
+@export var piega_da := 1.4
+@export var piega_a := 0.85
 
 var bambino: Bambino
 var _fatto := false
@@ -64,8 +64,11 @@ func _piega() -> void:
 	if absf(l.z - buco_z) < 0.6:
 		k = clampf((piega_da - (muro_x - l.x)) / (piega_da - piega_a), 0.0, 1.0)
 	k = k * k * (3.0 - 2.0 * k)
-	if k > 0.0:   # mentre si piega si mette dritto verso il buco (girandosi da solo arriverebbe di sbieco)
-		var dentro := genitore.global_basis * Vector3(1, 0, 0)
+	# mentre si piega si mette dritto verso il buco (girandosi da solo arriverebbe di sbieco), ma solo quando ha
+	# già fatto da sé la curva in fondo alla corsia: prima la fa col passo
+	var dentro := genitore.global_basis * Vector3(1, 0, 0)
+	var avanti := bambino.global_basis.z * Vector3(1, 0, 1)
+	if k > 0.0 and avanti.normalized().dot(dentro.normalized()) > 0.6:
 		bambino.rotation.y = lerp_angle(bambino.rotation.y, atan2(dentro.x, dentro.z), minf(1.0, k * 4.0))
 	bambino.rotation.x = deg_to_rad(piega_max) * k
 	# l'alzata va sui modelli: il nodo segue i punti di fuga (all'altezza del pavimento) e deve arrivarci
@@ -100,6 +103,9 @@ func compari() -> void:
 	bambino.tempo_per_vederlo = 0.5
 	bambino.distanza_fuga = distanza_fuga
 	bambino.velocita_corsa = velocita_corsa
+	# (si volta di scatto e parte svelto: la corsia è stretta e il giocatore gli corre dietro)
+	bambino.accel_corsa = 9.0
+	bambino.giro_corsa = 600.0
 	bambino.sparisce_fuori_vista = false   # sparisce in fondo alla cavità, al buio
 	bambino.sparito.connect(_corre_nel_muro)
 	var da := genitore.to_global(posizione)

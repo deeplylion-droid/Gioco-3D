@@ -117,10 +117,18 @@ func _corridoio() -> void:
 	# giù per la scala, verso ovest, poi in fondo girati verso nord: il corridoio
 	_registra = true
 	# (un passo dentro il corridoio: dal pianerottolo lo spigolo del muro copriva mezza inquadratura)
+	var pianerottolo := Vector3(fondo.x + 0.6, fondo.y + 1.6, fondo.z)
 	var occhio_fondo := Vector3(fondo.x, fondo.y + 1.6, fondo.z + 1.4)
-	await _cammina(cima + Vector3.UP * 1.6, occhio_fondo, fondo + Vector3(-2.0, 1.0, 0), fondo + Vector3(-2.0, 1.2, 0.5), 5.5)
+	# (si parte dal pianerottolo in fondo alla scala, appena scesi: guardando la scala, alle spalle il corridoio. Nella
+	# discesa la camera finta passava nel soffitto della scala)
+	_registra = false
+	_guarda(pianerottolo, cima + Vector3.UP * 0.6)
+	await _frames(10)
+	_registra = true
+	await _cammina(pianerottolo + Vector3(0.8, 0.0, 0.0), pianerottolo, cima + Vector3.UP * 0.6, fondo + Vector3(-2.0, 1.2, 0.5), 2.2)
 	var lontano := Vector3(fondo.x + 0.4, fondo.y + 1.4, porta.z + 1.0)
-	await _cammina(occhio_fondo, occhio_fondo, fondo + Vector3(-2.0, 1.2, 0.5), lontano, 1.6)
+	# girati verso nord e un passo dentro il corridoio
+	await _cammina(pianerottolo, occhio_fondo, fondo + Vector3(-2.0, 1.2, 0.5), lontano, 1.8)
 	await _frames(20)
 	await _scatto("corridoio_fiume")
 	# fermo a guardarlo, poi qualche passo avanti mentre scappa

@@ -28,12 +28,10 @@ enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
 
 const ANIMAZIONI: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"si_gira"]
 const CICLICHE: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa"]
-## Accelerazione della camminata e della corsa (m/s²): parte e si ferma con il passo, non di colpo.
+## Accelerazione della camminata (m/s²): parte e si ferma con il passo, non di colpo.
 const ACCEL_CAMMINATA := 1.2
-const ACCEL_CORSA := 4.5
-## Quanto gira al massimo camminando e correndo (gradi al secondo): curve, non giri sul posto.
+## Quanto gira al massimo camminando (gradi al secondo): curve, non giri sul posto.
 const GIRO_CAMMINATA := 110.0
-const GIRO_CORSA := 260.0
 
 @export var modalita := Modalita.STATUA
 ## Comincia già rivelato (il cubo spaccato, l'agnellino con il muso aperto).
@@ -77,6 +75,10 @@ const GIRO_CORSA := 260.0
 ## L'agnellino ha le gambe più corte del bambino a cubo.
 @export var vel_camminata_anim := 0.45
 @export var vel_corsa_anim := 2.45
+## Correndo: accelerazione (m/s²) e quanto gira al massimo (gradi al secondo). Più svelto dove scappa in una
+## corsia stretta col giocatore che gli corre dietro (l'agnellino della scala).
+@export var accel_corsa := 4.5
+@export var giro_corsa := 260.0
 
 @export_group("Fuga")
 ## Se il giocatore arriva più vicino di così, scappa (0 = mai).
@@ -316,7 +318,7 @@ func _process(delta: float) -> void:
 					osserva()
 		Modalita.SCAPPA:
 			_in_fuga += delta
-			var arrivato := _segui_punti(delta, velocita_corsa, GIRO_CORSA, ACCEL_CORSA, vel_corsa_anim, false)
+			var arrivato := _segui_punti(delta, velocita_corsa, giro_corsa, accel_corsa, vel_corsa_anim, false)
 			if not sparisce_fuori_vista:
 				if arrivato:
 					_sparisci()
@@ -443,7 +445,8 @@ func _gira_verso(punto: Vector3, passo: float) -> void:
 ## va alla stessa velocità del corpo ([param vel_anim]: quanto avanzano i piedi a terra), così i piedi non
 ## scivolano. Con [param ferma] rallenta fino a fermarsi sull'ultimo punto. True quando è arrivato all'ultimo.
 func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_anim: float, ferma: bool) -> bool:
-	while not _punti.is_empty() and global_position.distance_to(_punti[0]) < (0.12 if _punti.size() == 1 else 0.45):
+	# (un punto in mezzo vale raggiunto da un po' prima, meno se dopo c'è una curva stretta: non taglia lo spigolo)
+	while not _punti.is_empty() and global_position.distance_to(_punti[0]) < (0.12 if _punti.size() == 1 else (0.25 if _curva_stretta() else 0.45)):
 		_punti.pop_front()
 	if _punti.is_empty():
 		_vel = 0.0
@@ -457,8 +460,16 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 	# guardava) prima si volta quasi sul posto, a passi lenti, e poi parte: non fa la curva larga dentro un muro.
 	# Vicino all'ultimo punto si ferma col passo
 	var voluta := vel_max * clampf(cos(errore), 0.2, 1.0) if errore < deg_to_rad(75.0) else 0.0
+	# non più veloce di quanto serve per arrivare al punto girando (sennò gli gira intorno o lo manca)...
+	var d := verso.length()
+	var w := deg_to_rad(giro)
+	if errore > deg_to_rad(3.0):
+		voluta = minf(voluta, w * d / (2.0 * sin(errore)))
+	# ...e prima di una curva stretta rallenta, per farla col passo (raggio 0,35 m)
+	if _curva_stretta():
+		voluta = minf(voluta, sqrt(pow(w * 0.35, 2.0) + 2.0 * accel * d))
 	if ferma and _punti.size() == 1:
-		voluta = minf(voluta, sqrt(2.0 * accel * verso.length()))
+		voluta = minf(voluta, sqrt(2.0 * accel * d))
 	_vel = move_toward(_vel, voluta, accel * delta)
 	var avanti := global_basis.z
 	avanti.y = 0.0
@@ -466,6 +477,15 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 	global_position += avanti.normalized() * passo
 	_passo_animazione(vel_anim)
 	return false
+
+
+## Dopo il prossimo punto la strada gira di più di 45 gradi.
+func _curva_stretta() -> bool:
+	if _punti.size() < 2:
+		return false
+	var a := (_punti[0] - global_position) * Vector3(1, 0, 1)
+	var b := (_punti[1] - _punti[0]) * Vector3(1, 0, 1)
+	return a.length() > 0.01 and b.length() > 0.01 and a.angle_to(b) > deg_to_rad(45.0)
 
 
 ## L'animazione di camminata o corsa alla velocità del corpo (i piedi non scivolano); da fermo un passo minimo.

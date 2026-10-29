@@ -6,8 +6,8 @@ extends Node3D
 ##
 ## Il bambino sta dove sta questo nodo, coi piedi a terra, girato verso il suo asse +Z. Come va:
 ## 1. ATTESA: quando il giocatore entra nella [member zona] (coordinate del genitore) e [member aspetta] (se c'è, per
-##    esempio l'oblò dello stesso corridoio) non ha lei dietro il vetro, il bambino si mette al suo posto, ma solo mentre il giocatore
-##    non può vederlo (o, con [member compare_lontano], molto lontano nel buio): non compare mai sotto gli occhi;
+##    esempio l'oblò dello stesso corridoio) ha finito (lei è stata vista ed è andata via), il bambino si mette al suo
+##    posto, ma solo mentre il giocatore non può vederlo (o, con [member compare_lontano], molto lontano nel buio): non compare mai sotto gli occhi;
 ## 2. GUARDA: fermo, ti segue con la testa (Bambino in OSSERVA). Quando lo hai guardato per [member tempo_visto]
 ##    secondi, o ti avvicini sotto [member distanza_fuga] metri, aspetta ancora [member attesa_prima_di_scappare]
 ##    secondi (inclina piano la testa) e scappa lungo [member via] (coordinate del genitore; l'ultimo punto dietro un
@@ -28,7 +28,7 @@ enum Stato { ATTESA, GUARDA, SCAPPA, FINITO }
 @export var scena: PackedScene
 ## Dove deve stare il giocatore perché il bambino compaia (coordinate del genitore).
 @export var zona := AABB()
-## Un nodo da aspettare (un ObloLei: mentre lei è dietro il vetro il bambino non compare). Vuoto: nessuna attesa.
+## Un nodo da aspettare (un ObloLei: il bambino compare solo dopo lei, mai insieme). Vuoto: nessuna attesa.
 @export var aspetta: Node
 ## La strada della fuga (coordinate del genitore).
 @export var via := PackedVector3Array()
@@ -116,9 +116,11 @@ func _pronto(p: Player) -> bool:
 		var dove: Vector3 = get_parent().to_local(p.global_position) if get_parent() is Node3D else p.global_position
 		if not zona.has_point(dove):
 			return false
-	# (lei dietro l'oblò dello stesso posto: non insieme a lei, mentre c'è o se ne va)
+	# (lei dietro l'oblò dello stesso posto: mai insieme a lei, solo dopo che è stata vista ed è andata via; se lei non
+	# c'è stata, perché il giocatore non l'ha vista, il bambino non compare: ritornando lei ricompare per prima)
 	if aspetta and is_instance_valid(aspetta) and aspetta is ObloLei:
-		return (aspetta as ObloLei).stato in [ObloLei.Stato.ATTESA, ObloLei.Stato.FINITA]
+		var o := aspetta as ObloLei
+		return o.stato == ObloLei.Stato.FINITA or not o.attivo
 	return true
 
 

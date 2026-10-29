@@ -4,10 +4,11 @@ extends Node
 ## 1. il bambino poggia a terra (un raggio verso il basso trova il pavimento entro [constant TERRA_MAX] m dai piedi) e
 ##    al suo posto non entra in niente (una capsula larga come lui, dal pavimento in su);
 ## 2. la strada della fuga è libera: la stessa capsula, spostata da un punto all'altro, non tocca muri né oggetti, e
-##    sotto ogni punto c'è il pavimento;
+##    sotto ogni punto c'è il pavimento; non passa sopra o accanto alle Polaroid e fermo non ne copre nessuna;
 ## 3. dove sparisce (l'ultimo punto) dalla zona del giocatore non si vede (muri in mezzo da ogni punto della zona);
-## 4. col giocatore nella zona girato dall'altra parte il bambino compare, e mai mentre il giocatore guarda il suo
-##    posto; guardato, scappa, e sparisce solo quando il giocatore non lo vede più; finito, non ricompare.
+## 4. con lei all'oblò dello stesso posto ancora da vedere non compare; col giocatore nella zona girato dall'altra
+##    parte il bambino compare, e mai mentre il giocatore guarda il suo posto; guardato,
+##    scappa, e sparisce solo quando il giocatore non lo vede più; finito, non ricompare.
 ## I punti: nella risalita (scena di prova, con le stanze caricate) e nel tunnel sottomarino (costruito da solo).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_sfuggita.gd
 
@@ -138,6 +139,25 @@ func _prova(b: BambinoSfuggita) -> void:
 		check(urto.is_empty(), "fuga, tratto %d: la strada è libera%s" % [i, ((" (tocca a %s)" % str(urto[0])) if not urto.is_empty() else "")])
 		prima = g
 		i += 1
+	# 2b. le Polaroid lì vicino: non ci passa sopra né accanto, e fermo non ne copre nessuna a chi guarda dalla zona
+	var occhio_zona := _globale(b, b.da_dove)
+	var polaroid := 0
+	for f in get_tree().root.find_children("*", "PolaroidPhoto", true, false):
+		var pf := (f as Node3D).global_position
+		if pf.distance_to(piedi) > 25.0:
+			continue
+		polaroid += 1
+		var minima := Vector2(pf.x - piedi.x, pf.z - piedi.z).length()
+		var da := piedi
+		for q in b.via:
+			var g := _globale(b, q)
+			minima = minf(minima, _dist_segmento(pf, da, g))
+			da = g
+		check(minima > 0.7, "%s: la fuga ci passa lontano (%.2f m)" % [f.name, minima])
+		var testa := piedi + Vector3.UP * 0.6
+		var su_linea := Geometry3D.get_closest_point_to_segment(testa, occhio_zona, pf).distance_to(testa)
+		check(su_linea > 0.5, "%s: il bambino fermo non la copre a chi guarda dalla zona (%.2f m dalla linea)" % [f.name, su_linea])
+	print("    (Polaroid entro 25 m: %d)" % polaroid)
 	# 3. dove sparisce non si vede dalla zona
 	var fine := _globale(b, b.via[b.via.size() - 1]) + Vector3.UP * 0.6
 	var visti := 0
@@ -159,6 +179,14 @@ func _prova(b: BambinoSfuggita) -> void:
 	var t4 = _pavimento(dentro)
 	if t4 != null:
 		dentro = t4
+	var oblo := b.aspetta as ObloLei
+	if oblo:
+		# lei all'oblò dello stesso posto: finché non ha finito il bambino non compare (mai insieme a lei)
+		_metti(dentro, b.global_position, true)
+		await _frames(90)
+		check(b.stato == BambinoSfuggita.Stato.ATTESA and oblo.stato != ObloLei.Stato.FINITA,
+				"con lei all'oblò ancora da vedere (%s) non compare" % ObloLei.Stato.keys()[oblo.stato])
+		oblo.load_state({"finito": true})
 	_metti(dentro, b.global_position, true)
 	var t := 0.0
 	while t < 3.0 and b.stato == BambinoSfuggita.Stato.ATTESA:
@@ -188,6 +216,13 @@ func _prova(b: BambinoSfuggita) -> void:
 	check(b.stato == BambinoSfuggita.Stato.FINITO and not b.bambino.visible, "finito, non ricompare")
 	var s := b.save_state()
 	check(bool(s.get("finito", false)), "lo stato si salva (finito)")
+
+
+## Distanza in pianta di [param p] dal tratto da [param a] a [param b].
+func _dist_segmento(p: Vector3, a: Vector3, b: Vector3) -> float:
+	var piano := Vector3(1, 0, 1)
+	var c := Geometry3D.get_closest_point_to_segment(p * piano, a * piano, b * piano)
+	return c.distance_to(p * piano)
 
 
 ## Il giocatore in [param dove], che guarda verso [param punto] o (con [param via]) dalla parte opposta.

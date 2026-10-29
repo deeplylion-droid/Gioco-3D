@@ -56,6 +56,7 @@ func _run() -> void:
 	var b: Bambino = null
 	var minima := INF
 	var tempo_anim := 0.0
+	var tempo_atteso := 0.0
 	var compenetra := ""
 	Input.action_press(&"move_forward")
 	Input.action_press(&"sprint")
@@ -79,6 +80,8 @@ func _run() -> void:
 			if b.modalita == Bambino.Modalita.SCAPPA:
 				for ap in b.find_children("*", "AnimationPlayer", true, false):
 					tempo_anim = (ap as AnimationPlayer).speed_scale
+				# (l'animazione va alla velocità del corpo, misurata sui piedi: Bambino._passo_animazione)
+				tempo_atteso = clampf(b._vel / b.vel_corsa_anim, 0.25, 1.6)
 				if compenetra == "":
 					compenetra = _compenetra(b)
 		await get_tree().physics_frame
@@ -86,7 +89,7 @@ func _run() -> void:
 	Input.action_release(&"move_forward")
 	Input.action_release(&"sprint")
 	check(_comparso, "salendo la rampa F2 l'agnellino compare in cima alla scala di C2")
-	check(is_equal_approx(ag.velocita_corsa, 3.0) and is_equal_approx(tempo_anim, ag.velocita_corsa / Bambino.VEL_CORSA_ANIM),
+	check(is_equal_approx(ag.velocita_corsa, 3.0) and tempo_anim > 0.0 and absf(tempo_anim - tempo_atteso) < 0.01,
 			"corre piano (%.1f m/s), con l'animazione a tempo (velocità %.2f)" % [ag.velocita_corsa, tempo_anim])
 	check(_sparito_a >= 0, "si infila nel buco e sparisce (dopo %d frame di corsa)" % _sparito_a)
 	check(_sparito_a >= 0 and not _fuori_dalla_cavita, "quando sparisce è tutto dentro la cavità, al buio")
