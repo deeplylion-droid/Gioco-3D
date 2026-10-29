@@ -2,12 +2,13 @@ extends Node
 ## Video dal motore di lei nell'inseguimento (scena di prova scenes/test/inseguimento_prova.tscn), dalla camera del
 ## giocatore, per confrontare prima e dopo il movimento secondario di tentacoli e campana (MorbidezzaLei):
 ##   "vasca_0": il giocatore nella vasca 1, lei sale accanto e incombe;
-##   "sb1": il giocatore nel bacino, lei sbuca dal pozzo di scarico e lo guarda.
+##   "sb1": il giocatore nel bacino, lei sbuca dal pozzo di scarico e lo guarda;
+##   "grata": il giocatore dietro la grata, lei sale dal pozzetto e la colpisce.
 ##   "prima": senza la morbidezza (Engine meta morbidezza_spenta); "dopo": com'è nel gioco.
 ## Lei sale a 0,8 s; il video dura 5 s.
 ## Uso (sotto /home/user/tools/render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://tests/video_inseguimento_lei.gd <prima|dopo> <vasca_0|sb1> [preset]
+##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://tests/video_inseguimento_lei.gd <prima|dopo> <vasca_0|sb1|grata> [preset]
 
 const LEVEL := "res://scenes/test/inseguimento_prova.tscn"
 const RISCALDA := 60
@@ -57,6 +58,12 @@ func _avvia() -> void:
 		var r: Array = sala.dati["pozzo"]["rett"]
 		var c := SalaInseguimento.b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0 - 4.5, float(sala.dati["bacino"]["fondo"])])
 		p.teleport(c + Vector3.UP * 0.05, 0.0, 0.0)
+	elif dove == "grata":
+		# dietro la grata, 3,5 m dal perno, dalla parte opposta a lei
+		var g: Dictionary = sala.dati["grata"]
+		var perno := SalaInseguimento.b(g["perno"])
+		var n := SalaInseguimento.b(g["verso"]).normalized()
+		p.teleport(perno - Vector3(n.x, 0.0, n.z).normalized() * 3.5 + Vector3.UP * 0.3, 0.0, 0.0)
 	else:
 		# nella vasca 1, verso il lato sud, così il tubo giallo sul bordo nord non copre lei
 		var v: Dictionary = sala.dati["vasche"][0]
@@ -88,6 +95,8 @@ func _process(_delta: float) -> void:
 		_partito = true
 		if dove == "sb1":
 			sala.call(&"_lei_sale", "sb1", sala.call(&"_posto_sb1"), 1.3)
+		elif dove == "grata":
+			sala.call(&"_lei_alla_grata")
 		else:
 			sala.call(&"_lei_sale", "vasca_0", sala.call(&"_posto_vasca", 0), 1.6)
 	var m := MorbidezzaLei.su(sala.lei) if sala.lei else null
