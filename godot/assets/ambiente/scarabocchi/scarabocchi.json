@@ -1,0 +1,398 @@
+[
+	{
+		"nome": "scarabocchio_torre_1",
+		"zona": "torre",
+		"centro": [
+			24.0,
+			-6.55,
+			-4.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_torre_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_torre_3",
+		"zona": "torre",
+		"centro": [
+			36.0,
+			-4.64,
+			-4.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_torre_3.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_alto_torre_3",
+		"zona": "torre",
+		"centro": [
+			40.0,
+			-14.04,
+			-24.41
+		],
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"largo": 1.0,
+		"alto": 0.45,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_torre_3.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_inseguimento_2",
+		"zona": "inseguimento",
+		"centro": [
+			46.91,
+			-33.25,
+			2.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"largo": 1.6,
+		"alto": 0.8,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_inseguimento_2.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_inseguimento_3",
+		"zona": "inseguimento",
+		"centro": [
+			66.57,
+			-23.21,
+			-32.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			1.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_inseguimento_3.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_alto_inseguimento_2",
+		"zona": "inseguimento",
+		"centro": [
+			40.4,
+			-31.75,
+			-0.6
+		],
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"largo": 1.4,
+		"alto": 0.5,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_inseguimento_2.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_tunnel_1",
+		"zona": "tunnel",
+		"centro": [
+			-51.93,
+			-29.2,
+			22.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			1.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_tunnel_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_tunnel_2",
+		"zona": "tunnel",
+		"centro": [
+			39.3,
+			-29.2,
+			76.35
+		],
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_tunnel_2.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_tunnel_4",
+		"zona": "tunnel",
+		"centro": [
+			-3.3,
+			-29.2,
+			8.38
+		],
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_tunnel_4.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_tunnel_6",
+		"zona": "tunnel",
+		"centro": [
+			-23.28,
+			-29.2,
+			48.17
+		],
+		"normale": [
+			-0.94,
+			0.0,
+			-0.35
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_tunnel_6.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_alto_tunnel_1",
+		"zona": "tunnel",
+		"centro": [
+			26.7,
+			-27.75,
+			103.98
+		],
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"largo": 1.4,
+		"alto": 0.5,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_tunnel_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_alto_tunnel_3",
+		"zona": "tunnel",
+		"centro": [
+			39.3,
+			-27.75,
+			6.25
+		],
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"largo": 1.4,
+		"alto": 0.5,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_tunnel_3.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_sala_1",
+		"zona": "sala",
+		"centro": [
+			-9.65,
+			0.75,
+			20.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"largo": 1.6,
+		"alto": 0.8,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_sala_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_alto_sala_1",
+		"zona": "sala",
+		"centro": [
+			-9.15,
+			2.25,
+			20.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"largo": 1.4,
+		"alto": 0.5,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_sala_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_alto_sala_3",
+		"zona": "sala",
+		"centro": [
+			-19.55,
+			2.25,
+			-24.0
+		],
+		"normale": [
+			0.0,
+			0.0,
+			1.0
+		],
+		"largo": 1.0,
+		"alto": 0.45,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_sala_3.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_risalita_1",
+		"zona": "risalita",
+		"centro": [
+			-4.16,
+			-4.6,
+			48.2
+		],
+		"normale": [
+			0.0,
+			0.0,
+			1.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_risalita_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_risalita_2",
+		"zona": "risalita",
+		"centro": [
+			6.1,
+			-1.05,
+			49.25
+		],
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"largo": 1.6,
+		"alto": 0.8,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_risalita_2.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_risalita_3",
+		"zona": "risalita",
+		"centro": [
+			-5.9,
+			-4.7,
+			49.24
+		],
+		"normale": [
+			1.0,
+			0.0,
+			0.0
+		],
+		"largo": 1.2,
+		"alto": 0.7,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_risalita_3.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_tecnici_1",
+		"zona": "tecnici",
+		"centro": [
+			8.2,
+			-8.25,
+			39.28
+		],
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_tecnici_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_alto_tecnici_1",
+		"zona": "tecnici",
+		"centro": [
+			8.2,
+			-6.8,
+			39.28
+		],
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"largo": 1.4,
+		"alto": 0.5,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_alto_tecnici_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_fiume_1",
+		"zona": "fiume",
+		"centro": [
+			-21.83,
+			-4.6,
+			61.35
+		],
+		"normale": [
+			0.0,
+			0.0,
+			-1.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_fiume_1.png",
+		"sbiadito": 0.0
+	},
+	{
+		"nome": "scarabocchio_fiume_2",
+		"zona": "fiume",
+		"centro": [
+			-6.4,
+			-4.6,
+			75.03
+		],
+		"normale": [
+			-1.0,
+			0.0,
+			0.0
+		],
+		"largo": 2.0,
+		"alto": 0.9,
+		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_fiume_2.png",
+		"sbiadito": 0.0
+	}
+]

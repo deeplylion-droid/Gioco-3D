@@ -32,11 +32,16 @@ BAGNATE = {'fiume': 0.55, 'tunnel': 0.6, 'inseguimento': 0.5, 'piscina': 0.45}
 # (scelte consigliate dal coordinatore all'utente: vedi disegni.py). Un disegno per muro, deciso dalla zona, dall'altezza
 # e dall'ordine: in basso disegnini e scarabocchi (nei posti bagnati i pesci, il mare e, uno per zona, i bambini
 # sott'acqua), in alto, dove un bambino non arriva, quelli a disagio (le manine che salgono, l'occhio solo).
-def scegli(m, k_zona):
+def serie(m):
     if m.get('alto_su'):
-        return disegni.ALTI[k_zona % len(disegni.ALTI)]
-    serie = disegni.BASSI_BAGNATI if m['zona'] in BAGNATE else disegni.BASSI
-    return serie[k_zona % len(serie)]
+        return 'ALTI'
+    return 'BASSI_BAGNATI' if m['zona'] in BAGNATE else 'BASSI'
+
+
+def scegli(m, k):
+    # ogni serie a turno in tutto il gioco, così ci sono tutti i disegni e non due uguali di fila
+    s = getattr(disegni, serie(m))
+    return s[k % len(s)]
 
 
 def main():
@@ -46,14 +51,13 @@ def main():
     elenco = []
     contatori = {}
     for i, m in enumerate(scelti):
-        chiave = (m['zona'], bool(m.get('alto_su')))
-        k_zona = contatori.get(chiave, 0)
-        contatori[chiave] = k_zona + 1
+        k = contatori.get(serie(m), 0)
+        contatori[serie(m)] = k + 1
         if solo and m['nome'] not in solo:
             continue
         w, h = int(m['largo'] * PPM), int(m['alto'] * PPM)
         p = Pastello(w, h, 2810 + i)
-        disegno = scegli(m, k_zona)
+        disegno = scegli(m, k)
         disegno(p, w, h)
         im = p.finisci(bagnato=BAGNATE.get(m['zona'], 0.0), sbiadito=0.08)
         nome = 'scarabocchio_%s' % m['nome']

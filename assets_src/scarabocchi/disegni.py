@@ -169,5 +169,5 @@ def disagio_sott_acqua(p, w, h):
 
 
 BASSI = [mare_e_nave, per_mano, jilly_e_pesci, scarabocchi_misti, cerchio_e_cancellatura]
-BASSI_BAGNATI = [pesci_sul_fiume, jilly_e_pesci, scarabocchi_misti, mare_e_nave, disagio_sott_acqua]
-ALTI = [disagio_manine, disagio_occhio]
+BASSI_BAGNATI = [pesci_sul_fiume, jilly_e_pesci, scarabocchi_misti, mare_e_nave, cerchio_e_cancellatura]
+ALTI = [disagio_manine, disagio_occhio, disagio_sott_acqua]

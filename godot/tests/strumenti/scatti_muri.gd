@@ -127,9 +127,12 @@ func _scena(percorso: String, muri: Array) -> void:
 		we.camera_attributes = look.attributi_camera
 		look.free()
 		_radice.add_child(we)
-	# con SCARABOCCHI=1 gli scarabocchi sui muri (godot/assets/ambiente/scarabocchi/scarabocchi.json), come nel gioco
+	# con SCARABOCCHI=1 gli scarabocchi sui muri (godot/assets/ambiente/scarabocchi/scarabocchi.json), come nel gioco;
+	# per ogni vista prima senza e poi con, contando le pipeline compilate quando si accendono (attese: nessuna)
+	var scarabocchi: Node3D = null
 	if OS.get_environment("SCARABOCCHI") != "":
-		_radice.add_child(Scarabocchi.new())
+		scarabocchi = Scarabocchi.new()
+		_radice.add_child(scarabocchi)
 	var cam := Camera3D.new()
 	cam.near = 0.05
 	cam.far = 60.0
@@ -144,7 +147,16 @@ func _scena(percorso: String, muri: Array) -> void:
 			cam.fov = vista[2]
 			cam.look_at(c, Vector3.UP)
 			_accendi(cam.global_position, c)
-			await _frames(25)
+			if scarabocchi:
+				scarabocchi.visible = false
+				await _frames(25)
+				var senza := _pipeline()
+				scarabocchi.visible = true
+				await _frames(25)
+				var con := _pipeline()
+				print("PIPELINE %s %s senza %s con %s nuove %d" % [m["nome"], vista[0], senza, con, _somma(con) - _somma(senza)])
+			else:
+				await _frames(25)
 			if OS.has_environment("DIAG"):
 				var luci := _radice.find_children("*", "Light3D", true, false).filter(func(l): return (l as Light3D).is_visible_in_tree())
 				print("DIAG cam %s attuale %s accese %d luci %d ambiente %s" % [cam.global_position, get_viewport().get_camera_3d().get_path(),
@@ -172,6 +184,20 @@ func _accendi(da: Vector3, a: Vector3) -> void:
 		if vicino:
 			_accese[g] = true
 		g.visible = vicino
+
+
+static func _pipeline() -> Array:
+	return [RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_DRAW),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SURFACE),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_MESH)]
+
+
+static func _somma(a: Array) -> int:
+	var s := 0
+	for x in a:
+		s += int(x)
+	return s
 
 
 static func _distanza(b: AABB, p: Vector3) -> float:
