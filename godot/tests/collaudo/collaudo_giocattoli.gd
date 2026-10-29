@@ -38,6 +38,8 @@ func _run() -> void:
 		await _affonda()
 	if "giocatore_buco" in _parti:
 		await _giocatore_buco()
+	if "sonda_buco" in _parti:
+		await _sonda_buco()
 	_fine()
 
 
@@ -642,4 +644,34 @@ func _giocatore_buco() -> void:
 			minimo = minf(minimo, p.global_position.y)
 		Input.action_release(&"move_forward")
 		check(is_instance_valid(p) and minimo > -2.3 and not GameState.is_dying, "camminandoci sopra da %s non ci cade (quota minima %.3f)" % ["sud" if verso > 0 else "nord", minimo])
+
+
+func _colpo_giu(q: Vector3, da: float, a: float, escludi: Array) -> String:
+	var ex: Array[RID] = []
+	for r in escludi:
+		ex.append(r)
+	var h := (level as Node3D).get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(q.x, da, q.z), Vector3(q.x, a, q.z), Layers.WORLD, ex))
+	if h.is_empty():
+		return "niente"
+	return "%.3f %s" % [(h.position as Vector3).y, (h.collider as Node).get_path() if h.collider is Node else str(h.collider)]
+
+
+## Che cosa c'è sotto (0/3,6) prima e dopo aver messo lì il pallone (nella prova "affonda" ci finiva sotto).
+func _sonda_buco() -> void:
+	print("12. Sonda del punto (0/3,6)")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	var q := enigma.to_global(Vector3(0.0, 0.0, 3.6))
+	var tutti: Array = []
+	for k in 3:
+		tutti.append(enigma.giocattolo(k).get_rid())
+	print("    prima, da 1 m: ", _colpo_giu(q, 1.0, -6.0, tutti), " | da -0,97: ", _colpo_giu(q, -0.97, -5.2, tutti))
+	print("    pallone in ", enigma.giocattolo(1).global_position, ", paperella in ", enigma.giocattolo(0).global_position)
+	var stato: Dictionary = enigma.save_state()
+	stato["pos"][1] = [0.0, 3.6, 0.0]
+	enigma.load_state(stato)
+	print("    subito dopo load_state: pallone y ", enigma.giocattolo(1).global_position.y)
+	await _frames(5)
+	print("    dopo 5 fotogrammi: pallone in ", enigma.giocattolo(1).global_position, " | da 1 m: ", _colpo_giu(q, 1.0, -6.0, tutti), " | senza escludere: ", _colpo_giu(q, 1.0, -6.0, []))
 
