@@ -179,7 +179,9 @@ func _run() -> void:
 		if svuota.attivo:
 			break
 		await get_tree().physics_frame
-	check(hatch_button.enabled and svuota.attivo, "a piscina vuota il pulsante si attiva")
+	# (la serratura della botola, l'enigma dei giocattoli: finché i tre piatti non scendono il pulsante non si preme; lo
+	# prova test_enigma_giocattoli)
+	check(svuota.attivo and not hatch_button.enabled, "a piscina vuota il pulsante si attiva, chiuso dalla serratura dei giocattoli")
 	var scolo := (_f_asciutta - _f_scola) / 60.0
 	check(_f_scola >= 0 and _scarico_aperto and not _aspira_mentre_scola,
 		"rimasta poca acqua, il resto scola da solo dallo scarico, col gorgo (riscontro sulla v0.3.1; scarico aperto %s, aspirando %s)" \
@@ -206,6 +208,15 @@ func _run() -> void:
 	check(giallo and e_max > 3.0 * e_min, "e il suo lampeggiante giallo lampeggia (%.2f-%.2f)" % [e_min, e_max])
 	check(lampi >= 2 and lampi <= 3, "un lampo ogni 1,6 s, col segnale per il richiamo dell'audio (%d in 3,3 s)" % lampi)
 	check(_checkpoint() == "Piscina/CheckpointPozzaVuota", "checkpoint: piscina vuota (%s)" % _checkpoint())
+	print("  (scorciatoia: i giocattoli sui loro cerchi, i piatti scendono; lo prova test_enigma_giocattoli)")
+	var giocattoli := level.get_node_or_null(^"Piscina/EnigmaGiocattoli") as EnigmaGiocattoli
+	if giocattoli:
+		giocattoli.metti_al_posto()
+		for i in 300:
+			await get_tree().physics_frame
+			if hatch_button.enabled:
+				break
+	check(hatch_button.enabled, "coi tre piatti scesi il pulsante della botola si preme")
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	await _frames(10)
