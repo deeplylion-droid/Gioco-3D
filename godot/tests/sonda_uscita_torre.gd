@@ -130,8 +130,14 @@ func _entra() -> void:
 		portone.get(&"chiuso_dietro"), portone.get(&"quanto")])
 	print("  istantanea: %s %s" % [GameState.snapshot.get("checkpoint", ""), _conta(GameState.snapshot.get("objects", {}))])
 	# una morte: si riparte dal checkpoint
+	var vecchio := p
 	GameState.respawn()
-	await _aspetta_livello()
+	for i in 60 * 120:
+		await get_tree().process_frame
+		var n = GameState.player
+		if n != null and is_instance_valid(n) and n != vecchio and n.is_inside_tree() and not GameState.is_restoring():
+			break
+	level = get_tree().current_scene
 	for i in 60 * 6:
 		await get_tree().physics_frame
 	p = GameState.player

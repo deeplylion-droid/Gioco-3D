@@ -12,6 +12,8 @@ const SCENA := "res://scenes/sala_principale.tscn"
 const TOGLI := ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata",
 		"Mascotte", "Atmosfera", "Sala/TorreScivoli", "Sala/Dettagli", "Sala/AreaBimbi", "Vasca", "Gioco/LeiSbuca",
 		"Gioco/EnigmaAcquari"]
+## Il punto del bordo sud della piscina da cui si guardano i piatti che scendono (tests/scatti_disegno_luce.gd).
+const BORDO_PIATTI := Vector3(-2.5, 0.0, 5.8)
 const MONITOR := {"surface": Performance.PIPELINE_COMPILATIONS_SURFACE, "draw": Performance.PIPELINE_COMPILATIONS_DRAW,
 		"spec": Performance.PIPELINE_COMPILATIONS_SPECIALIZATION}
 
@@ -98,9 +100,9 @@ func _run() -> void:
 	print("FASE i piatti")
 	await _taglio()
 	vasca.fill = minf(vasca.fill, 0.75)
-	await _metti(Vector3(0.6, 0.0, 1.6), Vector3(-3.9, -1.9, 3.3))
+	# dal bordo sud, sopra il cerchio giallo: la paperella cala con l'acqua, si posa e il piatto scende
+	await _metti(BORDO_PIATTI, enigma.cerchio(0).global_position + Vector3(0.4, 0.1, -0.3))
 	await _attendi(0.6)
-	await _guarda(Vector3(0.2, -2.0, 3.4), 0.6)
 	# (lo svuotamento vero è come prima: qui l'ultima parte, in pochi secondi)
 	var f0 := vasca.fill
 	for k in int(5.0 * Engine.physics_ticks_per_second):
@@ -108,10 +110,17 @@ func _run() -> void:
 		await get_tree().physics_frame
 	vasca.fill = 0.0
 	for k in 240:
-		if enigma.piatto_giu(0) and enigma.piatto_giu(1):
+		if enigma.piatto_giu(0):
 			break
 		await get_tree().physics_frame
-	await _attendi(1.5)
+	await _attendi(1.2)
+	# poi il cerchio rosso, col pallone spinto prima
+	await _guarda(enigma.cerchio(1).global_position + Vector3(-0.6, 0.1, 0.0), 1.4)
+	for k in 240:
+		if enigma.piatto_giu(1):
+			break
+		await get_tree().physics_frame
+	await _attendi(1.2)
 	await _scatto("giocattoli_piatti_scesi")
 	_conta_pipeline("piatti scesi")
 
