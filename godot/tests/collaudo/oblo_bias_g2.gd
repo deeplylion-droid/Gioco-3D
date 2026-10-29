@@ -95,6 +95,11 @@ func _run() -> void:
 				luce.shadow_normal_bias = bias[1]
 				await _fotogrammi(12)
 				await _scatto("%s_%s_%s" % [nome, v[0], bias[2]])
+			# (la stessa vista con la luce di lei spenta: quello che resta non viene da lei)
+			luce.visible = false
+			await _fotogrammi(12)
+			await _scatto("%s_%s_%s" % [nome, v[0], "luce_spenta"])
+			luce.visible = true
 		p.set_physics_process(true)
 		o.lei.visible = false
 	get_tree().quit()
