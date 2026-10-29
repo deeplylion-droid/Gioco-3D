@@ -265,8 +265,25 @@ func _run() -> void:
 	check(float(esito[1]) > 45.0 and float(esito[1]) < 75.0, "circa 1 minuto di lavoro (%.0f s)" % float(esito[1]))
 	await _frames(3)
 	check(med == null or med.in_acqua() == 0, "a piscina vuota non resta nessuna medusina nell'acqua")
-	check(hatch_button.enabled and svuota.attivo and segnale.visible and segnale.light_color.b < 0.3,
-		"a piscina vuota il pulsante si attiva e il suo lampeggiante giallo si accende")
+	# (con l'enigma dei giocattoli la botola ha la serratura: i tre piatti sul fondo)
+	var giocattoli := level.get_node_or_null(^"Piscina/EnigmaGiocattoli") as EnigmaGiocattoli
+	check(svuota.attivo and segnale.visible and segnale.light_color.b < 0.3 and segnale.light_color.g < 0.8
+			and (giocattoli == null or not hatch_button.enabled),
+		"a piscina vuota il lampeggiante giallo del pulsante si accende; coi giocattoli fuori posto il pulsante non si preme")
+	if giocattoli:
+		print("  (scorciatoia: i giocattoli sui loro cerchi, i piatti scendono; lo prova test_enigma_giocattoli)")
+		giocattoli.metti_al_posto()
+		for i in 900:
+			await get_tree().physics_frame
+			if hatch_button.enabled:
+				break
+		if not hatch_button.enabled:
+			for k in 3:
+				print("  (giocattolo %d in %s, cerchio %s, piatto giù %s, velocità %.2f)" % [k, giocattoli.giocattolo(k).global_position,
+					giocattoli.cerchio(k).global_position, giocattoli.piatto_giu(k), giocattoli.velocita(k)])
+			print("  (risolto %s, pozza %.3f, attivo %s)" % [giocattoli.aperta(), puddle.fill, svuota.attivo])
+	check(hatch_button.enabled and segnale.light_color.g > 0.9,
+		"coi tre piatti scesi il pulsante della botola si preme e il lampeggiante è verde")
 	check(String(GameState.snapshot.get("checkpoint", "")).ends_with("CheckpointPozzaVuota"), "checkpoint: piscina vuota")
 
 	print("Portello")

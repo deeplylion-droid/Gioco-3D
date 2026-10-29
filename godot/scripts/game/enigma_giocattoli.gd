@@ -871,11 +871,7 @@ func _aggiorna_bordi(k: float) -> void:
 ## piscina vuota i piatti scendono da soli al prossimo passo.
 func metti_al_posto() -> void:
 	for i in 3:
-		if _giu[i]:
-			continue
-		_giocattoli[i].position.x = _cerchi[i].position.x
-		_giocattoli[i].position.z = _cerchi[i].position.z
-		_vel[i] = Vector2.ZERO
+		metti_al_posto_uno(i)
 
 
 ## Scorciatoia per gli scatti: solo il giocattolo [param i] sul suo cerchio.
@@ -885,6 +881,8 @@ func metti_al_posto_uno(i: int) -> void:
 	_giocattoli[i].position.x = _cerchi[i].position.x
 	_giocattoli[i].position.z = _cerchi[i].position.z
 	_vel[i] = Vector2.ZERO
+	# (spostato senza spinta: si riposa sul piatto, se no resta alla quota di prima, anche dentro la conca)
+	_assestato[i] = false
 
 
 ## I giocattoli (per i test e gli scatti).
@@ -949,3 +947,4 @@ func load_state(data: Dictionary) -> void:
 			if not _giu[i]:
 				_y[i] = _quota_bersaglio(i)
 				_giocattoli[i].global_position.y = _y[i]
+				_assestato[i] = false
