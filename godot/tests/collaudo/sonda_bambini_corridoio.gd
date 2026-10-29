@@ -6,7 +6,10 @@ extends Node
 ## 3. girato verso il fondo del corridoio: l'agnellino è comparso, lo guarda finché scappa, poi 4 m avanti.
 ## Il MonitorBambini registra piedi, contatti, Polaroid, lei, sparizione e pipeline; stampa lo stato dell'oblò.
 ## Uso: xvfb-run ... godot --path godot --rendering-driver vulkan --resolution 960x540 --fixed-fps 60 \
-##        --script res://tests/run.gd -- res://tests/collaudo/sonda_bambini_corridoio.gd <cartella>
+##        --script res://tests/run.gd -- res://tests/collaudo/sonda_bambini_corridoio.gd <cartella> [modo]
+## modo (cosa fa il giocatore mentre il bambino scappa): cammina (come prima: avanti verso la porta), fermo (resta in
+## fondo alla scala), corre (avanti di corsa), destra / sinistra (avanti spostandosi di lato, per guardare nella
+## rientranza da un'altra parte).
 
 const MON := preload("res://tests/collaudo/monitor_bambini.gd")
 var p: Player
@@ -30,6 +33,7 @@ func _guarda_per(q: Vector3, secondi: float) -> void:
 
 func _run() -> void:
 	var cart := OS.get_cmdline_user_args()[1]
+	var modo := OS.get_cmdline_user_args()[2] if OS.get_cmdline_user_args().size() > 2 else "cammina"
 	Game.pause_on_focus_loss = false
 	GameState.save_to_disk = false
 	get_tree().change_scene_to_file("res://tests/scene/risalita_prova.tscn")
@@ -82,13 +86,23 @@ func _run() -> void:
 		await get_tree().physics_frame
 		t += 1.0 / 60.0
 	mon.evento("dopo %.1f s verso il fondo: bambino %s" % [t, BambinoSfuggita.Stato.keys()[b.stato]])
-	Input.action_press(&"move_forward")
+	var tasti: Array[StringName] = []
+	match modo:
+		"cammina": tasti = [&"move_forward"]
+		"corre": tasti = [&"move_forward", &"sprint"]
+		"destra": tasti = [&"move_forward", &"move_right"]
+		"sinistra": tasti = [&"move_forward", &"move_left"]
+	mon.evento("modo %s: tasti %s" % [modo, tasti])
+	for k in tasti:
+		Input.action_press(k)
 	t = 0.0
-	while t < 6.0 and b.stato != BambinoSfuggita.Stato.FINITO:
+	while t < 12.0 and b.stato != BambinoSfuggita.Stato.FINITO:
 		p.look_at_point(porta + Vector3(-1.0, 1.0, 0.0))
 		await get_tree().physics_frame
 		t += 1.0 / 60.0
-	Input.action_release(&"move_forward")
+	for k in tasti:
+		Input.action_release(k)
+	mon.evento("dopo la fuga (%.1f s): bambino %s, giocatore in %s" % [t, BambinoSfuggita.Stato.keys()[b.stato], p.global_position.snapped(Vector3.ONE * 0.01)])
 	await _frames(60)
 	mon.evento("fine: bambino %s, giocatore in %s" % [BambinoSfuggita.Stato.keys()[b.stato], p.global_position.snapped(Vector3.ONE * 0.01)])
 	get_tree().quit()

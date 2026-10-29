@@ -1,0 +1,12 @@
+2.03 pronto: bambino ATTESA, oblò 0
+3.06 in fondo alla scala in (-4.42, -5.4, 49.2); oblò 1, bambino ATTESA
+3.77 guardando la scala: oblò 1
+4.92 dopo aver guardato l'oblò: oblò 2
+6.05 BambinoCorridoioFiume compare in (-4.8, -5.4, 66.7) (pipeline in questo fotogramma 0, lei all'oblò visibile false)
+6.77 dopo aver guardato via: oblò 4, bambino GUARDA
+7.57 dopo 2.6 s verso il fondo: bambino SCAPPA
+7.57 modo cammina: tasti [&"move_forward"]
+7.93 dopo la fuga (1.2 s): bambino FINITO, giocatore in (-4.98, -5.4, 52.98)
+7.93 BambinoCorridoioFiume sparisce: 1 ossa su 24 in vista dalla camera nel fotogramma prima: RightToeBase
+7.93 BambinoCorridoioFiume sparisce in (-6.26, -5.39, 65.99): nell'inquadratura ma coperto da Corridoi (bene); il giocatore gli è arrivato a 12.77 m (dalla capsula alla scatola)
+8.23 fine: bambino FINITO, giocatore in (-5.0, -5.4, 53.26)

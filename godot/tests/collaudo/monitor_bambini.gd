@@ -33,7 +33,7 @@ func _init(cartella: String) -> void:
 func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(cart.path_join("piedi"))
 	_csv = FileAccess.open(cart.path_join("bambini.csv"), FileAccess.WRITE)
-	_csv.store_line("t;bambino;stato;modalita;x;y;z;piede_alto_cm;scivola_ms;scivola_basso_ms;tocca;p13_cm;lei_visibile;pipeline;sotto")
+	_csv.store_line("t;bambino;stato;modalita;x;y;z;piede_alto_cm;scivola_ms;scivola_basso_ms;tocca;p13_cm;lei_visibile;pipeline;sotto;ossa_viste")
 	_ev = FileAccess.open(cart.path_join("eventi.txt"), FileAccess.WRITE)
 	_t0 = Time.get_ticks_msec()
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -129,8 +129,6 @@ func _process(delta: float) -> void:
 		var p13d := -1.0
 		if p13:
 			p13d = _dist_aabb(_aabb(bn), _aabb(p13)) * 100.0
-		_csv.store_line("%.3f;%s;%s;%s;%.3f;%.3f;%.3f;%.1f;%.2f;%.2f;%s;%.0f;%s;%d;%s" % [_t(), nome, stato, mod, bn.global_position.x, bn.global_position.y,
-			bn.global_position.z, basso * 100.0 if basso < 90 else -1.0, scivola, scivola_basso, tocca, p13d, lei_oblo, nuove, sotto])
 		_prima[id] = [true, piedi, _aabb(bn).get_center()]
 		var ossa := {}
 		for sk in bn.find_children("*", "Skeleton3D", true, false):
@@ -139,6 +137,12 @@ func _process(delta: float) -> void:
 				for i in sks.get_bone_count():
 					ossa[sks.get_bone_name(i)] = sks.global_transform * sks.get_bone_global_pose(i).origin
 		_ossa[id] = ossa
+		# in fuga: quante ossa si vedono dalla camera (per "resta fermo in vista ad aspettare")
+		var nv := -1
+		if stato == "SCAPPA" or mod == "SCAPPA":
+			nv = _conta_ossa(cam, ossa)
+		_csv.store_line("%.3f;%s;%s;%s;%.3f;%.3f;%.3f;%.1f;%.2f;%.2f;%s;%.0f;%s;%d;%s;%d" % [_t(), nome, stato, mod, bn.global_position.x, bn.global_position.y,
+			bn.global_position.z, basso * 100.0 if basso < 90 else -1.0, scivola, scivola_basso, tocca, p13d, lei_oblo, nuove, sotto, nv])
 		# gli scatti
 		_scatto_t -= delta
 		if _sv and _scatto_t <= 0.0 and _n < 60:
@@ -277,6 +281,11 @@ func _davanti(cam: Camera3D, q: Vector3, bn: Node) -> String:
 
 ## Quante ossa del corpo (del fotogramma prima) erano nell'inquadratura senza niente in mezzo dalla camera (tolleranza
 ## 5 cm), e quali.
+func _conta_ossa(cam: Camera3D, ossa: Dictionary) -> int:
+	var r := _ossa_in_vista(cam, ossa)
+	return int(r.split(" ")[0]) if r[0].is_valid_int() else -1
+
+
 func _ossa_in_vista(cam: Camera3D, ossa: Dictionary) -> String:
 	if cam == null or ossa.is_empty():
 		return "ossa non misurate"
