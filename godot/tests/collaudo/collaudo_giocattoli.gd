@@ -108,7 +108,7 @@ func _incastri() -> void:
 			var c := Vector2(enigma.cerchio(migliore).position.x, enigma.cerchio(migliore).position.z)
 			var via := (t[1] as Vector2) - c
 			via = via.normalized() if via.length() > 0.01 else Vector2.RIGHT
-			var pos := (t[1] as Vector2) + via * (float(t[2]) + EnigmaGiocattoli.RAGGI[migliore] + 0.02)
+			var pos: Vector2 = (t[1] as Vector2) + via * (float(t[2]) + float(EnigmaGiocattoli.RAGGI[migliore]) + 0.02)
 			pos = Vector2(clampf(pos.x, ar.position.x, ar.end.x), clampf(pos.y, ar.position.y, ar.end.y))
 			var stato: Dictionary = enigma.save_state()
 			stato["pos"][migliore] = [pos.x, pos.y, 0.0]
