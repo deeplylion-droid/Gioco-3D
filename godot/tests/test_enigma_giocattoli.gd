@@ -8,7 +8,8 @@ extends Node
 ## galleggiano, i posti liberi (P5, scalette), il salvataggio coi checkpoint. E i posti dove un giocattolo restava
 ## incastrato (collaudo di ambienti-2, 29 ottobre): dagli angoli dell'area e da sotto le scalette si riporta al suo
 ## cerchio col getto; spinto a lungo contro un gonfiabile non ci entra e non ci sale, e ci scivola attorno; posato
-## dall'acqua sopra un gonfiabile ne scivola giù.
+## dall'acqua sopra un gonfiabile ne scivola giù. E ogni fotogramma (ricontrollo di ambienti-2): chi si muove sul fondo
+## non sta mai più di 1 cm sopra il fondo che ha sotto, anche sulle pendenze e sulla conca della botola.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_enigma_giocattoli.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -29,9 +30,15 @@ var _failed := 0
 var _scesi: Array = []
 var _risolto := 0
 var _colpi := {}
+## La quota di chi si muove sul fondo, misurata ogni fotogramma ([method _misura_staccato]): il peggio e dove.
+var _misura_quota := false
+var _staccato := 0.0
+var _staccato_dove := ""
+var _xz_prima: Array[Vector2] = [Vector2.INF, Vector2.INF, Vector2.INF]
 
 
 func _ready() -> void:
+	get_tree().physics_frame.connect(_misura_staccato)
 	_run.call_deferred()
 
 
@@ -91,6 +98,7 @@ func _run() -> void:
 	print("3. Ordine B: prima lo svuotamento, poi i giocattoli sul fondo")
 	await _carica()
 	await _svuota()
+	_misura_quota = true
 	for k in 300:
 		if piscina.attivo:
 			break
@@ -125,6 +133,8 @@ func _run() -> void:
 	check(enigma.risolto_ok and pulsante.enabled, "scesi tutti e tre, il pulsante funziona")
 	await _colpisci_pulsante()
 	check(bool(portello.get(&"is_open")), "colpito col getto, la botola si apre")
+	_controlla_staccato("spinti sul fondo vuoto")
+	_misura_quota = false
 
 	print("4. Il salvataggio coi checkpoint")
 	var tutto: Dictionary = enigma.save_state()
@@ -155,6 +165,7 @@ func _run() -> void:
 		[0, Vector2(a.end.x, 3.2), true, "sotto la scaletta est"],
 		[0, a.position, true, "nell'angolo nord-ovest"], [1, Vector2(a.end.x, a.position.y), true, "nell'angolo nord-est"],
 		[2, Vector2(a.position.x, a.end.y), true, "nell'angolo sud-ovest"], [2, a.end, true, "nell'angolo sud-est"]]
+	_misura_quota = true
 	for caso in casi:
 		var i: int = caso[0]
 		if caso[2]:
@@ -168,9 +179,11 @@ func _run() -> void:
 		var ok := staccato and await _spingi(i, 50)
 		check(ok, "%s, %s: il giocattolo %d si stacca dal bordo e col getto torna al suo cerchio (%s)" % [
 			"a piscina vuota" if caso[2] else "a piscina piena", caso[3], i, _dove(i)])
+	_controlla_staccato("dagli angoli e dalle scalette")
 
 	print("6. Spinto a lungo contro un gonfiabile, non ci entra, non ci sale sopra e ci scivola attorno")
 	vasca.fill = 0.0
+	_misura_quota = true
 	var ostacoli: Array = enigma.get(&"_ostacoli")
 	var rids: Array = enigma.get(&"_rid_gonfiabili")
 	check(ostacoli.size() >= 4 and rids.size() >= 4, "i gonfiabili sul fondo con la loro forma (%d cerchi, %d collisioni)" % [ostacoli.size(), rids.size()])
@@ -209,15 +222,44 @@ func _run() -> void:
 		var esclusi := rids.duplicate()
 		esclusi.append(g1.get_rid())
 		su_max = maxf(su_max, g1.global_position.y - _fondo_sotto(g1.global_position, esclusi))
+	# il gonfiabile vicino alla conca della botola, spinto 8 s da tre lati come nel ricontrollo di ambienti-2: il pallone
+	# lo aggira e attraversa la conca (lì stava 2,5 cm sopra il fondo: la quota lo seguiva in ritardo)
+	var vicina: Vector3 = ostacoli[0]
+	for o: Vector3 in ostacoli:
+		if Vector2(o.x, o.y).distance_to(Vector2(-1.0, 0.4)) < Vector2(vicina.x, vicina.y).distance_to(Vector2(-1.0, 0.4)):
+			vicina = o
+	var spostato_min := INF
+	for ang: float in [PI, PI * 0.75, PI * 1.25]:
+		var via := Vector2(cos(ang), sin(ang))
+		var c2 := Vector2(vicina.x, vicina.y)
+		var r: float = vicina.z + EnigmaGiocattoli.RAGGI[1]
+		await _metti(1, c2 + via * (r + 0.05))
+		await _frames(120)
+		var partenza := Vector2(g1.position.x, g1.position.z)
+		var stand2 := partenza + via * 2.0
+		var stand := Vector3(stand2.x, _fondo_sotto(Vector3(stand2.x, 0.0, stand2.y), [g1.get_rid()]) + 0.05, stand2.y)
+		p.teleport(stand, 0.0, 0.0)
+		await _frames(4)
+		p.water_pack.set_tank_amount(30.0)
+		Input.action_press(&"spray")
+		for f in 480:
+			p.look_at_point(g1.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[1] * 0.6, 0))
+			await get_tree().physics_frame
+			dentro_max = maxf(dentro_max, r - Vector2(g1.position.x, g1.position.z).distance_to(c2))
+		Input.action_release(&"spray")
+		await _frames(60)
+		var fine := Vector2(g1.position.x, g1.position.z)
+		spostato_min = minf(spostato_min, fine.distance_to(partenza))
+		print("    da %.0f gradi contro %s: il pallone da %s a %s" % [rad_to_deg(ang), vicina.snapped(Vector3.ONE * 0.01),
+			partenza.snapped(Vector2.ONE * 0.01), fine.snapped(Vector2.ONE * 0.01)])
+	check(spostato_min > 0.5, "spinto 8 s da tre lati contro il gonfiabile vicino alla botola, ci scivola attorno (si sposta almeno %.2f m)" % spostato_min)
+	_controlla_staccato("contro i gonfiabili")
+	_misura_quota = false
 	check(dentro_max < 0.02, "il pallone spinto 4 s contro ognuno non ci entra (al più %.1f cm)" % (dentro_max * 100.0))
 	check(su_max < 0.03, "e resta sul fondo, non ci sale sopra (al più %.1f cm sopra il fondo)" % (su_max * 100.0))
 	check(di_lato_min > 0.3, "spinto dritto contro, ci scivola attorno invece di fermarsi (di lato almeno %.2f m)" % di_lato_min)
 
 	print("7. Calando l'acqua sopra un gonfiabile, il giocattolo ne scivola giù")
-	var vicina: Vector3 = ostacoli[0]
-	for o: Vector3 in ostacoli:
-		if Vector2(o.x, o.y).distance_to(Vector2(-1.0, 0.4)) < Vector2(vicina.x, vicina.y).distance_to(Vector2(-1.0, 0.4)):
-			vicina = o
 	# (sala ricaricata: svuotata, la piscina scolerebbe l'acqua rimessa)
 	await _carica()
 	await _metti(0, Vector2(vicina.x, vicina.y))
@@ -426,6 +468,43 @@ func _colpisci_pulsante() -> void:
 		await get_tree().physics_frame
 		if bool(portello.get(&"is_open")):
 			break
+
+
+## Ogni fotogramma, se [member _misura_quota]: chi si muove sul fondo (non galleggia e non è sul suo piatto sceso) quanto
+## sta sopra il fondo che ha sotto (i gonfiabili contano, gli altri giocattoli no). Gli spostamenti di più di 10 cm in un
+## fotogramma sono i giocattoli rimessi a posto dal test, non si contano.
+func _misura_staccato() -> void:
+	if not _misura_quota or not is_instance_valid(enigma) or not enigma.is_inside_tree() or not is_instance_valid(level) \
+			or not level.is_inside_tree():
+		return
+	var giocattoli: Array[RID] = []
+	for k in 3:
+		giocattoli.append(enigma.giocattolo(k).get_rid())
+	var spazio := (level as Node3D).get_world_3d().direct_space_state
+	for k in 3:
+		var g := enigma.giocattolo(k)
+		var ora := Vector2(g.position.x, g.position.z)
+		var mosso := ora.distance_to(_xz_prima[k])
+		_xz_prima[k] = ora
+		if mosso < 0.0005 or mosso > 0.1 or enigma.piatto_giu(k) or enigma.galleggia(k):
+			continue
+		var q := PhysicsRayQueryParameters3D.create(g.global_position + Vector3(0, 1.0, 0), g.global_position - Vector3(0, 4.0, 0),
+			Layers.WORLD, giocattoli)
+		var h := spazio.intersect_ray(q)
+		if h.is_empty():
+			continue
+		var su := g.global_position.y - (h.position as Vector3).y
+		if su > _staccato:
+			_staccato = su
+			_staccato_dove = "il giocattolo %d in %s sopra %s, acqua %.2f" % [k, ora.snapped(Vector2.ONE * 0.01),
+				(h.collider as Node).name if h.collider is Node else "?", vasca.fill]
+
+
+func _controlla_staccato(quando: String) -> void:
+	check(_staccato <= 0.01, "%s, in movimento sul fondo i giocattoli non stanno mai più di 1 cm sopra il fondo che hanno sotto (al più %.1f cm%s)" % [
+		quando, _staccato * 100.0, ", " + _staccato_dove if not _staccato_dove.is_empty() else ""])
+	_staccato = 0.0
+	_staccato_dove = ""
 
 
 func _fondo_sotto(punto: Vector3, escludi: Array) -> float:

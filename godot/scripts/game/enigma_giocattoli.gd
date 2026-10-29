@@ -39,6 +39,8 @@ const PESCAGGI := [0.13, 0.17, 0.12]
 const IMPRONTE := [Vector2(0.14, 0.2), Vector2(0.1, 0.1), Vector2(0.18, 0.3)]
 ## Quanto sopra la superficie restano appoggiati (sotto i 5 mm del controllo di posizionamento: toccano).
 const STACCO := 0.003
+## Fin qui un giocattolo sul fondo segue subito il fondo che scende sotto di lui; da più in alto cade.
+const GRADINO := 0.12
 
 ## L'acqua della parte profonda (la Pozza).
 @export var vasca: WaterTank
@@ -746,8 +748,11 @@ func _muovi(i: int, delta: float) -> void:
 	# la quota: sul pelo dell'acqua (col dondolio) o appoggiato sul fondo
 	var bersaglio := _quota_bersaglio(i)
 	if a_galla:
-		_y[i] = lerpf(_y[i], bersaglio, 1.0 - exp(-5.0 * delta))
-		g.global_position.y = _y[i] + sin(_t * 1.3 + i * 2.1) * 0.012
+		# (dove l'acqua è bassa e sta per toccare il fondo, dondola meno e non ci entra: arrivando dove tocca resta giù,
+		# non 1 cm più su)
+		var f := _fondo(i)
+		_y[i] = maxf(lerpf(_y[i], bersaglio, 1.0 - exp(-5.0 * delta)), f)
+		g.global_position.y = maxf(_y[i] + sin(_t * 1.3 + i * 2.1) * 0.012 * clampf((_y[i] - f) / 0.05, 0.0, 1.0), f)
 		g.rotation = Vector3(sin(_t * 0.9 + i) * 0.04, _yaw[i], sin(_t * 1.1 + i * 1.7) * 0.04)
 	else:
 		# (spostato anche da fermo, da un gonfiabile o da un altro giocattolo: si riassesta, se no resta alla quota di
@@ -755,7 +760,9 @@ func _muovi(i: int, delta: float) -> void:
 		if v.length() > 0.03 or (_assestato[i] and pos.distance_to(_fermo_in[i]) > 0.003):
 			_assestato[i] = false
 		if not _assestato[i]:
-			_y[i] = maxf(bersaglio, _y[i] - 1.5 * delta) if _y[i] > bersaglio else bersaglio
+			# segue il fondo subito anche dove scende (la conca, la pendenza a nord, giù da un piatto: prima scendeva a
+			# 1,5 m/s e restava indietro); cade solo da più in alto di [constant GRADINO] (giù da un gonfiabile)
+			_y[i] = bersaglio if _y[i] - bersaglio <= GRADINO else _y[i] - 1.5 * delta
 			g.global_position.y = _y[i]
 		# mentre si muove, inclinato come la superficie sotto (il fondo della conca, un piatto); fermo lo posa
 		# _posa_sul_fondo e resta così finché non lo si spinge
@@ -774,10 +781,11 @@ func _muovi(i: int, delta: float) -> void:
 			_posa_sul_fondo(i, escludi, bersaglio)
 
 
-## I gonfiabili già sul fondo della parte profonda (x, z, raggio nel sistema del nodo): i MeshInstance3D "ogg_*" della
-## sala che stanno lì sotto, con la loro misura vera (il riquadro della mesh girato con lei: col riquadro del mondo una
-## ciambella girata contava 10 cm in più e i tubi di traverso meno del vero). I lunghi (i tubi) diventano una fila di
-## cerchi lungo l'asse, fino in fondo. Raccoglie anche le loro collisioni ([member _rid_gonfiabili]).
+## Gli ostacoli sul fondo della parte profonda (x, z, raggio nel sistema del nodo): il portellone della botola e i
+## gonfiabili, cioè i MeshInstance3D "ogg_*" della sala che stanno lì sotto, con la loro misura vera (il riquadro della
+## mesh girato con lei: col riquadro del mondo una ciambella girata contava 10 cm in più e i tubi di traverso meno del
+## vero). I lunghi (i tubi) diventano una fila di cerchi lungo l'asse, fino in fondo. Raccoglie anche le collisioni dei
+## gonfiabili ([member _rid_gonfiabili]).
 func _ostacoli_fondo() -> Array[Vector3]:
 	var out: Array[Vector3] = []
 	_rid_gonfiabili.clear()
@@ -813,6 +821,16 @@ func _ostacoli_fondo() -> Array[Vector3]:
 		for k in passi + 1:
 			var q := Vector2(c.x, c.z) + asse * lerpf(-meta, meta, float(k) / passi)
 			out.append(Vector3(q.x, q.y, r))
+	# il portellone della botola, 7 cm sopra la conca: chi ci passava sopra, scendendo dal bordo restava staccato dal fondo
+	# (ricontrollo di ambienti-2), e un giocattolo fermo lì coprirebbe la botola. Un cerchio che lo copre tutto, preso
+	# chiuso (aperto, i giocattoli sono già tutti sui piatti)
+	var lastra := piscina.get(&"scarico") as MeshInstance3D if piscina else null
+	if lastra:
+		var bl := lastra.global_transform * lastra.get_aabb()
+		var cl := to_local(bl.get_center())
+		var rl := Vector2(bl.size.x, bl.size.z).length() * 0.5
+		out.append(Vector3(cl.x, cl.z, rl))
+		_capsule.append({"a": Vector2(cl.x, cl.z), "b": Vector2(cl.x, cl.z), "r": rl})
 	# due gonfiabili (o un gonfiabile e un posto libero) più vicini di un giocattolo: fra loro una capsula, se no nella
 	# tacca in mezzo il giocattolo spinto si ferma (fra il salvagente e la ciambella, 34 cm); di lì non passerebbe
 	var statici: Array[Dictionary] = _capsule.duplicate()
@@ -831,8 +849,8 @@ func _ostacoli_fondo() -> Array[Vector3]:
 
 
 ## I posti da lasciare liberi sul fondo, come capsule in pianta nel sistema del nodo ({"a", "b": Vector2, "r"}; un cerchio
-## ha a = b): quelli fissi, i gonfiabili (i tubi lunghi come un segmento: il bordo è liscio e ci si scivola lungo), la
-## P5 finché c'è e i cerchi con i giocattoli già scesi.
+## ha a = b): quelli fissi, il portellone della botola, i gonfiabili (i tubi lunghi come un segmento: il bordo è liscio e
+## ci si scivola lungo), la P5 finché c'è e i cerchi con i giocattoli già scesi.
 func _posti_liberi() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for l in liberi:
