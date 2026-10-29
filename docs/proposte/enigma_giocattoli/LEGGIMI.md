@@ -69,15 +69,23 @@ Cosa è stato tenuto libero, e come:
    - galleggiando dove l'acqua è bassa dondola meno, e quando tocca il fondo resta giù.
 
    Fermo sulla pendenza nord, un giocattolo sta 9 mm sopra le collisioni: poggia sulla rosa dei venti a mosaico, che è 6 mm più alta, più i 3 mm di sempre. Tocca quello che si vede.
+5. **Sotto il fondo** (terzo ricontrollo, su e22f8182). Il fondo si cercava con un raggio che partiva dal giocattolo. Proprio a x = 0 c'è la giunzione fra due triangoli del fondo della piscina, e un raggio su quella riga ci passa attraverso. Lì trovava il soffitto della camera delle onde, 2,4 m sotto: il pallone spinto dritto verso il portellone ci cadeva e non risaliva più, e l'enigma non si finiva. Il fondo non ha buchi: il giocatore è una capsula, non un raggio, e lì non cade. Ora:
+   - il fondo si cerca dall'alto, da sopra il bordo fino a poco sotto il fondo più basso della vasca, mai più giù; se il raggio al centro non trova niente, se ne provano due spostati di pochi millimetri;
+   - c'è una rete di sicurezza: un giocattolo sotto il fondo, fuori dall'area o senza fondo per mezzo secondo torna alla sua partenza appena il giocatore non guarda né lui né la partenza (non dovrebbe servire mai; se serve lo scrive);
+   - load_state rimette i giocattoli dentro l'area e alla quota del fondo cercato dall'alto (dove non lo trova, alla partenza);
+   - un piatto che stava scendendo finisce subito quando si riparte da un checkpoint. Prima la sua animazione rimetteva il giocattolo alla quota del piatto anche dopo averlo spostato: sulla pendenza nord restava 30 cm sotto il fondo. L'ha trovato il controllo nuovo di ogni fotogramma.
 
 `test_enigma_giocattoli` prova anche questi casi:
 - da ogni angolo e da sotto le due scalette, a piscina vuota e piena, si riporta il giocattolo al suo cerchio col getto;
 - il pallone spinto 4 s contro ogni gonfiabile non ci entra, non ci sale e ci scivola attorno (di lato almeno 1,1 m);
 - spinto 8 s da tre lati contro il gonfiabile vicino alla botola ci scivola attorno (come nel ricontrollo di ambienti-2);
 - la paperella posata sulla ciambella calando l'acqua ne scivola giù;
-- ogni fotogramma, a piscina vuota e piena: chi si muove sul fondo non sta mai più di 1 cm sopra il fondo che ha sotto (al massimo 0,5 cm).
+- ogni fotogramma, a piscina vuota e piena: chi si muove sul fondo non sta mai più di 1 cm sopra il fondo che ha sotto (al massimo 0,5 cm), e nessun giocattolo sta mai sotto il fondo;
+- il pallone spinto dritto contro il portellone da otto lati e avanti e indietro lungo la giunzione a x = 0;
+- la rete di sicurezza: messo apposta sotto il fondo o fuori dall'area, guardando altrove, torna su;
+- la ripartenza da un checkpoint col pallone sotto il fondo, e col pallone salvato sulla giunzione e riaperto in una sala nuova.
 
-In locale: test_enigma_giocattoli 68/68, test_sala 105/105, test_tappe56 100/100. La prova del ricontrollo di ambienti-2 (`collaudo_giocattoli.gd gonfiabile`) passa 19/19: da 180 gradi il pallone sta al massimo 3 mm sopra il fondo.
+In locale: test_enigma_giocattoli 83/83, test_sala 105/105, test_tappe56 100/100. Le prove del ricontrollo di ambienti-2 (`collaudo_giocattoli.gd affonda,portellone_diretto,gonfiabile`) passano 45/45. Il fondo sotto un punto, nei test, è il più alto di tre raggi a pochi millimetri (`_fondo_sotto`): un raggio solo, sulla giunzione, trovava il soffitto sotto anche col pallone sul fondo.
 
 ## I gonfiabili d'arredo della parte profonda
 
