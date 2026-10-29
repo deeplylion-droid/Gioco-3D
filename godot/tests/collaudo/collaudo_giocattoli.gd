@@ -36,6 +36,8 @@ func _run() -> void:
 		await _portellone_diretto()
 	if "affonda" in _parti:
 		await _affonda()
+	if "giocatore_buco" in _parti:
+		await _giocatore_buco()
 	_fine()
 
 
@@ -606,4 +608,38 @@ func _affonda() -> void:
 		await _frames(120)
 		var f := _fondo_sotto(Vector3(g.global_position.x, 1.0, g.global_position.z), [g.get_rid()])
 		check(absf(g.global_position.y - f) < 0.03, "messo in %s da %.0f gradi: resta sul fondo (subito y %.3f, dopo 2 s y %.3f, fondo %.3f)" % [pos.snapped(Vector2.ONE * 0.01), rad_to_deg(ang), subito, g.global_position.y, f])
+
+
+## Il giocatore nel punto senza collisione del fondo, (0/3,6), a piscina vuota: ci cade? Lasciato cadere da 30 cm, fermo
+## e poi camminandoci sopra da sud e da nord.
+func _giocatore_buco() -> void:
+	print("11. Il giocatore sul punto (0/3,6) a piscina vuota")
+	await _carica()
+	if not GameState.player_died.is_connected(_morto):
+		GameState.player_died.connect(_morto)
+	await _svuota()
+	await _frames(120)
+	var buco := enigma.to_global(Vector3(0.0, 0.0, 3.6))
+	for x in [-0.3, 0.0, 0.3]:
+		for z in [-0.3, 0.0, 0.3]:
+			var q := Vector3(buco.x + x, 0.0, buco.z + z)
+			var f := _fondo_sotto(Vector3(q.x, 1.0, q.z), [])
+			print("    fondo in (%.1f, %.1f): %.3f" % [q.x, q.z, f])
+	p.teleport(Vector3(buco.x, -1.7, buco.z), 0.0, 0.0)
+	await _frames(120)
+	check(p.global_position.y > -2.3 and not GameState.is_dying, "messo fermo sul punto: resta sul fondo (y %.3f)" % p.global_position.y)
+	for verso in [1.0, -1.0]:
+		if GameState.is_dying or not is_instance_valid(p):
+			break
+		p.teleport(Vector3(buco.x, -1.7, buco.z - 1.5 * verso), PI if verso > 0 else 0.0, 0.0)
+		await _frames(30)
+		Input.action_press(&"move_forward")
+		var minimo := 0.0
+		for f in 150:
+			await get_tree().physics_frame
+			if not is_instance_valid(p):
+				break
+			minimo = minf(minimo, p.global_position.y)
+		Input.action_release(&"move_forward")
+		check(is_instance_valid(p) and minimo > -2.3 and not GameState.is_dying, "camminandoci sopra da %s non ci cade (quota minima %.3f)" % ["sud" if verso > 0 else "nord", minimo])
 
