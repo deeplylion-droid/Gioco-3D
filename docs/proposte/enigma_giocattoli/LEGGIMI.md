@@ -73,7 +73,37 @@ Sulla spiaggia, dove sono finiti:
 
 ## Scatti e video
 
-<!-- SCATTI -->
+**Il video**: [giocattoli_video.mp4](giocattoli_video.mp4) (51 s, H.264, 10 MB). È ripreso dal motore, dagli occhi del giocatore, nella sala vera col preset medio. Per la memoria della macchina di prova sono tolte le zone lontane che dalla piscina non si vedono.
+
+È un montaggio dei momenti chiave, con tagli in nero di mezzo secondo:
+1. il disegno sul muro ovest, guardato dall'acqua della parte profonda;
+2. la spinta sull'acqua: il pallone rosso fino al suo cerchio;
+3. lo svuotamento dal bordo sud: la paperella cala con l'acqua, si posa sul cerchio giallo e il bordo si accende; poi lo sguardo va al cerchio rosso;
+4. la spinta sul fondo vuoto: la balena strisciata fino al cerchio blu;
+5. il lampeggiante del pulsante della botola diventato verde;
+6. il getto sul pulsante e la botola che si apre.
+
+Scorciatoie del montaggio, che nel gioco non ci sono:
+- la paperella è messa al suo cerchio durante un taglio;
+- dello svuotamento si vede solo l'ultima parte, accorciata a 5 secondi;
+- prima della spinta sul fondo lo zaino è riempito durante il taglio.
+
+Gli scatti, presi dal video:
+
+![1](scatto_1_disegno.jpg)
+![2](scatto_2_spinta_acqua.jpg)
+![3](scatto_3_piatti.jpg)
+![4](scatto_4_spinta_fondo.jpg)
+![5](scatto_5_luce_verde.jpg)
+![6](scatto_6_botola.jpg)
+
+**Il collaudo da vicino**, con una torcia sulla camera: i giocattoli e i piatti a piscina vuota, i piatti scesi coi giocattoli sopra, i gonfiabili spostati sulla spiaggia. Niente distacchi né compenetrazioni.
+
+![piscina vuota](collaudo_piscina_vuota.jpg)
+![piatti scesi](collaudo_piatti_scesi.jpg)
+![spiaggia](collaudo_spiaggia.jpg)
+
+**Pipeline**: nel video, a metà enigma, non si compilano pipeline nuove che fermano il disegno, tranne nella spinta sull'acqua (4). <!-- PIPELINE -->
 
 ## Cosa cambia nel gioco
 
@@ -81,6 +111,7 @@ Sulla spiaggia, dove sono finiti:
   - I cerchi li appoggia sul fondo Posa, lo strumento comune.
   - Quello che si vede si disegna una volta fuori vista appena la sala è pronta, sullo strato 1<<15 (`RiscaldamentoShader.disegna_fuori_vista`), così a metà enigma non si compilano pipeline nuove.
   - Lo stato si salva coi checkpoint: dove sono i giocattoli e quali piatti sono scesi.
+  - Il disegno ha un filo di luce propria (`luce_disegno`, 0,12; da approvare, vedi sotto).
 - `scripts/game/piscina_onde.gd`: c'è la `serratura`.
   - A piscina vuota il pulsante della botola si preme solo a serratura aperta.
   - Il lampeggiante è giallo prima e verde dopo, e verde fisso quando la botola è aperta.
@@ -88,7 +119,8 @@ Sulla spiaggia, dove sono finiti:
 - **Test**:
   - `tests/test_enigma_giocattoli.gd` risolve l'enigma nei due ordini col giocatore e il getto veri; è nella CI;
   - `test_tappe56` mette i giocattoli al loro posto con una scorciatoia prima di colpire il pulsante;
-  - nel controllo di posizionamento ci sono gli stati `piscina_vuota` e `piatti_scesi`.
+  - nel controllo di posizionamento ci sono gli stati `piscina_vuota` e `piatti_scesi`: 0 casi nuovi;
+  - il video e gli scatti si rifanno con `tests/video_enigma_giocattoli.gd`, `scatti_giocattoli_vicino.gd`, `scatti_giocattoli_arredo.gd` e `scatti_disegno_luce.gd`.
 - **Partenze del menu di prova**: `genera_partenze_prova.gd` mette l'enigma risolto nella parte della piscina. Le partenze si rifanno dopo l'unione con le Polaroid nuove, per non far litigare i file.
 
 ## Cosa manca e da decidere
