@@ -120,7 +120,23 @@ func _costruisci() -> void:
 	_metti_listelli()
 	_checkpoint()
 	_marker()
+	_nebbia_viola()
 	costruita = true
+
+
+## La nebbia viola in tutta la stanza (scelta dell'utente del 29 ottobre): la zona va da muro a muro e dal pavimento
+## al soffitto, quindi sale passando le porte; l'alone dalle lampade dell'infermeria.
+func _nebbia_viola() -> void:
+	var z := ZonaNebbiaViola.new()
+	z.name = "NebbiaViola"
+	var cs := CollisionShape3D.new()
+	var b := BoxShape3D.new()
+	b.size = Vector3(2 * L, H, 2 * L)
+	cs.shape = b
+	cs.position = Vector3(0, H * 0.5, 0)
+	z.add_child(cs)
+	z.quota = global_position.y
+	add_child(z)
 
 
 # --- materiali e aiuti -----------------------------------------------------------------------------

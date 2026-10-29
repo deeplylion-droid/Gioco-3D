@@ -89,6 +89,7 @@ func _ready() -> void:
 	_scelta(t, "Ombre", "ombre", ["Minime", "Basse", "Medie", "Alte", "Ultra"])
 	_scelta(t, "Illuminazione globale", "gi", ["No", "VoxelGI", "SDFGI"])
 	_scelta(t, "Nebbia", "nebbia", ["Semplice", "Volumetrica", "Volumetrica alta"])
+	_spunta(t, "Nebbia viola", "nebbia_viola")
 	_scelta(t, "Riflessi (SSR)", "ssr", ["No", "Bassi", "Medi", "Alti"])
 	_scelta(t, "Occlusione ambientale (SSAO)", "ssao", ["No", "Bassa", "Media", "Alta", "Ultra"])
 	_scelta(t, "Luce indiretta (SSIL)", "ssil", ["No", "Bassa", "Media", "Alta", "Ultra"])

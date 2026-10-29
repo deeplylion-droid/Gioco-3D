@@ -88,6 +88,8 @@ func _ready() -> void:
 	luce.shadow_enabled = true
 	luce.position = Vector3(0, 2.6, 0.9)
 	luce.set_meta(&"risveglio_ignora", true)
+	# (la sua luce rosa fa l'alone nella nebbia viola del tunnel prima delle lampade)
+	luce.add_to_group(NebbiaViola.GRUPPO_ALONE)
 	lei.add_child(luce)
 	# il viso: lì il getto la fa ritrarre (segue l'occhio a ogni fotogramma)
 	_viso = WaterHitbox.new()
