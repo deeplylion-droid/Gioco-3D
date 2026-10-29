@@ -112,7 +112,8 @@ static func _raggio(nodo: Node3D, da: Vector3, a: Vector3, escludi: Array[RID]) 
 		return {}
 	var q := PhysicsRayQueryParameters3D.create(da, a, STRATI, escludi)
 	q.hit_back_faces = false
-	var h := nodo.get_world_3d().direct_space_state.intersect_ray(q)
+	# (senza passare dalle crepe fra due triangoli, dove un raggio solo trova il pavimento sotto: RaggioSicuro)
+	var h := RaggioSicuro.interseca(nodo.get_world_3d().direct_space_state, q)
 	var dir := (a - da).normalized()
 	var fine := a if h.is_empty() else (h.position as Vector3) + dir * OLTRE
 	if da.distance_to(fine) > da.distance_to(a):

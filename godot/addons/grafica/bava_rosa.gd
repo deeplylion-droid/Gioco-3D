@@ -114,7 +114,8 @@ func _a_terra(q: Vector3) -> Vector3:
 	if w == null:
 		return q
 	var rq := PhysicsRayQueryParameters3D.create(q + Vector3.UP * ricerca_su, q - Vector3.UP * ricerca_giu, Layers.WORLD)
-	var hit := w.direct_space_state.intersect_ray(rq)
+	# (senza passare dalle crepe fra due triangoli, dove un raggio solo trova il pavimento sotto)
+	var hit := RaggioSicuro.interseca(w.direct_space_state, rq)
 	if hit.is_empty():
 		return q
 	return Vector3(q.x, (hit.position as Vector3).y + sollevamento, q.z)

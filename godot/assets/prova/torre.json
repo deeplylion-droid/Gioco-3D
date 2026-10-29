@@ -89,10 +89,24 @@
   "Risalita/ObloFiume": {
    "finito": false
   },
+  "Risalita/BambinoCorridoioFiume": {
+   "finito": false
+  },
   "Interni": {
    "tornello": true,
    "docce": true,
    "armadietto": true
+  },
+  "Interni/Acqua/VascaLavapiedi": {
+   "fill": 0.75,
+   "mix": {}
+  },
+  "Interni/Meccanismi/PulsanteTornello": {
+   "powered": true
+  },
+  "Interni/Meccanismi/Saracinesca": {
+   "latched": true,
+   "open": 1.0
   },
   "Piscina/Pozza": {
    "fill": 0.0,
@@ -105,6 +119,31 @@
    "attivo": true
   },
   "Piscina/SvuotaPiscina/Medusine": {},
+  "Piscina/EnigmaGiocattoli": {
+   "pos": [
+    [
+     -3.89999222755432,
+     3.29999732971191,
+     0.523598790168762
+    ],
+    [
+     3.89999508857727,
+     3.29999804496765,
+     0.0
+    ],
+    [
+     -3.89999914169312,
+     -0.0999995023012161,
+     2.09439516067505
+    ]
+   ],
+   "giu": [
+    true,
+    true,
+    true
+   ],
+   "risolto": true
+  },
   "Piscina/Portello": {
    "open": true
   },
@@ -113,12 +152,55 @@
    "mix": {}
   },
   "Vasche/VascaBimbi1": {
-   "fill": 0.680806201057273,
+   "fill": 0.865364337522053,
    "mix": {}
   },
   "Vasche/VascaBimbi2": {
-   "fill": 0.494759689429419,
+   "fill": 0.679317825894208,
    "mix": {}
+  },
+  "Tecnici/AgnellinoScala": {
+   "fatto": true
+  },
+  "Tecnici/Acqua/VascaRaccolta": {
+   "fill": 0.9118,
+   "mix": {}
+  },
+  "Tecnici/Logica/SalaPompe/Pompa3": {
+   "stato": 2
+  },
+  "Tecnici/Logica/SalaPompe/Pompa1": {
+   "stato": 2
+  },
+  "Tecnici/Logica/SalaPompe/Pompa2": {
+   "stato": 2
+  },
+  "Tecnici/Logica/SalaPompe/Leva": {
+   "abbassata": true
+  },
+  "Tecnici/Logica/SalaPompe/Paratia1": {
+   "chiusa": true,
+   "aperta": false
+  },
+  "Tecnici/Logica/SalaPompe/Paratia2": {
+   "chiusa": true,
+   "aperta": false
+  },
+  "Tecnici/Logica/SalaPompe/Maniglione": {
+   "aperta": true,
+   "bloccata": false
+  },
+  "Tecnici/Logica/SalaPompe/Risveglio": {
+   "avviate": 3,
+   "finito": true
+  },
+  "Tecnici/Logica/SerrandaMagazzino": {
+   "latched": true,
+   "open": 1.0,
+   "aperta": true
+  },
+  "Tecnici/Logica/LettoreTessera": {
+   "aperto": true
   },
   "Gioco/PortaSalaPompeInterni": {
    "aperta": true,
@@ -178,6 +260,6 @@
   ]
  },
  "luci": 2,
- "time": 1793223857.47605,
+ "time": 1793287260.82282,
  "partenza_prova": "torre"
 }
