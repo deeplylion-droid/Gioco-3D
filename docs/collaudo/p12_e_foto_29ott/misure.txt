@@ -1,0 +1,10 @@
+POLAROID: p12 P12 in (22.1, -0.006, -13.95), fondo -0.007, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto torre_A_grigliati,torre_A_grigliati,torre_A_grigliati,torre_A_grigliati,to
+POLAROID: p12 P12 raccolta true (collezione da 7 a 8), dal punto (22.1, -0.01, -14.85) il raggio trovava <Freed Object>
+POLAROID: p13 P13 in (-4.06, -5.396, 58.4), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D@665,@MeshInstance3D
+POLAROID: p13 P13 raccolta true (collezione da 8 a 9), dal punto (-4.06, -5.4, 59.3) il raggio trovava <Freed Object>
+POLAROID: p14 P14 in (17.25, 0.004, -20.5), fondo 0.003, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto sala_pavimento,sala_pavimento,sala_pavimento,sala_pavimento,sala_pavimento, 
+POLAROID: p14 P14 raccolta true (collezione da 9 a 10), dal punto (17.25, 0.0, -19.6) il raggio trovava <Freed Object>
+POLAROID: p15 P15 in (-34.16, -5.396, 50.52), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@136,@MeshInstance3D@136,@MeshInstance3D@136,@MeshInstance
+POLAROID: p15 P15 raccolta true (collezione da 10 a 11), dal punto (-34.16, -5.4, 49.62) il raggio trovava <Freed Object>
+POLAROID: p16 P16 in (-37.55, -5.396, 51.45), fondo -5.397, distacco sotto centro e angoli (mm) 3.2, 3.2, 3.2, 3.2, 3.2, sotto @MeshInstance3D@1727,@MeshInstance3D@1727,@MeshInstance3D@1727,@MeshInsta
+POLAROID: p16 P16 raccolta true (collezione da 11 a 12), dal punto (-37.55, -5.4, 52.35) il raggio trovava <Freed Object>
