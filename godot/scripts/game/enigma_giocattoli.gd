@@ -438,6 +438,12 @@ func _appoggia() -> void:
 		_metti_piatto(i, _giu[i])
 	_ostacoli = _ostacoli_fondo()
 	for i in 3:
+		# (sul piatto sceso al centro del cerchio com'è adesso, appoggiato e inclinato: un load_state di prima, come quello
+		# delle partenze di prova, l'aveva messo al centro di prima, qualche micron più in là, e lo stato salvato non
+		# tornava uguale)
+		if _giu[i]:
+			_giocattoli[i].position.x = _cerchi[i].position.x
+			_giocattoli[i].position.z = _cerchi[i].position.z
 		# (sul piatto sceso la quota è quella del piatto; gli altri sul pelo dell'acqua o sul fondo)
 		_y[i] = _cerchi[i].global_position.y + sporgenza - corsa + STACCO if _giu[i] else _quota_bersaglio(i)
 		_giocattoli[i].global_position.y = _y[i]
