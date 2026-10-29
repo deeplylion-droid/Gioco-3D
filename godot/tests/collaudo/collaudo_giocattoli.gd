@@ -44,6 +44,8 @@ func _run() -> void:
 		await _sequenza()
 	if "ripartenza_piatto" in _parti:
 		await _ripartenza_piatto()
+	if "ripartenza_piatto_a" in _parti:
+		await _ripartenza_piatto_a()
 	_fine()
 
 
@@ -775,4 +777,42 @@ func _ripartenza_piatto() -> void:
 	var a: Array = al_cp["pos"][0]
 	var b: Array = ora["pos"][0]
 	check(Vector2(a[0], a[1]).distance_to(Vector2(b[0], b[1])) < 0.03, "b) la paperella è dov'era al checkpoint (%s / %s)" % [b, a])
+
+
+## La a) di _ripartenza_piatto senza il robot che spinge (dopo il load_state la spinta continuava e la paperella tornava
+## sul cerchio): la paperella è portata vicino al suo cerchio con load_state, ci scivola dentro da sola, il piatto
+## comincia a scendere e a metà discesa (0,05 s dopo) si fa il load_state dello stato di prima.
+func _ripartenza_piatto_a() -> void:
+	print("15. load_state a metà discesa del piatto, senza spinta")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	var prima: Dictionary = enigma.save_state()
+	var c := enigma.cerchio(0).position
+	var vicino: Dictionary = enigma.save_state()
+	vicino["pos"][0] = [c.x + 0.2, c.z, 0.0]
+	var inizio := [-1]
+	var cb := func(i: int):
+		if inizio[0] < 0:
+			inizio[0] = Engine.get_physics_frames()
+	enigma.piatto_sceso.connect(cb)
+	enigma.load_state(vicino)
+	for k in 300:
+		await get_tree().physics_frame
+		if inizio[0] >= 0:
+			break
+	await _frames(3)
+	var a_meta := float(enigma._dischi[0].height)
+	enigma.load_state(prima)
+	enigma.piatto_sceso.disconnect(cb)
+	await _frames(60)
+	var g := enigma.giocattolo(0)
+	var pos0: Array = prima["pos"][0]
+	check(inizio[0] >= 0 and a_meta < enigma.sporgenza - 0.001 and a_meta > enigma.sporgenza - enigma.corsa + 0.001,
+		"il piatto stava scendendo quando si è fatto il load_state (altezza %.3f fra %.3f e %.3f)" % [a_meta, enigma.sporgenza, enigma.sporgenza - enigma.corsa])
+	check(not enigma.piatto_giu(0) and absf(float(enigma._dischi[0].height) - enigma.sporgenza) < 0.001,
+		"dopo il load_state il piatto è tornato su del tutto (altezza %.3f, a riposo %.3f)" % [float(enigma._dischi[0].height), enigma.sporgenza])
+	check(Vector2(g.position.x, g.position.z).distance_to(Vector2(pos0[0], pos0[1])) < 0.03, "la paperella è tornata dov'era (%s)" % _dove(0))
+	var f := _fondo_sotto(g.global_position, [g.get_rid()])
+	check(absf(g.global_position.y - f) < 0.03, "e sta sul fondo (y %.3f, fondo %.3f)" % [g.global_position.y, f])
 
