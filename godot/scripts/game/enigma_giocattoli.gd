@@ -107,6 +107,8 @@ var _piatti: Array[Node3D] = []
 var _dischi: Array[CylinderMesh] = []
 var _forme_piatti: Array[CylinderShape3D] = []
 var _ostacoli: Array[Vector3] = []
+## Gli stessi gonfiabili come capsule in pianta, {"a", "b": Vector2, "r": float} (i tubi: un segmento lungo l'asse).
+var _capsule: Array[Dictionary] = []
 ## Le collisioni dei gonfiabili sul fondo (per i test: la quota del fondo vero sotto un giocattolo).
 var _rid_gonfiabili: Array[RID] = []
 var _mat_cerchi: Array[Material] = []
@@ -711,9 +713,10 @@ func _muovi(i: int, delta: float) -> void:
 	if not a_galla:
 		# sul fondo: i gonfiabili e i posti liberi lo respingono (morbidi: chi ci arriva sopra calando l'acqua ne
 		# scivola giù in mezzo secondo)
-		for l in _posti_liberi():
-			var d := pos - Vector2(l.x, l.y)
-			var minimo: float = l.z + RAGGI[i]
+		for f in _posti_liberi():
+			var q := _vicino(f, pos)
+			var d := pos - q
+			var minimo: float = float(f["r"]) + RAGGI[i]
 			if d.length() < minimo:
 				# (proprio nel centro, come posato dall'acqua nel mezzo di una ciambella: scivola verso il centro dell'area)
 				var n := d.normalized() if d.length() > 0.0001 else (area.get_center() - pos).normalized()
@@ -722,13 +725,19 @@ func _muovi(i: int, delta: float) -> void:
 				# chi ci arriva da fuori spinto dal getto non entra più di 1 cm (il getto continuo vinceva la spinta morbida:
 				# il pallone entrava 20 cm nella ciambella e ci saliva sopra, collaudo di ambienti-2); chi ci arriva sopra
 				# calando l'acqua ne scivola giù in mezzo secondo
-				if minimo - (prima - Vector2(l.x, l.y)).length() <= 0.01:
-					var dopo := minimo - (pos - Vector2(l.x, l.y)).length()
+				if minimo - (prima - _vicino(f, prima)).length() <= 0.01:
+					var dopo := minimo - (pos - _vicino(f, pos)).length()
 					if dopo > 0.01:
 						pos += n * (dopo - 0.01)
 				var vn := v.dot(n)
 				if vn < 0.0:
+					# spinto contro, ci scivola attorno invece di fermarsi (va dove andava già di lato o, se ci arriva proprio
+					# di fronte, dalla parte del suo cerchio): non serve aggirarlo col giocatore (ritocco del collaudo di ambienti-2)
+					var t := Vector2(-n.y, n.x)
+					var vt := v.dot(t)
+					var lato := signf(vt) if absf(vt) > 0.05 else (1.0 if (c - q).dot(t) >= 0.0 else -1.0)
 					v -= n * vn * 1.3
+					v += t * lato * (-vn) * 0.5
 	_vel[i] = v
 	g.position.x = pos.x
 	g.position.z = pos.y
@@ -772,6 +781,7 @@ func _muovi(i: int, delta: float) -> void:
 func _ostacoli_fondo() -> Array[Vector3]:
 	var out: Array[Vector3] = []
 	_rid_gonfiabili.clear()
+	_capsule.clear()
 	if sala == null:
 		return out
 	for n in sala.find_children("ogg_*", "MeshInstance3D", true, false):
@@ -794,29 +804,58 @@ func _ostacoli_fondo() -> Array[Vector3]:
 		var r := corto.length()
 		if lungo.length() <= r * 1.2:
 			out.append(Vector3(c.x, c.z, lungo.length()))
+			_capsule.append({"a": Vector2(c.x, c.z), "b": Vector2(c.x, c.z), "r": lungo.length()})
 			continue
 		var asse := lungo.normalized()
 		var meta := lungo.length() - r
+		_capsule.append({"a": Vector2(c.x, c.z) - asse * meta, "b": Vector2(c.x, c.z) + asse * meta, "r": r})
 		var passi := maxi(1, ceili(meta / (r * 0.5)))
 		for k in passi + 1:
 			var q := Vector2(c.x, c.z) + asse * lerpf(-meta, meta, float(k) / passi)
 			out.append(Vector3(q.x, q.y, r))
+	# due gonfiabili (o un gonfiabile e un posto libero) più vicini di un giocattolo: fra loro una capsula, se no nella
+	# tacca in mezzo il giocattolo spinto si ferma (fra il salvagente e la ciambella, 34 cm); di lì non passerebbe
+	var statici: Array[Dictionary] = _capsule.duplicate()
+	for l in liberi:
+		statici.append({"a": Vector2(l.x, l.y), "b": Vector2(l.x, l.y), "r": l.z})
+	for x in statici.size():
+		for y in range(x + 1, statici.size()):
+			var fa: Dictionary = statici[x]
+			var fb: Dictionary = statici[y]
+			var pa := _vicino(fa, _vicino(fb, ((fa["a"] as Vector2) + (fa["b"] as Vector2)) * 0.5))
+			var pb := _vicino(fb, pa)
+			pa = _vicino(fa, pb)
+			if pa.distance_to(pb) - float(fa["r"]) - float(fb["r"]) < 2.0 * RAGGI.max():
+				_capsule.append({"a": pa, "b": pb, "r": minf(fa["r"], fb["r"])})
 	return out
 
 
-## I posti da lasciare liberi sul fondo (x, z, raggio nel sistema del nodo): quelli fissi, i gonfiabili, la P5 finché
-## c'è e i cerchi con i giocattoli già scesi.
-func _posti_liberi() -> Array[Vector3]:
-	var out: Array[Vector3] = liberi.duplicate()
-	out.append_array(_ostacoli)
+## I posti da lasciare liberi sul fondo, come capsule in pianta nel sistema del nodo ({"a", "b": Vector2, "r"}; un cerchio
+## ha a = b): quelli fissi, i gonfiabili (i tubi lunghi come un segmento: il bordo è liscio e ci si scivola lungo), la
+## P5 finché c'è e i cerchi con i giocattoli già scesi.
+func _posti_liberi() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for l in liberi:
+		out.append({"a": Vector2(l.x, l.y), "b": Vector2(l.x, l.y), "r": l.z})
+	out.append_array(_capsule)
 	if is_instance_valid(polaroid) and polaroid.is_inside_tree():
-		var l := to_local(polaroid.global_position)
-		out.append(Vector3(l.x, l.z, 0.35))
+		var p5 := to_local(polaroid.global_position)
+		out.append({"a": Vector2(p5.x, p5.z), "b": Vector2(p5.x, p5.z), "r": 0.35})
 	# e gli altri cerchi, coi giocattoli già scesi
 	for j in 3:
 		if _giu[j]:
-			out.append(Vector3(_cerchi[j].position.x, _cerchi[j].position.z, RAGGI[j]))
+			var cj := Vector2(_cerchi[j].position.x, _cerchi[j].position.z)
+			out.append({"a": cj, "b": cj, "r": RAGGI[j]})
 	return out
+
+
+## Il punto del segmento della capsula [param f] più vicino a [param q].
+static func _vicino(f: Dictionary, q: Vector2) -> Vector2:
+	var a: Vector2 = f["a"]
+	var ab: Vector2 = (f["b"] as Vector2) - a
+	if ab.length_squared() < 0.000001:
+		return a
+	return a + ab * clampf((q - a).dot(ab) / ab.length_squared(), 0.0, 1.0)
 
 
 ## I giocattoli non si compenetrano: si separano e si scambiano un po' di velocità.
