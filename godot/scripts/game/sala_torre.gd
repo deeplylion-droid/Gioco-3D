@@ -172,14 +172,36 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 
 
 ## Il rosso dentro la vasca dell'oblò (scelta B dell'utente del 29 ottobre, "com'era prima: si rimette un po' di rosso
-## solo dentro la vasca"). Fino alla 0.3.15 tutta la vasca (l'acqua dietro di lei, lei, le sue mani) prendeva il rosso
-## della lampada d'emergenza del muro est, che senza ombra passava il muro e accendeva la nebbia dentro la vasca (e
-## faceva la riga rossa nelle condotte). Ora quella lampada fa ombra; il suo rosso lo ridanno i veli dell'acqua torbida
-## della vasca e il vetro dell'oblò appena accesi (ObloLei.veli_colore e vetro_colore), senza luci: non passa niente,
-## né nelle condotte né nella torre (una luce o la nebbia dentro la vasca riportavano la riga nelle condotte, prove del
-## 29 ottobre: docs/report/collaudo_29ottobre_g2/torre_rosso).
-@export var oblo_veli_rossi := ROSSO * 0.1
-@export var oblo_vetro_rosso := ROSSO * 0.5
+## solo dentro la vasca"). Fino alla 0.3.15 lei e la vasca prendevano il rosso della lampada d'emergenza del muro est,
+## che senza ombra passava il muro (e faceva la riga rossa nelle condotte) e la illuminava da davanti. Ora quella
+## lampada fa ombra; il suo rosso lo ridanno:
+## - un faretto debole nel foro del muro, davanti al vetro, puntato dentro la vasca, con l'ombra: lei accesa da davanti,
+##   satura e con le ombre, come prima (la torre resta com'è: punta via da lei);
+## - i veli dell'acqua torbida della vasca appena accesi (ObloLei.veli_colore): il fondo rosso dietro di lei;
+## - il vetro quasi spento (ObloLei.vetro_colore): acceso faceva un velo rosa piatto su lei vista da vicino.
+## Niente nebbia e niente luci libere nella vasca: riportavano la riga nelle condotte (prove del 29 ottobre,
+## docs/report/collaudo_29ottobre_g2/torre_rosso). Sotto l'oblò: la preparazione della torre li disegna con lui.
+@export var oblo_rosso_faccia := 1.2
+@export var oblo_veli_rossi := ROSSO * 0.15
+@export var oblo_vetro_rosso := Color(0.0, 0.0, 0.0)
+## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
+const OBLO_ROSSO_FACCIA := Vector3(-0.15, 0.35, -0.15)
+
+
+func _rosso_vasca() -> void:
+	if oblo == null or oblo_rosso_faccia <= 0.0:
+		return
+	var l := SpotLight3D.new()
+	l.name = "RossoFaccia"
+	l.light_color = ROSSO
+	l.light_energy = oblo_rosso_faccia
+	l.spot_range = 4.0
+	l.spot_angle = 55.0
+	l.shadow_enabled = true
+	l.light_volumetric_fog_energy = 0.0
+	l.set_meta(&"risveglio_ignora", true)
+	l.position = OBLO_ROSSO_FACCIA     # (guarda lungo -z: dentro la vasca)
+	oblo.add_child(l)
 
 
 ## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
@@ -748,6 +770,7 @@ func _oblo_lei() -> void:
 	oblo.muro = _muro_oblo()
 	oblo.transform = global_transform.affine_inverse() * xf
 	add_child(oblo)
+	_rosso_vasca()
 	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
 	var bocca := Area3D.new()
 	bocca.name = "BoccaOblo"
@@ -1128,6 +1151,10 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	# sul muro est, quello in comune con la sala delle condotte, con l'ombra: senza, la luce passava il muro e faceva
 	# una riga rossa su uno spigolo delle condotte accanto alla cisterna dell'oblò (ricontrollo del 29 ottobre)
 	l.shadow_enabled = absf(p.x - MURO_CONDOTTE_X) < 1.0
+	# (e il corpo della lampada non fa ombra sul suo muro: con l'ombra accesa faceva una zona scura netta accanto a lei,
+	# dove nella 0.3.15 era rosso; ricontrollo di ambienti-1 del 29 ottobre)
+	if l.shadow_enabled:
+		corpo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	radice.add_child(l)
 	l.global_position = p + verso * 0.4
 

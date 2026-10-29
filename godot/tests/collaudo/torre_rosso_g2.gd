@@ -25,7 +25,7 @@ func _ready() -> void:
 	if a.size() > 3:
 		for t in a[3].split(";"):
 			var pe := t.split(",")
-			prove.append([float(pe[0]), float(pe[1]), float(pe[2]) if pe.size() > 2 else 0.0, float(pe[3]) if pe.size() > 3 else 0.0, float(pe[4]) if pe.size() > 4 else 0.0])
+			prove.append([float(pe[0]), float(pe[1]), float(pe[2])])
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -80,40 +80,50 @@ func _run() -> void:
 	await _fotogrammi(90)
 	var dopo_comparsa := _info()
 	print("TORRE pipeline alla comparsa di lei: disegno +%d, specializzazione +%d (luce rossa nella vasca: %s)" % [
-			dopo_comparsa[0] - base[0], dopo_comparsa[1] - base[1], rosso != null])
+			dopo_comparsa[0] - base[0], dopo_comparsa[1] - base[1], faccia != null])
 	p.set_physics_process(false)
 	var c := o.centro_vetro()
 	var n := o.normale()
 	var lato := n.cross(Vector3.UP).normalized()
 	var dietro := c - n * 1.8
 	var condotte := [dietro - lato * 3.6 - Vector3.UP * 1.6, dietro - lato * 1.6]
-	var lista: Array = energie if rosso else [null]
-	if rosso and not prove.is_empty():
+	# le prove: "faretto,veli,vetro" (energia del faretto, emissione dei veli e del vetro per ROSSO); senza: com'è
+	var lista: Array = [null]
+	if not prove.is_empty():
 		lista = prove
+	# da vicino (1,2 m dal vetro, agli occhi) e il muro sopra l'oblò accanto alla lampada d'emergenza
+	var vicino := c + n * 1.2
+	vicino.y = POSTO_TORRE.y
+	var lampada := Vector3(39.5, -16.5, -15.0)
 	for k in lista.size():
 		var e = lista[k]
-		var nome := "" if e == null else "_%s" % str(e)
+		var nome := ""
 		if e is Array:
-			rosso.light_energy = e[0]
 			if faccia:
-				faccia.light_energy = e[1]
-				faccia.visible = e[1] > 0.0
-			rosso.light_volumetric_fog_energy = e[2]
+				faccia.light_energy = e[0]
+				faccia.visible = e[0] > 0.0
 			for v in o.find_children("Velo*", "MeshInstance3D", true, false):
 				var mv := (v as MeshInstance3D).material_override as StandardMaterial3D
 				if mv and mv.emission_enabled:
-					mv.emission = Color(1.0, 0.035, 0.02) * e[3]
+					mv.emission = Color(1.0, 0.035, 0.02) * e[1]
 			var mvetro := (o.find_child("Vetro", true, false) as MeshInstance3D).material_override as StandardMaterial3D
 			if mvetro and mvetro.emission_enabled:
-				mvetro.emission = Color(1.0, 0.035, 0.02) * e[4]
-			nome = "_%s_%s_%s_%s_%s" % [e[0], e[1], e[2], e[3], e[4]]
-		elif rosso:
-			rosso.light_energy = float(e)
+				mvetro.emission = Color(1.0, 0.035, 0.02) * e[2]
+			nome = "_%s_%s_%s" % [e[0], e[1], e[2]]
 		p.teleport(POSTO_TORRE)
 		p.look_at_point(o.global_position + Vector3.DOWN * 0.15)
 		await _fotogrammi(30)
 		await _scatto("fronte" + nome, true)
-		if e == null or k == 0 or k == lista.size() - 1:
+		p.teleport(vicino)
+		p.look_at_point(c)
+		await _fotogrammi(30)
+		await _scatto("vicino" + nome, false)
+		if k == 0:
+			p.teleport(POSTO_TORRE)
+			p.look_at_point(lampada + Vector3.DOWN * 0.4)
+			await _fotogrammi(30)
+			await _scatto("muro" + nome, false)
+		if k == 0 or k == lista.size() - 1:
 			p.teleport(condotte[0])
 			p.look_at_point(condotte[1])
 			await _fotogrammi(30)
