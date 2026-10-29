@@ -30,6 +30,8 @@ func _run() -> void:
 		await _sponda()
 	if "gonfiabile" in _parti:
 		await _gonfiabile()
+	if "portellone" in _parti:
+		await _portellone()
 	_fine()
 
 
@@ -411,7 +413,7 @@ func _gonfiabile() -> void:
 			await get_tree().physics_frame
 			# (quanto sta sopra il fondo che ha sotto, non sopra la quota di partenza: il fondo non è piano, c'è la conca e
 			# il coperchio della botola)
-			if f % 10 == 0:
+			if true:
 				var esclusi: Array = []
 				for k in 3:
 					esclusi.append(enigma.giocattolo(k).get_rid())
@@ -425,7 +427,7 @@ func _gonfiabile() -> void:
 		await _frames(60)
 		var fine := Vector2(g.position.x, g.position.z)
 		var ar: Rect2 = enigma.area
-		check(su < 0.02 and dentro < 0.02, "spinto 8 s contro il gonfiabile da %.0f gradi: non ci sale (sopra il fondo che ha sotto al massimo %.3f m) e non ci entra (%.3f m)" % [rad_to_deg(ang), su, dentro])
+		check(su <= 0.01 and dentro < 0.02, "spinto 8 s contro il gonfiabile da %.0f gradi: non ci sale (sopra il fondo che ha sotto al massimo %.3f m) e non ci entra (%.3f m)" % [rad_to_deg(ang), su, dentro])
 		check(fine.distance_to(partenza) > 0.5, "da %.0f gradi ci scivola attorno: si sposta di %.2f m (da %s a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), partenza.snapped(Vector2.ONE * 0.01), fine.snapped(Vector2.ONE * 0.01)])
 		check(scatto < 2.5 / 60.0 * 1.2, "senza scatti: al massimo %.3f m in un fotogramma (velocità massima %.3f)" % [scatto, 2.4 / 60.0])
 		check(ar.grow(0.01).has_point(fine), "resta nella parte profonda (%s)" % fine.snapped(Vector2.ONE * 0.01))
@@ -453,4 +455,49 @@ func _compenetrazioni(quando: String) -> void:
 			ostacoli = maxf(ostacoli, float(EnigmaGiocattoli.RAGGI[i]) + float(f["r"]) - q.distance_to(EnigmaGiocattoli._vicino(f, q)))
 	check(peggio < 0.02, "%s i giocattoli non si compenetrano fra loro (%.3f m)" % [quando, peggio])
 	check(ostacoli < 0.02, "%s nessun giocattolo dentro un gonfiabile (%.3f m)" % [quando, ostacoli])
+
+
+## Il pallone spinto contro il portellone della botola (in 0, 2) da più lati, a piscina vuota (dopo il ricontrollo di
+## f1096e53: ci saliva sopra di 7 cm): in movimento non deve mai stare più di 1 cm sopra il fondo che ha sotto, e ci deve
+## scivolare attorno. Poi il passaggio sulla conca da ovest verso est (180 gradi).
+func _portellone() -> void:
+	print("8. Il pallone contro il portellone della botola")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	var r: float = EnigmaGiocattoli.RAGGI[1]
+	var botola := Vector2(0.0, 2.0)
+	for ang in [PI, PI * 0.5, PI * 1.5, 0.0, PI * 0.75, PI * 1.25]:
+		var via := Vector2(cos(ang), sin(ang))
+		var pos := botola + via * 1.6
+		var stato: Dictionary = enigma.save_state()
+		stato["pos"][1] = [pos.x, pos.y, 0.0]
+		# (gli altri due lontani, perché non si mettano in mezzo)
+		stato["pos"][0] = [-4.5, -2.5, 0.0]
+		stato["pos"][2] = [4.5, -2.5, 0.0]
+		enigma.load_state(stato)
+		await _frames(150)
+		var g := enigma.giocattolo(1)
+		var partenza := Vector2(g.position.x, g.position.z)
+		var stand := g.global_position + Vector3(via.x, 0, via.y) * 1.8
+		stand.y = _fondo_sotto(stand, []) + 0.05
+		p.teleport(stand, 0.0, 0.0)
+		await _frames(4)
+		p.water_pack.set_tank_amount(30.0)
+		var su := 0.0
+		var esclusi: Array = []
+		for k in 3:
+			esclusi.append(enigma.giocattolo(k).get_rid())
+		Input.action_press(&"spray")
+		for f in 360:
+			p.look_at_point(g.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[1] * 0.6, 0))
+			await get_tree().physics_frame
+			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
+		Input.action_release(&"spray")
+		for f in 120:
+			await get_tree().physics_frame
+			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
+		var fine := Vector2(g.position.x, g.position.z)
+		check(su <= 0.01, "spinto verso il portellone da %.0f gradi: mai più di 1 cm sopra il fondo che ha sotto (%.3f m)" % [rad_to_deg(ang), su])
+		check(fine.distance_to(partenza) > 0.5, "da %.0f gradi ci scivola attorno: si sposta di %.2f m (a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), fine.snapped(Vector2.ONE * 0.01)])
 
