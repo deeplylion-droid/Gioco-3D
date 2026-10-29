@@ -140,7 +140,8 @@ func _snap() -> void:
 	var space := get_world_3d().direct_space_state
 	var from := global_position + Vector3(0, 0.6, 0)
 	var q := PhysicsRayQueryParameters3D.create(from, from + Vector3(0, -4.0, 0), Layers.WORLD | Layers.PROPS)
-	var hit := space.intersect_ray(q)
+	# (senza passare dalle crepe fra due triangoli, dove un raggio solo trova il pavimento sotto: RaggioSicuro)
+	var hit := RaggioSicuro.interseca(space, q)
 	if hit.is_empty():
 		push_warning("Polaroid %d: niente sotto su cui appoggiarsi (%s)" % [photo, global_position])
 		return
@@ -157,7 +158,7 @@ func _snap() -> void:
 	for a in [Vector3(0.07, 0, 0.07), Vector3(-0.07, 0, 0.07), Vector3(0.07, 0, -0.07), Vector3(-0.07, 0, -0.07)]:
 		var angolo: Vector3 = global_transform * (a as Vector3)
 		var qa := PhysicsRayQueryParameters3D.create(angolo + Vector3(0, 0.3, 0), angolo + Vector3(0, -0.3, 0), Layers.WORLD | Layers.PROPS)
-		var ha: Dictionary = space.intersect_ray(qa)
+		var ha: Dictionary = RaggioSicuro.interseca(space, qa)
 		if not ha.is_empty():
 			alza = maxf(alza, (ha.position as Vector3).y + 0.002 - angolo.y)
 	global_position.y += alza

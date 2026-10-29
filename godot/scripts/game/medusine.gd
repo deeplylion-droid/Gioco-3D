@@ -630,19 +630,41 @@ func _costruisci_griglia() -> bool:
 	var q := PhysicsRayQueryParameters3D.new()
 	q.collision_mask = Layers.WORLD
 	var piu_basso := INF
+	var punto := func(i: int, j: int) -> Vector2:
+		return Vector2(minf(_g_min.x + i * PASSO, _g_min.x + size.x), minf(_g_min.y + j * PASSO, _g_min.y + size.y))
 	for j in _g_n.y:
 		for i in _g_n.x:
-			var x := minf(_g_min.x + i * PASSO, _g_min.x + size.x)
-			var z := minf(_g_min.y + j * PASSO, _g_min.y + size.y)
-			q.from = Vector3(x, fondo_vasca + vasca.inner_size.y + 0.5, z)
-			q.to = Vector3(x, fondo_vasca - 1.0, z)
+			var xz: Vector2 = punto.call(i, j)
+			q.from = Vector3(xz.x, fondo_vasca + vasca.inner_size.y + 0.5, xz.y)
+			q.to = Vector3(xz.x, fondo_vasca - 1.0, xz.y)
 			var hit := space.intersect_ray(q)
-			var y: float = hit.position.y if not hit.is_empty() else fondo_vasca
-			y = maxf(y, fondo_vasca)
+			_griglia[j * _g_n.x + i] = hit.position.y if not hit.is_empty() else -INF
+	# la griglia ha passi tondi, come le giunzioni fra i triangoli del fondo: un raggio proprio su una giunzione passa
+	# dalla crepa e trova quello che c'è sotto, o niente. Dove un punto non trova niente o sta più di 2 cm sotto i due
+	# vicini da parti opposte, lo si rifà col raggio robusto (RaggioSicuro). Tutti col raggio robusto costavano 48 ms
+	# in un fotogramma, contro 8
+	var alto := _griglia.duplicate()
+	for j in _g_n.y:
+		for i in _g_n.x:
+			var y: float = alto[j * _g_n.x + i]
+			var giu := y == -INF
+			if i > 0 and i < _g_n.x - 1:
+				giu = giu or y < minf(alto[j * _g_n.x + i - 1], alto[j * _g_n.x + i + 1]) - 0.02
+			if j > 0 and j < _g_n.y - 1:
+				giu = giu or y < minf(alto[(j - 1) * _g_n.x + i], alto[(j + 1) * _g_n.x + i]) - 0.02
+			if giu:
+				var xz: Vector2 = punto.call(i, j)
+				q.from = Vector3(xz.x, fondo_vasca + vasca.inner_size.y + 0.5, xz.y)
+				q.to = Vector3(xz.x, fondo_vasca - 1.0, xz.y)
+				var hit := RaggioSicuro.interseca(space, q)
+				_griglia[j * _g_n.x + i] = hit.position.y if not hit.is_empty() else -INF
+	for j in _g_n.y:
+		for i in _g_n.x:
+			var y := maxf(_griglia[j * _g_n.x + i], fondo_vasca)
 			_griglia[j * _g_n.x + i] = y
 			if y < piu_basso - 0.001:
 				piu_basso = y
-				_profondo = Vector2(x, z)
+				_profondo = punto.call(i, j)
 	return true
 
 

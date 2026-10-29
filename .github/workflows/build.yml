@@ -267,6 +267,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_posa.gd
 
+      - name: Test della crepa dei raggi (un raggio su un lato condiviso fra due triangoli passa in mezzo; chi cerca un appoggio resta sul fondo)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_raggi_crepa.gd
+
       - name: Test del primo uso, dell'ingresso nella torre e di lei negli oblò (niente blocchi; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
         run: |
