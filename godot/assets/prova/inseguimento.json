@@ -89,6 +89,9 @@
   "Risalita/ObloFiume": {
    "finito": false
   },
+  "Risalita/BambinoCorridoioFiume": {
+   "finito": false
+  },
   "Interni": {
    "tornello": true,
    "docce": true,
@@ -116,6 +119,31 @@
    "attivo": true
   },
   "Piscina/SvuotaPiscina/Medusine": {},
+  "Piscina/EnigmaGiocattoli": {
+   "pos": [
+    [
+     -3.89999222755432,
+     3.29999732971191,
+     0.523598790168762
+    ],
+    [
+     3.89999508857727,
+     3.29999804496765,
+     0.0
+    ],
+    [
+     -3.89999914169312,
+     -0.0999995023012161,
+     2.09439516067505
+    ]
+   ],
+   "giu": [
+    true,
+    true,
+    true
+   ],
+   "risolto": true
+  },
   "Piscina/Portello": {
    "open": true
   },
@@ -124,11 +152,11 @@
    "mix": {}
   },
   "Vasche/VascaBimbi1": {
-   "fill": 0.656279069682333,
+   "fill": 0.66778294545996,
    "mix": {}
   },
   "Vasche/VascaBimbi2": {
-   "fill": 0.470232558054435,
+   "fill": 0.481736433832083,
    "mix": {}
   },
   "Tecnici/AgnellinoScala": {
@@ -234,6 +262,6 @@
   ]
  },
  "luci": 2,
- "time": 1793223864.27933,
+ "time": 1793287274.39739,
  "partenza_prova": "inseguimento"
 }

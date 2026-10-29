@@ -89,6 +89,9 @@
   "Risalita/ObloFiume": {
    "finito": false
   },
+  "Risalita/BambinoCorridoioFiume": {
+   "finito": false
+  },
   "Interni": {
    "tornello": true,
    "docce": true,
@@ -116,6 +119,31 @@
    "attivo": true
   },
   "Piscina/SvuotaPiscina/Medusine": {},
+  "Piscina/EnigmaGiocattoli": {
+   "pos": [
+    [
+     -3.89999222755432,
+     3.29999732971191,
+     0.523598790168762
+    ],
+    [
+     3.89999508857727,
+     3.29999804496765,
+     0.0
+    ],
+    [
+     -3.89999914169312,
+     -0.0999995023012161,
+     2.09439516067505
+    ]
+   ],
+   "giu": [
+    true,
+    true,
+    true
+   ],
+   "risolto": true
+  },
   "Piscina/Portello": {
    "open": true
   },
@@ -124,11 +152,11 @@
    "mix": {}
   },
   "Vasche/VascaBimbi1": {
-   "fill": 0.675937984083991,
+   "fill": 0.65680620145651,
    "mix": {}
   },
   "Vasche/VascaBimbi2": {
-   "fill": 0.489891472456129,
+   "fill": 0.470759689828613,
    "mix": {}
   },
   "Tecnici/AgnellinoScala": {
@@ -206,6 +234,9 @@
   },
   "SalaTorre/ObloLei": {
    "finito": false
+  },
+  "SalaSottomarino/BambinoGalleria": {
+   "finito": false
   }
  },
  "removed": [
@@ -234,6 +265,6 @@
   ]
  },
  "luci": 2,
- "time": 1793223874.65107,
+ "time": 1793287288.97541,
  "partenza_prova": "tunnel"
 }
