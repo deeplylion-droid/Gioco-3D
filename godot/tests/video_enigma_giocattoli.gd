@@ -74,6 +74,11 @@ func _run() -> void:
 		Input.action_press(&"suck")
 		await _attendi(1.0)
 		Input.action_release(&"suck")
+		# e su una cosa solida (il muro sud), come negli interni
+		await _guarda(Vector3(-4.5, -1.0, 4.6), 0.3)
+		Input.action_press(&"spray")
+		await _attendi(1.5)
+		Input.action_release(&"spray")
 		await _guarda(Vector3(-6.97, -0.85, -0.2), 0.3)
 		await _attendi(1.0)
 	_conta_pipeline("inizio")
