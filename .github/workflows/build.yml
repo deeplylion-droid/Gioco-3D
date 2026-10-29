@@ -99,6 +99,12 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini.gd
 
+      - name: Test dei passi dei bambini (piedi a terra, niente scivolate) e dei bambini visti di sfuggita
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_passi.gd
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_sfuggita.gd
+
       - name: Test degli interni (corridoio, spogliatoi, stanzino)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd

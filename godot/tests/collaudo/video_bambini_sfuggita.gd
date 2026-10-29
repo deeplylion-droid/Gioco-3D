@@ -116,7 +116,8 @@ func _corridoio() -> void:
 			break
 	# giù per la scala, verso ovest, poi in fondo girati verso nord: il corridoio
 	_registra = true
-	var occhio_fondo := Vector3(fondo.x + 0.6, fondo.y + 1.6, fondo.z)
+	# (un passo dentro il corridoio: dal pianerottolo lo spigolo del muro copriva mezza inquadratura)
+	var occhio_fondo := Vector3(fondo.x, fondo.y + 1.6, fondo.z + 1.4)
 	await _cammina(cima + Vector3.UP * 1.6, occhio_fondo, fondo + Vector3(-2.0, 1.0, 0), fondo + Vector3(-2.0, 1.2, 0.5), 5.5)
 	var lontano := Vector3(fondo.x + 0.4, fondo.y + 1.4, porta.z + 1.0)
 	await _cammina(occhio_fondo, occhio_fondo, fondo + Vector3(-2.0, 1.2, 0.5), lontano, 1.6)
@@ -155,14 +156,14 @@ func _galleria() -> void:
 	var bocca := 203.6
 	# di corsa sulla banchina sinistra verso la galleria, poi ci si ferma a guardarlo
 	_registra = true
-	await _cammina(occhi.call(s0 - 30.0, 3.9), occhi.call(s0 - 14.0, 3.9), occhi.call(s0 - 10.0, 3.9), occhi.call(bocca, 4.0), 4.0)
+	await _cammina(occhi.call(s0 - 18.0, 3.9), occhi.call(s0, 3.9), occhi.call(s0 + 4.0, 3.9), occhi.call(bocca, 4.0), 4.5)
 	await _scatto("galleria_tunnel")
 	var t := 0.0
-	var qui: Vector3 = occhi.call(s0 - 14.0, 3.9)
+	var qui: Vector3 = occhi.call(s0, 3.9)
 	while t < 6.0 and b.stato != BambinoSfuggita.Stato.FINITO:
 		_guarda(qui, b.bambino.punto_testa() if b.stato != BambinoSfuggita.Stato.ATTESA else occhi.call(bocca, 4.0))
 		await _fotogramma()
 		t += 1.0 / 30.0
-	await _cammina(qui, occhi.call(s0 - 6.0, 3.9), occhi.call(bocca, 4.4), occhi.call(bocca + 1.0, 5.4), 3.0)
+	await _cammina(qui, occhi.call(s0 + 6.0, 3.9), occhi.call(bocca, 4.4), occhi.call(bocca + 1.0, 5.4), 3.0)
 	for i in 30:
 		await _fotogramma()

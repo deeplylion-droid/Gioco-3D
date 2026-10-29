@@ -30,10 +30,12 @@ Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspe
   sta in piedi: la galleria è alta 1,25 m) e va dietro il muro.
 - **Quando non si vede più**: dietro il muro della galleria; poi il giocatore passa nella stessa galleria e non c'è più.
 
-### 3. Il fiume lento (da fare se ci sta)
+### 3. Il fiume lento (non fatto stanotte)
 
-Sulla riva dell'anello, prima del bivio 2. Le sponde hanno la fila delle rocce: lo metto solo se trovo un passaggio
-dove scappare senza entrare nelle rocce o nelle piante.
+Era previsto sulla riva dell'anello, prima del bivio 2. Ma la banchina è larga 1,4 m fra l'acqua e la fila delle
+rocce finte, che si apre solo ai bivi: per scappare il bambino dovrebbe passare in mezzo alle rocce o alle piante, e un
+posto dove sparisca davvero fuori vista dalla ciambella non l'ho trovato in tempo. Lo propongo per il prossimo giro,
+se l'utente vuole un terzo punto (per esempio al bivio 2, lungo la banchina del ramo sbagliato).
 
 ## Le animazioni
 
