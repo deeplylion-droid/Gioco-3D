@@ -1,0 +1,93 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+9. Il pallone spinto direttamente contro il portellone
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    spinto dritto verso il portellone da 180 gradi: mai più di 1 cm sopra il fondo (0.000 m)
+  ok    da 180 gradi ci scivola attorno senza scatti: si sposta di 7.57 m, al massimo 0.040 m in un fotogramma, mai più vicino di 1.23 m al centro della botola (a (5.76, 3.75))
+  ok    spinto dritto verso il portellone da 90 gradi: mai più di 1 cm sopra il fondo (0.003 m)
+  ok    da 90 gradi ci scivola attorno senza scatti: si sposta di 0.80 m, al massimo 0.022 m in un fotogramma, mai più vicino di 1.25 m al centro della botola (a (0.63, 3.11))
+    sopra il fondo di 0.275 m: pallone in (2.208, -4.575, 2.76)
+    sopra il fondo di 0.250 m: pallone in (2.232, -4.6, 2.785)
+    sopra il fondo di 0.225 m: pallone in (2.256, -4.625, 2.812)
+    sopra il fondo di 0.200 m: pallone in (2.279, -4.65, 2.838)
+    sopra il fondo di 0.175 m: pallone in (2.301, -4.675, 2.866)
+    sopra il fondo di 0.150 m: pallone in (2.323, -4.7, 2.894)
+    sopra il fondo di 0.125 m: pallone in (2.345, -4.725, 2.922)
+    sopra il fondo di 0.100 m: pallone in (2.366, -4.75, 2.951)
+    senza fondo: pallone in (2.503, -4.85, 3.169), fondo cercato da 5 m più su: -2.084
+    senza fondo: pallone in (2.992, -4.85, 3.95), fondo cercato da 5 m più su: -2.031
+    senza fondo: pallone in (3.205, -4.85, 3.95), fondo cercato da 5 m più su: -2.022
+    senza fondo: pallone in (3.301, -4.85, 3.946), fondo cercato da 5 m più su: -2.019
+    senza fondo: pallone in (3.344, -4.85, 3.943), fondo cercato da 5 m più su: -2.017
+    senza fondo: pallone in (3.363, -4.85, 3.942), fondo cercato da 5 m più su: -2.016
+    (in 216 fotogrammi sotto il pallone il raggio non ha trovato il fondo: non contati)
+  FALLITO spinto dritto verso il portellone da 270 gradi: mai più di 1 cm sopra il fondo (0.275 m)
+  ok    da 270 gradi ci scivola attorno senza scatti: si sposta di 4.89 m, al massimo 0.040 m in un fotogramma, mai più vicino di 1.22 m al centro della botola (a (3.37, 3.94))
+    sopra il fondo di 0.275 m: pallone in (-1.155, -4.575, -0.655)
+    sopra il fondo di 0.250 m: pallone in (-1.189, -4.6, -0.675)
+    sopra il fondo di 0.225 m: pallone in (-1.224, -4.625, -0.695)
+    sopra il fondo di 0.200 m: pallone in (-1.259, -4.65, -0.714)
+    sopra il fondo di 0.175 m: pallone in (-1.294, -4.675, -0.733)
+    sopra il fondo di 0.150 m: pallone in (-1.33, -4.7, -0.751)
+    sopra il fondo di 0.125 m: pallone in (-1.366, -4.725, -0.769)
+    sopra il fondo di 0.100 m: pallone in (-1.402, -4.75, -0.786)
+    senza fondo: pallone in (-1.804, -4.85, -0.952), fondo cercato da 5 m più su: -2.037
+    senza fondo: pallone in (-2.763, -4.85, -1.318), fondo cercato da 5 m più su: -1.950
+    senza fondo: pallone in (-3.194, -4.85, -1.483), fondo cercato da 5 m più su: -1.920
+    (in 118 fotogrammi sotto il pallone il raggio non ha trovato il fondo: non contati)
+  FALLITO spinto dritto verso il portellone da 0 gradi: mai più di 1 cm sopra il fondo (0.275 m)
+  ok    da 0 gradi ci scivola attorno senza scatti: si sposta di 6.12 m, al massimo 0.041 m in un fotogramma, mai più vicino di 1.23 m al centro della botola (a (-3.38, -1.55))
+  ok    spinto dritto verso il portellone da 135 gradi: mai più di 1 cm sopra il fondo (0.000 m)
+  ok    da 135 gradi ci scivola attorno senza scatti: si sposta di 2.05 m, al massimo 0.034 m in un fotogramma, mai più vicino di 1.25 m al centro della botola (a (0.89, 3.49))
+    sopra il fondo di 0.275 m: pallone in (2.232, -4.575, 3.95)
+    sopra il fondo di 0.250 m: pallone in (2.268, -4.6, 3.95)
+    sopra il fondo di 0.225 m: pallone in (2.305, -4.625, 3.95)
+    sopra il fondo di 0.200 m: pallone in (2.341, -4.65, 3.95)
+    sopra il fondo di 0.175 m: pallone in (2.377, -4.675, 3.95)
+    sopra il fondo di 0.150 m: pallone in (2.413, -4.7, 3.95)
+    sopra il fondo di 0.125 m: pallone in (2.449, -4.725, 3.95)
+    sopra il fondo di 0.100 m: pallone in (2.486, -4.75, 3.95)
+    senza fondo: pallone in (2.522, -4.75, 3.95), fondo cercato da 5 m più su: -2.054
+    senza fondo: pallone in (4.006, -4.75, 3.95), fondo cercato da 5 m più su: -2.001
+    senza fondo: pallone in (4.994, -4.75, 3.946), fondo cercato da 5 m più su: -2.000
+    senza fondo: pallone in (5.438, -4.75, 3.945), fondo cercato da 5 m più su: -2.000
+    (in 159 fotogrammi sotto il pallone il raggio non ha trovato il fondo: non contati)
+  FALLITO spinto dritto verso il portellone da 225 gradi: mai più di 1 cm sopra il fondo (0.275 m)
+  ok    da 225 gradi ci scivola attorno senza scatti: si sposta di 7.57 m, al massimo 0.040 m in un fotogramma, mai più vicino di 1.22 m al centro della botola (a (5.63, 3.94))
+    sopra il fondo di 0.275 m: pallone in (-2.203, -4.575, 2.128)
+    sopra il fondo di 0.250 m: pallone in (-2.234, -4.6, 2.103)
+    sopra il fondo di 0.225 m: pallone in (-2.265, -4.625, 2.078)
+    sopra il fondo di 0.200 m: pallone in (-2.296, -4.65, 2.052)
+    sopra il fondo di 0.175 m: pallone in (-2.327, -4.675, 2.027)
+    sopra il fondo di 0.150 m: pallone in (-2.358, -4.7, 2.001)
+    sopra il fondo di 0.125 m: pallone in (-2.389, -4.725, 1.976)
+    sopra il fondo di 0.100 m: pallone in (-2.42, -4.75, 1.95)
+    senza fondo: pallone in (-2.511, -4.85, 1.873), fondo cercato da 5 m più su: -2.103
+    senza fondo: pallone in (-4.006, -4.85, 1.354), fondo cercato da 5 m più su: -2.009
+    senza fondo: pallone in (-5.298, -4.85, 0.414), fondo cercato da 5 m più su: -2.000
+    senza fondo: pallone in (-5.828, -4.85, -0.575), fondo cercato da 5 m più su: -2.000
+    senza fondo: pallone in (-5.749, -4.85, -1.094), fondo cercato da 5 m più su: -1.984
+    senza fondo: pallone in (-5.713, -4.85, -1.328), fondo cercato da 5 m più su: -1.945
+    (in 223 fotogrammi sotto il pallone il raggio non ha trovato il fondo: non contati)
+  FALLITO spinto dritto verso il portellone da 45 gradi: mai più di 1 cm sopra il fondo (0.275 m)
+  ok    da 45 gradi ci scivola attorno senza scatti: si sposta di 8.31 m, al massimo 0.041 m in un fotogramma, mai più vicino di 1.26 m al centro della botola (a (-5.7, -1.4))
+  ok    spinto dritto verso il portellone da 315 gradi: mai più di 1 cm sopra il fondo (0.003 m)
+  ok    da 315 gradi ci scivola attorno senza scatti: si sposta di 1.30 m, al massimo 0.029 m in un fotogramma, mai più vicino di 1.23 m al centro della botola (a (1.22, 2.29))
+
+RISULTATO: 13 controlli ok, 4 falliti
+WARNING: 861 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 492 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: 2 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 134 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 47 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 66 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 187 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.

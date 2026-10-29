@@ -34,6 +34,8 @@ func _run() -> void:
 		await _portellone()
 	if "portellone_diretto" in _parti:
 		await _portellone_diretto()
+	if "affonda" in _parti:
+		await _affonda()
 	_fine()
 
 
@@ -585,3 +587,23 @@ func _sopra(g: Node3D, esclusi: Array) -> float:
 	if su > 0.01:
 		print("    sopra il fondo di %.3f m: pallone in %s" % [su, g.global_position.snapped(Vector3.ONE * 0.001)])
 	return su
+
+
+## Dove il pallone messo con load_state (come una ripartenza dal checkpoint) finisce sotto il fondo della piscina: a
+## piscina vuota, nei punti a 1,6 m dal portellone, fermo, senza spinte.
+func _affonda() -> void:
+	print("10. Il pallone messo vicino al portellone (load_state), fermo")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	for ang in [PI, PI * 0.5, PI * 1.5, 0.0, PI * 0.75, PI * 1.25, PI * 0.25, PI * 1.75]:
+		var pos := Vector2(0.0, 2.0) + Vector2(cos(ang), sin(ang)) * 1.6
+		var stato: Dictionary = enigma.save_state()
+		stato["pos"][1] = [pos.x, pos.y, 0.0]
+		enigma.load_state(stato)
+		var g := enigma.giocattolo(1)
+		var subito := g.global_position.y
+		await _frames(120)
+		var f := _fondo_sotto(Vector3(g.global_position.x, 1.0, g.global_position.z), [g.get_rid()])
+		check(absf(g.global_position.y - f) < 0.03, "messo in %s da %.0f gradi: resta sul fondo (subito y %.3f, dopo 2 s y %.3f, fondo %.3f)" % [pos.snapped(Vector2.ONE * 0.01), rad_to_deg(ang), subito, g.global_position.y, f])
+
