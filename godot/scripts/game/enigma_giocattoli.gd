@@ -933,6 +933,11 @@ func metti_al_posto_uno(i: int) -> void:
 	_assestato[i] = false
 
 
+## Vero se il giocattolo [param i] galleggia (per i test).
+func galleggia(i: int) -> bool:
+	return _galleggia(i)
+
+
 ## I giocattoli (per i test e gli scatti).
 func giocattolo(i: int) -> AnimatableBody3D:
 	return _giocattoli[i]

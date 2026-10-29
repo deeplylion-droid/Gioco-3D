@@ -147,17 +147,21 @@ func _run() -> void:
 	# collaudo di ambienti-2 del 29 ottobre: tre posti dove un giocattolo restava incastrato e l'enigma si bloccava
 	print("5. Dagli angoli e da sotto le scalette si riporta il giocattolo al suo cerchio col getto")
 	await _carica()
-	# (giocattolo, da dove in pianta, a piscina vuota, il posto)
+	# (giocattolo, da dove in pianta, a piscina vuota, il posto). Prima quelli a piscina piena: svuotata, la piscina scola
+	# l'acqua che le si rimette
 	var a := enigma.area
-	var casi := [[1, Vector2(a.position.x, 1.3), true, "sotto la scaletta ovest"],
+	var casi := [[1, Vector2(a.position.x, 1.3), false, "sotto la scaletta ovest"], [2, Vector2(a.end.x, a.position.y), false, "nell'angolo nord-est"],
+		[1, Vector2(a.position.x, 1.3), true, "sotto la scaletta ovest"],
 		[0, Vector2(a.end.x, 3.2), true, "sotto la scaletta est"],
 		[0, a.position, true, "nell'angolo nord-ovest"], [1, Vector2(a.end.x, a.position.y), true, "nell'angolo nord-est"],
-		[2, Vector2(a.position.x, a.end.y), true, "nell'angolo sud-ovest"], [2, a.end, true, "nell'angolo sud-est"],
-		[1, Vector2(a.position.x, 1.3), false, "sotto la scaletta ovest"], [2, Vector2(a.end.x, a.position.y), false, "nell'angolo nord-est"]]
+		[2, Vector2(a.position.x, a.end.y), true, "nell'angolo sud-ovest"], [2, a.end, true, "nell'angolo sud-est"]]
 	for caso in casi:
 		var i: int = caso[0]
-		vasca.fill = 0.0 if caso[2] else 1.0
+		if caso[2]:
+			vasca.fill = 0.0
 		await _metti(i, caso[1])
+		if not caso[2]:
+			check(vasca.fill > 0.9 and enigma.galleggia(i), "a piscina piena (fill %.2f) il giocattolo %d galleggia %s" % [vasca.fill, i, caso[3]])
 		var staccato := await _libera(i)
 		var ok := staccato and await _spingi(i, 50)
 		check(ok, "%s, %s: il giocattolo %d si stacca dal bordo e col getto torna al suo cerchio (%s)" % [
@@ -204,9 +208,11 @@ func _run() -> void:
 	for o: Vector3 in ostacoli:
 		if Vector2(o.x, o.y).distance_to(Vector2(-1.0, 0.4)) < Vector2(vicina.x, vicina.y).distance_to(Vector2(-1.0, 0.4)):
 			vicina = o
-	vasca.fill = 1.0
+	# (sala ricaricata: svuotata, la piscina scolerebbe l'acqua rimessa)
+	await _carica()
 	await _metti(0, Vector2(vicina.x, vicina.y))
 	await _frames(30)
+	check(vasca.fill > 0.9 and enigma.galleggia(0), "la paperella galleggia sopra la ciambella (fill %.2f)" % vasca.fill)
 	for k in 180:
 		vasca.fill = 1.0 - float(k + 1) / 180.0
 		await get_tree().physics_frame
