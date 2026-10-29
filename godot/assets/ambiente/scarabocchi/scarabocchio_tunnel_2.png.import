@@ -3,15 +3,16 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0man2pxmnqgn"
-path="res://.godot/imported/scarabocchio_tunnel_2.png-118390b70fbc236bb97044ac3cf182e0.ctex"
+path.s3tc="res://.godot/imported/scarabocchio_tunnel_2.png-118390b70fbc236bb97044ac3cf182e0.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/ambiente/scarabocchi/scarabocchio_tunnel_2.png"
-dest_files=["res://.godot/imported/scarabocchio_tunnel_2.png-118390b70fbc236bb97044ac3cf182e0.ctex"]
+dest_files=["res://.godot/imported/scarabocchio_tunnel_2.png-118390b70fbc236bb97044ac3cf182e0.s3tc.ctex"]
 
 [params]
 

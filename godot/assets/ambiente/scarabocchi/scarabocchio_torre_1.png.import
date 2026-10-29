@@ -3,15 +3,16 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0crk22mm4vbb"
-path="res://.godot/imported/scarabocchio_torre_1.png-8059393fcf2a30c705901660e6f3d8ca.ctex"
+path.s3tc="res://.godot/imported/scarabocchio_torre_1.png-8059393fcf2a30c705901660e6f3d8ca.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/ambiente/scarabocchi/scarabocchio_torre_1.png"
-dest_files=["res://.godot/imported/scarabocchio_torre_1.png-8059393fcf2a30c705901660e6f3d8ca.ctex"]
+dest_files=["res://.godot/imported/scarabocchio_torre_1.png-8059393fcf2a30c705901660e6f3d8ca.s3tc.ctex"]
 
 [params]
 

@@ -3,15 +3,16 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c37xsbpsgmk5n"
-path="res://.godot/imported/scarabocchio_fiume_1.png-d502f43f921ac56fc32ba27bb7e37ccf.ctex"
+path.s3tc="res://.godot/imported/scarabocchio_fiume_1.png-d502f43f921ac56fc32ba27bb7e37ccf.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/ambiente/scarabocchi/scarabocchio_fiume_1.png"
-dest_files=["res://.godot/imported/scarabocchio_fiume_1.png-d502f43f921ac56fc32ba27bb7e37ccf.ctex"]
+dest_files=["res://.godot/imported/scarabocchio_fiume_1.png-d502f43f921ac56fc32ba27bb7e37ccf.s3tc.ctex"]
 
 [params]
 

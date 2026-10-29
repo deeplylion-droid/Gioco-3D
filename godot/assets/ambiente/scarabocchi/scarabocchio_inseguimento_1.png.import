@@ -3,15 +3,16 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfxey7ihbsfv4"
-path="res://.godot/imported/scarabocchio_inseguimento_1.png-40e9964336434990e4f84e94dbea6f7f.ctex"
+path.s3tc="res://.godot/imported/scarabocchio_inseguimento_1.png-40e9964336434990e4f84e94dbea6f7f.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/ambiente/scarabocchi/scarabocchio_inseguimento_1.png"
-dest_files=["res://.godot/imported/scarabocchio_inseguimento_1.png-40e9964336434990e4f84e94dbea6f7f.ctex"]
+dest_files=["res://.godot/imported/scarabocchio_inseguimento_1.png-40e9964336434990e4f84e94dbea6f7f.s3tc.ctex"]
 
 [params]
 

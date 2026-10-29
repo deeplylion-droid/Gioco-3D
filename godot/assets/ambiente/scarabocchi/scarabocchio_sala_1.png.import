@@ -3,15 +3,16 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8a8da1sbn4v8"
-path="res://.godot/imported/scarabocchio_sala_1.png-e7a1859728ffb198dc8e9dedeea2abdd.ctex"
+path.s3tc="res://.godot/imported/scarabocchio_sala_1.png-e7a1859728ffb198dc8e9dedeea2abdd.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/ambiente/scarabocchi/scarabocchio_sala_1.png"
-dest_files=["res://.godot/imported/scarabocchio_sala_1.png-e7a1859728ffb198dc8e9dedeea2abdd.ctex"]
+dest_files=["res://.godot/imported/scarabocchio_sala_1.png-e7a1859728ffb198dc8e9dedeea2abdd.s3tc.ctex"]
 
 [params]
 
