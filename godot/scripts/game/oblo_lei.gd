@@ -448,8 +448,10 @@ func _vasca() -> void:
 
 
 ## Il guscio che fa solo ombra attorno alla vasca ([member guscio_ombra]): il fondo, il soffitto, il pavimento e i due
-## lati, 2 mm fuori dalla vasca, che si sovrappongono agli spigoli; davanti c'è il muro.
+## lati, 2 mm fuori dalla vasca, che si sovrappongono agli spigoli. Davanti entrano 5 cm nel muro: fra il muro e la
+## vasca c'è la fessura di [constant STACCO_VASCA], e la luce entrata lì dal buco della piastra usciva dai lati.
 func _guscio_ombra(pz: Array, z0: float, z1: float) -> void:
+	var davanti := z0 + STACCO_VASCA + 0.05
 	var x0 := INF
 	var x1 := -INF
 	for r in pz:
@@ -462,10 +464,10 @@ func _guscio_ombra(pz: Array, z0: float, z1: float) -> void:
 	var dietro := z1 - E - t
 	var lastre := [
 		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x1 + E + t, y1 + E + t, z1 - E)],    # il fondo
-		[Vector3(x0 - E - t, y1 + E, dietro), Vector3(x1 + E + t, y1 + E + t, z0)],           # il soffitto
-		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x1 + E + t, y0 - E, z0)],           # il pavimento
-		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x0 - E, y1 + E + t, z0)],           # un lato
-		[Vector3(x1 + E, y0 - E - t, dietro), Vector3(x1 + E + t, y1 + E + t, z0)],           # l'altro
+		[Vector3(x0 - E - t, y1 + E, dietro), Vector3(x1 + E + t, y1 + E + t, davanti)],           # il soffitto
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x1 + E + t, y0 - E, davanti)],           # il pavimento
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x0 - E, y1 + E + t, davanti)],           # un lato
+		[Vector3(x1 + E, y0 - E - t, dietro), Vector3(x1 + E + t, y1 + E + t, davanti)],           # l'altro
 	]
 	var guscio := Node3D.new()
 	guscio.name = "GuscioOmbra"
