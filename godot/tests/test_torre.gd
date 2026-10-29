@@ -11,7 +11,7 @@ extends Node
 ##    fino all'imbocco dopo con un passaggio libero di 1 m, senza scavalcare niente. Chi sbaglia un salto cade
 ##    nella vasca di raccolta sotto, senza morire, e risale dalla scaletta fino alla pedana da cui era partito.
 ## 3. Nella sala grande: il portone (aperto qui senza la tappa 8) fa caricare la torre in un thread, il guscio
-##    vecchio sparisce, sulla passerella si entra (il portone si richiude, interni e tecnici si scaricano);
+##    vecchio sparisce, sulla passerella si entra (il portone si richiude, interni e tecnici si scaricano a portone chiuso);
 ##    cadendo nel vuoto per 12 m si muore, ma solo toccando il fondo (caduta vera), e si riparte dall'ultimo
 ##    checkpoint, con la torre di nuovo lì; le pedane
 ##    d'arrivo sono checkpoint in ordine; nella vasca del fondo la demo finisce.
@@ -321,8 +321,13 @@ func _run() -> void:
 	_metti(p, Vector3(21.3, 0.1, -15.0), Vector3(30.0, 0.1, -15.0))
 	await _frames(60)
 	check(portone.chiuso_dietro, "entrando sulla passerella il portone si richiude alle spalle")
+	# (si scaricano a portone chiuso del tutto, dopo la sua chiusura di 3 s: test_portone_torre)
+	for i in 600:
+		if portone.quanto <= 0.0 and level.get_node_or_null(^"Tecnici") == null and level.get_node_or_null(^"Interni") == null:
+			break
+		await _frames(1)
 	check(level.get_node_or_null(^"Tecnici") == null and level.get_node_or_null(^"Interni") == null,
-		"interni e tecnici si scaricano")
+		"interni e tecnici si scaricano, col portone chiuso")
 	check(String(GameState.snapshot.get("checkpoint", "")).contains("SalaTorre/Checkpoint_portone"),
 		"checkpoint all'ingresso (%s)" % GameState.snapshot.get("checkpoint", ""))
 

@@ -618,14 +618,19 @@ func _completa_torre() -> void:
 			_entra_in_torre(true))
 
 
-## Dentro la torre: il portone si richiude alle spalle (niente ritorno) e gli ambienti che non servono più
-## (interni e tecnici, dopo la tappa 8) si scaricano per la memoria.
+## Dentro la torre: il portone si richiude alle spalle (niente ritorno: la soglia si chiude subito) e gli ambienti che
+## non servono più (interni e tecnici, dopo la tappa 8) si scaricano per la memoria, col portone chiuso del tutto.
 func _entra_in_torre(chiudi: bool) -> void:
 	if _dentro_torre:
 		return
 	_dentro_torre = true
 	if chiudi and portone and portone.has_method(&"chiudi"):
 		portone.call(&"chiudi")
+		# mentre l'anta scorre dalla soglia si vede ancora la sala: via quando è chiuso (prima andavano via subito, e
+		# tornando indietro di corsa si restava nella sala senza; sonda del 29 ottobre)
+		if portone.has_signal(&"chiuso") and float(portone.get(&"quanto")) > 0.0:
+			portone.connect(&"chiuso", _scarica_ambienti, CONNECT_ONE_SHOT)
+			return
 	elif portone and portone.has_method(&"resta_chiuso"):
 		portone.call(&"resta_chiuso")
 	_scarica_ambienti.call_deferred()
