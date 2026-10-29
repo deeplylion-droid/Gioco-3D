@@ -18,6 +18,7 @@ var n: NebbiaViola
 
 
 func _ready() -> void:
+	OS.add_logger(_conta)
 	_run.call_deferred()
 
 
@@ -153,10 +154,19 @@ func _alone() -> void:
 	await _per(1.0)
 	_controlla(peso > 0.2 and peso < 1.0 and n._slot.any(func(s): return s[0] == lampade[3]),
 			"una lampada che esce dall'alone cala piano e una nuova prende il suo posto", [peso])
-	z.queue_free()
+	# la sala che si ricarica dopo una presa: le luci nell'alone liberate di colpo, la zona con loro, e la nebbia accesa
+	# va avanti senza errori (CI del 29 ottobre: "Lambda capture was freed" in _aggiorna_luci)
+	var errori_prima := _errori()
+	lei.free()
+	for l in lampade:
+		l.free()
+	await _per(0.5)
+	z.free()
+	await _per(0.5)
 	radice.queue_free()
-	lei.queue_free()
 	await _per(0.1)
+	_controlla(_errori() == errori_prima and n._slot.all(func(s): return s[0] == null or is_instance_valid(s[0])),
+			"luci e zona liberate di colpo con la nebbia accesa (la sala ricaricata dopo una presa): nessun errore", [_errori() - errori_prima])
 
 
 ## Le zone vere: l'infermeria, la sala principale e il tunnel dell'inseguimento.
@@ -188,6 +198,28 @@ func _zone_del_gioco() -> void:
 			and not sala.NEBBIA_SALA.has_point(Vector3(-9.7, 1, 40)) and not sala.NEBBIA_SALA.has_point(Vector3(30, 1, -15))
 			and (sala as GDScript).source_code.contains("_nebbia_viola()"),
 			"la sala principale ha la zona della nebbia viola (dentro l'ingresso e la vasca, fuori gli interni e la torre)", [])
+
+
+## Gli errori del motore e degli script (come in test_presa_vera.gd; il renderer finto dei test headless non conta).
+class ContaErrori extends Logger:
+	var n := 0
+	var _m := Mutex.new()
+
+	func _log_error(_function: String, file: String, _line: int, _code: String, _rationale: String, _editor_notify: bool,
+			error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
+		if error_type == Logger.ERROR_TYPE_WARNING or file.contains("rendering/dummy"):
+			return
+		_m.lock()
+		n += 1
+		_m.unlock()
+
+
+var _conta := ContaErrori.new()
+
+
+## Gli errori finora.
+func _errori() -> int:
+	return _conta.n
 
 
 func _in_zona(z: ZonaNebbiaViola, p: Vector3) -> bool:

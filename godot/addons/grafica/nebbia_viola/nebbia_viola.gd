@@ -165,21 +165,26 @@ func _aggiorna_luci(cam: Camera3D, delta: float) -> void:
 	if _t_scelta <= 0.0:
 		_t_scelta = OGNI_SCELTA
 		_scelte = _scegli(cam)
+	# (una luce liberata o tolta dall'albero, per esempio quando la sala si ricarica dopo una presa, esce subito)
+	var valide: Array[Light3D] = []
+	for l in _scelte:
+		if _valida(l):
+			valide.append(l)
+	_scelte = valide
 	var pos := PackedVector3Array()
 	var col := PackedVector3Array()
 	for s in _slot:
-		var l: Light3D = s[0] if is_instance_valid(s[0]) else null
-		if l == null:
+		if not _valida(s[0]):
 			s[0] = null
 			s[1] = 0.0
-		elif _scelte.has(l):
+		elif _scelte.has(s[0]):
 			s[1] = minf(s[1] + delta / CAMBIO_LUCE, 1.0)
 		else:
 			s[1] = maxf(s[1] - delta / CAMBIO_LUCE, 0.0)
 			if s[1] <= 0.0:
 				s[0] = null
 	for l in _scelte:
-		if _slot.any(func(s): return s[0] == l):
+		if _nell_alone(l):
 			continue
 		for s in _slot:
 			if s[0] == null:
@@ -187,11 +192,11 @@ func _aggiorna_luci(cam: Camera3D, delta: float) -> void:
 				s[1] = 0.0
 				break
 	for s in _slot:
-		var l: Light3D = s[0]
-		if l == null:
+		if s[0] == null:
 			pos.append(Vector3.ZERO)
 			col.append(Vector3.ZERO)
 			continue
+		var l: Light3D = s[0]
 		# (le lampade che sfarfallano: l'alone segue la luce accesa o spenta)
 		var acceso := 1.0 if l.is_visible_in_tree() and l.light_energy > 0.05 else 0.0
 		var c := l.light_color
@@ -210,26 +215,42 @@ func _scegli(cam: Camera3D) -> Array[Light3D]:
 	var avanti := -cam.global_basis.z
 	for n in get_tree().get_nodes_in_group(GRUPPO_ALONE):
 		var l := n as Light3D
-		if l and l.is_visible_in_tree() and l.light_energy > 0.0 and not cam.is_position_behind(l.global_position) \
+		if l and _valida(l) and l.is_visible_in_tree() and l.light_energy > 0.0 and not cam.is_position_behind(l.global_position) \
 				and l.global_position.distance_to(occhio) < RAGGIO_LUCI and out.size() < 4:
 			out.append(l)
-	var lampade: Array = []
+	var lampade: Array[Vector2] = []
+	var vicine: Array[Light3D] = []
 	for l in _luci_zona:
-		if not is_instance_valid(l) or out.has(l) or not l.is_visible_in_tree() or l.light_energy <= 0.0:
+		if not _valida(l) or out.has(l) or not l.is_visible_in_tree() or l.light_energy <= 0.0:
 			continue
 		var d := l.global_position - occhio
 		var dist := d.length()
 		if dist > RAGGIO_LUCI or d.normalized().dot(avanti) < 0.3:
 			continue
-		if _slot.any(func(s): return s[0] == l):
+		if _nell_alone(l):
 			dist *= 0.8
-		lampade.append([dist, l])
-	lampade.sort_custom(func(a, b): return a[0] < b[0])
+		lampade.append(Vector2(dist, lampade.size()))
+		vicine.append(l)
+	# (ordinate per distanza: le luci restano fuori dall'ordinamento)
+	lampade.sort()
 	for x in lampade:
 		if out.size() >= 4:
 			break
-		out.append(x[1])
+		out.append(vicine[int(x.y)])
 	return out
+
+
+## Vero se [param l] è una luce che c'è ancora, nell'albero.
+static func _valida(l: Variant) -> bool:
+	return l != null and is_instance_valid(l) and (l as Node).is_inside_tree()
+
+
+## Vero se [param l] è già in uno dei 4 posti dell'alone.
+func _nell_alone(l: Light3D) -> bool:
+	for s in _slot:
+		if s[0] == l:
+			return true
+	return false
 
 
 ## Le lampade a mano, per le prove fuori dal gioco: [posizione, colore, forza] (fino a 4). Nel gioco le sceglie da sé.
