@@ -208,6 +208,19 @@ func _prova(b: BambinoSfuggita) -> void:
 		if OS.has_environment("DEBUG_FUGA"):
 			print("    fuga %.2f %s vis %s cam %s" % [t, str(b.bambino.global_position.snapped(Vector3.ONE * 0.01)), b.bambino.visibile_da(_p), get_viewport().get_camera_3d() == _p.camera])
 	check(b.stato == BambinoSfuggita.Stato.FINITO, "sparisce alla fine della fuga (%.1f s)" % t)
+	# quando sparisce non se ne vede niente: nessun osso del corpo nell'inquadratura senza un muro in mezzo
+	var in_vista := []
+	var cam := get_viewport().get_camera_3d()
+	for m in ["Calmo", "Rivelato"]:
+		var mod := b.bambino.get_node_or_null(m) as Node3D
+		if mod == null or not mod.visible:
+			continue
+		var sk := mod.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+		for o in sk.get_bone_count():
+			var w := sk.global_transform * sk.get_bone_global_pose(o).origin
+			if cam.is_position_in_frustum(w) and _vista_libera(_p.get_eye_position(), w):
+				in_vista.append(sk.get_bone_name(o))
+	check(in_vista.is_empty(), "quando sparisce nessun osso è in vista%s" % ((" (%s)" % ", ".join(in_vista)) if not in_vista.is_empty() else ""))
 	var corsa := b.bambino.global_position.distance_to(b.global_position)
 	check(corsa > 1.0, "è sparito dopo essere scappato (%.1f m), quando non si vedeva più" % corsa)
 	# finito: non ricompare

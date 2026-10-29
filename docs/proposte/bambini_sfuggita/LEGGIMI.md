@@ -5,7 +5,8 @@ Proposta approvata dall'utente la sera del 25 ottobre (GDD, scelte della sera de
 guardarti e scappa dietro un angolo prima che tu ci arrivi. Niente aggressioni. Ci sono tutti e due: il bambino col
 cubo nel corridoio del fiume (la porta del capannone è alta), l'agnellino nella galleria bassa del tunnel.
 
-Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspetta l'ok dell'utente.**
+Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Approvato dall'utente il 29 ottobre**: i due punti
+vanno bene, niente terzo punto ("bastano questi due"), per l'agnellino della scala il tuffo nel buco, come nel video.
 
 ## I punti
 
@@ -21,8 +22,10 @@ Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspe
   (sta 8 m fuori dalla linea fra il giocatore e lei). La P15 è nella zona del personale, non in questo corridoio.
 - **Cosa fa**: fermo, respira, ti segue con la testa e ogni tanto la inclina piano. Quando lo hai guardato per poco più
   di un secondo, o ti avvicini sotto i 9 m, aspetta ancora un attimo, si volta e corre nella porta del capannone.
-- **Quando non si vede più**: corre nella rientranza fra la porta e il muro dell'approdo e sparisce lì in fondo, a
-  3,3 m dalla porta, coperto del tutto dallo stipite (collaudo del 29 ottobre: prima, a 2,6 m, era al limite). Una volta sola: lo stato si salva coi checkpoint.
+- **Quando non si vede più**: corre nella rientranza fra la porta e il muro dell'approdo (fino a 3,3 m dalla porta) e
+  sparisce appena è coperto del tutto dallo stipite: nessun osso del corpo in vista. Prima si guardava una griglia
+  piatta sul corpo, che col bambino di fianco finiva dietro lo spigolo con mezzo corpo ancora fuori (collaudo del 29
+  ottobre); ora vale per tutti i bambini. Una volta sola: lo stato si salva coi checkpoint.
 
 ### 2. La galleria del tunnel sottomarino: l'agnellino
 
@@ -34,7 +37,7 @@ Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspe
   sta in piedi: la galleria è alta 1,25 m) e va dietro il muro.
 - **Quando non si vede più**: dietro il muro della galleria; poi il giocatore passa nella stessa galleria e non c'è più.
 
-### 3. Il fiume lento (non fatto stanotte)
+### 3. Il fiume lento (non fatto: l'utente il 29 ottobre ha detto che bastano i due punti)
 
 Era previsto sulla riva dell'anello, prima del bivio 2. Ma la banchina è larga 1,4 m fra l'acqua e la fila delle
 rocce finte, che si apre solo ai bivi: per scappare il bambino dovrebbe passare in mezzo alle rocce o alle piante, e un
@@ -100,11 +103,11 @@ tocca terra in tutti e due: -2,6 mm il cubo, -2,4 mm l'agnellino. Abbassarlo lo 
 - `godot/tests/test_bambini_passi.gd`: i due bambini camminano e corrono (con una curva, da fermi): il piede a terra
   nel mondo scivola in media 0,00-0,01 m/s camminando e correndo, 0,01-0,04 voltandosi sul posto per scappare (anche
   di scatto come l'agnellino della scala); le punte dei piedi toccano terra.
-- `godot/tests/test_bambini_sfuggita.gd` (39 controlli verdi): per ogni punto, poggia a terra, al suo posto non entra
+- `godot/tests/test_bambini_sfuggita.gd` (41 controlli verdi): per ogni punto, poggia a terra, al suo posto non entra
   in niente, la strada della fuga è libera e ha il pavimento, passa lontano dalle Polaroid e fermo non ne copre
   nessuna, con lei all'oblò ancora da vedere non compare, dove sparisce non si vede da nessun punto della zona,
-  compare col giocatore girato dall'altra parte, guardato scappa, sparisce quando non si vede più, non ricompare, lo
-  stato si salva.
+  compare col giocatore girato dall'altra parte, guardato scappa, sparisce quando non si vede più (nessun osso in
+  vista dalla camera), non ricompare, lo stato si salva.
 - Verdi anche, in locale: check_scripts, test_bambini, test_agnellino, test_tecnici, test_risalita,
   test_sottomarino_lei, test_tappa7 e il controllo di posizionamento (nessun caso nuovo). Unito con `lavoro/godot`
   (le Polaroid nuove) prima degli ultimi test.

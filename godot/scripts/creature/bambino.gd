@@ -400,13 +400,24 @@ func _guardato_da(p: Player) -> bool:
 func visibile_da(p: Player) -> bool:
 	var cam := get_viewport().get_camera_3d()
 	var occhio := p.get_eye_position()
-	for i in 9:   # una griglia di punti sul corpo (solo in fuga): basta uno in vista
+	var punti: Array[Vector3] = []
+	# tutte le ossa del modello che si vede (dove sta davvero il corpo, anche di fianco: la griglia piatta qui sotto,
+	# col bambino girato di lato, finiva dietro uno spigolo mentre mezzo corpo era fuori; collaudo del 29 ottobre)...
+	for x in _piedi:
+		if not (x[0] as Node3D).visible:
+			continue
+		var sk := x[1] as Skeleton3D
+		for o in sk.get_bone_count():
+			punti.append(sk.global_transform * sk.get_bone_global_pose(o).origin)
+	# ...e una griglia di punti sul corpo (per i modelli senza ossa)
+	for i in 9:
 		for j in 5:
-			var punto: Vector3 = global_position + global_basis.y * (0.05 + i * 0.15) + global_basis.x * (j * 0.15 - 0.3)
-			if cam and not cam.is_position_in_frustum(punto):
-				continue
-			if _vista_libera(occhio, punto, p):
-				return true
+			punti.append(global_position + global_basis.y * (0.05 + i * 0.15) + global_basis.x * (j * 0.15 - 0.3))
+	for punto in punti:   # basta uno in vista
+		if cam and not cam.is_position_in_frustum(punto):
+			continue
+		if _vista_libera(occhio, punto, p):
+			return true
 	return false
 
 
