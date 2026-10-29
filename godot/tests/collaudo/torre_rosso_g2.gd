@@ -25,7 +25,7 @@ func _ready() -> void:
 	if a.size() > 3:
 		for t in a[3].split(";"):
 			var pe := t.split(",")
-			prove.append([float(pe[0]), float(pe[1]), float(pe[2])])
+			prove.append(Array(pe).map(func(x): return float(x)))
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -102,6 +102,17 @@ func _run() -> void:
 			if faccia:
 				faccia.light_energy = e[0]
 				faccia.visible = e[0] > 0.0
+				# in più (facoltativi): angolo del faretto, posizione nell'oblò x,y,z
+				if e.size() > 3:
+					(faccia as SpotLight3D).spot_angle = e[3]
+				if e.size() > 6:
+					faccia.position = Vector3(e[4], e[5], e[6])
+			# e l'opacità dell'ombra della lampada d'emergenza del muro (le luci con l'ombra entro 1,5 m)
+			if e.size() > 7:
+				for l in get_tree().root.find_children("*", "Light3D", true, false):
+					if (l as Light3D).shadow_enabled and (l as Node3D).global_position.distance_to(lampada) < 1.5:
+						(l as Light3D).shadow_opacity = e[7]
+						print("TORRE ombra lampada %s opacita %.2f" % [l.name, e[7]])
 			for v in o.find_children("Velo*", "MeshInstance3D", true, false):
 				var mv := (v as MeshInstance3D).material_override as StandardMaterial3D
 				if mv and mv.emission_enabled:
@@ -109,7 +120,7 @@ func _run() -> void:
 			var mvetro := (o.find_child("Vetro", true, false) as MeshInstance3D).material_override as StandardMaterial3D
 			if mvetro and mvetro.emission_enabled:
 				mvetro.emission = Color(1.0, 0.035, 0.02) * e[2]
-			nome = "_%s_%s_%s" % [e[0], e[1], e[2]]
+			nome = "_" + "_".join(e.map(func(x): return str(x)))
 		p.teleport(POSTO_TORRE)
 		p.look_at_point(o.global_position + Vector3.DOWN * 0.15)
 		await _fotogrammi(30)
@@ -118,12 +129,12 @@ func _run() -> void:
 		p.look_at_point(c)
 		await _fotogrammi(30)
 		await _scatto("vicino" + nome, false)
-		if k == 0:
+		if k == 0 or (e is Array and e.size() > 7):
 			p.teleport(POSTO_TORRE)
 			p.look_at_point(lampada + Vector3.DOWN * 0.4)
 			await _fotogrammi(30)
 			await _scatto("muro" + nome, false)
-		if k == 0 or k == lista.size() - 1:
+		if k == 0 or k == lista.size() - 1 or (e is Array and e.size() > 7):
 			p.teleport(condotte[0])
 			p.look_at_point(condotte[1])
 			await _fotogrammi(30)
