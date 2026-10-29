@@ -30,6 +30,8 @@ func _run() -> void:
 		await _ripartenze()
 	if "opzione" in _parti:
 		await _opzione()
+	if "continua" in _parti:
+		await _continua()
 	_fine()
 
 
@@ -204,3 +206,31 @@ func _opzione() -> void:
 		await get_tree().physics_frame
 	check(dopo2 > 0.2 and dopo2 < 0.45 and n.quanto == 1.0, "riaccesa risale piano (dopo 1 s %.2f) fino a piena" % dopo2)
 	print("  LINGUA: ", TranslationServer.translate("Nebbia viola"), " | testi.csv: Nebbia viola -> Purple fog")
+
+
+## Continua dal disco con il checkpoint nella sala: la nebbia nei primi 6 s, ogni quarto di secondo.
+func _continua() -> void:
+	print("5. Continua dal disco nella sala, la nebbia nel tempo")
+	await _carica_tutto()
+	GameState.save_to_disk = true
+	await _svuota()
+	await _frames(60)
+	GameState.reach_checkpoint(level.get_node(^"Piscina/CheckpointPozzaVuota") as Checkpoint)
+	await _frames(30)
+	GameState.reset_progress()
+	GameState.continue_from_disk()
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 240000:
+		await get_tree().process_frame
+		var s := get_tree().current_scene
+		if s != null and s.scene_file_path == LEVEL and GameState.player != null and is_instance_valid(GameState.player) and GameState.player.input_enabled:
+			break
+	var gp := GameState.player
+	for k in 24:
+		var cam := get_viewport().get_camera_3d()
+		print("  CONTINUA t %.2f s: quanto %.2f, in zona %s, giocatore %s, camera %s" % [k * 0.25, n.quanto, n.in_zona(),
+			gp.global_position.snapped(Vector3.ONE * 0.01) if is_instance_valid(gp) else "-", cam.global_position.snapped(Vector3.ONE * 0.01) if cam else "-"])
+		for i in 15:
+			await get_tree().physics_frame
+	check(n.quanto > 0.99, "con Continua dopo 6 s la nebbia è piena (%.2f)" % n.quanto)
+
