@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+12. Sonda del punto (0/3,6)
+  ok    c'è l'enigma dei giocattoli nella piscina
+    prima, da 1 m: -2.173 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde | da -0,97: -2.173 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde
+    pallone in (4.4, -1.997, -0.6), paperella in (0.4, -2.177922, 0.6)
+    subito dopo load_state: pallone y -2.17273640632629
+    dopo 5 fotogrammi: pallone in (0.0, -2.168689, 3.6) | da 1 m: -2.173 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde | senza escludere: -1.670 /root/SalaPrincipale/Piscina/EnigmaGiocattoli/Giocattoli/Pallone
+
+RISULTATO: 1 controlli ok, 0 falliti
+WARNING: 849 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 482 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: 2 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 128 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 47 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 62 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 187 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
