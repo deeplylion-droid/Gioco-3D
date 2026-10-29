@@ -656,9 +656,10 @@ func _process_modification() -> void:
 ## Gli aiuti: i tentacoli si calcolano in parallelo, sui thread del WorkerThreadPool e su questo, ognuno in un aiuto
 ## (un'altra MorbidezzaLei fuori dall'albero, con i suoi conti a parte e le forme di questa, che legge e basta); le
 ## ossa si scrivono qui, dopo. Il tentacolo k va sempre all'aiuto k % numero di aiuti, che ne tiene le forme vicine
-## come le terrebbe lei: i conti sono gli stessi, identici, di quando si facevano uno dopo l'altro. Gli aiuti sono il
-## doppio dei thread: ogni thread prende il prossimo libero, così finiscono insieme (test_morbidezza_inseguimento del
-## 29 ottobre: alla grata il costo medio da 5,7 a 3,3 ms, sui 4 thread del sandbox).
+## come le terrebbe lei: i conti sono gli stessi, identici, di quando si facevano uno dopo l'altro. Un aiuto per
+## tentacolo: ogni thread prende il prossimo libero, così finiscono insieme anche quando un thread è rallentato dai
+## caricamenti (test_morbidezza_inseguimento del 29 ottobre: alla grata il costo medio da 5,7 a 3,3 ms, sui 4 thread
+## del sandbox; con aiuti di tre tentacoli il principale aspettava fino a 9 ms nel tunnel).
 ## Nei conti degli aiuti niente AABB, Basis e Transform3D: Godot le tiene in un allocatore con un lucchetto, e con più
 ## thread ognuno aspettava gli altri (provato: 5 volte più lento che da solo). Le scatole sono inizio e fine (Vector3),
 ## coi conti di AABB (aabb.h) e gli stessi risultati: has_point è p.clamp(inizio, fine) == p; intersects è
@@ -692,7 +693,7 @@ func _notification(what: int) -> void:
 func _esegui_lavori(lavori: Array) -> void:
 	if _aiuti.is_empty():
 		_thread = clampi(OS.get_processor_count(), 1, _AIUTI)
-		for i in 2 * _thread if _thread > 1 else 1:
+		for i in maxi(_catene.size(), 1) if _thread > 1 else 1:
 			_aiuti.append((get_script() as GDScript).new())
 	# (la griglia delle forme si fa qui: gli aiuti la usano insieme, senza cambiarla)
 	if _forme.size() > 24:
