@@ -490,7 +490,7 @@ func _portellone() -> void:
 		# lo trovava e il giocatore finiva a -99)
 		stand.y = _fondo_sotto(Vector3(stand.x, 1.0, stand.z), []) + 0.05
 		p.teleport(stand, 0.0, 0.0)
-		await _frames(4)
+		await _frames(20)
 		p.water_pack.set_tank_amount(30.0)
 		var su := 0.0
 		var esclusi: Array = []
@@ -498,7 +498,8 @@ func _portellone() -> void:
 			esclusi.append(enigma.giocattolo(k).get_rid())
 		Input.action_press(&"spray")
 		for f in 360:
-			p.look_at_point(g.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[1] * 0.6, 0))
+			# (come la spinta di test_enigma: un po' più in alto, il getto scende)
+			p.look_at_point(g.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[1] * 0.75 + 0.1 * Vector2(g.global_position.x - stand.x, g.global_position.z - stand.z).length(), 0))
 			await get_tree().physics_frame
 			su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
 		Input.action_release(&"spray")
