@@ -28,11 +28,11 @@
 	{
 		"alto": 0.9,
 		"centro": [
-			36.0,
+			35.6,
 			-4.64,
 			-4.0
 		],
-		"largo": 2.0,
+		"largo": 1.6,
 		"luce": 1.45,
 		"mesh": "TorreStruttura/torre_A",
 		"nome": "torre_3",
@@ -49,7 +49,8 @@
 		"punteggio": 64.8,
 		"scena": "res://scenes/sala/torre/sala_torre.tscn",
 		"vista": 36,
-		"zona": "torre"
+		"zona": "torre",
+		"nota": "spostato di 40 cm verso il muro libero: a 36 m le scale ne coprivano un pezzo"
 	},
 	{
 		"alto": 0.45,
@@ -79,29 +80,29 @@
 		"alto_su": true
 	},
 	{
-		"alto": 0.8,
+		"alto": 0.9,
 		"centro": [
-			46.91,
-			-33.25,
-			2.0
+			40.4,
+			-33.2,
+			-0.6
 		],
-		"largo": 1.6,
-		"luce": 0.91,
+		"largo": 2.0,
+		"luce": 1.83,
 		"mesh": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
-		"nome": "inseguimento_2",
+		"nome": "inseguimento_1",
 		"normale": [
+			1.0,
 			0.0,
-			0.0,
-			-1.0
+			0.0
 		],
 		"occhi": [
-			47.1,
+			44.6,
 			-32.4,
-			-2.5
+			-2.0
 		],
-		"punteggio": 96.7,
+		"punteggio": 124.2,
 		"scena": "res://scenes/sala/torre/sala_torre.tscn",
-		"vista": 83,
+		"vista": 69,
 		"zona": "inseguimento"
 	},
 	{
@@ -133,27 +134,27 @@
 	{
 		"alto": 0.5,
 		"centro": [
-			40.4,
+			46.91,
 			-31.75,
-			-0.6
+			2.0
 		],
 		"largo": 1.4,
-		"luce": 2.39,
+		"luce": 1.12,
 		"mesh": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
-		"nome": "alto_inseguimento_2",
+		"nome": "alto_inseguimento_1",
 		"normale": [
-			1.0,
 			0.0,
-			0.0
+			0.0,
+			-1.0
 		],
 		"occhi": [
-			44.6,
+			47.1,
 			-32.4,
-			-2.0
+			-2.5
 		],
-		"punteggio": 74.2,
+		"punteggio": 102.2,
 		"scena": "res://scenes/sala/torre/sala_torre.tscn",
-		"vista": 106,
+		"vista": 146,
 		"zona": "inseguimento",
 		"alto_su": true
 	},
