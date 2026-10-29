@@ -39,6 +39,10 @@ def serie(m):
 
 
 def scegli(m, k):
+    # un muro può avere il suo disegno (per esempio in sala niente Jilly rosa: sembrerebbe la medusina del disegno
+    # degli acquari, l'indizio dell'enigma)
+    if m.get('disegno'):
+        return getattr(disegni, m['disegno'])
     # ogni serie a turno in tutto il gioco, così ci sono tutti i disegni e non due uguali di fila
     s = getattr(disegni, serie(m))
     return s[k % len(s)]

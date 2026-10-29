@@ -202,7 +202,7 @@
 		"zona": "sala",
 		"centro": [
 			-9.65,
-			0.85,
+			1.3,
 			20.0
 		],
 		"normale": [
@@ -211,7 +211,7 @@
 			-1.0
 		],
 		"largo": 1.6,
-		"alto": 0.6,
+		"alto": 0.5,
 		"texture": "res://assets/ambiente/scarabocchi/scarabocchio_sala_1.png",
 		"sbiadito": 0.0
 	},
