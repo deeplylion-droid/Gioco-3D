@@ -84,3 +84,18 @@ ricapita in gioco.
 - Script: `tests/collaudo/stress_morbidezza_thread.gd` (PROVA=1: la sala dell'inseguimento da sola),
   `tests/collaudo/confronta_dump_morbidezza.gd`, MORB_DUMP in `tests/misura_morbidezza.gd`;
   `tests/video_inseguimento_lei.gd` ora va a tempo anche a 60 fps (contava i secondi a 30 fotogrammi) e ha "scolo_N".
+
+## Le correzioni di grafica (lavoro/morbidezza-correzioni 7accf064): lei che sbuca a 60 fps
+
+Prima = 88355cee, dopo = 7accf064 (per lei che sbuca cambia solo `morbidezza_lei.gd`).
+
+- `test_morbidezza_sbuca` a 60 fps: lo scatto da 35,0 e 34,3 m/s scende a 19,1 e 15,5 m/s (il limite è 25), pelle 0
+  vertici dentro in tutte e due, test verde (prima 3 KO).
+- Dalla camera del giocatore, 7 m davanti alla fossa, a 60 fps (`tests/collaudo/scatti_lei_sbuca.gd`, la sala per
+  parti come gli scatti della nebbia: solo sala, luci, vasche e lei, e le mesh entro 22 m; memoria 12,2 GB): il punto
+  dei tentacoli più veloce va da 34 m/s (fotogrammi 118, 138, 158: il tentacolo che pende dal bordo cambia posto di
+  colpo) a 15,8 m/s. `lei_sbuca_60fps_prima_dopo.jpg` (i fotogrammi intorno agli scatti, ritagliati su di lei) e
+  `lei_sbuca_60fps_prima_dopo.mp4` (affiancati, a 60 fps); `lei_sbuca_60fps_prima_138.jpg` e `..._dopo_138.jpg`
+  interi.
+- Grata e scolo_2: gli scatti di grafica (`docs/tecnico/morbidezza_leggera/` sul suo branch) prima e dopo coincidono;
+  nessun tentacolo che salta o entra nella struttura.
