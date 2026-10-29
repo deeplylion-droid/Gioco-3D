@@ -61,7 +61,7 @@ func _run() -> void:
 	torre.process_mode = Node.PROCESS_MODE_INHERIT
 	campioni.clear()
 	var o := torre.oblo
-	var rosso := o.get_node_or_null(^"RossoVasca") as OmniLight3D
+	var rosso := o.get_node_or_null(^"RossoVasca") as Light3D
 	await _fotogrammi(20)
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:

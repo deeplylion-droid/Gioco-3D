@@ -173,26 +173,29 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 
 ## Il rosso dentro la vasca dell'oblò (scelta B dell'utente del 29 ottobre, "com'era prima: si rimette un po' di rosso
 ## solo dentro la vasca"). Fino alla 0.3.15 lei e l'acqua dietro di lei prendevano il rosso della lampada d'emergenza
-## del muro est, che senza ombra passava il muro (e faceva la riga rossa nelle condotte); ora quella lampada fa ombra, e
-## il suo rosso lo rimette una luce debole dentro la vasca, dalla stessa parte (in alto, verso sud), con l'ombra: la
-## vasca e il guscio d'ombra la tengono dentro. Senza nebbia: dalla cisterna passerebbe, come quella di lei.
-## Sta sotto l'oblò, quindi la preparazione della torre (prepara_materiali) la disegna con lui.
-@export var oblo_rosso := 0.6
-const OBLO_ROSSO_POSTO := Vector3(-1.3, 1.6, -0.75)   # nell'oblò: x lungo il muro, y in su, z dentro la vasca
+## del muro est, che senza ombra passava il muro (e faceva la riga rossa nelle condotte) e le illuminava la faccia da
+## davanti; ora quella lampada fa ombra, e il suo rosso lo rimette un faretto debole nel foro del muro, davanti al vetro,
+## puntato dentro la vasca: le illumina la faccia come prima, la torre resta com'è (punta via da lei), e la vasca e il
+## guscio d'ombra tengono la luce dentro. Con l'ombra, senza nebbia (dalla cisterna passerebbe, come quella di lei).
+## Sta sotto l'oblò, quindi la preparazione della torre (prepara_materiali) lo disegna con lui.
+@export var oblo_rosso := 1.5
+## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
+const OBLO_ROSSO_POSTO := Vector3(0.0, 0.3, -0.15)
 
 
 func _rosso_vasca() -> void:
 	if oblo_rosso <= 0.0 or oblo == null:
 		return
-	var l := OmniLight3D.new()
+	var l := SpotLight3D.new()
 	l.name = "RossoVasca"
 	l.light_color = ROSSO
 	l.light_energy = oblo_rosso
-	l.omni_range = 4.5
+	l.spot_range = 4.0
+	l.spot_angle = 55.0
 	l.shadow_enabled = true
 	l.light_volumetric_fog_energy = 0.0
 	l.set_meta(&"risveglio_ignora", true)
-	l.position = OBLO_ROSSO_POSTO
+	l.position = OBLO_ROSSO_POSTO     # (guarda lungo -z: dentro la vasca)
 	oblo.add_child(l)
 
 
