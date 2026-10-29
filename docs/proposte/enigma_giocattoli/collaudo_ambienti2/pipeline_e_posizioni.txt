@@ -1,0 +1,14 @@
+PIPELINE base (dopo il caricamento e il riscaldamento) [62, 156]
+PIPELINE piena: draw +2, specializzazione +2
+PIPELINE vuota coi giocattoli posati: draw +0, specializzazione +0
+PIPELINE un piatto sceso: draw +0, specializzazione +0
+PIPELINE risolto, luce verde: draw +0, specializzazione +0
+PIPELINE a metà enigma: draw 2, specializzazione 4
+POSIZIONE a_vuota_giocattolo 0: giocattolo (0.3, -2.147935, 2.5), cerchio (-3.899992, -2.008634, 3.299997), piatto giù false
+POSIZIONE a_vuota_giocattolo 1: giocattolo (4.4, -1.997, -0.6), cerchio (3.899995, -2.007857, 3.299998), piatto giù false
+POSIZIONE a_vuota_giocattolo 2: giocattolo (-0.2, -2.066477, -0.8), cerchio (-3.899999, -2.000982, -0.1), piatto giù false
+POSIZIONE b_sbaglio_paperella_su_rosso 0: giocattolo (3.899995, -1.974844, 3.299998), cerchio (-3.899992, -2.008634, 3.299997), piatto giù false
+POSIZIONE c_risolto 0: giocattolo (-3.899992, -2.000634, 3.299997), cerchio (-3.899992, -2.008634, 3.299997), piatto giù true
+POSIZIONE c_risolto 1: giocattolo (3.899995, -1.999857, 3.299998), cerchio (3.899995, -2.007857, 3.299998), piatto giù true
+POSIZIONE c_risolto 2: giocattolo (-3.899999, -1.992982, -0.1), cerchio (-3.899999, -2.000982, -0.1), piatto giù true
+PIPELINE totale col collaudo (torcia compresa) [64, 162]

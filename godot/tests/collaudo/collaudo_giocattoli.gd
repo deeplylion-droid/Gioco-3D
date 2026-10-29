@@ -193,7 +193,9 @@ func _morte() -> void:
 	print("  Continua dopo una chiusura")
 	GameState.reset_progress()
 	check(GameState.continue_from_disk(), "c'è il salvataggio su disco")
-	for k in 2400:
+	# (la sala si carica nel thread dalla schermata di caricamento: si aspetta fino a 4 minuti veri)
+	var t_cont := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_cont < 240000:
 		await get_tree().process_frame
 		var s := get_tree().current_scene
 		if s != null and s.scene_file_path == LEVEL and GameState.player != null and is_instance_valid(GameState.player) \
@@ -277,3 +279,67 @@ func _sponda() -> void:
 		check(staccato, "giocattolo %d in %s: sparando sul muro accanto si stacca dal muro" % [i, caso])
 		if staccato:
 			check(await _spingi_misura(i, "dopo la sponda %s" % caso, 25), "giocattolo %d in %s: poi arriva al suo cerchio (%s)" % [i, caso, _dove(i)])
+
+
+## La spinta di test_enigma_giocattoli.gd, con una correzione per il collaudo: se dietro al giocattolo alla distanza
+## voluta c'è il muro, il giocatore si avvicina invece di passare subito alla sponda (che spara lontano dal giocattolo).
+func _spingi(i: int, max_colpi := 40) -> bool:
+	var g := enigma.giocattolo(i)
+	var c := enigma.cerchio(i).global_position
+	for colpo in max_colpi:
+		var gp := g.global_position
+		var d := Vector2(c.x - gp.x, c.z - gp.z)
+		if enigma.piatto_giu(i) or (d.length() < 0.1 and enigma.velocita(i) < 0.05):
+			return true
+		var dir := d.normalized()
+		var dietro := clampf(1.6 + d.length() * 0.3, 1.8, 3.0)
+		var voluto := Vector2(gp.x - dir.x * dietro, gp.z - dir.y * dietro)
+		# dove si sta: nella parte profonda, non troppo vicino al muro sud (lì c'è la cassetta del pulsante, che
+		# prenderebbe il getto). Se dietro di lui non ci si sta (è contro un muro), lo si spinge di sponda: davanti a lui,
+		# colpendo il muro o l'acqua alle sue spalle l'onda lo manda verso il cerchio (e verso chi spruzza)
+		var dove_si_sta := Rect2(-6.4, -4.0, 12.8, 7.9)
+		# (collaudo: se dietro di lui alla distanza voluta non ci si sta, ci si avvicina, fino a 1,2 m, come farebbe un
+		# giocatore; di sponda solo se nemmeno così)
+		if not dove_si_sta.has_point(voluto):
+			for k in 8:
+				var dd := lerpf(dietro, 1.2, (k + 1) / 8.0)
+				var prova := Vector2(gp.x - dir.x * dd, gp.z - dir.y * dd)
+				if dove_si_sta.has_point(prova):
+					voluto = prova
+					break
+		var sponda := not dove_si_sta.has_point(voluto)
+		var stand := Vector3(voluto.x, 0.0, voluto.y)
+		var lato := Vector2(-dir.y, dir.x)
+		if sponda:
+			# di fianco, colpendo l'acqua (o il muro) dietro di lui ma accanto, così il getto non prende lui
+			if not dove_si_sta.has_point(Vector2(gp.x, gp.z) + lato * 2.2):
+				lato = -lato
+			stand = Vector3(gp.x + lato.x * 2.2, 0.0, gp.z + lato.y * 2.2)
+		stand.y = _fondo_sotto(Vector3(stand.x, 0.0, stand.z), []) + 0.05
+		p.teleport(stand, atan2(-(gp.x - stand.x), -(gp.z - stand.z)), 0.0)
+		await _frames(4)
+		p.water_pack.set_tank_amount(20.0)
+		# si spruzza finché va alla velocità giusta per arrivarci scivolando (non oltre)
+		var v_obiettivo := clampf(d.length() * 0.8, 0.3, 1.8)
+		Input.action_press(&"spray")
+		for f in 70:
+			# (un po' più in alto: il getto scende)
+			var mira := g.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[i] * 0.75 + 0.1 * Vector2(gp.x - stand.x, gp.z - stand.z).length(), 0)
+			if sponda:
+				mira = g.global_position - Vector3(dir.x, 0.0, dir.y) * (EnigmaGiocattoli.RAGGI[i] + 0.3) \
+					+ Vector3(lato.x, 0.0, lato.y) * (EnigmaGiocattoli.RAGGI[i] + 0.1)
+			p.look_at_point(mira)
+			await get_tree().physics_frame
+			if f > 8 and enigma.velocita(i) >= v_obiettivo:
+				break
+		Input.action_release(&"spray")
+		for f in 90:
+			await get_tree().physics_frame
+			if enigma.velocita(i) < 0.05:
+				break
+		print("    colpo %d: giocattolo %d a %.2f m dal cerchio, colpito %d volte, acqua %d, altro %d" % [colpo, i,
+			Vector2(c.x - g.global_position.x, c.z - g.global_position.z).length(), _colpi.get("giocattolo", 0),
+			_colpi.get("acqua", 0), _colpi.get("altro", 0)], " ", _colpi.get("primo", ""), " giocatore ", p.global_position.snapped(Vector3.ONE * 0.01))
+		_colpi.clear()
+	var fine := enigma.giocattolo(i).global_position
+	return enigma.piatto_giu(i) or Vector2(fine.x, fine.z).distance_to(Vector2(c.x, c.z)) < 0.15
