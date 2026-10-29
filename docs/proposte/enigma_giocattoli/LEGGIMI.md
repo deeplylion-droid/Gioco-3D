@@ -51,8 +51,22 @@ Il disegno è sul muro ovest (x -6.97), all'altezza di z -0.2, fra 0,35 e 1,25 m
 
 Cosa è stato tenuto libero, e come:
 - **i cerchi** stanno sul fondo piano fuori dalla conca della botola, lontano dalla P5, dalle scalette, dalla ripartenza del checkpoint e dai gonfiabili;
-- **i giocattoli appoggiati sul fondo** non vanno sulla P5, al piede delle scalette, sulla ripartenza e sui gonfiabili: ne scivolano giù;
+- **i giocattoli appoggiati sul fondo** non vanno sulla P5, sulla ripartenza e sui gonfiabili: ne scivolano giù;
 - **galleggiando** ci passano sopra.
+
+**Dove i giocattoli non si incastrano più** (collaudo di ambienti-2 del 29 ottobre, su 519e34f6). C'erano tre posti dove un giocattolo restava bloccato, e con lui l'enigma.
+1. **Contro i muri e negli angoli.** I giocattoli arrivavano a 40 cm dai muri: lì il giocatore non può mettersi dietro per spingerli via. Ora restano a circa un metro (x da -5,9 a 5,9, z da -3,5 a 3,95). Le scalette restano fuori.
+2. **Sotto la scaletta ovest.** Il posto libero della scaletta li rispingeva contro il muro, e il getto che cadeva sul fondo davanti al muro ce li rimandava. Ora la scaletta è fuori dall'area. L'acqua e il fondo colpiti non spingono più un giocattolo verso il bordo, se ci è già contro.
+3. **Sopra un gonfiabile.** Spinto a lungo, il pallone entrava 20 cm nella ciambella e restava sospeso sopra. Ora:
+   - i gonfiabili hanno la loro misura vera: i tubi diventano una fila di cerchi lungo l'asse;
+   - chi arriva da fuori non ci entra più di 1 cm;
+   - un giocattolo spostato da fermo si riassesta sul fondo e non resta più per aria;
+   - posato sopra un gonfiabile dall'acqua che cala, ne scivola giù.
+
+`test_enigma_giocattoli` prova anche questi casi:
+- da ogni angolo e da sotto le due scalette, a piscina vuota e piena, si riporta il giocattolo al suo cerchio col getto;
+- il pallone spinto 4 s contro ogni gonfiabile non ci entra e non ci sale;
+- la paperella posata sulla ciambella calando l'acqua ne scivola giù.
 
 ## I gonfiabili d'arredo della parte profonda
 
