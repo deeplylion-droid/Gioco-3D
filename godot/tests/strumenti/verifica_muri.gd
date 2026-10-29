@@ -50,6 +50,8 @@ func _candidati(spazio: PhysicsDirectSpaceState3D, _punti: Array) -> Array:
 					continue
 				if absf(n.dot(hh.position as Vector3) - piano) > 0.035 or (hh.normal as Vector3).dot(n) < 0.95:
 					storti += 1
+					print("    storto a %d/12 in largo, %d/6 in alto (dal basso a sinistra guardando il muro): fuori dal piano %.3f, normale %.2f" % [iu, 6 - iv,
+							n.dot(hh.position as Vector3) - piano, (hh.normal as Vector3).dot(n)])
 				var mi: MeshInstance3D = _corpi.get(hh.rid)
 				if mi == null or not _architettura(mi):
 					var k := String(_radice.get_path_to(mi)) if mi else "?"
