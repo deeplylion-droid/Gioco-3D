@@ -5,6 +5,9 @@ extends Node
 ## la pozza e le vasche, la mascotte, gli scarabocchi) nella posizione che ha nella sala, con l'ambiente e gli attributi
 ## della camera della sala (LookSala). Per ogni vista, dagli occhi del giocatore (1,6 m): lo scatto senza nebbia e con
 ## ogni variante, e il costo misurato dal motore. L'alone della nebbia prende le 4 lampade più importanti della vista.
+## Neanche così ci sta tutta (fuori memoria compilando le pipeline): come in tests/strumenti/scatti_muri.gd ogni mesh
+## parte spenta e a ogni vista si accendono solo quelle entro [constant RAGGIO] m dalla camera e dal punto guardato.
+## Le luci della sala come le trova il giocatore all'inizio (prima del risveglio).
 ## Uso (sotto il render.lock): tools/scatto_sicuro.sh res://proposte/nebbia_viola/scatti_sala.gd <cartella> \
 ##        ["nome:forza:lontano:oltre:cala,..."] [viste separate da virgole]
 
@@ -17,7 +20,12 @@ const CAMERE := {
 	"torre": [Vector3(-4.0, 1.6, 2.0), Vector3(19.8, 3.0, -15.0)],
 }
 
+const RAGGIO := 22.0
+
 var _look: LookSala
+var _radice: Node3D
+var _prima := {}         # GeometryInstance3D -> se era visibile (quelle nascoste dal gioco restano nascoste)
+var _accese := {}
 
 
 func _ready() -> void:
@@ -37,8 +45,11 @@ func _run() -> void:
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("alto")
 	Grafica.imposta("antialiasing", 2)
+	GameState.imposta_luci(GameState.Luci.PRIMA_DEL_RISVEGLIO)
 	var radice := Node3D.new()
 	radice.name = "SalaPerNebbia"
+	_radice = radice
+	get_tree().node_added.connect(_aggiunto)
 	var tutta := (load(SALA) as PackedScene).instantiate()
 	for percorso in PARTI:
 		var n := tutta.get_node_or_null(NodePath(percorso)) as Node3D
@@ -62,6 +73,7 @@ func _run() -> void:
 	var cam := Camera3D.new()
 	cam.fov = 62.0
 	cam.near = 0.05
+	cam.far = 60.0
 	radice.add_child(cam)
 	get_tree().root.add_child(radice)
 	cam.make_current()
@@ -77,6 +89,7 @@ func _run() -> void:
 		var c: Array = CAMERE[nome]
 		cam.global_position = c[0]
 		cam.look_at(c[1], Vector3.UP)
+		_accendi(c[0], c[1])
 		nebbia.imposta_luci(_luci_della_vista(radice, cam))
 		nebbia.attiva = false
 		var senza := await _misura(vp)
@@ -96,6 +109,37 @@ func _run() -> void:
 			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION)])
 	print("memoria massima del processo %d MB" % (OS.get_static_memory_peak_usage() / 1048576))
 	get_tree().quit()
+
+
+## Ogni mesh che entra nella scena parte spenta (se non è fra quelle accese per la vista).
+func _aggiunto(n: Node) -> void:
+	if n is GeometryInstance3D and n != null and _radice and _radice.is_ancestor_of(n) and not _accese.has(n):
+		if not _prima.has(n):
+			_prima[n] = (n as GeometryInstance3D).visible
+		(n as GeometryInstance3D).visible = false
+
+
+## Accende le mesh entro RAGGIO dalla camera o dal punto guardato (e il resto spento).
+func _accendi(da: Vector3, a: Vector3) -> void:
+	_accese.clear()
+	var n_accese := 0
+	for n in _radice.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		if g.get_parent() is Camera3D:
+			continue
+		if not _prima.has(g):
+			_prima[g] = g.visible
+		var b := g.global_transform * g.get_aabb()
+		var vicino := (_distanza(b, da) < RAGGIO or _distanza(b, a) < RAGGIO) and bool(_prima[g])
+		if vicino:
+			_accese[g] = true
+			n_accese += 1
+		g.visible = vicino
+	print("NEBBIA mesh accese %d di %d" % [n_accese, _prima.size()])
+
+
+static func _distanza(b: AABB, p: Vector3) -> float:
+	return p.clamp(b.position, b.end).distance_to(p)
 
 
 ## Le 4 lampade più importanti della vista: accese, davanti alla camera, entro 25 m; prima le più forti e vicine.
