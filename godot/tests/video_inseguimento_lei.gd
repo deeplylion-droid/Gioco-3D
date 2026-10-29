@@ -73,6 +73,10 @@ func _avvia() -> void:
 
 
 func _testa() -> Vector3:
+	# (GUARDA=x,y,z: la camera guarda sempre quel punto, per esempio la base di lei)
+	if OS.has_environment("GUARDA"):
+		var g := OS.get_environment("GUARDA").split_floats(",")
+		return Vector3(g[0], g[1], g[2])
 	if sala.lei.visible:
 		var o: Vector3 = sala.lei.get_eye_position()
 		if o != Vector3.ZERO:
