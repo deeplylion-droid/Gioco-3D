@@ -813,6 +813,20 @@ func _ostacoli_fondo() -> Array[Vector3]:
 		for k in passi + 1:
 			var q := Vector2(c.x, c.z) + asse * lerpf(-meta, meta, float(k) / passi)
 			out.append(Vector3(q.x, q.y, r))
+	# due gonfiabili (o un gonfiabile e un posto libero) più vicini di un giocattolo: fra loro una capsula, se no nella
+	# tacca in mezzo il giocattolo spinto si ferma (fra il salvagente e la ciambella, 34 cm); di lì non passerebbe
+	var statici: Array[Dictionary] = _capsule.duplicate()
+	for l in liberi:
+		statici.append({"a": Vector2(l.x, l.y), "b": Vector2(l.x, l.y), "r": l.z})
+	for x in statici.size():
+		for y in range(x + 1, statici.size()):
+			var fa: Dictionary = statici[x]
+			var fb: Dictionary = statici[y]
+			var pa := _vicino(fa, _vicino(fb, ((fa["a"] as Vector2) + (fa["b"] as Vector2)) * 0.5))
+			var pb := _vicino(fb, pa)
+			pa = _vicino(fa, pb)
+			if pa.distance_to(pb) - float(fa["r"]) - float(fb["r"]) < 2.0 * RAGGI.max():
+				_capsule.append({"a": pa, "b": pb, "r": minf(fa["r"], fb["r"])})
 	return out
 
 
