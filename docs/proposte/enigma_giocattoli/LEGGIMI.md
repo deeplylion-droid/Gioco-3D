@@ -132,6 +132,12 @@ Gli scatti, presi dal video:
   - Quello che si vede si disegna una volta fuori vista appena la sala è pronta, sullo strato 1<<15 (`RiscaldamentoShader.disegna_fuori_vista`), così a metà enigma non si compilano pipeline nuove.
   - Lo stato si salva coi checkpoint: dove sono i giocattoli e quali piatti sono scesi.
   - Il disegno ha un filo di luce propria (`luce_disegno`, 0,12; da approvare, vedi sotto).
+  - La texture del disegno (`assets/models/enigma_giocattoli/disegno_piscina.png`) è importata VRAM Compressed con le mipmap, come le altre del gioco: prima era Lossless senza mipmap. Negli scatti ravvicinati dal punto del giocatore le linee fini e i cerchi colorati restano uguali. La differenza media è di 1-2 livelli su 255; si rifà con `tests/scatti_disegno_vicino.gd`.
+
+![import vicino](import_disegno_vicino.jpg)
+![import dettaglio](import_disegno_dettaglio.jpg)
+![import dal video](import_disegno_dal_video.jpg)
+
 - `scripts/game/piscina_onde.gd`: c'è la `serratura`.
   - A piscina vuota il pulsante della botola si preme solo a serratura aperta.
   - Il lampeggiante è giallo prima e verde dopo, e verde fisso quando la botola è aperta.
