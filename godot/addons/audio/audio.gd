@@ -1013,7 +1013,7 @@ func _collega_neon(n: Node) -> void:
 	n.connect(&"scintilla", func(): suona(&"neon_scintilla", (n as Node3D).global_position))
 	_attivi.append(Funzione.new(n, func(_d: float):
 		if l:
-			l.volume = clampf(float(n.get(&"livello")), 0.0, 1.0)))
+			l.volume = clampf(float(n.get(&"livello")), 0.0, 1.0), [l]))
 
 
 func _collega_emergenza(n: Node) -> void:
@@ -1033,7 +1033,7 @@ func _collega_emergenza(n: Node) -> void:
 		if ronzio:
 			ronzio.volume = (0.35 + 0.65 * liv) if acceso else 0.0
 		if giro:
-			giro.volume = 1.0 if modo == 2 else 0.0))
+			giro.volume = 1.0 if modo == 2 else 0.0, [omni, ronzio, giro]))
 
 
 func _collega_gocce(n: Node) -> void:
@@ -1094,7 +1094,7 @@ func _collega_giocatore(n: Node) -> void:
 			_attivi.append(Funzione.new(n, func(_d: float):
 				var v: float = n.call(&"get_slide_speed")
 				scivolo.volume = clampf(0.25 + v / 14.0, 0.0, 1.1) if bool(n.get(&"is_sliding")) else 0.0
-				scivolo.tono = clampf(0.8 + v * 0.025, 0.8, 1.35)))
+				scivolo.tono = clampf(0.8 + v * 0.025, 0.8, 1.35), [scivolo]))
 
 
 func _nome_passo(superficie: StringName, bagnato: bool) -> StringName:
@@ -1276,18 +1276,26 @@ class Segui:
 		return true
 
 
-## Una funzione chiamata a ogni fotogramma finché il nodo esiste.
+## Una funzione chiamata a ogni fotogramma finché il nodo esiste, e finché esistono gli oggetti che la funzione cattura
+## ([param usa]: i loop e le luci figli del nodo). Quando una scena si libera dalle foglie (AccensioneAPezzi.libera,
+## all'uscita dalla sala e alla chiusura) i figli spariscono prima del nodo, che resta nell'albero ancora qualche
+## fotogramma: chiamare la funzione allora dava "Lambda capture at index 4 was freed" (difetto di mascotte, 29 ottobre).
 class Funzione:
 	var n: Node
 	var f: Callable
+	var usa: Array = []
 
-	func _init(nodo: Node, funzione: Callable) -> void:
+	func _init(nodo: Node, funzione: Callable, oggetti: Array = []) -> void:
 		n = nodo
 		f = funzione
+		usa = oggetti.filter(func(o): return o != null)
 
 	func aggiorna(_a, d: float) -> bool:
 		if not is_instance_valid(n) or not n.is_inside_tree():
 			return false
+		for o in usa:
+			if not is_instance_valid(o):
+				return false
 		f.call(d)
 		return true
 
