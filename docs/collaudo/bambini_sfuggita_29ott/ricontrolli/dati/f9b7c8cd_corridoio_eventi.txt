@@ -1,0 +1,10 @@
+568.39 pronto: bambino ATTESA, oblò 0
+815.01 in fondo alla scala in (-4.42, -5.4, 49.2); oblò 1, bambino ATTESA
+844.47 guardando la scala: oblò 1
+1097.35 dopo aver guardato l'oblò: oblò 2
+1141.91 BambinoCorridoioFiume compare in (-4.8, -5.4, 66.7) (pipeline in questo fotogramma 0, lei all'oblò visibile false)
+1220.55 dopo aver guardato via: oblò 4, bambino GUARDA
+1596.50 dopo 2.6 s verso il fondo: bambino SCAPPA
+1738.88 BambinoCorridoioFiume sparisce: 11 ossa su 24 in vista dalla camera nel fotogramma prima: Hips, LeftUpLeg, RightUpLeg, RightLeg, RightFoot, RightToeBase, Spine02, Spine01, LeftArm, LeftForeArm, LeftHand
+1738.88 BambinoCorridoioFiume sparisce in (-5.95, -5.39, 65.98): NELL'INQUADRATURA E NON COPERTO, a 13.6 m; il giocatore gli è arrivato a 13.13 m (dalla capsula alla scatola)
+1865.44 fine: bambino FINITO, giocatore in (-4.97, -5.4, 52.86)

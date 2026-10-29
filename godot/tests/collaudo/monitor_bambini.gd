@@ -21,6 +21,8 @@ var _cam: Camera3D
 var _scatto_t := 0.0
 var _n := 0
 var _t0 := 0
+var _ossa := {}          # instance id -> le ossa nel mondo nel fotogramma prima (nome -> posizione)
+var _vicino := {}        # instance id -> distanza minima (m) fra la capsula del giocatore e la scatola del bambino
 
 
 func _init(cartella: String) -> void:
@@ -84,7 +86,8 @@ func _process(delta: float) -> void:
 		if vis and not prima[0]:
 			evento("%s compare in %s (pipeline in questo fotogramma %d, lei all'oblò visibile %s)" % [nome, bn.global_position.snapped(Vector3.ONE * 0.01), nuove, lei_oblo])
 		if not vis and prima[0]:
-			evento("%s sparisce in %s: %s" % [nome, (prima[2] as Vector3).snapped(Vector3.ONE * 0.01), _davanti(cam, prima[2], bn)])
+			evento("%s sparisce: %s" % [nome, _ossa_in_vista(cam, _ossa.get(id, {}))])
+			evento("%s sparisce in %s: %s; il giocatore gli è arrivato a %.2f m (dalla capsula alla scatola)" % [nome, (prima[2] as Vector3).snapped(Vector3.ONE * 0.01), _davanti(cam, prima[2], bn), float(_vicino.get(id, 99.0))])
 		if not vis:
 			_prima[id] = [false, {}, prima[2]]
 			continue
@@ -116,12 +119,26 @@ func _process(delta: float) -> void:
 			if absf(db.y) / delta < 0.1:
 				scivola_basso = Vector2(db.x, db.z).length() / delta
 		var tocca := _tocca(bn, spazio)
+		var gp := GameState.player
+		if gp and is_instance_valid(gp):
+			# dal giocatore (capsula di raggio 0,3 m, in piano) alla scatola del bambino
+			var bb := _aabb(bn)
+			var q := Vector3(clampf(gp.global_position.x, bb.position.x, bb.end.x), 0, clampf(gp.global_position.z, bb.position.z, bb.end.z))
+			var dg := Vector2(gp.global_position.x - q.x, gp.global_position.z - q.z).length() - 0.3
+			_vicino[id] = minf(float(_vicino.get(id, 99.0)), dg)
 		var p13d := -1.0
 		if p13:
 			p13d = _dist_aabb(_aabb(bn), _aabb(p13)) * 100.0
 		_csv.store_line("%.3f;%s;%s;%s;%.3f;%.3f;%.3f;%.1f;%.2f;%.2f;%s;%.0f;%s;%d;%s" % [_t(), nome, stato, mod, bn.global_position.x, bn.global_position.y,
 			bn.global_position.z, basso * 100.0 if basso < 90 else -1.0, scivola, scivola_basso, tocca, p13d, lei_oblo, nuove, sotto])
 		_prima[id] = [true, piedi, _aabb(bn).get_center()]
+		var ossa := {}
+		for sk in bn.find_children("*", "Skeleton3D", true, false):
+			var sks := sk as Skeleton3D
+			if sks.is_visible_in_tree():
+				for i in sks.get_bone_count():
+					ossa[sks.get_bone_name(i)] = sks.global_transform * sks.get_bone_global_pose(i).origin
+		_ossa[id] = ossa
 		# gli scatti
 		_scatto_t -= delta
 		if _sv and _scatto_t <= 0.0 and _n < 60:
@@ -129,7 +146,7 @@ func _process(delta: float) -> void:
 			_scatti(bn, nome, stato)
 	for id in _prima.keys():
 		if not visti.has(id) and _prima[id][0]:
-			evento("bambino liberato mentre si vedeva in %s: %s" % [(_prima[id][2] as Vector3).snapped(Vector3.ONE * 0.01), _davanti(cam, _prima[id][2], null)])
+			evento("bambino liberato mentre si vedeva in %s: %s; il giocatore gli è arrivato a %.2f m (dalla capsula alla scatola)" % [(_prima[id][2] as Vector3).snapped(Vector3.ONE * 0.01), _davanti(cam, _prima[id][2], null), float(_vicino.get(id, 99.0))])
 			_prima[id] = [false, {}, _prima[id][2]]
 
 
@@ -152,6 +169,14 @@ func _scatti(bn: Bambino, nome: String, stato: String) -> void:
 	var im2 := get_viewport().get_texture().get_image()
 	if im2:
 		im2.save_jpg(cart.path_join("piedi").path_join(base + "_occhi.jpg"), 0.85)
+	# radente da davanti (verso chi guarda: lì è libero), 3 cm sopra il pavimento, per la suola a terra
+	if is_instance_valid(bn):
+		var fronte := Vector3(-avanti.x, 0, -avanti.z).normalized()
+		_cam.look_at_from_position(piede + fronte * 0.7 + Vector3.UP * -0.02 + lato * 0.1, piede + Vector3.UP * -0.03, Vector3.UP)
+		await RenderingServer.frame_post_draw
+		var im3 := _sv.get_texture().get_image()
+		if im3:
+			im3.save_jpg(cart.path_join("piedi").path_join(base + "_radente.jpg"), 0.88)
 
 
 func _piedi(bn: Bambino) -> Dictionary:
@@ -248,3 +273,24 @@ func _davanti(cam: Camera3D, q: Vector3, bn: Node) -> String:
 	if not h.is_empty() and (h.position as Vector3).distance_to(q) > 0.25:
 		return "nell'inquadratura ma coperto da %s (bene)" % (h.collider.name if h.collider else "?")
 	return "NELL'INQUADRATURA E NON COPERTO, a %.1f m" % cam.global_position.distance_to(q)
+
+
+## Quante ossa del corpo (del fotogramma prima) erano nell'inquadratura senza niente in mezzo dalla camera (tolleranza
+## 5 cm), e quali.
+func _ossa_in_vista(cam: Camera3D, ossa: Dictionary) -> String:
+	if cam == null or ossa.is_empty():
+		return "ossa non misurate"
+	var viste: PackedStringArray = []
+	var spazio := cam.get_world_3d().direct_space_state
+	for k in ossa:
+		var q: Vector3 = ossa[k]
+		if not cam.is_position_in_frustum(q):
+			continue
+		var r := PhysicsRayQueryParameters3D.create(cam.global_position, q)
+		var p := GameState.player
+		if p and is_instance_valid(p):
+			r.exclude = [p.get_rid()]
+		var h := spazio.intersect_ray(r)
+		if h.is_empty() or (h.position as Vector3).distance_to(q) < 0.05:
+			viste.append(String(k))
+	return "%d ossa su %d in vista dalla camera nel fotogramma prima%s" % [viste.size(), ossa.size(), (": " + ", ".join(viste.slice(0, 12))) if viste.size() else ""]
