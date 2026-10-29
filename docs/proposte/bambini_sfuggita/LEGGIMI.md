@@ -13,8 +13,11 @@ Branch `lavoro/bambini-sfuggita` (da `lavoro/godot` efc7352f). **Non unito: aspe
 - **Dove**: il corridoio di 17 m che dal fondo della scala porta al capannone del fiume lento. L'agnellino sta in
   fondo, sul pavimento del corridoio, a destra della porta aperta del capannone, girato verso la scala.
 - **Quando compare**: col giocatore sul pianerottolo in fondo alla scala o nel primo tratto del corridoio, e solo
-  mentre non può vederlo (si mette al suo posto fuori vista). Non insieme a lei: mentre lei è dietro il vetro
-  dell'oblò dello stesso corridoio il bambino aspetta.
+  mentre non può vederlo (si mette al suo posto fuori vista). Mai insieme a lei all'oblò dello stesso corridoio:
+  compare solo dopo che lei è stata vista ed è andata via. Se il giocatore passa senza vederla, lei torna la volta
+  dopo e il bambino aspetta ancora.
+- **Le Polaroid**: la P13, per terra sotto l'oblò, è a 5,9 m dalla strada della fuga, e il bambino fermo non la copre
+  (sta 8 m fuori dalla linea fra il giocatore e lei). La P15 è nella zona del personale, non in questo corridoio.
 - **Cosa fa**: fermo, respira, ti segue con la testa e ogni tanto la inclina piano. Quando lo hai guardato per poco più
   di un secondo, o ti avvicini sotto i 9 m, aspetta ancora un attimo, si volta e corre nella porta del capannone.
 - **Quando non si vede più**: appena lo stipite della porta lo nasconde sparisce (dal corridoio dove va non si vede:
@@ -50,6 +53,23 @@ Per tutti i bambini del gioco (`scripts/creature/bambino.gd`):
   passi lenti, poi parte;
 - **lo stare fermo**: respira, segue con la testa e ogni 3-4 secondi la inclina piano.
 
+- **curve strette**: prima di una curva di più di 45 gradi rallenta e la fa col passo, senza tagliare lo spigolo;
+  non va mai più veloce di quanto serve per prendere il punto girando.
+
+### Cosa cambia per l'agnellino della scala C2 (già nel gioco)
+
+Con le curve nuove l'agnellino della scala tagliava la curva davanti al buco, toccava il bordo e si fermava: il
+giocatore lo raggiungeva. Ora (test_agnellino verde):
+
+- quello che si vede resta uguale: compare in cima alla scala, ti guarda, scappa nella corsia, si piega e si infila
+  nel buco;
+- si volta di scatto (600 gradi al secondo) e parte più svelto, perché la corsia è stretta e il giocatore gli corre
+  dietro;
+- scappa quando ti avvicini sotto i 9 m invece dei 7 di prima (per girarsi col passo gli serve quel mezzo secondo);
+- comincia a piegarsi per entrare nel buco a 1,4 m dal muro invece di 1,15, e ci arriva già piegato a 0,85 m invece
+  di 0,75, così la testa resta lontana dal bordo alto;
+- la curva in fondo alla corsia la fa da sé, col passo; poi si raddrizza verso il buco come prima.
+
 Il bambino si muove sempre in coordinate del mondo (`top_level`), così il nodo che lo mette al suo posto può essere
 girato.
 
@@ -64,9 +84,14 @@ girato.
 
 - `godot/tests/test_bambini_passi.gd`: i due bambini camminano e corrono (con una curva, da fermi): il piede a terra
   nel mondo scivola in media 0,06 e 0,11 m/s camminando, 0,15 e 0,21 m/s correndo; le punte dei piedi toccano terra.
-- `godot/tests/test_bambini_sfuggita.gd`: per ogni punto, poggia a terra, al suo posto non entra in niente, la strada
-  della fuga è libera e ha il pavimento, dove sparisce non si vede da nessun punto della zona, compare col giocatore
-  girato dall'altra parte, guardato scappa, sparisce quando non si vede più, non ricompare, lo stato si salva.
+- `godot/tests/test_bambini_sfuggita.gd` (39 controlli verdi): per ogni punto, poggia a terra, al suo posto non entra
+  in niente, la strada della fuga è libera e ha il pavimento, passa lontano dalle Polaroid e fermo non ne copre
+  nessuna, con lei all'oblò ancora da vedere non compare, dove sparisce non si vede da nessun punto della zona,
+  compare col giocatore girato dall'altra parte, guardato scappa, sparisce quando non si vede più, non ricompare, lo
+  stato si salva.
+- Verdi anche, in locale: check_scripts, test_bambini, test_agnellino, test_tecnici, test_risalita,
+  test_sottomarino_lei, test_tappa7 e il controllo di posizionamento (nessun caso nuovo). Unito con `lavoro/godot`
+  (le Polaroid nuove) prima degli ultimi test.
 
 ## Video e scatti
 
