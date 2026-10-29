@@ -32,17 +32,22 @@ const AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
 ## Il muro col buco (x della faccia sul corridoio) e il centro del buco.
 @export var muro_x := 45.5
 @export var buco_z := 4.9
-@export var distanza_fuga := 7.0
+@export var distanza_fuga := 9.0
 ## Quanto corre (il giocatore corre a 5,8 m/s): l'animazione di corsa va a tempo con questa velocità.
 @export var velocita_corsa := 3.0
 ## Per entrare nel buco si piega in avanti fino a tanto, cominciando a [member piega_da] m dal muro e finendo
 ## a [member piega_a] m (misurati dai piedi): così la testa passa sotto il bordo del buco.
 @export var piega_max := 75.0
-@export var piega_da := 1.15
-@export var piega_a := 0.75
+@export var piega_da := 1.4
+@export var piega_a := 0.85
+
+## Quanto in fretta si piega o si raddrizza (gradi al secondo).
+const PIEGA_AL_SECONDO := 400.0
 
 var bambino: Bambino
 var _fatto := false
+## Di quanto sono alzati i modelli mentre si piega (m, in verticale nel mondo).
+var _alza := 0.0
 
 
 func _ready() -> void:
@@ -50,26 +55,40 @@ func _ready() -> void:
 	process_priority = 10   # dopo il bambino (che si sposta nel suo _process): la piega vale per il fotogramma
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if bambino and is_instance_valid(bambino) and bambino.modalita == Bambino.Modalita.SCAPPA:
-		_piega()
+		_piega(delta)
 
 
 ## Per infilarsi nel buco si piega in avanti (perno ai piedi) e si alza un po', così i piedi non entrano nel
 ## pavimento; solo quando corre verso il muro, nella striscia davanti al buco.
-func _piega() -> void:
+func _piega(delta: float) -> void:
 	var genitore := get_parent() as Node3D
 	var l := genitore.to_local(bambino.global_position)
-	var k := 0.0
-	if absf(l.z - buco_z) < 0.6:
-		k = clampf((piega_da - (muro_x - l.x)) / (piega_da - piega_a), 0.0, 1.0)
+	# (anche di lato comincia piano, entrando nella striscia davanti al buco: niente scatti)
+	var k := clampf((piega_da - (muro_x - l.x)) / (piega_da - piega_a), 0.0, 1.0)
+	k *= clampf((0.6 - absf(l.z - buco_z)) / 0.3, 0.0, 1.0)
 	k = k * k * (3.0 - 2.0 * k)
-	if k > 0.0:   # mentre si piega si mette dritto verso il buco (girandosi da solo arriverebbe di sbieco)
-		var dentro := genitore.global_basis * Vector3(1, 0, 0)
+	# mentre si piega si mette dritto verso il buco (girandosi da solo arriverebbe di sbieco), ma solo quando ha
+	# già fatto da sé la curva in fondo alla corsia: prima la fa col passo
+	var dentro := genitore.global_basis * Vector3(1, 0, 0)
+	var avanti := bambino.global_basis.z * Vector3(1, 0, 1)
+	if k > 0.0 and avanti.normalized().dot(dentro.normalized()) > 0.6:
 		bambino.rotation.y = lerp_angle(bambino.rotation.y, atan2(dentro.x, dentro.z), minf(1.0, k * 4.0))
-	bambino.rotation.x = deg_to_rad(piega_max) * k
-	# l'alzata va sui modelli: il nodo segue i punti di fuga (all'altezza del pavimento) e deve arrivarci
-	var su := bambino.global_basis.inverse() * Vector3.UP * (0.12 * k)
+	bambino.rotation.x = move_toward(bambino.rotation.x, deg_to_rad(piega_max) * k, deg_to_rad(PIEGA_AL_SECONDO) * delta)
+	# l'alzata va sui modelli: il nodo segue i punti di fuga (all'altezza del pavimento) e deve arrivarci. Quanto
+	# serve perché i piedi, che piegandosi girano attorno al perno, non entrino nel pavimento: si misura il punto più
+	# basso dei piedi (con l'alzata di adesso e la piega nuova) e si alza o abbassa di quanto manca, mai sotto zero
+	var pavimento := genitore.to_global(Vector3(l.x, posizione.y, l.z)).y
+	var basso := bambino.piedi_piu_in_basso()
+	var voluta := 0.0
+	if bambino.rotation.x > 0.01 and basso < INF:
+		# (e più si piega più si stacca da terra: gli ultimi passi diventano un tuffo nel buco, coi piedi in aria;
+		# piegato e coi piedi a terra la corsa li trascinerebbe sul pavimento)
+		voluta = clampf(_alza + pavimento + 0.005 + 0.035 * k - basso, 0.0, 0.45)
+	# (su subito, giù piano: non sobbalza a ogni passo)
+	_alza = voluta if voluta > _alza else lerpf(_alza, voluta, 0.15)
+	var su := bambino.global_basis.inverse() * Vector3.UP * _alza
 	for nome in [^"Calmo", ^"Rivelato"]:
 		var m := bambino.get_node_or_null(nome) as Node3D
 		if m:
@@ -97,9 +116,12 @@ func compari() -> void:
 	bambino.name = "Agnellino"
 	bambino.modalita = Bambino.Modalita.STATUA
 	bambino.reazione = Bambino.Reazione.INCLINA_TESTA
-	bambino.tempo_per_vederlo = 0.5
+	bambino.tempo_per_vederlo = 0.3
 	bambino.distanza_fuga = distanza_fuga
 	bambino.velocita_corsa = velocita_corsa
+	# (si volta di scatto e parte svelto: la corsia è stretta e il giocatore gli corre dietro)
+	bambino.accel_corsa = 12.0
+	bambino.giro_corsa = 900.0
 	bambino.sparisce_fuori_vista = false   # sparisce in fondo alla cavità, al buio
 	bambino.sparito.connect(_corre_nel_muro)
 	var da := genitore.to_global(posizione)

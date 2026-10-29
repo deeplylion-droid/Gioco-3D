@@ -72,6 +72,8 @@ const VELOCITA_GUADO_ACCOVACCIATO := 1.2
 ## Le gallerie di servizio (i passaggi bassi, scelta 4C dell'utente): dietro il muro, larghe [constant GALLERIA_LARGA]
 ## e alte [constant GALLERIA_ALTA] (ci si passa solo accovacciati), con le due bocche lunghe [constant GALLERIA_BOCCA].
 const GALLERIA_ALTA := 1.25
+## L'agnellino del bambino visto di sfuggita alla bocca della galleria (preload: col thread della zona).
+const BAMBINO_AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
 const GALLERIA_LARGA := 1.5
 const GALLERIA_BOCCA := 1.4
 ## Lo smusso dello spigolo fra lo stipite della bocca e il muro della galleria (si gira dentro senza fermarsi).
@@ -340,6 +342,7 @@ func _passi() -> Array:
 			out.append(_ostacolo.bind(o))
 	for g in gommoni:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
+	out.append(_bambino_galleria)
 	out.append(_parapetto_presa)
 	out.append(_acqua_presa)
 	out.append(_checkpoint)
@@ -2027,6 +2030,40 @@ func _fascia_bocca(nodo: Node3D, sb: float, lato: float, y_bocca: float) -> void
 ## dalla bocca d'entrata (prima del crollo) a quella d'uscita (dopo). Pavimento, soffitto basso, muro esterno, le
 ## teste e gli stipiti delle bocche nello spessore del muro; dentro, due plafoniere a filo del soffitto. Sopra le
 ## bocche la fascia gialla e nera e una lampada: si vedono al buio.
+## Il bambino visto di sfuggita del tunnel (proposta approvata dall'utente il 25 ottobre, "i bambini visti di
+## sfuggita"): l'agnellino sulla banchina sinistra, davanti alla bocca della prima galleria di servizio, girato verso
+## chi arriva. Lo si vede da lontano mentre si scappa da lei; ti guarda, poi entra nella bocca della galleria (è
+## piccolo, ci sta in piedi) e va dietro il muro, dove dalla banchina non si vede più, e sparisce.
+func _bambino_galleria() -> void:
+	var g: Dictionary = {}
+	for o in ostacoli:
+		if o["tipo"] == "galleria":
+			g = o
+			break
+	if g.is_empty():
+		return
+	var s0: float = float(g["s"]) - GALLERIA_BOCCA        # dove comincia la bocca
+	var lato: float = g["lato"]
+	var dentro := muro + spessore + GALLERIA_LARGA * 0.5    # il mezzo della galleria
+	var al := func(s: float, u: float) -> Vector3: return _al(punto(s), destra(s) * lato, Vector2(u, piano))
+	var b := BambinoSfuggita.new()
+	b.name = "BambinoGalleria"
+	b.scena = BAMBINO_AGNELLO
+	b.position = al.call(s0 - 0.6, muro - 1.1)
+	b.basis = Basis.looking_at(direzione(s0), Vector3.UP)  # (+Z verso chi arriva: guarda indietro lungo la strada)
+	var lo: Vector3 = al.call(s0 - 34.0, canale)
+	var hi: Vector3 = al.call(s0 - 8.0, muro)
+	b.zona = AABB(lo, Vector3.ZERO).expand(hi).expand(al.call(s0 - 34.0, muro)).expand(al.call(s0 - 8.0, canale)).grow(0.3)
+	b.zona.size.y = 3.0
+	b.zona.position.y = piano - 0.2
+	b.via = PackedVector3Array([al.call(s0 + 0.5, muro - 0.4), al.call(s0 + 0.7, dentro), al.call(s0 + 2.4, dentro),
+			al.call(s0 + 7.5, dentro)])
+	b.da_dove = al.call(s0 - 18.0, muro - 1.2) + Vector3.UP * 1.6
+	b.distanza_fuga = 12.0
+	b.compare_lontano = 26.0     # (si corre guardando avanti: compare lontano, nel buio, a più di 26 m)
+	add_child(b)
+
+
 func _galleria(o: Dictionary) -> void:
 	var nodo := Node3D.new()
 	nodo.name = "Galleria_%d" % int(o["s"])

@@ -151,7 +151,12 @@ func _test_statua_e_fuga() -> void:
 	p.teleport(Vector3(0.5, 0, 2.6), 0.0, 0.0)
 	await _frames(10)
 	check(ev.has(&"scappa"), "se ti avvicini troppo scappa (segnale scappa)")
-	check(_anim(b).current_animation == &"corsa", "scappa di corsa")
+	# (prima si volta sul posto coi passi della camminata, poi corre)
+	for i in 90:
+		if _anim(b).current_animation == &"corsa":
+			break
+		await _frames(1)
+	check(_anim(b).current_animation == &"corsa", "scappa di corsa (dopo essersi voltato)")
 	await _frames(150)
 	check(ev.has(&"sparito") and not b.visible, "arriva al punto di fuga e sparisce (segnale sparito)")
 	check(b.global_position.distance_to(fuga.global_position) < 0.3, "si è mosso fino al punto di fuga (%.1f m)" % Vector3(0.5, 0, 1.0).distance_to(fuga.global_position))

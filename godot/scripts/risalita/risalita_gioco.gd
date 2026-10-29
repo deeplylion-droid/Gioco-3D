@@ -81,6 +81,8 @@ const OBLO_PERSONALE := Vector3(-36.0, Y + 1.5, 49.6)
 const OBLO_SERVIZIO := Vector3(-21.5, 1.5, 37.45)
 const ALZATA := 0.18
 const PEDATA := 0.28
+## Il bambino col cubo dei bambini visti di sfuggita, nel corridoio del fiume (preload: si carica col thread della zona).
+const BAMBINO_CUBO := preload("res://scenes/creature/bambino_cubo.tscn")
 
 ## Falso: le stanze si caricano subito in _ready e restano sempre, come prima (strumenti e test che le vogliono
 ## sempre). Lo stesso con Engine.set_meta(&"risalita_subito", true).
@@ -400,8 +402,9 @@ func _scala_fiume() -> void:
 	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es", {"e": [OBLO_FIUME, ObloLei.PIASTRA * 0.5, FORO_OBLO]})
 	# l'oblò nel muro est, a destra andando verso il capannone, fra le due lampade rosse: lei schiacciata sul vetro;
 	# compare mentre scendi la scala
-	_oblo("ObloFiume", OBLO_FIUME, Vector3.LEFT, "schiacciata", AABB(Vector3(xc - 0.2, Y - 0.2, z0), Vector3(x_fondo - xc + 0.2, 3.0, fine - z0)),
+	var oblo := _oblo("ObloFiume", OBLO_FIUME, Vector3.LEFT, "schiacciata", AABB(Vector3(xc - 0.2, Y - 0.2, z0), Vector3(x_fondo - xc + 0.2, 3.0, fine - z0)),
 			{"vasca_larga": 6.6, "vasca_fonda": 5.6, "vasca_sotto": 8.0})
+	_bambino_corridoio_fiume(xc, x_fondo, z0, z1, porta0, porta1, fine, oblo)
 	_muro(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), Y)
 	# la Polaroid 13 (quella notte, il bagliore nel mare accanto alla nave, proposta del 25 ottobre notte): per terra
 	# contro il muro, sotto l'oblò da cui si vede il mare
@@ -422,6 +425,27 @@ func _scala_fiume() -> void:
 		k.name = d[0]
 		k.position = d[1]
 		m.add_child(k)
+
+
+## Il bambino visto di sfuggita del corridoio del fiume (proposta approvata dall'utente il 25 ottobre, "i bambini visti
+## di sfuggita"): il bambino col cubo in fondo al corridoio, a destra della porta del capannone, girato verso la
+## scala. Compare mentre il giocatore è sul pianerottolo in fondo alla scala o nel corridoio (mai sotto i suoi occhi, e
+## solo dopo lei all'oblò, mai insieme), ti guarda inclinando la testa, poi corre nella porta aperta del capannone e gira a
+## sinistra, nella rientranza fra la porta e il muro dell'approdo: lì dal corridoio non si vede più, e sparisce.
+func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, porta0: float, porta1: float, fine: float,
+		oblo: ObloLei) -> void:
+	var b := BambinoSfuggita.new()
+	b.name = "BambinoCorridoioFiume"
+	b.scena = BAMBINO_CUBO
+	b.position = Vector3(xc + 1.1, Y, fine - 0.6)
+	b.rotation.y = PI                          # guarda verso sud, verso la scala
+	b.zona = AABB(Vector3(xc, Y - 0.2, z0), Vector3(x_fondo - xc, 3.0, porta0 - 2.5 - z0))
+	b.aspetta = oblo
+	var pm := (porta0 + porta1) * 0.5
+	b.via = PackedVector3Array([Vector3(xc + 0.7, Y, pm), Vector3(xc - 0.9, Y, pm), Vector3(xc - 2.0, Y, porta0 - 0.7),
+			Vector3(xc - 2.2, Y, porta0 - 3.3)])
+	b.da_dove = Vector3(xc + 1.0, Y + 1.6, z1 + 2.0)
+	add_child(b)
 
 
 ## Un oblò con lei dietro il vetro (ObloLei): [param centro] sulla faccia del muro dalla parte del corridoio,
