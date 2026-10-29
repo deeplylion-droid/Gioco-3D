@@ -107,12 +107,19 @@ func _run() -> void:
 					(faccia as SpotLight3D).spot_angle = e[3]
 				if e.size() > 6:
 					faccia.position = Vector3(e[4], e[5], e[6])
+				if e.size() > 10:
+					(faccia as SpotLight3D).spot_range = e[10]
 			# e l'opacità dell'ombra della lampada d'emergenza del muro (le luci con l'ombra entro 1,5 m)
 			if e.size() > 7:
 				for l in get_tree().root.find_children("*", "Light3D", true, false):
 					if (l as Light3D).shadow_enabled and (l as Node3D).global_position.distance_to(lampada) < 1.5:
 						(l as Light3D).shadow_opacity = e[7]
-						print("TORRE ombra lampada %s opacita %.2f" % [l.name, e[7]])
+						if e.size() > 8:
+							(l as Light3D).shadow_blur = e[8]
+						if e.size() > 9:
+							(l as Light3D).light_size = e[9]
+						print("TORRE ombra lampada %s opacita %.2f sfocatura %.2f grandezza %.2f" % [l.name, e[7],
+								(l as Light3D).shadow_blur, (l as Light3D).light_size])
 			for v in o.find_children("Velo*", "MeshInstance3D", true, false):
 				var mv := (v as MeshInstance3D).material_override as StandardMaterial3D
 				if mv and mv.emission_enabled:
