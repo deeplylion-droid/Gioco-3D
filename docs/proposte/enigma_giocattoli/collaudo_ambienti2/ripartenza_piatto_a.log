@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+15. load_state a metà discesa del piatto, senza spinta
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    il piatto stava scendendo quando si è fatto il load_state (altezza 0.027 fra 0.030 e 0.005)
+  ok    dopo il load_state il piatto è tornato su del tutto (altezza 0.030, a riposo 0.030)
+  ok    la paperella è tornata dov'era (giocattolo (0.4, -2.18, 0.6), cerchio (-3.9, -2.01, 3.3))
+  ok    e sta sul fondo (y -2.178, fondo -2.182)
+
+RISULTATO: 5 controlli ok, 0 falliti
+WARNING: 853 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 482 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: 2 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 128 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 47 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 64 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 187 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
