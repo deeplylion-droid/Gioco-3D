@@ -73,40 +73,61 @@ func _mappa() -> void:
 
 
 ## Cammina a passo d'uomo (4,5 m/s, a piccoli passi: niente salti) da [param da] ad [param a], registrando la nebbia.
-func _passeggia(nome: String, da: Vector3, a: Vector3) -> void:
+func _passeggia(nome: String, tappe: Array) -> void:
+	if not is_instance_valid(p):
+		return
+	var da: Vector3 = tappe[0]
+	da.y = _fondo_sotto(da + Vector3.UP * 1.5, []) + 0.05
 	await _vai(da, 3.5)
 	var inizio := n.quanto
-	var passi := int(da.distance_to(a) / (4.5 / 60.0))
 	var salto := 0.0
 	var cambio := Vector3.INF
 	var prima := n.quanto
-	for i in passi + 120:
-		var t := minf(1.0, float(i) / passi)
-		p.global_position = da.lerp(a, t)
+	for k in range(1, tappe.size()):
+		var a: Vector3 = tappe[k - 1]
+		var b: Vector3 = tappe[k]
+		var passi := maxi(1, int(a.distance_to(b) / (4.5 / 60.0)))
+		for i in passi:
+			if not is_instance_valid(p):
+				printerr("  il giocatore non c'è più (%s)" % nome)
+				return
+			var q := a.lerp(b, float(i + 1) / passi)
+			var f := _fondo_sotto(q + Vector3.UP * 1.5, [])
+			q.y = (f if f > -50.0 else q.y) + 0.05
+			p.global_position = q
+			p.velocity = Vector3.ZERO
+			await get_tree().physics_frame
+			salto = maxf(salto, absf(n.quanto - prima))
+			if cambio == Vector3.INF and absf(n.quanto - prima) > 0.0001:
+				cambio = p.global_position
+			prima = n.quanto
+	for i in 220:
 		await get_tree().physics_frame
 		salto = maxf(salto, absf(n.quanto - prima))
-		if cambio == Vector3.INF and absf(n.quanto - prima) > 0.0001 and n.quanto != inizio:
-			cambio = p.global_position
 		prima = n.quanto
-	for i in 200:
-		await get_tree().physics_frame
-		salto = maxf(salto, absf(n.quanto - prima))
-		prima = n.quanto
-	check(salto <= 1.0 / (60.0 * NebbiaViola.DURATA) * 1.6, "%s: niente salti (al massimo %.4f per fotogramma, %.4f è 3 s)" % [nome, salto, 1.0 / (60.0 * NebbiaViola.DURATA)])
+	check(salto <= 1.0 / (60.0 * NebbiaViola.DURATA) * 1.6, "%s: niente salti (al massimo %.4f per fotogramma; 3 s sono %.4f)" % [nome, salto, 1.0 / (60.0 * NebbiaViola.DURATA)])
 	print("  SOGLIA %s: da %.2f a %.2f, comincia a cambiare in %s" % [nome, inizio, n.quanto, cambio.snapped(Vector3.ONE * 0.1)])
 
 
 func _soglie() -> void:
-	print("2. Le soglie camminando")
+	print("2. Le soglie camminando (lungo le strade dei checkpoint, attraverso le porte)")
 	await _carica_tutto()
-	await _passeggia("sala verso gli interni (esce)", Vector3(-9.7, 0.05, 14.0), Vector3(-9.7, 0.05, 30.0))
-	await _passeggia("dagli interni nella sala (entra)", Vector3(-9.7, 0.05, 30.0), Vector3(-9.7, 0.05, 14.0))
-	await _passeggia("sala verso la torre (esce, x 20)", Vector3(14.0, 0.05, 0.0), Vector3(26.0, 0.05, 0.0))
-	var inferm := level.find_children("*", "InfermeriaGioco", true, false)
-	if not inferm.is_empty():
-		var c := (inferm[0] as Node3D).global_position
-		await _passeggia("infermeria verso fuori (+x 8 m)", c + Vector3(0, 0.1, 0), c + Vector3(8, 0.1, 0))
-		await _passeggia("da fuori nell'infermeria", c + Vector3(8, 0.1, 0), c + Vector3(0, 0.1, 0))
+	if not GameState.player_died.is_connected(_morto):
+		GameState.player_died.connect(_morto)
+	# sala <-> interni: dalla statua all'ingresso, alla saracinesca, al tornello
+	await _passeggia("dalla sala agli interni (esce)", [Vector3(0, 0, 14.4), Vector3(0, 0, 19.2), Vector3(0, 0, 22.7), Vector3(0, 0, 25.6)])
+	await _passeggia("dagli interni nella sala (entra)", [Vector3(0, 0, 25.6), Vector3(0, 0, 22.7), Vector3(0, 0, 19.2), Vector3(0, 0, 14.4)])
+	# sala <-> magazzino: dalla serranda al magazzino
+	await _passeggia("dalla sala al magazzino (esce)", [Vector3(-15, 0, 15.0), Vector3(-15, 0, 19.3), Vector3(-15, 0, 29.0)])
+	await _passeggia("dal magazzino nella sala (entra)", [Vector3(-15, 0, 29.0), Vector3(-15, 0, 19.3), Vector3(-15, 0, 15.0)])
+	# infermeria <-> fiume
+	await _passeggia("dall'infermeria al fiume (esce)", [Vector3(-36.0, -5.3, 45.4), Vector3(-35.0, -5.3, 54.8)])
+	await _passeggia("dal fiume nell'infermeria (entra)", [Vector3(-35.0, -5.3, 54.8), Vector3(-36.0, -5.3, 45.4)])
+
+
+func _morto(causa: StringName) -> void:
+	var gp: Vector3 = GameState.player.global_position if GameState.player and is_instance_valid(GameState.player) else Vector3.ZERO
+	printerr("  MORTO il giocatore (causa %s) in %s" % [causa, gp.snapped(Vector3.ONE * 0.01)])
 
 
 func _ripartenze() -> void:
