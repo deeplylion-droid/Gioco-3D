@@ -79,8 +79,11 @@ func _ordini() -> void:
 ## raggio) e gli angoli della parte profonda.
 func _trappole() -> Array:
 	var out := []
-	for l in enigma._posti_liberi():
-		out.append(["ostacolo (%.1f, %.1f) r %.2f" % [l.x, l.y, l.z], Vector2(l.x, l.y), float(l.z)])
+	# (i posti liberi ora sono capsule: il centro e il raggio che le contiene)
+	for f in enigma._posti_liberi():
+		var c: Vector2 = ((f["a"] as Vector2) + (f["b"] as Vector2)) / 2.0
+		var r: float = float(f["r"]) + ((f["b"] as Vector2) - (f["a"] as Vector2)).length() / 2.0
+		out.append(["ostacolo (%.1f, %.1f) r %.2f" % [c.x, c.y, r], c, r])
 	var ar: Rect2 = enigma.area
 	for c in [ar.position, Vector2(ar.end.x, ar.position.y), Vector2(ar.position.x, ar.end.y), ar.end]:
 		out.append(["angolo (%.1f, %.1f)" % [c.x, c.y], c, 0.0])
@@ -123,6 +126,7 @@ func _incastri() -> void:
 			var ok := await _spingi_misura(migliore, "incastro %s %s giocattolo %d" % ["vuota" if vuota else "piena", t[0], migliore], 25)
 			check(ok, "piscina %s, giocattolo %d da %s (partito da %s): torna al suo cerchio (%s)" % ["vuota" if vuota else "piena",
 				migliore, t[0], partito.snapped(Vector2.ONE * 0.01), _dove(migliore)])
+			_compenetrazioni("piscina %s, dopo %s" % ["vuota" if vuota else "piena", t[0]])
 			# lo si rimette dov'era all'inizio per la prova dopo (un piatto sceso resta: si ricarica la sala ogni tanto)
 			if enigma.piatto_giu(migliore):
 				await _carica()
@@ -371,14 +375,16 @@ func _gonfiabile() -> void:
 	await _carica()
 	await _svuota()
 	await _frames(120)
-	var ob := Vector3.ZERO
+	var cap := {}
 	var meglio := 99.0
-	for l in enigma._posti_liberi():
-		var d := Vector2(l.x, l.y).distance_to(Vector2(-1.0, 0.4))
+	for f in enigma._posti_liberi():
+		var d := EnigmaGiocattoli._vicino(f, Vector2(-1.0, 0.4)).distance_to(Vector2(-1.0, 0.4))
 		if d < meglio:
 			meglio = d
-			ob = l
-	print("  gonfiabile: ", ob)
+			cap = f
+	var cc: Vector2 = ((cap["a"] as Vector2) + (cap["b"] as Vector2)) / 2.0
+	var ob := Vector3(cc.x, cc.y, float(cap["r"]) + ((cap["b"] as Vector2) - (cap["a"] as Vector2)).length() / 2.0)
+	print("  gonfiabile: ", cap)
 	var r: float = EnigmaGiocattoli.RAGGI[1]
 	for ang in [PI, PI * 0.75, PI * 1.25]:
 		var via := Vector2(cos(ang), sin(ang))
@@ -396,14 +402,48 @@ func _gonfiabile() -> void:
 		p.water_pack.set_tank_amount(30.0)
 		var su := 0.0
 		var dentro := 0.0
+		var scatto := 0.0
+		var prima := Vector2(g.position.x, g.position.z)
+		var partenza := prima
 		Input.action_press(&"spray")
 		for f in 480:
 			p.look_at_point(g.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[1] * 0.6, 0))
 			await get_tree().physics_frame
 			su = maxf(su, g.global_position.y - y0)
-			var d := Vector2(g.position.x, g.position.z).distance_to(Vector2(ob.x, ob.y))
-			dentro = maxf(dentro, ob.z + r - d)
+			var ora := Vector2(g.position.x, g.position.z)
+			scatto = maxf(scatto, ora.distance_to(prima))
+			prima = ora
+			var d := ora.distance_to(EnigmaGiocattoli._vicino(cap, ora))
+			dentro = maxf(dentro, float(cap["r"]) + r - d)
 		Input.action_release(&"spray")
 		await _frames(60)
+		var fine := Vector2(g.position.x, g.position.z)
+		var ar: Rect2 = enigma.area
 		check(su < 0.02 and dentro < 0.02, "spinto 8 s contro il gonfiabile da %.0f gradi: non ci sale (su di %.3f m) e non ci entra (%.3f m)" % [rad_to_deg(ang), su, dentro])
+		check(fine.distance_to(partenza) > 0.5, "da %.0f gradi ci scivola attorno: si sposta di %.2f m (da %s a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), partenza.snapped(Vector2.ONE * 0.01), fine.snapped(Vector2.ONE * 0.01)])
+		check(scatto < 2.5 / 60.0 * 1.2, "senza scatti: al massimo %.3f m in un fotogramma (velocità massima %.3f)" % [scatto, 2.4 / 60.0])
+		check(ar.grow(0.01).has_point(fine), "resta nella parte profonda (%s)" % fine.snapped(Vector2.ONE * 0.01))
+		_compenetrazioni("dopo la spinta da %.0f gradi" % rad_to_deg(ang))
+
+
+func _compenetrazioni(quando: String) -> void:
+	var peggio := 0.0
+	for a in 3:
+		for b in range(a + 1, 3):
+			var ga := enigma.giocattolo(a)
+			var gb := enigma.giocattolo(b)
+			if enigma.piatto_giu(a) or enigma.piatto_giu(b):
+				continue
+			var d := Vector2(ga.position.x, ga.position.z).distance_to(Vector2(gb.position.x, gb.position.z))
+			peggio = maxf(peggio, float(EnigmaGiocattoli.RAGGI[a]) + float(EnigmaGiocattoli.RAGGI[b]) - d)
+	var ostacoli := 0.0
+	for i in 3:
+		if enigma.piatto_giu(i):
+			continue
+		var g := enigma.giocattolo(i)
+		var q := Vector2(g.position.x, g.position.z)
+		for f in enigma._capsule:
+			ostacoli = maxf(ostacoli, float(EnigmaGiocattoli.RAGGI[i]) + float(f["r"]) - q.distance_to(EnigmaGiocattoli._vicino(f, q)))
+	check(peggio < 0.02, "%s i giocattoli non si compenetrano fra loro (%.3f m)" % [quando, peggio])
+	check(ostacoli < 0.02, "%s nessun giocattolo dentro un gonfiabile (%.3f m)" % [quando, ostacoli])
 

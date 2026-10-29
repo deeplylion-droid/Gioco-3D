@@ -103,6 +103,28 @@ func _run() -> void:
 	enigma.load_state({"risolto": true})
 	await _riposa()
 	await _giro("c_risolto", true)
+	# e. a piscina vuota, il pallone appoggiato a ogni gonfiabile del fondo (dopo lo scivolamento attorno ai gonfiabili):
+	# di lato, all'altezza del contatto, fra lui e il gonfiabile
+	var r1: float = EnigmaGiocattoli.RAGGI[1]
+	var k_cap := 0
+	for f in enigma._capsule:
+		var a: Vector2 = f["a"]
+		var b: Vector2 = f["b"]
+		var c := (a + b) / 2.0
+		var verso := (Vector2(0.0, 1.5) - c)
+		verso = verso.normalized() if verso.length() > 0.01 else Vector2.RIGHT
+		var q := EnigmaGiocattoli._vicino(f, c + verso * 5.0)
+		var pos := q + verso * (float(f["r"]) + r1 + 0.01)
+		enigma.load_state({"pos": [[0.3, 2.5, 0.0], [pos.x, pos.y, 0.0], [-0.2, -0.8, 0.0]], "giu": [false, false, false], "risolto": false})
+		await _riposa()
+		var g := enigma.giocattolo(1).global_position
+		var lato := Vector3(-verso.y, 0, verso.x)
+		var tocco := enigma.to_global(Vector3(q.x, 0, q.y))
+		tocco.y = g.y + 0.1
+		print("GONFIABILE %d: capsula %s, pallone %s" % [k_cap, f, g])
+		await _scatto(tocco + lato * 1.1 + Vector3(0, 0.05, 0), tocco + Vector3(verso.x, 0, verso.y) * 0.1, "e_gonfiabile_%d_lato" % k_cap)
+		await _scatto(tocco + Vector3(verso.x, 0, verso.y) * 1.6 + lato * 0.5 + Vector3(0, 0.6, 0), tocco, "e_gonfiabile_%d_alto" % k_cap)
+		k_cap += 1
 	# d. la spiaggia
 	var oggetti := level.get_node(^"Sala/Oggetti") as Node3D
 	for nome in SPIAGGIA:
