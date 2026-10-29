@@ -119,8 +119,13 @@ func _run() -> void:
 		check(h > -0.002 and h < 0.012, "la Polaroid 10 è appoggiata sul lettino (%.1f cm sopra)" % (h * 100.0))
 	# la Polaroid 12 della proposta del 25 ottobre notte, sul pianerottolo del portone (la mette Posa)
 	var p12 := torre.get_node_or_null("Polaroid12") as Node3D
-	var h12: float = POLAROID_LIBERE.appoggio(torre, p12) if p12 else INF
-	check(p12 != null and h12 > -0.002 and h12 < 0.012, "c'è la Polaroid 12, appoggiata sul pianerottolo del portone (%.1f cm sopra)" % (h12 * 100.0))
+	# (sta su un grigliato: l'appoggio è sulle barre, si misura sotto tutta la foto e conta il punto più vicino; collaudo
+	# del 28 ottobre, sospesa di 13 mm quando la metteva un raggio solo)
+	var h12 := INF
+	if p12:
+		for punto in PolaroidPhoto.IMPRONTA:
+			h12 = minf(h12, POLAROID_LIBERE.appoggio(torre, p12, punto))
+	check(p12 != null and h12 > -0.002 and h12 < 0.006, "c'è la Polaroid 12, appoggiata sul grigliato del pianerottolo del portone (%.1f mm sopra le barre)" % (h12 * 1000.0))
 	check(torre.find_children("*", "KillZone", true, false).is_empty(), "niente zone che uccidono senza una caduta vera (V1)")
 	var raccolta: Array = dati.get("raccolta", [])
 	check(raccolta.size() == 5 and torre.find_children("Raccolta*", "WaterVolume", false, false).size() == 5 \

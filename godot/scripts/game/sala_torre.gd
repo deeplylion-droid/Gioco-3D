@@ -591,7 +591,11 @@ func _polaroid() -> void:
 		doppione.queue_free()
 	# la Polaroid 12 (l'ultima sera di festa, col temporale lontano, proposta del 25 ottobre notte): in cima, per terra
 	# nell'angolo sud-est del pianerottolo del portone, alle spalle di chi entra e va verso il primo scivolo (a nord)
-	PolaroidPhoto.metti(self, 12, b([22.1, 13.95, 0.03]), 30.0)
+	# (sul grigliato: l'altezza sulle barre, sotto tutta la foto, è calcolata una volta da tests/posa_polaroid12.gd; a
+	# gioco avviato i raggi mentre la torre si costruisce facevano fotogrammi da 130 ms, test_attesa_zone del 29 ottobre)
+	var p12 := b([22.1, 13.95, 0.0])
+	p12.y = -0.0063
+	PolaroidPhoto.metti(self, 12, p12, 30.0, true)
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.

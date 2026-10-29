@@ -34,6 +34,31 @@ static func appoggia_a_terra(nodo: Node3D, fondo := 0.0, lega := false, escludi:
 	return true
 
 
+## Appoggia [param nodo], piatto (un foglio, una Polaroid), su quello che si vede sotto la sua impronta: un raggio per
+## ognuno dei [param punti] (nel sistema del nodo); il nodo va sul più alto delle mesh colpite, [param fondo] sopra. Su un
+## grigliato un raggio solo può passare in un buco e trovare la collisione, che spesso sta sopra le barre (pianerottolo
+## della torre: 1 cm; collaudo delle Polaroid del 28 ottobre, P12 sospesa di 13 mm). Mesh molto sotto la collisione (più
+## di 5 cm: il pavimento sotto il grigliato) non contano; senza mesh vale la collisione.
+static func appoggia_su_impronta(nodo: Node3D, punti: Array[Vector3], fondo := 0.0, escludi: Array[RID] = []) -> bool:
+	var su_mesh := -INF
+	var su_fisica := -INF
+	for l in punti:
+		var p := nodo.global_transform * l
+		var h := _raggio(nodo, Vector3(p.x, nodo.global_position.y + 0.05, p.z), Vector3(p.x, nodo.global_position.y - PORTATA, p.z), escludi)
+		if h.is_empty():
+			continue
+		if h.collider is MeshInstance3D:
+			su_mesh = maxf(su_mesh, (h.position as Vector3).y)
+		else:
+			su_fisica = maxf(su_fisica, (h.position as Vector3).y)
+	var y := su_mesh if su_mesh > -INF and (su_fisica == -INF or su_mesh > su_fisica - 0.05) else su_fisica
+	if y == -INF:
+		push_warning("Posa: niente sotto %s (%s)" % [nodo.name, nodo.global_position])
+		return false
+	nodo.global_position.y = y + fondo
+	return true
+
+
 ## Fissa [param nodo] al muro dietro di lui: [param verso] è la direzione verso cui guarda l'oggetto (fuori dal muro);
 ## si cerca il muro nella direzione opposta e il retro dell'oggetto ([param spessore] metri dietro l'origine) va sul muro.
 static func fissa_al_muro(nodo: Node3D, verso: Vector3, spessore := 0.0, lega := false, escludi: Array[RID] = []) -> bool:
