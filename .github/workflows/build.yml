@@ -62,6 +62,16 @@ jobs:
           # Le texture estratte dai GLB vanno in compressione VRAM (meno memoria), poi si reimporta.
           python3 tools/godot_vram_textures.py godot
           godot --headless --path godot --import
+          # Alcune texture estratte dai GLB (quelle della medusa) nascono solo con la seconda importazione, dopo la
+          # conversione: senza un altro giro restavano Lossless senza mipmap (le ha trovate il controllo qui sotto).
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Texture del pacchetto compresse per la scheda video e con le mipmap (le eccezioni volute in tools/ci/texture_lossless_volute.txt)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          python3 tools/ci/test_texture_compresse.py
+          python3 tools/ci/texture_compresse.py godot
 
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'
