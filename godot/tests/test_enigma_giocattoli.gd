@@ -160,8 +160,10 @@ func _run() -> void:
 		if caso[2]:
 			vasca.fill = 0.0
 		await _metti(i, caso[1])
+		# (sulla pendenza a nord, a piscina piena, l'acqua è più bassa di quanto pescano: lì toccano il fondo)
 		if not caso[2]:
-			check(vasca.fill > 0.9 and enigma.galleggia(i), "a piscina piena (fill %.2f) il giocattolo %d galleggia %s" % [vasca.fill, i, caso[3]])
+			check(vasca.fill > 0.9 and (enigma.galleggia(i) or caso[1].y < 0.0), "a piscina piena (fill %.2f) il giocattolo %d %s %s" % [
+				vasca.fill, i, "galleggia" if enigma.galleggia(i) else "tocca la pendenza", caso[3]])
 		var staccato := await _libera(i)
 		var ok := staccato and await _spingi(i, 50)
 		check(ok, "%s, %s: il giocattolo %d si stacca dal bordo e col getto torna al suo cerchio (%s)" % [
