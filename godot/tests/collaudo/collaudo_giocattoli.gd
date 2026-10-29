@@ -28,6 +28,8 @@ func _run() -> void:
 		await _morte()
 	if "sponda" in _parti:
 		await _sponda()
+	if "gonfiabile" in _parti:
+		await _gonfiabile()
 	_fine()
 
 
@@ -343,3 +345,48 @@ func _spingi(i: int, max_colpi := 40) -> bool:
 		_colpi.clear()
 	var fine := enigma.giocattolo(i).global_position
 	return enigma.piatto_giu(i) or Vector2(fine.x, fine.z).distance_to(Vector2(c.x, c.z)) < 0.15
+
+
+## Il pallone spinto a lungo contro il gonfiabile vicino a (-1,0/0,4) (collaudo delle 07:05: ci entrava di 20 cm e ci
+## saliva sopra): dietro di lui, il getto addosso per 8 secondi verso il gonfiabile; non deve entrarci né salirci.
+func _gonfiabile() -> void:
+	print("7. Il pallone spinto a lungo contro il gonfiabile")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	var ob := Vector3.ZERO
+	var meglio := 99.0
+	for l in enigma._posti_liberi():
+		var d := Vector2(l.x, l.y).distance_to(Vector2(-1.0, 0.4))
+		if d < meglio:
+			meglio = d
+			ob = l
+	print("  gonfiabile: ", ob)
+	var r: float = EnigmaGiocattoli.RAGGI[1]
+	for ang in [PI, PI * 0.75, PI * 1.25]:
+		var via := Vector2(cos(ang), sin(ang))
+		var pos := Vector2(ob.x, ob.y) + via * (ob.z + r + 0.05)
+		var stato: Dictionary = enigma.save_state()
+		stato["pos"][1] = [pos.x, pos.y, 0.0]
+		enigma.load_state(stato)
+		await _frames(150)
+		var g := enigma.giocattolo(1)
+		var y0 := g.global_position.y
+		var stand := g.global_position + Vector3(via.x, 0, via.y) * 2.0
+		stand.y = _fondo_sotto(stand, []) + 0.05
+		p.teleport(stand, 0.0, 0.0)
+		await _frames(4)
+		p.water_pack.set_tank_amount(30.0)
+		var su := 0.0
+		var dentro := 0.0
+		Input.action_press(&"spray")
+		for f in 480:
+			p.look_at_point(g.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[1] * 0.6, 0))
+			await get_tree().physics_frame
+			su = maxf(su, g.global_position.y - y0)
+			var d := Vector2(g.position.x, g.position.z).distance_to(Vector2(ob.x, ob.y))
+			dentro = maxf(dentro, ob.z + r - d)
+		Input.action_release(&"spray")
+		await _frames(60)
+		check(su < 0.02 and dentro < 0.02, "spinto 8 s contro il gonfiabile da %.0f gradi: non ci sale (su di %.3f m) e non ci entra (%.3f m)" % [rad_to_deg(ang), su, dentro])
+
