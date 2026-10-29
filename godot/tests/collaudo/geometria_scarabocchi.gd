@@ -142,7 +142,9 @@ func _controlla(s: Dictionary, mesh_tutte: Array, nodi_tutti: Array, re: RegEx) 
 		if mi == muro or mi.mesh == null:
 			continue
 		var a := mi.global_transform * mi.get_aabb()
-		if a.intersects(box) and colpite.has(mi) or (a.intersects(box) and _tocca_box(mi, t, size)):
+		# (un piano, come il pelo dell'acqua, entra nella scatola anche senza vertici dentro)
+		var piano := a.size.x < 0.01 or a.size.y < 0.01 or a.size.z < 0.01
+		if a.intersects(box) and (colpite.has(mi) or piano or _tocca_box(mi, t, size)):
 			dentro.append("%s%s" % [mi.name, "" if mi.is_visible_in_tree() else " (nascosta)"])
 	# gli oggetti importanti vicini
 	var vicini := []
