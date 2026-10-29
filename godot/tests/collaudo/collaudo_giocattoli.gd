@@ -409,7 +409,13 @@ func _gonfiabile() -> void:
 		for f in 480:
 			p.look_at_point(g.global_position + Vector3(0, EnigmaGiocattoli.ALTEZZE[1] * 0.6, 0))
 			await get_tree().physics_frame
-			su = maxf(su, g.global_position.y - y0)
+			# (quanto sta sopra il fondo che ha sotto, non sopra la quota di partenza: il fondo non è piano, c'è la conca e
+			# il coperchio della botola)
+			if f % 10 == 0:
+				var esclusi: Array = []
+				for k in 3:
+					esclusi.append(enigma.giocattolo(k).get_rid())
+				su = maxf(su, g.global_position.y - _fondo_sotto(g.global_position, esclusi))
 			var ora := Vector2(g.position.x, g.position.z)
 			scatto = maxf(scatto, ora.distance_to(prima))
 			prima = ora
@@ -419,7 +425,7 @@ func _gonfiabile() -> void:
 		await _frames(60)
 		var fine := Vector2(g.position.x, g.position.z)
 		var ar: Rect2 = enigma.area
-		check(su < 0.02 and dentro < 0.02, "spinto 8 s contro il gonfiabile da %.0f gradi: non ci sale (su di %.3f m) e non ci entra (%.3f m)" % [rad_to_deg(ang), su, dentro])
+		check(su < 0.02 and dentro < 0.02, "spinto 8 s contro il gonfiabile da %.0f gradi: non ci sale (sopra il fondo che ha sotto al massimo %.3f m) e non ci entra (%.3f m)" % [rad_to_deg(ang), su, dentro])
 		check(fine.distance_to(partenza) > 0.5, "da %.0f gradi ci scivola attorno: si sposta di %.2f m (da %s a %s)" % [rad_to_deg(ang), fine.distance_to(partenza), partenza.snapped(Vector2.ONE * 0.01), fine.snapped(Vector2.ONE * 0.01)])
 		check(scatto < 2.5 / 60.0 * 1.2, "senza scatti: al massimo %.3f m in un fotogramma (velocità massima %.3f)" % [scatto, 2.4 / 60.0])
 		check(ar.grow(0.01).has_point(fine), "resta nella parte profonda (%s)" % fine.snapped(Vector2.ONE * 0.01))
@@ -438,7 +444,8 @@ func _compenetrazioni(quando: String) -> void:
 			peggio = maxf(peggio, float(EnigmaGiocattoli.RAGGI[a]) + float(EnigmaGiocattoli.RAGGI[b]) - d)
 	var ostacoli := 0.0
 	for i in 3:
-		if enigma.piatto_giu(i):
+		# (galleggiando ci passa sopra, come vuole il LEGGIMI)
+		if enigma.piatto_giu(i) or enigma._galleggia(i):
 			continue
 		var g := enigma.giocattolo(i)
 		var q := Vector2(g.position.x, g.position.z)
