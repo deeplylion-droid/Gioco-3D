@@ -96,5 +96,6 @@ func _process(delta: float) -> void:
 func _misura_altezza() -> float:
 	var spazio := get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(global_position, global_position + Vector3.DOWN * 50.0)
-	var r := spazio.intersect_ray(q)
+	# (senza passare dalle crepe fra due triangoli: le gocce cadrebbero attraverso il pavimento)
+	var r := RaggioSicuro.interseca(spazio, q)
 	return global_position.y - r.position.y if r else 3.0

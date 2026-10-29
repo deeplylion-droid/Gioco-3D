@@ -117,7 +117,28 @@ albedo_color = Color(0.08, 0.2, 0.22, 0.55)
 metallic_specular = 0.8
 roughness = 0.08
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_11h5x"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_11h5x"]
+resource_name = "campione"
+cull_mode = 2
+metallic = 1.0
+metallic_texture_channel = 2
+roughness_texture_channel = 1
+emission_enabled = true
+emission = Color(1, 0.18, 0.66, 1)
+emission_energy_multiplier = 1.6
+emission_operator = 1
+normal_enabled = true
+metadata/_gltf_primary_texture_coord = 0
+metadata/piena = 1.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_novb6"]
+resource_name = "campione"
+cull_mode = 2
+roughness = 0.12
+texture_repeat = false
+metadata/_gltf_primary_texture_coord = 0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e4dpn"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("4_o43qk")
@@ -166,7 +187,7 @@ shader_parameter/env_intensity = null
 shader_parameter/env_fallback_color = null
 shader_parameter/underwater_window_strength = null
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_novb6"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_15y38"]
 resource_name = "campione"
 albedo_color = Color(0.7, 0.76, 0.96, 1)
 metallic_specular = 0.6
@@ -175,7 +196,7 @@ normal_enabled = true
 clearcoat_enabled = true
 clearcoat_roughness = 0.03
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_e4dpn"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tb8go"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("5_8cq8h")
@@ -193,8 +214,9 @@ shader_parameter/bagliore_dentro = null
 shader_parameter/pulsazione_al_secondo = 0.0
 shader_parameter/pulsazione_ampiezza = 0.3
 shader_parameter/rugosita = 0.08
+shader_parameter/scurisci = null
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_15y38"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4eqib"]
 resource_name = "campione"
 roughness = 0.1
 emission_enabled = true
@@ -217,7 +239,7 @@ subsurf_scatter_transmittance_boost = 0.35
 backlight_enabled = true
 backlight = Color(0.6, 0.1, 0.3, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tb8go"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nhfqi"]
 resource_name = "campione"
 cull_mode = 2
 roughness = 0.3
@@ -228,7 +250,7 @@ emission_operator = 1
 texture_repeat = false
 metadata/_gltf_primary_texture_coord = 0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4eqib"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_17wth"]
 resource_name = "campione"
 vertex_color_use_as_albedo = true
 roughness = 0.12
@@ -253,20 +275,20 @@ subsurf_scatter_transmittance_boost = 0.2
 detail_enabled = true
 detail_blend_mode = 3
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nhfqi"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3nmdb"]
 resource_name = "campione"
 transparency = 4
 cull_mode = 2
 albedo_color = Color(1, 1, 1, 0.06)
 roughness = 0.03
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_17wth"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m7j4g"]
 resource_name = "campione"
 cull_mode = 2
 albedo_color = Color(0.935741, 0.91627353, 0.86504203, 1)
 roughness = 0.22
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3nmdb"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t4ods"]
 resource_name = "campione"
 vertex_color_use_as_albedo = true
 albedo_color = Color(0.58, 0.63, 0.95, 1)
@@ -275,16 +297,17 @@ roughness = 0.1
 clearcoat_enabled = true
 clearcoat_roughness = 0.03
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_m7j4g"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uveds"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("6_akfia")
 shader_parameter/venatura = 0.0
 shader_parameter/ruvidita = 0.3
 shader_parameter/luce_propria = 0.22
+shader_parameter/scurisci = null
 shader_parameter/colore_palpebra = null
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t4ods"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wi2b3"]
 resource_name = "campione"
 albedo_color = Color(0.486, 0.552, 0.845, 1)
 metallic_specular = 0.6
@@ -292,7 +315,7 @@ roughness = 0.1
 clearcoat_enabled = true
 clearcoat_roughness = 0.03
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uveds"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r461k"]
 resource_name = "campione"
 cull_mode = 2
 vertex_color_use_as_albedo = true
@@ -300,4 +323,4 @@ albedo_color = Color(0.7, 0.76, 0.96, 1)
 roughness = 0.2
 
 [resource]
-metadata/materiali = Array[Material]([SubResource("StandardMaterial3D_ujctc"), SubResource("StandardMaterial3D_kx6b2"), SubResource("StandardMaterial3D_ljcmb"), SubResource("StandardMaterial3D_8j56g"), SubResource("ShaderMaterial_ewxfo"), SubResource("ShaderMaterial_fo61r"), SubResource("ShaderMaterial_76blx"), SubResource("StandardMaterial3D_2ia2o"), SubResource("StandardMaterial3D_a8w1u"), SubResource("ShaderMaterial_11h5x"), SubResource("StandardMaterial3D_novb6"), SubResource("ShaderMaterial_e4dpn"), SubResource("StandardMaterial3D_15y38"), SubResource("StandardMaterial3D_tb8go"), SubResource("StandardMaterial3D_4eqib"), SubResource("StandardMaterial3D_nhfqi"), SubResource("StandardMaterial3D_17wth"), SubResource("StandardMaterial3D_3nmdb"), SubResource("ShaderMaterial_m7j4g"), SubResource("StandardMaterial3D_t4ods"), SubResource("StandardMaterial3D_uveds")])
+metadata/materiali = Array[Material]([SubResource("StandardMaterial3D_ujctc"), SubResource("StandardMaterial3D_kx6b2"), SubResource("StandardMaterial3D_ljcmb"), SubResource("StandardMaterial3D_8j56g"), SubResource("ShaderMaterial_ewxfo"), SubResource("ShaderMaterial_fo61r"), SubResource("ShaderMaterial_76blx"), SubResource("StandardMaterial3D_2ia2o"), SubResource("StandardMaterial3D_a8w1u"), SubResource("StandardMaterial3D_11h5x"), SubResource("StandardMaterial3D_novb6"), SubResource("ShaderMaterial_e4dpn"), SubResource("StandardMaterial3D_15y38"), SubResource("ShaderMaterial_tb8go"), SubResource("StandardMaterial3D_4eqib"), SubResource("StandardMaterial3D_nhfqi"), SubResource("StandardMaterial3D_17wth"), SubResource("StandardMaterial3D_3nmdb"), SubResource("StandardMaterial3D_m7j4g"), SubResource("StandardMaterial3D_t4ods"), SubResource("ShaderMaterial_uveds"), SubResource("StandardMaterial3D_wi2b3"), SubResource("StandardMaterial3D_r461k")])

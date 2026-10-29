@@ -107,6 +107,13 @@ Posa.appoggia_su_impronta(foto, [Vector3.ZERO, Vector3(0.04, 0, 0.05), Vector3(-
 
 Nel gioco l'unico altro uso di `appoggia_a_terra` sono gli arredi del sottomarino, appoggiati sulle mensole (`sottomarino_arredi_a2.gd`), che non sono grigliati. Le altre Polaroid si appoggiano da sole (`snap_to_surface`, un raggio della fisica): nessuna sta su un grigliato.
 
+**La crepa dei raggi.** Il test raggio-triangolo di Jolt non è a tenuta. Un raggio della fisica a meno di qualche millesimo di millimetro da un lato condiviso fra due triangoli può passare in mezzo, e trova quello che c'è sotto o niente. Succede solo proprio sopra un lato, ma le cose messe a coordinate tonde ci finiscono, perché anche le giunzioni stanno spesso a coordinate tonde. Sul fondo della piscina, a x = 0, un giocattolo spinto lungo l'asse cadeva sul soffitto della camera delle onde, 2,4 m sotto (ricontrollo di ambienti-2 del 29 ottobre). Il giocatore e i corpi con una forma non hanno il problema: vale solo per i raggi. Per cercare un appoggio con un raggio si usa `RaggioSicuro.interseca(spazio, query)` (`godot/addons/acqua/scripts/raggio_sicuro.gd`) al posto di `intersect_ray`:
+- oltre al raggio ne lancia quattro paralleli a 2,5 mm, in croce;
+- se quelli di due lati opposti trovano, d'accordo fra loro, una superficie più vicina, il raggio al centro era passato da una crepa e vale quella;
+- vicino a uno spigolo vero la superficie la trova un lato solo, e lì, come ovunque fuori dalle crepe, il risultato è quello del raggio solo.
+
+Lo usano già Posa, lo snap delle Polaroid, le pozze, i galleggianti, la bava rosa, le gocce e la griglia del fondo delle medusine (lì solo sui punti sospetti, per non pesare). Test: `godot/tests/test_raggi_crepa.gd`, nella CI.
+
 **Nei generatori Blender**: `tools/blender/posa.py`. Misura la mesh vera nel mondo, modificatori compresi, quindi non servono gli scarti a mano.
 
 ```python
