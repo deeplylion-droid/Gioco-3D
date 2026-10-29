@@ -63,6 +63,12 @@ jobs:
           python3 tools/godot_vram_textures.py godot
           godot --headless --path godot --import
 
+      - name: Texture del pacchetto compresse per la scheda video e con le mipmap (le eccezioni volute in tools/ci/texture_lossless_volute.txt)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          python3 tools/ci/test_texture_compresse.py
+          python3 tools/ci/texture_compresse.py godot
+
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/check_scripts.gd

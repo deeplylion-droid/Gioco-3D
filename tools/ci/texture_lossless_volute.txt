@@ -1,0 +1,45 @@
+# Texture del pacchetto che restano non compresse per la scheda video (o senza mipmap) apposta, con il motivo.
+# Le controlla tools/ci/texture_compresse.py nella CI. Formato: res://percorso | motivo
+# Prima di aggiungerne una: va bene solo se la compressione la rovina a vista (scritte, disegni fini, sfumature, indizi),
+# se è interfaccia, o se uno script la legge sulla CPU. Altrimenti si reimporta VRAM Compressed con le mipmap.
+
+# Interfaccia e icona
+res://icon.svg | icona del gioco (finestra ed eseguibile), non si usa in 3D
+res://assets/ui/logo/logo_jilly_jubilee.png | logo del titolo e dello spot, interfaccia a schermo
+
+# Infermeria (grafica, 23 ottobre, lavoro/grafica-vram 7e848e8c: restano Lossless le immagini con scritte, disegni o indizi)
+res://assets/infermeria/texture/adesivo_0.png | adesivo dell'enigma dell'infermeria, disegno fine (7e848e8c)
+res://assets/infermeria/texture/adesivo_1.png | adesivo dell'enigma dell'infermeria, disegno fine (7e848e8c)
+res://assets/infermeria/texture/adesivo_2.png | adesivo dell'enigma dell'infermeria, disegno fine (7e848e8c)
+res://assets/infermeria/texture/adesivo_3.png | adesivo dell'enigma dell'infermeria, disegno fine (7e848e8c)
+res://assets/infermeria/texture/adesivo_4.png | adesivo dell'enigma dell'infermeria, disegno fine (7e848e8c)
+res://assets/infermeria/texture/polaroid_medico.jpg | Polaroid del medico, indizio da leggere da vicino (7e848e8c)
+res://assets/infermeria/texture/polaroid_medico_B.jpg | Polaroid del medico, indizio da leggere da vicino (7e848e8c)
+res://assets/infermeria/texture/radiografia.jpg | radiografia sul negatoscopio, indizio con linee fini (7e848e8c)
+res://assets/infermeria/texture/radiografia_emi.jpg | radiografia sul negatoscopio (emissione), indizio con linee fini (7e848e8c)
+res://assets/infermeria/texture/rotella_cifre.jpg | cifre delle rotelle della cassaforte, da leggere (7e848e8c)
+res://assets/infermeria/texture/simbolo_coda.png | simbolo dell'enigma, bordi netti (7e848e8c)
+res://assets/infermeria/texture/simbolo_corpo.png | simbolo dell'enigma, bordi netti (7e848e8c)
+res://assets/infermeria/texture/simbolo_testa.png | simbolo dell'enigma, bordi netti (7e848e8c)
+res://assets/tessera/texture/tessera_1.png | tessera del personale dell'infermeria (foto, simbolo, banda), indizio da vicino
+res://assets/tessera/texture/tessera_2.png | tessera con la chiave dell'infermeria, simbolo da riconoscere da vicino
+
+# Fiume lento (grafica, 23 ottobre, 7e848e8c)
+res://assets/fiume_lento/texture/cartello_bimbi.jpg | cartello disegnato, bordi netti a colori (7e848e8c)
+res://assets/fiume_lento/texture/cartello_tuffi.jpg | cartello disegnato, bordi netti a colori (7e848e8c)
+res://assets/fiume_lento/texture/uscita_faccia.jpg | cartello d'uscita, disegno (7e848e8c)
+res://assets/fiume_lento/texture/linea_calcare.png | linea del calcare con l'alfa, striscia sottile (7e848e8c)
+res://assets/fiume_lento/texture/scatolone_colorato_pile.jpg | scatolone con i simboli dell'enigma (stella, pallini, bersaglio), lasciato apposta il 23 ottobre (7e848e8c compresse solo le due normali)
+
+# Tunnel e sala
+res://assets/ambiente/sottomarino/cartello_portello.jpg | cartello disegnato del portello, bordi netti a colori (come i cartelli del fiume)
+res://assets/tecnici/monitor_sala.jpg | immagine sullo schermo del monitor della sala, emissiva e piccola (320x240): non verificata a vista, la sala non si renderizza qui
+
+# Luci
+res://addons/grafica/texture/torcia_cookie.png | maschera della torcia, sfumatura: compressa fa le bande nel fascio
+
+# Acqua (shader dell'acqua approvato: rumore, normali e schiuma sono dati per lo shader, compressi cambiano le increspature)
+res://addons/acqua/textures/foam.png | schiuma dello shader dell'acqua
+res://addons/acqua/textures/noise_rgba.png | rumore dello shader dell'acqua (variabile globale water_noise_tex), dati
+res://addons/acqua/textures/water_normal_a.png | normali delle increspature dello shader dell'acqua
+res://addons/acqua/textures/water_normal_b.png | normali delle increspature dello shader dell'acqua

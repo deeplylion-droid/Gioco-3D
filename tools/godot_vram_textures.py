@@ -71,10 +71,11 @@ def main(root: str) -> int:
             lato = _limite_estratta(root, d, f)
             if lato:
                 s2 = s2.replace("process/size_limit=0", f"process/size_limit={lato}")
-            if limit is not None:
-                if limit > 0:
-                    s2 = s2.replace("process/size_limit=0", f"process/size_limit={limit}")
-                s2 = s2.replace("mipmaps/generate=false", "mipmaps/generate=true")
+            if limit is not None and limit > 0:
+                s2 = s2.replace("process/size_limit=0", f"process/size_limit={limit}")
+            # (anche le estratte: una restava senza, sala_vasca_centrale_acciaio_inox_orm, e il controllo della CI
+            # tools/ci/texture_compresse.py le vuole tutte con le mipmap)
+            s2 = s2.replace("mipmaps/generate=false", "mipmaps/generate=true")
             if s2 != s:
                 with open(p, "w", encoding="utf-8") as fh:
                     fh.write(s2)
