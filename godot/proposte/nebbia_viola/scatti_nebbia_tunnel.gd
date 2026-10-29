@@ -74,14 +74,15 @@ func _run() -> void:
 		cam.fov = v[6]
 		cam.look_at_from_position(_occhio(sala, v[0], v[1], v[2]), _occhio(sala, v[3], v[4], v[5]))
 		occhi.global_position = cam.global_position
-		var con_lei: bool = float(v[7]) >= 0.0 and sala.lei != null
+		var con_lei: bool = float(v[7]) >= 0.0 and sala.lei_tunnel != null
 		if sala.lei:
-			sala.lei.visible = con_lei
-			if con_lei:
-				sala.bersaglio = occhi
-				sala.insegui_da(float(v[7]))
-				sala.velocita_lei = 0.0
-				sala.velocita_rincorsa = 0.0
+			sala.lei.visible = false
+		if con_lei:
+			# lei che insegue nel canale: risale dall'acqua davanti alla camera e la guarda (come tests/misura_tunnel_lei.gd)
+			var dove := sala.punto(float(v[7]))
+			dove.y = sala.acqua
+			sala.lei_tunnel.riemergi(dove, cam.global_position - dove)
+			await _frames(150)
 		await _frames(30)
 		nebbia.imposta_luci(_luci(sala, cam, con_lei))
 		nebbia.attiva = false
@@ -99,7 +100,7 @@ func _luci(sala: SalaSottomarino, cam: Camera3D, con_lei: bool) -> Array:
 	var scelte: Array = []
 	var avanti := -cam.global_basis.z
 	if con_lei:
-		for l in sala.lei.find_children("*", "OmniLight3D", true, false):
+		for l in sala.lei_tunnel.find_children("*", "OmniLight3D", true, false):
 			var lu := l as Light3D
 			if lu.is_visible_in_tree() and not cam.is_position_behind(lu.global_position):
 				scelte.append([lu.global_position, lu.light_color, 0.18])
@@ -109,7 +110,7 @@ func _luci(sala: SalaSottomarino, cam: Camera3D, con_lei: bool) -> Array:
 		var l := n as Light3D
 		if l is DirectionalLight3D or not l.is_visible_in_tree() or l.light_energy <= 0.0:
 			continue
-		if sala.lei and sala.lei.is_ancestor_of(l):
+		if (sala.lei and sala.lei.is_ancestor_of(l)) or (sala.lei_tunnel and sala.lei_tunnel.is_ancestor_of(l)):
 			continue
 		var d := l.global_position - cam.global_position
 		if d.length() > 16.0 or d.normalized().dot(avanti) < 0.3:
