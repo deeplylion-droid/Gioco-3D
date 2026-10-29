@@ -317,11 +317,11 @@ func _spingi(i: int, max_colpi := 40) -> bool:
 		# colpendo il muro o l'acqua alle sue spalle l'onda lo manda verso il cerchio (e verso chi spruzza)
 		# (collaudo: tutta la parte profonda, fino a 40 cm dai muri: anche a nord dei cerchi, dove un giocatore ci sta)
 		var dove_si_sta := Rect2(-6.6, -4.0, 13.2, 8.6)
-		# (collaudo: se dietro di lui alla distanza voluta non ci si sta, ci si avvicina, fino a 1,2 m, come farebbe un
+		# (collaudo: se dietro di lui alla distanza voluta non ci si sta, ci si avvicina, fino a 0,6 m, come farebbe un
 		# giocatore; di sponda solo se nemmeno così)
 		if not dove_si_sta.has_point(voluto):
 			for k in 8:
-				var dd := lerpf(dietro, 1.2, (k + 1) / 8.0)
+				var dd := lerpf(dietro, 0.6, (k + 1) / 8.0)
 				var prova := Vector2(gp.x - dir.x * dd, gp.z - dir.y * dd)
 				if dove_si_sta.has_point(prova):
 					voluto = prova
