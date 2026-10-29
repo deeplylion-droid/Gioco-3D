@@ -123,6 +123,9 @@ func _sala() -> void:
 		break
 	print("ACQUARI in ", acq_pos)
 	await _coppia("sala_2_acquari", acq_pos + Vector3(0, 1.6 - acq_pos.y, 0) + (Vector3(0, 0, 0) - acq_pos).normalized() * 4.5 * Vector3(1, 0, 1), acq_pos, zona)
+	# gli acquari in tutti gli stati: vuoti (prima del magazzino), pieni, il miscuglio verde e torbido
+	if acq:
+		await _acquari(acq as EnigmaAcquari, zona)
 	var cancello := _vicino(level, ["cancell", "Cancell", "grata", "Grata"])
 	if cancello:
 		var c := cancello.global_position
@@ -137,7 +140,8 @@ func _sala() -> void:
 	if pol:
 		var q := pol.global_position
 		print("POLAROID ", level.get_path_to(pol), " in ", q)
-		await _coppia("sala_4_polaroid", q + (Vector3(0, q.y, 0) - q).normalized() * 3.0 + Vector3(0, 1.4, 0), q, zona)
+		var verso_centro := (Vector3(0, q.y, 0) - q).normalized()
+		await _coppia("sala_4_polaroid", q + verso_centro * 1.8 + Vector3(0, 1.6, 0), q + Vector3(0, 0.05, 0), zona)
 	# il preset basso: la nebbia semplice, 10 passi
 	Grafica.applica_preset("basso")
 	await _frames(30)
@@ -216,3 +220,34 @@ func _tunnel() -> void:
 func _occhio(sala: SalaSottomarino, s: float, lato: float, su: float) -> Vector3:
 	var di_lato := lato * sala.canale if absf(lato) < 0.99 else signf(lato) * (sala.canale + sala.banchina * 0.5)
 	return sala.punto(s) + sala.destra(s) * di_lato + Vector3.UP * (sala.piano - sala.acqua + su)
+
+
+func _acquari(e: EnigmaAcquari, zona: Node) -> void:
+	var tanks := [e._giallo, e._blu, e._misto]
+	var c := Vector3.ZERO
+	for tk in tanks:
+		c += (tk as Node3D).global_position
+	c /= 3.0
+	var verso := (Vector3(0, c.y, 0) - c).normalized()
+	var da := c + verso * 6.5
+	da.y = 1.6
+	var guarda := c + Vector3(0, 1.2, 0)
+	e._mostra(false)
+	await _frames(20)
+	await _coppia("acquari_1_vuoti", da, guarda, zona)
+	e._mostra(true)
+	await _frames(20)
+	await _coppia("acquari_2_pieni", da, guarda, zona)
+	e._misto.fill = e._misto.max_fill
+	e._misto.set_mix({WaterMix.GIALLO: 0.5, WaterMix.BLU: 0.5})
+	await _frames(20)
+	await _coppia("acquari_3_miscuglio_verde", da, guarda, zona)
+	e._misto.set_mix({WaterMix.GIALLO: 0.8, WaterMix.BLU: 0.2})
+	await _frames(20)
+	await _coppia("acquari_4_miscuglio_sbagliato", da, guarda, zona)
+	for i in 3:
+		var tk := tanks[i] as Node3D
+		var p := tk.global_position
+		var v := (Vector3(0, p.y, 0) - p).normalized()
+		await _coppia("acquari_5_vicino_%d" % i, p + v * 3.0 + Vector3(0, 1.6 - p.y, 0), p + Vector3(0, 1.0, 0), zona)
+
