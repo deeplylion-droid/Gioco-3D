@@ -88,6 +88,8 @@ func _ready() -> void:
 
 
 func _aggiorna_tipo() -> void:
+	if not _luci_vive():
+		return
 	var rotante := modalita == Modalita.ROTANTE
 	_omni.visible = modalita in [Modalita.FISSA, Modalita.PULSANTE]
 	# Con il lampeggiante resta una luce tenue tutt'intorno, senza ombra.
@@ -98,6 +100,8 @@ func _aggiorna_tipo() -> void:
 	else:
 		_omni.shadow_enabled = ombre
 	for s in _spot:
+		if not is_instance_valid(s):
+			continue
 		s.visible = rotante
 		s.light_energy = energia * 2.5
 	_cupola_mat.emission_energy_multiplier = 0.0 if modalita == Modalita.SPENTA else 3.0
@@ -105,6 +109,10 @@ func _aggiorna_tipo() -> void:
 
 
 func _process(delta: float) -> void:
+	# (la luce e il perno sono figli: quando una zona si scarica si liberano dalle foglie, un po' per fotogramma,
+	# AccensioneAPezzi.libera, e la lampada resta qualche fotogramma senza; ricontrollo del 29 ottobre)
+	if not _luci_vive():
+		return
 	_t += delta
 	match modalita:
 		Modalita.FISSA:
@@ -116,3 +124,8 @@ func _process(delta: float) -> void:
 			_cupola_mat.emission_energy_multiplier = lerpf(0.3, 4.0, p)
 		Modalita.ROTANTE:
 			_perno.rotation.y = _t * TAU * giri_al_secondo
+
+
+## La luce e il perno ci sono ancora (vedi [method _process]).
+func _luci_vive() -> bool:
+	return is_instance_valid(_omni) and is_instance_valid(_perno)

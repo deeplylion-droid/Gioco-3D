@@ -97,6 +97,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
 
+      - name: Test dell'audio quando le scene si liberano a pezzi o il gioco si chiude (niente "Lambda capture ... was freed")
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio_chiusura.gd
+
       - name: Test del menu (titolo, caricamento, pausa)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd

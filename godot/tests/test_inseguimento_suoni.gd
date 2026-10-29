@@ -19,6 +19,7 @@ var ap: AnimationPlayer
 var p: Node3D
 var st
 var _vol_max := [-80.0, -80.0]   # il volume più alto di un battito e di un colpo nell'ultimo _conta
+var _colpi_pieni := 0            # i colpi del ritmo nell'ultimo _conta senza i doppi (5,2 dB più piano)
 var _passed := 0
 var _failed := 0
 
@@ -63,15 +64,20 @@ func _run() -> void:
 	await _secondi(2.0)
 	var lontana := await _conta(20.0)
 	var vol_lontana: Array = _vol_max.duplicate()
+	var pieni_lontana := _colpi_pieni
 	lei.global_position = Vector3(0, 0, -8)
 	await _secondi(9.0)                                 # (il cuore accelera piano)
 	var vicina := await _conta(20.0)
 	var vol_vicina: Array = _vol_max.duplicate()
+	var pieni_vicina := _colpi_pieni
 	print("  lontana: %d battiti e %d colpi in 20 s; vicina: %d e %d" % [lontana[0], lontana[1], vicina[0], vicina[1]])
 	check(lontana[0] >= 22 and lontana[0] <= 26, "lontana il cuore a circa 72 al minuto (%d in 20 s)" % lontana[0])
 	check(vicina[0] >= 40 and vicina[0] <= 45, "vicina il cuore a circa 128 al minuto (%d in 20 s)" % vicina[0])
-	check(lontana[1] >= 10 and lontana[1] <= 19, "lontana il ritmo rado (%d colpi in 20 s)" % lontana[1])
-	check(vicina[1] >= 28 and vicina[1] <= 50, "vicina il ritmo fitto (%d colpi in 20 s)" % vicina[1])
+	# (i colpi pieni, senza i doppi che arrivano a caso una volta su cinque: lontana uno ogni 1,5 s × 0,8-1,25, cioè
+	# 10,7-16,7 in 20 s; vicina uno ogni 0,55 s × 0,8-1,25, cioè 29-45. Contando anche i doppi una volta usciva 20 da
+	# lontana: CI di lavoro/audio-chiusura, 29 ottobre)
+	check(pieni_lontana >= 10 and pieni_lontana <= 17, "lontana il ritmo rado (%d colpi pieni in 20 s, %d coi doppi)" % [pieni_lontana, lontana[1]])
+	check(pieni_vicina >= 28 and pieni_vicina <= 46, "vicina il ritmo fitto (%d colpi pieni in 20 s, %d coi doppi)" % [pieni_vicina, vicina[1]])
 	check(vol_vicina[0] > vol_lontana[0] + 6.0, "vicina il cuore più forte (%.1f contro %.1f dB)" % [vol_vicina[0], vol_lontana[0]])
 	# sotto il canto come nell'esempio approvato: a 8 m il battito a -5 dB, il canto (lei_tunnel_canto) a 0 (29 ottobre)
 	check(vol_vicina[0] <= -5.0 and vol_vicina[0] >= -6.0, "vicina il cuore 5 dB sotto il canto, come nell'esempio (%.1f dB)" % vol_vicina[0])
@@ -123,6 +129,7 @@ func _conta(t: float) -> Array:
 	# (senza uscita audio i lettori della riserva si riprendono subito: un colpo nuovo si riconosce perché il suo lettore
 	# cambia volume o momento di partenza, il meta "finto_fino")
 	var prima := {}
+	var volumi_ritmo: Array[float] = []
 	for pl in Audio.find_children("*", "AudioStreamPlayer", true, false):
 		prima[pl] = [pl.get(&"stream"), pl.get(&"volume_db"), pl.get_meta(&"finto_fino", -1.0)]
 	for i in int(round(t * 60.0)):
@@ -132,7 +139,11 @@ func _conta(t: float) -> Array:
 			var k := flussi.find(ora[0])
 			if k >= 0 and ora != prima.get(pl, []):
 				_vol_max[k] = maxf(_vol_max[k], float(ora[1]))
+				if k == 1:
+					volumi_ritmo.append(float(ora[1]))
 			prima[pl] = ora
+	# i colpi pieni: quelli al volume più alto (i doppi sono 5,2 dB sotto)
+	_colpi_pieni = volumi_ritmo.filter(func(v): return v > _vol_max[1] - 2.6).size()
 	return [int(Audio.conteggio.get(CUORE, 0)) - c0, int(Audio.conteggio.get(RITMO, 0)) - r0]
 
 
