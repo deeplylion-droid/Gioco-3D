@@ -62,7 +62,14 @@ Perché l'enigma si legga bene, nella parte profonda restano solo i tre giocatto
 - Sul fondo restano le due ciambelle, il salvagente e i tubi galleggianti: non si confondono coi giocattoli, e nell'enigma sono ostacoli da girare.
 - Gli spostamenti sono nella scena della sala, sui nodi di `sala_oggetti.glb`; il GLB non cambia.
 
-<!-- PRIMA DOPO -->
+Prima e dopo, dall'alto della parte profonda, a piscina vuota (scatti dal motore, stesso punto):
+
+![prima](arredo_prima.jpg)
+![dopo](arredo_dopo.jpg)
+
+Sulla spiaggia, dove sono finiti:
+
+![spiaggia](arredo_spiaggia.jpg)
 
 ## Scatti e video
 
@@ -86,4 +93,13 @@ Perché l'enigma si legga bene, nella parte profonda restano solo i tre giocatto
 
 ## Cosa manca e da decidere
 
-<!-- DA DECIDERE -->
+1. **Il disegno ha un filo di luce propria**, come se fosse fatto coi pastelli fosforescenti (come il bordo dei cerchi), con intensità 0,12 (scatto 1).
+   - Senza luce, al buio della piscina, da 4 m non si legge: si vede solo un rettangolo scuro.
+   - A 0,3 sembra uno schermo acceso.
+   - L'alternativa è una lampada sul bordo, sopra il disegno.
+2. **I suoni sono provvisori**, presi fra quelli che ci sono già:
+   - il tonfo del piatto è la fine della saracinesca, più grave;
+   - il risucchio dagli scarichi è lo svuotamento della piscina, rallentato.
+   Se servono suoni fatti apposta, li chiedo alla squadra audio.
+3. **Il fianco dei piatti è chiaro**, come il bordo di piastrelle: si vede bene a piscina vuota, quando i piatti sporgono di 3 cm (foglio del collaudo, piscina vuota).
+4. **Le partenze del menu di prova** (F9) si rifanno dopo l'unione con le Polaroid nuove, perché i due branch cambiano gli stessi file. In quella della piscina l'enigma è già risolto.
