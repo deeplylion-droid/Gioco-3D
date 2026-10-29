@@ -20,7 +20,7 @@ Branch `lavoro/scarabocchi`. **Niente si unisce senza l'ok dell'utente.**
 | torre | 3 | la nave col sole; i bambini per mano con Jilly sorridente | le manine che salgono |
 | inseguimento | 3 | i pesci sotto le onde; Jilly coi pesci | l'occhio solo |
 | tunnel | 5 | spirale, macchia viola e scarabocchio; la nave; l'omino cancellato e il tondo verde | i bambini sott'acqua; le manine |
-| sala | 3 | Jilly coi pesci (sulla fascia di piastrelle) | l'occhio solo; i bambini sott'acqua |
+| sala | 3 | la nave col sole (sulle piastrelle bianche sopra la riga rossa) | l'occhio solo; i bambini sott'acqua |
 | risalita | 2 | spirale, macchia viola e scarabocchio; l'omino cancellato | |
 | tecnici | 1 | la nave col sole | |
 | fiume | 1 | i pesci sotto le onde | |
@@ -36,7 +36,8 @@ Branch `lavoro/scarabocchi`. **Niente si unisce senza l'ok dell'utente.**
 
 - **inseguimento_1**: alzato sopra l'acqua allagata (pelo -33,40). Il bordo basso del disegno ora è a -33,20, con 20 cm
   di margine.
-- **sala_1**: più piccolo (1,6 × 0,6 m) e più alto, sulla parte piatta delle piastrelle.
+- **sala_1**: più piccolo (1,6 × 0,5 m), sulle piastrelle bianche sopra la riga rossa (da 1,05 a 1,55 m), e la nave al
+  posto di Jilly rosa, che in sala sembrava la medusina del disegno degli acquari.
 - **alto_sala_3**: più stretto (0,8 m) e spostato via dall'angolo.
 - **torre_3**: spostato e rimpicciolito (1,4 × 0,7 m) via dalle scale, che a 12-13 cm dal muro sarebbero state dipinte.
   La verifica passa anche spostandolo di 10-20 cm da tutte e due le parti.
