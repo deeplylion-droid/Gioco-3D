@@ -55,3 +55,15 @@ alto_sala_3, risalita_2, tunnel_1 e torre_3 spostato.
 - sala_1 sta sulla fascia di piastrelle con la riga rossa: la medusa cade proprio sulla riga rossa e si legge meno.
 - Il disegno di Jilly coi pesci (sala_1, inseguimento_3) somiglia alla medusina rosa del disegno degli acquari. Sta a
   più di 3 m dagli acquari, ma è da tenere presente se l'utente lo legge come un indizio.
+
+## Ricontrollo di sala_1 su 7b20252b
+
+sala_1 è stato rifatto: ora c'è la nave col sole e il pesce, 1,6 × 0,5 m sulle piastrelle bianche sopra la riga rossa,
+fra 1,05 e 1,55 m.
+
+- Geometria: 0 problemi su 91 raggi, niente nella scatola.
+- Fra il bordo alto (1,55 m) e il bordo basso dell'occhio di alto_sala_1 (2,0 m) restano 45 cm: non si toccano.
+- Niente cartelli entro 1 m. L'unica cosa vicina è l'oblò a 0,46 m, che non tocca.
+- Scatti nuovi in `foglio_sala.jpg`, righe sala_1 e alto_sala_1. **Superato.**
+- Con questo cadono le due note di design su sala_1: la medusa sulla riga rossa e la Jilly simile alla medusina
+  degli acquari.
