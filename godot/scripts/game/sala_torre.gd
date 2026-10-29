@@ -175,17 +175,18 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 ## solo dentro la vasca"). Fino alla 0.3.15 lei e la vasca prendevano il rosso della lampada d'emergenza del muro est,
 ## che senza ombra passava il muro (e faceva la riga rossa nelle condotte) e la illuminava da davanti. Ora quella
 ## lampada fa ombra; il suo rosso lo ridanno:
-## - un faretto debole nel foro del muro, davanti al vetro, puntato dentro la vasca, con l'ombra: lei accesa da davanti,
-##   satura e con le ombre, come prima (la torre resta com'è: punta via da lei);
+## - un faretto appena fuori dal foro del muro, all'altezza del vetro, puntato dentro la vasca, largo e corto (1,8 m: non
+##   arriva alle condotte dietro), con l'ombra: lei accesa da davanti, tutta, capelli, faccia, corpo e mani, satura e
+##   con le ombre, come nella 0.3.15 (più in alto e più stretto i capelli facevano ombra e il corpo restava grigio);
 ## - i veli dell'acqua torbida della vasca appena accesi (ObloLei.veli_colore): il fondo rosso dietro di lei;
 ## - il vetro quasi spento (ObloLei.vetro_colore): acceso faceva un velo rosa piatto su lei vista da vicino.
 ## Niente nebbia e niente luci libere nella vasca: riportavano la riga nelle condotte (prove del 29 ottobre,
 ## docs/report/collaudo_29ottobre_g2/torre_rosso). Sotto l'oblò: la preparazione della torre li disegna con lui.
-@export var oblo_rosso_faccia := 1.2
+@export var oblo_rosso_faccia := 2.5
 @export var oblo_veli_rossi := ROSSO * 0.15
 @export var oblo_vetro_rosso := Color(0.0, 0.0, 0.0)
 ## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
-const OBLO_ROSSO_FACCIA := Vector3(-0.15, 0.35, -0.15)
+const OBLO_ROSSO_FACCIA := Vector3(0.0, 0.2, 0.2)
 
 
 func _rosso_vasca() -> void:
@@ -195,8 +196,8 @@ func _rosso_vasca() -> void:
 	l.name = "RossoFaccia"
 	l.light_color = ROSSO
 	l.light_energy = oblo_rosso_faccia
-	l.spot_range = 4.0
-	l.spot_angle = 55.0
+	l.spot_range = 1.8
+	l.spot_angle = 70.0
 	l.shadow_enabled = true
 	l.light_volumetric_fog_energy = 0.0
 	l.set_meta(&"risveglio_ignora", true)
@@ -1151,10 +1152,12 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	# sul muro est, quello in comune con la sala delle condotte, con l'ombra: senza, la luce passava il muro e faceva
 	# una riga rossa su uno spigolo delle condotte accanto alla cisterna dell'oblò (ricontrollo del 29 ottobre)
 	l.shadow_enabled = absf(p.x - MURO_CONDOTTE_X) < 1.0
-	# (e il corpo della lampada non fa ombra sul suo muro: con l'ombra accesa faceva una zona scura netta accanto a lei,
-	# dove nella 0.3.15 era rosso; ricontrollo di ambienti-1 del 29 ottobre)
+	# (e il corpo della lampada non fa ombra sul suo muro, e l'ombra della condotta è sfocata: netta faceva una zona
+	# scura accanto a lei, dove nella 0.3.15 era rosso; ricontrollo di ambienti-1 del 29 ottobre. L'ombra resta piena:
+	# meno opaca la riga delle condotte tornava; con la grandezza della luce, ombre morbide, 36 pipeline nuove)
 	if l.shadow_enabled:
 		corpo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		l.shadow_blur = 4.0
 	radice.add_child(l)
 	l.global_position = p + verso * 0.4
 
