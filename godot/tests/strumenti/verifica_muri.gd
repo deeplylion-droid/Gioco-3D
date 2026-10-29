@@ -3,7 +3,8 @@ extends "res://tests/strumenti/cerca_muri.gd"
 ## con una griglia fitta, 13 × 7 raggi come il collaudo: per ognuno quanti raggi non trovano il muro, lo trovano
 ## inclinato o fuori dal piano (più di 3,5 cm) o colpiscono altro che architettura. Poi le mesh che entrano nella scatola
 ## della decal (±12 cm dal muro, che verrebbero dipinte) e l'acqua, anche nascosta (si allaga dopo), con il margine fra
-## l'acqua e il bordo basso del disegno.
+## l'acqua e il bordo basso del disegno, e i vietati della ricerca (porte, Polaroid, interattivi, poster a 1 m,
+## acquari a 3 m).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/strumenti/verifica_muri.gd [scena]
 
 var _lista: Array = []
@@ -77,8 +78,13 @@ func _candidati(spazio: PhysicsDirectSpaceState3D, _punti: Array) -> Array:
 			if b.intersects(orizz) and b.size.y < 3.0:
 				var pelo := b.end.y
 				acqua.append("%s pelo %.2f, bordo basso del disegno %.2f (margine %.2f)" % [String(_radice.get_path_to(a)), pelo, c.y - h / 2.0, c.y - h / 2.0 - pelo])
-		var ok := vuoti == 0 and storti == 0 and altro.is_empty() and dentro.is_empty()
-		print("VERIFICA %s %s: vuoti %d, storti %d, altro %s, dentro %s" % [m["nome"], "OK" if ok else "NO", vuoti, storti, altro, dentro])
+		# porte, Polaroid, interattivi e poster entro 1 m, gli acquari e il loro disegno entro 3 m (come nella ricerca)
+		var vietati := []
+		for v in _vietati:
+			if (v[0] as AABB).intersects(scatola) and not String(v[1]).begins_with("Scarabocchi/"):
+				vietati.append(v[1])
+		var ok := vuoti == 0 and storti == 0 and altro.is_empty() and dentro.is_empty() and vietati.is_empty()
+		print("VERIFICA %s %s: vuoti %d, storti %d, altro %s, dentro %s, vietati %s" % [m["nome"], "OK" if ok else "NO", vuoti, storti, altro, dentro, vietati])
 		for v in vicine:
 			print("    vicino: ", v)
 		for a in acqua:
