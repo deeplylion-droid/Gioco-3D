@@ -40,6 +40,10 @@ func _run() -> void:
 		await _giocatore_buco()
 	if "sonda_buco" in _parti:
 		await _sonda_buco()
+	if "sequenza" in _parti:
+		await _sequenza()
+	if "ripartenza_piatto" in _parti:
+		await _ripartenza_piatto()
 	_fine()
 
 
@@ -681,4 +685,94 @@ func _sonda_buco() -> void:
 	print("    subito dopo load_state: pallone y ", enigma.giocattolo(1).global_position.y)
 	await _frames(5)
 	print("    dopo 5 fotogrammi: pallone in ", enigma.giocattolo(1).global_position, " | da 1 m: ", _colpo_giu(q, 1.0, -6.0, tutti), " | senza escludere: ", _colpo_giu(q, 1.0, -6.0, []))
+
+
+## La sequenza che mandava il pallone sotto il fondo (ricontrollo di e22f8182): spinto da (-1,6/2,0) verso est, poi
+## rimesso con load_state in (0/3,6) e in altri punti vicino al portellone.
+func _sequenza() -> void:
+	print("13. La sequenza col load_state dopo una spinta")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	var stato: Dictionary = enigma.save_state()
+	stato["pos"][1] = [-1.6, 2.0, 0.0]
+	enigma.load_state(stato)
+	await _frames(60)
+	for f in 240:
+		enigma._vel[1] += Vector2(1, 0) * 4.0 / 60.0
+		await get_tree().physics_frame
+	var g := enigma.giocattolo(1)
+	for pos in [Vector2(0.0, 3.6), Vector2(0.0, 0.4), Vector2(1.6, 2.0), Vector2(-1.13, 3.13), Vector2(1e-16, 3.6), Vector2(0.0, 2.6)]:
+		stato = enigma.save_state()
+		stato["pos"][1] = [pos.x, pos.y, 0.0]
+		enigma.load_state(stato)
+		await _frames(2)
+		var subito := g.global_position.y
+		await _frames(90)
+		var f := _fondo_sotto(Vector3(g.global_position.x, 1.0, g.global_position.z), [g.get_rid()])
+		check(absf(g.global_position.y - f) < 0.03 and subito > -2.5, "rimesso in %s: sul fondo (dopo 2 fotogrammi y %.3f, dopo 1,5 s y %.3f, fondo %.3f)" % [pos, subito, g.global_position.y, f])
+
+
+## Ripartenza mentre un piatto sta scendendo (0,18 s): a) load_state dello stato di prima nel mezzo della discesa; b) il
+## checkpoint della pozza vuota, poi si muore nel mezzo della discesa. Il piatto deve tornare su del tutto e il
+## giocattolo dov'era.
+func _ripartenza_piatto() -> void:
+	print("14. Ripartenza mentre un piatto scende")
+	await _carica()
+	await _svuota()
+	await _frames(120)
+	var prima: Dictionary = enigma.save_state()
+	var fatto := [false]
+	var e := enigma
+	var cb := func(i: int):
+		if not fatto[0]:
+			fatto[0] = true
+			e.call_deferred(&"load_state", prima)
+	enigma.piatto_sceso.connect(cb)
+	await _spingi(0)
+	enigma.piatto_sceso.disconnect(cb)
+	await _frames(60)
+	var pos0: Array = prima["pos"][0]
+	var g := enigma.giocattolo(0)
+	check(fatto[0], "a) il piatto della paperella ha cominciato a scendere")
+	check(not enigma.piatto_giu(0) and absf(float(enigma._dischi[0].height) - enigma.sporgenza) < 0.001,
+		"a) load_state a metà discesa: il piatto è tornato su del tutto (altezza %.3f, a riposo %.3f)" % [float(enigma._dischi[0].height), enigma.sporgenza])
+	check(Vector2(g.position.x, g.position.z).distance_to(Vector2(pos0[0], pos0[1])) < 0.03, "a) la paperella è tornata dov'era (%s)" % _dove(0))
+	var f := _fondo_sotto(g.global_position, [g.get_rid()])
+	check(absf(g.global_position.y - f) < 0.03, "a) e sta sul fondo (y %.3f, fondo %.3f)" % [g.global_position.y, f])
+	# b) checkpoint, poi la morte a metà discesa
+	await _carica()
+	GameState.save_to_disk = false
+	await _svuota()
+	await _frames(120)
+	var cp := level.get_node(^"Piscina/CheckpointPozzaVuota") as Checkpoint
+	GameState.reach_checkpoint(cp)
+	await _frames(5)
+	var al_cp: Dictionary = enigma.save_state()
+	var morto := [false]
+	var cb2 := func(i: int):
+		if not morto[0]:
+			morto[0] = true
+			GameState.call_deferred(&"kill_player", &"collaudo")
+	enigma.piatto_sceso.connect(cb2)
+	var vecchio := level
+	await _spingi(0)
+	for k in 1200:
+		await get_tree().process_frame
+		var s := get_tree().current_scene
+		if s != null and s != vecchio and GameState.player != null and is_instance_valid(GameState.player) and GameState.player.input_enabled:
+			break
+	await _frames(60)
+	check(morto[0], "b) il piatto della paperella ha cominciato a scendere e si è morti")
+	level = get_tree().current_scene
+	enigma = level.get_node_or_null(^"Piscina/EnigmaGiocattoli") as EnigmaGiocattoli
+	check(enigma != null, "b) dopo la ripartenza c'è l'enigma")
+	if enigma == null:
+		return
+	var ora: Dictionary = enigma.save_state()
+	check(not enigma.piatto_giu(0) and absf(float(enigma._dischi[0].height) - enigma.sporgenza) < 0.001,
+		"b) dopo la morte il piatto è su (altezza %.3f, giù: %s)" % [float(enigma._dischi[0].height), ora["giu"]])
+	var a: Array = al_cp["pos"][0]
+	var b: Array = ora["pos"][0]
+	check(Vector2(a[0], a[1]).distance_to(Vector2(b[0], b[1])) < 0.03, "b) la paperella è dov'era al checkpoint (%s / %s)" % [b, a])
 
