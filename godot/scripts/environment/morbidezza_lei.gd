@@ -88,6 +88,9 @@ var fossa_pianta := PackedVector2Array():
 		_fossa_centro = Vector2.ZERO
 		for q in v:
 			_fossa_centro += q / v.size()
+## Vero se [member fossa_pianta] è un foro nel pavimento (lei sale attraverso il pavimento): lì dentro un punto non
+## esce mai di sotto, sotto il pavimento, ma verso il centro del foro.
+var fossa_foro := false
 ## Tubi ([da, a, raggio]) dove le forme non contano: per esempio il condotto, chiuso dalla parete di collisione.
 var tunnel: Array = []
 ## Le vasche (WaterTank) il cui pelo conta; vuoto: quelle entro 8 m, cercate all'inizio.
@@ -748,6 +751,7 @@ func _prepara_aiuto(a: MorbidezzaLei) -> void:
 	a._sez = _sez
 	if a.fossa_pianta != fossa_pianta:
 		a.fossa_pianta = fossa_pianta
+	a.fossa_foro = fossa_foro
 	a.tunnel = tunnel
 	# (le forme, la griglia e quelle che si muovono, già messe a posto qui, gli aiuti le leggono e basta)
 	a._forme = _forme
@@ -1100,10 +1104,10 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			var k := clampf(sotto / 0.5, 0.0, 1.0) * _trattieni_k
 			out[i] = Vector3(lerpf(q.x, c.x, k), q.y, lerpf(q.z, c.y, k))
 	for i in range(1, n + 1):
+		_nc_posa = out[i]
 		_nc_radice = out[0]
-		_nc_prima = out[i - 1]
 		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true, i)
-	_nc_radice = Vector3.INF
+	_nc_posa = Vector3.INF
 	for i in range(1, n + 1):
 		# (prima la scatola, allargata di VICINO: un tratto che non la tocca non passa dentro la forma. Senza AABB, vedi
 		# _AIUTI; si rifà quando i capi salgono)
@@ -1458,10 +1462,10 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 					meglio = cima
 					rf = _sup(meglio.normal, ip) if ip >= 0 else r
 					dm = meglio.distance_to(p)
-			# dentro la pianta della fossa (il foro dove lei sale) un punto non si spinge in giù, sotto il pavimento: esce
+			# dentro un foro nel pavimento ([member fossa_foro]) un punto non si spinge in giù, sotto il pavimento: esce
 			# dalla faccia verso il centro del foro. Uscendo di sotto restava sotto il bordo e poi lo passava in un
 			# fotogramma (scolo_2, mentre sale: test del 29 ottobre)
-			if meglio.normal.y < -0.5 and fossa_pianta.size() >= 3 \
+			if fossa_foro and meglio.normal.y < -0.5 and fossa_pianta.size() >= 3 \
 					and Geometry2D.is_point_in_polygon(Vector2(p.x, p.z), fossa_pianta):
 				var verso := Vector3(_fossa_centro.x - p.x, 0.0, _fossa_centro.y - p.z).normalized()
 				var dv := -INF
@@ -1478,9 +1482,9 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 	return p
 
 
-# (per _da_sopra, da _bersagli: la radice e il punto prima nella catena; INF: la regola non vale)
+# (per _da_sopra, da _bersagli: il punto della posa; INF: la regola non vale)
+var _nc_posa := Vector3.INF
 var _nc_radice := Vector3.INF
-var _nc_prima := Vector3.INF
 
 
 ## Le forme basse (il bordo, alto 45 cm) si lasciano da sopra: un punto a meno di mezzo metro sotto la cima esce in
@@ -1492,11 +1496,11 @@ func _da_sopra(fo: Array, p: Vector3, meglio: Plane) -> Plane:
 	if i < 0:
 		return meglio
 	var cima: Plane = fo[0][i]
-	# (non se il tentacolo parte da sotto la cima: se la radice e il punto prima nella catena sono tutti e due più giù
-	# della cima, il punto resta di lato. Alla grata la radice di un tentacolo è accanto a un tubo basso, più giù della
-	# sua cima, e la posa ci passa sotto: uscendo da sopra, a ogni colpo dei palmi il tentacolo lo scavalcava di 70 cm in
-	# un fotogramma. Test del 29 ottobre)
-	if _nc_radice != Vector3.INF and cima.distance_to(_nc_radice) < 0.0 and cima.distance_to(_nc_prima) < 0.0:
+	# (non se la posa passa sotto la forma, più giù del suo fondo, e la radice è più giù della cima: una forma staccata da
+	# terra accanto alla radice, il punto resta di lato. Alla grata la posa di un tentacolo passa sotto un tubo basso
+	# accanto alla radice: uscendo da sopra, a ogni colpo dei palmi il tentacolo lo scavalcava di 70 cm in un
+	# fotogramma. Test del 29 ottobre)
+	if _nc_posa != Vector3.INF and _nc_posa.y < (fo[7] as Vector3).y and cima.distance_to(_nc_radice) < 0.0:
 		return meglio
 	if cima.distance_to(p) > -0.5:
 		return cima
