@@ -1,0 +1,97 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: 108 colonne, 379 unità, 2495 scatole di cartone e 757 colorate
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:551)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:544)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:145)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:551)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:544)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:145)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:551)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:544)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:145)
+AttesaZone: torre non ancora pronta, si aspetta senza bloccare
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2754 ((31.0, -2.5, -4.08), verso (0.0, 0.0, -1.0))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:45)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1081)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:907)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2756 ((31.0, -8.0, -25.92), verso (0.0, 0.0, 1.0))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:45)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1081)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:907)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2758 ((20.28, -12.0, -10.0), verso (1.0, 0.0, 0.0))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:45)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1081)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:907)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2760 ((39.92, -16.5, -15.0), verso (-1.0, 0.0, 0.0))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:45)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1081)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:907)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+AttesaZone: torre pronta dopo 1211 ms di attesa
+  ok  la torre è costruita e il portone è aperto
+PORTONE: misura: camera near 0.030, raggio del giocatore ?
+PORTONE: t 0.00 quanto 0.96 camera x 21.325; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 26.113 m
+PORTONE: t 0.25 quanto 0.88 camera x 21.597; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 26.145 m
+PORTONE: t 0.50 quanto 0.79 camera x 20.971; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 25.535 m
+PORTONE: t 0.75 quanto 0.71 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.917 m
+PORTONE: t 1.00 quanto 0.63 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 1.25 quanto 0.54 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 1.50 quanto 0.46 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 1.75 quanto 0.38 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 2.00 quanto 0.29 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 2.25 quanto 0.21 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 2.50 quanto 0.13 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 2.75 quanto 0.04 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 3.00 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 3.25 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 3.50 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 3.75 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 4.00 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 4.25 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 4.50 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: t 4.75 quanto 0.00 camera x 20.230; anta (mesh) x da 0.000 a 0.000, z da 0.00 a 0.00; distanza camera-anta 24.920 m
+PORTONE: muro invisibile ConvexPolygonShape3D x da 19.650 a 19.800, y da 0.97 a 1.63, z da -12.24 a -12.16
+PORTONE: muro invisibile ConvexPolygonShape3D x da 19.800 a 19.880, y da 0.00 a 5.10, z da -18.15 a -11.85
+PORTONE: errori del motore e degli script: 0
+RISULTATO: 1 controlli ok, 0 falliti
+WARNING: 36 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

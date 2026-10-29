@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PORTONE: salvataggio su disco: checkpoint SalaTorre/Checkpoint_portone
+PORTONE: al titolo il focus è su Continua
+PORTONE: arrivati dopo 8.3 s al checkpoint SalaTorre/Checkpoint_portone, quanto 0.00, chiuso_dietro true, soglia true, ambienti false, in (21.4, -0.009443, -15.0)
+  ok  Continua: al checkpoint del portone
+  ok  Continua: il portone è chiuso (quanto 0.00, chiuso_dietro true, soglia true)
+  ok  Continua: niente interni e tecnici
+  ok  Continua: nella torre ((21.4, -0.009443, -15.0))
+  ok  Continua: non si passa la soglia (x minima 20.24, soglia 19.84)
+  ok  Continua: portone chiuso e ambienti scaricati (quanto 0.00, chiuso_dietro true, soglia true)
+  ok  Continua: il giocatore è nella torre, in piedi ((20.24206, 0.000005, -15.0))
+  ok  Continua: poi cammina nella torre (x da 20.24 a 21.44)
+PORTONE: errori del motore e degli script: 0
+RISULTATO: 8 controlli ok, 0 falliti
+WARNING: 57 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
