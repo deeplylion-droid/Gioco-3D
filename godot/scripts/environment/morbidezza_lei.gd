@@ -1388,7 +1388,8 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 	var sl := 2 * scatola + 3    # (dove stanno inizio e fine di quella scatola nella forma)
 	for giro in 2:
 		var mosso := false
-		if p.y < pavimento_y + r_su and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
+		if p.y < pavimento_y + r_su and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)) \
+				and not _sul_bordo_del_buco(p, pavimento_y + r_su - p.y, rmax):
 			p.y = pavimento_y + r_su
 			mosso = true
 		for fo in (_forme_in(p, forme) if ip >= 0 and not forme.is_empty() else forme):
@@ -1485,6 +1486,20 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 # (per _da_sopra, da _bersagli: il punto della posa; INF: la regola non vale)
 var _nc_posa := Vector3.INF
 var _nc_radice := Vector3.INF
+
+
+## Vero se [param p], che salirebbe di [param su] sul pavimento, è ben sotto il pavimento e fuori dal buco di meno della
+## pelle ([param r]): è nel muro del buco, e lo spingono fuori di lato le forme del muro. In sbuca un punto vicino alla
+## radice usciva di pochi millimetri dal bordo della fossa, 50 cm sotto il pavimento, e saliva di 63 cm in un
+## fotogramma, ogni 20 (test del 29 ottobre).
+func _sul_bordo_del_buco(p: Vector3, su: float, r: float) -> bool:
+	if su <= SPINTA_GRANDE or not buco_pavimento.has_area():
+		return false
+	var q := Vector2(p.x, p.z)
+	return q.clamp(buco_pavimento.position, buco_pavimento.end).distance_to(q) < r
+
+
+const SPINTA_GRANDE := 0.25
 
 
 ## Le forme basse (il bordo, alto 45 cm) si lasciano da sopra: un punto a meno di mezzo metro sotto la cima esce in
