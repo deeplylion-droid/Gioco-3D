@@ -68,6 +68,8 @@ Cosa è stato tenuto libero, e come:
 - il pallone spinto 4 s contro ogni gonfiabile non ci entra e non ci sale;
 - la paperella posata sulla ciambella calando l'acqua ne scivola giù.
 
+In locale: test_enigma_giocattoli 63/63, test_sala 105/105, test_tappe56 100/100.
+
 ## I gonfiabili d'arredo della parte profonda
 
 Perché l'enigma si legga bene, nella parte profonda restano solo i tre giocattoli (richiesta del coordinatore del 28 ottobre). Le due paperelle giganti e i quattro palloni da spiaggia, che erano sparsi sul fondo, sono spostati sulla spiaggia della piscina, dove ci sono già il delfino sgonfio, una ciambella e altre paperelle: lì li ha portati l'onda.
