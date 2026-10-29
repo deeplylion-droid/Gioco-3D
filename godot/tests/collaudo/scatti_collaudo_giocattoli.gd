@@ -56,6 +56,21 @@ func _run() -> void:
 	cam.near = 0.02
 	get_tree().root.add_child(cam)
 	cam.make_current()
+	# (SOLO_DISEGNO=1: solo il disegno dei bambini sul muro ovest, dagli occhi del giocatore, con la luce del gioco)
+	if OS.get_environment("SOLO_DISEGNO") != "":
+		for i in 300:
+			await get_tree().process_frame
+		var muro := Vector3(-6.97, -0.8, -0.2)
+		await _guarda("disegno dall'acqua", Vector3(-3.2, -0.35, -0.2), muro)
+		await _guarda("disegno dal bordo", Vector3(-4.6, 1.6, 2.6), muro)
+		await _guarda("disegno da vicino nell'acqua", Vector3(-5.2, -0.35, 0.4), muro)
+		vasca.fill = 0.0
+		for i in 240:
+			await get_tree().physics_frame
+		await _guarda("disegno dal fondo vuoto", Vector3(-3.5, -0.45, -0.2), muro)
+		print("FINE")
+		get_tree().quit()
+		return
 	# 1. le pipeline: dagli occhi sul bordo sud e sul bordo est, come il giocatore
 	cam.look_at_from_position(Vector3(0.0, 1.6, -3.2), Vector3(0.0, -1.5, 2.0), Vector3.UP)
 	for i in 300:
