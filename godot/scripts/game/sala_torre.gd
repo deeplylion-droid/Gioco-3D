@@ -171,6 +171,31 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 		oblo.fine_preparazione()
 
 
+## Il rosso dentro la vasca dell'oblò (scelta B dell'utente del 29 ottobre, "com'era prima: si rimette un po' di rosso
+## solo dentro la vasca"). Fino alla 0.3.15 lei e l'acqua dietro di lei prendevano il rosso della lampada d'emergenza
+## del muro est, che senza ombra passava il muro (e faceva la riga rossa nelle condotte); ora quella lampada fa ombra, e
+## il suo rosso lo rimette una luce debole dentro la vasca, dalla stessa parte (in alto, verso sud), con l'ombra: la
+## vasca e il guscio d'ombra la tengono dentro. Senza nebbia: dalla cisterna passerebbe, come quella di lei.
+## Sta sotto l'oblò, quindi la preparazione della torre (prepara_materiali) la disegna con lui.
+@export var oblo_rosso := 0.6
+const OBLO_ROSSO_POSTO := Vector3(-1.3, 1.6, -0.75)   # nell'oblò: x lungo il muro, y in su, z dentro la vasca
+
+
+func _rosso_vasca() -> void:
+	if oblo_rosso <= 0.0 or oblo == null:
+		return
+	var l := OmniLight3D.new()
+	l.name = "RossoVasca"
+	l.light_color = ROSSO
+	l.light_energy = oblo_rosso
+	l.omni_range = 4.5
+	l.shadow_enabled = true
+	l.light_volumetric_fog_energy = 0.0
+	l.set_meta(&"risveglio_ignora", true)
+	l.position = OBLO_ROSSO_POSTO
+	oblo.add_child(l)
+
+
 ## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
 func _passi() -> Array:
 	var out: Array = []
@@ -735,6 +760,7 @@ func _oblo_lei() -> void:
 	oblo.muro = _muro_oblo()
 	oblo.transform = global_transform.affine_inverse() * xf
 	add_child(oblo)
+	_rosso_vasca()
 	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
 	var bocca := Area3D.new()
 	bocca.name = "BoccaOblo"
