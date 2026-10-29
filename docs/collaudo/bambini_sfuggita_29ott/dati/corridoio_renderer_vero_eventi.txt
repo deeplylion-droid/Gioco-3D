@@ -1,0 +1,9 @@
+495.02 pronto: bambino ATTESA, oblò 0
+701.71 in fondo alla scala in (-4.42, -5.4, 49.2); oblò 1, bambino ATTESA
+726.00 guardando la scala: oblò 1
+931.98 dopo aver guardato l'oblò: oblò 2
+968.82 BambinoCorridoioFiume compare in (-4.8, -5.4, 66.7) (pipeline in questo fotogramma 0, lei all'oblò visibile true)
+992.09 dopo aver guardato via: oblò 4, bambino GUARDA
+1256.81 dopo 2.6 s verso il fondo: bambino SCAPPA
+1357.51 BambinoCorridoioFiume sparisce in (-5.95, -5.39, 65.99): nell'inquadratura ma coperto da Corridoi (bene)
+1464.69 fine: bambino FINITO, giocatore in (-4.92, -5.4, 52.24)

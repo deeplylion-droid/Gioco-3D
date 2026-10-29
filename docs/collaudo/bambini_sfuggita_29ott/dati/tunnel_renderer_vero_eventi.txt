@@ -1,0 +1,13 @@
+12.17 BambinoGalleria compare in (0.06, -30.0, 66.87) (pipeline in questo fotogramma 291, lei all'oblò visibile false)
+71.25 BambinoGalleria sparisce in (0.06, -29.99, 66.87): fuori dall'inquadratura (bene)
+1129.53 BambinoGalleria compare in (0.06, -30.0, 66.87) (pipeline in questo fotogramma 0, lei all'oblò visibile false)
+1132.47 bambino GUARDA; giocatore a s 170.3, lei a 17.5 m dietro (INSEGUE), prese 0
+1143.01 bambino GUARDA; giocatore a s 173.2, lei a 17.9 m dietro (INSEGUE), prese 0
+1153.36 bambino GUARDA; giocatore a s 176.1, lei a 17.9 m dietro (INSEGUE), prese 0
+1163.50 bambino GUARDA; giocatore a s 179.0, lei a 17.9 m dietro (INSEGUE), prese 0
+1173.64 bambino GUARDA; giocatore a s 181.2, lei a 17.7 m dietro (INSEGUE), prese 0
+1183.91 bambino SCAPPA; giocatore a s 184.1, lei a 17.9 m dietro (INSEGUE), prese 0
+1194.75 bambino SCAPPA; giocatore a s 187.0, lei a 17.9 m dietro (INSEGUE), prese 0
+1205.27 bambino SCAPPA; giocatore a s 189.9, lei a 17.9 m dietro (INSEGUE), prese 0
+1210.68 BambinoGalleria sparisce in (-0.79, -29.99, 65.24): nell'inquadratura ma coperto da Collisione (bene)
+1528.49 a 240 m: bambino FINITO, morsi 1, prese 0, respinte 3
