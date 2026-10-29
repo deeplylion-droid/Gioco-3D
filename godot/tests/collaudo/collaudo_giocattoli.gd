@@ -577,5 +577,11 @@ func _sopra(g: Node3D, esclusi: Array) -> float:
 	var f := _fondo_sotto(g.global_position, esclusi)
 	if f < -50.0:
 		_senza_fondo += 1
+		if _senza_fondo % 40 == 1:
+			var f2 := _fondo_sotto(g.global_position + Vector3.UP * 5.0, esclusi)
+			print("    senza fondo: pallone in %s, fondo cercato da 5 m più su: %.3f" % [g.global_position.snapped(Vector3.ONE * 0.001), f2])
 		return 0.0
-	return g.global_position.y - f
+	var su := g.global_position.y - f
+	if su > 0.01:
+		print("    sopra il fondo di %.3f m: pallone in %s" % [su, g.global_position.snapped(Vector3.ONE * 0.001)])
+	return su
