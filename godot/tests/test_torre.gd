@@ -117,6 +117,10 @@ func _run() -> void:
 		check(coperte.is_empty(), "la Polaroid 10 non è coperta né compenetrata %s" % str(coperte))
 		var h: float = POLAROID_LIBERE.appoggio(torre, p10)
 		check(h > -0.002 and h < 0.012, "la Polaroid 10 è appoggiata sul lettino (%.1f cm sopra)" % (h * 100.0))
+	# la Polaroid 12 della proposta del 25 ottobre notte, sul pianerottolo del portone (la mette Posa)
+	var p12 := torre.get_node_or_null("Polaroid12") as Node3D
+	var h12: float = POLAROID_LIBERE.appoggio(torre, p12) if p12 else INF
+	check(p12 != null and h12 > -0.002 and h12 < 0.012, "c'è la Polaroid 12, appoggiata sul pianerottolo del portone (%.1f cm sopra)" % (h12 * 100.0))
 	check(torre.find_children("*", "KillZone", true, false).is_empty(), "niente zone che uccidono senza una caduta vera (V1)")
 	var raccolta: Array = dati.get("raccolta", [])
 	check(raccolta.size() == 5 and torre.find_children("Raccolta*", "WaterVolume", false, false).size() == 5 \

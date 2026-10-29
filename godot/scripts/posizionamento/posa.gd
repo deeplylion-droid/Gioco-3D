@@ -14,7 +14,9 @@ const STRATI := Layers.WORLD
 ## sporgere qualche centimetro oltre le piastrelle (vasca centrale: 3 cm), o stare dietro.
 const OLTRE := 0.3
 
-## Le TriangleMesh delle mesh già usate (per il raggio sulle facce vere): mesh -> TriangleMesh.
+## Le TriangleMesh delle mesh già usate (per il raggio sulle facce vere): instance id della mesh -> [WeakRef della mesh,
+## TriangleMesh]. Con la mesh come chiave la cache la teneva viva: le mesh fatte da codice sono nuove a ogni ripartenza,
+## e ognuna restava in memoria con la sua TriangleMesh (+3,3 MB a ogni morte, test_memoria_morti del 28 ottobre).
 static var _triangoli := {}
 
 
@@ -107,12 +109,7 @@ static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3) -> Dictionary:
 		var gt := mi.global_transform
 		if not (gt * mi.get_aabb()).grow(0.01).intersects_segment(da, a):
 			continue
-		var tm: TriangleMesh = _triangoli.get(mi.mesh)
-		if tm == null:
-			if _triangoli.size() > 256:
-				_triangoli.clear()
-			tm = mi.mesh.generate_triangle_mesh()
-			_triangoli[mi.mesh] = tm
+		var tm := _triangoli_di(mi.mesh)
 		if tm == null:
 			continue
 		var inv := gt.affine_inverse()
@@ -134,3 +131,21 @@ static func _lega(nodo: Node3D, corpo: Object) -> void:
 	if sostegno == null or sostegno == nodo or nodo.is_ancestor_of(sostegno):
 		return
 	nodo.reparent(sostegno)
+
+
+## La TriangleMesh di [param mesh], dalla cache (vedi [member _triangoli]) o calcolata adesso.
+static func _triangoli_di(mesh: Mesh) -> TriangleMesh:
+	var id := mesh.get_instance_id()
+	var e: Array = _triangoli.get(id, [])
+	if not e.is_empty() and (e[0] as WeakRef).get_ref() == mesh:
+		return e[1]
+	# (prima di aggiungerne una si tolgono quelle delle mesh liberate: le TriangleMesh sono grandi, 2,6 MB a ripartenza;
+	# se restano troppe tutte vive, si ricomincia)
+	for k in _triangoli.keys():
+		if (_triangoli[k][0] as WeakRef).get_ref() == null:
+			_triangoli.erase(k)
+	if _triangoli.size() > 256:
+		_triangoli.clear()
+	var tm := mesh.generate_triangle_mesh()
+	_triangoli[id] = [weakref(mesh), tm]
+	return tm

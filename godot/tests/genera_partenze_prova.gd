@@ -56,13 +56,15 @@ const RACCOLTI := {
 	"interni": ["Interni/Zaino/Prendi"],
 	"risalita": ["Risalita/Infermeria/Cassetto14/Frontale/Radiografia", "Risalita/Infermeria/Keycard"],
 }
-## Le Polaroid raccolte, per parte.
+## Le Polaroid raccolte, per parte (P12-P16 le nuove del 28 ottobre: P13 sotto l'oblò, P15 nella zona del personale e
+## P16 all'approdo nella risalita, P14 agli acquari, P12 in cima alla torre).
 const POLAROID := {
 	"interni": ["p01", "p02", "p03"],
 	"piscina": ["p04", "p05", "p08", "p09"],
 	"tecnici": ["p06", "p07"],
-	"risalita": ["PolaroidPecora"],
-	"torre": ["Polaroid10"],
+	"risalita": ["PolaroidPecora", "p13", "p15", "p16"],
+	"sala_buio": ["p14"],
+	"torre": ["Polaroid10", "p12"],
 }
 const PARTI := ["interni", "piscina", "tecnici", "risalita", "sala_buio", "torre"]
 

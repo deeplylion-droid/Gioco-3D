@@ -110,6 +110,10 @@ func _applica(l: float) -> void:
 		acceso_cambiato.emit(acceso)
 	livello = l
 	for i in _luci.size():
+		# (una luce figlia può essere già liberata mentre il neon c'è ancora: le zone che si scaricano si liberano un
+		# nodo per fotogramma, dalle foglie, AccensioneAPezzi.libera; errore a caso alla fine di test_torre)
+		if not is_instance_valid(_luci[i]):
+			continue
 		_luci[i].light_energy = _energie[i] * l
 		_luci[i].visible = l > 0.01
 	for i in _materiali.size():

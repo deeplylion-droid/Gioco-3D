@@ -71,6 +71,23 @@ var attesa_ripartenza := 0.0
 var ricarica_in_due_tempi := true
 ## Il PackedScene del livello, tenuto per la ricarica in due tempi.
 var _pacchetto_livello: PackedScene
+## Le zone caricate nel thread durante il gioco (la torre e i file dell'inseguimento), tenute fra una ripartenza e
+## l'altra: percorso -> risorsa. Così la sala nuova le trova in cache e non le ricarica nel thread mentre si costruisce
+## (in 2 ripartenze su 15 il renderer finto dava "Initializing already initialized RID" in acquario_vetro.gd e
+## "Parameter t is null" in water_particles.gd, collaudo del 28 ottobre). Non costano memoria in più: dopo la tappa 8 la
+## sala le ricarica comunque subito. Si lasciano col ritorno al titolo o con un altro livello.
+var _tenute := {}
+
+
+## Tiene [param risorsa] (caricata da [param percorso]) fra le ripartenze (vedi [member _tenute]).
+func tieni(percorso: String, risorsa: Resource) -> void:
+	if risorsa:
+		_tenute[percorso] = risorsa
+
+
+## La risorsa tenuta per [param percorso], o null.
+func tenuta(percorso: String) -> Resource:
+	return _tenute.get(percorso)
 
 
 # --- Livello e giocatore ------------------------------------------------------------------
@@ -89,6 +106,7 @@ func _on_level_ready() -> void:
 	# di un altro livello si lascia andare)
 	if _pacchetto_livello and _pacchetto_livello.resource_path != scene:
 		_pacchetto_livello = null
+		_tenute.clear()
 	if _pacchetto_livello == null and scene != "" and ResourceLoader.has_cached(scene):
 		_pacchetto_livello = load(scene) as PackedScene
 	if _restore_pending and snapshot.get("scene", "") == scene:
@@ -467,6 +485,7 @@ func prepara_ripresa(data: Dictionary) -> void:
 func reset_progress() -> void:
 	snapshot = {}
 	_pacchetto_livello = null
+	_tenute.clear()
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()

@@ -73,10 +73,11 @@ static func tema() -> Theme:
 	return t
 
 
-## Voce del menu: testo in maiuscolo; il mouse sopra la sceglie come la tastiera e il joypad.
+## Voce del menu: testo in maiuscolo (nella lingua del gioco); il mouse sopra la sceglie come la tastiera e il joypad.
 static func voce(testo: String, dimensione := 30) -> Button:
 	var b := Button.new()
-	b.text = testo.to_upper()
+	b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	Lingua.segui(b, func(): b.text = Lingua.t(testo).to_upper())
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.focus_mode = Control.FOCUS_ALL
 	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND

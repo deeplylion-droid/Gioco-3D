@@ -51,7 +51,8 @@ func _run() -> void:
 	await _secondi(0.5)
 	check(ris.get(&"fiume") == null and not ris.has_node(^"Fiume") and not ris.has_node(^"Infermeria"),
 		"all'avvio della sala il fiume e l'infermeria non sono caricati")
-	check(GameState.get_total(&"polaroid") == 10, "la Polaroid della pecora conta già: %d in tutto" % GameState.get_total(&"polaroid"))
+	# (9 della sala e la P14 degli acquari, la pecora e la P16 del fiume, la P13 e la P15 dei corridoi della risalita)
+	check(GameState.get_total(&"polaroid") == 14, "la Polaroid della pecora e la P16 del fiume contano già: %d in tutto" % GameState.get_total(&"polaroid"))
 	var shader_sala := {}
 	RisorseNodi.materiali_per_shader(level, shader_sala)
 	for m in ris.get(&"_campioni"):

@@ -91,6 +91,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
 
+      - name: Test delle lingue (italiano e inglese; ogni testo a schermo ha la traduzione, nessuna chiave vuota)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lingua.gd
+
       - name: Test dello spot VHS (lettore, audio ai tempi, salto tenendo premuto)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/spot/test_lettore_spot.gd
@@ -128,6 +132,10 @@ jobs:
       - name: Test del canto di sirena di lei nel tunnel (solo mentre insegue, una frase alla volta, tace e riparte dopo la morte)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_tunnel.gd
+
+      - name: Test del cuore e del ritmo d'inseguimento nel tunnel (seguono la distanza di lei, tacciono quando prende o sparisce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento_suoni.gd
 
       - name: Test degli ambienti tecnici (camera delle onde, sala pompe)
         if: steps.progetto.outputs.presente == 'si'
@@ -274,6 +282,10 @@ jobs:
       - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
+
+      - name: Test della memoria a ogni morte (6 ripartenze di fila, niente che cresce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_memoria_morti.gd
 
       - name: Test degli strati di disegno (nessuno condiviso senza volerlo; quello della preparazione non si vede)
         if: steps.progetto.outputs.presente == 'si'

@@ -490,6 +490,20 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
   - numero, lunghezza e forma dei tentacoli;
   - nome della mascotte.
 
+## Le lingue: italiano e inglese (approvato dall'utente, 25 ottobre sera)
+
+Il gioco anche in inglese, con la nota dell'utente: "anche eventuali scritte sui disegni o nel videoclip sono da
+tradurre". Si sceglie nelle opzioni (prima riga della scheda Schermo, "Lingua": Italiano o English) e si salva.
+**Di base l'italiano**; la prima volta il gioco parte in inglese solo se il sistema è in inglese (scelta tecnica,
+proposta da ambienti-2). Tradotti: titolo, pausa, opzioni (audio compreso), calibrazione, comandi e nomi dei tasti,
+caricamento e consigli, avvisi e azioni ("Pick up", "Open"...), oggetti, la domanda di Nuova partita, le scritte finali
+e i sottotitoli dello spot VHS. Restano uguali i nomi (Jilly Jubilee, Jubilee, Wonderwave Cruises, Splash Lagoon) e le
+scritte nel parco, che sono già solo disegni o nomi ("LIVE SHOW", "CAM 3", "● REC" e la data dei monitor). La voce
+dello speaker nello spot è già inglese (Kokoro, voce A): in inglese i sottotitoli dicono le stesse parole della voce
+(il testo approvato nella bozza), in italiano restano le traduzioni. Tecnica: `godot/lingue/testi.csv`
+(chiave = la frase italiana), autoload `Lingua`, test `godot/tests/test_lingua.gd`.
+Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzioni, comandi).
+
 ## Tecnica
 
 - **Godot 4.7.2**, renderer Forward+, per PC. Build automatiche con GitHub Actions e Release su GitHub.
@@ -510,3 +524,23 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 **Inseguimento nel tunnel, richieste dell'utente del 25 ottobre (sera)**:
 - "aggiungici un canto da sirena distorto ed inquietante, che possa dare l'idea di inseguimento pauroso": il canto è di lei, con la stessa gola sintetica della sua voce, a frasi sempre diverse (niente loop), più vicino e forte quando lei si avvicina. Tre proposte (A vocalizzo lento in minore, B rotto e rallentato, C coro stonato coi sussurri) da far sentire all'utente prima di metterlo nel gioco (ambienti-1, lavoro/canto-sirena);
 - "se finisci in acqua in quella sezione, non puoi saltare": nell'acqua del canale il salto non funziona (sui gommoni e sulle banchine sì); dall'acqua si esce camminando dal gradino lungo le banchine (ambienti-2, lavoro/acqua-senza-salto).
+
+**Scelte della sera del 25 ottobre** (pagine "Scelte della v0.3.15" e "Lavoro della notte"):
+- **Canto di sirena: A, ritoccato.** Nota dell'utente: "devi però abbassare il respiro del 70%, alzare la melodia del 30% ed eliminare quel suono fastidioso di grattamento che compare ritmicamente". Il fiato del tunnel va a ×0,3, il canto a ×1,3; il grattamento erano i versi di lei (il ringhio raschiato ogni 4-6 s), che mentre canta non ci sono più. Sentito l'esempio ritoccato: "va bene, ma non so se basterà a dare l'impressione di inseguimento". Scartate B (rotto) e C (coro coi sussurri).
+- **Lei che si stacca dall'oblò: A**, si scurisce fino al nero insieme alla sua luce (così resta la palpebra). Scartata B, la trasparenza di prima corretta.
+- **Nuova partita con un salvataggio: A**, prima di partire chiede "Ricominciare da capo?" ("Il salvataggio verrà sostituito"), Sì e No, col cursore su No. Il salvataggio vecchio resta comunque fino al primo checkpoint della partita nuova.
+- **La scritta finale**: "toglilo fine della demo. Dovrebbe essere fine del capitolo 1". Diventa "FINE DEL CAPITOLO 1". Niente crediti alla fine.
+- **Luce sui poster rovinati**: il cartellone del corridoio e il pannello rosa dell'infermeria restano come sono (B per tutti e due).
+- **Per l'inseguimento nel tunnel** (approvati, da far sentire e vedere prima): il battito del cuore che accelera quando lei si avvicina; un ritmo di colpi bassi come tamburi nello scafo, senza melodia né loop; gli effetti quando è vicina (bordi che si scuriscono, la camera che trema appena a ogni morso, la sua luce rosa che ti supera sulle pareti). Bocciata "lei più addosso": la distanza resta 8-18 m.
+- **Per allungare il capitolo 1** (approvati come proposte, da guardare prima di metterli nel gioco): i bambini visti di sfuggita (il bambino col cubo e l'agnellino lontani in 3-4 punti nuovi; nota: "attenzione alle animazioni. falle bene."), 4-6 Polaroid nuove nascoste nelle zone che ci sono, 2-3 idee per un enigma nuovo in una zona che c'è già. Bocciato un altro spavento con lei.
+- **Capitolo 2: non ancora** (D): prima si finisce bene il capitolo 1.
+- **Il gioco anche in inglese: sì**, con la lingua nelle opzioni; nota: "anche eventuali scritte sui disegni o nel videoclip sono da tradurre".
+
+**Scelte del 28 ottobre** (pagina "Proposte del 28 ottobre", con gli scatti, il video e i suoni fatti nel motore):
+- **Cuore e ritmo nell'inseguimento: A, tutti e due**, come negli esempi sentiti (sotto il canto, più fitti quando lei è vicina, zitti quando prende o sparisce).
+- **Effetti quando è vicina: sì**, come nel video: bordi scuri sotto gli 8 m (fino ai 3 m), tremito di meno di mezzo grado a ogni morso a vuoto (niente se l'oscillazione della camera è spenta), la sua luce rosa 7 m davanti al giocatore.
+- **Inglese**: le schermate vanno bene. **Lingua alla prima partenza: A**, l'inglese solo se Windows è in inglese, se no l'italiano. **Voce dello spot**: la domanda era partita da un errore del coordinatore ("lo spot ha la voce in italiano"), e l'utente aveva scelto B, "una voce inglese nuova". In realtà la voce dello speaker scelta (A_uomo_caldo, Kokoro-82M am_michael) è già inglese, e in italiano ci sono i sottotitoli italiani: in inglese lo spot è già tutto inglese. I sottotitoli inglesi si allineano alle parole della voce. Rifatta la domanda giusta, l'utente ha risposto: "lasciamo la voce in inglese coi sottotitoli". In italiano resta la voce inglese coi sottotitoli italiani, com'è.
+- **Polaroid nuove P12-P16: tutte e cinque approvate**, foto e posti come negli scatti (P12 torre, P13 risalita sotto l'oblò, P14 sala davanti all'acquario giallo, P15 zona del personale, P16 approdo del fiume lento). Il totale passa a 16.
+- **Enigma nuovo: A, "I giocattoli al loro posto"** nella piscina a onde, con la nota: "ma facciamo che puoi spingere i giocattoli anche una volta che hai svuotato la piscina". I giocattoli si spingono col getto sia sull'acqua della pozza sia sul fondo vuoto, quindi l'ordine (prima i giocattoli o prima lo svuotamento) è libero. Scartate B (disegni a cera) e C (telecamera).
+- **Lavoro della notte: A**, tutte le squadre insieme, accettando il rischio di un altro fermo per il limite settimanale.
+- **Prossima build: B**, niente 0.3.16 al mattino: al mattino solo le cose nuove da guardare, e la build quando la chiede l'utente.

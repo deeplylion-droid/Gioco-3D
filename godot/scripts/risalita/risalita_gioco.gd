@@ -28,8 +28,9 @@ const ELENCO_RISORSE := "res://scenes/risalita/risorse_stanze.json"
 ## strumento.
 const CAMPIONI := "res://scenes/risalita/materiali_campione.tres"
 ## I collezionabili delle stanze: contano nel totale anche quando le stanze non sono caricate (il visore delle
-## Polaroid mostra "x su 10" dall'inizio). test_risalita controlla che siano tutti qui.
-const COLLEZIONABILI := [[&"polaroid", &"PolaroidPecora"]]
+## Polaroid mostra il totale vero dall'inizio): la pecora nell'infermeria, la P16 all'approdo del fiume.
+## test_risalita_tardi controlla il totale.
+const COLLEZIONABILI := [[&"polaroid", &"PolaroidPecora"], [&"polaroid", &"p16"]]
 ## Distanza dalle zone delle stanze sotto cui si disegnano (e devono esserci: se il thread non ha finito, si
 ## finisce di caricarle lì, con un attimo di fermo).
 const VICINO := 4.0
@@ -333,6 +334,9 @@ func _zona_personale() -> void:
 			"vicino": 0.9, "lato_sbircia": 1.0})
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
 	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0))
+	# la Polaroid 15 (i bambini che si fanno le maschere, proposta del 25 ottobre notte): per terra nell'angolo nord-est,
+	# accanto alla porta del capannone (alle spalle di chi entra), nella zona del personale dove stavano gli attrezzi
+	PolaroidPhoto.metti(self, 15, Vector3(x + 0.84, Y + 0.03, CENTRO_FIUME.z + F.X0 - 0.48), 65.0)
 
 
 ## La scala di servizio: dalla porta nord dell'infermeria un pianerottolo, poi verso est due rampe da
@@ -402,6 +406,9 @@ func _scala_fiume() -> void:
 			{"vasca_larga": 6.6, "vasca_fonda": 5.6, "vasca_sotto": 8.0})
 	_bambino_corridoio_fiume(xc, x_fondo, z0, z1, porta0, porta1, fine, oblo)
 	_muro(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), Y)
+	# la Polaroid 13 (quella notte, il bagliore nel mare accanto alla nave, proposta del 25 ottobre notte): per terra
+	# contro il muro, sotto l'oblò da cui si vede il mare
+	PolaroidPhoto.metti(self, 13, Vector3(OBLO_FIUME.x - 0.16, Y + 0.03, OBLO_FIUME.z + 0.4), 20.0)
 	# il muro ovest, aperto davanti alla porta del capannone (alta 2,3 m come la sua)
 	_muro(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), Y)
 	_muro(Vector3(0.2, 2.6, fine - porta1), Vector3(xc - 0.1, Y + 1.3, (porta1 + fine) * 0.5), Y)

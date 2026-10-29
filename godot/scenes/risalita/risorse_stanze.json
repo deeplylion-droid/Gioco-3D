@@ -251,6 +251,8 @@
 	"res://assets/models/polaroid/polaroid.glb",
 	"res://assets/models/polaroid/texture/P11.jpg",
 	"res://assets/models/polaroid/texture/P11_rugosita.jpg",
+	"res://assets/models/polaroid/texture/P16.jpg",
+	"res://assets/models/polaroid/texture/P16_rugosita.jpg",
 	"res://assets/models/polaroid/texture/normale.png",
 	"res://assets/models/polaroid/texture/retro.jpg",
 	"res://assets/models/polaroid/texture/retro_rugosita.jpg",

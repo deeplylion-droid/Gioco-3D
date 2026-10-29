@@ -214,8 +214,11 @@ func _costruisci() -> void:
 	dx.size_flags_stretch_ratio = 0.85
 	centro.add_child(dx)
 	dx.add_child(_intestazione("CONSIGLIO"))
-	_consiglio = StileMenu.etichetta(consiglio(CONSIGLI.pick_random()), StileMenu.barlow(), 23, StileMenu.TESTO)
+	var scelto: String = CONSIGLI.pick_random()
+	_consiglio = StileMenu.etichetta("", StileMenu.barlow(), 23, StileMenu.TESTO)
 	_consiglio.name = "Consiglio"
+	_consiglio.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	Lingua.segui(_consiglio, func(): _consiglio.text = consiglio(scelto))
 	_consiglio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_consiglio.custom_minimum_size.x = 380
 	dx.add_child(_consiglio)
@@ -263,8 +266,9 @@ func _costruisci() -> void:
 	col.add_child(_barra)
 
 
-## Il testo di un consiglio con i tasti veri al posto delle azioni tra graffe.
+## Il testo di un consiglio (nella lingua del gioco) con i tasti veri al posto delle azioni tra graffe.
 static func consiglio(testo: String) -> String:
+	testo = Lingua.t(testo)
 	var i := testo.find("{")
 	while i >= 0:
 		var j := testo.find("}", i)
@@ -272,9 +276,12 @@ static func consiglio(testo: String) -> String:
 		var nomi := SchermataComandi.nomi_tasti([StringName(azione)])
 		for k in nomi.size():
 			# Dentro una frase "Tasto destro" diventa "tasto destro"; Spazio, E, Invio restano.
-			if nomi[k].begins_with("Tasto ") or nomi[k].begins_with("Rotellina"):
+			var minuscolo := nomi[k].begins_with("Tasto ") or nomi[k].begins_with("Rotellina")
+			nomi[k] = Lingua.t(nomi[k])
+			if minuscolo:
 				nomi[k] = nomi[k].to_lower()
-		var tasti := " o ".join(nomi) if nomi.size() <= 2 else ", ".join(nomi.slice(0, -1)) + " o " + nomi[-1]
+		var o := " %s " % Lingua.t("o")
+		var tasti := o.join(nomi) if nomi.size() <= 2 else ", ".join(nomi.slice(0, -1)) + o + nomi[-1]
 		testo = testo.substr(0, i) + tasti + testo.substr(j + 1)
 		i = testo.find("{")
 	return testo

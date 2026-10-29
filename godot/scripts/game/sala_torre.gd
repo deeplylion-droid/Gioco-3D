@@ -587,6 +587,9 @@ func _polaroid() -> void:
 	var doppione := find_child("torre_polaroid_10", true, false)
 	if doppione:
 		doppione.queue_free()
+	# la Polaroid 12 (l'ultima sera di festa, col temporale lontano, proposta del 25 ottobre notte): in cima, per terra
+	# nell'angolo sud-est del pianerottolo del portone, alle spalle di chi entra e va verso il primo scivolo (a nord)
+	PolaroidPhoto.metti(self, 12, b([22.1, 13.95, 0.03]), 30.0)
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.

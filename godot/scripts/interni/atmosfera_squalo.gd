@@ -67,6 +67,9 @@ func _ready() -> void:
 	luce.spot_angle_attenuation = 1.2
 	luce.spot_attenuation = 1.6
 	luce.shadow_enabled = true      # lo squalo fa ombra nei raggi della nebbia
+	# (anche con la grafica al minimo: con "ombre 0" Grafica spegne le ombre a priorità 1, e lo squalo non faceva ombra,
+	# D1 del collaudo dello squalo del 25 ottobre; costa un'ombra di faretto per 11 s)
+	luce.set_meta("grafica_priorita_ombra", 0)
 	luce.shadow_blur = 1.5
 	luce.light_volumetric_fog_energy = energia_nebbia
 	luce.light_specular = 1.4
