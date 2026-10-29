@@ -574,7 +574,10 @@ static func _mat_velo(alfa: float, colore := Color.BLACK) -> StandardMaterial3D:
 ## I materiali dell'oblò (per il riscaldamento: si compilano prima, dove si costruisce la sala).
 static func materiali() -> Array:
 	return [_mat_lamiera(Color(0.42, 0.45, 0.46), 1.2), _mat_vasca(), _mat_ottone(),
-			_mat_vetro(), _mat_velo(0.22), _mat_velo(0.3), _mat_velo(0.38)]
+			_mat_vetro(), _mat_velo(0.22), _mat_velo(0.3), _mat_velo(0.38),
+			# (i veli accesi di un colore, nella torre: con l'emissione sono un'altra variante dello shader; non
+			# riscaldata costava 167 ms nel passo dell'oblò della costruzione a pezzi, test_oblo_leggeri)
+			_mat_velo(0.22, Color(0.01, 0.0, 0.0))]
 
 
 # --- lei -----------------------------------------------------------------------------------------------------------
