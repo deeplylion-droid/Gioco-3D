@@ -673,10 +673,15 @@ var _lavori: Array = []                    # (in un aiuto) i tentacoli da fare i
 var _thread := 1
 var _prossimo := 0
 var _presa := Mutex.new()
+var _finiti := Semaphore.new()
+var _giro := 0
+var _presi_altri := 0
+var _task: Array[int] = []
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
+		_raccogli_task(true)
 		for a in _aiuti:
 			if is_instance_valid(a):
 				(a as Object).free()
@@ -696,13 +701,23 @@ func _esegui_lavori(lavori: Array) -> void:
 		_prepara_aiuto(a)
 	for lv in lavori:
 		(_aiuti[int(lv[0]) % _aiuti.size()] as MorbidezzaLei)._lavori.append(lv)
+	# (questo thread lavora anche lui, e alla fine aspetta solo i thread che hanno preso un aiuto: i task che il pool
+	# fa partire tardi, occupato per esempio dai caricamenti nel thread, trovano tutto fatto ed escono. Aspettarli
+	# tutti erano i fotogrammi isolati di 17-26 ms: ricontrollo del 29 ottobre)
+	_presa.lock()
 	_prossimo = 0
-	if _thread == 1:
-		_lavora(0)
-	else:
-		var id := WorkerThreadPool.add_group_task(_lavora, _thread - 1, -1, true, "morbidezza")
-		_lavora(0)
-		WorkerThreadPool.wait_for_group_task_completion(id)
+	_giro += 1
+	_presi_altri = 0
+	_presa.unlock()
+	_raccogli_task(false)
+	for t in _thread - 1:
+		_task.append(WorkerThreadPool.add_task(_lavora.bind(_giro, false), true, "morbidezza"))
+	_lavora(_giro, true)
+	_presa.lock()
+	var presi := _presi_altri
+	_presa.unlock()
+	for j in presi:
+		_finiti.wait()
 	for a: MorbidezzaLei in _aiuti:
 		a._lavori.clear()
 		for chiave in a.parti_usec:
@@ -710,18 +725,32 @@ func _esegui_lavori(lavori: Array) -> void:
 			a.parti_usec[chiave] = 0
 
 
-## Un thread: prende un aiuto alla volta, finché ce ne sono.
-func _lavora(_i: int) -> void:
+## Un thread: prende un aiuto alla volta, finché ce ne sono in questo giro ([param giro]: un task partito tardi, a
+## giro finito, esce subito).
+func _lavora(giro: int, principale: bool) -> void:
 	while true:
 		_presa.lock()
+		if giro != _giro or _prossimo >= _aiuti.size():
+			_presa.unlock()
+			return
 		var i := _prossimo
 		_prossimo += 1
+		if not principale:
+			_presi_altri += 1
 		_presa.unlock()
-		if i >= _aiuti.size():
-			return
 		var a: MorbidezzaLei = _aiuti[i]
 		for lv in a._lavori:
 			a._fai_lavoro(lv)
+		if not principale:
+			_finiti.post()
+
+
+## Chiude i task finiti dei giri passati (con [param tutti], aspetta anche gli altri).
+func _raccogli_task(tutti: bool) -> void:
+	for j in range(_task.size() - 1, -1, -1):
+		if tutti or WorkerThreadPool.is_task_completed(_task[j]):
+			WorkerThreadPool.wait_for_task_completion(_task[j])
+			_task.remove_at(j)
 
 
 ## Dà all'aiuto [param a] quello che serve ai conti.
