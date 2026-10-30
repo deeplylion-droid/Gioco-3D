@@ -114,7 +114,7 @@ func _run() -> void:
 			var q := faccia + u * d.x * mezzo_u * 0.92 + Vector3.UP * d.y * mezzo_v * 0.92
 			await _scatta(cam, [q + fuori * 0.75 - Vector3.UP * 0.1, q, 50.0], _out.path_join("%s%s_vicino_%s.jpg" % [pre, corto, k]))
 		# di sbieco radente dai due lati, a metà altezza: la carta sulla lamiera (o staccata)
-		for s in [-1.0, 1.0]:
+		for s: float in [-1.0, 1.0]:
 			var q := faccia + u * s * mezzo_u
 			await _scatta(cam, [q + u * s * 0.6 + fuori * 0.35, faccia - u * s * mezzo_u * 0.3, 60.0],
 					_out.path_join("%s%s_radente_%s.jpg" % [pre, corto, "sx" if s < 0 else "dx"]))
