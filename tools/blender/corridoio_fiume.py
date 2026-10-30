@@ -60,9 +60,10 @@ def tubi(obs):
     rosso = C.mat_pbr('volantino_rosso', base=(0.55, 0.06, 0.04), roughness=0.5, metallic=0.4)
     for k, (r, y) in enumerate(TUBI):
         x = MURO_O + r + STACCO_TUBO
-        # dal muro della sala pompe (7 cm dentro) a 2 m prima della porta, poi nel muro ovest (10 cm dentro)
+        # dal muro della sala pompe (3 cm dentro: il controllo riconosce un capo infilato entro 5 cm da una faccia) a 2 m
+        # prima della porta, poi nel muro ovest (10 cm dentro)
         z1 = FINE_ARREDO + 0.1 + 0.15 * k
-        pezzi = [C.tubo(f'tubo_pompe_{k}_tubo', [g(x, y, MURO_S - 0.07), g(x, y, z1), g(MURO_O - 0.1, y, z1)], r, acciaio, rc=2.2 * r)]
+        pezzi = [C.tubo(f'tubo_pompe_{k}_tubo', [g(x, y, MURO_S - 0.03), g(x, y, z1), g(MURO_O - 0.1, y, z1)], r, acciaio, rc=2.2 * r)]
         z = MURO_S + 1.3
         while z < z1 - 0.4:
             pezzi.append(C.cilindro(f'tubo_pompe_{k}_collare', g(x, y, z), r + STACCO_TUBO - 0.002, 0.05, acciaio,
