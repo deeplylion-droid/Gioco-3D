@@ -10,7 +10,8 @@ extends Node
 ## Stampa "MISURA" con la luminosità media dello schermo e della metà bassa. Scatti in <cartella>.
 ## Uso: xvfb-run -a -s "-screen 0 960x540x24" godot --path godot --rendering-driver vulkan --resolution 960x540 \
 ##        --script res://tests/run.gd -- res://tests/collaudo/collaudo_nebbia_0317.gd <cartella> <piscina|infermeria> \
-##        <shader della 0.3.16 (percorso assoluto)> [solo_vuota]
+##        <shader della 0.3.16 (percorso assoluto)> [solo_vuota | punti dell'infermeria separati da virgole]
+## (con i punti dell'infermeria anche gli scambi di passi: lo shader nuovo a 20 e quello della 0.3.16 a 32)
 ## (la sala a parti è lenta col renderer software: piena e vuota insieme passano i 40 minuti; "solo_vuota" fa la seconda)
 
 const SALA := "res://scenes/sala_principale.tscn"
@@ -158,11 +159,16 @@ func _infermeria() -> void:
 		if &"sfarfalla" in l:
 			l.set(&"sfarfalla", false)    # (il negatoscopio)
 	(n.get(&"_mat") as ShaderMaterial).set_shader_parameter(&"vento", Vector3.ZERO)
+	var solo: String = OS.get_cmdline_user_args()[4] if OS.get_cmdline_user_args().size() > 4 else ""
 	for v in VISTE_INFERMERIA:
+		if solo != "" and not v in solo.split(","):
+			continue
 		var c: Array = VISTE_INFERMERIA[v]
 		_cam.global_position = f.to_global(c[0])
 		_cam.look_at(f.to_global(c[1]), Vector3.UP)
 		await _tre(v)
+		if solo != "":
+			await _passi_scambiati(v)
 
 
 ## Lo stesso punto senza nebbia, con quella di adesso e con quella della 0.3.16: salva i tre scatti e stampa le
@@ -185,6 +191,23 @@ func _tre(vista: String) -> void:
 	print("MISURA %s: luminosità (tutto / metà bassa) senza %.1f / %.1f, 0.3.16 %.1f / %.1f, 0.3.17 %.1f / %.1f; pixel diversi fra 0.3.16 e 0.3.17 (>=6/255) %d su %d" % [
 			vista, _luminosita(senza, tutto), _luminosita(senza, basso), _luminosita(prima, tutto), _luminosita(prima, basso),
 			_luminosita(ora, tutto), _luminosita(ora, basso), _diversi(prima, ora), (senza.get_width() / 2) * (senza.get_height() / 2)])
+
+
+## Lo shader nuovo con 20 passi e quello della 0.3.16 con 32: se la differenza fra le versioni viene dai passi o dalla
+## formula. Stampa i pixel diversi rispetto ai due scatti normali.
+func _passi_scambiati(vista: String) -> void:
+	var mat := n.get(&"_mat") as ShaderMaterial
+	mat.set_shader_parameter(&"passi", 20)
+	var ora20 := await _scatto("%s_0317_20passi" % vista)
+	mat.shader = _shader_0316
+	mat.set_shader_parameter(&"passi", 32)
+	var prima32 := await _scatto("%s_0316_32passi" % vista)
+	mat.shader = _shader_ora
+	mat.set_shader_parameter(&"passi", _passi_ora)
+	var ora := Image.load_from_file(_cartella.path_join("%s_0317.jpg" % vista))
+	var prima := Image.load_from_file(_cartella.path_join("%s_0316.jpg" % vista))
+	print("MISURA passi %s: 0.3.17 a 20 passi contro 0.3.16 a 20: %d pixel diversi; 0.3.16 a 32 passi contro 0.3.17 a 32: %d" % [
+			vista, _diversi(ora20, prima), _diversi(prima32, ora)])
 
 
 func _scatto(nome: String) -> Image:
