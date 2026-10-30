@@ -341,6 +341,7 @@ func _physics_process(delta: float) -> void:
 	rotation = Vector3(0.0, yaw, 0.0)
 	_update_crouch(delta)
 	_update_ladder()
+	_attraversa_scala(delta)
 	var pre_vy := velocity.y
 	var pre_floor := is_on_floor() and ladder == null
 	var pre_transform := global_transform
@@ -822,6 +823,51 @@ func _update_ladder() -> void:
 		ladder_changed.emit(true)
 
 
+## I corpi che si passano scavalcando la cima di una scala ([member Ladder.attraversa]), la scala e da quanto.
+var _scavalcati: Array[PhysicsBody3D] = []
+var _scavalcata: Ladder = null
+var _scavalco_t := 0.0
+
+
+func _scavalca(l: Ladder) -> void:
+	_fine_scavalco()
+	for b in l.corpi_da_attraversare():
+		add_collision_exception_with(b)
+		_scavalcati.append(b)
+	_scavalcata = l
+	_scavalco_t = 0.0
+
+
+## Le eccezioni dello scavalco finiscono quando non si tocca più niente dei corpi della scala (fuori dai corrimano, da
+## una parte o dall'altra), o dopo 6 s.
+func _attraversa_scala(delta: float) -> void:
+	if _scavalcata == null:
+		return
+	_scavalco_t += delta
+	if not is_instance_valid(_scavalcata) or _scavalco_t > 6.0 or (_scavalco_t > 0.3 and not _tocca_scavalcati()):
+		_fine_scavalco()
+
+
+func _tocca_scavalcati() -> bool:
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = collision_shape.shape
+	q.transform = collision_shape.global_transform
+	q.margin = 0.04
+	q.collision_mask = collision_mask
+	for r in get_world_3d().direct_space_state.intersect_shape(q, 16):
+		if _scavalcati.has(r.collider):
+			return true
+	return false
+
+
+func _fine_scavalco() -> void:
+	for b in _scavalcati:
+		if is_instance_valid(b):
+			remove_collision_exception_with(b)
+	_scavalcati.clear()
+	_scavalcata = null
+
+
 func _leave_ladder() -> void:
 	if ladder == null:
 		return
@@ -871,8 +917,10 @@ func _move_on_ladder(delta: float) -> void:
 		_move_on_ground(delta)
 		return
 	if climb > 0.0 and global_position.y >= ladder.get_top_y() - 0.08:
-		# In cima: scavalca il bordo.
+		# In cima: scavalca il bordo. I corpi della scala che sporgono sopra il bordo (Ladder.attraversa: i corrimano
+		# delle scalette della piscina) si passano mentre si scavalca, finché si è usciti (vedi _attraversa_scala).
 		velocity = -n * 2.4 + Vector3.UP * 1.6
+		_scavalca(ladder)
 		_leave_ladder()
 		return
 	var side := n.cross(Vector3.UP)
