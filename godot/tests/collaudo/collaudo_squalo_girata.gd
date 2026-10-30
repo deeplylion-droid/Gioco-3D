@@ -37,7 +37,7 @@ func _run() -> void:
 			break
 	for i in 30:
 		await get_tree().process_frame
-	var level := get_tree().current_scene
+	var level := get_tree().current_scene as Node3D
 	var p := GameState.player
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
@@ -54,7 +54,7 @@ func _run() -> void:
 	for o in OSSA:
 		testa += ",%s_x,%s_y,%s_z" % [o, o, o]
 	csv.store_line(testa + ",dentro_muro_m,dentro_muro_dove,vertici_provati")
-	var spazio := level.get_world_3d().direct_space_state
+	var spazio: PhysicsDirectSpaceState3D = level.get_world_3d().direct_space_state
 	var t := 0.0
 	var n := 0
 	var peggio := 0.0
@@ -66,8 +66,9 @@ func _run() -> void:
 		if t < R - 0.2 or s.squalo == null:
 			continue
 		if pavimento == -INF:
-			var q := PhysicsRayQueryParameters3D.create(s.call(&"_bone_mondo", "spina"), s.call(&"_bone_mondo", "spina") + Vector3.DOWN * 4.0, Layers.WORLD)
-			var h := spazio.intersect_ray(q)
+			var sp: Vector3 = s.call(&"_bone_mondo", "spina")
+			var q := PhysicsRayQueryParameters3D.create(sp, sp + Vector3.DOWN * 4.0, Layers.WORLD)
+			var h: Dictionary = spazio.intersect_ray(q)
 			pavimento = (h.position as Vector3).y if not h.is_empty() else -99.0
 			print("pavimento a y %.2f" % pavimento)
 		if lato and cam_lato == null:
@@ -97,7 +98,7 @@ func _run() -> void:
 						continue
 					provati += 1
 					var q := PhysicsRayQueryParameters3D.create(da, w, Layers.WORLD)
-					var h := spazio.intersect_ray(q)
+					var h: Dictionary = spazio.intersect_ray(q)
 					if h.is_empty():
 						continue
 					var d := (h.position as Vector3).distance_to(w)
