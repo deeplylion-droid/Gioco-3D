@@ -102,12 +102,12 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `effetti/vasca_svuotata.ogg` | 2.8 s | sintesi (originale) |  |
 | `giocatore/atterraggio_acqua_01.ogg` | 0.7 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_acqua_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | senza goccioline, come i passi bagnati (16 ottobre) |
-| `giocatore/atterraggio_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | senza goccioline, come i passi bagnati (16 ottobre) |
-| `giocatore/atterraggio_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_piastrelle_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_piastrelle_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
+| `giocatore/atterraggio_bagnato_01.ogg` | 0.5 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/atterraggio_bagnato_02.ogg` | 0.5 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/atterraggio_metallo_01.ogg` | 0.6 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/atterraggio_metallo_02.ogg` | 0.6 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/atterraggio_piastrelle_01.ogg` | 0.5 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/atterraggio_piastrelle_02.ogg` | 0.5 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
 | `giocatore/cuore_battito_01.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
 | `giocatore/cuore_battito_02.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
 | `giocatore/cuore_battito_03.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
@@ -119,28 +119,28 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `giocatore/passo_acqua_04.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_05.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_06.ogg` | 0.8 s | sintesi (originale) |  |
-| `giocatore/passo_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
-| `giocatore/passo_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
-| `giocatore/passo_bagnato_03.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
-| `giocatore/passo_bagnato_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
-| `giocatore/passo_bagnato_05.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
-| `giocatore/passo_bagnato_06.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
-| `giocatore/passo_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
-| `giocatore/passo_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
-| `giocatore/passo_metallo_03.ogg` | 0.5 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
-| `giocatore/passo_metallo_04.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
-| `giocatore/passo_metallo_05.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
-| `giocatore/passo_metallo_06.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
-| `giocatore/passo_piastrelle_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_03.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_05.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_06.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_scala_01.ogg` | 0.5 s | Kenney Impact Sounds (CC0), rielaborati | impactMetal_light |
-| `giocatore/passo_scala_02.ogg` | 0.3 s | Kenney Impact Sounds (CC0), rielaborati | impactMetal_light |
-| `giocatore/passo_scala_03.ogg` | 0.3 s | Kenney Impact Sounds (CC0), rielaborati | impactMetal_light |
-| `giocatore/passo_scala_04.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | impactMetal_light |
+| `giocatore/passo_bagnato_01.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_bagnato_02.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_bagnato_03.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_bagnato_04.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_bagnato_05.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_bagnato_06.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_metallo_01.ogg` | 0.4 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_metallo_02.ogg` | 0.4 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_metallo_03.ogg` | 0.4 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_metallo_04.ogg` | 0.4 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_metallo_05.ogg` | 0.4 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_metallo_06.ogg` | 0.4 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_piastrelle_01.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_piastrelle_02.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_piastrelle_03.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_piastrelle_04.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_piastrelle_05.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_piastrelle_06.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_scala_01.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_scala_02.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_scala_03.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
+| `giocatore/passo_scala_04.ogg` | 0.3 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
 | `giocatore/riemersione.ogg` | 1.4 s | sintesi (originale) |  |
 | `giocatore/salto_01.ogg` | 0.3 s | Kenney RPG Audio (CC0) | cloth |
 | `giocatore/salto_02.ogg` | 0.3 s | Kenney RPG Audio (CC0) | cloth |
