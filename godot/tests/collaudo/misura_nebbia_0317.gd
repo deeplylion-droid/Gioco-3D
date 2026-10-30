@@ -159,7 +159,7 @@ func _misura(vista: String) -> void:
 	var strato := n.get(&"_strato") as CanvasLayer
 	mat.set_shader_parameter(&"misura", true)
 	strato.visible = false
-	var solo := await _scatto("")
+	var solo := await _scatto("%s_%s_T" % [vista, _nome])
 	mat.set_shader_parameter(&"misura", false)
 	strato.visible = true
 	var basso := Rect2i(0, senza.get_height() / 2, senza.get_width(), senza.get_height() / 2)
