@@ -193,10 +193,31 @@ func _collisione_struttura_gioco() -> void:
 	mi.add_child(corpo)
 
 
+## Le scalette della piscina a onde: la loro collisione nel GLB (sala_scaletta_e e _o) è una scatola sola, dal fondo
+## fino alla cima dei corrimano, 95 cm sopra il bordo, e in cima alla scala (Ladder) il giocatore ci sbatteva contro e
+## ricadeva giù: dalla piscina si usciva solo dalla spiaggia (riscontro della 0.3.16, col controller). La scatola resta
+## (sul bordo i corrimano non si attraversano camminando), e la Ladder la fa passare solo mentre si scavalca la cima
+## ([member Ladder.attraversa]).
+const SCALETTE_PISCINA := {"Piscina/ScalettaEst": "sala_scaletta_e", "Piscina/ScalettaOvest": "sala_scaletta_o"}
+
+
+func _scalette_piscina() -> void:
+	var sala := get_node_or_null(^"Sala/Piscina")
+	if sala == null:
+		return
+	for percorso in SCALETTE_PISCINA:
+		var l := get_node_or_null(NodePath(percorso)) as Ladder
+		if l == null:
+			continue
+		for corpo in sala.find_children(String(SCALETTE_PISCINA[percorso]), "StaticBody3D", true, false):
+			l.attraversa.append(l.get_path_to(corpo))
+
+
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
 	_cordone_vasca()
 	_collisione_struttura_gioco()
+	_scalette_piscina()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D

@@ -24,6 +24,10 @@ extends Area3D
 		show_model = value
 		_rebuild()
 
+## I corpi della scala vera (nel modello dell'ambiente) che sporgono sopra la cima, come i corrimano delle scalette
+## della piscina: il giocatore li attraversa solo mentre scavalca la cima (Player._scavalca), poi tornano solidi.
+@export var attraversa: Array[NodePath] = []
+
 var _vis: Node3D
 var _shape_node: CollisionShape3D
 
@@ -43,6 +47,16 @@ func get_climb_normal() -> Vector3:
 	var n := global_transform.basis.z
 	n.y = 0.0
 	return n.normalized()
+
+
+## I corpi di [member attraversa] (quelli che ci sono).
+func corpi_da_attraversare() -> Array[PhysicsBody3D]:
+	var out: Array[PhysicsBody3D] = []
+	for np in attraversa:
+		var b := get_node_or_null(np) as PhysicsBody3D
+		if b:
+			out.append(b)
+	return out
 
 
 ## Quota globale della cima della scala.
