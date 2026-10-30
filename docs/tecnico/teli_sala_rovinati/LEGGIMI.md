@@ -39,12 +39,15 @@ Le texture le fa `assets_src/ambienti_interni/poster/rovina.py` (`telo_arcobalen
 - A pastello: croci nere, un ghigno rosso sulla campana, righe viola sui tentacoli.
 - Tagli di coltello in croce.
 - Bruciature:
-  - due grandi coi buchi, dal basso a destra e dal bordo sinistro sul salvagente;
-  - un buco tondo bruciato sulla campana;
+  - il fondo bruciato a lingue, con una lingua più alta a sinistra;
+  - una dal bordo sinistro sul salvagente;
+  - un buco tondo bruciato sul delfino;
   - sette buchi di sigaretta.
-- Strappi e sporco: uno strappo grosso, l'angolo in basso a sinistra ripiegato, fuliggine, acqua e muffa.
+- Strappi e sporco: uno strappo verticale dal bordo in alto, giù lungo il delfino; l'angolo in alto a destra ripiegato; fuliggine, acqua e muffa.
 
-Gli scarabocchi sono solo disegni, senza scritte. Manca circa il 28% della carta.
+I due teli sono appesi vicini, quindi hanno strappi e bruciature diverse. Con la prima versione grafica-2 aveva visto lo strappo di traverso e il pezzo mancante in basso uguali nei due, e la bagnina è stata rifatta.
+
+Gli scarabocchi sono solo disegni, senza scritte. Manca circa il 27% della carta dell'arcobaleno e il 26% della bagnina.
 
 ## Nel gioco
 
@@ -73,7 +76,9 @@ Script: `godot/proposte/poster_sala/scatti_teli.gd`.
 | `1_arrivo_prima_dopo.jpg` | dall'ingresso, i due teli, i due teli col campo stretto |
 | `2_lampione_prima_dopo.jpg` | lo stesso col lampione acceso (sui teli cambia poco) |
 | `3_tecnico_torcia_prima_dopo.jpg` | **solo tecnico**: una torcia che nel gioco non c'è, per vedere i buchi e i bordi sulla lamiera |
-| `4_texture_prima_dopo.jpg` | le texture piatte, prima e dopo, coi buchi sul grigio |
+| `4_texture_prima_dopo.jpg` | le texture piatte, prima e dopo, coi buchi sul grigio (la bagnina rifatta) |
+
+**I fogli 1-3 hanno la prima versione della bagnina.** È rifatta solo la texture, e la luce non cambia.
 
 **Cosa si vede nel gioco.** La sala all'inizio è buia, e anche prima i teli erano scuri. Il faretto caldo di ognuno illumina il centro, e lì ora si vedono il buco bruciato sul petto e la croce coi denti rossi. Il resto del telo si intravede appena.
 

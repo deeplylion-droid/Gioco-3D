@@ -748,9 +748,9 @@ def telo_bagnina():
     """Il telo con Jilly bagnina, a destra della statua (sala_cartellone_mascotte_1): la faccia annerita sotto il
     cappellino cancellato, l'occhio a spirale con la croce rossa, il ghigno coi denti, il rosso che cola, il delfino
     col ghigno e l'occhio annerito, il salvagente con gli occhi crocettati; croci nere, un ghigno rosso e righe viola
-    a pastello sulla campana e sui tentacoli; tagli di coltello, due bruciature grandi coi buchi (dal basso a destra e
-    dal bordo sinistro sul salvagente), un buco tondo bruciato sulla campana, sette buchi di sigaretta, uno strappo
-    grosso, l'angolo in basso a sinistra ripiegato, fuliggine, acqua e muffa."""
+    a pastello sulla campana e sui tentacoli; tagli di coltello, due bruciature grandi coi buchi (il fondo bruciato a
+    lingue e dal bordo sinistro sul salvagente), un buco tondo bruciato sul delfino, sette buchi di sigaretta, uno strappo
+    verticale dall'alto, l'angolo in alto a destra ripiegato, fuliggine, acqua e muffa."""
     src = Image.open(os.path.join(SALA_SRC, 'cartellone_bagnino_col.jpg')).convert('RGB')
     W, H = src.size
     a = f32(src)
@@ -791,22 +791,27 @@ def telo_bagnina():
     for (p0, p1, lw, s) in (((360, 100), (560, 330), 5, 306), ((560, 90), (360, 320), 4, 307),
                             ((480, 520), (520, 1100), 4, 308), ((300, 700), (400, 1200), 3, 309)):
         a, alfa = taglio(alfa, a, p0, p1, lw, s)
+    # (diversa dal telo dell'arcobaleno appeso accanto, ricontrollo di grafica-2 del 30 ottobre: lì lo strappo è di traverso
+    # a metà, la bruciatura grande sale dall'angolo in basso e il buco tondo è al centro; qui il fondo bruciato a lingue,
+    # lo strappo verticale dall'alto, il buco sul delfino e l'angolo ripiegato in alto)
     n = blob((H, W), 310, 5) * 0.65 + blob((H, W), 311, 18) * 0.35
-    dist = np.hypot((xx - W * 0.85) / W, (yy - H * 1.06) / H)
-    a, alfa = bruciatura(a, alfa, 1 - dist * 1.3 + (n - 0.5) * 0.55, 0.42, 0.18, 312, fuliggine=2.4, verso=(-0.1, -1))
+    lingua = np.exp(-((xx - W * 0.36) / (W * 0.14)) ** 2) * 0.3
+    campo = (yy / H - 0.75) * 3.2 + lingua * 2.2 + (n - 0.5) * 0.7
+    a, alfa = bruciatura(a, alfa, campo, 0.42, 0.18, 312, fuliggine=2.4, verso=(0.05, -1))
     dist2 = np.hypot((xx - W * -0.03) / W * 1.2, (yy - H * 0.28) / H * 0.85)
     a, alfa = bruciatura(a, alfa, 1 - dist2 * 2.8 + (blob((H, W), 313, 7) - 0.5) * 0.6, 0.48, 0.13, 314, fuliggine=1.2,
                          verso=(0.15, -1))
-    d3 = np.hypot((xx - 430) / 95, (yy - 690) / 105)
+    d3 = np.hypot((xx - 830) / 70, (yy - 520) / 85)
     a, alfa = bruciatura(a, alfa, 1 - d3 * 0.6 + (blob((H, W), 315, 8) - 0.5) * 0.35, 0.45, 0.2, 316, fuliggine=1.4,
                          verso=(0.1, -1))
-    a, alfa = buchi_sigaretta(a, alfa, [(ex + 6, ey + 2), (400, 230), (540, 400), (786, 304), (300, 900), (640, 860), (200, 1200)],
+    a, alfa = buchi_sigaretta(a, alfa, [(ex + 6, ey + 2), (400, 230), (540, 400), (786, 304), (300, 900), (640, 860), (470, 700)],
                               [9, 7, 8, 8, 7, 9, 8], 317)
+    # strappo verticale dal bordo in alto, giù lungo il delfino fino a metà (la carta a destra resta unita in basso)
     ns = blob((H, W), 318, 14)
-    linea_y = 770 + xx * 0.18 + (ns - 0.5) * 50
-    larga = 14 + 30 * blob((H, W), 319, 6)
-    alfa = alfa * ~((np.abs(yy - linea_y) < larga) & (xx < W - 110))
-    a, alfa = angolo_ripiegato(a, alfa, 'bs', 210, ombra=0.55, seme=320)
+    linea_x = 700 + yy * 0.05 + (ns - 0.5) * 46
+    larga = 10 + 26 * blob((H, W), 319, 6) * (1 - yy / (H * 0.55))
+    alfa = alfa * ~((np.abs(xx - linea_x) < larga) & (yy < 0.55 * H))
+    a, alfa = angolo_ripiegato(a, alfa, 'ad', 190, ombra=0.55, seme=320)
     a = macchie_acqua(a, blob((H, W), 321, 3) + np.linspace(0, 1, H)[:, None] * 0.45 - 0.05, (0.62, 0.74))
     a = muffa(a, np.clip((blob((H, W), 322, 5) + np.linspace(0, 1, H)[:, None] * 0.4 - 0.7) * 4, 0, 1), 323, 0.02)
     a = colature(a, alfa, 9, 324, forza=0.4, colore=(0.1, 0.08, 0.06), da_y=0.0)
