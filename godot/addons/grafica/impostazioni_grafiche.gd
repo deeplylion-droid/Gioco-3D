@@ -489,11 +489,11 @@ func _applica_camera() -> void:
 
 
 ## L'opzione (cambiata dentro una zona la nebbia sale o scende piano, come entrando e uscendo) e i passi per la
-## qualità della nebbia: al minimo la metà.
+## qualità della nebbia (i passi per preset: NebbiaViola.PASSI_PRESET).
 func _applica_nebbia_viola() -> void:
 	if nebbia_viola:
 		nebbia_viola.accesa = bool(valori["nebbia_viola"])
-		nebbia_viola.imposta_qualita(int(valori["nebbia"]))
+		nebbia_viola.imposta_qualita(int(valori["nebbia"]), String(valori["preset"]))
 
 
 func _applica_fov() -> void:

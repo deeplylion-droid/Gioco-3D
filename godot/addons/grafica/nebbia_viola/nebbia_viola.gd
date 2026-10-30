@@ -37,8 +37,11 @@ const RAGGIO_LUCI := 16.0
 const OGNI_SCELTA := 0.2
 const CAMBIO_LUCE := 0.5
 const OGNI_ELENCO := 3.0
-## I passi lungo il raggio per la qualità della nebbia di Grafica (0 semplice, 1 volumetrica, 2 alta).
-const PASSI := [10, 20, 20]
+## I passi lungo il raggio per preset (più passi, meno grana: riscontro dell'utente sulla 0.3.16, "la film grain con la
+## nebbia stona"; il trattino fisso dell'inizio sfalsato si vedeva a 20 passi e molto a 10). Con le impostazioni fatte a
+## mano, per la qualità della nebbia di Grafica (0 semplice, 1 volumetrica, 2 alta).
+const PASSI_PRESET := {"basso": 16, "medio": 24, "alto": 32, "ultra": 32}
+const PASSI := [16, 32, 32]
 
 ## L'opzione "Nebbia viola" (Grafica): spenta, la nebbia scende piano e non si disegna più.
 var accesa := true
@@ -112,9 +115,10 @@ func materiali() -> Array[Material]:
 	return [_mat]
 
 
-## La qualità (0..2, come la nebbia di Grafica): i passi lungo il raggio.
-func imposta_qualita(q: int) -> void:
-	_mat.set_shader_parameter(&"passi", PASSI[clampi(q, 0, PASSI.size() - 1)])
+## La qualità: i passi lungo il raggio per il [param preset] di Grafica, o per la qualità [param q] della nebbia (0..2).
+func imposta_qualita(q: int, preset := "") -> void:
+	var passi: int = PASSI_PRESET.get(preset, PASSI[clampi(q, 0, PASSI.size() - 1)])
+	_mat.set_shader_parameter(&"passi", passi)
 
 
 ## Il giocatore entra in una zona ([param zona]) o ne esce. Subito dopo un salto della camera, o con [param subito]:
