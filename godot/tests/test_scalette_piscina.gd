@@ -77,7 +77,7 @@ func _run() -> void:
 	var scalette: Array[Ladder] = [level.get_node(^"Piscina/ScalettaEst") as Ladder, level.get_node(^"Piscina/ScalettaOvest") as Ladder]
 	var modi := MODI
 	# (prima piena, com'è all'inizio: svuotata, la piscina non tiene più l'acqua)
-	for stato in ["piena", "vuota"]:
+	for stato in ([] if OS.get_environment("SOLO") == "tecnici" else ["piena", "vuota"]):
 		if stato == "vuota":
 			vasca.fill = 0.0
 		await _frames(30)
@@ -102,6 +102,9 @@ func _run() -> void:
 		check(l != null, "c'è %s" % nome)
 		if l:
 			await _tutti_i_modi(l, "tecnici")
+	if OS.get_environment("SOLO") == "tecnici":
+		_fine()
+		return
 	# la torre con le condotte: le scale delle vasche di raccolta, degli scoli e del bacino
 	get_tree().change_scene_to_file(TORRE)
 	for i in 600:
@@ -124,6 +127,12 @@ func _run() -> void:
 	var scale := level.find_children("*", "Ladder", true, false)
 	check(scale.size() >= 4, "nella torre e nelle condotte ci sono le scale (%d)" % scale.size())
 	for l in scale:
+		# (la scaletta del bacino si sale dopo SB1, che parte quando ci si avvicina e ferma i comandi: la prova
+		# test_scaletta_bacino.gd, dopo SB1 vero)
+		if ins and ins.is_ancestor_of(l) and (l as Ladder).get_top_y() > float(ins.dati["bacino"]["fondo"]) + 3.0 \
+				and (l as Ladder).global_position.y < float(ins.dati["bacino"]["fondo"]) + 0.5:
+			print("  (%s, la scaletta del bacino: in test_scaletta_bacino.gd)" % l.name)
+			continue
 		await _tutti_i_modi(l as Ladder, "torre" if not (ins and ins.is_ancestor_of(l)) else "condotte")
 	_fine()
 
@@ -205,7 +214,7 @@ func _sali(s: Ladder, modo: String) -> Dictionary:
 			prese += 1
 		era = p.is_on_ladder()
 		alto = maxf(alto, p.global_position.y)
-		if OS.has_environment("DIAG") and p.global_position.y > -0.4:
+		if OS.has_environment("DIAG") and p.global_position.y > s.get_top_y() - 0.4:
 			for k in p.get_slide_collision_count():
 				var c := p.get_slide_collision(k)
 				var o := c.get_collider() as Node
@@ -214,7 +223,7 @@ func _sali(s: Ladder, modo: String) -> Dictionary:
 		if modo == "accovacciato" and t > 1.5:
 			Input.action_release(&"crouch")
 		var oltre := (p.global_position - s.global_position).dot(-n)
-		if p.is_on_floor() and p.global_position.y > s.get_top_y() - 0.15 and oltre > 0.3 and not p.is_on_ladder():
+		if p.is_on_floor() and p.global_position.y > s.get_top_y() - 0.4 and oltre > 0.3 and not p.is_on_ladder():
 			fuori = true
 			break
 	var fine := "%s%s" % [p.global_position.snapped(Vector3.ONE * 0.01), " sulla scala" if p.is_on_ladder() else ""]
