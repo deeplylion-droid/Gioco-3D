@@ -120,9 +120,13 @@ const BODY_SIDES := 16
 @export var head_bob_vertical := 0.035
 ## Oscillazione laterale massima (m).
 @export var head_bob_horizontal := 0.022
-@export var step_length_walk := 0.75
-@export var step_length_run := 1.05
-@export var step_length_crouch := 0.55
+## La lunghezza di un passo (m): un passo, un suono e un'oscillazione verticale della camera. Come una persona vera
+## (proposta A della domanda 3 della pagina dei passi, 30 ottobre: prima 0,75, 1,05 e 0,55, cioè 4,5 passi al secondo
+## camminando, "ticchettosi"): camminando 2,6 passi al secondo, correndo 3,4, accovacciati 2. L'oscillazione resta
+## della stessa ampiezza (in metri), più lenta.
+@export var step_length_walk := 1.3
+@export var step_length_run := 1.7
+@export var step_length_crouch := 0.85
 ## Abbassamento massimo della camera all'atterraggio (m).
 @export var land_dip_max := 0.08
 
