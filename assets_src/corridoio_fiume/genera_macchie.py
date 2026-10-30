@@ -101,7 +101,7 @@ def pozza_alone(w=1024, h=384):
     y = np.linspace(-1, 1, h)[:, None] * np.ones((1, w))
     x = np.ones((h, 1)) * np.linspace(-1, 1, w)[None, :]
     d = np.sqrt(x ** 2 + y ** 2) + (rumore(w, h, 6) - 0.5) * 0.35
-    a = np.clip((1.0 - d) / 0.55, 0, 1) ** 1.5 * 0.6
+    a = np.clip((1.0 - d) / 0.55, 0, 1) ** 1.3 * 0.8
     col = np.zeros((h, w, 4), np.float32)
     col[..., :3] = (0.11, 0.10, 0.09)
     col[..., 3] = a

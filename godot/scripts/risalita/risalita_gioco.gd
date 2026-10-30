@@ -468,7 +468,7 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	m.set_shader_parameter(&"wetness_variation", 0.0)
 	# (non uno specchio pieno: rifletteva il buio della volta e restava nero; cemento fradicio e lucido)
 	m.set_shader_parameter(&"puddle_amount", 0.45)
-	m.set_shader_parameter(&"wet_darkening", 0.35)
+	m.set_shader_parameter(&"wet_darkening", 0.25)
 	m.set_shader_parameter(&"puddle_tint", Color(0.85, 0.86, 0.85))
 	p.material_override = m
 	add_child(p)

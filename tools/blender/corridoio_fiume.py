@@ -69,11 +69,13 @@ def tubi(obs):
         # r + 3,5 cm, così i due rosoni del muro della sala pompe (centri a 20 cm) restano staccati di 1 cm
         rr = r + 0.035
         pezzi.append(C.cilindro(f'tubo_pompe_{k}_rosone_s', g(x, y, MURO_S + 0.006), rr, 0.012, acciaio, asse=(0, 1, 0), seg=32))
-        pezzi.append(C.cilindro(f'tubo_pompe_{k}_rosone_o', g(MURO_O + 0.006, y, z1), rr, 0.012, acciaio, asse=(1, 0, 0), seg=32))
+        # (sul muro ovest più grande: i centri sono a 25 cm, e dalla porta il rosone deve spuntare attorno al gomito)
+        pezzi.append(C.cilindro(f'tubo_pompe_{k}_rosone_o', g(MURO_O + 0.01, y, z1), r + 0.06, 0.02, acciaio, asse=(1, 0, 0), seg=32))
         for a in (45, 135, 225, 315):
             du, dv = math.cos(R_(a)) * (r + 0.02), math.sin(R_(a)) * (r + 0.02)
             pezzi.append(C.cilindro('rosone_bullone', g(x + du, y + dv, MURO_S + 0.015), 0.007, 0.008, acciaio, asse=(0, 1, 0)))
-            pezzi.append(C.cilindro('rosone_bullone', g(MURO_O + 0.015, y + dv, z1 + du), 0.007, 0.008, acciaio, asse=(1, 0, 0)))
+            du2, dv2 = math.cos(R_(a)) * (r + 0.04), math.sin(R_(a)) * (r + 0.04)
+            pezzi.append(C.cilindro('rosone_bullone', g(MURO_O + 0.023, y + dv2, z1 + du2), 0.008, 0.008, acciaio, asse=(1, 0, 0)))
         z = MURO_S + 1.3
         while z < z1 - 0.4:
             pezzi.append(C.cilindro(f'tubo_pompe_{k}_collare', g(x, y, z), r + STACCO_TUBO - 0.002, 0.05, acciaio,
