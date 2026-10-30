@@ -38,6 +38,7 @@ func _scatto(nome: String, occhio: Vector3, punto: Vector3) -> void:
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	GameState.save_to_disk = false
+	Grafica.salva_su_disco = false
 	var a := OS.get_cmdline_user_args()
 	_cartella = a[1] if a.size() > 1 else "user://scatti_corridoio_fiume"
 	get_tree().change_scene_to_file("res://tests/scene/risalita_prova.tscn")
@@ -53,6 +54,12 @@ func _run() -> void:
 	if hud:
 		hud.visible = false
 	_p.camera.make_current()
+	# l'ambiente della sala (nel gioco la Risalita sta nella sala principale, con LookSala): riflessi e luce d'ambiente
+	Grafica.applica_preset("alto")
+	var env := WorldEnvironment.new()
+	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
+	get_tree().current_scene.add_child(env)
+	Grafica.aggiorna_environment()
 	var ris := get_tree().current_scene.get_node(^"Risalita")
 	var b := ris.find_child("BambinoCorridoioFiume", true, false) as Node3D
 	if b:

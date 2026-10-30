@@ -441,14 +441,15 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	arredo.name = "ArredoCorridoioFiume"
 	add_child(arredo)
 	var est := xc + 2.0
-	var muffa := load("res://assets/ambiente/dettagli/gltf/texture/macchia_muffa_col.png") as Texture2D
-	var umido := load("res://assets/ambienti_interni/shader_tex/decal_macchia.png") as Texture2D
-	var scuro := Color(0.16, 0.15, 0.12)
-	# intorno all'oblò e, sotto, la colatura verso il pavimento, a sud della Polaroid 13 (la P13 resta fuori dai decal)
-	_decal("MuffaOblo", muffa, Vector3(est, Y + 1.35, OBLO_FIUME.z + 0.1), Vector3.LEFT, 2.2, 1.7, Color.WHITE, 0.85)
-	_decal("UmidoOblo", umido, Vector3(est, Y + 0.5, OBLO_FIUME.z - 0.35), Vector3.LEFT, 0.8, 0.8, scuro, 0.7)
-	# sul muro di fronte, fra il carrello e la griglia (sotto i tubi)
-	_decal("MuffaMuroOvest", muffa, Vector3(xc, Y + 1.0, 58.3), Vector3.RIGHT, 2.0, 1.5, Color.WHITE, 0.8)
+	# (le macchie: assets_src/corridoio_fiume/genera_macchie.py; sotto la luce rossa si leggono per luminosità, scure e
+	# bagnate col bordo chiaro di calcare: il verde scuro della muffa da solo non si vedeva)
+	var colature := load("res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_colature.png") as Texture2D
+	var muffa := load("res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_muffa.png") as Texture2D
+	# sotto l'oblò, dal bordo della flangia al pavimento, a sud della Polaroid 13 (che resta fuori dal decal)
+	_decal("ColatureOblo", colature, Vector3(est, Y + 0.7, OBLO_FIUME.z - 0.3), Vector3.LEFT, 0.9, 1.4, Color.WHITE, 1.0)
+	# la muffa accanto all'oblò, verso la scala, e sul muro di fronte, fra il carrello e la griglia (sotto i tubi)
+	_decal("MuffaOblo", muffa, Vector3(est, Y + 1.7, OBLO_FIUME.z - 1.4), Vector3.LEFT, 1.0, 0.75, Color.WHITE, 1.0)
+	_decal("MuffaMuroOvest", muffa, Vector3(xc, Y + 1.05, 58.3), Vector3.RIGHT, 1.9, 1.4, Color.WHITE, 1.0)
 	# la pozza: dalla colatura (piede del muro est, z 57,45) alla griglia di scolo (x -5,6, z 60,3), lunga e stretta;
 	# la P13 (x -4,06, z 58,4) resta a 15 cm dal suo bordo
 	var da := Vector2(est - 0.2, OBLO_FIUME.z - 0.55)
