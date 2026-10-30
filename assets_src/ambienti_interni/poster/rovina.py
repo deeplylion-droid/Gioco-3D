@@ -640,7 +640,182 @@ def infermeria():
     salva(a, alfa, os.path.join(TEX_INT, 'cartellone_medusa_infermeria.png'))
 
 
+# ---------------------------------------------------------------- 5-6. i due teli di Jilly nella sala principale
+# (richiesta dell'utente del 30 ottobre: "ci sono due poster rettangolari sul muro in fondo della sala centrale, vanno
+# bruciati e scarabocchiati moltissimo"). Sono i teli ai lati della statua, 2 x 3 m, incollati sulla lamiera della
+# cornice: dove la carta brucia o si strappa si vede la lamiera. Partono dalle texture della sala (le stesse del GLB,
+# che non si tocca: lo usa anche lo spot VHS); i rovinati li mette sala_principale.gd.
+SALA_SRC = os.path.join(ROOT, 'assets_src/ambiente/textures/derivate/sala_a')
+SALA_ROV = os.path.join(ROOT, 'godot/assets/ambiente/sala/cartelloni_rovinati')
+
+
+def bordo_dipinto(a):
+    """Il bordo strappato già dipinto sopra e sotto nelle texture dei teli (grigio, la lamiera): ora è trasparente."""
+    h, w = a.shape[:2]
+    mx, mn = a.max(-1), a.min(-1)
+    sat = (mx - mn) / np.maximum(mx, 1e-3)
+    yy = np.linspace(0, 1, h)[:, None] * np.ones((1, w))
+    vicino = (yy < 0.05) | (yy > 0.95)
+    grigio = sfoca((sat < 0.25).astype(np.float32), 2.0) > 0.5
+    return 1 - (vicino & grigio).astype(np.float32)
+
+
+def un_pezzo(alfa):
+    """Resta un pezzo solo di carta: via i granelli staccati lasciati dai buchi."""
+    lab, n = ndimage.label(alfa > 0.5)
+    if n > 1:
+        grandi = np.argmax(ndimage.sum(alfa > 0.5, lab, range(1, n + 1))) + 1
+        alfa = alfa * (lab == grandi)
+    return alfa
+
+
+def zigzag(p, x0, y0, x1, y1, n, larg, col, trem=4):
+    zig = []
+    for i in range(n):
+        t = i / (n - 1)
+        zig += [(x0 + (x1 - x0) * t + p.rng.normal(0, 10), y0 + p.rng.normal(0, 14)),
+                (x0 + (x1 - x0) * t + 22 + p.rng.normal(0, 10), y1 + p.rng.normal(0, 14))]
+    p.tratto(zig, larg, col, trem=trem)
+
+
+def telo_arcobaleno():
+    """Il telo con Jilly e l'arcobaleno, a sinistra della statua (sala_cartellone_mascotte_0), più rovinato del
+    cartellone A del corridoio: la faccia tutta annerita, l'occhio a spirale con la croce bianca, il ghigno coi denti,
+    l'arcobaleno cancellato a zig-zag, la manina annerita; croci, denti e righe a pastello rossi sulla campana e sui
+    tentacoli; due bruciature grandi coi buchi (dal basso a sinistra e dal bordo destro), due buchi tondi bruciati,
+    sette buchi di sigaretta, uno strappo grosso, fuliggine che cola, acqua e muffa."""
+    src = Image.open(os.path.join(SALA_SRC, 'cartellone_medusa_col.jpg')).convert('RGB')
+    W, H = src.size
+    a = f32(src)
+    alfa = bordo_dipinto(a)
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    nero, bianco, rosso, viola = (14, 12, 12), (236, 232, 222), (165, 16, 18), (110, 40, 150)
+    ex, ey, er = 494, 330, 50
+    p = Pennarello(W, H, 202)
+    p.spirale(ex + 10, ey + 30, 150, 13, nero, giri=26)
+    p.spirale(ex, ey, er * 1.4, 15, nero, giri=40)
+    p.croce(ex, ey, er * 1.8, 10, bianco, volte=2)
+    p.denti(510, 405, 230, 92, 9, nero, (40, 6, 8), bianco, 8, arco=0.55)
+    p.nervose(ex, ey + 20, 230, 40, 6, nero, lung=(0.5, 1.25))
+    p.nervose(760, 430, 90, 14, 7, nero, lung=(0.5, 1.1))
+    p.spirale(760, 440, 55, 9, nero, giri=10)
+    for (x0, y0, x1, y1) in ((40, 60, 960, 230), (60, 250, 320, 430), (700, 250, 960, 430)):
+        zigzag(p, x0, y0, x1, y1, 14, 9, nero)
+    for i in range(8):
+        x = p.rng.uniform(60, 960)
+        p.linea((x, p.rng.uniform(40, 260)), (x + p.rng.normal(0, 140), p.rng.uniform(900, 1400)), 5, bianco, n=14,
+                trem=3, curva=p.rng.normal(0, 0.08))
+    for (x, y) in ((60, 890), (915, 850), (100, 1370), (950, 1370)):
+        p.croce(x, y, 20, 4, nero, volte=2)
+    a = p.applica(a, alfa)
+    q = Pennarello(W, H, 203)
+    q.croce(510, 760, 170, 14, rosso, volte=3)
+    q.denti(510, 845, 360, 120, 11, rosso, (90, 4, 8), (245, 240, 230), 10, arco=0.4)
+    for i in range(9):
+        x = 230 + i * 70
+        q.linea((x, 920), (x + q.rng.normal(0, 60), 1320 + q.rng.normal(0, 60)), 9, rosso, n=12, trem=4)
+    q.spirale(290, 560, 70, 10, viola, giri=8)
+    for dx in (-24, 0, 24):
+        q.linea((ex + dx, ey + er), (ex + dx * 1.4 + q.rng.normal(0, 6), ey + er + 170 + q.rng.normal(0, 25)), 8, viola, n=12, trem=2)
+    a = q.applica_pastello(a, alfa, 204)
+    a = graffi(a, alfa, 30, 205, lung=(60, 260))
+    n = blob((H, W), 206, 5) * 0.65 + blob((H, W), 207, 18) * 0.35
+    dist = np.hypot((xx - W * -0.04) / W, (yy - H * 1.04) / H * 1.1)
+    a, alfa = bruciatura(a, alfa, 1 - dist * 1.15 + (n - 0.5) * 0.55, 0.42, 0.18, 208, fuliggine=2.4, verso=(0.25, -1))
+    dist2 = np.hypot((xx - W * 1.03) / W * 1.3, (yy - H * 0.55) / H * 0.75)
+    a, alfa = bruciatura(a, alfa, 1 - dist2 * 3.0 + (blob((H, W), 209, 7) - 0.5) * 0.6, 0.48, 0.13, 210, fuliggine=1.2,
+                         verso=(-0.15, -1))
+    for (cx, cy, rx, ry, s) in ((500, 560, 105, 115, 211), (215, 175, 70, 60, 213)):
+        d3 = np.hypot((xx - cx) / rx, (yy - cy) / ry)
+        a, alfa = bruciatura(a, alfa, 1 - d3 * 0.6 + (blob((H, W), s, 8) - 0.5) * 0.35, 0.45, 0.2, s + 1, fuliggine=1.5,
+                             verso=(0.1, -1))
+    a, alfa = buchi_sigaretta(a, alfa, [(ex + 8, ey + 4), (430, 300), (610, 470), (380, 690), (650, 720), (560, 1050), (820, 300)],
+                              [9, 7, 8, 7, 9, 8, 7], 215)
+    ns = blob((H, W), 216, 14)
+    linea_y = 1010 - (W - xx) * 0.30 + (ns - 0.5) * 60
+    larga = 16 + 34 * blob((H, W), 217, 6)
+    alfa = alfa * ~((np.abs(yy - linea_y) < larga) & (xx > 0.30 * W))
+    a = macchie_acqua(a, blob((H, W), 218, 3) + np.linspace(0, 1, H)[:, None] * 0.5 - 0.1, (0.6, 0.72))
+    a = muffa(a, np.clip((blob((H, W), 219, 5) + np.linspace(0, 1, H)[:, None] * 0.4 - 0.7) * 4, 0, 1), 220, 0.02)
+    a = colature(a, alfa, 9, 221, forza=0.4, colore=(0.1, 0.08, 0.06), da_y=0.0)
+    a, alfa = scotch(a, alfa, 760, 890, 130, 36, -0.35, 222)
+    a = bordo_strappato(a, alfa, 2.0, 0.5)
+    os.makedirs(SALA_ROV, exist_ok=True)
+    salva(a, un_pezzo(alfa), os.path.join(SALA_ROV, 'telo_arcobaleno_rovinato.png'))
+
+
+def telo_bagnina():
+    """Il telo con Jilly bagnina, a destra della statua (sala_cartellone_mascotte_1): la faccia annerita sotto il
+    cappellino cancellato, l'occhio a spirale con la croce rossa, il ghigno coi denti, il rosso che cola, il delfino
+    col ghigno e l'occhio annerito, il salvagente con gli occhi crocettati; croci nere, un ghigno rosso e righe viola
+    a pastello sulla campana e sui tentacoli; tagli di coltello, due bruciature grandi coi buchi (dal basso a destra e
+    dal bordo sinistro sul salvagente), un buco tondo bruciato sulla campana, sette buchi di sigaretta, uno strappo
+    grosso, l'angolo in basso a sinistra ripiegato, fuliggine, acqua e muffa."""
+    src = Image.open(os.path.join(SALA_SRC, 'cartellone_bagnino_col.jpg')).convert('RGB')
+    W, H = src.size
+    a = f32(src)
+    alfa = bordo_dipinto(a)
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    nero, bianco, rosso, viola = (12, 10, 12), (236, 232, 222), (165, 12, 14), (110, 40, 150)
+    ex, ey, er = 456, 186, 42
+    p = Pennarello(W, H, 302)
+    p.spirale(ex + 8, ey + 30, 125, 12, nero, giri=24)
+    p.spirale(ex, ey, er * 1.5, 13, nero, giri=40)
+    p.croce(ex + 4, ey + 10, 120, 11, rosso, volte=2)
+    p.denti(470, 248, 190, 80, 9, nero, (90, 6, 10), bianco, 7, arco=0.6)
+    for dx in (-22, 0, 22):
+        p.linea((ex + dx, ey + 30), (ex + dx * 1.3 + p.rng.normal(0, 5), ey + 180 + p.rng.normal(0, 25)), 5, rosso, n=14, trem=1.2)
+    p.nervose(ex, ey + 20, 210, 32, 6, rosso, lung=(0.5, 1.2))
+    p.tratteggio(320, 40, 560, 150, 26, 7, nero)
+    p.spirale(480, 460, 70, 8, nero, giri=10)
+    p.spirale(786, 304, 24, 5, nero, giri=12)
+    p.denti(745, 362, 110, 42, 7, nero, (60, 6, 8), bianco, 4, arco=0.5)
+    for (x0, y0, x1, y1) in ((760, 400, 960, 560), (60, 360, 290, 640), (150, 1000, 420, 1300), (620, 980, 900, 1280)):
+        zigzag(p, x0, y0, x1, y1, 10, 8, nero, trem=3)
+    p.croce(110, 400, 22, 5, nero)
+    p.croce(165, 400, 22, 5, nero)
+    p.linea((95, 465), (185, 462), 6, nero, n=6)
+    for i in range(8):
+        x = p.rng.uniform(60, 960)
+        p.linea((x, p.rng.uniform(60, 320)), (x + p.rng.normal(0, 110), p.rng.uniform(900, 1450)), 5, rosso, n=12, trem=3,
+                curva=p.rng.normal(0, 0.08))
+    a = p.applica(a, alfa)
+    q = Pennarello(W, H, 303)
+    q.croce(500, 640, 150, 14, nero, volte=3)
+    q.denti(500, 705, 300, 100, 10, rosso, (90, 4, 8), (245, 240, 230), 10, arco=0.35)
+    for i in range(10):
+        x = 200 + i * 65
+        q.linea((x, 800), (x + q.rng.normal(0, 50), 1300 + q.rng.normal(0, 60)), 9, viola, n=12, trem=4)
+    a = q.applica_pastello(a, alfa, 304)
+    a = graffi(a, alfa, 30, 305, lung=(40, 220))
+    for (p0, p1, lw, s) in (((360, 100), (560, 330), 5, 306), ((560, 90), (360, 320), 4, 307),
+                            ((480, 520), (520, 1100), 4, 308), ((300, 700), (400, 1200), 3, 309)):
+        a, alfa = taglio(alfa, a, p0, p1, lw, s)
+    n = blob((H, W), 310, 5) * 0.65 + blob((H, W), 311, 18) * 0.35
+    dist = np.hypot((xx - W * 0.85) / W, (yy - H * 1.06) / H)
+    a, alfa = bruciatura(a, alfa, 1 - dist * 1.3 + (n - 0.5) * 0.55, 0.42, 0.18, 312, fuliggine=2.4, verso=(-0.1, -1))
+    dist2 = np.hypot((xx - W * -0.03) / W * 1.2, (yy - H * 0.28) / H * 0.85)
+    a, alfa = bruciatura(a, alfa, 1 - dist2 * 2.8 + (blob((H, W), 313, 7) - 0.5) * 0.6, 0.48, 0.13, 314, fuliggine=1.2,
+                         verso=(0.15, -1))
+    d3 = np.hypot((xx - 430) / 95, (yy - 690) / 105)
+    a, alfa = bruciatura(a, alfa, 1 - d3 * 0.6 + (blob((H, W), 315, 8) - 0.5) * 0.35, 0.45, 0.2, 316, fuliggine=1.4,
+                         verso=(0.1, -1))
+    a, alfa = buchi_sigaretta(a, alfa, [(ex + 6, ey + 2), (400, 230), (540, 400), (786, 304), (300, 900), (640, 860), (200, 1200)],
+                              [9, 7, 8, 8, 7, 9, 8], 317)
+    ns = blob((H, W), 318, 14)
+    linea_y = 770 + xx * 0.18 + (ns - 0.5) * 50
+    larga = 14 + 30 * blob((H, W), 319, 6)
+    alfa = alfa * ~((np.abs(yy - linea_y) < larga) & (xx < W - 110))
+    a, alfa = angolo_ripiegato(a, alfa, 'bs', 210, ombra=0.55, seme=320)
+    a = macchie_acqua(a, blob((H, W), 321, 3) + np.linspace(0, 1, H)[:, None] * 0.45 - 0.05, (0.62, 0.74))
+    a = muffa(a, np.clip((blob((H, W), 322, 5) + np.linspace(0, 1, H)[:, None] * 0.4 - 0.7) * 4, 0, 1), 323, 0.02)
+    a = colature(a, alfa, 9, 324, forza=0.4, colore=(0.1, 0.08, 0.06), da_y=0.0)
+    a = bordo_strappato(a, alfa, 1.8, 0.55)
+    os.makedirs(SALA_ROV, exist_ok=True)
+    salva(a, un_pezzo(alfa), os.path.join(SALA_ROV, 'telo_bagnina_rovinato.png'))
+
+
 if __name__ == '__main__':
-    scelti = sys.argv[1:] or ['cartellone', 'bagnino', 'manifesto', 'infermeria']
+    scelti = sys.argv[1:] or ['cartellone', 'bagnino', 'manifesto', 'infermeria', 'telo_arcobaleno', 'telo_bagnina']
     for s in scelti:
         globals()[s]()

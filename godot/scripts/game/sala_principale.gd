@@ -193,10 +193,21 @@ func _collisione_struttura_gioco() -> void:
 	mi.add_child(corpo)
 
 
+## I due teli di Jilly ai lati della statua, bruciati e scarabocchiati (richiesta dell'utente del 30 ottobre: "vanno
+## bruciati e scarabocchiati moltissimo"; le texture le fa assets_src/ambienti_interni/poster/rovina.py, telo_arcobaleno e
+## telo_bagnina). Il GLB della sala resta com'è: lo usa anche lo spot VHS, dove il parco è ancora nuovo. La carta è
+## incollata sulla lamiera della cornice: dove manca (alpha scissor) si vede la lamiera.
+const TELI_ROVINATI := {
+	"sala_cartellone_mascotte_0": ["M_amb_cartellone_medusa", "res://assets/ambiente/sala/cartelloni_rovinati/telo_arcobaleno_rovinato.png"],
+	"sala_cartellone_mascotte_1": ["M_amb_cartellone_bagnino", "res://assets/ambiente/sala/cartelloni_rovinati/telo_bagnina_rovinato.png"],
+}
+
+
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
 	_cordone_vasca()
 	_collisione_struttura_gioco()
+	_teli_rovinati()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D
@@ -265,6 +276,37 @@ func _cordone_vasca() -> void:
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override
 ## (così si può cambiare l'emissione di quella mesh soltanto).
+func _teli_rovinati() -> void:
+	var arch := get_node_or_null(^"Sala/Architettura")
+	if arch:
+		metti_teli_rovinati(arch)
+
+
+## Mette sui due teli di [param arch] (la sala importata) il materiale con la texture rovinata: copia di quello
+## importato (stessi colori dei vertici e ruvidezza) con l'alpha scissor come i M_amb_alfa_*. Torna quante superfici ha
+## cambiato (2). La usano anche gli scatti, che caricano la sala a pezzi (proposte/poster_sala/scatti_teli.gd).
+static func metti_teli_rovinati(arch: Node) -> int:
+	var fatti := 0
+	for nome: String in TELI_ROVINATI:
+		var mi := arch.find_child(nome, true, false) as MeshInstance3D
+		if mi == null or mi.mesh == null:
+			push_warning("sala: niente %s per il telo rovinato" % nome)
+			continue
+		var voce: Array = TELI_ROVINATI[nome]
+		for i in mi.mesh.get_surface_count():
+			var m := mi.mesh.surface_get_material(i) as StandardMaterial3D
+			if m == null or m.resource_name != voce[0]:
+				continue
+			var r := m.duplicate() as StandardMaterial3D
+			r.albedo_texture = load(voce[1]) as Texture2D
+			r.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+			r.alpha_scissor_threshold = 0.5
+			r.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
+			mi.set_surface_override_material(i, r)
+			fatti += 1
+	return fatti
+
+
 static func _find_surface_material(n: Node, mat_name: String) -> StandardMaterial3D:
 	var mi := n as MeshInstance3D
 	if mi == null or mi.mesh == null:
