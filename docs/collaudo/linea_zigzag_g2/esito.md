@@ -1,0 +1,3 @@
+# Ricontrollo di grafica-2: riga a zig-zag (lavoro/linea-zigzag 3ae6a193)
+
+Superato. Stesso fotogramma con parete.gdshader nuovo e vecchio (ca58515f), lampade ferme (`godot/tests/collaudo/ricontrollo_zigzag_g2.gd`). La differenza (verde = più chiaro dopo, rosso = più scuro, x8) è solo la riga a zig-zag che sparisce; il rosso nei tecnici è una lampada che lampeggia sullo sfondo (lì non fermata). Interni 6 punti: più chiari 26.241 pixel, più scuri 720 (rumore, sparsi); tecnici 16 punti: solo riga e lampada. 0 ERROR: BUG, 0 SCRIPT ERROR. Righe: `differenze_prima_dopo.jpg` (interni corridoio due punti, tecnici).
