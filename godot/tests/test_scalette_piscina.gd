@@ -201,7 +201,8 @@ func _fermo_in_cima(s: Ladder) -> Dictionary:
 	for fr in 60 * 8:
 		await get_tree().physics_frame
 		if OS.has_environment("DIAG") and fr % 20 == 0:
-			print("    DIAG fermo %s scala %s pavimento %s v %s" % [p.global_position.snapped(Vector3.ONE * 0.01), p.is_on_ladder(), p.is_on_floor(), p.velocity.snapped(Vector3.ONE * 0.01)])
+			print("    DIAG fermo %s scala %s pavimento %s v %s aree %s cooldown %.2f accovacciato %s eccezioni %d input %s" % [p.global_position.snapped(Vector3.ONE * 0.01), p.is_on_ladder(), p.is_on_floor(), p.velocity.snapped(Vector3.ONE * 0.01),
+					p.sensor.get_overlapping_areas().map(func(a): return a.name), p.get(&"_ladder_cooldown"), p.is_crouching, p.get_collision_exceptions().size(), p.input_enabled])
 		# appena scavalcato e posato sul bordo, dentro la scatola dei corrimano: si lascia tutto
 		if not p.is_on_ladder() and p.is_on_floor() and p.global_position.y > s.get_top_y() - 0.15:
 			su = true
