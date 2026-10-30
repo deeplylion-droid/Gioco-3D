@@ -4,14 +4,14 @@
 
 ## Quale corridoio
 
-- **Vuoto: il corridoio in fondo alla scala che scende al fiume** (`1_corridoio_dal_fondo_scala.jpg`, `2_corridoio_meta.jpg`, `3_corridoio_indietro.jpg`). Largo 2 m e lungo circa 17 m. Dentro ci sono solo l'oblò di lei a destra, la Polaroid 13 per terra sotto l'oblò e tre lampade rosse. I muri e il pavimento sono nudi.
+- **Vuoto: il corridoio in fondo alla scala che scende al fiume** (`1_corridoio_dal_fondo_scala.jpg`, `2_corridoio_meta.jpg`, `3_corridoio_indietro.jpg`). Largo 2 m e lungo circa 17 m. Dentro ci sono solo l'oblò di lei a sinistra (muro est), la Polaroid 13 per terra sotto l'oblò e tre lampade rosse. I muri e il pavimento sono nudi.
 - **Non vuoto: il passaggio fra le pile verso l'imbarco** (`4_capannone_ingresso.jpg`). Ha già le transenne, le pile di scatoloni colorati e le lampade.
 
 ## Opzioni (solo a parole: niente nel gioco prima della scelta)
 
 Valgono per tutte e tre:
 - la luce resta quella di adesso;
-- si arreda solo lungo il muro ovest, a sinistra andando verso il capannone, con al massimo 50 cm di profondità, così restano 1,5 m liberi per camminare;
+- si arreda solo lungo il muro ovest, quello di fronte all'oblò, a destra andando verso il capannone (sul muro est ci sono già l'oblò e le tre lampade rosse), con al massimo 50 cm di profondità, così restano 1,5 m liberi per camminare. L'arredo sta fra il fondo della scala e circa 2 m prima della porta del capannone, che è nello stesso muro ovest in fondo: lì restano libere la porta e la strada del bambino, che dall'angolo in fondo a est corre nella porta;
 - sopra la strada fino a 2 m non c'è niente;
 - intorno all'oblò, alla Polaroid 13, alla porta del capannone e al posto del bambino resta 1 m libero.
 
