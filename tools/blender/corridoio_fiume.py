@@ -111,10 +111,16 @@ def arredi(obs):
     q = metti('quadro_elettrico', 'quadro_elettrico', (MURO_O + 0.15, Y + 1.15, 52.4), alto=0.75, rz=90, prof_max=0.22)
     a_muro_e_a_terra(q, terra=False)
     obs.append(q)
-    # i fusti sotto la valvola, appoggiati al muro
-    f = metti('fusti', 'fusti_cloro', (MURO_O + 0.3, Y, 53.9), alto=0.85, rz=90, prof_max=0.5)
-    a_muro_e_a_terra(f)
-    obs.append(f)
+    # due bidoni di plastica blu sotto la valvola, appoggiati al muro (il modello Meshy dei fusti è un gruppo di tre,
+    # largo quanto alto: non si stacca un fusto solo), alti 88 cm, larghi 48
+    blu = C.mat_pbr('bidone_blu', base=(0.05, 0.16, 0.42), roughness=0.55)
+    bianco = C.mat_pbr('bidone_tappo', base=(0.8, 0.8, 0.76), roughness=0.6)
+    f = []
+    for k, z in enumerate((53.62, 54.16)):
+        f.append(bidone(f'bidone_{k}', g(MURO_O + 0.002 + 0.24, Y, z), blu, bianco, 25 + 60 * k))
+    for o in f:
+        a_muro_e_a_terra(o)
+        obs.append(o)
     # il secchio di lamiera accanto ai fusti
     zinco = C.mat_pbr('secchio_zinco', base=(0.52, 0.54, 0.53), roughness=0.4, metallic=0.85)
     s = C.unisci('secchio', [C.cilindro('secchio_corpo', g(MURO_O + 0.2, Y + 0.14, 54.85), 0.12, 0.28, zinco, r2=0.15, seg=28),
@@ -126,7 +132,9 @@ def arredi(obs):
     a_muro_e_a_terra(c)
     obs.append(c)
     # la griglia di scolo per terra, dove finisce la pozza (il gioco mette la pozza fra le gocce e la griglia)
-    gr = metti('griglia_scolo', 'griglia_scolo', (MURO_O + 0.3, Y, 60.3), largo=0.4)
+    # (il modello è un blocco alto un terzo della larghezza: schiacciato a 2,5 cm, resta il disegno della griglia)
+    d = HQ.dimensioni('griglia_scolo')
+    gr = HQ.metti('griglia_scolo', 'griglia_scolo', g(MURO_O + 0.3, Y, 60.3), (0.4, 0.4 * d.y / d.x, 0.025))
     Posa.appoggia_a_terra(gr)
     obs.append(gr)
     # il cartello a disegni (onda, ciambella, freccia verso la porta), 50 cm, a 1,5 m, avvitato al muro
@@ -136,7 +144,21 @@ def arredi(obs):
     lastra = C.box('cartello_fiume_lastra', g(xc + 0.006, Y + 1.5, 62.3), (0.012, 0.5, 0.5), lam)
     faccia = C.quad('cartello_fiume_faccia', g(xc + 0.0125, Y + 1.5, 62.3), 0.49, 0.49, normale=(1, 0, 0), mat=st)
     obs.append(C.unisci('cartello_fiume', [lastra, faccia]))
-    return [q, f, c]
+    return [q, *f, c]
+
+
+def bidone(nome, base, blu, bianco, rz):
+    """Un bidone di plastica (fusto da 200 l): il corpo con due nervature, l'orlo in cima e i due tappi."""
+    r, h = 0.235, 0.88          # (con le nervature 49 cm di diametro)
+    pezzi = [C.cilindro(nome + '_corpo', base + Vector((0, 0, h / 2)), r, h, blu, seg=40)]
+    for t in (0.33, 0.66):
+        pezzi.append(C.toro(nome + '_nervatura', base + Vector((0, 0, h * t)), r, 0.012, blu, seg=40))
+    pezzi.append(C.toro(nome + '_orlo', base + Vector((0, 0, h - 0.01)), r - 0.006, 0.014, blu, seg=40))
+    for dx, rt in ((0.12, 0.035), (-0.13, 0.022)):
+        a = R_(rz)
+        q = base + Vector((math.cos(a) * dx, math.sin(a) * dx, h + 0.012))
+        pezzi.append(C.cilindro(nome + '_tappo', q, rt, 0.024, bianco, seg=16))
+    return C.unisci(nome, pezzi)
 
 
 def collisioni(obs, grandi):

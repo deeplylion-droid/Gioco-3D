@@ -72,11 +72,34 @@ func _run() -> void:
 		if not bool(ris.call(&"lavori_in_corso")) and i > 300:
 			break
 	var e := Vector3.UP * 1.6
+	var solo_giro := _cartella.ends_with("_giro") or OS.get_cmdline_user_args().has("giro")
 	# il corridoio: dal pianerottolo in fondo alla scala verso nord, a metà (all'oblò), dalla porta indietro
 	await _scatto("1_corridoio_dal_fondo_scala", fondo + e + Vector3(0, 0, 1.2), porta + Vector3(0, 1.2, 1.0))
 	await _scatto("2_corridoio_meta", Vector3(fondo.x - 0.3, fondo.y + 1.6, 55.0), porta + Vector3(0.3, 1.0, 1.0))
 	await _scatto("3_corridoio_indietro", porta + e + Vector3(0.2, 0, 0.3), fondo + Vector3(0.2, 1.2, -0.5))
-	# dentro il capannone: dalla porta verso l'imbarco, fra le pile
-	await _scatto("4_capannone_ingresso", porta + e + Vector3(-1.5, 0, 0), porta + Vector3(-12.0, 1.2, 0))
-	await _scatto("5_capannone_fra_le_pile", porta + e + Vector3(-9.0, 0, 0), porta + Vector3(-20.0, 1.2, 0))
+	await _scatto("3b_dalla_scala", cima + e + Vector3(-1.5, 0, 0), fondo + Vector3(-0.6, 0.6, 1.5))
+	if OS.get_cmdline_user_args().has("ravvicinati"):
+		# gli scatti ravvicinati di ogni oggetto appeso o appoggiato (arredo A+C del 30 ottobre), da 60-90 cm
+		var Y := fondo.y
+		var o := -5.9
+		for v in [
+				["r01_tubi_dal_muro_sala_pompe", Vector3(-5.0, Y + 1.7, 49.6), Vector3(-5.8, Y + 2.3, 48.25)],
+				["r02_quadro", Vector3(-5.0, Y + 1.6, 52.4), Vector3(o, Y + 1.5, 52.4)],
+				["r03_quadro_di_lato", Vector3(-5.2, Y + 1.5, 51.6), Vector3(o, Y + 1.5, 52.4)],
+				["r04_fusti_e_secchio", Vector3(-4.9, Y + 1.2, 54.2), Vector3(o + 0.25, Y + 0.3, 54.3)],
+				["r05_fusti_base", Vector3(-5.0, Y + 0.6, 53.0), Vector3(o + 0.25, Y + 0.05, 53.9)],
+				["r06_valvola", Vector3(-4.9, Y + 1.7, 53.3), Vector3(o + 0.2, Y + 2.25, 54.0)],
+				["r07_carrello", Vector3(-4.9, Y + 1.3, 56.0), Vector3(o + 0.2, Y + 0.6, 56.0)],
+				["r08_carrello_base", Vector3(-5.0, Y + 0.6, 57.0), Vector3(o + 0.25, Y + 0.05, 56.2)],
+				["r09_muffa_ovest", Vector3(-4.3, Y + 1.5, 58.3), Vector3(o, Y + 1.0, 58.3)],
+				["r10_oblo_muffa_e_colatura", Vector3(-5.2, Y + 1.4, 57.6), Vector3(-3.9, Y + 0.9, 57.9)],
+				["r11_pozza_e_p13", Vector3(-5.3, Y + 1.5, 57.2), Vector3(-4.6, Y, 58.6)],
+				["r12_griglia_e_pozza", Vector3(-4.8, Y + 1.3, 59.6), Vector3(o + 0.3, Y, 60.3)],
+				["r13_cartello", Vector3(-5.0, Y + 1.55, 61.6), Vector3(o, Y + 1.5, 62.3)],
+				["r14_tubi_nel_muro_capannone", Vector3(-4.8, Y + 1.8, 62.4), Vector3(o, Y + 2.3, 63.5)],
+				["r15_tubi_collare", Vector3(-5.1, Y + 1.8, 58.5), Vector3(o + 0.08, Y + 2.25, 59.3)]]:
+			await _scatto(v[0], v[1], v[2])
+	else:
+		# dentro il capannone: dalla porta verso l'imbarco
+		await _scatto("4_capannone_ingresso", porta + e + Vector3(-1.5, 0, 0), porta + Vector3(-12.0, 1.2, 0))
 	get_tree().quit(0)
