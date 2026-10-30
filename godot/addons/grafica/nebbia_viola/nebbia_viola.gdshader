@@ -59,12 +59,18 @@ void fragment() {
 	vec4 vicino = INV_PROJECTION_MATRIX * vec4(ndc, 1.0, 1.0);
 	vec3 dir_vista = normalize(vicino.xyz / vicino.w);
 	float L = lontano;
+	float vista = 1e6;
 	if (z > 0.0) {
 		vec4 v = INV_PROJECTION_MATRIX * vec4(ndc, z, 1.0);
-		L = min(length(v.xyz / v.w), lontano);
+		vista = length(v.xyz / v.w);
+		L = min(vista, lontano);
 	}
 	vec3 occhio = INV_VIEW_MATRIX[3].xyz;
 	vec3 rd = normalize((INV_VIEW_MATRIX * vec4(dir_vista, 0.0)).xyz);
+	// lo strato più fitto sta sul pavimento; guardando giù sotto il pavimento (il fondo della piscina, il canale) scende
+	// un po' verso quello che si vede (il 40% della differenza): il fondo ha appena un filo di nebbia più del pavimento
+	// alla stessa distanza, non una vasca piena di nebbia (riscontro dell'utente sulla 0.3.16)
+	float q = quota + min(occhio.y + rd.y * min(vista, 1e3) - quota, 0.0) * 0.4;
 	float dt = L / float(passi);
 	// un inizio diverso per ogni punto dello schermo (rumore a gradiente intrecciato)
 	float j = fract(52.9829189 * fract(dot(FRAGCOORD.xy, vec2(0.06711056, 0.00583715))));
@@ -74,9 +80,8 @@ void fragment() {
 		float t = (float(i) + j) * dt;
 		vec3 p = occhio + rd * t;
 		float n = fbm(p * vec3(scala, scala * 1.8, scala) + vento * TIME);
-		// lo strato più fitto sta sul pavimento e si dirada salendo e anche scendendo: sotto il pavimento (la piscina, il
-		// canale) non è pieno, così il fondo ha appena un filo di nebbia più del pavimento (riscontro dell'utente sulla 0.3.16)
-		float d = (densita + strato * exp(-abs(p.y - quota) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
+		// (lo strato si dirada salendo e anche scendendo sotto la sua quota)
+		float d = (densita + strato * exp(-abs(p.y - q) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
 		d /= 1.0 + max(t - oltre, 0.0) * cala;
 		d *= quanto;
 		vec3 luce = aria;
