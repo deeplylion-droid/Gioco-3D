@@ -666,6 +666,10 @@ func _process_modification() -> void:
 ## fine1 > inizio2 e fine2 > inizio1 su ogni asse, cioè (fine1 - inizio2).min(fine2 - inizio1).sign() == ONE;
 ## expand e grow come lì (la fine è inizio + misura, calcolata come la calcola AABB).
 const _AIUTI := 4                          # thread al più, compreso questo
+## Falso: tutti i tentacoli in questo thread, uno dopo l'altro (gli stessi conti, identici). Ripiego della 0.3.17: un
+## signal 11 nella CI in test_morbidezza_tunnel, alla presa (_fai_lavoro ← _lavora ← _esegui_lavori, 30 ottobre), coi
+## tentacoli sui thread del pool; finché la causa non è trovata, niente thread.
+const IN_PARALLELO := false
 const LAVORO_PASSI := 0
 const LAVORO_PARTENZA := 1
 const LAVORO_ZONA := 2
@@ -692,7 +696,7 @@ func _notification(what: int) -> void:
 ## Fa i lavori dei tentacoli ([param lavori], da _process_modification) negli aiuti, in parallelo, e aspetta.
 func _esegui_lavori(lavori: Array) -> void:
 	if _aiuti.is_empty():
-		_thread = clampi(OS.get_processor_count(), 1, _AIUTI)
+		_thread = clampi(OS.get_processor_count(), 1, _AIUTI) if IN_PARALLELO else 1
 		for i in maxi(_catene.size(), 1) if _thread > 1 else 1:
 			_aiuti.append((get_script() as GDScript).new())
 	# (la griglia delle forme si fa qui: gli aiuti la usano insieme, senza cambiarla)
