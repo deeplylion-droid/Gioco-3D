@@ -361,6 +361,10 @@ func _nebbia_viola() -> void:
 	var z := ZonaNebbiaViola.new()
 	z.name = "NebbiaViola"
 	z.quota = piano
+	# (meno aria e alone che nella sala: nel tunnel buio l'aria viola alzava i neri, e con la 0.3.16 sembrava "troppo
+	# luminoso"; così i punti bui sono neri come nella 0.3.15 e la foschia resta vicino alle lampade)
+	z.aria = 0.25
+	z.alone = 0.7
 	var largo := 2.0 * (muro - spessore * 0.5)
 	var basso := PRESA_FONDO - 0.5
 	var lung := lunghezza()

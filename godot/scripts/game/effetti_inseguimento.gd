@@ -24,6 +24,9 @@ extends Node3D
 @export var luce_avanti := 7.0
 @export var luce_energia := 20.0
 @export var luce_angolo := 26.0
+## Quanta luce rosa quando lei è lontana (piena da vicino): bassa, si nota quando si avvicina (riscontro dell'utente sulla
+## 0.3.16, il tunnel "troppo luminoso"; prima 0,55).
+@export var luce_lontana := 0.3
 ## Dove nasce la luce, sopra l'origine di lei (come la sua OmniLight in LeiTunnel).
 const LUCE_DA := Vector3(0, 2.6, 0.9)
 
@@ -128,7 +131,7 @@ func _process(delta: float) -> void:
 	# la luce davanti: accesa mentre lei ti insegue, più forte quando è vicina
 	var vuole_luce := 0.0
 	if gap < sala.distanza_max + 6.0:
-		vuole_luce = lerpf(1.0, 0.55, clampf((gap - bordi_pieni) / (sala.distanza_max - bordi_pieni), 0.0, 1.0))
+		vuole_luce = lerpf(1.0, luce_lontana, clampf((gap - bordi_pieni) / (sala.distanza_max - bordi_pieni), 0.0, 1.0))
 	forza_luce = lerpf(forza_luce, vuole_luce, 1.0 - exp(-2.5 * delta))
 	luce.visible = forza_luce > 0.01
 	if luce.visible:
