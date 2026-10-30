@@ -1,0 +1,43 @@
+SONDA versione 0.3.16
+SONDA opzioni: preset=alto, ombre=3, gi=1, nebbia=1, luminosita=1.0, esposizione=1.0, contrasto=1.0, glow=false, grana=false, vignetta=true, nebbia_viola=true
+SONDA fiume_partenza: luci 61, energia 119.8, arriva agli occhi 0.690 (bianche 0.266), lampade bianche (override) 17.6; occhio (-7.6, -3.8, 66.0)
+SONDA fiume_partenza forti: @OmniLight3D@1469 2.60 a 1.6 m (0.336), @OmniLight3D@1467 1.20 a 2.2 m (0.205), @OmniLight3D@925 1.80 a 4.9 m (0.026), @OmniLight3D@1450 1.20 a 6.2 m (0.025), @OmniLight3D@1604 1.20 a 6.4 m (0.023), @OmniLight3D@1606 1.20 a 13.7 m (0.005)
+SONDA fiume_partenza ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA fiume_partenza nebbia viola: quanto 0.00, accesa true
+SONDA fiume_morte: luci 61, energia 119.8, arriva agli occhi 0.690 (bianche 0.266), lampade bianche (override) 17.6; occhio (-7.6, -3.8, 66.0)
+SONDA fiume_morte forti: @OmniLight3D@4155 2.60 a 1.6 m (0.336), @OmniLight3D@4153 1.20 a 2.2 m (0.205), @OmniLight3D@3611 1.80 a 4.9 m (0.026), @OmniLight3D@4136 1.20 a 6.2 m (0.025), @OmniLight3D@4290 1.20 a 6.4 m (0.023), @OmniLight3D@4292 1.20 a 13.7 m (0.005)
+SONDA fiume_morte ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA fiume_morte nebbia viola: quanto 0.00, accesa true
+SONDA tunnel_partenza: luci 1, energia 6.0, arriva agli occhi 0.048 (bianche 0.000), lampade bianche (override) 7.0; occhio (38.0, -28.4, -1.0)
+SONDA tunnel_partenza forti: @OmniLight3D@8380 6.00 a 8.0 m (0.048)
+SONDA tunnel_partenza ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA tunnel_partenza nebbia viola: quanto 1.00, accesa true
+SONDA tunnel_morte: luci 0, energia 0.0, arriva agli occhi 0.000 (bianche 0.000), lampade bianche (override) 7.0; occhio (38.0, -28.4, -1.0)
+SONDA tunnel_morte forti: 
+SONDA tunnel_morte ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA tunnel_morte nebbia viola: quanto 1.00, accesa true
+SONDA risalita_partenza: luci 88, energia 192.5, arriva agli occhi 2.023 (bianche 0.007), lampade bianche (override) 20.8; occhio (-1.4, -7.5, 48.9)
+SONDA risalita_partenza forti: @OmniLight3D@14188 1.20 a 1.5 m (0.403), @SpotLight3D@14254 2.40 a 1.4 m (0.311), @SpotLight3D@14253 2.40 a 1.4 m (0.311), @OmniLight3D@14251 2.40 a 1.4 m (0.293), @SpotLight3D@14223 2.40 a 2.2 m (0.128), @SpotLight3D@14224 2.40 a 2.2 m (0.128)
+SONDA risalita_partenza ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA risalita_partenza nebbia viola: quanto 0.00, accesa true
+SONDA risalita_morte: luci 88, energia 192.5, arriva agli occhi 2.023 (bianche 0.007), lampade bianche (override) 20.8; occhio (-1.4, -7.5, 48.9)
+SONDA risalita_morte forti: @OmniLight3D@16874 1.20 a 1.5 m (0.403), @SpotLight3D@16940 2.40 a 1.4 m (0.311), @SpotLight3D@16939 2.40 a 1.4 m (0.311), @OmniLight3D@16937 2.40 a 1.4 m (0.293), @SpotLight3D@16909 2.40 a 2.2 m (0.128), @SpotLight3D@16910 2.40 a 2.2 m (0.128)
+SONDA risalita_morte ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA risalita_morte nebbia viola: quanto 0.00, accesa true
+SONDA torre_partenza: luci 67, energia 251.7, arriva agli occhi 1.152 (bianche 0.697), lampade bianche (override) 46.2; occhio (21.4, 1.6, -15.0)
+SONDA torre_partenza forti: @SpotLight3D@19029 6.40 a 6.7 m (0.126), @SpotLight3D@19106 6.40 a 7.2 m (0.112), @SpotLight3D@19166 9.00 a 8.9 m (0.087), @SpotLight3D@19148 9.00 a 9.1 m (0.082), @SpotLight3D@19172 9.00 a 13.8 m (0.036), Luce 0.88 a 4.4 m (0.036)
+SONDA torre_partenza ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA torre_partenza nebbia viola: quanto 0.00, accesa true
+SONDA torre_morte: luci 67, energia 251.7, arriva agli occhi 1.152 (bianche 0.697), lampade bianche (override) 46.2; occhio (21.4, 1.6, -15.0)
+SONDA torre_morte forti: @SpotLight3D@21263 6.40 a 6.7 m (0.126), @SpotLight3D@21340 6.40 a 7.2 m (0.112), @SpotLight3D@21400 9.00 a 8.9 m (0.087), @SpotLight3D@21382 9.00 a 9.1 m (0.082), @SpotLight3D@21406 9.00 a 13.8 m (0.036), Luce 0.88 a 4.4 m (0.036)
+SONDA torre_morte ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA torre_morte nebbia viola: quanto 0.00, accesa true
+SONDA inseguimento_partenza: luci 68, energia 272.9, arriva agli occhi 1.317 (bianche 0.289), lampade bianche (override) 66.4; occhio (37.9, -18.4, -14.9)
+SONDA inseguimento_partenza forti: @OmniLight3D@23488 3.50 a 2.2 m (0.170), @SpotLight3D@23733 21.98 a 8.0 m (0.166), @OmniLight3D@23731 13.99 a 7.3 m (0.128), @SpotLight3D@23709 9.00 a 7.5 m (0.122), RossoFaccia 2.50 a 2.3 m (0.118), @OmniLight3D@23732 9.99 a 8.6 m (0.066)
+SONDA inseguimento_partenza ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA inseguimento_partenza nebbia viola: quanto 0.00, accesa true
+SONDA inseguimento_morte: luci 68, energia 272.9, arriva agli occhi 1.317 (bianche 0.289), lampade bianche (override) 66.4; occhio (37.9, -18.4, -14.9)
+SONDA inseguimento_morte forti: @OmniLight3D@25722 3.50 a 2.2 m (0.170), @SpotLight3D@25967 21.98 a 8.0 m (0.166), @OmniLight3D@25965 13.99 a 7.3 m (0.128), @SpotLight3D@25943 9.00 a 7.5 m (0.122), RossoFaccia 2.50 a 2.3 m (0.118), @OmniLight3D@25966 9.99 a 8.6 m (0.066)
+SONDA inseguimento_morte ambiente: ambiente 2 0.70 col 0f1a1c, cielo 1.00, tonemap 4 esp 1.00 bianco 1.00, regola true lum 1.00 contr 1.00 sat 1.00, glow false 0.70, nebbia false 0.0100, volumetrica true 0.0150, ssao true, ssil true, sdfgi false, esposizione camera 1.00 auto false
+SONDA inseguimento_morte nebbia viola: quanto 0.00, accesa true
+SONDA FINE
