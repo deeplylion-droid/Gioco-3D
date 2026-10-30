@@ -227,6 +227,10 @@ def _rot_mondo(lista):
     return R
 
 
+def lerp(a, b, w):
+    return a + (b - a) * w
+
+
 def _matrice_osso(B3, y_dir, testa):
     """Matrice (spazio dell'armatura) di un osso con l'asse Y verso y_dir e il rollio più vicino a B3."""
     y = y_dir.normalized()
@@ -347,7 +351,16 @@ def cuoci(arm, piedi, nome='risveglio'):
 
             def _ik(mano, polo):
                 d = mano - spalla
-                dist = min(max(d.length, abs(l1 - l2) + 0.02), (l1 + l2) * 0.995)
+                # (quasi teso il gomito si muove di colpo per pochi centimetri della mano: la distanza si ferma piano
+                # all'88% della lunghezza del braccio, dal richiamo in poi (la minaccia resta com'era); gomito sinistro a scatti a
+                # 9,9-10,0 s, ricontrollo del 30 ottobre)
+                lun = l1 + l2
+                dd = d.length
+                if dd > 0.8 * lun:
+                    # (entra piano dopo il richiamo: di colpo il gomito destro scattava)
+                    w = A.liscio(0.0, 1.0, A.FASI['RICHIAMO'], A.FASI['RICHIAMO'] + 0.6, t)
+                    dd = lerp(dd, 0.8 * lun + 0.08 * lun * math.tanh((dd - 0.8 * lun) / (0.08 * lun)), w)
+                dist = min(max(dd, abs(l1 - l2) + 0.02), lun * 0.995)
                 u = d.normalized()
                 pp = (polo - u * polo.dot(u)).normalized()
                 aa = (l1 * l1 - l2 * l2 + dist * dist) / (2 * dist)
@@ -377,21 +390,19 @@ def cuoci(arm, piedi, nome='risveglio'):
             punti = _ik(mano, polo)
             # (solo intorno al giro: fuori, la 0.3.16 restava già ad almeno 26 cm, e spinte qui le braccia raccolte alla
             # porta entravano nel battente)
-            tp_ = A.tempo_alla_porta()
-            alla_porta = tp_ - 0.5 < t < tp_ + 0.7
-            if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
+            # (alla porta niente spinta: le mani raccolte stanno già più in basso, e spinte solo in giù non ci arrivavano
+            # mai, il braccio si tendeva e il gomito sinistro scattava di 10 cm; ricontrollo del 30 ottobre)
+            nel_giro = A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8
+            if nel_giro:
                 bocca = pbs['bocca'].head.copy()
                 muso = [bocca, bocca.lerp(pbs['mento_punta'].head, 0.45), pbs['mento_punta'].head.copy(),
                         pbs['mascella'].head.copy(), pbs['mascella'].tail.copy(), pbs['testa'].tail.copy()]
-                # quanto spingere: in una direzione fissa rispetto al corpo (in fuori, in giù e un poco indietro; alla
-                # porta solo in giù: di lato le braccia entravano nel battente), di quanto basta perché gomito, polso,
+                # quanto spingere: in una direzione fissa rispetto al corpo (in fuori, in giù e un poco indietro), di
+                # quanto basta perché gomito, polso,
                 # mano e artigli stiano ad almeno A.MANO_MUSO da bocca, mascella e mento. La quantità cambia in modo
                 # continuo da un fotogramma all'altro (cercata a passi di 1 cm), anche la direzione: la mano non salta
                 # più dall'altra parte del mento (75 cm in un fotogramma) e non trema (terzo ricontrollo del 30 ottobre)
-                if alla_porta:
-                    verso = Vector((0, 0, -1.0))
-                else:
-                    verso = (lato + Vector((0, 0, -0.6)) - avanti * 0.3).normalized()
+                verso = (lato + Vector((0, 0, -0.6)) - avanti * 0.3).normalized()
                 k = 0.0
                 while k < 0.6:
                     prova = _nord(obiettivo + verso * k)
@@ -409,7 +420,7 @@ def cuoci(arm, piedi, nome='risveglio'):
             VEL_SPINTA[s] += (MOLLA ** 2 * (voluta - SPINTA[s]) - 2.0 * MOLLA * VEL_SPINTA[s]) * dt_
             mano = _nord(obiettivo + SPINTA[s] + VEL_SPINTA[s] * dt_)
             punti = _ik(mano, polo)
-            if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
+            if nel_giro:
                 for nome_p, h in punti:
                     for q in muso:
                         if (h - q).length < VICINO_MUSO[0]:
