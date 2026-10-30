@@ -1,0 +1,6 @@
+1_calde: media 12.6 → 6.8 (54%), mediana 10 → 5, 10° 4 → 3, 90° 21 → 10
+2_coralli: media 18.3 → 8.0 (44%), mediana 12 → 6, 10° 4 → 3, 90° 36 → 13
+3_presa: media 12.6 → 8.3 (66%), mediana 11 → 7, 10° 4 → 4, 90° 21 → 15
+4_approdo: media 18.8 → 9.2 (49%), mediana 15 → 8, 10° 5 → 2, 90° 32 → 15
+5_portello: media 20.6 → 12.3 (60%), mediana 17 → 11, 10° 8 → 5, 90° 35 → 20
+6_lampada_vicino: media 4.2 → 2.9 (69%), mediana 3 → 2, 10° 1 → 1, 90° 8 → 7
