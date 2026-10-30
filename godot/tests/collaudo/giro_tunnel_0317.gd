@@ -55,6 +55,12 @@ func _run() -> void:
 	for i in 60:
 		await get_tree().process_frame
 	effetti = sala.get(&"effetti")
+	if a.size() > 4 and a[4] == "0316":
+		# i valori della 0.3.16 per il confronto: aria e alone della nebbia pieni, la luce rosa da lontano a 0,55
+		var z := sala.find_child("NebbiaViola", false, false)
+		z.set(&"aria", 1.0)
+		z.set(&"alone", 1.0)
+		effetti.set(&"luce_lontana", 0.55)
 	p.set_physics_process(false)
 	sala.attiva_tunnel()
 	# [param solo_lei] (terzo argomento "lei"): solo lei che si avvicina, nel tratto dritto da s 100
