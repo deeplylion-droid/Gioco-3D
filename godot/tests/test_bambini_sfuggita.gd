@@ -13,6 +13,11 @@ extends Node
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_sfuggita.gd
 
 const SCENA := "res://tests/scene/risalita_prova.tscn"
+const CorpiMesh := preload("res://tests/corpi_dalle_mesh.gd")
+## Quanto corre chi gli va dietro (lo sprint del giocatore) e l'altezza degli occhi, in piedi e accucciato.
+const SPRINT := 5.8
+const OCCHI := 1.6
+const OCCHI_GIU := 0.95
 const TERRA_MAX := 0.05
 ## Il bambino come capsula (l'agnellino è più piccolo: la misura del più grande, il bambino a cubo).
 const RAGGIO := 0.22
@@ -77,6 +82,7 @@ func _run() -> void:
 	check(not nel_tunnel.is_empty(), "nel tunnel c'è il bambino visto di sfuggita")
 	for b: BambinoSfuggita in nel_tunnel:
 		await _prova(b)
+		await _insegui(b, sala)
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	Game.esci(1 if _failed > 0 else 0)
@@ -217,7 +223,7 @@ func _prova(b: BambinoSfuggita) -> void:
 			continue
 		var sk := mod.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
 		for o in sk.get_bone_count():
-			var w := sk.global_transform * sk.get_bone_global_pose(o).origin
+			var w: Vector3 = sk.global_transform * sk.get_bone_global_pose(o).origin
 			if cam.is_position_in_frustum(w) and _vista_libera(_p.get_eye_position(), w):
 				in_vista.append(sk.get_bone_name(o))
 	check(in_vista.is_empty(), "quando sparisce nessun osso è in vista%s" % ((" (%s)" % ", ".join(in_vista)) if not in_vista.is_empty() else ""))
@@ -236,6 +242,124 @@ func _dist_segmento(p: Vector3, a: Vector3, b: Vector3) -> float:
 	var piano := Vector3(1, 0, 1)
 	var c := Geometry3D.get_closest_point_to_segment(p * piano, a * piano, b * piano)
 	return c.distance_to(p * piano)
+
+
+## Il giocatore gli corre dietro (riscontro dell'utente sulla 0.3.16: "il bambino pecorella si vede che sparisce perché
+## gli corri dietro"), con la camera vera che lo guarda sempre: a tutta velocità lungo la banchina, poi dentro la galleria
+## accucciato (sempre allo sprint, anche scivolando: il caso peggiore) fin fuori dalla bocca d'uscita; oppure fermo
+## alla bocca d'entrata a guardare dentro la galleria. Quando sparisce, nessun osso del corpo dev'essere
+## nell'inquadratura senza qualcosa che si vede in mezzo (raggi dalla camera sulle mesh, CorpiMesh, senza tolleranza),
+## e dev'essere già fuori dalla bocca d'uscita: in mezzo alla galleria, dritta e illuminata, si vedrebbe che non c'è più.
+func _insegui(b: BambinoSfuggita, sala: SalaSottomarino) -> void:
+	var g: Dictionary = {}
+	for o in sala.ostacoli:
+		if o["tipo"] == "galleria":
+			g = o
+			break
+	var s0: float = float(g["s"]) - SalaSottomarino.GALLERIA_BOCCA
+	var s1: float = float(g["s"]) + float(g["lungo"]) + SalaSottomarino.GALLERIA_BOCCA
+	var lato: float = g["lato"]
+	var dentro := sala.muro + sala.spessore + SalaSottomarino.GALLERIA_LARGA * 0.5
+	var al := func(s: float, u: float) -> Vector3: return sala._al(sala.punto(s), sala.destra(s) * lato, Vector2(u, sala.piano))
+	var n := CorpiMesh.crea(sala, AABB(al.call(s0 - 40.0, 0.0), Vector3.ZERO).expand(al.call(s1 + 25.0, dentro + 3.0)).grow(4.0), b.bambino)
+	print("    (corpi dalle mesh: %d)" % n)
+	await _frames(2)
+	var banchina: Array[Vector3] = [al.call(s0 - 30.0, sala.muro - 1.2), al.call(s0 - 0.6, sala.muro - 1.2),
+			al.call(s0 + 0.6, sala.muro - 0.3)]
+	var tutta := banchina.duplicate()
+	tutta.append_array([al.call(s0 + 1.4, dentro), al.call(s1 - 1.4, dentro), al.call(s1 - 0.6, sala.muro - 0.3),
+			al.call(s1 + 1.0, sala.muro - 1.1), al.call(s1 + 20.0, sala.muro - 1.2)])
+	var ferma := banchina.duplicate()
+	ferma.append(al.call(s0 + 0.9, sala.muro + sala.spessore))
+	for caso in [["fin fuori dalla galleria", tutta], ["fermo alla bocca a guardare dentro", ferma]]:
+		print("- %s, col giocatore che gli corre dietro %s" % [b.name, caso[0]])
+		await _insegui_su(b, sala, caso[1], al, s0, s1, lato)
+
+
+func _insegui_su(b: BambinoSfuggita, sala: SalaSottomarino, strada: Array, al: Callable, s0: float, s1: float, lato: float) -> void:
+	b.load_state({"finito": false})
+	var qui: Vector3 = strada[0]
+	var k := 1
+	var cam := _p.camera
+	var t := 0.0
+	var visto := false
+	var fine := -1.0
+	var in_vista := []
+	var dove_sparito := -INF
+	var fuori := false
+	var dt := 1.0 / 60.0
+	var r := sala.destra(s0) * lato
+	while t < 25.0 and b.stato != BambinoSfuggita.Stato.FINITO:
+		if k < strada.size():
+			var verso: Vector3 = strada[k] - qui
+			if verso.length() <= SPRINT * dt:
+				qui = strada[k]
+				k += 1
+			else:
+				qui += verso.normalized() * SPRINT * dt
+		_p.global_position = qui
+		# accucciato nelle bocche e nella galleria (è alta 1,25 m)
+		var giu: bool = (qui - al.call(s0, sala.muro)).dot(r) > -0.15 and k >= 3
+		var occhio := qui + Vector3.UP * (OCCHI_GIU if giu else OCCHI)
+		var mira: Vector3 = strada[mini(k, strada.size() - 1)] + Vector3.UP * (OCCHI_GIU if giu else OCCHI)
+		if b.stato == BambinoSfuggita.Stato.GUARDA or b.stato == BambinoSfuggita.Stato.SCAPPA:
+			mira = b.bambino.punto_testa()
+			visto = true
+		if (mira - occhio).length() > 0.05:
+			cam.global_transform = Transform3D(Basis.looking_at(mira - occhio, Vector3.UP), occhio)
+		var dov := b.bambino.global_position
+		await _frames(1)
+		t += dt
+		if b.stato == BambinoSfuggita.Stato.FINITO:
+			fine = t
+			# (com'era l'ultimo fotogramma in cui si vedeva: rimesso visibile solo per contare le ossa)
+			b.bambino.visible = true
+			in_vista = _ossa_in_vista(b, cam)
+			b.bambino.visible = false
+			dove_sparito = _ascissa(sala, dov, s0 - 5.0, s1 + 30.0)
+			fuori = (dov - sala.punto(dove_sparito)).dot(sala.destra(dove_sparito) * lato) < sala.muro
+			print("    sparito a %.2f s, a s=%.1f (bocca d'uscita fino a %.1f), il giocatore a %.1f m" % [t, dove_sparito, s1, qui.distance_to(dov)])
+	check(visto, "correndogli dietro lo si vede e scappa")
+	if fine < 0.0:
+		print("    (non è sparito in %.0f s: lo si guardava sempre)" % t)
+	check(in_vista.is_empty(), "quando sparisce, dalla camera di chi gli corre dietro nessun osso si vede%s" % ((" (%s)" % ", ".join(in_vista)) if not in_vista.is_empty() else ""))
+	check(fine < 0.0 or (dove_sparito > s1 - SalaSottomarino.GALLERIA_BOCCA and fuori),
+			"sparisce solo uscito dalla galleria dalla bocca in fondo, sul lato del tunnel (s=%.1f, la bocca da %.1f)" % [dove_sparito, s1 - SalaSottomarino.GALLERIA_BOCCA])
+
+
+## A che punto della strada del tunnel è [param p] (il centro più vicino, a passi di 5 cm).
+func _ascissa(sala: SalaSottomarino, p: Vector3, da: float, a: float) -> float:
+	var migliore := da
+	var d_min := INF
+	var x := da
+	while x <= a:
+		var d := (sala.punto(x) - p).length_squared()
+		if d < d_min:
+			d_min = d
+			migliore = x
+		x += 0.05
+	return migliore
+
+
+## Le ossa del bambino (il modello che si vedeva) nell'inquadratura di [param cam] senza niente in mezzo.
+func _ossa_in_vista(b: BambinoSfuggita, cam: Camera3D) -> Array:
+	var out := []
+	var spazio := get_viewport().find_world_3d().direct_space_state
+	for m in ["Calmo", "Rivelato"]:
+		var mod := b.bambino.get_node_or_null(m) as Node3D
+		if mod == null or not mod.visible:
+			continue
+		var sk := mod.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+		for o in sk.get_bone_count():
+			var w: Vector3 = sk.global_transform * sk.get_bone_global_pose(o).origin
+			if not cam.is_position_in_frustum(w):
+				continue
+			# (solo quello che si vede: la collisione può coprire dove a occhio non c'è niente)
+			var q := PhysicsRayQueryParameters3D.create(cam.global_position, w, CorpiMesh.STRATO)
+			q.exclude = [_p.get_rid()]
+			if spazio.intersect_ray(q).is_empty():
+				out.append(sk.get_bone_name(o))
+	return out
 
 
 ## Il giocatore in [param dove], che guarda verso [param punto] o (con [param via]) dalla parte opposta.

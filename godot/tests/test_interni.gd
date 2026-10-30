@@ -181,6 +181,8 @@ func _scena_squalo(start: Marker3D) -> void:
 	var porta_t: float = s.tempi.get("porta", 10.0)
 	var t := 0.0
 	var corsa_x := -99.0
+	var mani_z := Vector2(INF, -INF)
+	var mani_quando := ""
 	var pelle_min := 99.0
 	var scosse := 0
 	var scossa_prima := 0.0
@@ -213,6 +215,13 @@ func _scena_squalo(start: Marker3D) -> void:
 				continue
 			if b.z < -2.5 or b.z > -0.1 or b.y > 2.4:
 				dentro = false
+		# le mani (il polso: l'osso della mano parte lì), col palmo e gli artigli 10 cm più in là
+		if t < porta_t - 0.8:
+			for osso in ["mano.L", "mano.R"]:
+				var m: Vector3 = s.call(&"_bone_mondo", osso)
+				if m.z > mani_z.y:
+					mani_quando = "%s a %.2f s" % [osso, t]
+				mani_z = Vector2(minf(mani_z.x, m.z), maxf(mani_z.y, m.z))
 		var spina: Vector3 = s.call(&"_bone_mondo", "spina")
 		if absf(spina.x - 21.97) < 0.3:
 			alla_porta_y = maxf(alla_porta_y, spina.y)
@@ -221,6 +230,7 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(max_apertura > 0.28, "ed è spalancata (%.2f m tra il labbro e il mento)" % max_apertura)
 	check(max_angolo_in_minaccia < 22.0, "la camera la guarda in faccia (al massimo %.0f° di lato)" % max_angolo_in_minaccia)
 	check(dentro, "lo squalo resta dentro il corridoio (niente muri attraversati)")
+	check(mani_z.x > -2.4 and mani_z.y < -0.2, "anche le mani, fino alla porta: nel giro non entrano nei muri (polsi fra z %.2f e %.2f, i muri a -2,5 e -0,1; la più a nord: %s)" % [mani_z.x, mani_z.y, mani_quando])
 	check(pelle_min > 0.18, "la camera non entra mai nello squalo, anche con le scosse (al più vicino %.2f m dalla sua pelle)" % pelle_min)
 	check(scosse >= 8 and scossa_forte > 0.8 and scossa_ultima < scossa_forte * 0.5,
 		"la camera trema a ogni passo, forte vicino e sempre meno lontano (%d scosse, da %.2f a %.2f)" % [scosse, scossa_forte, scossa_ultima])

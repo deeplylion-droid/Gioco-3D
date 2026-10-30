@@ -240,6 +240,9 @@ def _matrice_osso(B3, y_dir, testa):
     return M
 
 
+NORD_MAX = [-9.0]
+
+
 def cuoci(arm, piedi, nome='risveglio'):
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='POSE')
@@ -317,6 +320,11 @@ def cuoci(arm, piedi, nome='risveglio'):
             off = posa['_mano.' + s].copy()
             off.rotate(Matrix.Rotation(yaw, 3, 'Z'))
             mano = spalla + off
+            # il muro nord del corridoio: la mano che ci va vicino si ritira verso il corpo, morbida, e il polso non
+            # passa A.MANI_NORD (nel giro, col corpo di traverso, la mano sinistra in avanti entrava nel muro)
+            if mano.x > A.MANI_NORD - 0.12 and t < A.tempo_alla_porta():
+                mano.x = A.MANI_NORD - 0.12 + 0.12 * math.tanh((mano.x - A.MANI_NORD + 0.12) / 0.12)
+            NORD_MAX[0] = max(NORD_MAX[0], (spalla + off).x)
             l1, l2 = lung[f'braccio.{s}'], lung[f'avambraccio.{s}']
             d = mano - spalla
             dist = min(max(d.length, abs(l1 - l2) + 0.02), (l1 + l2) * 0.995)
@@ -369,6 +377,7 @@ def esporta(mesh, arm, dati):
     with open(USCITA.replace('.glb', '_labbra.json'), 'w') as f:
         json.dump(BOCCA.LABBRA, f)
     print('ESPORTATO', USCITA, dati)
+    print('MANI: la più a nord senza il muro a x %.2f' % NORD_MAX[0])
 
 
 def anteprime(cartella, tempi, dati):
