@@ -81,3 +81,29 @@ Strumenti: gli stessi del primo giro (`collaudo_squalo_girata.gd`, `squalo_bracc
 - Questo vale per il fotogramma a 11,50 s: a 11,52 s lo squalo sparisce.
 - Dalla camera del giocatore, nella nebbia viola a circa 10 m, non si distingue (`4_squalo_ef38_porta.jpg`), ma è una compenetrazione.
 - Possibili correzioni: fermarlo 20-30 cm più avanti, raccogliere la coda in frenata, o farlo sparire quando la porta si chiude (porta + 0,58 invece di + 0,62).
+
+## 5. Terzo giro: lo squalo su 37d772ca
+
+**Esito:** coda e porta, gomito e artigli, e muri corretti. La scelta A dagli occhi del giocatore va giudicata. Un difetto nuovo, che il giocatore non vede: la mano sinistra trema alla porta.
+
+### Corretto
+
+- **Coda contro porta:** a ogni fotogramma, porta chiusa compresa, nessun vertice della pelle entra nei muri o nella porta (0,000 m in tutta la scena). Foglio `5_squalo_37d7_porta.jpg`.
+- **Gomiti e polsi:** dal richiamo in poi restano ad almeno 30 cm da bocca, mascella e mento (0.3.16: 6 cm; secondo giro: 7,5 cm).
+- **Artigli:** a 0,7 m dal mento, a 9,2-9,67 s, di lato si vede lo spazio fra artigli e mascella. Da sotto gli artigli si sovrappongono al mento solo in proiezione (`5_squalo_37d7_mento.jpg`).
+- Nessun `ERROR: BUG,`.
+
+### Scelta A dagli occhi del giocatore: da giudicare
+
+Foglio `5_squalo_37d7_giro_giocatore.jpg`.
+
+- A 8,77-8,87 s il braccio alzato sta accanto al muso, con lo spazio: si legge.
+- A 9,07-9,27 s, col gomito "in guardia", nella sagoma il braccio passa davanti alla mascella. In 3D resta a più di 30 cm, ma da lì lo spazio non si vede.
+- Da 9,47 s lo squalo è di schiena.
+
+### Nuovo: la mano sinistra trema alla porta, a 10,6-10,8 s
+
+- Nello spazio del petto, la velocità della mano sinistra salta da un fotogramma all'altro: 0,27, 1,69, 0,85, 1,52, 1,67, 0,65, 0,83 m/s. Nella 0.3.16 andava liscia, fra 0,2 e 0,6.
+- Il salto più grande in un fotogramma è 3,06 m/s, il doppio del massimo della 0.3.16 (1,50).
+- Probabile causa: la spinta che tiene le braccia lontane dal muso (al più 10 cm per fotogramma) si accende e si spegne.
+- Dagli occhi del giocatore non si vede: lo squalo è di schiena nella luce e le mani sono coperte.
