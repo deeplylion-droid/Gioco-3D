@@ -63,6 +63,10 @@ X0_GIOCO = 40.4
 BOCCA_TORRE = [(37.6, 17.4, -18.15), (38.8, 17.4, -18.38), (41.0, 17.4, -18.6)]   # come in torre_a.py (GIOCO), nel verso della discesa
 MOBILI = []                              # i pezzi che si muovono (pannelli delle paratie, sbarre della grata)
 GIOCO_DATI = dict(paratie=[], grata=None, tubi={}, scale=[])
+# Nel gioco il pelo delle vasche dei bivi e del bacino è 10 cm più giù (correzione della 0.3.17): l'acqua era alta
+# 98 cm e l'occhio di chi ci sta accovacciato (anche solo atterrando dal tubo) a 92, sotto il pelo, e da sotto l'acqua
+# sembrava aria. Ora è alta 88 cm (il bacino 85).
+PELO_GIU = 0.0
 
 
 # --- pezzi comuni -----------------------------------------------------------------------------------
@@ -222,6 +226,10 @@ def appendi_tubo(c, pts, r, soffitto, ogni=3.5, pedane=(), mat='metallo', altri=
         s += (pts[i] - pts[i - 1]).length
         if s < prossimo:
             continue
+        # (non dove il tubo curva stretto: lì la fascia, dritta, dal lato interno della curva entrava nel tubo, nello
+        # scolo 0 di 4 cm, correzione della 0.3.17; si sposta avanti al primo tratto quasi dritto)
+        if 3 <= i < len(pts) - 3 and (pts[i] - pts[i - 3]).angle(pts[i + 3] - pts[i]) > math.radians(8.0):
+            continue
         prossimo += ogni
         p = pts[i]
         d = (pts[i + 1] - pts[i - 1]).normalized()
@@ -357,7 +365,7 @@ def vasca_bocche(c, x0, y0, x1, y1, z, alto, nome_acqua, bocche, largo=1.8):
             else:
                 c.scatola((a, u0, z), (b, u1, z + alto), 'vasca_bimbi', smusso=0.02)
     c.scatola((x0 + sp, y0 + sp, z), (x1 - sp, y1 - sp, z + 0.02), 'vasca')
-    return P.acqua_piano(nome_acqua, x0 + sp, y0 + sp, x1 - sp, y1 - sp, z + alto - 0.12)
+    return P.acqua_piano(nome_acqua, x0 + sp, y0 + sp, x1 - sp, y1 - sp, z + alto - 0.12 - PELO_GIU)
 
 
 def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
@@ -630,16 +638,25 @@ def versione_A(mats):
     # dritti e non entrano nella paratia; il tubo 0 continua dritto quello della torre)
     zc2 = C2[4] + 0.75
     zc3 = C3[4] + 0.75
+    # nel gioco i tubi arrivano nelle vasche 20 cm più su del centro delle bocche (correzione della 0.3.17): col fondo
+    # del tubo al fondo della vasca l'occhio di chi arriva accovacciato (0,92 m) stava 9 cm sotto il pelo, e da sotto
+    # l'acqua sembrava aria; così resta 11 cm sopra e si scende di 17 cm nell'acqua
+    ARRIVO = 0.2 if GIOCO else 0.0
     # T0: dalla bocca alla vasca 1 (entra dal lato ovest)
     # (nel gioco continua il tubo della bocca della torre, che finisce in x 41: le due flange si toccano, i bulloni
     # passano dall'una all'altra)
-    t0 = tubo('ins_A_tubo_0', [(41.06, 17.4, -18.606) if GIOCO else (39.5, 17.4, -18.6)] + ([(41.6, 17.4, -18.66), (42.2, 17.4, -18.72)] if GIOCO else []) + [(43.0, 17.2, -19.6), (46.5, 15.2, -20.9), (49.0, 15.0, zc1 + 0.3), (50.4, 15.0, zc1)], ['tsc_giallo'])
+    # (nel gioco, correzione della 0.3.17: la curva dopo la bocca scendeva da 5 a 51 gradi in mezzo metro e il tubo,
+    # largo 1,6 m, si ripiegava su se stesso; ora la pendenza sale piano fino a 20 gradi e cala a 12 all'arrivo)
+    t0 = tubo('ins_A_tubo_0', [(39.5, 17.4, -18.6), (43.0, 17.2, -19.6), (46.5, 15.2, -20.9), (49.0, 15.0, zc1 + 0.3), (50.4, 15.0, zc1)]
+              if not GIOCO else [(41.06, 17.4, -18.606), (41.6, 17.4, -18.66), (42.2, 17.4, -18.74), (43.4, 17.2, -19.12),
+                                 (44.9, 16.45, -19.72), (46.5, 15.45, -20.35), (48.0, 15.02, -20.9), (49.0, 15.0, -21.28),
+                                 (50.4, 15.0, zc1 + ARRIVO)], ['tsc_giallo'])
     # bivio 1 (lato est della vasca 1): a nord la giusta (verso la vasca 2), a sud la sbagliata (scolo 0)
     paratia(c, (C1[2] - 0.2, 16.4, zc1), (1, 0), True, luci)
     paratia(c, (C1[2] - 0.2, 13.6, zc1), (1, 0), False, luci)
     t1 = tubo('ins_A_tubo_1', [(C1[2] - 0.3, 16.4, zc1 - 0.1), (57.5, 17.5, -23.4), (60.5, 21.0, -24.2), (61.3, 25.0, zc2 + 0.5), (61.9, 27.6, zc2 + 0.2), (C2[0] + 0.3, 27.8, zc2)]
               if not GIOCO else   # nel gioco la discesa è distribuita meglio (al 3 % ci si fermava)
-              [(C1[2] - 0.08, 16.4, zc1 - 0.1), (C1[2] + 0.4, 16.4, zc1 - 0.13), (C1[2] + 0.8, 16.4, zc1 - 0.16), (57.5, 17.5, -22.9), (60.5, 21.0, -23.6), (61.3, 25.0, -24.25), (61.9, 27.6, -24.6), (C2[0] + 0.3, 27.8, zc2)],
+              [(C1[2] - 0.08, 16.4, zc1 - 0.1), (C1[2] + 0.4, 16.4, zc1 - 0.13), (C1[2] + 0.8, 16.4, zc1 - 0.16), (57.5, 17.5, -22.9), (60.5, 21.0, -23.6), (61.3, 25.0, -24.2), (61.9, 27.6, -24.5), (C2[0] + 0.3, 27.8, zc2 + ARRIVO)],
               ['tsc_rosso', 'tsc_bianco'])
     tubo('ins_A_scolo_0', [(C1[2] - 0.3, 13.6, zc1 - 0.1), (56.6, 13.9, -23.5), (58.2, 13.0, -24.4), (59.0, 11.8, D[0][4] + 0.9)]
          if not GIOCO else [(C1[2] - 0.08, 13.6, zc1 - 0.1), (C1[2] + 0.4, 13.6, zc1 - 0.13), (C1[2] + 0.8, 13.6, zc1 - 0.16), (56.6, 13.9, -22.6), (58.2, 13.0, -23.8), (59.0, 11.8, D[0][4] + 0.9)], ['tsc_rosso'])
@@ -647,7 +664,7 @@ def versione_A(mats):
     paratia(c, (67.0, C2[1] + 0.2, zc2), (0, -1), True, luci)
     paratia(c, (64.0, C2[1] + 0.2, zc2), (0, -1), False, luci)
     t2 = tubo('ins_A_tubo_2', [(67.0, C2[1] + 0.3, zc2 - 0.1), (68.5, 21.5, -26.4), (71.5, 17.0, -27.3), (72.0, 12.0, -27.9), (70.5, 8.6, zc3 + 0.3), (69.5, 7.6, zc3)]
-              if not GIOCO else [(67.0, C2[1] + 0.08, zc2 - 0.1), (67.0, C2[1] - 0.4, zc2 - 0.13), (67.15, 24.0, -25.1), (67.6, 23.1, -25.45), (68.1, 22.25, -25.75), (68.5, 21.5, -26.0), (71.5, 17.0, -26.8), (72.0, 12.0, -27.3), (70.5, 8.6, -27.6), (69.5, 7.6, zc3)],
+              if not GIOCO else [(67.0, C2[1] + 0.08, zc2 - 0.1), (67.0, C2[1] - 0.4, zc2 - 0.13), (67.15, 24.0, -25.1), (67.6, 23.1, -25.45), (68.1, 22.25, -25.75), (68.5, 21.5, -26.0), (71.5, 17.0, -26.8), (72.0, 12.0, -27.25), (70.5, 8.6, -27.5), (69.5, 7.6, zc3 + ARRIVO)],
               ['tsc_turchese', 'tsc_rosa'])
     tubo('ins_A_scolo_1', [(64.0, C2[1] + 0.3, zc2 - 0.1), (62.0, 23.0, -26.6), (59.5, 25.0, -27.6), (58.0, 27.0, D[1][4] + 0.9)]
          if not GIOCO else [(64.0, C2[1] + 0.08, zc2 - 0.1), (64.0, C2[1] - 0.4, zc2 - 0.13), (63.75, 23.95, -25.2), (63.0, 23.35, -25.55), (62.0, 23.0, -25.9), (59.5, 25.0, -27.2), (58.0, 27.0, D[1][4] + 0.9)], ['tsc_turchese'])
@@ -667,8 +684,9 @@ def versione_A(mats):
     for k in range(1, 9):
         a = math.radians(-60 - k * 52)
         spir.append((sx + math.cos(a) * 4.2, sy + math.sin(a) * 4.2 + 0.0, -29.8 - k * (0.33 if GIOCO else 0.42)))
-    # nel gioco il tubo finisce col fondo sul fondo del bacino, davanti all'apertura del suo muro est
-    spir += [(53.5, 6.0, -32.9), (50.8, 6.5, -33.2)] if GIOCO else [(53.5, 6.0, -33.6), (51.0, 6.5, -33.75)]
+    # nel gioco il tubo finisce davanti all'apertura del muro est del bacino, col fondo 17 cm sopra il fondo del bacino (l'occhio
+    # di chi arriva accovacciato resta sopra il pelo, correzione della 0.3.17)
+    spir += [(53.5, 6.0, -32.85), (50.8, 6.5, -33.05)] if GIOCO else [(53.5, 6.0, -33.6), (51.0, 6.5, -33.75)]
     t3 = tubo('ins_A_tubo_3', spir, ['tsc_arancio', 'tsc_giallo'], passo=1.6)
     # il bacino di scarico: una vasca larga nel fondo allagato (bordo sopra l'acqua)
     BX = (42.5, 1.0, 50.5, 11.0)
@@ -681,7 +699,7 @@ def versione_A(mats):
         muri_bacino.append(((BX[2] - 0.3, BX[1]), (BX[2], BX[3])))
     for (a, b) in muri_bacino:
         c.scatola((a[0], a[1], z0), (b[0], b[1], T + 0.55), 'vasca_bimbi', smusso=0.03)
-    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35))
+    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35 - PELO_GIU))
     # la grata di sicurezza sulla bocca del tubo finale (chiusa: è calata davanti a lei)
     grata(c, (BX[2] - 0.1, 6.5, z0 + 2.0), (1, 0), not GIOCO, largo=3.0, alto=4.0)   # nel gioco alzata: cala dopo
     # la strada per uscire: scaletta sul bordo ovest del bacino, passerella, porta di servizio
@@ -873,9 +891,9 @@ def versione_A(mats):
             pa['tubo'] = tb
             pa['vasca'] = v
         GIOCO_DATI.update(
-            vasche=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 1.1 - 0.12) for v in (C1, C2, C3)],
+            vasche=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 1.1 - 0.12 - PELO_GIU) for v in (C1, C2, C3)],
             scolo=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 0.9 - 0.12) for v in D],
-            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35),
+            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35 - PELO_GIU),
             allagato=dict(acqua=T, fondo=z0),
             pozzo=dict(rett=[43.6, 7.9, 45.8, 10.1], fondo=z0 - 4.5, bordo=T + 0.12),
             pozzetto_grata=dict(rett=list(POZZETTO_GRATA[:4]), fondo=z0 - POZZETTO_GRATA[4], bordo=POZZETTO_GRATA[5]),
@@ -948,6 +966,10 @@ def sostieni_canale(c, pts, z_terra, ogni=3.0):
     for i in range(1, len(pts) - 1):
         s += (pts[i] - pts[i - 1]).length
         if s < prossimo:
+            continue
+        # (non dove il tubo curva stretto: lì la fascia, dritta, dal lato interno della curva entrava nel tubo, nello
+        # scolo 0 di 4 cm, correzione della 0.3.17; si sposta avanti al primo tratto quasi dritto)
+        if 3 <= i < len(pts) - 3 and (pts[i] - pts[i - 3]).angle(pts[i + 3] - pts[i]) > math.radians(8.0):
             continue
         prossimo += ogni
         p = pts[i]
@@ -1347,7 +1369,9 @@ def main():
     if gioco:
         assert nome == 'A', "nel gioco c'è solo la A (scelta dell'utente del 19 ottobre)"
         global GIOCO, X0, SOTTO_PEDANA
+        global PELO_GIU
         GIOCO, X0, SOTTO_PEDANA = True, X0_GIOCO, 0.26
+        PELO_GIU = 0.1
         uscita, prefisso = GIOCO_USCITA, 'inseguimento'
     gruppi, percorso, luci, info = VERSIONI[nome](mats)
     os.makedirs(uscita, exist_ok=True)
