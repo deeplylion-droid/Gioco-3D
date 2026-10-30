@@ -38,3 +38,4 @@ Tutto sul muro ovest, di fronte all'oblò (a destra andando verso il capannone).
 
 - Controllo di posizionamento (`sala_principale`): 0 nuovi, 0 da correggere.
 - Giro dagli occhi del giocatore: `1_…`, `2_…`, `3_…`. Scatti ravvicinati di ogni oggetto: `r01`-`r15`. Fogli: `foglio_giro.jpg`, `foglio_ravvicinati_1.jpg`, `foglio_ravvicinati_2.jpg`.
+- Texture VRAM Compressed con le mipmap (48c93eb3): rifatti `r02`, `r09`-`r13` e confrontati con quelli di prima in `confronto_vram.jpg`. Differenza media sotto 2 livelli su 255: quadro, macchie con la trasparenza, pozza, griglia e cartello sono uguali.
