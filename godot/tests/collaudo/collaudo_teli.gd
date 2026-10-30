@@ -92,17 +92,16 @@ func _run() -> void:
 	cam.add_child(luce)
 	luce.position = Vector3(0.25, 0.2, 0.0)
 	for nome in teli:
-		var b: AABB = teli[nome][1]
-		var c := b.get_center()
-		# il telo è sottile lungo un asse: quello è la normale; il davanti guarda verso +z (l'ingresso)
-		var fuori := Vector3(0, 0, 1)
-		var u := Vector3(1, 0, 0)
-		if b.size.x < b.size.z:
-			fuori = Vector3(signf(-c.x), 0, 0)
-			u = Vector3(0, 0, 1)
-		var mezzo_u := (b.size * u).length() * 0.5
-		var mezzo_v := b.size.y * 0.5
-		var faccia := c + fuori * (b.size * fuori.abs()).length() * 0.5
+		# la faccia della carta: la normale dal primo triangolo (girata verso l'ingresso, +z), l'asse orizzontale e
+		# l'estensione dai vertici (i teli sono girati di circa 28 gradi verso il centro)
+		var mi0 := teli[nome][0] as MeshInstance3D
+		var piano := _faccia_telo(mi0)
+		var fuori: Vector3 = piano[0]
+		var u: Vector3 = piano[1]
+		var faccia: Vector3 = piano[2]
+		var mezzo_u: float = piano[3]
+		var mezzo_v: float = piano[4]
+		print("FACCIA %s normale %s centro %s mezzi %.2f x %.2f" % [nome, fuori, faccia, mezzo_u, mezzo_v])
 		var corto := "arcobaleno" if nome.ends_with("0") else "bagnina"
 		var punti := {
 			"angolo_alto_sx": Vector2(-1, 1), "angolo_alto_dx": Vector2(1, 1), "angolo_basso_sx": Vector2(-1, -1),
@@ -213,6 +212,39 @@ func _buchi(mi: MeshInstance3D, fuori: Vector3, nome: String) -> void:
 	print("BUCHI %s: %d punti trasparenti (ogni 8 texel), dietro a meno di 5 cm %d, più lontano %d, niente %d; il più lontano %.3f m (%d mesh vicine)" % [
 			nome, tot, lamiera, lontano, vuoto, peggio, corpi])
 	PhysicsServer3D.free_rid(spazio)
+
+
+## [normale verso +z, asse orizzontale, centro della faccia, metà larghezza, metà altezza] della superficie con la
+## texture del telo.
+static func _faccia_telo(mi: MeshInstance3D) -> Array:
+	var si := 0
+	for i in mi.mesh.get_surface_count():
+		var m := mi.get_surface_override_material(i) as StandardMaterial3D
+		if m == null:
+			m = mi.mesh.surface_get_material(i) as StandardMaterial3D
+		if m and String(m.resource_name).begins_with("M_amb_cartellone"):
+			si = i
+	var arr := mi.mesh.surface_get_arrays(si)
+	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
+	var xf := mi.global_transform
+	var n := ((xf * vs[idx[1]]) - (xf * vs[idx[0]])).cross((xf * vs[idx[2]]) - (xf * vs[idx[0]])).normalized()
+	n.y = 0.0
+	n = n.normalized()
+	if n.z < 0.0:
+		n = -n
+	var u := Vector3.UP.cross(n).normalized()
+	var c := Vector3.ZERO
+	for v in vs:
+		c += xf * v
+	c /= vs.size()
+	var mu := 0.0
+	var mv := 0.0
+	for v in vs:
+		var d := (xf * v) - c
+		mu = maxf(mu, absf(d.dot(u)))
+		mv = maxf(mv, absf(d.y))
+	return [n, u, c, mu, mv]
 
 
 static func _baricentriche(p: Vector2, a: Vector2, b: Vector2, c: Vector2) -> Vector3:
