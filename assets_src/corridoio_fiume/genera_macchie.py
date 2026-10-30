@@ -3,7 +3,9 @@ alfa, disegnati qui (numpy). Sotto la luce rossa del corridoio il verde scuro de
 leggono per luminosità, con le colature scure e bagnate e il bordo bianco di calcare (efflorescenze), come su un muro
 vero che perde.
 - macchie_colature.png (512 x 1024): chiazza di muffa in alto e colature verticali che scendono fino in fondo;
-- macchie_muffa.png (1024 x 768): chiazze di muffa e alone di calcare per il muro di fronte.
+- macchie_muffa.png (1024 x 768): chiazze di muffa e alone di calcare per il muro di fronte;
+- pozza_alone.png (1024 x 384) e pozza_alone_orm.png: il cemento bagnato attorno alla pozza, che sfuma verso l'asciutto
+  (ricontrollo di grafica del 30 ottobre: da metà corridoio la pozza era una striscia scura col bordo netto).
 Uso: python3 genera_macchie.py"""
 import os
 import numpy as np
@@ -94,8 +96,26 @@ def muffa():
     return componi(bagnato, calcare, macchie)
 
 
+def pozza_alone(w=1024, h=384):
+    """Colore scuro di cemento bagnato con l'alfa che va a zero verso il bordo, irregolare."""
+    y = np.linspace(-1, 1, h)[:, None] * np.ones((1, w))
+    x = np.ones((h, 1)) * np.linspace(-1, 1, w)[None, :]
+    d = np.sqrt(x ** 2 + y ** 2) + (rumore(w, h, 6) - 0.5) * 0.35
+    a = np.clip((1.0 - d) / 0.55, 0, 1) ** 1.5 * 0.6
+    col = np.zeros((h, w, 4), np.float32)
+    col[..., :3] = (0.11, 0.10, 0.09)
+    col[..., 3] = a
+    orm = np.zeros((h, w, 3), np.float32)
+    orm[..., 0] = 1.0
+    orm[..., 1] = 0.22
+    return (Image.fromarray((col * 255).astype(np.uint8), 'RGBA'), Image.fromarray((orm * 255).astype(np.uint8), 'RGB'))
+
+
 if __name__ == '__main__':
     os.makedirs(USCITA, exist_ok=True)
     colature().save(os.path.join(USCITA, 'macchie_colature.png'))
     muffa().save(os.path.join(USCITA, 'macchie_muffa.png'))
+    al, orm = pozza_alone()
+    al.save(os.path.join(USCITA, 'pozza_alone.png'))
+    orm.save(os.path.join(USCITA, 'pozza_alone_orm.png'))
     print('fatto')

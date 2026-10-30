@@ -64,6 +64,16 @@ def tubi(obs):
         # prima della porta, poi nel muro ovest (10 cm dentro)
         z1 = FINE_ARREDO + 0.1 + 0.15 * k
         pezzi = [C.tubo(f'tubo_pompe_{k}_tubo', [g(x, y, MURO_S - 0.03), g(x, y, z1), g(MURO_O - 0.1, y, z1)], r, acciaio, rc=2.2 * r)]
+        # i rosoni sui due muri dove il tubo entra, con quattro bulloni: si legge subito che il tubo passa nel muro
+        # (ricontrollo di grafica del 30 ottobre: dalla porta il gomito sembrava un tubo che finiva tondo); raggio
+        # r + 3,5 cm, così i due rosoni del muro della sala pompe (centri a 20 cm) restano staccati di 1 cm
+        rr = r + 0.035
+        pezzi.append(C.cilindro(f'tubo_pompe_{k}_rosone_s', g(x, y, MURO_S + 0.006), rr, 0.012, acciaio, asse=(0, 1, 0), seg=32))
+        pezzi.append(C.cilindro(f'tubo_pompe_{k}_rosone_o', g(MURO_O + 0.006, y, z1), rr, 0.012, acciaio, asse=(1, 0, 0), seg=32))
+        for a in (45, 135, 225, 315):
+            du, dv = math.cos(R_(a)) * (r + 0.02), math.sin(R_(a)) * (r + 0.02)
+            pezzi.append(C.cilindro('rosone_bullone', g(x + du, y + dv, MURO_S + 0.015), 0.007, 0.008, acciaio, asse=(0, 1, 0)))
+            pezzi.append(C.cilindro('rosone_bullone', g(MURO_O + 0.015, y + dv, z1 + du), 0.007, 0.008, acciaio, asse=(1, 0, 0)))
         z = MURO_S + 1.3
         while z < z1 - 0.4:
             pezzi.append(C.cilindro(f'tubo_pompe_{k}_collare', g(x, y, z), r + STACCO_TUBO - 0.002, 0.05, acciaio,

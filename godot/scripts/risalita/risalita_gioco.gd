@@ -475,6 +475,25 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	var c := (da + a) * 0.5
 	p.position = Vector3(c.x, Y, c.y)
 	p.rotation.y = atan2(-verso.y, verso.x)
+	# attorno, il cemento bagnato che sfuma verso l'asciutto (ricontrollo di grafica del 30 ottobre: da metà corridoio la
+	# pozza era una striscia scura col bordo netto). Il decal prende solo il pavimento del corridoio (lo strato 19, messo
+	# qui alla sua mesh): non scurisce la P13 accanto alla pozza
+	const STRATO_POZZA := 1 << 18
+	for n in get_children():
+		var mi := n as MeshInstance3D
+		if mi and mi.material_override == _mat_pav:
+			var box := mi.transform * mi.get_aabb()
+			if box.grow(0.01).has_point(Vector3(c.x, Y - 0.1, c.y)):
+				mi.layers |= STRATO_POZZA
+	var alone := Decal.new()
+	alone.name = "PozzaCorridoioFiumeAlone"
+	alone.texture_albedo = load("res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone.png")
+	alone.texture_orm = load("res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone_orm.png")
+	alone.size = Vector3(p.size.x + 0.7, 0.3, p.size.y + 0.45)
+	alone.cull_mask = STRATO_POZZA
+	add_child(alone)
+	alone.position = Vector3(c.x, Y, c.y)
+	alone.rotation.y = p.rotation.y
 
 
 func _decal(nome: String, tex: Texture2D, pos: Vector3, normale: Vector3, w: float, h: float, colore: Color, mix: float) -> void:
