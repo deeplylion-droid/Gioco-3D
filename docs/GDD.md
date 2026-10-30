@@ -566,3 +566,16 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
 - "Potremmo anche tenerla solo in alcuni ambienti", e "assicurati solo di farla apparire gradualmente quando entri negli ambienti dove ci sarà".
 - Nella prossima build va in infermeria, sala principale e inseguimento nel tunnel sottomarino. Compare piano entrando nella zona e svanisce uscendo.
 - Nelle opzioni c'è la voce "Nebbia viola: sì/no", accesa di serie ("sì e sì" dell'utente, 29 ottobre).
+
+**Riscontro dell'utente sulla v0.3.16 (30 ottobre)**, giocata la build. Correzioni chieste:
+- **Nebbia sul fondo della piscina delle onde**: troppo forte. Va ridotta a "pochissimo più che nel resto della stanza" (grafica-2).
+- **Corridoio vuoto prima della zona del fiume**: "sistemalo". Le opzioni per arredarlo si scrivono e si chiedono all'utente prima di metterle (ambienti-1).
+- **Zona prima di prendere il salvagente**: "troppo luminosa ora". Torna buia come nella 0.3.15, come da scelta del 23 ottobre (grafica cerca la causa).
+- **Tunnel dell'inseguimento sottomarino**: "troppo luminoso ora". Torna buio come nella 0.3.15; la nebbia resta, ma non deve illuminarlo (grafica-2 e grafica).
+- **Agnellino del tunnel**: "si vede che sparisce perché gli corri dietro". Non deve mai sparire mentre si vede (mascotte).
+- **L'altro agnellino**, che nella 0.3.16 "si gira lentamente per andarsene": "mi piaceva di più prima". Torna la girata veloce della 0.3.15 (mascotte).
+- **Torre, vasca d'arrivo degli scivoli**: nella zona delle piscinette coi bersagli verdi, dove Jilly guarda, entrando negli scivoli si vede l'acqua trasparente da sotto. Da sotto deve sembrare acqua (ambienti-2).
+- **Squalo all'inizio, quando si gira**: "mette male una pinna attaccata al braccio, anche il braccio stesso, animalo un po' di più in quella fase". Più animazione per braccio e pinna nella girata; la posa col braccio alzato resta (scelta A del 29 ottobre) (mascotte).
+- **Squalo, ruggito in faccia**: "troppo buio, totalmente nero". Durante il ruggito la faccia e la bocca si devono vedere, tenendo la luce viola dalla porta (grafica).
+- **Lo scivolo dalla torre all'area seguente**: "piegato male e mezzo compenetrato". Va rifatto liscio, senza entrare in niente (ambienti-2).
+- **Grana della pellicola**: "con la nebbia stona, mettiamola off by default". È già spenta di serie dalla v0.2.1; si rimette spenta anche per chi l'ha salvata accesa, e si controlla che la nebbia stessa non sembri granulosa (grafica-2).
