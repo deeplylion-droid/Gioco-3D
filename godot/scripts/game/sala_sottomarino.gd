@@ -2065,6 +2065,9 @@ func _fascia_bocca(nodo: Node3D, sb: float, lato: float, y_bocca: float) -> void
 ## sfuggita"): l'agnellino sulla banchina sinistra, davanti alla bocca della prima galleria di servizio, girato verso
 ## chi arriva. Lo si vede da lontano mentre si scappa da lei; ti guarda, poi entra nella bocca della galleria (è
 ## piccolo, ci sta in piedi) e va dietro il muro, dove dalla banchina non si vede più, e sparisce.
+## Sparisce solo dopo essere uscito dalla bocca in fondo, dietro lo spigolo: la galleria è dritta e illuminata, e a
+## metà chi gli correva dietro e ci entrava vedeva che non c'era più (riscontro dell'utente sulla 0.3.16). Se lo si
+## guarda ancora, corre via sulla banchina dopo il crollo, nel buio.
 func _bambino_galleria() -> void:
 	var g: Dictionary = {}
 	for o in ostacoli:
@@ -2087,8 +2090,11 @@ func _bambino_galleria() -> void:
 	b.zona = AABB(lo, Vector3.ZERO).expand(hi).expand(al.call(s0 - 34.0, muro)).expand(al.call(s0 - 8.0, canale)).grow(0.3)
 	b.zona.size.y = 3.0
 	b.zona.position.y = piano - 0.2
+	var s1: float = float(g["s"]) + float(g["lungo"]) + GALLERIA_BOCCA    # dove finisce la bocca d'uscita
 	b.via = PackedVector3Array([al.call(s0 + 0.5, muro - 0.4), al.call(s0 + 0.7, dentro), al.call(s0 + 2.4, dentro),
-			al.call(s0 + 7.5, dentro)])
+			al.call(s1 - 0.7, dentro), al.call(s1 - 0.5, muro - 0.4), al.call(s1 + 1.0, muro - 1.1),
+			al.call(s1 + 16.0, muro - 1.2)])
+	b.sparisce_dopo = 5       # (fuori dalla bocca d'uscita, dietro la sua testa)
 	b.da_dove = al.call(s0 - 18.0, muro - 1.2) + Vector3.UP * 1.6
 	b.distanza_fuga = 12.0
 	b.compare_lontano = 26.0     # (si corre guardando avanti: compare lontano, nel buio, a più di 26 m)
@@ -2617,11 +2623,14 @@ func _gommone(s: float, off: float) -> void:
 	corpo.collision_mask = 0
 	corpo.sync_to_physics = true
 	corpo.set_meta(&"superficie", &"gomma")
-	nodo.add_child(corpo)
 	var giro := float(int(s * 13.0) % 60) * 0.1
 	# (la posa di partenza la si tiene a parte: con sync_to_physics il corpo la prende al passo della fisica)
 	var posa0 := Transform3D(Basis.looking_at(d, Vector3.UP).rotated(Vector3.UP, giro), centro)
-	corpo.global_transform = posa0
+	# la posa prima di entrare nella scena: entrato all'origine, con sync_to_physics il corpo ci restava fino al passo della
+	# fisica dopo, cioè sopra il centro della piscina della sala (collaudo finale del 30 ottobre: un gommone per
+	# fotogramma, all'altezza del bordo, mentre si costruisce il tunnel)
+	corpo.transform = nodo.global_transform.affine_inverse() * posa0
+	nodo.add_child(corpo)
 	_collisione_gommone(corpo)
 	var colori := [Color(0.95, 0.42, 0.12), Color(0.2, 0.62, 0.3), Color(0.95, 0.78, 0.15)]
 	var gomma := StandardMaterial3D.new()

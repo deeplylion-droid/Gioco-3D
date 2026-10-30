@@ -22,7 +22,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
 
@@ -243,6 +243,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_parkour_gommoni.gd
 
+      - name: Test dei gommoni del tunnel mentre si costruiscono (niente passa dall'origine del mondo, sopra il centro della piscina)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_gommoni_origine.gd
+
       - name: Test degli oblò con lei dietro il vetro (compare fuori vista, ti segue con l'occhio, se ne va se guardi via o ti avvicini, una volta sola, resta nella vasca)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_oblo_lei.gd
@@ -394,6 +398,10 @@ jobs:
       - name: Test della luce normale (luci bianche al 40%, fisse)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche.gd
+
+      - name: Test delle luci bianche al 40% nel gioco vero (fiume e tunnel da F9, anche dopo una morte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche_gioco.gd
 
       - name: Test del blocco del pool di thread (la sala al primo fotogramma con 4 worker; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
