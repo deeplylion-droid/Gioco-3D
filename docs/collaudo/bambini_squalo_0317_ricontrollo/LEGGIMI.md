@@ -52,3 +52,32 @@ Ossa e animazione del corpo sono identiche al millimetro, quindi non le ha intro
 
 - a 6,47-6,50 s, il fianco dietro, all'altezza x 16,3, entra di 3,8 cm per due fotogrammi in `corridoio_collisione`;
 - a 11,33-11,50 s, oltre la porta, il davanti dello squalo entra fino a 1,3 m nel muro di fondo, mentre la porta si chiude (si chiude del tutto a 11,48 s, e lui sparisce a 11,52 s). Dalla camera del giocatore si vede appena, nella nebbia viola, dalla fessura della porta. Foglio `3_squalo_porta_muro.jpg`.
+
+## 4. Secondo giro: lo squalo corretto da mascotte (ef383996)
+
+Strumenti: gli stessi del primo giro (`collaudo_squalo_girata.gd`, `squalo_braccia_misure.gd`, `squalo_braccia_viste.gd`), più la vista "mento", a 0,7 m dalla punta del mento.
+
+**Esito:** la mano, il muro di fondo e i 6,47 s sono corretti. Ci sono però due cose nuove: l'avambraccio e gli artigli vicino al muso, e la coda nella porta che si chiude.
+
+### Corretto
+
+- **La mano non entra più nel muso.** Il polso resta ad almeno 26 cm da bocca, mascella e mento (0,260 m a 9,27 s). Nella 0.3.16 erano 26 cm, nel primo giro 2,4.
+- **Oltre la porta** non entra più nel muro di fondo: frena con la spina a x 23,09.
+- **A 6,47 s** il fianco non entra più nel cartello.
+- **Muri del corridoio:** ho controllato tutti i vertici della pelle a ogni fotogramma, e niente entra nei muri.
+- **Test del tunnel:** ora va a 1,7 m/s da accucciato e ha gli occhi all'altezza della camera.
+
+### Da guardare: avambraccio e artigli vicino al muso, a 9,6-9,67 s
+
+- Il gomito del braccio alzato passa a 7,6 cm dall'osso del mento (9,60 s). Nella 0.3.16 restava ad almeno 27 cm.
+- Gli artigli lunghi della mano attraversano la bocca aperta: foglio `4_squalo_ef38_mento.jpg`, viste "e" e "sotto_e" a 9,633 e 9,667 s.
+- Dalla camera del giocatore, in quel momento lo squalo è di schiena, e non si vede.
+- Si vede invece a 9,07-9,17 s (`4_squalo_ef38_giro_giocatore.jpg`): il braccio alzato passa davanti al muso nella sagoma, anche se in 3D resta a più di 26 cm. Lo spazio fra braccio e testa della scelta A, da lì, non si legge.
+
+### Nuovo: la coda nella porta che si chiude, a 11,48-11,52 s
+
+- Ora lo squalo si ferma subito dopo la porta, e la coda resta nel vano.
+- Quando la porta finisce di chiudersi (11,48 s), la punta della coda sta 14-16 cm oltre la porta chiusa, dalla parte del giocatore: punto (21,85; 1,12; -1,86), con la porta a x 21,97.
+- Questo vale per il fotogramma a 11,50 s: a 11,52 s lo squalo sparisce.
+- Dalla camera del giocatore, nella nebbia viola a circa 10 m, non si distingue (`4_squalo_ef38_porta.jpg`), ma è una compenetrazione.
+- Possibili correzioni: fermarlo 20-30 cm più avanti, raccogliere la coda in frenata, o farlo sparire quando la porta si chiude (porta + 0,58 invece di + 0,62).
