@@ -55,13 +55,14 @@ func _run() -> void:
 		hud.visible = false
 	_p.camera.make_current()
 	# l'ambiente della sala (nel gioco la Risalita sta nella sala principale, con LookSala): riflessi e luce d'ambiente
-	Grafica.applica_preset("alto")
 	var env := WorldEnvironment.new()
 	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
-	get_tree().current_scene.add_child(env)
-	Grafica.aggiorna_environment()
-	# (senza la GI: con la Risalita intera, fiume compreso, llvmpipe passava i 12,5 GB)
+	# (senza GI, nebbia volumetrica e SSIL: con la Risalita intera, fiume compreso, llvmpipe passava i 12,5 GB; i
+	# riflessi dello schermo, che fanno la pozza, restano)
 	env.environment.sdfgi_enabled = false
+	env.environment.volumetric_fog_enabled = false
+	env.environment.ssil_enabled = false
+	get_tree().current_scene.add_child(env)
 	var ris := get_tree().current_scene.get_node(^"Risalita")
 	var b := ris.find_child("BambinoCorridoioFiume", true, false) as Node3D
 	if b:
