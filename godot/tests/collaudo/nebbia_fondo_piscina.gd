@@ -149,6 +149,10 @@ func _piscina() -> void:
 			_cam.look_at(c[1], Vector3.UP)
 			_accendi(c[0], c[1])
 			_piedi = await _piedi_sotto(c[0])
+			# (gli occhi a 1,6 m sopra il fondo dove si sta, come in gioco: il fondo è in pendenza)
+			if v.begins_with("dentro"):
+				_cam.global_position.y = _piedi + 1.6
+				_cam.look_at(c[1], Vector3.UP)
 			_giocatore.global_position = Vector3(c[0].x, _piedi, c[0].z)
 			_cam.make_current()
 			await _tre("%s_%s" % [v, stato] if v != "pavimento" else v)
