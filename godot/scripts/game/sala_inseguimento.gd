@@ -648,6 +648,7 @@ func _morbidezza_qui(dove: String) -> void:
 	_morbidezza.trattieni = false
 	_morbidezza.trattieni_y = -INF
 	_morbidezza.fossa_pianta = PackedVector2Array()
+	_morbidezza.fossa_foro = false
 	if dove == "sb1" or dove == "grata":
 		var pz: Dictionary = dati["pozzo"] if dove == "sb1" else dati["pozzetto_grata"]
 		var r: Array = pz["rett"]
@@ -667,6 +668,7 @@ func _morbidezza_qui(dove: String) -> void:
 		for k in 12:
 			cerchio.append(Vector2(centro.x, centro.z) + Vector2.from_angle(TAU * k / 12.0) * float(fo[3]))
 		_morbidezza.fossa_pianta = cerchio
+		_morbidezza.fossa_foro = true
 		# (la quota del trattenere mezzo metro sopra il pavimento: sotto il pavimento restano tutti nel foro, e si lasciano
 		# mentre escono)
 		_morbidezza.trattieni_y = centro.y + 0.5

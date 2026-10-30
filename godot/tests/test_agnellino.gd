@@ -19,6 +19,7 @@ const MURO := 0.3
 var p: Player
 var tec: Node3D
 var ag: AgnellinoScala
+var _giu_prima := Vector3(0, INF, 0)
 var _comparso := false
 var _sparito_a := -1
 var _fuori_dalla_cavita := false
@@ -56,7 +57,11 @@ func _run() -> void:
 	var b: Bambino = null
 	var minima := INF
 	var tempo_anim := 0.0
+	var tempo_atteso := 0.0
 	var compenetra := ""
+	var piedi_sotto := INF
+	var piega_scorre := 0.0
+	var piega_n := 0
 	Input.action_press(&"move_forward")
 	Input.action_press(&"sprint")
 	var tappa := 0
@@ -79,17 +84,30 @@ func _run() -> void:
 			if b.modalita == Bambino.Modalita.SCAPPA:
 				for ap in b.find_children("*", "AnimationPlayer", true, false):
 					tempo_anim = (ap as AnimationPlayer).speed_scale
+				# (l'animazione va alla velocità del corpo, misurata sui piedi: Bambino._passo_animazione)
+				tempo_atteso = clampf(b._vel / b.vel_corsa_anim, 0.25, 1.6)
 				if compenetra == "":
 					compenetra = _compenetra(b)
+				# i piedi a terra, anche piegandosi per il buco (collaudo del 29 ottobre: entravano nel pavimento)
+				var pav := tec.to_global(Vector3(0, ag.posizione.y, 0)).y
+				piedi_sotto = minf(piedi_sotto, b.piedi_piu_in_basso() - pav)
+				# piegato per il buco fa i passi: il punto più basso, quando è a terra, non scorre col corpo
+				var giu := b.punto_piu_in_basso()
+				if b.rotation.x > 0.3 and giu.y - pav < 0.015 and _giu_prima.y < INF and _giu_prima.y - pav < 0.015:
+					piega_scorre += Vector2(giu.x - _giu_prima.x, giu.z - _giu_prima.z).length() * 60.0
+					piega_n += 1
+				_giu_prima = giu
 		await get_tree().physics_frame
 		_corso += 1
 	Input.action_release(&"move_forward")
 	Input.action_release(&"sprint")
 	check(_comparso, "salendo la rampa F2 l'agnellino compare in cima alla scala di C2")
-	check(is_equal_approx(ag.velocita_corsa, 3.0) and is_equal_approx(tempo_anim, ag.velocita_corsa / Bambino.VEL_CORSA_ANIM),
+	check(is_equal_approx(ag.velocita_corsa, 3.0) and tempo_anim > 0.0 and absf(tempo_anim - tempo_atteso) < 0.01,
 			"corre piano (%.1f m/s), con l'animazione a tempo (velocità %.2f)" % [ag.velocita_corsa, tempo_anim])
 	check(_sparito_a >= 0, "si infila nel buco e sparisce (dopo %d frame di corsa)" % _sparito_a)
 	check(_sparito_a >= 0 and not _fuori_dalla_cavita, "quando sparisce è tutto dentro la cavità, al buio")
+	check(piega_scorre / maxf(piega_n, 1) < 0.5, "piegato per il buco nessun piede striscia a terra (in media %.2f m/s, %d fotogrammi a terra)" % [piega_scorre / maxf(piega_n, 1), piega_n])
+	check(piedi_sotto > -0.02, "correndo e piegandosi i piedi non entrano nel pavimento (il punto più basso a %+.3f m)" % piedi_sotto)
 	check(compenetra == "", "correndo e infilandosi non passa attraverso muri, pavimento e roba accatastata %s" % compenetra)
 	check(minima > 1.2, "correndo non lo si raggiunge (il più vicino: %.1f m)" % minima)
 	await _frames(10)

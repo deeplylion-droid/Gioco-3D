@@ -1,0 +1,43 @@
+SONDA luce di lei a (40.95, -20.27, -13.7) vetro (40.4, -18.25, -13.7) normale (-1.0, 0.0, 0.0)
+SONDA base                         riga alta R  30  riga bassa R 170  parete R 6.0 G 1.0 B 8.2
+SONDA nebbia_di_lei_0              riga alta R  36  riga bassa R 168  parete R 0.0 G 0.1 B 2.0
+SONDA nebbia_spenta                riga alta R  32  riga bassa R 170  parete R 0.0 G 0.0 B 1.0
+SONDA paraboloide                  riga alta R 109  riga bassa R 168  parete R 0.0 G 0.1 B 2.1
+SONDA bias_serie                   riga alta R  72  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA bias_0                       riga alta R  28  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA interno_senza_ombra          riga alta R  89  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA interno_due_facce            riga alta R  36  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA lei_spenta                   riga alta R  28  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA lei_spenta_nebbia_spenta     riga alta R  24  riga bassa R 170  parete R 0.0 G 0.0 B 1.0
+SONDA riga bassa pixel 200: punto (40.76961, -19.17, -12.04774) su /root/TestRunner/SalaTorre/SalaInseguimento/InseguimentoStruttura/ins_A_struttura/StaticBody3D (normale (0.0, 1.0, 0.0))
+SONDA riga bassa pixel 400: punto (41.41979, -19.17, -12.04774) su /root/TestRunner/SalaTorre/SalaInseguimento/InseguimentoStruttura/ins_A_struttura/StaticBody3D (normale (0.0, 1.0, 0.0))
+SONDA riga bassa pixel 600: punto (42.06997, -19.17, -12.04774) su /root/TestRunner/SalaTorre/SalaInseguimento/InseguimentoStruttura/ins_A_struttura/StaticBody3D (normale (0.0, 1.0, 0.0))
+SONDA luce vicina /root/TestRunner/SalaTorre/Luci/@OmniLight3D@151 a 4.4 m: colore (1.0, 0.035, 0.02, 1.0) energia 3.50 ombre false pos (39.52, -16.5, -15.0)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@443 a 9.5 m: colore (1.0, 0.66, 0.36, 1.0) energia 6.50 ombre true pos (50.816, -20.5, -12.816)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@Node3D@508/@OmniLight3D@510 a 10.0 m: colore (1.0, 0.16, 0.68, 1.0) energia 0.45 ombre false pos (49.87688, -21.24, -16.905)
+SONDA luce vicina /root/TestRunner/SalaTorre/Luci/@OmniLight3D@373 a 10.1 m: colore (0.1, 1.0, 0.3, 1.0) energia 1.20 ombre false pos (37.4888, -12.8, -18.8713)
+SONDA luce vicina /root/TestRunner/SalaTorre/Luci/@SpotLight3D@372 a 10.5 m: colore (0.1, 1.0, 0.3, 1.0) energia 9.00 ombre false pos (37.58192, -11.93, -18.58612)
+SONDA luce vicina /root/TestRunner/SalaTorre/Luci/@OmniLight3D@371 a 10.5 m: colore (0.1, 1.0, 0.3, 1.0) energia 1.60 ombre false pos (37.644, -11.73, -18.396)
+SONDA luce vicina /root/TestRunner/SalaTorre/Luci/@OmniLight3D@338 a 10.9 m: colore (1.0, 0.82, 0.62, 1.0) energia 6.00 ombre true pos (32.2, -14.2, -15.0)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@475 a 10.9 m: colore (0.25, 1.0, 0.45, 1.0) energia 3.00 ombre false pos (40.59, -27.5, -5.0)
+SONDA luce vicina /root/TestRunner/SalaTorre/@OmniLight3D@394 a 11.0 m: colore (1.0, 0.32, 0.62, 1.0) energia 13.91 ombre false pos (31.0, -20.8, -15.0)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@491 a 11.0 m: colore (1.0, 0.66, 0.36, 1.0) energia 4.00 ombre true pos (45.0, -19.3, -22.5)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@479 a 11.3 m: colore (1.0, 0.66, 0.36, 1.0) energia 4.00 ombre true pos (51.5, -16.8, -7.5)
+SONDA luce vicina /root/TestRunner/SalaTorre/@SpotLight3D@396 a 11.3 m: colore (1.0, 0.32, 0.62, 1.0) energia 21.85 ombre true pos (31.0, -22.5, -15.0)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@SpotLight3D@507 a 11.5 m: colore (1.0, 0.88, 0.72, 1.0) energia 18.00 ombre true pos (43.0, -18.8, -0.7)
+SONDA luce vicina /root/TestRunner/SalaTorre/@OmniLight3D@395 a 11.7 m: colore (1.0, 0.32, 0.62, 1.0) energia 9.93 ombre false pos (31.0, -23.5, -15.0)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@Node3D@508/@OmniLight3D@509 a 12.3 m: colore (1.0, 0.16, 0.68, 1.0) energia 0.45 ombre false pos (51.94707, -21.24, -18.02606)
+SONDA luce vicina /root/TestRunner/SalaTorre/Luci/@OmniLight3D@189 a 12.7 m: colore (1.0, 0.66, 0.36, 1.0) energia 4.00 ombre false pos (39.45685, -13.9, -23.45685)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@SpotLight3D@504 a 13.1 m: colore (1.0, 0.88, 0.72, 1.0) energia 18.00 ombre true pos (48.0, -18.8, -0.7)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@456 a 13.2 m: colore (1.0, 0.035, 0.02, 1.0) energia 1.00 ombre false pos (54.55, -18.35, -13.6)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@SpotLight3D@457 a 13.3 m: colore (1.0, 0.035, 0.02, 1.0) energia 2.50 ombre true pos (54.55, -18.2, -13.6)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@433 a 13.3 m: colore (1.0, 0.035, 0.02, 1.0) energia 3.50 ombre true pos (40.53, -16.15, -25.0)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/InseguimentoMobili/ins_paratia_0/@OmniLight3D@454 a 13.5 m: colore (0.25, 1.0, 0.45, 1.0) energia 1.50 ombre false pos (54.034, -21.432, -16.4)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@451 a 13.9 m: colore (0.25, 1.0, 0.45, 1.0) energia 2.00 ombre false pos (54.55, -18.35, -16.4)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@SpotLight3D@452 a 13.9 m: colore (0.25, 1.0, 0.45, 1.0) energia 14.00 ombre true pos (54.55, -18.2, -16.4)
+SONDA luce vicina /root/TestRunner/SalaTorre/SalaInseguimento/Luci/@OmniLight3D@503 a 13.9 m: colore (0.85, 0.95, 1.0, 1.0) energia 3.00 ombre true pos (49.0, -17.185, -0.6)
+SONDA senza__OmniLight3D_151       riga alta R  24  riga bassa R   0  parete R 0.0 G 0.0 B 1.1
+SONDA senza__OmniLight3D_443       riga alta R  21  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA senza__OmniLight3D_510       riga alta R  28  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA senza__OmniLight3D_373       riga alta R  28  riga bassa R 168  parete R 0.0 G 0.0 B 2.0
+SONDA senza__SpotLight3D_372       riga alta R  28  riga bassa R 168  parete R 0.0 G 0.0 B 2.0

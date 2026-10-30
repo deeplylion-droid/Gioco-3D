@@ -23,6 +23,7 @@ const FATTI := {
 		"Piscina/PulsantePortello": {"powered": true},
 		"Piscina/SvuotaPiscina": {"attivo": true},
 		"Piscina/Portello": {"open": true},
+		"Piscina/EnigmaGiocattoli": {"risolto": true},
 	},
 	"tecnici": {
 		"Tecnici/AgnellinoScala": {"fatto": true},
@@ -56,20 +57,24 @@ const RACCOLTI := {
 	"interni": ["Interni/Zaino/Prendi"],
 	"risalita": ["Risalita/Infermeria/Cassetto14/Frontale/Radiografia", "Risalita/Infermeria/Keycard"],
 }
-## Le Polaroid raccolte, per parte.
+## Le Polaroid raccolte, per parte (P12-P16 le nuove del 28 ottobre: P13 sotto l'oblò, P15 nella zona del personale e
+## P16 all'approdo nella risalita, P14 agli acquari, P12 in cima alla torre).
 const POLAROID := {
 	"interni": ["p01", "p02", "p03"],
 	"piscina": ["p04", "p05", "p08", "p09"],
 	"tecnici": ["p06", "p07"],
-	"risalita": ["PolaroidPecora"],
-	"torre": ["Polaroid10"],
+	"risalita": ["PolaroidPecora", "p13", "p15", "p16"],
+	"sala_buio": ["p14"],
+	"torre": ["Polaroid10", "p12"],
 }
 const PARTI := ["interni", "piscina", "tecnici", "risalita", "sala_buio", "torre"]
 
-## Le partenze: le parti fatte prima, il checkpoint (percorso dalla scena del livello), se serve la torre.
+## Le partenze: le parti fatte prima, il checkpoint (percorso dalla scena del livello), se serve la torre, le Polaroid
+## raccolte in più (quelle della parte della partenza che stanno prima del suo checkpoint).
 const PARTENZE := {
 	"risalita": {"fatte": 3, "checkpoint": "Tecnici/Logica/Checkpoint/CheckpointT7Inizio"},
-	"fiume": {"fatte": 3, "checkpoint": "Risalita/Fiume/Checkpoint/CheckpointIngresso"},
+	# (la P13 sta nel corridoio della scala verso il fiume, prima del capannone: chi parte dal fiume ci è già passato)
+	"fiume": {"fatte": 3, "checkpoint": "Risalita/Fiume/Checkpoint/CheckpointIngresso", "polaroid": ["p13"]},
 	"torre": {"fatte": 5, "checkpoint": "SalaTorre/Checkpoint_portone", "torre": true},
 	"inseguimento": {"fatte": 6, "checkpoint": "SalaTorre/Checkpoint_fondo", "torre": true},
 	"tunnel": {"fatte": 6, "checkpoint": "SalaSottomarino/Checkpoint_6", "torre": true, "tunnel": true},
@@ -129,6 +134,8 @@ func _partenza(id: String, p: Dictionary) -> void:
 		raccolti.append_array(RACCOLTI.get(parte, []))
 		for e in POLAROID.get(parte, []):
 			GameState.collect(&"polaroid", StringName(e))
+	for e in p.get("polaroid", []):
+		GameState.collect(&"polaroid", StringName(e))
 	var applicati := 0
 	for n in get_tree().get_nodes_in_group(&"persist"):
 		var key := GameState.persist_key(n)

@@ -141,6 +141,8 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 ## 1 << 19, lo stesso dell'acqua (WaterBody.WATER_LAYER) e di quello che il lampo della tempesta esclude, che la camera
 ## del giocatore disegna (collaudo del 25 ottobre).
 const STRATO_PREPARA := 1 << 15
+## Il muro est della torre, in comune con la sala delle condotte (x, come X0 di tools/blender/inseguimento_proposte.py).
+const MURO_CONDOTTE_X := 40.0
 
 
 ## Disegna la sala una volta fuori vista (una camera sua in un SubViewport con le stesse impostazioni di
@@ -167,6 +169,43 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 			alla_fine if con_oblo else Callable())
 	if con_oblo and is_instance_valid(oblo):
 		oblo.fine_preparazione()
+
+
+## Il rosso dentro la vasca dell'oblò (scelta B dell'utente del 29 ottobre, "com'era prima: si rimette un po' di rosso
+## solo dentro la vasca"). Fino alla 0.3.15 lei e la vasca prendevano il rosso della lampada d'emergenza del muro est,
+## che senza ombra passava il muro (e faceva la riga rossa nelle condotte) e la illuminava da davanti. Ora quella
+## lampada fa ombra; il suo rosso lo ridanno:
+## - un faretto appena fuori dal foro del muro, all'altezza del vetro, puntato dentro la vasca, largo e corto (1,8 m: non
+##   arriva alle condotte dietro), con l'ombra: lei accesa da davanti, tutta, capelli, faccia, corpo e mani, satura e
+##   con le ombre, come nella 0.3.15 (più in alto e più stretto i capelli facevano ombra e il corpo restava grigio);
+## - i veli dell'acqua torbida della vasca appena accesi (ObloLei.veli_colore): il fondo rosso dietro di lei;
+## - il vetro quasi spento (ObloLei.vetro_colore): acceso faceva un velo rosa piatto su lei vista da vicino.
+## Niente nebbia e niente luci libere nella vasca: riportavano la riga nelle condotte (prove del 29 ottobre,
+## docs/report/collaudo_29ottobre_g2/torre_rosso). Sotto l'oblò: la preparazione della torre li disegna con lui.
+@export var oblo_rosso_faccia := 2.5
+@export var oblo_veli_rossi := ROSSO * 0.15
+@export var oblo_vetro_rosso := Color(0.0, 0.0, 0.0)
+## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
+const OBLO_ROSSO_FACCIA := Vector3(0.0, 0.2, 0.2)
+
+
+func _rosso_vasca() -> void:
+	if oblo == null or oblo_rosso_faccia <= 0.0:
+		return
+	var l := SpotLight3D.new()
+	l.name = "RossoFaccia"
+	l.light_color = ROSSO
+	l.light_energy = oblo_rosso_faccia
+	l.spot_range = 1.8
+	l.spot_angle = 70.0
+	l.shadow_enabled = true
+	l.light_volumetric_fog_energy = 0.0
+	# (senza riflessi: sul vetro dell'oblò, liscio, il faretto faceva un puntino rosso acceso al centro, a vasca vuota;
+	# ricontrollo di ambienti-1 del 29 ottobre)
+	l.light_specular = 0.0
+	l.set_meta(&"risveglio_ignora", true)
+	l.position = OBLO_ROSSO_FACCIA     # (guarda lungo -z: dentro la vasca)
+	oblo.add_child(l)
 
 
 ## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
@@ -587,6 +626,13 @@ func _polaroid() -> void:
 	var doppione := find_child("torre_polaroid_10", true, false)
 	if doppione:
 		doppione.queue_free()
+	# la Polaroid 12 (l'ultima sera di festa, col temporale lontano, proposta del 25 ottobre notte): in cima, per terra
+	# nell'angolo sud-est del pianerottolo del portone, alle spalle di chi entra e va verso il primo scivolo (a nord)
+	# (sul grigliato: l'altezza sulle barre, sotto tutta la foto, è calcolata una volta da tests/posa_polaroid12.gd; a
+	# gioco avviato i raggi mentre la torre si costruisce facevano fotogrammi da 130 ms, test_attesa_zone del 29 ottobre)
+	var p12 := b([22.1, 13.95, 0.0])
+	p12.y = -0.0063
+	PolaroidPhoto.metti(self, 12, p12, 30.0, true)
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.
@@ -711,6 +757,14 @@ func _oblo_lei() -> void:
 	# la cisterna profonda 3,6 m (mascotte: la posa "occhio" arrivando e staccandosi va fino a 3,4 m dietro il vetro);
 	# il fuori è nel GLB delle condotte (inseguimento_proposte.py, OBLO_VASCA)
 	oblo.vasca_fonda = 3.6
+	# (le ombre della luce di lei più strette che negli altri oblò: con i bias di serie passava dagli spigoli sottili
+	# della cisterna, righe rosa nella sala delle condotte, collaudo finale del 25 ottobre)
+	oblo.bias_ombre = Vector2(0.03, 0.2)
+	# (e attorno alla vasca il guscio che fa solo ombra: la cisterna fuori, nel GLB delle condotte, è di lamiere da una
+	# faccia sola, e dal suo spigolo in alto passava ancora una riga rosa; ricontrollo del 29 ottobre)
+	oblo.guscio_ombra = 0.03
+	oblo.veli_colore = oblo_veli_rossi
+	oblo.vetro_colore = oblo_vetro_rosso
 	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
 	var v: Array = dati["vasca_fondo"]["rett"]
 	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
@@ -720,6 +774,7 @@ func _oblo_lei() -> void:
 	oblo.muro = _muro_oblo()
 	oblo.transform = global_transform.affine_inverse() * xf
 	add_child(oblo)
+	_rosso_vasca()
 	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
 	var bocca := Area3D.new()
 	bocca.name = "BoccaOblo"
@@ -1097,6 +1152,15 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	l.light_energy = 3.5
 	l.omni_range = 7.5
 	l.light_volumetric_fog_energy = 1.5
+	# sul muro est, quello in comune con la sala delle condotte, con l'ombra: senza, la luce passava il muro e faceva
+	# una riga rossa su uno spigolo delle condotte accanto alla cisterna dell'oblò (ricontrollo del 29 ottobre)
+	l.shadow_enabled = absf(p.x - MURO_CONDOTTE_X) < 1.0
+	# (e il corpo della lampada non fa ombra sul suo muro, e l'ombra della condotta è sfocata: netta faceva una zona
+	# scura accanto a lei, dove nella 0.3.15 era rosso; ricontrollo di ambienti-1 del 29 ottobre. L'ombra resta piena:
+	# meno opaca la riga delle condotte tornava; con la grandezza della luce, ombre morbide, 36 pipeline nuove)
+	if l.shadow_enabled:
+		corpo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		l.shadow_blur = 4.0
 	radice.add_child(l)
 	l.global_position = p + verso * 0.4
 

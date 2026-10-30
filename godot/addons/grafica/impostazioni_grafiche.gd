@@ -60,6 +60,7 @@ const PREDEFINITI := {
 	"vignetta": true,
 	"aberrazione": false,
 	"profondita_campo": true,   # sfocatura leggera solo in lontananza
+	"nebbia_viola": true,       # la nebbia viola nelle sue zone (scelta dell'utente del 29 ottobre: accesa di serie)
 	"riduci_lampi": false,      # accessibilità: lampi più deboli e senza sfarfallio
 	"calibrato": false,         # true dopo la prima calibrazione della luminosità
 	# Controlli (li legge il controller del giocatore)
@@ -104,6 +105,8 @@ var _post_layer: CanvasLayer
 var _post_rect: ColorRect
 var _lut_cache := {}
 var _salvataggio_pendente := false
+## La nebbia viola delle zone (NebbiaViola): una per tutto il gioco.
+var nebbia_viola: NebbiaViola
 
 
 func _ready() -> void:
@@ -112,6 +115,8 @@ func _ready() -> void:
 	carica()
 	_assicura_azioni_input()
 	_crea_post_processing()
+	nebbia_viola = NebbiaViola.new()
+	add_child(nebbia_viola)
 	_attiva_shader_avanzati()
 	get_tree().node_added.connect(_su_nodo_aggiunto)
 	applica_tutto.call_deferred()
@@ -194,6 +199,7 @@ func applica_tutto() -> void:
 	_applica_post()
 	_applica_fov()
 	_applica_camera()
+	_applica_nebbia_viola()
 	applicate.emit()
 
 
@@ -264,6 +270,11 @@ func _applica_chiave(chiave: String) -> void:
 			_applica_fov()
 		"profondita_campo":
 			_applica_camera()
+		"nebbia_viola":
+			_applica_nebbia_viola()
+		"nebbia":
+			_applica_environment()
+			_applica_nebbia_viola()
 		_:
 			_applica_environment()
 
@@ -472,6 +483,14 @@ func _applica_camera() -> void:
 		a.dof_blur_far_transition = 10.0
 		a.dof_blur_near_enabled = false
 		a.dof_blur_amount = 0.04
+
+
+## L'opzione (cambiata dentro una zona la nebbia sale o scende piano, come entrando e uscendo) e i passi per la
+## qualità della nebbia: al minimo la metà.
+func _applica_nebbia_viola() -> void:
+	if nebbia_viola:
+		nebbia_viola.accesa = bool(valori["nebbia_viola"])
+		nebbia_viola.imposta_qualita(int(valori["nebbia"]))
 
 
 func _applica_fov() -> void:

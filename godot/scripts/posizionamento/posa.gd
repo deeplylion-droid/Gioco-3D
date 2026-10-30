@@ -14,7 +14,9 @@ const STRATI := Layers.WORLD
 ## sporgere qualche centimetro oltre le piastrelle (vasca centrale: 3 cm), o stare dietro.
 const OLTRE := 0.3
 
-## Le TriangleMesh delle mesh già usate (per il raggio sulle facce vere): mesh -> TriangleMesh.
+## Le TriangleMesh delle mesh già usate (per il raggio sulle facce vere): instance id della mesh -> [WeakRef della mesh,
+## TriangleMesh]. Con la mesh come chiave la cache la teneva viva: le mesh fatte da codice sono nuove a ogni ripartenza,
+## e ognuna restava in memoria con la sua TriangleMesh (+3,3 MB a ogni morte, test_memoria_morti del 28 ottobre).
 static var _triangoli := {}
 
 
@@ -29,6 +31,31 @@ static func appoggia_a_terra(nodo: Node3D, fondo := 0.0, lega := false, escludi:
 	nodo.global_position = Vector3(p.x, (h.position as Vector3).y + fondo, p.z)
 	if lega:
 		_lega(nodo, h.collider)
+	return true
+
+
+## Appoggia [param nodo], piatto (un foglio, una Polaroid), su quello che si vede sotto la sua impronta: un raggio per
+## ognuno dei [param punti] (nel sistema del nodo); il nodo va sul più alto delle mesh colpite, [param fondo] sopra. Su un
+## grigliato un raggio solo può passare in un buco e trovare la collisione, che spesso sta sopra le barre (pianerottolo
+## della torre: 1 cm; collaudo delle Polaroid del 28 ottobre, P12 sospesa di 13 mm). Mesh molto sotto la collisione (più
+## di 5 cm: il pavimento sotto il grigliato) non contano; senza mesh vale la collisione.
+static func appoggia_su_impronta(nodo: Node3D, punti: Array[Vector3], fondo := 0.0, escludi: Array[RID] = []) -> bool:
+	var su_mesh := -INF
+	var su_fisica := -INF
+	for l in punti:
+		var p := nodo.global_transform * l
+		var h := _raggio(nodo, Vector3(p.x, nodo.global_position.y + 0.05, p.z), Vector3(p.x, nodo.global_position.y - PORTATA, p.z), escludi)
+		if h.is_empty():
+			continue
+		if h.collider is MeshInstance3D:
+			su_mesh = maxf(su_mesh, (h.position as Vector3).y)
+		else:
+			su_fisica = maxf(su_fisica, (h.position as Vector3).y)
+	var y := su_mesh if su_mesh > -INF and (su_fisica == -INF or su_mesh > su_fisica - 0.05) else su_fisica
+	if y == -INF:
+		push_warning("Posa: niente sotto %s (%s)" % [nodo.name, nodo.global_position])
+		return false
+	nodo.global_position.y = y + fondo
 	return true
 
 
@@ -85,7 +112,8 @@ static func _raggio(nodo: Node3D, da: Vector3, a: Vector3, escludi: Array[RID]) 
 		return {}
 	var q := PhysicsRayQueryParameters3D.create(da, a, STRATI, escludi)
 	q.hit_back_faces = false
-	var h := nodo.get_world_3d().direct_space_state.intersect_ray(q)
+	# (senza passare dalle crepe fra due triangoli, dove un raggio solo trova il pavimento sotto: RaggioSicuro)
+	var h := RaggioSicuro.interseca(nodo.get_world_3d().direct_space_state, q)
 	var dir := (a - da).normalized()
 	var fine := a if h.is_empty() else (h.position as Vector3) + dir * OLTRE
 	if da.distance_to(fine) > da.distance_to(a):
@@ -107,12 +135,7 @@ static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3) -> Dictionary:
 		var gt := mi.global_transform
 		if not (gt * mi.get_aabb()).grow(0.01).intersects_segment(da, a):
 			continue
-		var tm: TriangleMesh = _triangoli.get(mi.mesh)
-		if tm == null:
-			if _triangoli.size() > 256:
-				_triangoli.clear()
-			tm = mi.mesh.generate_triangle_mesh()
-			_triangoli[mi.mesh] = tm
+		var tm := _triangoli_di(mi.mesh)
 		if tm == null:
 			continue
 		var inv := gt.affine_inverse()
@@ -134,3 +157,21 @@ static func _lega(nodo: Node3D, corpo: Object) -> void:
 	if sostegno == null or sostegno == nodo or nodo.is_ancestor_of(sostegno):
 		return
 	nodo.reparent(sostegno)
+
+
+## La TriangleMesh di [param mesh], dalla cache (vedi [member _triangoli]) o calcolata adesso.
+static func _triangoli_di(mesh: Mesh) -> TriangleMesh:
+	var id := mesh.get_instance_id()
+	var e: Array = _triangoli.get(id, [])
+	if not e.is_empty() and (e[0] as WeakRef).get_ref() == mesh:
+		return e[1]
+	# (prima di aggiungerne una si tolgono quelle delle mesh liberate: le TriangleMesh sono grandi, 2,6 MB a ripartenza;
+	# se restano troppe tutte vive, si ricomincia)
+	for k in _triangoli.keys():
+		if (_triangoli[k][0] as WeakRef).get_ref() == null:
+			_triangoli.erase(k)
+	if _triangoli.size() > 256:
+		_triangoli.clear()
+	var tm := mesh.generate_triangle_mesh()
+	_triangoli[id] = [weakref(mesh), tm]
+	return tm

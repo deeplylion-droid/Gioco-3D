@@ -24,6 +24,8 @@ signal pulsante_attivato
 signal lampeggio
 ## Il pulsante è stato colpito: la luce diventa verde e il richiamo si ferma.
 signal pulsante_premuto
+## La serratura della botola si è aperta (a piscina vuota): il lampeggiante passa da giallo a verde.
+signal serratura_aperta
 ## Si comincia ([code]true[/code]) o si smette di togliere acqua dalla piscina (per il gorgo).
 signal svuotamento(attivo: bool)
 
@@ -38,6 +40,10 @@ enum Aspetto { OGGI, LEGGIBILE, LEGGIBILE_CON_LAMPADA }
 @export var vasca: WaterTank
 ## Il pulsante della botola: finché la piscina non è vuota il getto non lo preme.
 @export var pulsante: WaterButton
+## La serratura della botola (EnigmaGiocattoli, scelte del 28 ottobre): a piscina vuota il pulsante funziona solo
+## quando è aperta ([code]aperta()[/code]: i tre piatti scesi). Prima il lampeggiante resta giallo, poi passa al verde;
+## colpito, resta verde fisso. Senza serratura com'era.
+@export var serratura: Node
 ## Quanta acqua c'è da togliere: di serie circa 30 secondi di lavoro (4 zainate).
 @export var taratura := Taratura.TRENTA_SECONDI:
 	set(v):
@@ -275,6 +281,9 @@ func _physics_process(delta: float) -> void:
 	elif attivo and vasca and vasca.fill > 0.0:
 		# A piscina vuota quel poco che arriva scola via (vedi _scarico).
 		vasca.fill = 0.0
+	if attivo and pulsante and not pulsante.enabled and aperta():
+		_aggiorna_pulsante()
+		serratura_aperta.emit()
 	if premuto() and not _premuto_detto:
 		_premuto_detto = true
 		pulsante_premuto.emit()
@@ -284,11 +293,13 @@ func _physics_process(delta: float) -> void:
 			_luce.light_energy = energia_segnale
 			_vetro(colore_premuto, 1.0)
 		else:
-			# Il lampeggiante giallo: un lampo corto ogni periodo_lampeggio secondi.
+			# Il lampeggiante: un lampo corto ogni periodo_lampeggio secondi, giallo finché la serratura è chiusa,
+			# verde quando si può colpire.
 			var k := _lampo(delta)
-			_luce.light_color = colore_attesa
+			var colore := colore_premuto if aperta() else colore_attesa
+			_luce.light_color = colore
 			_luce.light_energy = energia_segnale * (0.04 + 0.96 * k)
-			_vetro(colore_attesa, 0.08 + 0.92 * k)
+			_vetro(colore, 0.08 + 0.92 * k)
 
 
 func _vetro(colore: Color, k: float) -> void:
@@ -333,9 +344,14 @@ func premuto() -> bool:
 	return attivo and pulsante != null and pulsante.powered
 
 
+## Vero quando la serratura della botola è aperta (o non c'è).
+func aperta() -> bool:
+	return serratura == null or not serratura.has_method(&"aperta") or bool(serratura.call(&"aperta"))
+
+
 func _aggiorna_pulsante() -> void:
 	if pulsante:
-		pulsante.enabled = attivo
+		pulsante.enabled = attivo and aperta()
 	if _luce:
 		_luce.visible = attivo
 	# Prima che la piscina sia vuota il lampeggiante è spento.

@@ -80,6 +80,18 @@
    ],
    "aperta": false
   },
+  "Risalita/ObloPersonale": {
+   "finito": false
+  },
+  "Risalita/ObloServizio": {
+   "finito": false
+  },
+  "Risalita/ObloFiume": {
+   "finito": false
+  },
+  "Risalita/BambinoCorridoioFiume": {
+   "finito": false
+  },
   "Interni": {
    "tornello": true,
    "docce": true,
@@ -107,6 +119,31 @@
    "attivo": true
   },
   "Piscina/SvuotaPiscina/Medusine": {},
+  "Piscina/EnigmaGiocattoli": {
+   "pos": [
+    [
+     -3.89999222755432,
+     3.29999732971191,
+     0.523598790168762
+    ],
+    [
+     3.89999508857727,
+     3.29999804496765,
+     0.0
+    ],
+    [
+     -3.89999914169312,
+     -0.0999995023012161,
+     2.09439516067505
+    ]
+   ],
+   "giu": [
+    true,
+    true,
+    true
+   ],
+   "risolto": true
+  },
   "Piscina/Portello": {
    "open": true
   },
@@ -209,6 +246,6 @@
   ]
  },
  "luci": 2,
- "time": 1792873588.0384,
+ "time": 1793287191.83719,
  "partenza_prova": "risalita"
 }

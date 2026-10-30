@@ -64,9 +64,11 @@ func _run() -> void:
 	var risalita := level.get_node_or_null(^"Risalita")
 	var polaroid := level.find_children("*", "PolaroidPhoto", true, false).filter(func(n): return risalita == null or not risalita.is_ancestor_of(n))
 	var p10 := polaroid.filter(func(n): return int(n.get(&"photo")) == 10)
-	var totale := 9 + (1 if risalita else 0)
-	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == totale,
-		"nella sala ci sono 9 Polaroid (P10 torna con la sala della torre, P11 è nell'infermeria): %d, in tutto %d" % [polaroid.size(), GameState.get_total(&"polaroid")])
+	# (con le nuove della proposta del 25 ottobre notte: P14 agli acquari; nella risalita P13 e P15 nei corridoi, P16 nel
+	# fiume, che conta già come la P11; P12 è nella torre)
+	var totale := 10 + (4 if risalita else 0)
+	check(polaroid.size() == 10 and p10.is_empty() and GameState.get_total(&"polaroid") == totale,
+		"nella sala ci sono 10 Polaroid (P10 e P12 tornano con la sala della torre, P11, P13, P15 e P16 sono nella risalita): %d, in tutto %d" % [polaroid.size(), GameState.get_total(&"polaroid")])
 	var coperte: PackedStringArray = POLAROID_LIBERE.coperte(level)
 	check(coperte.is_empty(), "nessuna Polaroid è coperta o compenetrata da un'altra mesh %s" % str(coperte))
 	var sospese := PackedStringArray()
@@ -265,8 +267,25 @@ func _run() -> void:
 	check(float(esito[1]) > 45.0 and float(esito[1]) < 75.0, "circa 1 minuto di lavoro (%.0f s)" % float(esito[1]))
 	await _frames(3)
 	check(med == null or med.in_acqua() == 0, "a piscina vuota non resta nessuna medusina nell'acqua")
-	check(hatch_button.enabled and svuota.attivo and segnale.visible and segnale.light_color.b < 0.3,
-		"a piscina vuota il pulsante si attiva e il suo lampeggiante giallo si accende")
+	# (con l'enigma dei giocattoli la botola ha la serratura: i tre piatti sul fondo)
+	var giocattoli := level.get_node_or_null(^"Piscina/EnigmaGiocattoli") as EnigmaGiocattoli
+	check(svuota.attivo and segnale.visible and segnale.light_color.b < 0.3 and segnale.light_color.g < 0.8
+			and (giocattoli == null or not hatch_button.enabled),
+		"a piscina vuota il lampeggiante giallo del pulsante si accende; coi giocattoli fuori posto il pulsante non si preme")
+	if giocattoli:
+		print("  (scorciatoia: i giocattoli sui loro cerchi, i piatti scendono; lo prova test_enigma_giocattoli)")
+		giocattoli.metti_al_posto()
+		for i in 900:
+			await get_tree().physics_frame
+			if hatch_button.enabled:
+				break
+		if not hatch_button.enabled:
+			for k in 3:
+				print("  (giocattolo %d in %s, cerchio %s, piatto giù %s, velocità %.2f)" % [k, giocattoli.giocattolo(k).global_position,
+					giocattoli.cerchio(k).global_position, giocattoli.piatto_giu(k), giocattoli.velocita(k)])
+			print("  (risolto %s, pozza %.3f, attivo %s)" % [giocattoli.aperta(), puddle.fill, svuota.attivo])
+	check(hatch_button.enabled and segnale.light_color.g > 0.9,
+		"coi tre piatti scesi il pulsante della botola si preme e il lampeggiante è verde")
 	check(String(GameState.snapshot.get("checkpoint", "")).ends_with("CheckpointPozzaVuota"), "checkpoint: piscina vuota")
 
 	print("Portello")

@@ -1,16 +1,22 @@
 @tool
 class_name PolaroidPhoto
 extends Collectible
-## Una delle 10 Polaroid del capitolo 1 (nella demo ce ne sono 9: P10 stava in cima alla torre e
-## torna con la sala della torre): il modello 3D con la sua foto. Raccolta, si guarda
-## da vicino (PhotoViewer) e va nella collezione. Con [member snap_to_surface] all'avvio si
-## appoggia sulla superficie sotto di sé.
+## Una delle Polaroid del capitolo 1 (le 10 della scaletta, P11 la pecora che brilla dell'infermeria, P12-P16 le
+## nuove della proposta del 25 ottobre notte, docs/proposte/polaroid_nuove/): il modello 3D con la sua foto. Raccolta,
+## si guarda da vicino (PhotoViewer) e va nella collezione. Con [member snap_to_surface] all'avvio si appoggia sulla
+## superficie sotto di sé; quelle messe da codice con [method metti] le appoggia Posa.
 
 const TEX_DIR := "res://assets/models/polaroid/texture/"
 const VIEWER := preload("res://scripts/ui/photo_viewer.gd")
+const SCENA := "res://scenes/props/polaroid.tscn"
+## I punti dell'impronta della foto (8,8 x 10,7 cm) per Posa.appoggia_su_impronta, negli strumenti e nei test (a gioco
+## avviato, con le stanze che si costruiscono a pezzi, i raggi sotto tutta la foto fanno fotogrammi lunghi): il centro,
+## gli angoli e i lati.
+const IMPRONTA: Array[Vector3] = [Vector3(0, 0, 0), Vector3(0.04, 0, 0.05), Vector3(-0.04, 0, 0.05), Vector3(0.04, 0, -0.05),
+	Vector3(-0.04, 0, -0.05), Vector3(0.04, 0, 0), Vector3(-0.04, 0, 0), Vector3(0, 0, 0.05), Vector3(0, 0, -0.05)]
 
-## Numero della foto (1-10, 11 la pecora che brilla dell'infermeria): texture Pxx.jpg.
-@export_range(1, 11) var photo := 1:
+## Numero della foto (1-10, 11 la pecora che brilla dell'infermeria, 12-16 le nuove): texture Pxx.jpg.
+@export_range(1, 16) var photo := 1:
 	set(value):
 		photo = value
 		_apply()
@@ -31,6 +37,50 @@ func _ready() -> void:
 	super()
 	if snap_to_surface:
 		_snap.call_deferred()
+
+
+## Una Polaroid messa da codice sotto [param padre]: [param pos] (locale, appena sopra il sostegno) e girata di
+## [param gradi]. Due fotogrammi di fisica dopo, Posa (lo strumento comune) la appoggia sulla superficie che si vede
+## sotto, 4 mm sopra come lo snap di sempre. Con [param posata] [param pos] è già il posto giusto, calcolato una volta
+## sola con uno strumento (la P12 sul grigliato della torre, tests/posa_polaroid12.gd): niente raggi a gioco avviato.
+## L'id nella collezione è "pNN".
+static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float, posata := false) -> PolaroidPhoto:
+	var p := (load(SCENA) as PackedScene).instantiate() as PolaroidPhoto
+	p.name = "Polaroid%02d" % foto
+	p.photo = foto
+	p.entry_id = StringName("p%02d" % foto)
+	p.snap_to_surface = false
+	p.position = pos
+	p.rotation_degrees.y = gradi
+	padre.add_child(p)
+	if not posata:
+		p._appoggia.call_deferred()
+	return p
+
+
+func _appoggia() -> void:
+	# (nelle stanze costruite a pezzi mentre si gioca, come il fiume, il pavimento può arrivare dopo: si aspetta la fine)
+	var n := get_parent()
+	while n:
+		while &"costruita" in n and not bool(n.get(&"costruita")) and is_inside_tree():
+			await get_tree().process_frame
+		n = n.get_parent()
+	if not is_inside_tree():
+		return
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	# (il fiume caricato a gioco avviato entra nella scena prima del suo pavimento: si riprova finché c'è, al massimo
+	# 20 secondi, poi Posa dice che non c'è niente sotto)
+	for i in 120:
+		if not is_inside_tree():
+			return
+		var da := global_position + Vector3.UP * 0.05
+		var q := PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * Posa.PORTATA, Posa.STRATI)
+		if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():
+			break
+		await get_tree().create_timer(0.17, false, true).timeout
+	if is_inside_tree():
+		Posa.appoggia_a_terra(self, 0.004)
 
 
 func get_texture() -> Texture2D:
@@ -90,7 +140,8 @@ func _snap() -> void:
 	var space := get_world_3d().direct_space_state
 	var from := global_position + Vector3(0, 0.6, 0)
 	var q := PhysicsRayQueryParameters3D.create(from, from + Vector3(0, -4.0, 0), Layers.WORLD | Layers.PROPS)
-	var hit := space.intersect_ray(q)
+	# (senza passare dalle crepe fra due triangoli, dove un raggio solo trova il pavimento sotto: RaggioSicuro)
+	var hit := RaggioSicuro.interseca(space, q)
 	if hit.is_empty():
 		push_warning("Polaroid %d: niente sotto su cui appoggiarsi (%s)" % [photo, global_position])
 		return
@@ -107,7 +158,7 @@ func _snap() -> void:
 	for a in [Vector3(0.07, 0, 0.07), Vector3(-0.07, 0, 0.07), Vector3(0.07, 0, -0.07), Vector3(-0.07, 0, -0.07)]:
 		var angolo: Vector3 = global_transform * (a as Vector3)
 		var qa := PhysicsRayQueryParameters3D.create(angolo + Vector3(0, 0.3, 0), angolo + Vector3(0, -0.3, 0), Layers.WORLD | Layers.PROPS)
-		var ha: Dictionary = space.intersect_ray(qa)
+		var ha: Dictionary = RaggioSicuro.interseca(space, qa)
 		if not ha.is_empty():
 			alza = maxf(alza, (ha.position as Vector3).y + 0.002 - angolo.y)
 	global_position.y += alza

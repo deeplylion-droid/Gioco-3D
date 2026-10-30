@@ -490,6 +490,20 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
   - numero, lunghezza e forma dei tentacoli;
   - nome della mascotte.
 
+## Le lingue: italiano e inglese (approvato dall'utente, 25 ottobre sera)
+
+Il gioco anche in inglese, con la nota dell'utente: "anche eventuali scritte sui disegni o nel videoclip sono da
+tradurre". Si sceglie nelle opzioni (prima riga della scheda Schermo, "Lingua": Italiano o English) e si salva.
+**Di base l'italiano**; la prima volta il gioco parte in inglese solo se il sistema è in inglese (scelta tecnica,
+proposta da ambienti-2). Tradotti: titolo, pausa, opzioni (audio compreso), calibrazione, comandi e nomi dei tasti,
+caricamento e consigli, avvisi e azioni ("Pick up", "Open"...), oggetti, la domanda di Nuova partita, le scritte finali
+e i sottotitoli dello spot VHS. Restano uguali i nomi (Jilly Jubilee, Jubilee, Wonderwave Cruises, Splash Lagoon) e le
+scritte nel parco, che sono già solo disegni o nomi ("LIVE SHOW", "CAM 3", "● REC" e la data dei monitor). La voce
+dello speaker nello spot è già inglese (Kokoro, voce A): in inglese i sottotitoli dicono le stesse parole della voce
+(il testo approvato nella bozza), in italiano restano le traduzioni. Tecnica: `godot/lingue/testi.csv`
+(chiave = la frase italiana), autoload `Lingua`, test `godot/tests/test_lingua.gd`.
+Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzioni, comandi).
+
 ## Tecnica
 
 - **Godot 4.7.2**, renderer Forward+, per PC. Build automatiche con GitHub Actions e Release su GitHub.

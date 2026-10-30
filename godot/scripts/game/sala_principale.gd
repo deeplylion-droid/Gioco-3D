@@ -104,10 +104,32 @@ var _materiali_torre: Array[Material] = []
 var _faccia: WaterHitbox
 
 
+## La nebbia viola in tutta la sala (scelta dell'utente del 29 ottobre): la zona va dai muri della sala (x da -20 a 20,
+## z da -24 a 20: tools/blender/ambiente_sala.py, X0..X1 e Y0..Y1) e dal fondo della piscina e della fossa dei bimbi
+## alla cupola, quindi sale passando le porte (gli interni, la torre, la Risalita e i tecnici restano fuori);
+## l'alone solo dalle lampade della sala (dietro i muri no).
+const NEBBIA_SALA := AABB(Vector3(-20.0, -3.5, -24.0), Vector3(40.0, 22.5, 44.0))
+
+
+func _nebbia_viola() -> void:
+	var z := ZonaNebbiaViola.new()
+	z.name = "NebbiaViola"
+	var cs := CollisionShape3D.new()
+	var b := BoxShape3D.new()
+	b.size = NEBBIA_SALA.size
+	cs.shape = b
+	cs.position = NEBBIA_SALA.get_center()
+	z.add_child(cs)
+	z.quota = 0.0
+	z.luci = [^"../Sala", ^"../LuciSala"]
+	add_child(z)
+
+
 func _ready() -> void:
 	# Prima del primo frame: meno varianti di shader, a parità di aspetto (UnificaMateriali).
 	UnificaMateriali.unifica(self)
 	_setup_hall()
+	_nebbia_viola()
 	if lamp_trigger:
 		lamp_trigger.body_entered.connect(_on_lamp_trigger)
 		# Ripartendo da un checkpoint già oltre il lampione la lampada è accesa: il trigger è
@@ -443,6 +465,16 @@ func _carica_torre() -> void:
 func _precarica_torre() -> void:
 	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "" or Game.uscendo:
 		return
+	# già caricata prima di una ripartenza (GameState.tieni): niente thread, si prepara subito
+	var tenuta := GameState.tenuta(sala_torre_scena) as PackedScene
+	if tenuta:
+		_torre_fallita = false
+		for r in SalaInseguimento.risorse():
+			if not ResourceLoader.has_cached(r):
+				Game.carica_in_thread(r)
+		_torre_pronta = tenuta
+		_prepara_torre.call_deferred()
+		return
 	if Game.carica_in_thread(sala_torre_scena, "PackedScene") == OK:
 		_torre_in_caricamento = true
 		_torre_fallita = false
@@ -462,6 +494,11 @@ func _process(_delta: float) -> void:
 	if stato == ResourceLoader.THREAD_LOAD_LOADED:
 		_torre_in_caricamento = false
 		var scena := ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
+		# tenuta per le ripartenze, con i file dell'inseguimento già arrivati (vedi GameState.tieni)
+		GameState.tieni(sala_torre_scena, scena)
+		for r in SalaInseguimento.risorse():
+			if ResourceLoader.has_cached(r):
+				GameState.tieni(r, load(r))
 		# (con la riserva già in sala la copia del thread non serve: si lascia andare)
 		if sala_torre == null:
 			_torre_pronta = scena
@@ -603,14 +640,19 @@ func _completa_torre() -> void:
 			_entra_in_torre(true))
 
 
-## Dentro la torre: il portone si richiude alle spalle (niente ritorno) e gli ambienti che non servono più
-## (interni e tecnici, dopo la tappa 8) si scaricano per la memoria.
+## Dentro la torre: il portone si richiude alle spalle (niente ritorno: la soglia si chiude subito) e gli ambienti che
+## non servono più (interni e tecnici, dopo la tappa 8) si scaricano per la memoria, col portone chiuso del tutto.
 func _entra_in_torre(chiudi: bool) -> void:
 	if _dentro_torre:
 		return
 	_dentro_torre = true
 	if chiudi and portone and portone.has_method(&"chiudi"):
 		portone.call(&"chiudi")
+		# mentre l'anta scorre dalla soglia si vede ancora la sala: via quando è chiuso (prima andavano via subito, e
+		# tornando indietro di corsa si restava nella sala senza; sonda del 29 ottobre)
+		if portone.has_signal(&"chiuso") and float(portone.get(&"quanto")) > 0.0:
+			portone.connect(&"chiuso", _scarica_ambienti, CONNECT_ONE_SHOT)
+			return
 	elif portone and portone.has_method(&"resta_chiuso"):
 		portone.call(&"resta_chiuso")
 	_scarica_ambienti.call_deferred()

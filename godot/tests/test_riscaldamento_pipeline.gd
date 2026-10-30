@@ -9,6 +9,7 @@ extends Node
 ##    nessuna compilazione "surface" né "draw" (le "specialization" vanno in sottofondo: si stampano).
 ## 3. il tunnel del viaggio sottomarino costruito come nel gioco (a pezzi, col suo riscaldamento) e poi visto lungo
 ##    tutta la strada: nessuna compilazione "surface" né "draw".
+## 5. nel tunnel la nebbia viola (NebbiaViola) che sale entrando: nessuna compilazione "surface" né "draw".
 ## (la torre al primo fotogramma visibile la prova test_torre_ingresso.gd)
 ## Uso: xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 \
 ##        --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
@@ -198,6 +199,23 @@ func _run() -> void:
 	check(spruzzava and colpi[0] > 0.0, "il getto parte e la colpisce (%.1f litri sul viso)" % colpi[0])
 	check(int(c[0] - prima[0]) == 0 and int(c[1] - prima[1]) == 0,
 		"spruzzandola nessuna compilazione che blocca (surface %d, draw %d; in sottofondo %d)" % [c[0] - prima[0], c[1] - prima[1], c[2] - prima[2]])
+
+	print("5. La nebbia viola del tunnel: entrando sale (con l'alone di lei), poi spenta dalle opzioni")
+	# (riscaldata all'avvio da RiscaldamentoShader: accendendola nessuna compilazione che blocca)
+	var nv := Grafica.nebbia_viola
+	GameState.player = g
+	nv.quanto = 0.0
+	prima = _conta()
+	var vista := 0.0
+	for i in 200:
+		var dir_lei := viso.global_position - occhi_g
+		g.teleport(piedi, atan2(-dir_lei.x, -dir_lei.z), atan2(dir_lei.y, Vector2(dir_lei.x, dir_lei.z).length()))
+		await get_tree().process_frame
+		vista = maxf(vista, nv.quanto)
+	c = _conta()
+	check(nv.in_zona() and vista > 0.5, "nel tunnel la nebbia viola c'è (%.2f)" % vista)
+	check(int(c[0] - prima[0]) == 0 and int(c[1] - prima[1]) == 0,
+		"accendendo la nebbia viola nessuna compilazione che blocca (surface %d, draw %d; in sottofondo %d)" % [c[0] - prima[0], c[1] - prima[1], c[2] - prima[2]])
 	g.queue_free()
 	_fine()
 

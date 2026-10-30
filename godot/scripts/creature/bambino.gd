@@ -28,9 +28,15 @@ enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
 
 const ANIMAZIONI: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"si_gira"]
 const CICLICHE: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa"]
-## Velocità a cui sono fatte le animazioni di camminata e corsa (m/s, a velocità 1).
-const VEL_CAMMINATA_ANIM := 0.45
-const VEL_CORSA_ANIM := 2.2
+## Accelerazione della camminata (m/s²): parte e si ferma con il passo, non di colpo.
+const ACCEL_CAMMINATA := 1.2
+## Quanto gira al massimo camminando (gradi al secondo): curve, non giri sul posto.
+const GIRO_CAMMINATA := 110.0
+## Il passo più lento delle animazioni di camminata e corsa (velocità dell'animazione): sotto, il piede a terra si
+## tiene fermo e il corpo si muove attorno a lui.
+const PASSO_MINIMO := 0.25
+## L'osso del piede sta così in alto sul pavimento quando il piede è a terra (m, con un po' di margine): più su è in aria.
+const PIEDE_A_TERRA := 0.11
 
 @export var modalita := Modalita.STATUA
 ## Comincia già rivelato (il cubo spaccato, l'agnellino con il muso aperto).
@@ -69,6 +75,16 @@ const VEL_CORSA_ANIM := 2.2
 ## Alla fine del percorso sparisce (per esempio dietro un angolo) invece di fermarsi a osservare.
 @export var sparisce_a_fine_percorso := false
 
+## Quanto avanzano i piedi a terra nelle animazioni di camminata e corsa (m/s, a velocità 1), misurato sugli
+## ossa dei piedi (tests/test_bambini_passi.gd): il corpo avanza alla stessa velocità e i piedi non scivolano.
+## L'agnellino ha le gambe più corte del bambino a cubo.
+@export var vel_camminata_anim := 0.45
+@export var vel_corsa_anim := 2.45
+## Correndo: accelerazione (m/s²) e quanto gira al massimo (gradi al secondo). Più svelto dove scappa in una
+## corsia stretta col giocatore che gli corre dietro (l'agnellino della scala).
+@export var accel_corsa := 4.5
+@export var giro_corsa := 260.0
+
 @export_group("Fuga")
 ## Se il giocatore arriva più vicino di così, scappa (0 = mai).
 @export var distanza_fuga := 3.5
@@ -90,6 +106,14 @@ const VEL_CORSA_ANIM := 2.2
 var e_rivelato := false
 
 var _modelli: Array[Node3D] = []
+## Per ogni modello: lo scheletro e le ossa dei piedi e delle punte (il piede a terra e il punto più basso).
+var _piedi: Array = []
+## Il piede tenuto fermo a terra mentre si volta sul posto o parte piano (osso e punto nel mondo; -1: nessuno).
+var _perno_osso := -1
+var _perno_pos := Vector3.ZERO
+var _perno_y := 0.0
+## Si sta voltando sul posto (coi passi della camminata).
+var _svolta := false
 var _player_anim: Array[AnimationPlayer] = []
 var _sguardi: Array[LookAtModifier3D] = []
 var _occhio_mat: StandardMaterial3D
@@ -102,6 +126,7 @@ var _punti: Array[Vector3] = []
 var _in_fuga := 0.0
 var _fermo_a_fine_fuga := false
 var _influenza := 0.0
+var _vel := 0.0           # velocità del corpo adesso (m/s), verso dove guarda
 
 
 func _ready() -> void:
@@ -136,6 +161,7 @@ func _prepara_modello(m: Node3D) -> void:
 	_modelli.append(m)
 	var ap := m.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if ap:
+		ap.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 		for a in CICLICHE:
 			if ap.has_animation(a):
 				ap.get_animation(a).loop_mode = Animation.LOOP_LINEAR
@@ -146,6 +172,11 @@ func _prepara_modello(m: Node3D) -> void:
 	if scheletri.is_empty():
 		return
 	var sk := scheletri[0] as Skeleton3D
+	var ossa := []
+	for nome in ["LeftFoot", "RightFoot", "LeftToeBase", "RightToeBase"]:
+		ossa.append(sk.find_bone(nome))
+	if ossa[0] >= 0 and ossa[1] >= 0:
+		_piedi.append([m, sk, ossa])
 	var testa := sk.find_bone("Head")
 	if testa < 0:
 		return
@@ -221,8 +252,10 @@ func cammina(punti: Array[Node3D]) -> void:
 		osserva()
 		return
 	_anima(&"cammina")
-	for ap in _player_anim:
-		ap.speed_scale = velocita_camminata / VEL_CAMMINATA_ANIM
+	_vel = 0.0
+	_perno_osso = -1
+	_svolta = false
+	_passo_animazione(vel_camminata_anim)
 
 
 ## Scappa subito (lungo punti_fuga, oppure via dal giocatore) e poi sparisce.
@@ -233,6 +266,8 @@ func scappa_ora() -> void:
 	_reazione_in_corso = false
 	_in_fuga = 0.0
 	_fermo_a_fine_fuga = false
+	_perno_osso = -1
+	_svolta = false
 	if rivela_quando_scappa and not e_rivelato:
 		rivela()
 	_punti.clear()
@@ -247,9 +282,8 @@ func scappa_ora() -> void:
 		if via.length() < 0.01:
 			via = global_basis.z
 		_punti.append(global_position + via.normalized() * distanza_fuga_libera)
-	_anima(&"corsa", 0.25)
-	for ap in _player_anim:
-		ap.speed_scale = velocita_corsa / VEL_CORSA_ANIM
+	_anima(&"corsa", 0.3)
+	_passo_animazione(vel_corsa_anim)
 	scappa.emit()
 
 
@@ -268,6 +302,10 @@ func richiudi() -> void:
 
 # ---------------------------------------------------------------- ogni frame
 func _process(delta: float) -> void:
+	# l'animazione va avanti qui, prima di muovere il corpo: il piede tenuto fermo a terra si misura sulla posa di
+	# questo fotogramma (con un fotogramma di ritardo scivolava)
+	for ap in _player_anim:
+		ap.advance(delta)
 	var p: Player = GameState.player
 	_aggiorna_sguardo(delta, p)
 	if p == null:
@@ -298,7 +336,7 @@ func _process(delta: float) -> void:
 			if _deve_scappare(p):
 				scappa_ora()
 				return
-			if _segui_punti(velocita_camminata * delta, deg_to_rad(90.0) * delta):
+			if _segui_punti(delta, velocita_camminata, GIRO_CAMMINATA, ACCEL_CAMMINATA, vel_camminata_anim, true):
 				if sparisce_a_fine_percorso:
 					_sparisci()
 				else:
@@ -307,7 +345,7 @@ func _process(delta: float) -> void:
 					osserva()
 		Modalita.SCAPPA:
 			_in_fuga += delta
-			var arrivato := _segui_punti(velocita_corsa * delta, deg_to_rad(540.0) * delta)
+			var arrivato := _segui_punti(delta, velocita_corsa, giro_corsa, accel_corsa, vel_corsa_anim, false)
 			if not sparisce_fuori_vista:
 				if arrivato:
 					_sparisci()
@@ -362,13 +400,24 @@ func _guardato_da(p: Player) -> bool:
 func visibile_da(p: Player) -> bool:
 	var cam := get_viewport().get_camera_3d()
 	var occhio := p.get_eye_position()
-	for i in 9:   # una griglia di punti sul corpo (solo in fuga): basta uno in vista
+	var punti: Array[Vector3] = []
+	# tutte le ossa del modello che si vede (dove sta davvero il corpo, anche di fianco: la griglia piatta qui sotto,
+	# col bambino girato di lato, finiva dietro uno spigolo mentre mezzo corpo era fuori; collaudo del 29 ottobre)...
+	for x in _piedi:
+		if not (x[0] as Node3D).visible:
+			continue
+		var sk := x[1] as Skeleton3D
+		for o in sk.get_bone_count():
+			punti.append(sk.global_transform * sk.get_bone_global_pose(o).origin)
+	# ...e una griglia di punti sul corpo (per i modelli senza ossa)
+	for i in 9:
 		for j in 5:
-			var punto: Vector3 = global_position + global_basis.y * (0.05 + i * 0.15) + global_basis.x * (j * 0.15 - 0.3)
-			if cam and not cam.is_position_in_frustum(punto):
-				continue
-			if _vista_libera(occhio, punto, p):
-				return true
+			punti.append(global_position + global_basis.y * (0.05 + i * 0.15) + global_basis.x * (j * 0.15 - 0.3))
+	for punto in punti:   # basta uno in vista
+		if cam and not cam.is_position_in_frustum(punto):
+			continue
+		if _vista_libera(occhio, punto, p):
+			return true
 	return false
 
 
@@ -429,16 +478,157 @@ func _gira_verso(punto: Vector3, passo: float) -> void:
 	rotation.y = rotate_toward(rotation.y, voluto, passo)
 
 
-## Avanza verso il prossimo punto; true quando è arrivato all'ultimo.
-func _segui_punti(passo: float, giro: float) -> bool:
-	while not _punti.is_empty() and global_position.distance_to(_punti[0]) < 0.1:
+## Avanza verso il prossimo punto come si cammina davvero: accelera e rallenta ([param accel]), gira in curva al
+## massimo di [param giro] gradi al secondo (più piano quando deve girare molto), e va sempre dove guarda; l'animazione
+## va alla stessa velocità del corpo ([param vel_anim]: quanto avanzano i piedi a terra), così i piedi non
+## scivolano. Con [param ferma] rallenta fino a fermarsi sull'ultimo punto. True quando è arrivato all'ultimo.
+func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_anim: float, ferma: bool) -> bool:
+	# (un punto in mezzo vale raggiunto da un po' prima, meno se dopo c'è una curva stretta: non taglia lo spigolo)
+	while not _punti.is_empty() and global_position.distance_to(_punti[0]) < (0.12 if _punti.size() == 1 else (0.25 if _curva_stretta() else 0.45)):
 		_punti.pop_front()
 	if _punti.is_empty():
+		_vel = 0.0
 		return true
 	var prossimo := _punti[0]
-	_gira_verso(prossimo, giro)
-	global_position = global_position.move_toward(prossimo, passo)
+	var verso := prossimo - global_position
+	verso.y = 0.0
+	var errore := absf(angle_difference(rotation.y, atan2(verso.x, verso.z)))
+	# voltandosi sul posto gira solo mentre il piede libero è sollevato: rasoterra la svolta lo trascinerebbe
+	_gira_verso(prossimo, deg_to_rad(giro) * delta * (_piede_libero_alzato() if _svolta else 1.0))
+	# girandosi molto rallenta (non va di lato); se deve voltarsi (oltre 75 gradi, per esempio per scappare da chi
+	# guardava) prima si volta quasi sul posto, a passi lenti, e poi parte: non fa la curva larga dentro un muro.
+	# Vicino all'ultimo punto si ferma col passo
+	var voluta := vel_max * clampf(cos(errore), 0.2, 1.0) if errore < deg_to_rad(75.0) else 0.0
+	# non più veloce di quanto serve per arrivare al punto girando (sennò gli gira intorno o lo manca)...
+	var d := verso.length()
+	var w := deg_to_rad(giro)
+	if errore > deg_to_rad(3.0):
+		voluta = minf(voluta, w * d / (2.0 * sin(errore)))
+	# ...e prima di una curva stretta rallenta, per farla col passo (raggio 0,35 m)
+	if _curva_stretta():
+		voluta = minf(voluta, sqrt(pow(w * 0.35, 2.0) + 2.0 * accel * d))
+	if ferma and _punti.size() == 1:
+		voluta = minf(voluta, sqrt(2.0 * accel * d))
+	_vel = move_toward(_vel, voluta, accel * delta)
+	# voltandosi sul posto fa i passi della camminata (a tempo con la svolta), poi riprende la sua andatura
+	var sul_posto := errore > deg_to_rad(75.0) and _vel < vel_anim * PASSO_MINIMO
+	if sul_posto != _svolta:
+		_svolta = sul_posto
+		var andatura := &"corsa" if modalita == Modalita.SCAPPA else &"cammina"
+		_anima(&"cammina" if _svolta else andatura, 0.15)
+	if _svolta:
+		for ap in _player_anim:
+			ap.speed_scale = clampf(giro / 150.0, 1.2, 2.5)
+		_blocca_piede()
+		return false
+	# camminando o andando piano (partendo, finendo di voltarsi) il piede a terra resta fermo nel mondo e il corpo gira
+	# e avanza attorno a lui, come un passo vero (sennò il piede piantato striscia); già lanciato, piegato in avanti
+	# (l'agnellino che entra nel buco) o con tutti e due i piedi in aria va alla sua velocità, che è quella dei piedi
+	if (_vel < vel_anim * 0.8 or modalita == Modalita.CAMMINA) and absf(rotation.x) < 0.01 and _blocca_piede():
+		_passo_animazione(vel_anim)
+		return false
+	_perno_osso = -1
+	var avanti := global_basis.z
+	avanti.y = 0.0
+	var passo := minf(_vel * delta, verso.length()) if _punti.size() == 1 else _vel * delta
+	global_position += avanti.normalized() * passo
+	_passo_animazione(vel_anim)
 	return false
+
+
+## Tiene fermo nel mondo il piede a terra (il più basso del modello che si vede): se è lo stesso del fotogramma prima,
+## sposta il corpo (in orizzontale) di quanto il piede si è mosso, per la rotazione o per l'animazione. Falso se il
+## modello non ha i piedi o se nessun piede tocca terra.
+func _blocca_piede() -> bool:
+	var basso := _piede_basso()
+	if basso.is_empty() or (basso[1] as Vector3).y - global_position.y > PIEDE_A_TERRA:
+		_perno_osso = -1
+		return false
+	if basso[0] == _perno_osso:
+		var d: Vector3 = _perno_pos - basso[1]
+		d.y = 0.0
+		global_position += d
+	else:
+		_perno_osso = basso[0]
+		_perno_pos = basso[1]
+		_perno_y = (basso[1] as Vector3).y
+	return true
+
+
+## Quanto girare voltandosi sul posto, secondo quanto è sollevato il piede che non fa da perno: 1 da un paio di
+## centimetri in su (tallone e punta), rasoterra poco (0,25: la svolta non si ferma, ma lo trascina appena).
+func _piede_libero_alzato() -> float:
+	for x in _piedi:
+		if not (x[0] as Node3D).visible or _perno_osso < 0:
+			continue
+		var sk := x[1] as Skeleton3D
+		var ossa: Array = x[2]
+		var i := 0 if _perno_osso == ossa[0] else 1
+		var y := func(o: int) -> float: return (sk.global_transform * sk.get_bone_global_pose(o).origin).y
+		var libero: float = y.call(ossa[1 - i]) - y.call(ossa[i])
+		# (anche la punta: alzando il tallone resta a terra ancora un po')
+		if ossa[2] >= 0 and ossa[3] >= 0:
+			libero = minf(libero, y.call(ossa[3 - i]) - y.call(ossa[2 + i]))
+		return clampf((libero - 0.006) / 0.014, 0.25, 1.0)
+	return 1.0
+
+
+## [osso, punto nel mondo] del piede a terra del modello che si vede (vuoto se non ci sono le ossa).
+func _piede_basso() -> Array:
+	for x in _piedi:
+		if not (x[0] as Node3D).visible:
+			continue
+		var sk := x[1] as Skeleton3D
+		var ossa: Array = x[2]
+		var a := sk.global_transform * sk.get_bone_global_pose(ossa[0]).origin
+		var b := sk.global_transform * sk.get_bone_global_pose(ossa[1]).origin
+		# (il piede che fa da perno resta lui finché l'altro non è più basso di un millimetro: da fermo sono tutti e due a terra
+		# e cambiare a ogni fotogramma vorrebbe dire non tenerne fermo nessuno)
+		# (e lo lascia appena comincia ad alzarsi, se l'altro è più basso: quello è il piede che appoggia)
+		var alzato := _perno_osso >= 0 and (a if _perno_osso == ossa[0] else b).y > _perno_y + 0.004
+		var i := 0 if a.y < b.y else 1
+		if _perno_osso == ossa[0] and a.y < b.y + (0.0 if alzato else 0.001):
+			i = 0
+		elif _perno_osso == ossa[1] and b.y < a.y + (0.0 if alzato else 0.001):
+			i = 1
+		return [ossa[i], a if i == 0 else b]
+	return []
+
+
+## L'altezza del punto più basso dei piedi e delle punte (nel mondo) del modello che si vede; INF se non ci sono le ossa.
+func piedi_piu_in_basso() -> float:
+	return punto_piu_in_basso().y
+
+
+## Il punto più basso dei piedi e delle punte (nel mondo) del modello che si vede; y INF se non ci sono le ossa.
+func punto_piu_in_basso() -> Vector3:
+	var q := Vector3(0, INF, 0)
+	for x in _piedi:
+		if not (x[0] as Node3D).visible:
+			continue
+		var sk := x[1] as Skeleton3D
+		for o: int in x[2]:
+			if o >= 0:
+				var w := sk.global_transform * sk.get_bone_global_pose(o).origin
+				if w.y < q.y:
+					q = w
+	return q
+
+
+## Dopo il prossimo punto la strada gira di più di 45 gradi.
+func _curva_stretta() -> bool:
+	if _punti.size() < 2:
+		return false
+	var a := (_punti[0] - global_position) * Vector3(1, 0, 1)
+	var b := (_punti[1] - _punti[0]) * Vector3(1, 0, 1)
+	return a.length() > 0.01 and b.length() > 0.01 and a.angle_to(b) > deg_to_rad(45.0)
+
+
+## L'animazione di camminata o corsa alla velocità del corpo (i piedi non scivolano); da fermo un passo minimo.
+func _passo_animazione(vel_anim: float) -> void:
+	var scala := clampf(_vel / maxf(vel_anim, 0.01), PASSO_MINIMO, 1.6)
+	for ap in _player_anim:
+		ap.speed_scale = scala
 
 
 func _sparisci() -> void:

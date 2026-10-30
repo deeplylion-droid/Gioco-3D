@@ -99,6 +99,21 @@ Posa.appendi_a(lampadina, gancio, 0.03)            # l'attacco 3 cm sopra l'orig
 
 Le funzioni restituiscono `true` se hanno trovato il sostegno. Esempio vero: le luci di emergenza della torre (`sala_torre.gd`, `_emergenza`). Test: `godot/tests/test_posa.gd`, nella CI.
 
+**Grigliati e cose piatte.** Un raggio solo, al centro dell'oggetto, su un grigliato può passare in un buco fra le barre: lì trova solo la collisione, che spesso sta sopra le barre (sul pianerottolo del portone della torre 1 cm). Così la P12 restava sospesa di 13 mm (collaudo delle Polaroid del 28 ottobre). Per le cose piatte che si posano a terra (fogli, Polaroid) c'è `appoggia_su_impronta`: un raggio per ogni punto dell'impronta. Vale la mesh più alta colpita; le mesh più di 5 cm sotto la collisione non contano, perché sono il pavimento sotto il grigliato. **Non a gioco avviato** in una stanza che si costruisce a pezzi: i raggi sotto tutta la foto, con le mesh appena arrivate, facevano due fotogrammi da 130 ms mentre la torre finiva di costruirsi (test_attesa_zone rosso il 29 ottobre). Un oggetto che sta fermo si posa una volta con uno strumento, e il posto calcolato si scrive nel codice. La P12 si calcola con `tests/posa_polaroid12.gd`, e si mette con `PolaroidPhoto.metti(..., true)`: l'altezza la controlla `test_torre`, sotto tutta la foto. Le altre Polaroid messe da codice si appoggiano con un raggio solo (`appoggia_a_terra`), perché non stanno su grigliati.
+
+```gdscript
+Posa.appoggia_su_impronta(foto, [Vector3.ZERO, Vector3(0.04, 0, 0.05), Vector3(-0.04, 0, -0.05)], 0.004)
+```
+
+Nel gioco l'unico altro uso di `appoggia_a_terra` sono gli arredi del sottomarino, appoggiati sulle mensole (`sottomarino_arredi_a2.gd`), che non sono grigliati. Le altre Polaroid si appoggiano da sole (`snap_to_surface`, un raggio della fisica): nessuna sta su un grigliato.
+
+**La crepa dei raggi.** Il test raggio-triangolo di Jolt non è a tenuta. Un raggio della fisica a meno di qualche millesimo di millimetro da un lato condiviso fra due triangoli può passare in mezzo, e trova quello che c'è sotto o niente. Succede solo proprio sopra un lato, ma le cose messe a coordinate tonde ci finiscono, perché anche le giunzioni stanno spesso a coordinate tonde. Sul fondo della piscina, a x = 0, un giocattolo spinto lungo l'asse cadeva sul soffitto della camera delle onde, 2,4 m sotto (ricontrollo di ambienti-2 del 29 ottobre). Il giocatore e i corpi con una forma non hanno il problema: vale solo per i raggi. Per cercare un appoggio con un raggio si usa `RaggioSicuro.interseca(spazio, query)` (`godot/addons/acqua/scripts/raggio_sicuro.gd`) al posto di `intersect_ray`:
+- oltre al raggio ne lancia quattro paralleli a 2,5 mm, in croce;
+- se quelli di due lati opposti trovano, d'accordo fra loro, una superficie più vicina, il raggio al centro era passato da una crepa e vale quella;
+- vicino a uno spigolo vero la superficie la trova un lato solo, e lì, come ovunque fuori dalle crepe, il risultato è quello del raggio solo.
+
+Lo usano già Posa, lo snap delle Polaroid, le pozze, i galleggianti, la bava rosa, le gocce e la griglia del fondo delle medusine (lì solo sui punti sospetti, per non pesare). Test: `godot/tests/test_raggi_crepa.gd`, nella CI.
+
 **Nei generatori Blender**: `tools/blender/posa.py`. Misura la mesh vera nel mondo, modificatori compresi, quindi non servono gli scarti a mano.
 
 ```python

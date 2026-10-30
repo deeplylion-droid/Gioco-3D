@@ -92,6 +92,21 @@ const FORMA := 0.3
 @export var muro_col_foro_tondo := false
 ## Falso: niente lei (per esempio prima del blackout lo decide chi mette l'oblò con [member pronto]).
 @export var attivo := true
+## I bias delle ombre della luce di lei (shadow_bias, shadow_normal_bias). Di serie 0,1 e 1,0, come l'occhio di lei
+## si è sempre visto (scelta dell'utente del 29 ottobre); la torre li abbassa (SalaTorre._oblo_lei: con quelli di serie
+## la luce passava dagli spigoli sottili della cisterna e faceva righe rosa nella sala delle condotte).
+@export var bias_ombre := Vector2(0.1, 1.0)
+## Se più di 0: attorno alla vasca, appena fuori, un guscio spesso tanto (m) che fa solo ombra (non si vede), chiuso
+## agli spigoli. La luce di lei resta dentro anche dove fuori c'è una lamiera sottile da una faccia sola (la cisterna
+## dell'oblò della torre, nel GLB delle condotte: dai suoi spigoli in alto passava una riga rosa).
+@export var guscio_ombra := 0.0
+## Se non è nero: i veli dell'acqua torbida della vasca si accendono appena di questo colore (emissione), come l'acqua
+## illuminata da una luce che sta fuori (l'oblò della torre: il rosso della lampada d'emergenza, scelta B dell'utente
+## del 29 ottobre). La luce resta nei veli: non passa da nessuna parte.
+@export var veli_colore := Color.BLACK
+## Lo stesso per il vetro (davanti a lei): un velo di colore su tutto quello che si vede dall'oblò, come la nebbia accesa
+## nella vasca davanti a lei (l'oblò della torre, 0.3.15).
+@export var vetro_colore := Color.BLACK
 
 var stato := Stato.ATTESA
 ## La lei che sta dietro il vetro, se c'è.
@@ -234,7 +249,7 @@ func _costruisci() -> void:
 	vetro.mesh = cm
 	vetro.rotation_degrees.x = 90.0
 	vetro.position.z = -spessore_muro + 0.015
-	vetro.material_override = _mat_vetro()
+	vetro.material_override = _mat_vetro(vetro_colore)
 	vetro.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF   # la luce rosa di lei passa
 	add_child(vetro)
 	# il corpo: piastra e vetro chiudono il buco del muro
@@ -415,6 +430,8 @@ func _vasca() -> void:
 	mi.mesh = st.commit()
 	mi.material_override = _mat_vasca()
 	add_child(mi)
+	if guscio_ombra > 0.0:
+		_guscio_ombra(pz, z0, z1)
 	# l'acqua torbida: veli che si vedono dal vetro, a pezzi come la vasca (una "superficie d'acqua" per i controlli)
 	var acqua := Node3D.new()
 	acqua.name = "AcquaTorbida"
@@ -432,9 +449,47 @@ func _vasca() -> void:
 			qm.size = Vector2(float(r[1]) - float(r[0]) - 0.02, float(r[3]) - float(r[2]) - 0.02)
 			v.mesh = qm
 			v.position = Vector3((float(r[0]) + float(r[1])) * 0.5, (float(r[2]) + float(r[3])) * 0.5, z0 - float(veli[k]))
-			v.material_override = _mat_velo(0.22 + 0.08 * k)
+			v.material_override = _mat_velo(0.22 + 0.08 * k, veli_colore)
 			v.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			acqua.add_child(v)
+
+
+## Il guscio che fa solo ombra attorno alla vasca ([member guscio_ombra]): il fondo, il soffitto, il pavimento e i due
+## lati, 2 mm fuori dalla vasca, che si sovrappongono agli spigoli. Davanti entrano 5 cm nel muro: fra il muro e la
+## vasca c'è la fessura di [constant STACCO_VASCA], e la luce entrata lì dal buco della piastra usciva dai lati.
+func _guscio_ombra(pz: Array, z0: float, z1: float) -> void:
+	var davanti := z0 + STACCO_VASCA + 0.05
+	var x0 := INF
+	var x1 := -INF
+	for r in pz:
+		x0 = minf(x0, float(r[0]))
+		x1 = maxf(x1, float(r[1]))
+	var y0 := -vasca_sotto
+	var y1 := vasca_sopra
+	var t := guscio_ombra
+	const E := 0.002
+	var dietro := z1 - E - t
+	var lastre := [
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x1 + E + t, y1 + E + t, z1 - E)],    # il fondo
+		[Vector3(x0 - E - t, y1 + E, dietro), Vector3(x1 + E + t, y1 + E + t, davanti)],           # il soffitto
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x1 + E + t, y0 - E, davanti)],           # il pavimento
+		[Vector3(x0 - E - t, y0 - E - t, dietro), Vector3(x0 - E, y1 + E + t, davanti)],           # un lato
+		[Vector3(x1 + E, y0 - E - t, dietro), Vector3(x1 + E + t, y1 + E + t, davanti)],           # l'altro
+	]
+	var guscio := Node3D.new()
+	guscio.name = "GuscioOmbra"
+	add_child(guscio)
+	for l in lastre:
+		var a: Vector3 = l[0]
+		var b: Vector3 = l[1]
+		var m := MeshInstance3D.new()
+		var bx := BoxMesh.new()
+		bx.size = (b - a).abs()
+		m.mesh = bx
+		m.position = (a + b) * 0.5
+		m.material_override = _mat_vasca()
+		m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+		guscio.add_child(m)
 
 
 static func _quad(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, verso: Vector3) -> void:
@@ -486,25 +541,32 @@ static func _mat_vasca() -> StandardMaterial3D:
 	return _materiali["vasca"]
 
 
-static func _mat_vetro() -> StandardMaterial3D:
-	if not _materiali.has("vetro"):
+static func _mat_vetro(colore := Color.BLACK) -> StandardMaterial3D:
+	var chiave := "vetro" if colore == Color.BLACK else "vetro_%s" % colore.to_html()
+	if not _materiali.has(chiave):
 		var m := StandardMaterial3D.new()
 		m.albedo_color = Color(0.4, 0.6, 0.6, 0.16)
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		m.roughness = 0.05
 		m.cull_mode = BaseMaterial3D.CULL_DISABLED
-		_materiali["vetro"] = m
-	return _materiali["vetro"]
+		if colore != Color.BLACK:
+			m.emission_enabled = true
+			m.emission = colore
+		_materiali[chiave] = m
+	return _materiali[chiave]
 
 
-static func _mat_velo(alfa: float) -> StandardMaterial3D:
-	var chiave := "velo_%s" % alfa
+static func _mat_velo(alfa: float, colore := Color.BLACK) -> StandardMaterial3D:
+	var chiave := "velo_%s_%s" % [alfa, colore.to_html()]
 	if not _materiali.has(chiave):
 		var m := StandardMaterial3D.new()
 		m.albedo_color = Color(0.03, 0.09, 0.09, alfa)
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		m.roughness = 1.0
 		m.metallic_specular = 0.0
+		if colore != Color.BLACK:
+			m.emission_enabled = true
+			m.emission = colore
 		_materiali[chiave] = m
 	return _materiali[chiave]
 
@@ -512,7 +574,10 @@ static func _mat_velo(alfa: float) -> StandardMaterial3D:
 ## I materiali dell'oblò (per il riscaldamento: si compilano prima, dove si costruisce la sala).
 static func materiali() -> Array:
 	return [_mat_lamiera(Color(0.42, 0.45, 0.46), 1.2), _mat_vasca(), _mat_ottone(),
-			_mat_vetro(), _mat_velo(0.22), _mat_velo(0.3), _mat_velo(0.38)]
+			_mat_vetro(), _mat_velo(0.22), _mat_velo(0.3), _mat_velo(0.38),
+			# (i veli accesi di un colore, nella torre: con l'emissione sono un'altra variante dello shader; non
+			# riscaldata costava 167 ms nel passo dell'oblò della costruzione a pezzi, test_oblo_leggeri)
+			_mat_velo(0.22, Color(0.01, 0.0, 0.0))]
 
 
 # --- lei -----------------------------------------------------------------------------------------------------------
@@ -611,6 +676,7 @@ func prepara_lei(fase := -1) -> void:
 func _crea_lei() -> void:
 	lei = LeiOblo.new()
 	lei.name = "Lei"
+	lei.bias_ombre = bias_ombre
 	lei.lato_sbircia = 1 if lato_sbircia >= 0.0 else -1
 	add_child(lei)
 	lei.sparita.connect(_sparita)

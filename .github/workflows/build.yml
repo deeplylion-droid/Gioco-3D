@@ -62,6 +62,16 @@ jobs:
           # Le texture estratte dai GLB vanno in compressione VRAM (meno memoria), poi si reimporta.
           python3 tools/godot_vram_textures.py godot
           godot --headless --path godot --import
+          # Alcune texture estratte dai GLB (quelle della medusa) nascono solo con la seconda importazione, dopo la
+          # conversione: senza un altro giro restavano Lossless senza mipmap (le ha trovate il controllo qui sotto).
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Texture del pacchetto compresse per la scheda video e con le mipmap (le eccezioni volute in tools/ci/texture_lossless_volute.txt)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          python3 tools/ci/test_texture_compresse.py
+          python3 tools/ci/texture_compresse.py godot
 
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'
@@ -87,9 +97,21 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
 
+      - name: Test dell'audio quando le scene si liberano a pezzi o il gioco si chiude (niente "Lambda capture ... was freed")
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio_chiusura.gd
+
       - name: Test del menu (titolo, caricamento, pausa)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
+
+      - name: Test delle lingue (italiano e inglese; ogni testo a schermo ha la traduzione, nessuna chiave vuota)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lingua.gd
+
+      - name: Test della nebbia viola per zona (sale entrando, scende uscendo, checkpoint, opzione, alone, zone)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_zona_nebbia.gd
 
       - name: Test dello spot VHS (lettore, audio ai tempi, salto tenendo premuto)
         if: steps.progetto.outputs.presente == 'si'
@@ -98,6 +120,12 @@ jobs:
       - name: Test dei bambini (scene, animazioni, modalità)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini.gd
+
+      - name: Test dei passi dei bambini (piedi a terra, niente scivolate) e dei bambini visti di sfuggita
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_passi.gd
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_sfuggita.gd
 
       - name: Test degli interni (corridoio, spogliatoi, stanzino)
         if: steps.progetto.outputs.presente == 'si'
@@ -123,6 +151,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_tunnel.gd
 
+      - name: Test del cuore e del ritmo d'inseguimento nel tunnel (seguono la distanza di lei, tacciono quando prende o sparisce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento_suoni.gd
+
       - name: Test degli ambienti tecnici (camera delle onde, sala pompe)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tecnici.gd
@@ -130,6 +162,10 @@ jobs:
       - name: Test delle tappe 5-6 (dalla pozza al raccordo, il risveglio)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappe56.gd
+
+      - name: Test dell'enigma dei giocattoli (spinti col getto sull'acqua e sul fondo vuoto, nei due ordini; i piatti, il lampeggiante e la botola)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_enigma_giocattoli.gd
 
       - name: Test della tappa 7 (il ritorno al buio)
         if: steps.progetto.outputs.presente == 'si'
@@ -151,9 +187,17 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_sbuca.gd
 
+      - name: Test dei tentacoli morbidi di lei che sbuca a 60 fps (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_sbuca.gd
+
       - name: Test dei tentacoli morbidi nell'inseguimento (collisioni bloccanti, costo solo stampato)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+
+      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata e a scolo_2 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: SOLO=scolo_2,grata godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
       - name: Test della vista subacquea (con la testa sopra il pelo di ogni acqua resta normale, anche con due acque sovrapposte)
         if: steps.progetto.outputs.presente == 'si'
@@ -186,6 +230,10 @@ jobs:
       - name: Test della riserva della torre (thread lento al portone)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_riserva.gd
+
+      - name: Test del portone della torre alle spalle (tornando indietro di corsa si resta nella torre, appoggiati alla soglia non si resta incastrati, dopo una morte si riparte col portone chiuso)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_portone_torre.gd
 
       - name: Test del guado nel canale del tunnel sottomarino (velocità, risalita, aspirazione)
         if: steps.progetto.outputs.presente == 'si'
@@ -255,6 +303,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_posa.gd
 
+      - name: Test della crepa dei raggi (un raggio su un lato condiviso fra due triangoli passa in mezzo; chi cerca un appoggio resta sul fondo)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_raggi_crepa.gd
+
       - name: Test del primo uso, dell'ingresso nella torre e di lei negli oblò (niente blocchi; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
         run: |
@@ -268,6 +320,10 @@ jobs:
       - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
+
+      - name: Test della memoria a ogni morte (6 ripartenze di fila, niente che cresce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_memoria_morti.gd
 
       - name: Test degli strati di disegno (nessuno condiviso senza volerlo; quello della preparazione non si vede)
         if: steps.progetto.outputs.presente == 'si'

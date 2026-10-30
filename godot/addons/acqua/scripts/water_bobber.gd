@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
 	if _floor_t <= 0.0:
 		_floor_t = 0.4
 		var q := PhysicsRayQueryParameters3D.create(p + Vector3.UP * 0.6, p + Vector3.DOWN * 6.0)
-		var hit := get_world_3d().direct_space_state.intersect_ray(q)
+		var hit := RaggioSicuro.interseca(get_world_3d().direct_space_state, q)
 		_floor_y = hit.position.y if hit else rest_y
 	var floor_y := maxf(_floor_y, rest_y) + draft * 0.6
 	var grounded: bool = _body.is_empty() or y < floor_y

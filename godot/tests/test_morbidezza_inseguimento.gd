@@ -38,6 +38,15 @@ func _check_costo(cond: bool, msg: String) -> void:
 		_check(cond, msg)
 
 
+var _occupati: Array[int] = []
+
+
+func _occupa() -> void:
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 40:
+		pass
+
+
 func _check(cond: bool, msg: String) -> void:
 	if cond:
 		_ok += 1
@@ -89,8 +98,15 @@ func _run() -> void:
 		var durata := float(sala.get_meta(&"durata_salita", 1.6)) + 2.0
 		var t := 0.0
 		while t < durata:
+			# (POOL_OCCUPATO=1: il WorkerThreadPool occupato a ogni fotogramma, come dai caricamenti nel thread)
+			if OS.has_environment("POOL_OCCUPATO"):
+				for kk in 4:
+					_occupati.append(WorkerThreadPool.add_task(_occupa, false, "occupa"))
 			await get_tree().process_frame
 			t += get_process_delta_time()
+		for id in _occupati:
+			WorkerThreadPool.wait_for_task_completion(id)
+		_occupati.clear()
 		mis.ferma()
 		var r: Dictionary = mis.risultati(dove)
 		_check(r["fotogrammi"] > 20, "%s: registrati %d fotogrammi" % [dove, r["fotogrammi"]])

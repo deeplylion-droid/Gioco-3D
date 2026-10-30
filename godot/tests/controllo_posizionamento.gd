@@ -51,6 +51,12 @@ const ZONE := [
 			"parti": ["SalaInseguimento"]},
 	# l'oblò del fondo della torre con lei dietro il vetro (ObloLei, come quelli della Risalita)
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "torre_oblo", "parti": ["ObloLei"]},
+	# l'enigma dei giocattoli nella piscina a onde (enigmi, 28 ottobre): a pozza vuota coi giocattoli appoggiati sul
+	# fondo dove sono, e risolto, coi piatti scesi e la botola aperta
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "giocattoli", "stato": "piscina_vuota",
+			"parti": ["Piscina/EnigmaGiocattoli"]},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "giocattoli", "stato": "piatti_scesi",
+			"parti": ["Piscina/EnigmaGiocattoli", "Sala/Interattivi/sala_portello_scarico"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
@@ -71,10 +77,10 @@ const SQUADRE := [
 	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
 	["Sala/Dettagli", "ambienti-2"],   # il kit dei dettagli (dettagli_sala.gd)
 	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
-	["ArredoRisalita", "enigmi"],
+	["ArredoRisalita", "enigmi"], ["Piscina/EnigmaGiocattoli", "enigmi"],
 ]
 const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2",
-	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
+	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi", "giocattoli": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
 ## Effetti a tempo (schizzi, getti, vapore, particelle): durano pochi secondi e si sovrappongono per natura, non sono
 ## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dalle parole del nome di un nodo
 ## del percorso o della classe del suo script: una parola che comincia con una di queste (vedi _parole). Non basta
@@ -317,6 +323,22 @@ func _prepara(stato: String) -> void:
 			if lei and lei.has_method(&"_affaccia"):
 				lei.call(&"_affaccia")
 			for i in 30:
+				await get_tree().physics_frame
+			return
+		"piscina_vuota", "piatti_scesi":
+			var giocattoli := _radice.find_child("EnigmaGiocattoli", true, false)
+			var pozza := _radice.get_node_or_null(^"Piscina/Pozza") as WaterTank
+			if pozza:
+				pozza.fill = 0.0
+			if giocattoli and stato == "piatti_scesi":
+				giocattoli.call(&"load_state", {"risolto": true})
+				var svuota := _radice.get_node_or_null(^"Piscina/SvuotaPiscina")
+				if svuota:
+					svuota.call(&"load_state", {"attivo": true})
+				for portello in _radice.find_children("*", "HingedHatch", true, false):
+					portello.call(&"load_state", {"open": true})
+			# (i giocattoli calano sul fondo e scivolano giù dai gonfiabili: un paio di secondi)
+			for i in 150:
 				await get_tree().physics_frame
 			return
 		"tappa7":

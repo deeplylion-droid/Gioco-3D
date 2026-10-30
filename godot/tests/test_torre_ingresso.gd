@@ -72,6 +72,8 @@ func _run() -> void:
 	for s in ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creature/bambino_agnello.tscn", "res://scenes/props/polaroid.tscn"]:
 		var n := (load(s) as PackedScene).instantiate()
 		n.set(&"visible", false)
+		# (la Polaroid qui, nell'origine, non ha niente sotto: niente avviso dello snap)
+		n.set(&"snap_to_surface", false)
 		add_child(n)
 		await _frames(1)
 	# e gli shader dei materiali che la torre crea da codice, che la sala crea entrando (sala_principale.gd)

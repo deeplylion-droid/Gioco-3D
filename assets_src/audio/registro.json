@@ -99,6 +99,66 @@
   "lufs": null,
   "lufs_max": -18.0
  },
+ "ambiente/inseguimento_colpo_01": {
+  "file": "res://audio/ambiente/inseguimento_colpo_01.ogg",
+  "canali": 1,
+  "durata": 1.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina",
+  "lufs": -33.0,
+  "lufs_max": -28.0
+ },
+ "ambiente/inseguimento_colpo_02": {
+  "file": "res://audio/ambiente/inseguimento_colpo_02.ogg",
+  "canali": 1,
+  "durata": 1.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina",
+  "lufs": -32.2,
+  "lufs_max": -28.0
+ },
+ "ambiente/inseguimento_colpo_03": {
+  "file": "res://audio/ambiente/inseguimento_colpo_03.ogg",
+  "canali": 1,
+  "durata": 1.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina",
+  "lufs": -34.1,
+  "lufs_max": -30.0
+ },
+ "ambiente/inseguimento_colpo_04": {
+  "file": "res://audio/ambiente/inseguimento_colpo_04.ogg",
+  "canali": 1,
+  "durata": 1.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina",
+  "lufs": -35.9,
+  "lufs_max": -30.0
+ },
+ "ambiente/inseguimento_colpo_05": {
+  "file": "res://audio/ambiente/inseguimento_colpo_05.ogg",
+  "canali": 1,
+  "durata": 1.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina",
+  "lufs": -33.6,
+  "lufs_max": -30.0
+ },
+ "ambiente/inseguimento_colpo_06": {
+  "file": "res://audio/ambiente/inseguimento_colpo_06.ogg",
+  "canali": 1,
+  "durata": 1.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina",
+  "lufs": -36.2,
+  "lufs_max": -30.0
+ },
  "ambiente/nave_colpo_lontano_01": {
   "file": "res://audio/ambiente/nave_colpo_lontano_01.ogg",
   "canali": 1,
@@ -778,6 +838,56 @@
   "nota": "",
   "lufs": null,
   "lufs_max": -16.6
+ },
+ "giocatore/cuore_battito_01": {
+  "file": "res://audio/giocatore/cuore_battito_01.ogg",
+  "canali": 1,
+  "durata": 0.75,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei",
+  "lufs": -31.2,
+  "lufs_max": -26.3
+ },
+ "giocatore/cuore_battito_02": {
+  "file": "res://audio/giocatore/cuore_battito_02.ogg",
+  "canali": 1,
+  "durata": 0.75,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei",
+  "lufs": -32.0,
+  "lufs_max": -26.5
+ },
+ "giocatore/cuore_battito_03": {
+  "file": "res://audio/giocatore/cuore_battito_03.ogg",
+  "canali": 1,
+  "durata": 0.75,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei",
+  "lufs": -31.2,
+  "lufs_max": -26.2
+ },
+ "giocatore/cuore_battito_04": {
+  "file": "res://audio/giocatore/cuore_battito_04.ogg",
+  "canali": 1,
+  "durata": 0.75,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei",
+  "lufs": -31.8,
+  "lufs_max": -26.7
+ },
+ "giocatore/cuore_battito_05": {
+  "file": "res://audio/giocatore/cuore_battito_05.ogg",
+  "canali": 1,
+  "durata": 0.75,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei",
+  "lufs": -30.9,
+  "lufs_max": -26.0
  },
  "giocatore/passo_acqua_01": {
   "file": "res://audio/giocatore/passo_acqua_01.ogg",

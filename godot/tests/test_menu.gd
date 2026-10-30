@@ -162,6 +162,19 @@ func _run() -> void:
 	await _frames(3)
 	sotto = menu.call(&"sottomenu")
 	check(sotto != null and sotto.get_node_or_null("Menu") is MenuOpzioni, "Opzioni apre il menu dell'addon grafica")
+	# la voce "Nebbia viola" (richiesta dell'utente del 29 ottobre): accesa di serie; cambiata, va alla nebbia
+	var opz_m: Node = sotto.get_node_or_null("Menu") if sotto else null
+	var nv: CheckButton = (opz_m.get(&"_controlli") as Dictionary).get("nebbia_viola") if opz_m else null
+	var salva_prima := Grafica.salva_su_disco
+	Grafica.salva_su_disco = false
+	var di_serie := nv != null and nv.button_pressed and bool(Grafica.valore("nebbia_viola")) and Grafica.nebbia_viola.accesa
+	if nv:
+		nv.button_pressed = false
+	var spenta := not bool(Grafica.valore("nebbia_viola")) and not Grafica.nebbia_viola.accesa
+	if nv:
+		nv.button_pressed = true
+	check(di_serie and spenta and Grafica.nebbia_viola.accesa, "nelle opzioni c'è \"Nebbia viola\", accesa di serie, e spegnerla spegne la nebbia")
+	Grafica.salva_su_disco = salva_prima
 	await _premi(&"ui_cancel")
 	await _frames(2)
 	check(menu.call(&"sottomenu") == null, "Esc chiude le opzioni")

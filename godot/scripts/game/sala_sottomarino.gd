@@ -72,6 +72,8 @@ const VELOCITA_GUADO_ACCOVACCIATO := 1.2
 ## Le gallerie di servizio (i passaggi bassi, scelta 4C dell'utente): dietro il muro, larghe [constant GALLERIA_LARGA]
 ## e alte [constant GALLERIA_ALTA] (ci si passa solo accovacciati), con le due bocche lunghe [constant GALLERIA_BOCCA].
 const GALLERIA_ALTA := 1.25
+## L'agnellino del bambino visto di sfuggita alla bocca della galleria (preload: col thread della zona).
+const BAMBINO_AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
 const GALLERIA_LARGA := 1.5
 const GALLERIA_BOCCA := 1.4
 ## Lo smusso dello spigolo fra lo stipite della bocca e il muro della galleria (si gira dentro senza fermarsi).
@@ -298,6 +300,9 @@ func _riscalda() -> void:
 		cam.attributes = cam_gioco.attributes
 		cam.fov = cam_gioco.fov
 	cam.current = true
+	# (la luce rosa degli effetti dell'inseguimento accesa davanti alla camera nascosta: le sue pipeline qui)
+	if effetti:
+		effetti.riscalda_da(cam, true)
 	for v in VISTE_RISCALDA:
 		if not is_inside_tree():
 			return
@@ -307,8 +312,12 @@ func _riscalda() -> void:
 		if s > lunghezza() - 0.5:
 			occhio = _al(p, destra(s), Vector2(0.0, piano + SOGLIA + 1.6)) + direzione(s) * (float(v[0]) - lunghezza())
 		cam.look_at_from_position(occhio, _al(p, destra(s), Vector2(float(v[1]) * muro, piano + 1.2)) + direzione(s) * 3.0)
+		if effetti:
+			effetti.riscalda_da(cam, true)
 		for i in 3:
 			await get_tree().process_frame
+	if effetti:
+		effetti.riscalda_da(cam, false)
 	vp.queue_free()
 
 
@@ -333,11 +342,43 @@ func _passi() -> Array:
 			out.append(_ostacolo.bind(o))
 	for g in gommoni:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
+	out.append(_bambino_galleria)
 	out.append(_parapetto_presa)
 	out.append(_acqua_presa)
 	out.append(_checkpoint)
 	out.append(_lei_crea)
+	out.append(_nebbia_viola)
 	return out
+
+
+## La nebbia viola nel tunnel dell'inseguimento (scelta dell'utente del 29 ottobre): una zona fatta di tratti di
+## [constant NEBBIA_TRATTO] m lungo la strada, larghi fra le facce interne dei muri e alti dal fondo della presa alla
+## chiave della volta, dalla testa (con la porta del bacino nel suo muro est) al portello: sale passando la porta.
+const NEBBIA_TRATTO := 2.0
+
+
+func _nebbia_viola() -> void:
+	var z := ZonaNebbiaViola.new()
+	z.name = "NebbiaViola"
+	z.quota = piano
+	var largo := 2.0 * (muro - spessore * 0.5)
+	var basso := PRESA_FONDO - 0.5
+	var lung := lunghezza()
+	var s0 := -TESTA
+	while s0 < lung - 0.01:
+		var s1 := minf(s0 + NEBBIA_TRATTO, lung)
+		var m := (s0 + s1) * 0.5
+		var d := direzione(m)
+		var cs := CollisionShape3D.new()
+		var b := BoxShape3D.new()
+		# (un po' più lunghi: nelle curve i tratti si toccano)
+		b.size = Vector3(largo, chiave - basso, s1 - s0 + 0.3)
+		cs.shape = b
+		var p := punto(m)
+		cs.transform = Transform3D(Basis.looking_at(d, Vector3.UP), Vector3(p.x, (chiave + basso) * 0.5, p.z))
+		z.add_child(cs)
+		s0 = s1
+	add_child(z)
 
 
 ## L'acqua profonda della presa (da s -4,5 a 6, il fondo scende fino a -36): una WaterBody solo per la vista
@@ -1586,6 +1627,8 @@ var bersaglio: Node3D
 
 ## Lei del tunnel (LeiTunnel di mascotte) e il suo modello.
 var lei_tunnel: LeiTunnel
+## Gli effetti quando è vicina: i bordi scuri, il tremito ai morsi, la sua luce che ti supera.
+var effetti: EffettiInseguimento
 var lei: MedusaAffacciata
 var lei_stato := Lei.VIA
 var lei_s := 0.0
@@ -1622,6 +1665,7 @@ func _lei_crea() -> void:
 	lei_tunnel.getto_litri = getto_in_faccia
 	lei_tunnel.vicina = distanza_morsi
 	lei_tunnel.getto_in_faccia.connect(respingi)
+	effetti = EffettiInseguimento.su(self)
 
 
 ## I checkpoint del tunnel, lungo la strada ([member checkpoint_s]): un'area da banchina a banchina, la ripartenza
@@ -2017,6 +2061,40 @@ func _fascia_bocca(nodo: Node3D, sb: float, lato: float, y_bocca: float) -> void
 ## dalla bocca d'entrata (prima del crollo) a quella d'uscita (dopo). Pavimento, soffitto basso, muro esterno, le
 ## teste e gli stipiti delle bocche nello spessore del muro; dentro, due plafoniere a filo del soffitto. Sopra le
 ## bocche la fascia gialla e nera e una lampada: si vedono al buio.
+## Il bambino visto di sfuggita del tunnel (proposta approvata dall'utente il 25 ottobre, "i bambini visti di
+## sfuggita"): l'agnellino sulla banchina sinistra, davanti alla bocca della prima galleria di servizio, girato verso
+## chi arriva. Lo si vede da lontano mentre si scappa da lei; ti guarda, poi entra nella bocca della galleria (è
+## piccolo, ci sta in piedi) e va dietro il muro, dove dalla banchina non si vede più, e sparisce.
+func _bambino_galleria() -> void:
+	var g: Dictionary = {}
+	for o in ostacoli:
+		if o["tipo"] == "galleria":
+			g = o
+			break
+	if g.is_empty():
+		return
+	var s0: float = float(g["s"]) - GALLERIA_BOCCA        # dove comincia la bocca
+	var lato: float = g["lato"]
+	var dentro := muro + spessore + GALLERIA_LARGA * 0.5    # il mezzo della galleria
+	var al := func(s: float, u: float) -> Vector3: return _al(punto(s), destra(s) * lato, Vector2(u, piano))
+	var b := BambinoSfuggita.new()
+	b.name = "BambinoGalleria"
+	b.scena = BAMBINO_AGNELLO
+	b.position = al.call(s0 - 0.6, muro - 1.1)
+	b.basis = Basis.looking_at(direzione(s0), Vector3.UP)  # (+Z verso chi arriva: guarda indietro lungo la strada)
+	var lo: Vector3 = al.call(s0 - 34.0, canale)
+	var hi: Vector3 = al.call(s0 - 8.0, muro)
+	b.zona = AABB(lo, Vector3.ZERO).expand(hi).expand(al.call(s0 - 34.0, muro)).expand(al.call(s0 - 8.0, canale)).grow(0.3)
+	b.zona.size.y = 3.0
+	b.zona.position.y = piano - 0.2
+	b.via = PackedVector3Array([al.call(s0 + 0.5, muro - 0.4), al.call(s0 + 0.7, dentro), al.call(s0 + 2.4, dentro),
+			al.call(s0 + 7.5, dentro)])
+	b.da_dove = al.call(s0 - 18.0, muro - 1.2) + Vector3.UP * 1.6
+	b.distanza_fuga = 12.0
+	b.compare_lontano = 26.0     # (si corre guardando avanti: compare lontano, nel buio, a più di 26 m)
+	add_child(b)
+
+
 func _galleria(o: Dictionary) -> void:
 	var nodo := Node3D.new()
 	nodo.name = "Galleria_%d" % int(o["s"])
