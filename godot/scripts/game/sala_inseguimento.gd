@@ -1095,9 +1095,10 @@ func _luci() -> void:
 		s.global_position = b(f[0])
 		s.look_at(b(f[1]), Vector3.UP)
 	# la scia rosa sul bordo della vasca 1, dalla parte da cui lei arriva: stretta come il bordo (18 cm, smussato) e
-	# appoggiata sopra, così non pende nel vuoto ai lati (collaudo del 22 sera)
+	# appoggiata sopra, così non pende nel vuoto ai lati (collaudo del 22 sera); finisce 15 cm prima della bocca del
+	# tubo, che dalla 0.3.17 arriva più su e col bordo passa sopra il muro fino a y 15,9
 	var bava := BavaRosa.new()
-	bava.punti = PackedVector3Array([b([53.5, 17.91, -21.49]), b([50.09, 17.91, -21.49]), b([50.09, 15.9, -21.49])])
+	bava.punti = PackedVector3Array([b([53.5, 17.91, -21.49]), b([50.09, 17.91, -21.49]), b([50.09, 16.05, -21.49])])
 	bava.larghezza = 0.08
 	bava.variazione = 0.25
 	bava.emissione = 2.5
