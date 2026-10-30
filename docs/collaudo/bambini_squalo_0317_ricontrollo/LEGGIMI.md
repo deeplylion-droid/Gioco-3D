@@ -107,3 +107,19 @@ Foglio `5_squalo_37d7_giro_giocatore.jpg`.
 - Il salto più grande in un fotogramma è 3,06 m/s, il doppio del massimo della 0.3.16 (1,50).
 - Probabile causa: la spinta che tiene le braccia lontane dal muso (al più 10 cm per fotogramma) si accende e si spegne.
 - Dagli occhi del giocatore non si vede: lo squalo è di schiena nella luce e le mani sono coperte.
+
+## 6. Quarto giro: lo squalo su a6cb3c0b
+
+**Esito:** superato, con una nota sulla mano sinistra alla porta.
+
+- **Distanze dal muso su tutti i vertici** (`squalo_braccia_vertici.gd`).
+  - Come misura: la pelle di avambracci e mani, con pinne e artigli, contro quella di bocca, mascella e mento (denti, gengive e interno della bocca compresi), deformata come nello shader, a ogni fotogramma da 5,4 a 11,8 s.
+  - Su a6cb3c0b non c'è nessun contatto: il punto più vicino è a 4,4 cm (braccio destro, 9,47 s). Solo 9,47 e 9,50 s scendono sotto i 5 cm.
+  - La misura trova i difetti di prima, quindi funziona: su 598f11f2 la mano destra in bocca (1-2 mm, da 9,13 a 9,67 s); sulla 0.3.16 le braccia raccolte contro la mascella (8,53-9,13 s e alla porta, 11,30 s).
+- **Muri e porta:** nessun vertice dentro in tutta la scena, porta chiusa compresa (0,000 m). Nessun `ERROR: BUG,`.
+- **Scelta A dagli occhi del giocatore** (`6_squalo_a6cb_scelta_a.jpg`, insieme a 0.3.16 e 37d772ca): a 8,67-8,87 s il braccio alzato sta accanto al muso, con lo spazio, e si legge meglio di prima.
+- **Mano sinistra alla porta.**
+  - Il tremore a fotogrammi alterni non c'è più. La velocità rispetto al petto a 10,55-10,9 s: 0,32, 0,39, 0,68, 0,66, 2,00, 1,68, 0,50 m/s.
+  - Nota: a 10,70-10,77 s gomito e mano sinistri fanno uno scatto. Il gomito va a 0,87, poi 2,51, poi 3,16, poi 0,36 m/s: circa 10 cm in due fotogrammi, poi si ferma. È il salto più grande di tutta la girata, 3,52 m/s (0.3.16: 3,01). Nella 0.3.16, lì, il gomito restava sotto 0,76 m/s.
+  - Il test di mascotte guarda le mani, non i gomiti.
+  - Dagli occhi del giocatore non si vede: lo squalo è di schiena e le mani sono coperte.
