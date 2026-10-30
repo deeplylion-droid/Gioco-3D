@@ -569,13 +569,13 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
 
 **Riscontro dell'utente sulla v0.3.16 (30 ottobre)**, giocata la build. Correzioni chieste:
 - **Nebbia sul fondo della piscina delle onde**: troppo forte. Va ridotta a "pochissimo più che nel resto della stanza" (grafica-2).
-- **Corridoio vuoto prima della zona del fiume**: "sistemalo". Le opzioni per arredarlo si scrivono e si chiedono all'utente prima di metterle (ambienti-1).
+- **Corridoio vuoto prima della zona del fiume**: "sistemalo". È il corridoio in fondo alla scala che scende al fiume, quello con l'oblò di lei. **Scelta A+C** (pagina "Corridoio prima del fiume", 30 ottobre): corridoio di servizio coi tubi delle pompe (dalla sala pompe dietro la scala al capannone), quadro elettrico spento, valvola a volantino, bidoni, carrello con secchio, griglia di scolo e cartello a disegni, più le macchie umide, la muffa e la pozza della C, che filtrano dalla vasca dell'oblò. Arredo lungo il muro di fronte all'oblò, luce di adesso. **Vederlo prima: no**, lo vede nella build (ambienti-1).
 - **Zona prima di prendere il salvagente**: "troppo luminosa ora". Torna buia come nella 0.3.15, come da scelta del 23 ottobre (grafica cerca la causa).
 - **Tunnel dell'inseguimento sottomarino**: "troppo luminoso ora". Torna buio come nella 0.3.15; la nebbia resta, ma non deve illuminarlo (grafica-2 e grafica).
 - **Agnellino del tunnel**: "si vede che sparisce perché gli corri dietro". Non deve mai sparire mentre si vede (mascotte).
 - **L'altro agnellino**, che nella 0.3.16 "si gira lentamente per andarsene": "mi piaceva di più prima". Torna la girata veloce della 0.3.15 (mascotte).
-- **Torre, vasca d'arrivo degli scivoli**: nella zona delle piscinette coi bersagli verdi, dove Jilly guarda, entrando negli scivoli si vede l'acqua trasparente da sotto. Da sotto deve sembrare acqua (ambienti-2).
+- **Inseguimento, vasche dei bersagli verdi** (non la torre: le condotte dell'inseguimento): entrando negli scivoli si vede l'acqua trasparente da sotto. Da sotto deve sembrare acqua; l'occhio non deve andare sotto il pelo (ambienti-2).
 - **Squalo all'inizio, quando si gira**: "mette male una pinna attaccata al braccio, anche il braccio stesso, animalo un po' di più in quella fase". Più animazione per braccio e pinna nella girata; la posa col braccio alzato resta (scelta A del 29 ottobre) (mascotte).
 - **Squalo, ruggito in faccia**: "troppo buio, totalmente nero". Durante il ruggito la faccia e la bocca si devono vedere, tenendo la luce viola dalla porta (grafica).
-- **Lo scivolo dalla torre all'area seguente**: "piegato male e mezzo compenetrato". Va rifatto liscio, senza entrare in niente (ambienti-2).
+- **Lo scivolo dalla torre all'area seguente** (il tubo dalla torre all'inseguimento): "piegato male e mezzo compenetrato". Va rifatto liscio, senza entrare in niente (ambienti-2).
 - **Grana della pellicola**: "con la nebbia stona, mettiamola off by default". È già spenta di serie dalla v0.2.1; si rimette spenta anche per chi l'ha salvata accesa, e si controlla che la nebbia stessa non sembri granulosa (grafica-2).
