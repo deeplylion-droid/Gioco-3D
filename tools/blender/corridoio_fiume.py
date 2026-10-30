@@ -68,7 +68,10 @@ def tubi(obs):
         # (ricontrollo di grafica del 30 ottobre: dalla porta il gomito sembrava un tubo che finiva tondo); raggio
         # r + 3,5 cm, così i due rosoni del muro della sala pompe (centri a 20 cm) restano staccati di 1 cm
         rr = r + 0.035
-        pezzi.append(C.cilindro(f'tubo_pompe_{k}_rosone_s', g(x, y, MURO_S + 0.006), rr, 0.012, acciaio, asse=(0, 1, 0), seg=32))
+        # (sul muro della sala pompe il tubo corre nell'angolo col muro ovest: lì la piastra è quadrata e parte dalla
+        # faccia del muro ovest, un rosone tondo ci entrava di 3 cm)
+        x0 = MURO_O + 0.001
+        pezzi.append(C.box(f'tubo_pompe_{k}_rosone_s', g((x0 + x + rr) * 0.5, y, MURO_S + 0.006), (x + rr - x0, 0.012, 2 * rr), acciaio))
         # (sul muro ovest più grande: i centri sono a 25 cm, e dalla porta il rosone deve spuntare attorno al gomito)
         pezzi.append(C.cilindro(f'tubo_pompe_{k}_rosone_o', g(MURO_O + 0.01, y, z1), r + 0.06, 0.02, acciaio, asse=(1, 0, 0), seg=32))
         for a in (45, 135, 225, 315):
