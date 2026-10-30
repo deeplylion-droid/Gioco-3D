@@ -60,6 +60,8 @@ func _run() -> void:
 	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
 	get_tree().current_scene.add_child(env)
 	Grafica.aggiorna_environment()
+	# (senza la GI: con la Risalita intera, fiume compreso, llvmpipe passava i 12,5 GB)
+	env.environment.sdfgi_enabled = false
 	var ris := get_tree().current_scene.get_node(^"Risalita")
 	var b := ris.find_child("BambinoCorridoioFiume", true, false) as Node3D
 	if b:
