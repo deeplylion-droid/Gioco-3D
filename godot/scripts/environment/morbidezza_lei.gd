@@ -105,6 +105,9 @@ var parti_usec := {"bersagli": 0, "passi": 0, "ossa": 0, "giri": 0, "conta_passi
 const PASSO_MAX := 1.0 / 30.0
 ## Il passo più lungo per un tentacolo simulato a fotogrammi alterni (posa quasi ferma).
 const PASSO_LENTO := 1.0 / 15.0
+## Sotto questa velocità (m/s) i punti di un tentacolo con la posa quasi ferma si possono simulare un fotogramma sì e
+## uno no (vedi _process_modification).
+const LENTI := 1.0
 
 var _catene: Array[PackedInt32Array] = []
 var _lunghezze: Array[PackedFloat32Array] = []   # per catena: la lunghezza di riposo di ogni tratto (mondo)
@@ -560,13 +563,17 @@ func _process_modification() -> void:
 					mobili_qui = true
 					break
 		# con la posa quasi ferma (lei affacciata) ogni tentacolo si simula un fotogramma sì e uno no, a turno (metà dei
-		# tentacoli per fotogramma), col tempo di tutti e due: le ossa si scrivono sempre, dai punti dell'ultima volta
+		# tentacoli per fotogramma), col tempo di tutti e due: le ossa si scrivono sempre, dai punti dell'ultima volta.
+		# Solo se anche i punti sono quasi fermi: se stanno ancora raggiungendo la posa (all'inizio del tuffo la posa
+		# salta di un metro), un fotogramma fermo e il dopo con la strada di due fanno uno scatto (a 60 fps 25 m/s,
+		# collaudo della 0.3.16)
 		if _dt_acc.size() != _catene.size():
 			_dt_acc.resize(_catene.size())
 		_dt_acc[k] += dt
 		var dt_k: float = _dt_acc[k]
 		if passi == 1 and not (_x[k] as PackedVector3Array).is_empty() \
-				and (k + _fotogrammi) % 2 == 1 and dt_k < 0.1 and not mobili_qui and _quasi_ferma(tg, _bers_posa[k]):
+				and (k + _fotogrammi) % 2 == 1 and dt_k < 0.1 and not mobili_qui and _quasi_ferma(tg, _bers_posa[k]) \
+				and _lenti(_v[k]):
 			var xs: PackedVector3Array = (_x[k] as PackedVector3Array).duplicate()
 			xs[0] = tg[0]
 			var us := Time.get_ticks_usec()
@@ -912,20 +919,26 @@ func _fai_lavoro(lv: Array) -> void:
 	var u1 := Time.get_ticks_usec()
 	parti_usec["bersagli"] += u1 - u0
 	parti_usec["conta_passi"] += passi_k
+	# Con più passi in un fotogramma la radice va dalla posa di prima a quella di adesso un passo alla volta, e i
+	# bersagli con lei: messa subito alla fine, a ogni passo la catena veniva tirata di nuovo verso la posa nuova e il
+	# tentacolo recuperava in un fotogramma il ritardo di un tuffo veloce (a 60 fps, quando i passi da 1 diventano 3, un
+	# punto vicino alla radice faceva 0,86 m contro 0,43 della posa, 26 m/s di scatto; collaudo della 0.3.16)
+	var radice_prima := x[0]
 	for passo in passi_k:
+		var sposta := radice_prima.lerp(tg[0], float(passo + 1) / passi_k) - tg[0]
 		var pred := PackedVector3Array()
 		pred.resize(n + 1)
-		pred[0] = tg[0]
+		pred[0] = tg[0] + sposta
 		for i in range(1, n + 1):
 			var f := float(i) / n
 			var acqua := in_acqua[i]
-			var bersaglio := tgf[i]
+			var bersaglio := tgf[i] + sposta
 			var k_molla := lerpf(molla_radice, molla_punta, pow(f, 0.6))
 			var smorza := lerpf(smorza_aria, smorza_acqua, acqua)
 			var grav := lerpf(gravita_aria, gravita_acqua, acqua) * f
 			var a := (bersaglio - x[i]) * k_molla - v[i] * smorza + Vector3(0, -grav, 0)
 			# troppo lontano dalla posa (nei movimenti velocissimi del tuffo): una molla in più, dura, che la riprende
-			var fuori := x[i] - rif[i]
+			var fuori := x[i] - rif[i] - sposta
 			var lim := distacco_massimo * f
 			if fuori.length() > lim:
 				a -= fuori.normalized() * (fuori.length() - lim) * 400.0
@@ -941,9 +954,9 @@ func _fai_lavoro(lv: Array) -> void:
 			var voluto := pred[i - 1] + (pred[i] - pred[i - 1]).normalized() * lung[i]
 			# mai oltre il doppio (rete di sicurezza: la molla dura di sopra di solito basta)
 			var lim := 2.0 * distacco_massimo * f
-			var scarto := voluto - rif[i]
+			var scarto := voluto - rif[i] - sposta
 			if scarto.length() > lim:
-				voluto = rif[i] + scarto.normalized() * lim
+				voluto = rif[i] + sposta + scarto.normalized() * lim
 				voluto = pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
 			voluto = _fuori(voluto, lerpf(raggio_radice, raggio_punta, f), forme, x[i], false, i)
 			corr[i] = voluto - pred[i]
@@ -989,7 +1002,7 @@ func _fai_lavoro(lv: Array) -> void:
 			# quanto va più veloce della posa (che nel tuffo a tratti corre)
 			v[i] = vp[i] + (nv - vp[i]).limit_length(velocita_massima)
 			x[i] = pred[i]
-		x[0] = tg[0]
+		x[0] = pred[0]
 	parti_usec["passi"] += Time.get_ticks_usec() - u1
 	ris.append_array([x, v, bers_nuovi, bers_posa_nuovi, forme,
 			[_s1a.duplicate(), _s1b.duplicate(), _s2a.duplicate(), _s2b.duplicate(), _smax.duplicate(), _ssu.duplicate()]
@@ -1069,6 +1082,14 @@ func _quasi_ferma(tg: PackedVector3Array, prima: PackedVector3Array) -> bool:
 		return false
 	for i in tg.size():
 		if prima[i].distance_squared_to(tg[i]) > 1e-4:
+			return false
+	return true
+
+
+## I punti di una catena vanno tutti a meno di [constant LENTI] m/s.
+func _lenti(v: PackedVector3Array) -> bool:
+	for q in v:
+		if q.length_squared() > LENTI * LENTI:
 			return false
 	return true
 
