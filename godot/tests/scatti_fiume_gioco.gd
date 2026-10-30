@@ -53,6 +53,14 @@ static func camere() -> Dictionary:
 		"gancio_lampada_fronte": [Vector3(-4.0, 4.5, -6.22), Vector3(-4.0, 4.5, -6.6)],
 		"gancio_lampada_storta": [Vector3(13.75, 4.5, -16.3), Vector3(14.0, 4.5, -16.6)],
 	}
+	# dagli occhi del giocatore lungo la fila fra le pile, dall'ingresso alla cabina dell'imbarco (sull'asse delle
+	# transenne), guardando 8 m avanti: per la luce del corridoio (riscontro dell'utente sulla 0.3.16)
+	var da := Vector3(F.INGRESSO_X, 0, F.Z0 + 1.0)
+	var dir := (F.FINE_FILA - da).normalized()
+	var lungo := da.distance_to(F.FINE_FILA)
+	for k in 4:
+		var p: Vector3 = da + dir * lungo * [0.08, 0.35, 0.62, 0.9][k]
+		d["corridoio_%d" % (k + 1)] = [p + Vector3(0, 1.6, 0), p + dir * 8.0 + Vector3(0, 1.3, 0)]
 	return d
 
 
@@ -81,6 +89,10 @@ func _run() -> void:
 	e.volumetric_fog_enabled = true
 	e.volumetric_fog_density = 0.025
 	we.environment = e
+	# SCATTI_SALA=1: l'ambiente e l'esposizione della sala, come nel gioco (il fiume sta nella Risalita della sala)
+	if OS.get_environment("SCATTI_SALA") == "1":
+		we.environment = load("res://addons/grafica/sala/ambiente_sala.tres") as Environment
+		we.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
 	get_tree().root.add_child(we)
 	var f: Node3D = (load("res://scenes/risalita/fiume.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(f)
@@ -138,6 +150,18 @@ func _run() -> void:
 		for i in 30:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_jpg(out.path_join("fiume_%s_%s.jpg" % ["girate" if girate else "arrivo", nome]), 0.9)
-		print("salvato fiume_gioco_", nome)
+		var img := get_viewport().get_texture().get_image()
+		img.save_jpg(out.path_join("fiume_%s_%s.jpg" % ["girate" if girate else "arrivo", nome]), 0.9)
+		print("salvato fiume_gioco_%s luminanza %.1f" % [nome, _luma(img)])
 	get_tree().quit()
+
+
+func _luma(img: Image) -> float:
+	var somma := 0.0
+	var n := 0
+	for y in range(0, img.get_height(), 4):
+		for x in range(0, img.get_width(), 4):
+			var c := img.get_pixel(x, y)
+			somma += 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+			n += 1
+	return somma / maxf(n, 1) * 255.0
