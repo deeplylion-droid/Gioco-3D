@@ -5,7 +5,8 @@ extends Node
 ##   piena e vuota: dal bordo sud guardando il fondo, dal bordo sud guardando attraverso la piscina, dal bordo est, da
 ##   dentro la piscina vuota (in piedi sul fondo) e il pavimento della sala alla stessa distanza;
 ## - "infermeria": l'infermeria del gioco da sola, con la sua zona di nebbia, dai punti del giro dagli occhi del giocatore
-##   di scatti_infermeria_gioco.gd. Per ogni punto stampa quanti pixel cambiano fra adesso e la 0.3.16.
+##   di scatti_infermeria_gioco.gd, con le lampade che sfarfallano ferme e la nebbia senza vento (i due scatti
+##   differiscono solo per la nebbia). Per ogni punto stampa quanti pixel cambiano fra adesso e la 0.3.16.
 ## Stampa "MISURA" con la luminosità media dello schermo e della metà bassa. Scatti in <cartella>.
 ## Uso: xvfb-run -a -s "-screen 0 960x540x24" godot --path godot --rendering-driver vulkan --resolution 960x540 \
 ##        --script res://tests/run.gd -- res://tests/collaudo/collaudo_nebbia_0317.gd <cartella> <piscina|infermeria> \
@@ -149,6 +150,14 @@ func _infermeria() -> void:
 	print("zona della nebbia dell'infermeria: %s" % z)
 	if z:
 		n.zona(z, true, true)
+	# (per un confronto pulito fra 0.3.16 e 0.3.17: le lampade che sfarfallano ferme e la nebbia senza vento, così i
+	# due scatti differiscono solo per la nebbia)
+	for l in f.find_children("*", "Node3D", true, false):
+		if l is LuceEmergenza and int(l.get(&"modalita")) in [1, 2]:
+			l.set(&"modalita", 0)
+		if &"sfarfalla" in l:
+			l.set(&"sfarfalla", false)    # (il negatoscopio)
+	(n.get(&"_mat") as ShaderMaterial).set_shader_parameter(&"vento", Vector3.ZERO)
 	for v in VISTE_INFERMERIA:
 		var c: Array = VISTE_INFERMERIA[v]
 		_cam.global_position = f.to_global(c[0])
