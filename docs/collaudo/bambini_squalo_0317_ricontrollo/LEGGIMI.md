@@ -1,0 +1,54 @@
+# Ricontrollo di bambini e squalo per la 0.3.17 (30 ottobre)
+
+Ricontrollo del branch di mascotte `lavoro/bambini-squalo-0317` (598f11f2), fatto da enigmi su richiesta del coordinatore.
+Gli scatti sono tutti dal motore. Gli strumenti sono in `godot/tests/collaudo/` su `lavoro/collaudo-bambini-squalo-0317`.
+
+**Esito:** agnellino del tunnel e agnellino di C2 superati. Squalo: **un difetto**, la mano destra entra nel muso durante il giro. CI di 598f11f2 verde, con 0 casi da correggere nel controllo di posizionamento e nessun `ERROR: BUG,`.
+
+## 1. Agnellino del tunnel: superato
+
+Strumento: `collaudo_agnellino_tunnel.gd`. Il giocatore lo insegue, la camera vera lo guarda sempre e gira al massimo a 300° al secondo. Gli occhi del giocatore, quelli con cui il bambino decide se è visto, stanno alla stessa altezza della camera, anche da accucciati.
+
+Nel fotogramma in cui sparisce, il disegno si rifà due volte, con lui nella stessa posa e senza: i pixel che cambiano sono quello che si vedrebbe sparire. In tutti i casi i pixel cambiano quanto il rumore (acqua e nebbia si muovono anche a camera ferma), e dove stava lui non resta nessuna forma: non si vede sparire, nemmeno in parte. Foglio: `1_tunnel_riassunto.jpg`; l'inseguimento intero del caso "meta" è in `1_tunnel_meta_galleria.jpg`.
+
+| Caso | Sparisce | Pixel diversi (≥6/255) / rumore |
+|---|---|---|
+| bocca: sprint fino alla bocca, fermo a guardare dentro (quello di mascotte) | fotogramma 284, nella bocca d'uscita, coperto dal muro | 281 / 148 |
+| indietro: dentro accucciato, a un terzo si volta, torna e riguarda dentro | 284, dietro le spalle | 25 / 10 |
+| meta: accucciato a 1,7 m/s, fermo 3 s a metà galleria, poi riparte | 284, dietro il muro in fondo alla galleria | 291 / 146 (dove stava, solo puntini sparsi, nessuna forma) |
+| lontano: lo guarda da 18 m prima della bocca, poi va alla bocca | 313, a 32 m, fuori vista | 52 / 30 |
+| via: sprint anche accucciato fin fuori, poi si gira | 371, fuori dall'inquadratura | 27 / 13 |
+
+Due cose sui test di mascotte (`test_bambini_sfuggita`, `video_bambini_sfuggita.gd`). Non sono difetti del gioco:
+
+- Nella galleria fanno correre il giocatore a 5,8 m/s. Nel gioco, accucciati, si va al massimo a 1,7 m/s (`Player._max_speed`). L'agnellino va a circa 2,5 m/s, quindi nel gioco non si raggiunge. A 5,8 m/s invece il giocatore lo raggiunge e gli passa attraverso: è il caso "via", foglio `1_tunnel_via_sorpasso.jpg`, fotogrammi 192-204.
+- La camera è a 0,95 m, ma `get_eye_position()` resta a 1,6 m, perché il giocatore è fermo. Quindi il bambino decide se è visto da un punto più alto della camera. Con gli occhi giusti il risultato è lo stesso (caso bocca: sparisce allo stesso punto, s 217,9, a 10 m).
+
+## 2. Agnellino della scala di C2: superato
+
+Strumento: `girata_agnellino_c2.gd`. Il confronto è fra la 0.3.15 (503b5d45, con il suo `bambino.gd`, `agnellino_scala.gd` e `bambino_agnello.tscn`) e il branch. Foglio: `2_girata_c2_015_branch.jpg`.
+
+La girata è uguale: parte allo stesso fotogramma, gira di 18° per fotogramma e fa 177° in 0,33 s. L'unica differenza è che ora prende velocità in un quarto di secondo: a 0,4 s è a 0,87 m invece che a 1,2 m, poi va alla stessa velocità.
+
+## 3. Squalo all'inizio: un difetto
+
+### Difetto: la mano destra entra nel muso
+
+Nel giro il braccio alzato non resta accanto al muso. La mano destra ci passa sopra e dentro due volte, a 9,1-9,27 s e a 9,67-9,77 s, e gli artigli escono dalla bocca. Il polso arriva a 5,8 cm dall'osso della bocca (a 9,20 s) e a 2,4 cm (a 9,73 s). Nella 0.3.16 restava ad almeno 26 cm. Lo spazio fra braccio e testa della scelta A quindi non c'è.
+
+- Foglio `3_squalo_mano_bocca.jpg`: il modello vero nel motore, a 1,1 m dalla bocca, prima e dopo.
+- Dalla camera del giocatore si vede a 9,07-9,17 s: il braccio passa sul muso. Fogli `3_squalo_giro_giocatore.jpg` e `3_squalo_giro_giocatore_vicino.jpg`.
+- Causa probabile: in `mostro_anim.py` la mano destra nel giro va a `(-0.10, -0.46 - 0.12*dondolo, ...)`, ruotata di `ritardo_braccia`. Con il dondolo e il ritardo la mano passa davanti al muso.
+
+### Il resto: superato
+
+- **Muri.** Ho controllato ogni vertice della pelle vera a ogni fotogramma, con un raggio dal petto a ogni vertice. Nel corridoio, durante il giro e la corsa fino alla porta, niente entra nei muri.
+- **Scatti.** Il salto di velocità delle mani più grande in un fotogramma è uguale a quello della 0.3.16, negli stessi istanti della corsa (10,23 s). Le braccia si muovono di più, come chiesto, senza scatti nuovi.
+- **La pinna dell'avambraccio** non spunta più sotto il petto (fogli `3_squalo_viste_dopo.jpg` e `3_squalo_viste_prima.jpg`).
+
+### Due compenetrazioni che c'erano già nella 0.3.16
+
+Ossa e animazione del corpo sono identiche al millimetro, quindi non le ha introdotte questo branch:
+
+- a 6,47-6,50 s, il fianco dietro, all'altezza x 16,3, entra di 3,8 cm per due fotogrammi in `corridoio_collisione`;
+- a 11,33-11,50 s, oltre la porta, il davanti dello squalo entra fino a 1,3 m nel muro di fondo, mentre la porta si chiude (si chiude del tutto a 11,48 s, e lui sparisce a 11,52 s). Dalla camera del giocatore si vede appena, nella nebbia viola, dalla fessura della porta. Foglio `3_squalo_porta_muro.jpg`.

@@ -6,7 +6,7 @@ extends Node
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/collaudo/squalo_braccia_misure.gd \
 ##        <glb> <uscita.csv>
 
-const OSSA := ["petto", "testa", "braccio.L", "avambraccio.L", "mano.L", "braccio.R", "avambraccio.R", "mano.R"]
+const OSSA := ["petto", "testa", "braccio.L", "avambraccio.L", "mano.L", "braccio.R", "avambraccio.R", "mano.R", "bocca", "mascella", "mento_punta"]
 
 
 func _ready() -> void:
@@ -38,7 +38,7 @@ func _run() -> void:
 		testa += ",%s_x,%s_y,%s_z,%s_px,%s_py,%s_pz" % [o, o, o, o, o, o]
 	csv.store_line(testa)
 	var petto := sk.find_bone("petto")
-	var k := 150
+	var k := 60
 	while k <= 360:
 		var t := k / 30.0
 		ap.seek(t, true)
