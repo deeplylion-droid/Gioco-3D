@@ -1,10 +1,14 @@
 extends Node
 ## Ricontrollo delle scalette della piscina a onde (ambienti-1, 30 ottobre, per lavoro/scalette-piscina): quello che
 ## test_scalette_piscina.gd non prova. A piscina piena e vuota, per ogni scaletta:
-## - la discesa dal bordo: girati verso il bordo con avanti, girati verso la piscina con indietro (anche con lo stick a
-##   metà), e camminando avanti verso la piscina; si deve arrivare in basso (sul fondo o in acqua);
-## - i corrimano sul bordo: camminandoci contro (dal bordo verso la piscina, di lato) non si attraversano;
-## - dopo la cima: salendo con avanti, un secondo dopo lo scavalco non si tocca più la scala e si cammina via.
+## - la discesa dal bordo con la scala (Ladder.get_climb_normal() punta dentro la piscina): girati verso la piscina con
+##   avanti e di spalle alla piscina con indietro, anche con lo stick a metà; ci si deve aggrappare e arrivare in basso;
+##   poi, dal fondo, avanti verso la scala: ci si riaggrappa e si esce di nuovo sul bordo;
+## - i corrimano sul bordo: camminandoci contro (dritto e di sbieco) non si attraversano all'altezza del bordo (sotto,
+##   aggrappati alla scala, si può scendere);
+## - dopo la cima: salendo con avanti, da 0,5 s dopo lo scavalco (finito lo slancio) a 7 s fermi la posizione non cambia
+##   più di 2 cm (prima, a 6 s, l'eccezione dei corrimano scadeva dentro di loro e il giocatore schizzava indietro di 81 cm);
+##   poi si cammina via.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/ricontrollo_scalette.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -73,11 +77,15 @@ func _run() -> void:
 		await _frames(30)
 		print("piscina %s (fill %.2f)" % [stato, vasca.fill])
 		for s in scalette:
-			for modo in ([] if OS.get_environment("SOLO_USCITA") == "1" else ["verso il bordo, avanti", "verso la piscina, indietro", "verso il bordo, stick a metà",
-					"verso la piscina, indietro a metà", "verso la piscina, avanti"]):
+			for modo in ([] if OS.get_environment("SOLO_USCITA") == "1" else ["verso la piscina, avanti", "verso la piscina, avanti a metà",
+					"di spalle alla piscina, indietro", "di spalle alla piscina, indietro a metà"]):
 				var r: Dictionary = await _scendi(s, modo)
-				check(r["giu"], "piscina %s, %s, discesa %s: si arriva in basso (in %.1f s, il più in basso %.2f, cima %.2f, presa %s, fine %s)" % [
+				check(r["giu"] and r["presa"], "piscina %s, %s, discesa %s: ci si aggrappa e si arriva in basso (in %.1f s, il più in basso %.2f, cima %.2f, presa %s, fine %s)" % [
 						stato, s.name, modo, r["tempo"], r["basso"], s.get_top_y(), r["presa"], r["fine"]])
+				if r["giu"]:
+					var su: Dictionary = await _risali(s)
+					check(su["fuori"], "piscina %s, %s, dopo la discesa %s: dal fondo ci si riaggrappa e si esce sul bordo (in %.1f s, prese %d, fine %s)" % [
+							stato, s.name, modo, su["tempo"], su["prese"], su["fine"]])
 			for modo in ([] if OS.get_environment("SOLO_USCITA") == "1" else ["dritto", "di sbieco"]):
 				var c: Dictionary = await _corrimano(s, modo)
 				check(c["fermo"], "piscina %s, %s: camminando contro i corrimano dal bordo (%s) non si passano (più avanti %.2f m oltre il muro, fine %s)" % [
@@ -107,6 +115,7 @@ func _scendi(s: Ladder, modo: String) -> Dictionary:
 	# (1 m dietro: la scatola dei corrimano va 70 cm sul bordo, e il giocatore deve partire fuori)
 	await _sul_bordo(s, 1.0)
 	var verso_piscina := modo.begins_with("verso la piscina")
+	# (verso la piscina si guarda lungo la normale della scala, che punta dentro la piscina; di spalle, al contrario)
 	var dir := n if verso_piscina else -n
 	p.look_at_point(p.global_position + Vector3.UP * 1.5 + dir * 5.0)
 	p.pitch = deg_to_rad(-20.0) if verso_piscina else 0.0
@@ -127,6 +136,34 @@ func _scendi(s: Ladder, modo: String) -> Dictionary:
 	var fine := "%s%s" % [p.global_position.snapped(Vector3.ONE * 0.01), " sulla scala" if p.is_on_ladder() else ""]
 	_rilascia()
 	return {"giu": giu, "tempo": t, "basso": basso, "presa": presa, "fine": fine}
+
+
+## Dopo una discesa: si lascia tutto, fermi 1 s, poi avanti verso la scala (girati verso il muro) fino a 12 s; si deve
+## uscire sul bordo, oltre il muro.
+func _risali(s: Ladder) -> Dictionary:
+	_rilascia()
+	var n := s.get_climb_normal()
+	await _frames(60)
+	p.look_at_point(Vector3(s.global_position.x, p.global_position.y + 1.5, s.global_position.z) - n * 2.0)
+	p.pitch = 0.0
+	Input.action_press(&"move_forward")
+	var t := 0.0
+	var prese := 0
+	var era := p.is_on_ladder()
+	var fuori := false
+	for f in 60 * 12:
+		await get_tree().physics_frame
+		t += 1.0 / 60.0
+		if p.is_on_ladder() and not era:
+			prese += 1
+		era = p.is_on_ladder()
+		var oltre := (p.global_position - s.global_position).dot(-n)
+		if p.is_on_floor() and p.global_position.y > s.get_top_y() - 0.4 and oltre > 0.3 and not p.is_on_ladder():
+			fuori = true
+			break
+	var fine := "%s%s" % [p.global_position.snapped(Vector3.ONE * 0.01), " sulla scala" if p.is_on_ladder() else ""]
+	_rilascia()
+	return {"fuori": fuori, "tempo": t, "prese": prese, "fine": fine}
 
 
 ## Dal bordo, 1 m dietro (fuori dalla scatola dei corrimano), contro i corrimano verso la piscina (dritto, o di sbieco
@@ -150,16 +187,17 @@ func _corrimano(s: Ladder, modo: String) -> Dictionary:
 		await get_tree().physics_frame
 		var o := (p.global_position - s.global_position).dot(n)
 		oltre = maxf(oltre, o)
-		# oltre la scala, verso la piscina, senza esserci aggrappati: è passato fra i corrimano
-		if o > 0.45 and not p.is_on_ladder():
+		# oltre la scala, verso la piscina, all'altezza del bordo e senza esserci aggrappati: è passato fra i corrimano
+		# (più in basso, sulla scala o sul fondo dopo la discesa, va bene)
+		if o > 0.45 and not p.is_on_ladder() and p.global_position.y > s.get_top_y() - 0.5:
 			passato = true
 	var fine := "%s%s" % [p.global_position.snapped(Vector3.ONE * 0.01), " sulla scala" if p.is_on_ladder() else ""]
 	_rilascia()
 	return {"fermo": not passato, "oltre": oltre, "fine": fine}
 
 
-## Dal fondo, avanti fino allo scavalco; poi un secondo fermi: niente corpi della scala intorno; poi 1,5 s avanti:
-## ci si allontana di almeno 1 m.
+## Dal fondo, avanti fino allo scavalco; poi fermi fino a 7 s: da 0,5 s in poi non ci si sposta più di 2 cm; poi 1,5 s
+## avanti: ci si allontana di almeno 1 m.
 func _uscita(s: Ladder) -> Dictionary:
 	_rilascia()
 	var n := s.get_climb_normal()
@@ -178,8 +216,13 @@ func _uscita(s: Ladder) -> Dictionary:
 	_rilascia()
 	if not sopra:
 		return {"ok": false, "dettaglio": "non si è usciti (fine %s)" % p.global_position.snapped(Vector3.ONE * 0.01)}
+	# da 0,5 s (finito lo slancio dello scavalco) a 7 s: lo spostamento più grande dalla posizione a 0,5 s
+	await _frames(30)
 	var uscito := p.global_position
-	await _frames(60 * 7)
+	var salto := 0.0
+	for f in 60 * 7 - 30:
+		await get_tree().physics_frame
+		salto = maxf(salto, Vector2(p.global_position.x - uscito.x, p.global_position.z - uscito.z).length())
 	var dopo7 := p.global_position
 	# dentro i corpi della scala (i corrimano)? con la forma del giocatore, senza margine
 	var corpi: Array = s.corpi_da_attraversare() if s.has_method(&"corpi_da_attraversare") else []
@@ -198,7 +241,5 @@ func _uscita(s: Ladder) -> Dictionary:
 	await _frames(90)
 	_rilascia()
 	var via := Vector2(p.global_position.x - da.x, p.global_position.z - da.z).length()
-	# fermi 7 s dopo l'uscita: niente spinte di colpo (prima, a 6 s, l'eccezione scadeva dentro i corrimano)
-	var salto := Vector2(dopo7.x - uscito.x, dopo7.z - uscito.z).length()
-	return {"ok": salto < 0.2 and via > 1.0 and not p.is_on_ladder(),
-			"dettaglio": "spinta da fermi %.2f m, uscito a %s, dopo 7 s fermo %s, tocca ancora la scala %s, eccezioni %d, poi via di %.2f m, fine %s" % [salto, uscito.snapped(Vector3.ONE * 0.01), dopo7.snapped(Vector3.ONE * 0.01), dentro, eccezioni, via, p.global_position.snapped(Vector3.ONE * 0.01)]}
+	return {"ok": salto <= 0.02 and via > 1.0 and not p.is_on_ladder(),
+			"dettaglio": "spinta da fermi (0,5-7 s) %.3f m, a 0,5 s %s, a 7 s %s, tocca ancora la scala %s, eccezioni %d, poi via di %.2f m, fine %s" % [salto, uscito.snapped(Vector3.ONE * 0.01), dopo7.snapped(Vector3.ONE * 0.01), dentro, eccezioni, via, p.global_position.snapped(Vector3.ONE * 0.01)]}
