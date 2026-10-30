@@ -1,0 +1,90 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CONTINUA: cartella dei dati /tmp/claude-0/-home-user-Gioco-3D/f5e5d037-885d-5565-b3d5-b4de770f14f6/scratchpad/c/sott/f1_9baa00d5/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"], focus su Continua
+CONTINUA: schermata di caricamento dopo 0.1 s
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 2
+rocce della riva dell'imbarco: 1
+pile di scatoloni: 108 colonne, 379 unità, 2495 scatole di cartone e 757 colorate
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+CONTINUA: arrivo in res://scenes/sala_principale.tscn dopo 8.4 s
+CONTINUA: arrivato {"acqua":20.0,"checkpoint":"Tecnici/Logica/Checkpoint/CheckpointRaccordo","comandi":true,"inventario":["zaino_pompa"],"luci":2,"polaroid":{"polaroid":["p01","p02","p03","p04","p05","p08","p09","p06","p07"]},"posizione":[7.79999828338623,-1.80000019073486,45.4000015258789],"scena":"res://scenes/sala_principale.tscn","zaino":true}
+CONTINUA: CONFRONTO risalita: checkpoint Tecnici/Logica/Checkpoint/CheckpointRaccordo / atteso Tecnici/Logica/Checkpoint/CheckpointRaccordo; distanza dal posto salvato 0.00 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 2
+rocce della riva dell'imbarco: 1
+pile di scatoloni: 108 colonne, 379 unità, 2495 scatole di cartone e 757 colorate
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+CONTINUA: MORTE risalita: ripartito true dopo 4.9 s, checkpoint Tecnici/Logica/Checkpoint/CheckpointRaccordo (prima Tecnici/Logica/Checkpoint/CheckpointRaccordo), a 0.00 m dal posto salvato, in piedi true
+WARNING: 830 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+ERROR: 407 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+ERROR: 2 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 122 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 62 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 39 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 136 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 5 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
+ERROR: 2 RID allocations of type 'PN18TextServerAdvanced27FontAdvancedLinkedVariationE' were leaked at exit.

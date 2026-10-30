@@ -1,0 +1,107 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 2
+rocce della riva dell'imbarco: 1
+pile di scatoloni: 108 colonne, 379 unità, 2495 scatole di cartone e 757 colorate
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+         [7] _scena (res://tests/strumenti/cerca_muri.gd:86)
+         [8] _run (res://tests/strumenti/verifica_muri.gd:22)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+         [7] _scena (res://tests/strumenti/cerca_muri.gd:86)
+         [8] _run (res://tests/strumenti/verifica_muri.gd:22)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:575)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:568)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:147)
+         [7] _scena (res://tests/strumenti/cerca_muri.gd:86)
+         [8] _run (res://tests/strumenti/verifica_muri.gd:22)
+sala_principale.tscn: 15521 punti dove si cammina (45032 ms)
+VERIFICA sala_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+VERIFICA alto_sala_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+VERIFICA alto_sala_3 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+VERIFICA risalita_2 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    vicino: Risalita/@MeshInstance3D@586 a 0.35 m
+    vicino: Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f2s_m_2 a 0.49 m
+VERIFICA risalita_3 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    vicino: Risalita/@MeshInstance3D@653 a 0.35 m
+    vicino: Risalita/@MeshInstance3D@665 a 0.50 m
+VERIFICA tecnici_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    acqua: Interni/Ambienti/Corridoio/acqua_pozze_corridoio pelo 0.00, bordo basso del disegno -8.70 (margine -8.70)
+VERIFICA fiume_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    DIAG punti fiume: 4855
+    DIAG punti infermeria: 314
+    DIAG punti interni: 1576
+    DIAG punti risalita: 621
+    DIAG punti sala: 6147
+    DIAG punti tecnici: 2008
+  0 muri vuoti trovati (45220 ms)
+sala_torre.tscn: 5121 punti dove si cammina (3486 ms)
+VERIFICA torre_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+VERIFICA torre_3 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+VERIFICA alto_torre_3 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    vicino: Luci/@MeshInstance3D@16932 a 0.52 m
+    vicino: Luci/@MeshInstance3D@16933 a 0.48 m
+    vicino: Luci/@MeshInstance3D@16934 a 0.47 m
+    vicino: Luci/@MeshInstance3D@16935 a 0.59 m
+    vicino: Luci/@MeshInstance3D@16936 a 0.58 m
+    acqua: SalaInseguimento/InseguimentoStruttura/acqua_allagata pelo -33.40, bordo basso del disegno -14.26 (margine 19.13)
+VERIFICA inseguimento_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    acqua: SalaInseguimento/InseguimentoStruttura/acqua_allagata pelo -33.40, bordo basso del disegno -33.20 (margine 0.20)
+VERIFICA inseguimento_3 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    acqua: SalaInseguimento/InseguimentoStruttura/acqua_allagata pelo -33.40, bordo basso del disegno -23.66 (margine 9.74)
+VERIFICA alto_inseguimento_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    acqua: SalaInseguimento/InseguimentoStruttura/acqua_allagata pelo -33.40, bordo basso del disegno -32.00 (margine 1.40)
+    DIAG punti inseguimento: 2913
+    DIAG punti torre: 2208
+  0 muri vuoti trovati (3530 ms)
+sala_sottomarino.tscn: 27737 punti dove si cammina (6954 ms)
+VERIFICA tunnel_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+VERIFICA tunnel_2 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    acqua: Tunnel_072/Acqua pelo -30.42, bordo basso del disegno -29.65 (margine 0.77)
+VERIFICA tunnel_4 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    acqua: Tunnel_264/Acqua pelo -30.42, bordo basso del disegno -29.65 (margine 0.77)
+VERIFICA alto_tunnel_1 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    vicino: Luci/@Node3D@18622/globo a 0.68 m
+    vicino: Luci/@Node3D@18622/lampada a 0.52 m
+VERIFICA alto_tunnel_3 OK: vuoti 0, storti 0, altro {  }, dentro [], vietati []
+    vicino: Luci/@Node3D@18570/globo a 0.66 m
+    vicino: Luci/@Node3D@18570/lampada a 0.49 m
+    DIAG punti tunnel: 27737
+  0 muri vuoti trovati (7128 ms)
+WARNING: 851 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+ERROR: 419 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+ERROR: 7 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 90 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 46 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 53 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 149 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.

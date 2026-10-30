@@ -1,0 +1,102 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+catene 25
+== primo tuffo
+  ok  primo tuffo: affacciata, la morbidezza c'è già
+  primo tuffo, affacciata, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  primo tuffo: affacciata, la pelle vera dei tentacoli fuori dal mondo (0 vertici dentro, al più 0.0 cm)
+  affacciata, problemi per fotogramma: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  costi dei primi fotogrammi (ms): [3.36, 2.92, 1.28]
+  ok  primo tuffo: quando compare nessun fotogramma sopra i 10 ms (3.36)
+  COSTO primo tuffo, affacciata (dal fotogramma in cui compare): medio 1.73 ms, mediano 1.62 ms, 95% sotto 2.92 ms, massimo 3.73 ms; parti (totali) { "bersagli": 9170, "passi": 144026, "ossa": 10627, "giri": 94932, "conta_passi": 768, "conta_giri": 1255, "zona": 4192, "sezioni": 10682 }
+  ok  primo tuffo, affacciata (dal fotogramma in cui compare): costo sotto 4.0 ms in media e 8 nel 95% dei fotogrammi (1.73 e 2.92 ms)
+  affacciata: 60 fotogrammi, punti dentro il mondo 0, tratti che lo attraversano 0
+  ok  primo tuffo: affacciata, i tentacoli poggiano sul bordo senza entrarci (0 punti dentro, 0 tratti)
+  ok  primo tuffo: la morbidezza c'è
+  ok  primo tuffo: la morbidezza è l'ultima, dopo Tuffo
+  primo tuffo, tuffo, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  primo tuffo: tuffo, la pelle vera dei tentacoli fuori dal mondo (0 vertici dentro, al più 0.0 cm)
+  dissolvenza finita al fotogramma 0; tentacoli-fotogramma con la radice della posa dentro il mondo (non contati): 363
+  fotogrammi 127, scarto massimo 2.114 m, primo 1.3059 m, velocità massima oltre la posa 25.6 m/s
+  salto peggiore f26 k13 i2 posa (-13.63622, 0.95955, -8.171272) esce (-12.92845, 0.876786, -7.8828); dt 0.0167, il punto simulato si è mosso di 0.855, la posa di 0.428, l'uscita di 0.855
+  attraversamenti: posa del tuffo 442, dopo la morbidezza 0; punti sotto il pavimento in più 0; punti che passano una superficie 0 (nella posa 6)
+  COSTO primo tuffo, tuffo: medio 2.16 ms, mediano 1.83 ms, 95% sotto 3.77 ms, massimo 7.32 ms; parti (totali) { "bersagli": 86569, "passi": 374878, "ossa": 21847, "giri": 221017, "conta_passi": 3561, "conta_giri": 3546, "zona": 20168, "sezioni": 41538 }
+  ok  primo tuffo, tuffo: costo sotto 6.0 ms in media e 16 nel 95% dei fotogrammi (2.16 e 3.77 ms)
+  tratti dei tentacoli: da 0.88 a 1.13 volte la posa (0 tratti-fotogramma fuori da 0,7-1,3 su 19050)
+  ok  primo tuffo: i tentacoli non si allungano né accorciano troppo (0.88-1.13, fuori da 0,7-1,3 in 0 tratti-fotogramma: meno dell'1%)
+  ok  primo tuffo: registrati 127 fotogrammi
+  KO  primo tuffo: niente scatti (va al più 25.6 m/s più veloce della posa)
+  ok  primo tuffo: nessun punto dei tentacoli dentro pavimento, pareti, fondo, bordo o griglia (0)
+  ok  primo tuffo: nessun tratto dei tentacoli attraversa il mondo (0; la posa da sola: 442)
+  punti che fra due fotogrammi passano una superficie (non si vede): 0; la posa da sola: 6
+  ok  primo tuffo: nessun punto sotto il pavimento fuori dalla fossa (0)
+  ok  primo tuffo: quando sparisce è tutta sotto, anche le punte morbide (0 punti fuori)
+== secondo tuffo (dopo il checkpoint)
+  ok  secondo tuffo (dopo il checkpoint): affacciata, la morbidezza c'è già
+  secondo tuffo (dopo il checkpoint), affacciata, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  secondo tuffo (dopo il checkpoint): affacciata, la pelle vera dei tentacoli fuori dal mondo (0 vertici dentro, al più 0.0 cm)
+  affacciata, problemi per fotogramma: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  costi dei primi fotogrammi (ms): [4.94, 2.67, 1.46]
+  ok  secondo tuffo (dopo il checkpoint): quando compare nessun fotogramma sopra i 10 ms (4.94)
+  COSTO secondo tuffo (dopo il checkpoint), affacciata (dal fotogramma in cui compare): medio 2.05 ms, mediano 1.73 ms, 95% sotto 3.99 ms, massimo 8.80 ms; parti (totali) { "bersagli": 7167, "passi": 157409, "ossa": 11479, "giri": 99931, "conta_passi": 780, "conta_giri": 1281, "zona": 4857, "sezioni": 11225 }
+  ok  secondo tuffo (dopo il checkpoint), affacciata (dal fotogramma in cui compare): costo sotto 4.0 ms in media e 8 nel 95% dei fotogrammi (2.05 e 3.99 ms)
+  affacciata: 61 fotogrammi, punti dentro il mondo 0, tratti che lo attraversano 0
+  ok  secondo tuffo (dopo il checkpoint): affacciata, i tentacoli poggiano sul bordo senza entrarci (0 punti dentro, 0 tratti)
+  ok  secondo tuffo (dopo il checkpoint): la morbidezza c'è
+  ok  secondo tuffo (dopo il checkpoint): la morbidezza è l'ultima, dopo Tuffo
+  secondo tuffo (dopo il checkpoint), tuffo, pelle vera: 2 vertici dentro il mondo di più di 1 cm (al più 1.4 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+    pelle dentro di 1.4 cm: f16 tentacolo 22 osso 1 (-13.67793, -0.077283, -5.987532) in sala_fossa_bimbi (mesh)
+    pelle dentro di 1.3 cm: f14 tentacolo 22 osso 1 (-13.66605, -0.009585, -5.988678) in sala_fossa_bimbi (mesh)
+  KO  secondo tuffo (dopo il checkpoint): tuffo, la pelle vera dei tentacoli fuori dal mondo (2 vertici dentro, al più 1.4 cm)
+  entra f27 k18 i1 (-14.75877, 0.349025, -7.306465) -> (-14.94083, 0.649435, -7.315108): sala_vasca_bimbi_1_3 in (-14.8, 0.417063, -7.308422) normale (1.0, 0.0, 0.0)
+  dissolvenza finita al fotogramma 0; tentacoli-fotogramma con la radice della posa dentro il mondo (non contati): 363
+  fotogrammi 127, scarto massimo 2.081 m, primo 1.2956 m, velocità massima oltre la posa 26.2 m/s
+  salto peggiore f25 k24 i2 posa (-13.34834, 0.779118, -7.744152) esce (-12.58987, 0.579298, -7.405592); dt 0.0167, il punto simulato si è mosso di 0.849, la posa di 0.412, l'uscita di 0.849
+  attraversamenti: posa del tuffo 442, dopo la morbidezza 0; punti sotto il pavimento in più 0; punti che passano una superficie 1 (nella posa 6)
+  COSTO secondo tuffo (dopo il checkpoint), tuffo: medio 2.06 ms, mediano 1.79 ms, 95% sotto 3.60 ms, massimo 4.08 ms; parti (totali) { "bersagli": 91145, "passi": 381404, "ossa": 21129, "giri": 221973, "conta_passi": 3542, "conta_giri": 3518, "zona": 21621, "sezioni": 43526 }
+  ok  secondo tuffo (dopo il checkpoint), tuffo: costo sotto 6.0 ms in media e 16 nel 95% dei fotogrammi (2.06 e 3.60 ms)
+  tratti dei tentacoli: da 0.88 a 1.12 volte la posa (0 tratti-fotogramma fuori da 0,7-1,3 su 19050)
+  ok  secondo tuffo (dopo il checkpoint): i tentacoli non si allungano né accorciano troppo (0.88-1.12, fuori da 0,7-1,3 in 0 tratti-fotogramma: meno dell'1%)
+  ok  secondo tuffo (dopo il checkpoint): registrati 127 fotogrammi
+  KO  secondo tuffo (dopo il checkpoint): niente scatti (va al più 26.2 m/s più veloce della posa)
+  ok  secondo tuffo (dopo il checkpoint): nessun punto dei tentacoli dentro pavimento, pareti, fondo, bordo o griglia (0)
+  ok  secondo tuffo (dopo il checkpoint): nessun tratto dei tentacoli attraversa il mondo (0; la posa da sola: 442)
+  punti che fra due fotogrammi passano una superficie (non si vede): 1; la posa da sola: 6
+  ok  secondo tuffo (dopo il checkpoint): nessun punto sotto il pavimento fuori dalla fossa (0)
+  ok  secondo tuffo (dopo il checkpoint): quando sparisce è tutta sotto, anche le punte morbide (0 punti fuori)
+== quanto 0
+  ok  quanto 0: affacciata, la morbidezza c'è già
+  quanto 0, affacciata, pelle vera: 651 vertici dentro il mondo di più di 1 cm (al più 5.7 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+    pelle dentro di 5.7 cm: f22 tentacolo 11 osso 5 (-14.8107, -0.042925, -6.455003) in bava
+    pelle dentro di 5.7 cm: f36 tentacolo 11 osso 5 (-14.8107, -0.042925, -6.455003) in bava
+    pelle dentro di 5.7 cm: f56 tentacolo 11 osso 5 (-14.8107, -0.042925, -6.455003) in bava
+  affacciata dentro f0 k4 i9 t0.00 (-15.44775, -0.130533, -7.279517) di 0.131; posa del punto (-14.11665, -0.873422, -7.000675)
+  affacciata dentro f0 k4 i9 t0.25 (-15.37964, -0.099611, -7.230148) di 0.100; posa del punto (-14.11665, -0.873422, -7.000675)
+  affacciata dentro f0 k4 i9 t0.50 (-15.31152, -0.068689, -7.180779) di 0.069; posa del punto (-14.11665, -0.873422, -7.000675)
+  affacciata attraversa f0 k5 i9 (-15.21479, 0.020641, -6.862152) -> (-15.4233, -0.202248, -6.832449): sala_pavimento in (-15.2341, -0.0, -6.859401) normale (0.0, 1.0, 0.0)
+  affacciata attraversa f0 k11 i6 (-14.80631, 0.083352, -6.474519) -> (-14.91807, -0.239785, -6.362756): sala_pavimento in (-14.83514, 0.0, -6.44569) normale (0.0, 1.0, 0.0)
+  affacciata attraversa f0 k12 i6 (-14.28616, 0.168767, -5.904622) -> (-14.30913, -0.169985, -5.881651): sala_pavimento in (-14.2976, 0.0, -5.893178) normale (0.0, 1.0, 0.0)
+  affacciata, problemi per fotogramma: [35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35]
+  affacciata: 61 fotogrammi, punti dentro il mondo 1952, tratti che lo attraversano 183
+  ok  quanto 0: la morbidezza c'è
+  ok  quanto 0: la morbidezza è l'ultima, dopo Tuffo
+  quanto 0, tuffo, pelle vera: 1967 vertici dentro il mondo di più di 1 cm (al più 9.8 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+    pelle dentro di 9.8 cm: f4 tentacolo 5 osso 4 (-14.89761, 0.369418, -7.487815) in sala_vasca_bimbi_1 (mesh)
+    pelle dentro di 9.5 cm: f20 tentacolo 0 osso 7 (-12.71707, 0.374148, -5.826863) in sala_fossa_bimbi (mesh)
+    pelle dentro di 9.5 cm: f8 tentacolo 3 osso 2 (-13.20897, -0.15265, -8.082971) in sala_fossa_bimbi (mesh)
+  dissolvenza finita al fotogramma 127; tentacoli-fotogramma con la radice della posa dentro il mondo (non contati): 0
+  fotogrammi 127, scarto massimo 0.000 m, primo 0.0000 m, velocità massima oltre la posa 0.0 m/s
+  salto peggiore 
+  attraversamenti: posa del tuffo 0, dopo la morbidezza 0; punti sotto il pavimento in più 0; punti che passano una superficie 0 (nella posa 0)
+  tratti dei tentacoli: da 10.00 a 0.00 volte la posa (0 tratti-fotogramma fuori da 0,7-1,3 su 19050)
+  ok  quanto 0: i tentacoli non si allungano né accorciano troppo (10.00-0.00, fuori da 0,7-1,3 in 0 tratti-fotogramma: meno dell'1%)
+  ok  quanto 0: registrati 127 fotogrammi
+  ok  quanto 0: al primo fotogramma è la posa del tuffo (0.0000 m)
+  ok  quanto 0: niente scatti (va al più 0.0 m/s più veloce della posa)
+  ok  quanto 0: nessun punto dei tentacoli dentro pavimento, pareti, fondo, bordo o griglia (0)
+  ok  quanto 0: nessun tratto dei tentacoli attraversa il mondo (0; la posa da sola: 0)
+  punti che fra due fotogrammi passano una superficie (non si vede): 0; la posa da sola: 0
+  ok  quanto 0: nessun punto sotto il pavimento fuori dalla fossa (0)
+  ok  quanto 0: la posa resta quella del tuffo (scarto massimo 0.000000 m)
+  ok  quanto 1: i tentacoli si muovono davvero (scarto massimo 2.114 m)
+RISULTATO: 41 controlli ok, 3 falliti

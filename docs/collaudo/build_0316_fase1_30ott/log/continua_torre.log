@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CONTINUA: cartella dei dati /tmp/claude-0/-home-user-Gioco-3D/f5e5d037-885d-5565-b3d5-b4de770f14f6/scratchpad/c/sott/f1_9baa00d5/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"], focus su Continua
+CONTINUA: schermata di caricamento dopo 0.1 s
+CONTINUA: arrivo in res://scenes/sala_principale.tscn dopo 7.8 s
+CONTINUA: arrivato {"acqua":20.0,"checkpoint":"SalaTorre/Checkpoint_NEm3","comandi":true,"inventario":["zaino_pompa"],"luci":2,"polaroid":{"polaroid":["p01","p02","p03","p04","p05","p08","p09","p06","p07","PolaroidPecora","p13","p15","p16","p14"]},"posizione":[37.4678840637207,-3.0094428062439,-18.9700698852539],"scena":"res://scenes/sala_principale.tscn","zaino":true}
+CONTINUA: CONFRONTO torre: checkpoint SalaTorre/Checkpoint_NEm3 / atteso SalaTorre/Checkpoint_NEm3; distanza dal posto salvato 0.01 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
+CONTINUA: MORTE torre: ripartito true dopo 8.4 s, checkpoint SalaTorre/Checkpoint_NEm3 (prima SalaTorre/Checkpoint_NEm3), a 0.01 m dal posto salvato, in piedi true
+WARNING: 1024 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+ERROR: 451 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+ERROR: 7 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 129 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 62 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 53 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 154 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 5 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
+ERROR: 2 RID allocations of type 'PN18TextServerAdvanced27FontAdvancedLinkedVariationE' were leaked at exit.

@@ -1,0 +1,221 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+1. Com'è all'inizio
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    il cerchio 0 è appoggiato sul fondo (-2.009, fondo -2.009)
+  ok    il cerchio 0 non copre la botola né la P5 (4.1 m, 5.1 m)
+  ok    il giocattolo 0 galleggia (-1.638, pelo -1.500)
+  ok    il giocattolo 0 parte lontano dal suo cerchio
+  ok    il cerchio 1 è appoggiato sul fondo (-2.008, fondo -2.008)
+  ok    il cerchio 1 non copre la botola né la P5 (4.1 m, 2.7 m)
+  ok    il giocattolo 1 galleggia (-1.658, pelo -1.500)
+  ok    il giocattolo 1 parte lontano dal suo cerchio
+  ok    il cerchio 2 è appoggiato sul fondo (-2.001, fondo -2.001)
+  ok    il cerchio 2 non copre la botola né la P5 (4.4 m, 5.9 m)
+  ok    il giocattolo 2 galleggia (-1.624, pelo -1.500)
+  ok    il giocattolo 2 parte lontano dal suo cerchio
+  ok    c'è il disegno dei bambini sul muro
+  ok    con l'acqua il pulsante della botola è spento
+2. Ordine A: prima i giocattoli sull'acqua, poi lo svuotamento
+    colpo 0: giocattolo 0 a 3.22 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (2.94, -1.99, -1.0)
+    colpo 1: giocattolo 0 a 1.03 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (0.92, -2.13, 0.1)
+    colpo 2: giocattolo 0 a 0.14 m dal cerchio, colpito 14 volte, acqua 0, altro 0  giocatore (-1.51, -2.16, 1.33)
+    colpo 3: giocattolo 0 a 0.03 m dal cerchio, colpito 4 volte, acqua 0, altro 0  giocatore (-3.13, -2.05, 1.52)
+  ok    col getto il giocattolo 0 arriva sul suo cerchio galleggiando (giocattolo (-3.92, -1.64, 3.32), cerchio (-3.9, -2.01, 3.3))
+    colpo 0: giocattolo 1 a 2.05 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.75, -1.59, -3.36)
+    colpo 1: giocattolo 1 a 0.15 m dal cerchio, colpito 40 volte, acqua 0, altro 0  giocatore (4.24, -1.99, -0.95)
+    colpo 2: giocattolo 1 a 0.03 m dal cerchio, colpito 4 volte, acqua 0, altro 0  giocatore (2.8, -1.99, 1.7)
+  ok    col getto il giocattolo 1 arriva sul suo cerchio galleggiando (giocattolo (3.9, -1.66, 3.33), cerchio (3.9, -2.01, 3.3))
+    colpo 0: giocattolo 2 a 2.11 m dal cerchio, colpito 22 volte, acqua 25, altro 0  giocatore (2.12, -1.99, -1.05)
+    colpo 1: giocattolo 2 a 0.15 m dal cerchio, colpito 44 volte, acqua 0, altro 0  giocatore (0.36, -2.06, -0.93)
+    colpo 2: giocattolo 2 a 0.03 m dal cerchio, colpito 4 volte, acqua 0, altro 0  giocatore (-2.71, -1.87, -1.64)
+  ok    col getto il giocattolo 2 arriva sul suo cerchio galleggiando (giocattolo (-3.93, -1.62, -0.09), cerchio (-3.9, -2.0, -0.1))
+  ok    galleggiando sopra il suo cerchio lo accende appena, i piatti non scendono (3 accesi)
+  ok    la piscina si svuota con lo zaino
+  ok    calando l'acqua i giocattoli si posano e i tre piatti scendono ([0, 1, 2])
+  ok    il giocattolo 0 è appoggiato sul suo piatto sceso (giocattolo (-3.9, -2.0, 3.3), cerchio (-3.9, -2.01, 3.3))
+  ok    il giocattolo 1 è appoggiato sul suo piatto sceso (giocattolo (3.9, -2.0, 3.3), cerchio (3.9, -2.01, 3.3))
+  ok    il giocattolo 2 è appoggiato sul suo piatto sceso (giocattolo (-3.9, -1.99, -0.1), cerchio (-3.9, -2.0, -0.1))
+  ok    scesi tutti e tre, il pulsante della botola funziona
+  ok    e il lampeggiante è verde
+  ok    colpito col getto, la botola si apre
+  (ordine A in 14 s di prova)
+  ok    lo stato preso galleggiando non ha piatti scesi
+3. Ordine B: prima lo svuotamento, poi i giocattoli sul fondo
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    a piscina vuota coi giocattoli fuori posto il pulsante non si preme
+  ok    e il lampeggiante resta giallo
+  ok    colpito, la botola resta chiusa
+  ok    il giocattolo 0 è appoggiato sul fondo (giocattolo (0.4, -2.18, 0.6), cerchio (-3.9, -2.01, 3.3))
+  ok    il giocattolo 1 è appoggiato sul fondo (giocattolo (4.4, -2.0, -0.6), cerchio (3.9, -2.01, 3.3))
+  ok    il giocattolo 2 è appoggiato sul fondo (giocattolo (-0.2, -2.08, -0.8), cerchio (-3.9, -2.0, -0.1))
+    colpo 0: giocattolo 0 a 4.78 m dal cerchio, colpito 46 volte, acqua 0, altro 1612 /root/SalaPrincipale/Mascotte/StatuaSqualo/Collisione (9.74, 0.91, 2.17) giocatore (2.94, -1.99, -1.0)
+    colpo 1: giocattolo 0 a 4.48 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (1.68, -1.8, -2.12)
+    colpo 2: giocattolo 0 a 3.31 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (0.36, -1.69, -2.77)
+    colpo 3: giocattolo 0 a 2.53 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (-0.26, -1.96, -1.36)
+    colpo 4: giocattolo 0 a 0.87 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (0.19, -2.18, 0.64)
+    colpo 5: giocattolo 0 a 0.00 m dal cerchio, colpito 14 volte, acqua 0, altro 0  giocatore (-1.52, -2.17, 1.96)
+  ok    spinto sul fondo, il giocattolo 0 arriva sul cerchio e il suo piatto scende subito (giocattolo (-3.9, -1.98, 3.3), cerchio (-3.9, -2.01, 3.3))
+  ok    con 1 piatti su 3 il pulsante non si preme ancora
+    colpo 0: giocattolo 1 a 2.42 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.75, -1.59, -3.36)
+    colpo 1: giocattolo 1 a 0.68 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (4.36, -1.91, -1.43)
+    colpo 2: giocattolo 1 a 0.00 m dal cerchio, colpito 10 volte, acqua 0, altro 0  giocatore (3.68, -2.0, 0.83)
+  ok    spinto sul fondo, il giocattolo 1 arriva sul cerchio e il suo piatto scende subito (giocattolo (3.9, -1.98, 3.3), cerchio (3.9, -2.01, 3.3))
+  ok    con 2 piatti su 3 il pulsante non si preme ancora
+    colpo 0: giocattolo 2 a 0.24 m dal cerchio, colpito 36 volte, acqua 0, altro 0  giocatore (-0.68, -1.9, -1.62)
+    colpo 1: giocattolo 2 a 0.00 m dal cerchio, colpito 48 volte, acqua 0, altro 0  giocatore (-2.45, -1.89, -1.53)
+  ok    spinto sul fondo, il giocattolo 2 arriva sul cerchio e il suo piatto scende subito (giocattolo (-3.9, -1.99, -0.1), cerchio (-3.9, -2.0, -0.1))
+  ok    scesi tutti e tre, il pulsante funziona
+  ok    colpito col getto, la botola si apre
+  ok    spinti sul fondo vuoto, in movimento sul fondo i giocattoli non stanno mai più di 1 cm sopra il fondo che hanno sotto (al più 0.0 cm, il giocattolo 0 in (-0.59, -0.09), fondo -2.129, acqua 0.00)
+  ok    nei due ordini nessun giocattolo è mai sotto il fondo (al più 0.5 cm, il giocattolo 0 in (-3.9, -1.984, 3.3), fondo -1.979)
+4. Il salvataggio coi checkpoint
+  ok    lo stato salva i piatti scesi ({ "pos": [[-3.89999222755432, 3.29999732971191, -1.567674004299], [3.89999508857727, 3.29999804496765, -0.92383989716344], [-3.89999914169312, -0.09999950230122, 3.30912414826931]], "giu": [true, true, true], "risolto": true })
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    ricaricato, i giocattoli tornano dov'erano
+  ok    con lo stato "risolto" (le partenze di prova) i giocattoli sono sui piatti scesi
+5. Dagli angoli e da sotto le scalette si riporta il giocattolo al suo cerchio col getto
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    a piscina piena (fill 1.00) il giocattolo 1 galleggia sotto la scaletta ovest
+    dal bordo: giocattolo 1 in (-4.88, 1.72)
+    colpo 0: giocattolo 1 a 6.78 m dal cerchio, colpito 48 volte, acqua 20, altro 44 /root/SalaPrincipale/Piscina/PulsantePortello/Graybox/Bersaglio (1.98, -0.9, 4.3) giocatore (-6.55, -2.0, 1.42)
+    colpo 1: giocattolo 1 a 6.52 m dal cerchio, colpito 0 volte, acqua 42, altro 0  giocatore (-5.79, -2.0, 1.97)
+    colpo 2: giocattolo 1 a 5.31 m dal cerchio, colpito 29 volte, acqua 13, altro 0  giocatore (-5.54, -2.0, 2.07)
+    colpo 3: giocattolo 1 a 5.16 m dal cerchio, colpito 0 volte, acqua 42, altro 0  giocatore (-4.35, -2.0, 2.32)
+    colpo 4: giocattolo 1 a 5.13 m dal cerchio, colpito 0 volte, acqua 42, altro 0  giocatore (-4.2, -2.0, 2.35)
+    colpo 5: giocattolo 1 a 4.92 m dal cerchio, colpito 5 volte, acqua 37, altro 0  giocatore (-4.17, -2.0, 2.36)
+    colpo 6: giocattolo 1 a 4.89 m dal cerchio, colpito 0 volte, acqua 42, altro 0  giocatore (-3.97, -2.01, 2.4)
+    colpo 7: giocattolo 1 a 4.87 m dal cerchio, colpito 0 volte, acqua 42, altro 0  giocatore (-3.94, -2.01, 2.4)
+    colpo 8: giocattolo 1 a 4.87 m dal cerchio, colpito 0 volte, acqua 42, altro 0  giocatore (-3.92, -2.01, 2.4)
+    colpo 9: giocattolo 1 a 3.35 m dal cerchio, colpito 37 volte, acqua 9, altro 0  giocatore (-3.92, -2.01, 2.41)
+    colpo 10: giocattolo 1 a 1.23 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (-2.03, -2.12, 2.74)
+    colpo 11: giocattolo 1 a 0.17 m dal cerchio, colpito 18 volte, acqua 0, altro 0  giocatore (0.71, -2.17, 3.34)
+    colpo 12: giocattolo 1 a 0.01 m dal cerchio, colpito 3 volte, acqua 0, altro 0  giocatore (2.56, -2.05, 3.9)
+  ok    a piscina piena, sotto la scaletta ovest: il giocattolo 1 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (3.91, -1.66, 3.31), cerchio (3.9, -2.01, 3.3))
+  ok    a piscina piena (fill 1.00) il giocattolo 2 tocca la pendenza nell'angolo nord-est
+    dal bordo: giocattolo 2 in (5.04, -3.13)
+    dal bordo: giocattolo 2 in (4.53, -2.06)
+    colpo 0: giocattolo 2 a 6.56 m dal cerchio, colpito 48 volte, acqua 58, altro 0  giocatore (6.57, -1.73, -2.53)
+    colpo 1: giocattolo 2 a 4.44 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (5.37, -1.74, -2.42)
+    colpo 2: giocattolo 2 a 2.32 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (3.2, -1.81, -2.05)
+    colpo 3: giocattolo 2 a 0.15 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (0.49, -1.92, -1.51)
+    colpo 4: giocattolo 2 a 0.03 m dal cerchio, colpito 4 volte, acqua 0, altro 0  giocatore (-2.93, -1.85, -1.79)
+  ok    a piscina piena, nell'angolo nord-est: il giocattolo 2 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (-3.93, -1.62, -0.09), cerchio (-3.9, -2.0, -0.1))
+    dal bordo: giocattolo 1 in (-5.03, 1.63)
+    colpo 0: giocattolo 1 a 7.35 m dal cerchio, colpito 49 volte, acqua 0, altro 29 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (-6.04, -2.0, 1.51) giocatore (-6.51, -2.0, 1.35)
+    colpo 1: giocattolo 1 a 5.68 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (-6.33, -2.0, 1.75)
+    colpo 2: giocattolo 1 a 4.58 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (-4.7, -2.0, 2.15)
+    colpo 3: giocattolo 1 a 3.36 m dal cerchio, colpito 34 volte, acqua 0, altro 12 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (1.16, -2.13, 3.74) giocatore (-3.64, -1.98, 3.78)
+    colpo 4: giocattolo 1 a 1.70 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (-2.01, -2.06, 4.15)
+    colpo 5: giocattolo 1 a 0.00 m dal cerchio, colpito 41 volte, acqua 0, altro 0  giocatore (0.18, -2.12, 4.11)
+  ok    a piscina vuota, sotto la scaletta ovest: il giocattolo 1 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (3.9, -1.98, 3.3), cerchio (3.9, -2.01, 3.3))
+    dal bordo: giocattolo 0 in (5.53, 2.39)
+    dal bordo: giocattolo 0 in (4.68, 2.04)
+    colpo 0: giocattolo 0 a 6.98 m dal cerchio, colpito 48 volte, acqua 0, altro 58 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (6.18, -2.0, 3.17) giocatore (6.56, -2.0, 1.76)
+    colpo 1: giocattolo 0 a 5.31 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (5.93, -2.0, 1.58)
+    colpo 2: giocattolo 0 a 5.16 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.26, -2.0, 1.72)
+    colpo 3: giocattolo 0 a 5.16 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.12, -2.01, 1.77)
+    colpo 4: giocattolo 0 a 5.16 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.12, -2.01, 1.77)
+    colpo 5: giocattolo 0 a 5.16 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.12, -2.01, 1.77)
+    colpo 6: giocattolo 0 a 5.16 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.12, -2.01, 1.77)
+    colpo 7: giocattolo 0 a 4.59 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.12, -2.01, 1.77)
+    colpo 8: giocattolo 0 a 2.68 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (3.6, -2.02, 2.26)
+    colpo 9: giocattolo 0 a 0.51 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (1.15, -2.18, 2.8)
+    colpo 10: giocattolo 0 a 0.04 m dal cerchio, colpito 4 volte, acqua 0, altro 0  giocatore (-1.69, -2.15, 2.62)
+    colpo 11: giocattolo 0 a 0.06 m dal cerchio, colpito 7 volte, acqua 0, altro 0  giocatore (-2.31, -2.11, 2.39)
+  ok    a piscina vuota, sotto la scaletta est: il giocattolo 0 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (-3.95, -1.98, 3.32), cerchio (-3.9, -2.01, 3.3))
+    dal bordo: giocattolo 0 in (-5.51, -2.69)
+    dal bordo: giocattolo 0 in (-4.65, -2.34)
+    colpo 0: giocattolo 0 a 4.06 m dal cerchio, colpito 47 volte, acqua 0, altro 58 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (-6.17, -1.59, -3.47) giocatore (-4.93, -1.41, -4.43)
+    colpo 1: giocattolo 0 a 2.38 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (-4.93, -1.56, -3.5)
+    colpo 2: giocattolo 0 a 0.63 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (-4.77, -1.93, -1.32)
+    colpo 3: giocattolo 0 a 0.00 m dal cerchio, colpito 9 volte, acqua 0, altro 0  giocatore (-4.83, -2.0, 1.05)
+  ok    a piscina vuota, nell'angolo nord-ovest: il giocattolo 0 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (-3.9, -1.98, 3.3), cerchio (-3.9, -2.01, 3.3))
+    dal bordo: giocattolo 1 in (5.07, -3.1)
+    dal bordo: giocattolo 1 in (4.72, -2.21)
+    colpo 0: giocattolo 1 a 3.95 m dal cerchio, colpito 47 volte, acqua 0, altro 58 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (5.87, -1.54, -3.77) giocatore (5.06, -1.4, -4.49)
+    colpo 1: giocattolo 1 a 2.27 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (4.69, -1.58, -3.38)
+    colpo 2: giocattolo 1 a 0.52 m dal cerchio, colpito 47 volte, acqua 0, altro 0  giocatore (4.25, -1.94, -1.23)
+    colpo 3: giocattolo 1 a 0.00 m dal cerchio, colpito 7 volte, acqua 0, altro 0  giocatore (3.51, -1.93, 1.04)
+  ok    a piscina vuota, nell'angolo nord-est: il giocattolo 1 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (3.9, -1.98, 3.3), cerchio (3.9, -2.01, 3.3))
+    dal bordo: giocattolo 2 in (-4.83, 3.55)
+    dal bordo: giocattolo 2 in (-4.45, 2.67)
+    colpo 0: giocattolo 2 a 1.13 m dal cerchio, colpito 78 volte, acqua 0, altro 29 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (-4.61, -2.0, 3.73) giocatore (-4.83, -2.0, 4.58)
+    colpo 1: giocattolo 2 a 0.00 m dal cerchio, colpito 21 volte, acqua 0, altro 0  giocatore (-4.05, -1.97, 2.97)
+  ok    a piscina vuota, nell'angolo sud-ovest: il giocattolo 2 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (-3.9, -1.97, -0.1), cerchio (-3.9, -2.0, -0.1))
+    dal bordo: giocattolo 2 in (5.51, 3.11)
+    dal bordo: giocattolo 2 in (4.63, 2.73)
+    colpo 0: giocattolo 2 a 8.95 m dal cerchio, colpito 0 volte, acqua 0, altro 58 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (6.18, -2.0, 3.93) giocatore (6.45, -1.98, 3.36)
+    colpo 1: giocattolo 2 a 7.29 m dal cerchio, colpito 48 volte, acqua 0, altro 0  giocatore (6.45, -2.0, 3.38)
+    colpo 2: giocattolo 2 a 6.94 m dal cerchio, colpito 0 volte, acqua 0, altro 42 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (1.62, -2.17, 1.48) giocatore (5.96, -2.0, 2.86)
+    colpo 3: giocattolo 2 a 6.64 m dal cerchio, colpito 0 volte, acqua 0, altro 43 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (1.44, -2.18, 1.41) giocatore (5.63, -2.0, 2.72)
+    colpo 4: giocattolo 2 a 6.30 m dal cerchio, colpito 0 volte, acqua 0, altro 43 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (1.21, -2.19, 1.33) giocatore (5.35, -2.0, 2.63)
+    colpo 5: giocattolo 2 a 5.90 m dal cerchio, colpito 0 volte, acqua 0, altro 43 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (0.94, -2.2, 1.25) giocatore (5.02, -2.0, 2.52)
+    colpo 6: giocattolo 2 a 5.42 m dal cerchio, colpito 0 volte, acqua 0, altro 43 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (0.63, -2.21, 1.15) giocatore (4.64, -2.0, 2.4)
+    colpo 7: giocattolo 2 a 4.98 m dal cerchio, colpito 0 volte, acqua 0, altro 43 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (0.26, -2.21, 1.03) giocatore (4.19, -2.0, 2.25)
+    colpo 8: giocattolo 2 a 4.38 m dal cerchio, colpito 0 volte, acqua 0, altro 43 /root/SalaPrincipale/Sala/Piscina/sala_piscina_onde/sala_piscina_onde (-0.05, -2.19, 0.68) giocatore (3.88, -2.01, 1.7)
+    colpo 9: giocattolo 2 a 3.32 m dal cerchio, colpito 45 volte, acqua 0, altro 0  giocatore (3.33, -1.89, 1.3)
+    colpo 10: giocattolo 2 a 1.74 m dal cerchio, colpito 46 volte, acqua 0, altro 0  giocatore (2.01, -2.05, -0.47)
+    colpo 11: giocattolo 2 a 0.00 m dal cerchio, colpito 43 volte, acqua 0, altro 0  giocatore (-0.13, -2.05, -0.98)
+  ok    a piscina vuota, nell'angolo sud-est: il giocattolo 2 si stacca dal bordo e col getto torna al suo cerchio (giocattolo (-3.9, -1.97, -0.1), cerchio (-3.9, -2.0, -0.1))
+  ok    dagli angoli e dalle scalette, in movimento sul fondo i giocattoli non stanno mai più di 1 cm sopra il fondo che hanno sotto (al più 0.5 cm, il giocattolo 2 in (5.32, -3.25), fondo -1.625, acqua 1.00)
+  ok    dagli angoli e dalle scalette nessun giocattolo è mai sotto il fondo (al più 0.4 cm, il giocattolo 1 in (3.9, -1.982, 3.3), fondo -1.978)
+6. Spinto a lungo contro un gonfiabile, non ci entra, non ci sale sopra e ci scivola attorno
+  ok    i gonfiabili sul fondo con la loro forma (7 cerchi, 4 collisioni)
+    contro (-0.99, 0.41, 0.42): di lato 1.12 m, il pallone in (-2.1, 2.34)
+    contro (1.83, 0.83, 0.38): di lato 2.69 m, il pallone in (5.9, 1.6)
+    contro (2.9, 1.0, 0.37): di lato 1.39 m, il pallone in (5.9, 2.43)
+    contro (-2.42, 1.21, 0.42): di lato 1.68 m, il pallone in (-3.19, 3.95)
+    contro (-2.6, 0.9, 0.42): di lato 2.27 m, il pallone in (-2.88, 3.95)
+    contro (-2.78, 0.59, 0.42): di lato 1.96 m, il pallone in (-5.9, 0.79)
+    contro (0.0, 2.02, 0.99): di lato 2.81 m, il pallone in (2.81, 3.95)
+    da 180 gradi contro (-0.99, 0.41, 0.42): il pallone da (-1.72, 0.41) a (-0.22, 3.94)
+    da 135 gradi contro (-0.99, 0.41, 0.42): il pallone da (-1.51, 0.92) a (0.33, -3.31)
+    da 225 gradi contro (-0.99, 0.41, 0.42): il pallone da (-1.51, -0.1) a (2.82, 2.17)
+  ok    spinto 8 s da tre lati contro il gonfiabile vicino alla botola, ci scivola attorno (si sposta almeno 3.84 m)
+  ok    contro i gonfiabili, in movimento sul fondo i giocattoli non stanno mai più di 1 cm sopra il fondo che hanno sotto (al più 0.0 cm, il giocattolo 1 in (-0.5, -2.16), fondo -1.813, acqua 0.00)
+  ok    contro i gonfiabili nessun giocattolo è mai sotto il fondo (al più 0.0 cm, il giocattolo 2 in (0.046, -1.799, -2.244), fondo -1.798)
+  ok    il pallone spinto 4 s contro ognuno non ci entra (al più 0.7 cm)
+  ok    e resta sul fondo, non ci sale sopra (al più 0.4 cm sopra il fondo)
+  ok    spinto dritto contro, ci scivola attorno invece di fermarsi (di lato almeno 1.12 m)
+7. Calando l'acqua sopra un gonfiabile, il giocattolo ne scivola giù
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    la paperella galleggia sopra la ciambella (fill 1.00)
+  ok    la paperella posata dall'acqua sopra la ciambella ne scivola giù sul fondo (a 0.65 m dal centro, 0.3 cm sopra il fondo)
+  ok    calando l'acqua sopra un gonfiabile nessun giocattolo è mai sotto il fondo (al più 0.0 cm, il giocattolo 0 in (-0.595, -1.939, 0.228), fondo -1.939)
+8. Contro il portellone e sulla giunzione del fondo il giocattolo resta sul fondo; la rete; il checkpoint
+  ok    c'è l'enigma dei giocattoli nella piscina
+    da 0 gradi: il pallone in (-3.378, -1.908, -1.553), 0.000 sopra il fondo
+    da 45 gradi: il pallone in (-5.703, -1.934, -1.395), 0.000 sopra il fondo
+    da 90 gradi: il pallone in (0.627, -2.191, 3.106), 0.003 sopra il fondo
+    da 135 gradi: il pallone in (0.89, -2.163, 3.487), 0.000 sopra il fondo
+    da 180 gradi: il pallone in (5.762, -2.0, 3.748), 0.000 sopra il fondo
+    da 225 gradi: il pallone in (5.631, -2.0, 3.944), 0.000 sopra il fondo
+    da 270 gradi: il pallone in (3.367, -2.013, 3.942), 0.003 sopra il fondo
+    da 315 gradi: il pallone in (1.223, -2.19, 2.289), 0.003 sopra il fondo
+  ok    spinto dritto contro il portellone da otto lati non ci sale (al più vicino 1.22 m dal centro)
+  ok    contro il portellone e sulla giunzione, in movimento sul fondo i giocattoli non stanno mai più di 1 cm sopra il fondo che hanno sotto (al più 0.1 cm, il giocattolo 1 in (0.0, -1.65), fondo -1.919, acqua 0.00)
+  ok    dopo, il pallone è sul fondo ((0.0, -1.666, -2.95), fondo -1.675)
+  ok    contro il portellone e sulla giunzione nessun giocattolo è mai sotto il fondo (al più 0.1 cm, il giocattolo 2 in (0.0, -1.583, -3.504), fondo -1.583)
+EnigmaGiocattoli: Pallone perso in (2.5, -4.6, -1.0) (fondo -2.01477432250977), torna alla partenza
+  ok    messo sotto il fondo, torna sul fondo ((4.4, -1.997, -0.6), fondo -2.000)
+EnigmaGiocattoli: Pallone perso in (0.0, -1.997, 9.0) (fondo -2.00000047683716), torna alla partenza
+  ok    messo fuori dall'area, guardando altrove torna alla sua partenza ((4.4, -1.997, -0.6))
+  ok    ripartendo dal checkpoint con il pallone sotto il fondo, torna sul fondo ((2.5, -2.004, -1.0))
+  ok    c'è l'enigma dei giocattoli nella piscina
+  ok    salvato sulla giunzione (0, 3,6) e riaperto in una sala nuova, il pallone è lì sul fondo ((0.0, -2.169, 3.6))
+  ok    ripartendo dal checkpoint nessun giocattolo è mai sotto il fondo (al più 0.0 cm)
+
+RISULTATO: 83 controlli ok, 0 falliti
+WARNING: 709 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+ERROR: 366 resources still in use at exit (run with --verbose for details).
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+ERROR: 2 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 79 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 44 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 39 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 123 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.

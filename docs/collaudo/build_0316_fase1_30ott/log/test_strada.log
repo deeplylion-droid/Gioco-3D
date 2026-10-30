@@ -1,0 +1,112 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  ok    dopo il risveglio nel corridoio si gioca ((4.8, 0.0, 39.6))
+Gli interni: corridoio, spogliatoi, lo stanzino del bagnino con lo zaino
+  ok    dal corridoio del risveglio agli spogliatoi
+  ok    dagli spogliatoi dentro lo stanzino
+  (zaino in (4.837, 0.72, 32.47), il raggio trova Prendi:<Area3D#354871680736>)
+  ok    nello stanzino si prende lo zaino-pompa dalla rastrelliera (in (3.49, 0.0, 32.47), il raggio trova <null>)
+  ok    dallo stanzino al lavapiedi, fino al tornello
+  (scorciatoia: il tornello sbloccato col getto, lo prova test_interni)
+  ok    il tornello
+  (scorciatoia: la saracinesca aperta con la turbina, lo prova test_interni)
+  ok    sotto la saracinesca, nella sala, fino alla statua
+La sala: la piscina a onde e il pozzo
+  (scorciatoia: la piscina vuota e il portello aperto, la tappa 5 la prova test_tappe56)
+  ok    giù per la scala del pozzo fino alla camera delle onde (y -9.05)
+  ok    la camera delle onde: le paratie si aprono al passaggio, il tunnel fino alla sala pompe
+La sala pompe, il risveglio e il raccordo
+  (scorciatoia: le pompe avviate e la leva tirata, li prova test_tappe56)
+  ok    nella sala pompe fino alla porta del ponte inferiore
+AttesaZone: risalita non ancora pronta, si aspetta senza bloccare
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 2
+rocce della riva dell'imbarco: 1
+pile di scatoloni: 108 colonne, 379 unità, 2495 scatole di cartone e 757 colorate
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _pausa (res://scripts/risalita/infermeria_gioco.gd:94)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _pausa (res://scripts/risalita/infermeria_gioco.gd:94)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:520)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:494)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _pausa (res://scripts/risalita/infermeria_gioco.gd:94)
+AttesaZone: risalita pronta dopo 18649 ms di attesa
+  ok    col maniglione la porta del ponte si apre (attesa delle stanze 17.9 s)
+  ok    dalla porta del ponte su per le due rampe del raccordo
+ERROR: Parameter "material" is null.
+  ok    il corridoio C2 fino alla porta di servizio
+La Risalita: la scala verso il fiume, il capannone, la barca, l'infermeria, la scala di servizio
+  ok    dalla porta di servizio giù per la scala fino al capannone
+  ok    le stanze della Risalita sono caricate (nel thread, dalla sala pompe)
+  ok    nel capannone fino all'imbarco
+  (scorciatoia: le paratie girate per il giro giusto, lo prova test_risalita)
+  ok    in barca fino all'approdo, giù sulla banchina ((-35.0, -5.399141, 54.8))
+  (scorciatoia: il pulsantone dell'infermeria colpito col getto, la porta nord si apre; lo prova test_infermeria_gioco)
+  ok    dall'approdo, porta di servizio, zona del personale, infermeria, porta nord
+  ok    su per la scala di servizio fino alla porta di C3
+C3, il magazzino, la serranda, la sala
+  ok    da C3 al magazzino dei gonfiabili
+  (scorciatoia: la keycard della cassaforte, la provano test_infermeria_gioco e test_risalita)
+  ok    la keycard nel lettore col tasto E: verde
+  ok    sotto la serranda, nella sala
+La sala al buio: l'area bimbi, la spiaggia, il portone della torre
+  (scorciatoia: lei già tuffata nella fossa, la tappa 8 la prova test_tappa8)
+  ok    dalla serranda lungo la scia fino all'area bimbi
+  (scorciatoia: l'enigma degli acquari risolto, il portone si apre; lo prova test_acquari)
+AttesaZone: torre non ancora pronta, si aspetta senza bloccare
+  ok    dall'area bimbi lungo la spiaggia fino al portone
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2836 ((31.0, -2.5, -4.08), verso (0.0, 0.0, -1.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2838 ((31.0, -8.0, -25.92), verso (0.0, 0.0, 1.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2840 ((20.28, -12.0, -10.0), verso (1.0, 0.0, 0.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+WARNING: Posa: nessun muro dietro @MeshInstance3D@2842 ((39.92, -16.5, -15.0), verso (-1.0, 0.0, 0.0))
+     GDScript backtrace (most recent call first):
+         [0] fissa_al_muro (res://scripts/posizionamento/posa.gd:70)
+         [1] _emergenza (res://scripts/game/sala_torre.gd:1093)
+         [2] <anonymous lambda> (res://scripts/game/sala_torre.gd:919)
+         [3] costruisci_a_pezzi (res://scripts/game/sala_torre.gd:119)
+AttesaZone: torre pronta dopo 34210 ms di attesa
+  ok    il portone è aperto e dietro c'è la sala della torre
+EnigmaGiocattoli: Paperella perso in (0.4, -2.072632, 0.6) (fondo 0.40000000596046), torna alla partenza
+EnigmaGiocattoli: Balena perso in (-0.2, -2.075674, -0.8) (fondo 0.06000000238419), torna alla partenza
+  ok    attraverso il portone, sulla passerella della torre
+  ok    si entra nella sala della torre
+I checkpoint lungo la strada: CheckpointRisveglio, CheckpointIngressoSpogliatoi, CheckpointStanzino, CheckpointLavapiedi, CheckpointTornello, CheckpointSaracinesca, CheckpointIngresso, CheckpointStatua, CheckpointPozzaVuota, CheckpointPozzo, CheckpointSalaPompe, CheckpointRisveglio, CheckpointT7Inizio, CheckpointRaccordo, CheckpointIngresso, CheckpointApprodo, DopoLuce, CheckpointMagazzino, Checkp
+  ok    checkpoint CheckpointRisveglio
+  ok    checkpoint CheckpointRaccordo
+  ok    checkpoint CheckpointIngresso
+  ok    checkpoint CheckpointApprodo
+  ok    checkpoint CheckpointMagazzino
+  ok    checkpoint CheckpointSerranda
+  ok    checkpoint CheckpointAreaBimbi
+  ok    checkpoint CheckpointTorre
+
+RISULTATO: 35 controlli ok, 0 falliti

@@ -1,0 +1,104 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+corpi dalle mesh: 96
+catene 25
+== vasca_0
+  vasca_0: 220 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 12.4 m/s; tratti 0.99-1.02; dalla posa al più 1.13 m; costo medio 1.16, 95% 1.40, massimo 5.09, primi fotogrammi 2.93 ms
+    tratto più corto f3 k5 i1 0.99 (nella posa 1.00) (47.11468, -27.09964, -18.45184) -> (46.96622, -26.73378, -18.4444)
+  ok  vasca_0: registrati 220 fotogrammi
+  vasca_0, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  vasca_0: la pelle vera dei tentacoli fuori dalla sala (0 vertici dentro, al più 0.0 cm)
+  ok  vasca_0: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  vasca_0: i tentacoli si muovono davvero (al più 1.13 m dalla posa)
+  ok  vasca_0: niente scatti (12.4 m/s più della posa)
+  ok  vasca_0: tratti vicini alla lunghezza di riposo (0.99-1.02)
+  ok  vasca_0: costo sotto 4 ms in media e 8 nel 95% (1.16 e 1.40)
+  ok  vasca_0: quando compare nessun fotogramma sopra i 10 ms (2.93)
+== vasca_1
+  vasca_1: 220 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 5.3 m/s; tratti 0.99-1.02; dalla posa al più 0.83 m; costo medio 1.13, 95% 1.45, massimo 4.71, primi fotogrammi 2.34 ms
+    tratto più corto f3 k0 i1 0.99 (nella posa 1.00) (70.62781, -23.09964, -27.17967) -> (70.46741, -22.72856, -27.16639)
+  ok  vasca_1: registrati 220 fotogrammi
+  vasca_1, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  vasca_1: la pelle vera dei tentacoli fuori dalla sala (0 vertici dentro, al più 0.0 cm)
+  ok  vasca_1: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  vasca_1: i tentacoli si muovono davvero (al più 0.83 m dalla posa)
+  ok  vasca_1: niente scatti (5.3 m/s più della posa)
+  ok  vasca_1: tratti vicini alla lunghezza di riposo (0.99-1.02)
+  ok  vasca_1: costo sotto 4 ms in media e 8 nel 95% (1.13 e 1.45)
+  ok  vasca_1: quando compare nessun fotogramma sopra i 10 ms (2.34)
+== vasca_2
+  vasca_2: 190 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 7.1 m/s; tratti 0.90-1.10; dalla posa al più 1.30 m; costo medio 1.21, 95% 1.47, massimo 4.23, primi fotogrammi 4.23 ms
+    tratto più corto f0 k2 i8 0.90 (nella posa 1.00) (69.8332, -33.21027, 1.88392) -> (69.86183, -32.88632, 1.85915)
+  ok  vasca_2: registrati 190 fotogrammi
+  vasca_2, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  vasca_2: la pelle vera dei tentacoli fuori dalla sala (0 vertici dentro, al più 0.0 cm)
+  ok  vasca_2: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  vasca_2: i tentacoli si muovono davvero (al più 1.30 m dalla posa)
+  ok  vasca_2: niente scatti (7.1 m/s più della posa)
+  ok  vasca_2: tratti vicini alla lunghezza di riposo (0.90-1.10)
+  ok  vasca_2: costo sotto 4 ms in media e 8 nel 95% (1.21 e 1.47)
+  ok  vasca_2: quando compare nessun fotogramma sopra i 10 ms (4.23)
+== scolo_0
+  scolo_0: 184 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 13.0 m/s; tratti 0.97-1.03; dalla posa al più 1.20 m; costo medio 1.26, 95% 1.82, massimo 3.71, primi fotogrammi 2.92 ms
+    tratto più corto f53 k1 i8 0.97 (nella posa 1.00) (59.77328, -27.03199, -13.53501) -> (59.99268, -27.19478, -13.34254)
+  ok  scolo_0: registrati 184 fotogrammi
+  scolo_0, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  scolo_0: la pelle vera dei tentacoli fuori dalla sala (0 vertici dentro, al più 0.0 cm)
+  ok  scolo_0: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  scolo_0: i tentacoli si muovono davvero (al più 1.20 m dalla posa)
+  ok  scolo_0: niente scatti (13.0 m/s più della posa)
+  ok  scolo_0: tratti vicini alla lunghezza di riposo (0.97-1.03)
+  ok  scolo_0: costo sotto 4 ms in media e 8 nel 95% (1.26 e 1.82)
+  ok  scolo_0: quando compare nessun fotogramma sopra i 10 ms (2.92)
+== scolo_1
+  scolo_1: 163 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 13.1 m/s; tratti 0.90-1.09; dalla posa al più 2.74 m; costo medio 2.04, 95% 3.22, massimo 6.25, primi fotogrammi 6.25 ms
+    tratto più corto f0 k1 i7 0.90 (nella posa 1.00) (58.63552, -32.90551, -22.10829) -> (58.73638, -33.22648, -22.08874)
+  ok  scolo_1: registrati 163 fotogrammi
+  scolo_1, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  scolo_1: la pelle vera dei tentacoli fuori dalla sala (0 vertici dentro, al più 0.0 cm)
+  ok  scolo_1: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  scolo_1: i tentacoli si muovono davvero (al più 2.74 m dalla posa)
+  ok  scolo_1: niente scatti (13.1 m/s più della posa)
+  ok  scolo_1: tratti vicini alla lunghezza di riposo (0.90-1.09)
+  ok  scolo_1: costo sotto 4 ms in media e 8 nel 95% (2.04 e 3.22)
+  ok  scolo_1: quando compare nessun fotogramma sopra i 10 ms (6.25)
+== scolo_2
+  scolo_2: 184 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 14.6 m/s; tratti 0.76-1.03; dalla posa al più 2.14 m; costo medio 1.24, 95% 2.04, massimo 4.55, primi fotogrammi 2.45 ms
+    tratto più corto f1 k3 i1 0.76 (nella posa 1.00) (72.08503, -35.50599, -14.3791) -> (72.22509, -35.7862, -14.40122)
+  ok  scolo_2: registrati 184 fotogrammi
+  scolo_2, pelle vera: 4 vertici dentro il mondo di più di 1 cm (al più 4.0 cm), 51 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+    pelle dentro di 4.0 cm: f22 tentacolo 3 osso 2 (72.39443, -34.02773, -14.45162) in ins_A_struttura (mesh)
+    pelle dentro di 1.1 cm: f30 tentacolo 3 osso 7 (72.38153, -34.00267, -14.62705) in ins_A_struttura (mesh)
+    pelle dentro di 1.1 cm: f30 tentacolo 3 osso 7 (72.38153, -34.00267, -14.62705) in ins_A_struttura (mesh)
+  KO  scolo_2: la pelle vera dei tentacoli fuori dalla sala (4 vertici dentro, al più 4.0 cm)
+  ok  scolo_2: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  scolo_2: i tentacoli si muovono davvero (al più 2.14 m dalla posa)
+  ok  scolo_2: niente scatti (14.6 m/s più della posa)
+  ok  scolo_2: tratti vicini alla lunghezza di riposo (0.76-1.03)
+  ok  scolo_2: costo sotto 4 ms in media e 8 nel 95% (1.24 e 2.04)
+  ok  scolo_2: quando compare nessun fotogramma sopra i 10 ms (2.45)
+== grata
+  grata: 185 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 35.3 m/s; tratti 0.90-1.06; dalla posa al più 1.56 m; costo medio 2.31, 95% 4.01, massimo 5.28, primi fotogrammi 5.28 ms
+    tratto più corto f0 k1 i4 0.90 (nella posa 1.00) (52.61791, -38.43958, -7.78312) -> (52.70507, -38.60922, -7.741062)
+  ok  grata: registrati 185 fotogrammi
+  grata, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  grata: la pelle vera dei tentacoli fuori dalla sala (0 vertici dentro, al più 0.0 cm)
+  ok  grata: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  grata: i tentacoli si muovono davvero (al più 1.56 m dalla posa)
+  KO  grata: niente scatti (35.3 m/s più della posa)
+  ok  grata: tratti vicini alla lunghezza di riposo (0.90-1.06)
+  ok  grata: costo sotto 4 ms in media e 8 nel 95% (2.31 e 4.01)
+  ok  grata: quando compare nessun fotogramma sopra i 10 ms (5.28)
+== sb1
+  sb1: 160 fotogrammi; dentro 0, attraversa 0 (radice nel mondo, non contati: 0); salto 5.0 m/s; tratti 0.84-1.01; dalla posa al più 1.86 m; costo medio 1.58, 95% 2.31, massimo 5.35, primi fotogrammi 4.96 ms
+    tratto più corto f0 k3 i4 0.84 (nella posa 1.00) (43.68335, -36.53878, -8.634821) -> (43.79052, -36.76247, -8.590793)
+  ok  sb1: registrati 160 fotogrammi
+  sb1, pelle vera: 0 vertici dentro il mondo di più di 1 cm (al più 0.0 cm), 0 del primo osso (radice) o nel foro dove passa lei a parte; 5963 vertici per fotogramma
+  ok  sb1: la pelle vera dei tentacoli fuori dalla sala (0 vertici dentro, al più 0.0 cm)
+  ok  sb1: nessun tratto dei tentacoli attraversa la sala (0)
+  ok  sb1: i tentacoli si muovono davvero (al più 1.86 m dalla posa)
+  ok  sb1: niente scatti (5.0 m/s più della posa)
+  ok  sb1: tratti vicini alla lunghezza di riposo (0.84-1.01)
+  ok  sb1: costo sotto 4 ms in media e 8 nel 95% (1.58 e 2.31)
+  ok  sb1: quando compare nessun fotogramma sopra i 10 ms (4.96)
+RISULTATO: 62 controlli ok, 2 falliti
