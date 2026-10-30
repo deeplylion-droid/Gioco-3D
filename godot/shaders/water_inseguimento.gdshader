@@ -10,6 +10,8 @@ uniform vec4 deep_color : source_color = vec4(0.06, 0.22, 0.21, 1.0);
 // Quanto in fretta l'acqua si fa piena (per metro di spessore) e quanto è piena anche sottilissima.
 uniform float absorption = 2.0;
 uniform float min_alpha = 0.45;
+// Da sotto, dritto in su (nella finestra di Snell): quanto è piena.
+uniform float under_alpha = 0.8;
 uniform float wave_scale = 1.4;
 uniform float wave_speed = 0.3;
 uniform float wave_strength : hint_range(0.0, 1.0) = 0.1;
@@ -43,6 +45,16 @@ void fragment() {
 	float pieno = 1.0 - exp(-spessore * absorption);
 	ALBEDO = mix(water_color.rgb, deep_color.rgb, pieno);
 	ALPHA = clamp(max(pieno, min_alpha), 0.0, 1.0);
+	// da sotto (dai tubi che arrivano sotto il pelo, correzione della 0.3.17): non lo spessore d'aria che c'è dietro,
+	// ma la superficie come si vede da sott'acqua. Fuori dalla finestra di Snell (oltre 48° dalla verticale) è uno
+	// specchio dell'acqua scura sotto, piena; dentro, dritto in su, si intravede appena quello che c'è sopra
+	if (!FRONT_FACING) {
+		NORMAL = -NORMAL;
+		float su = clamp(dot(NORMAL, VIEW), 0.0, 1.0);
+		float finestra = smoothstep(0.6, 0.8, su);
+		ALBEDO = mix(deep_color.rgb, water_color.rgb, 0.35 + 0.4 * finestra);
+		ALPHA = mix(0.97, under_alpha, finestra);
+	}
 	ROUGHNESS = 0.03;
 	SPECULAR = 0.6;
 	METALLIC = 0.0;
