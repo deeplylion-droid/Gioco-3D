@@ -79,13 +79,13 @@ func _run() -> void:
 	var scalette: Array[Ladder] = [level.get_node(^"Piscina/ScalettaEst") as Ladder, level.get_node(^"Piscina/ScalettaOvest") as Ladder]
 	var modi := MODI
 	# (prima piena, com'è all'inizio: svuotata, la piscina non tiene più l'acqua)
-	for stato in ([] if OS.get_environment("SOLO") == "tecnici" else ["piena", "vuota"]):
+	for stato in ([] if OS.get_environment("SOLO") == "tecnici" else (["piena"] if OS.get_environment("SOLO") == "discesa" else ["piena", "vuota"])):
 		if stato == "vuota":
 			vasca.fill = 0.0
 		await _frames(30)
 		print("piscina %s (fill %.2f)" % [stato, vasca.fill])
 		check(vasca.fill > 0.5 if stato == "piena" else vasca.fill < 0.01, "la piscina è %s (fill %.2f)" % [stato, vasca.fill])
-		for s in scalette:
+		for s in ([] if OS.get_environment("SOLO") == "discesa" else scalette):
 			for modo in modi:
 				var r: Dictionary = await _sali(s, modo)
 				check(r["fuori"], "piscina %s, %s, %s: si esce sul bordo (in %.1f s; il più in alto %.2f, %d prese della scala, fine %s)" % [
@@ -114,7 +114,7 @@ func _run() -> void:
 		check(l != null, "c'è %s" % nome)
 		if l:
 			await _tutti_i_modi(l, "tecnici")
-	if OS.get_environment("SOLO") == "tecnici":
+	if OS.get_environment("SOLO") in ["tecnici", "discesa"]:
 		_fine()
 		return
 	# la torre con le condotte: le scale delle vasche di raccolta, degli scoli e del bacino
@@ -197,10 +197,14 @@ func _fermo_in_cima(s: Ladder) -> Dictionary:
 	p.look_at_point(Vector3(s.global_position.x, p.global_position.y + 1.5, s.global_position.z))
 	p.pitch = 0.0
 	Input.action_press(&"move_forward")
+	var su := false
 	for fr in 60 * 8:
 		await get_tree().physics_frame
+		if OS.has_environment("DIAG") and fr % 20 == 0:
+			print("    DIAG fermo %s scala %s pavimento %s v %s" % [p.global_position.snapped(Vector3.ONE * 0.01), p.is_on_ladder(), p.is_on_floor(), p.velocity.snapped(Vector3.ONE * 0.01)])
 		# appena scavalcato e posato sul bordo, dentro la scatola dei corrimano: si lascia tutto
 		if not p.is_on_ladder() and p.is_on_floor() and p.global_position.y > s.get_top_y() - 0.15:
+			su = true
 			break
 	_rilascia()
 	var salto := 0.0
@@ -209,7 +213,7 @@ func _fermo_in_cima(s: Ladder) -> Dictionary:
 		await get_tree().physics_frame
 		salto = maxf(salto, Vector2(p.global_position.x - prima.x, p.global_position.z - prima.z).length())
 		prima = p.global_position
-	return {"salto": salto, "dove": str(p.global_position.snapped(Vector3.ONE * 0.01))}
+	return {"salto": salto if su else 99.0, "dove": str(p.global_position.snapped(Vector3.ONE * 0.01)) + ("" if su else " (non è arrivato in cima)")}
 
 
 ## Chi passa accanto alla scaletta [param s] senza andarle contro non ci si aggrappa: sul bordo lungo la piscina, davanti

@@ -818,6 +818,10 @@ func _update_ladder() -> void:
 	# (la direzione, non quanto è spinto lo stick: con lo stick a metà, 0,5, non ci si aggrappava mai; riscontro della
 	# 0.3.16, scalette della piscina col controller)
 	var toward := wish.length() > 0.2 and wish.normalized().dot(-found.get_climb_normal()) > 0.5
+	# (sul bordo, nell'area sopra la cima di una Ladder.dalla_cima, andando via dal vuoto non ci si aggrappa: si è appena
+	# usciti)
+	if toward and found.dalla_cima > 0.0 and (global_position - found.global_position).dot(found.get_climb_normal()) < 0.05:
+		toward = false
 	var falling_onto := not is_on_floor() and velocity.y < -0.5 and global_position.y < found.get_top_y() - 0.3
 	# dalla cima (Ladder.dalla_cima): sul bordo, andando verso il vuoto, ci si aggrappa per scendere
 	var dalla_cima := found.dalla_cima > 0.0 and is_on_floor() and global_position.y >= found.get_top_y() - 0.35 \
