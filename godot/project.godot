@@ -128,6 +128,7 @@ ui_accept={
 
 3d_render/layer_1="mondo"
 3d_render/layer_2="viewmodel"
+3d_render/layer_15="torre senza ombra del muro est"
 3d_render/layer_16="preparazione"
 3d_physics/layer_1="mondo"
 3d_physics/layer_2="giocatore"

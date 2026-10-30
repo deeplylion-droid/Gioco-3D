@@ -141,6 +141,10 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 ## 1 << 19, lo stesso dell'acqua (WaterBody.WATER_LAYER) e di quello che il lampo della tempesta esclude, che la camera
 ## del giocatore disegna (collaudo del 25 ottobre).
 const STRATO_PREPARA := 1 << 15
+## La struttura della torre (torre_A) che non fa ombra con le lampade d'emergenza del muro est (vedi [method _emergenza]):
+## sta solo su questo strato, che quelle lampade tolgono da chi fa ombra (shadow_caster_mask); le altre luci, le camere
+## e i riflessi la prendono come prima (hanno tutti gli strati).
+const STRATO_SENZA_OMBRA_EST := 1 << 14
 ## Il muro est della torre, in comune con la sala delle condotte (x, come X0 di tools/blender/inseguimento_proposte.py).
 const MURO_CONDOTTE_X := 40.0
 
@@ -1158,9 +1162,19 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	# (e il corpo della lampada non fa ombra sul suo muro, e l'ombra della condotta è sfocata: netta faceva una zona
 	# scura accanto a lei, dove nella 0.3.15 era rosso; ricontrollo di ambienti-1 del 29 ottobre. L'ombra resta piena:
 	# meno opaca la riga delle condotte tornava; con la grandezza della luce, ombre morbide, 36 pipeline nuove)
+	# Il tubo della struttura che passa sul muro subito sopra la lampada faceva anche lui ombra: il muro sopra il tubo
+	# restava scuro, col bordo netto lungo il tubo (R 38 contro 53 della 0.3.15; collaudo di ambienti-1 del 29 ottobre,
+	# tests/sonda_ombra_muro_oblo.gd). Quindi torre_A non fa ombra con questa lampada: la luce verso le condotte la
+	# ferma la struttura della sala delle condotte, che fa ombra (tests/collaudo/muro_oblo_ombra.gd: niente righe).
 	if l.shadow_enabled:
 		corpo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		l.shadow_blur = 4.0
+		l.shadow_caster_mask = 0xFFFFF & ~STRATO_SENZA_OMBRA_EST
+		var ta := find_child("torre_A", true, false) as GeometryInstance3D
+		if ta:
+			ta.layers = STRATO_SENZA_OMBRA_EST
+		else:
+			push_warning("torre: niente torre_A per lo strato senza l'ombra del muro est")
 	radice.add_child(l)
 	l.global_position = p + verso * 0.4
 
