@@ -106,7 +106,8 @@ func _piscina() -> void:
 	for stato in ["piena", "vuota"]:
 		if stato == "vuota" and pozza and &"fill" in pozza:
 			pozza.set(&"fill", 0.0)
-			for i in 10:
+			# (l'acqua che scende e il resto che si sistema: gli scatti senza e con devono vedere la stessa scena)
+			for i in 300:
 				await get_tree().process_frame
 		for v in VISTE_SALA:
 			if v == "pavimento" and stato == "vuota":
