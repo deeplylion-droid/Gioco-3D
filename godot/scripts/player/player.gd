@@ -890,6 +890,9 @@ func _leave_ladder() -> void:
 	ladder = null
 	_ladder_cooldown = 0.35
 	_ladder_from_top = false
+	# (a ogni presa si riguarda dove si guarda per scendere o salire: scesa una scala guardando in basso e ripresa da
+	# sotto guardando dritto, restava "in discesa" e lasciava subito la presa sul fondo; ricontrollo della 0.3.17)
+	_ladder_giu_su = null
 	ladder_changed.emit(false)
 
 
