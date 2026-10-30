@@ -177,7 +177,7 @@ func _process(delta: float) -> void:
 			quanto = _obiettivo()
 		_ultima_pos = pos
 		_ultima_cam = cam.get_instance_id()
-		_segui_fondo(p, delta)
+		_segui_fondo(p if is_instance_valid(p) else null, delta)
 	quanto = move_toward(quanto, _obiettivo(), delta / DURATA)
 	if quanto > 0.0 and cam:
 		_aggiorna_luci(cam, delta)
@@ -186,8 +186,8 @@ func _process(delta: float) -> void:
 ## Lo strato fitto sta sul pavimento della zona ("quota"); in piedi più in basso (il fondo della piscina vuota) scende
 ## dove si cammina. Si guardano i piedi solo a terra (saltando o nuotando resta dov'era) e si segue piano, ma dopo un salto
 ## della camera subito.
-func _segui_fondo(p: Node, delta: float) -> void:
-	var giocatore: CharacterBody3D = p as CharacterBody3D if p and is_instance_valid(p) else null
+func _segui_fondo(p: Object, delta: float) -> void:
+	var giocatore: CharacterBody3D = p as CharacterBody3D if is_instance_valid(p) else null
 	if giocatore == null or not giocatore.is_inside_tree():
 		_fondo_obiettivo = INF
 		_fondo = INF
