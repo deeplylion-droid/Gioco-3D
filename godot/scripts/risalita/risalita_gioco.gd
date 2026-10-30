@@ -83,6 +83,8 @@ const ALZATA := 0.18
 const PEDATA := 0.28
 ## Il bambino col cubo dei bambini visti di sfuggita, nel corridoio del fiume (preload: si carica col thread della zona).
 const BAMBINO_CUBO := preload("res://scenes/creature/bambino_cubo.tscn")
+## L'arredo del corridoio del fiume (tools/blender/corridoio_fiume.py), nelle coordinate della sala.
+const ARREDO_CORRIDOIO := preload("res://assets/ambienti_tecnici/corridoio_fiume/corridoio_fiume.gltf")
 
 ## Falso: le stanze si caricano subito in _ready e restano sempre, come prima (strumenti e test che le vogliono
 ## sempre). Lo stesso con Engine.set_meta(&"risalita_subito", true).
@@ -409,6 +411,7 @@ func _scala_fiume() -> void:
 	# la Polaroid 13 (quella notte, il bagliore nel mare accanto alla nave, proposta del 25 ottobre notte): per terra
 	# contro il muro, sotto l'oblò da cui si vede il mare
 	PolaroidPhoto.metti(self, 13, Vector3(OBLO_FIUME.x - 0.16, Y + 0.03, OBLO_FIUME.z + 0.4), 20.0)
+	_arredo_corridoio_fiume(xc)
 	# il muro ovest, aperto davanti alla porta del capannone (alta 2,3 m come la sua)
 	_muro(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), Y)
 	_muro(Vector3(0.2, 2.6, fine - porta1), Vector3(xc - 0.1, Y + 1.3, (porta1 + fine) * 0.5), Y)
@@ -425,6 +428,59 @@ func _scala_fiume() -> void:
 		k.name = d[0]
 		k.position = d[1]
 		m.add_child(k)
+
+
+## L'arredo del corridoio del fiume (riscontro dell'utente sulla v0.3.16, "c'è un corridoio vuoto prima della zona del
+## fiume"; scelta A+C del 30 ottobre, docs/proposte/corridoio_fiume/LEGGIMI.md): il corridoio di servizio, con i tubi
+## delle pompe, il quadro, i fusti, il carrello e il cartello contro il muro ovest (tools/blender/corridoio_fiume.py), e
+## l'acqua che filtra dalla vasca dell'oblò: macchie umide e muffa intorno all'oblò e sul muro di fronte, le gocce dal
+## soffitto in un punto e la pozza che va verso la griglia di scolo. La luce resta quella di prima.
+func _arredo_corridoio_fiume(xc: float) -> void:
+	var arredo := ARREDO_CORRIDOIO.instantiate() as Node3D
+	arredo.name = "ArredoCorridoioFiume"
+	add_child(arredo)
+	var est := xc + 2.0
+	var muffa := load("res://assets/ambiente/dettagli/gltf/texture/macchia_muffa_col.png") as Texture2D
+	var umido := load("res://assets/ambienti_interni/shader_tex/decal_macchia.png") as Texture2D
+	var scuro := Color(0.16, 0.15, 0.12)
+	# intorno all'oblò (sopra la Polaroid 13, che resta fuori dal decal) e la colatura sotto
+	_decal("MuffaOblo", muffa, Vector3(est, Y + 1.25, OBLO_FIUME.z + 0.2), Vector3.LEFT, 2.2, 1.8, Color.WHITE, 0.85)
+	_decal("UmidoOblo", umido, Vector3(est, Y + 0.75, OBLO_FIUME.z - 0.1), Vector3.LEFT, 1.0, 1.1, scuro, 0.7)
+	# sul muro di fronte, fra il carrello e la griglia (sotto i tubi)
+	_decal("MuffaMuroOvest", muffa, Vector3(xc, Y + 1.0, 58.3), Vector3.RIGHT, 2.0, 1.5, Color.WHITE, 0.8)
+	# le gocce dal soffitto, la macchia sopra e la pozza che scende verso la griglia di scolo (x -5,6, z 60,3)
+	var goccia := Vector3(xc + 0.95, Y + 2.6, 59.0)
+	_decal("UmidoSoffitto", umido, goccia, Vector3.DOWN, 0.9, 0.7, scuro, 0.75)
+	var g := WaterDripEmitter.new()
+	g.name = "GocceCorridoioFiume"
+	g.interval_min = 0.9
+	g.interval_max = 2.8
+	add_child(g)
+	g.position = goccia - Vector3(0, 0.02, 0)
+	var verso := Vector2(xc + 0.3 - goccia.x, 60.3 - goccia.z).normalized()
+	var p := WaterPuddle.new()
+	p.name = "PozzaCorridoioFiume"
+	p.size = Vector2(1.3, 0.75)
+	p.shape_seed = 5
+	add_child(p)
+	p.position = Vector3(goccia.x + verso.x * 0.5, Y, goccia.z + verso.y * 0.5)
+	p.rotation.y = atan2(-verso.y, verso.x)
+
+
+func _decal(nome: String, tex: Texture2D, pos: Vector3, normale: Vector3, w: float, h: float, colore: Color, mix: float) -> void:
+	var d := Decal.new()
+	d.name = nome
+	d.texture_albedo = tex
+	d.modulate = colore
+	d.albedo_mix = mix
+	d.size = Vector3(w, 0.3, h)
+	d.cull_mask = 1
+	add_child(d)
+	# il decal proietta lungo il suo -Y: Y = la normale della superficie, X orizzontale sui muri
+	var y := normale.normalized()
+	var ref := Vector3.UP if absf(y.y) < 0.9 else Vector3(0, 0, -1)
+	var x := ref.cross(y).normalized()
+	d.transform = Transform3D(Basis(x, y, x.cross(y).normalized()), pos)
 
 
 ## Il bambino visto di sfuggita del corridoio del fiume (proposta approvata dall'utente il 25 ottobre, "i bambini visti
