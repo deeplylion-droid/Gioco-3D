@@ -33,3 +33,16 @@ Il ricontrollo è sul branch `lavoro/collaudo-bambini-squalo-0317`, in `docs/col
 - **Nuovo controllo in `test_interni`.** Dal richiamo finché lo squalo si vede, verifica che i punti della pelle deformata non entrino nei muri, anche oltre la porta: ne entrano 0 m.
 - **Test del tunnel.** Nella galleria il giocatore va alla velocità da accucciato (1,7 m/s), e gli occhi con cui il bambino decide se è visto sono all'altezza della camera.
 - **Strumento.** `tests/collaudo/sonda_oltre_porta.gd` sonda i muri del vano dietro la porta.
+
+## Secondo ricontrollo di enigmi (30 ottobre sera)
+
+- **La coda nella porta che si chiude.** Dietro la porta lo squalo si ferma 33 cm più avanti di prima (`Y_FERMO`), gira la testa di lato (`TESTA_GIRA`) e alza un poco la coda (`CODA_SU`). Così il muso non arriva al muro di fondo del vano e, con la porta chiusa, la coda è tutta oltre il battente: il punto più indietro è a x 22,12, il battente arriva a 22,00.
+  - Nuovo controllo in `test_interni`: con la porta quasi chiusa e lo squalo ancora visibile, nessun punto della pelle sta dalla parte del giocatore.
+- **Gomito e artigli al mento.** Nel giro la testa resta sul giocatore e passa sopra la spalla destra, a 21 cm dal mento. Le correzioni:
+  - il gomito del braccio alzato va giù, in guardia;
+  - gomito, polso, mano e artigli restano lontani da bocca, cerniera della mascella e mento, nel giro e alla porta (alla porta la mano si sposta solo in giù);
+  - la spinta che li tiene lontani passa da un fotogramma al successivo e cambia al più di 10 cm per fotogramma. Senza, la mano saltava di 75 cm da un lato all'altro del mento fra due fotogrammi, e a 60 fps, nell'interpolazione, il gomito gli passava a 9 cm.
+  - Misura dal GLB, a 120 campioni al secondo da 5,5 a 11,5 s: il punto più vicino è a 30 cm. Il salto più grande di una mano è di 5 cm ogni 1/120 s, nella corsa.
+  - `test_interni` ora controlla anche gomiti e artigli, non solo i polsi, contro bocca, mascella e mento: al più vicino 0,30 m.
+- Foglio: `5_squalo_girata_secondo_ricontrollo.jpg`, la 0.3.16 sopra e la versione corretta sotto, da sopra e dagli occhi (render Blender del modello vero).
+- Strumento in più: `tests/collaudo/scatti_piscina_vuota.gd` fa gli scatti dal fondo della piscina a onde vuota, con la nebbia viola, per il ricontrollo della nebbia.

@@ -74,8 +74,11 @@ def arretrato(t):
             break
     return 0.5 * (piedi['L'] + piedi['R'])
 FINE_Y = PORTA_Y + 1.6   # dove si ferma il conto (oltre la porta, ormai chiusa)
-# dietro la porta: dove si ferma la radice (il muro di fondo del vano è a Y 8,68, il muso 1,5 m davanti alla radice)
-Y_FERMO = 7.09
+# dietro la porta: dove si ferma la radice (il muro di fondo del vano è a Y 8,68; il muso, 1,5 m davanti alla radice
+# di corsa, fermo gira di lato, vedi TESTA_GIRA: così si ferma abbastanza avanti da avere la coda oltre la porta)
+Y_FERMO = 7.42
+CODA_SU = 15.0           # gradi per ogni osso della coda, alzata dietro la porta
+TESTA_GIRA = 70.0        # dietro la porta, fermandosi, gira la testa di lato (gradi, collo e testa insieme)
 PASSO_FINE = 2.3         # di quanto la radice è andata verso la porta, arretrando e girandosi, quando parte la corsa
 
 
@@ -399,11 +402,13 @@ def posa(t, piedi):
         for tc in (M + 0.7, M + 1.6, M + 2.5):
             scatti += math.exp(-((t - tc) / 0.09) ** 2) * 7.0
     tremito = rumore(t, 3.0, 1.0) * (1.0 if t < R else 0.4)
-    p['collo'] = [('x', 6 * chino + 0.5 * tremito - 4 * corsa), ('z', guarda * 0.45), ('x', alza * 0.5)]
+    # dietro la porta, fermandosi, gira la testa di lato (il muso non arriva al muro di fondo del vano)
+    gira_testa = liscio(0.0, TESTA_GIRA, tp + 0.05, tp + 0.4, t)
+    p['collo'] = [('x', 6 * chino + 0.5 * tremito - 4 * corsa), ('z', guarda * 0.45 + gira_testa * 0.45), ('x', alza * 0.5)]
     # con la bocca spalancata il muso si alza: l'apertura guarda in avanti, verso la faccia del giocatore
     muso_su = chiavi(t, [(0.0, 0.0), (1.2, -4.0), (M, -24.0), (R + 0.05, -24.0), (R + 0.50, 0.0)])
     p['testa'] = [('x', 4 * chino + muso_su + scatti - 6 * corsa - 3 * corsa * math.cos(2 * fase)),
-                  ('z', guarda * 0.55 + 1.5 * tremito), ('x', alza * 0.5), ('y', 6 * chino * math.sin(t * 0.9))]
+                  ('z', guarda * 0.55 + 1.5 * tremito + gira_testa * 0.55), ('x', alza * 0.5), ('y', 6 * chino * math.sin(t * 0.9))]
     # --- mascella: si apre piano al risveglio, spalancata nella minaccia, mezza chiusa al richiamo, sbuffo
     # nell'esitazione, ansima nella corsa
     # arretrando la bocca mezza aperta (ringhia); lo sbuffo prima del giro; nel giro si chiude
@@ -464,9 +469,11 @@ def posa(t, piedi):
     p['_stringi'] = 1.0 - 0.27 * sbieco
     for k, b in enumerate(('coda1', 'coda2', 'coda3')):
         # quando si volta indietro la coda va dall'altra parte (contrappeso; e non copre il muso)
+        # passata la porta, fermo nel vano, la coda si alza e si raccoglie: la porta che si chiude dietro di lui
+        # la toccava (ricontrollo del 30 ottobre)
         p[b] = [('z', amp * math.sin((fase if corsa > 0 else t * 1.3) - 0.9 * (k + 1)) * (1 + 0.3 * k)
                  + 25 * torsione),
-                ('x', -4 * corsa)]
+                ('x', -4 * corsa + liscio(0.0, CODA_SU, tp + 0.0, tp + 0.4, t))]
     return p
 
 

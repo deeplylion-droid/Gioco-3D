@@ -184,6 +184,8 @@ func _scena_squalo(start: Marker3D) -> void:
 	var mani_z := Vector2(INF, -INF)
 	var richiamo_t: float = s.tempi.get("richiamo", 5.4)
 	var mano_bocca := INF
+	var coda_porta := INF
+	var coda_porta_quando := ""
 	var mano_bocca_quando := ""
 	var pelle_muro := 0.0
 	var pelle_muro_dove := ""
@@ -232,13 +234,29 @@ func _scena_squalo(start: Marker3D) -> void:
 		# il braccio alzato resta accanto al muso (lo spazio fra braccio e testa, scelta A dell'utente del 29 ottobre):
 		# dal richiamo in poi nessun polso va vicino alla bocca (nella 0.3.16 almeno 26 cm; ricontrollo del 30 ottobre:
 		# nel giro la mano destra entrava nel muso e gli artigli uscivano dalla bocca)
+		# (e anche il gomito, la mano e gli artigli, da bocca, mascella e mento: secondo ricontrollo del 30 ottobre,
+		# il gomito passava a 7,6 cm dal mento e gli artigli attraversavano la bocca aperta)
 		if t > richiamo_t:
-			var bo: Vector3 = s.call(&"_bone_mondo", "bocca")
-			for osso in ["mano.L", "mano.R"]:
-				var dmb := (s.call(&"_bone_mondo", osso) as Vector3).distance_to(bo)
-				if dmb < mano_bocca:
-					mano_bocca = dmb
-					mano_bocca_quando = "%s a %.2f s" % [osso, t]
+			var sk: Skeleton3D = s.get(&"_scheletro")
+			var testa_punti: Array[Vector3] = []
+			var testa_nomi := ["bocca", "mascella", "mento_punta"]
+			for o in testa_nomi:
+				var i := sk.find_bone(o)
+				testa_punti.append((sk.global_transform * sk.get_bone_global_pose(i)).origin)
+			var braccio_punti := {}
+			for lato in ["L", "R"]:
+				var g := sk.global_transform * sk.get_bone_global_pose(sk.find_bone("avambraccio." + lato))
+				var m := sk.global_transform * sk.get_bone_global_pose(sk.find_bone("mano." + lato))
+				braccio_punti["gomito." + lato] = g.origin
+				braccio_punti["polso." + lato] = m.origin
+				# (la mano è lunga circa 26 cm, gli artigli 10 cm oltre: lungo l'asse dell'osso, la y)
+				braccio_punti["artigli." + lato] = m.origin + m.basis.y.normalized() * 0.36 * sk.global_transform.basis.get_scale().x
+			for nome in braccio_punti:
+				for k in testa_punti.size():
+					var dmb := (braccio_punti[nome] as Vector3).distance_to(testa_punti[k])
+					if dmb < mano_bocca:
+						mano_bocca = dmb
+						mano_bocca_quando = "%s da %s a %.2f s" % [nome, testa_nomi[k], t]
 		# la pelle nei muri (ricontrollo del 30 ottobre), dal richiamo finché si vede: i punti della pelle deformata
 		# che la scena usa per la camera (uno ogni CELLA), quelli entro 1,5 m dal petto e dalla testa; un raggio dal
 		# petto a ognuno più su di 25 cm dal pavimento: se trova un muro prima, il punto è oltre, di quanto resta
@@ -259,6 +277,14 @@ func _scena_squalo(start: Marker3D) -> void:
 				if dm > pelle_muro:
 					pelle_muro = dm
 					pelle_muro_dove = "a %.2f s, (%.2f, %.2f, %.2f) in %s" % [t, w.x, w.y, w.z, (h.collider as Node).name]
+		# la coda e la porta che si chiude (ricontrollo del 30 ottobre: fermo dietro la porta, la punta della coda
+		# restava 15 cm dalla parte del giocatore con la porta chiusa): con la porta quasi chiusa (meno di 8 gradi) e lui
+		# ancora visibile, nessun punto della pelle dalla parte del giocatore del battente (che va da x 21,93 a 22,00)
+		if perno and t > porta_t and absf(perno.rotation_degrees.y) < 8.0:
+			for w: Vector3 in s.call(&"_pelle_vicina", s.call(&"_bone_mondo", "coda2")):
+				if w.y > pavimento + 0.05 and w.z > -2.3 and w.z < -0.3 and w.x < coda_porta:
+					coda_porta = w.x
+					coda_porta_quando = "a %.2f s, (%.2f, %.2f, %.2f), porta a %.1f gradi" % [t, w.x, w.y, w.z, perno.rotation_degrees.y]
 		var spina: Vector3 = s.call(&"_bone_mondo", "spina")
 		if absf(spina.x - 21.97) < 0.3:
 			alla_porta_y = maxf(alla_porta_y, spina.y)
@@ -268,7 +294,8 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(max_angolo_in_minaccia < 22.0, "la camera la guarda in faccia (al massimo %.0f° di lato)" % max_angolo_in_minaccia)
 	check(dentro, "lo squalo resta dentro il corridoio (niente muri attraversati)")
 	check(mani_z.x > -2.4 and mani_z.y < -0.2, "anche le mani, fino alla porta: nel giro non entrano nei muri (polsi fra z %.2f e %.2f, i muri a -2,5 e -0,1; la più a nord: %s)" % [mani_z.x, mani_z.y, mani_quando])
-	check(mano_bocca >= 0.26, "il braccio alzato resta accanto al muso: nessun polso a meno di 26 cm dalla bocca (al più vicino %.2f m, %s)" % [mano_bocca, mano_bocca_quando])
+	check(mano_bocca >= 0.26, "le braccia restano accanto al muso: gomiti, polsi e artigli ad almeno 26 cm da bocca, mascella e mento (al più vicino %.2f m, %s)" % [mano_bocca, mano_bocca_quando])
+	check(coda_porta > 22.02, "con la porta chiusa la coda è tutta oltre il battente (il punto più indietro a x %.2f, il battente fino a 22,00; %s)" % [coda_porta, coda_porta_quando])
 	check(pelle_muro < 0.01, "la pelle non entra nei muri, neanche oltre la porta (al più %.3f m%s)" % [pelle_muro, (", " + pelle_muro_dove) if pelle_muro > 0.0 else ""])
 	check(pelle_min > 0.18, "la camera non entra mai nello squalo, anche con le scosse (al più vicino %.2f m dalla sua pelle)" % pelle_min)
 	check(scosse >= 8 and scossa_forte > 0.8 and scossa_ultima < scossa_forte * 0.5,
