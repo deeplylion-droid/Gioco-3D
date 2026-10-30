@@ -79,7 +79,8 @@ func _run() -> void:
 		"sbieco_arcobaleno": [Vector3(-9.5, 1.6, 13.5), Vector3(-5.6, 4.6, 9.8), 65.0],
 		"sbieco_bagnina": [Vector3(9.5, 1.6, 13.5), Vector3(5.6, 4.6, 9.8), 65.0],
 	}
-	for stato in ["arrivo", "lampione"]:
+	# SOLO_VICINO=1: niente viste dagli occhi; SOLO_TELO=0|1: un telo solo; SALTA_ANGOLI=1: senza angoli e lati
+	for stato in ([] if OS.get_environment("SOLO_VICINO") == "1" else ["arrivo", "lampione"]):
 		if stato == "lampione" and sfarfallio:
 			sfarfallio.turn_on(true)
 		for nome in occhi:
@@ -92,6 +93,8 @@ func _run() -> void:
 	cam.add_child(luce)
 	luce.position = Vector3(0.25, 0.2, 0.0)
 	for nome in teli:
+		if OS.get_environment("SOLO_TELO") != "" and not String(nome).ends_with(OS.get_environment("SOLO_TELO")):
+			continue
 		# la faccia della carta: la normale dal primo triangolo (girata verso l'ingresso, +z), l'asse orizzontale e
 		# l'estensione dai vertici (i teli sono girati di circa 28 gradi verso il centro)
 		var mi0 := teli[nome][0] as MeshInstance3D
@@ -108,7 +111,7 @@ func _run() -> void:
 			"angolo_basso_dx": Vector2(1, -1), "lato_alto": Vector2(0, 1), "lato_basso": Vector2(0, -1),
 			"lato_sx": Vector2(-1, 0), "lato_dx": Vector2(1, 0),
 		}
-		for k in punti:
+		for k in ({} if OS.get_environment("SALTA_ANGOLI") == "1" else punti):
 			var d: Vector2 = punti[k]
 			var q := faccia + u * d.x * mezzo_u * 0.92 + Vector3.UP * d.y * mezzo_v * 0.92
 			await _scatta(cam, [q + fuori * 0.75 - Vector3.UP * 0.1, q, 50.0], _out.path_join("%s%s_vicino_%s.jpg" % [pre, corto, k]))
