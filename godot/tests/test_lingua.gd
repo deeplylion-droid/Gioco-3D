@@ -372,5 +372,14 @@ func _cambia_lingua() -> void:
 	await _frames(2)
 	check(prima.ends_with("orizz.)") and dopo.ends_with("horiz.)") and etichetta.text == prima,
 			"nelle opzioni il testo del FOV cambia lingua subito, avanti e indietro", [prima, dopo, etichetta.text if etichetta else ""])
+	# la voce della nebbia viola nelle opzioni, in inglese come le altre (richiesta dell'utente del 29 ottobre)
+	var nv := (opz.get(&"_controlli") as Dictionary).get("nebbia_viola") as CheckButton
+	Lingua.imposta("en")
+	await _frames(2)
+	var nv_en := tr("Nebbia viola")
+	Lingua.imposta("it")
+	await _frames(2)
+	check(nv != null and nv_en == "Purple fog" and tr("Nebbia viola") == "Nebbia viola",
+			"nelle opzioni la voce \"Nebbia viola\" c'è e in inglese è \"Purple fog\"", [nv != null, nv_en])
 	opz.queue_free()
 	await _frames(2)

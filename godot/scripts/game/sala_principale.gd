@@ -104,10 +104,32 @@ var _materiali_torre: Array[Material] = []
 var _faccia: WaterHitbox
 
 
+## La nebbia viola in tutta la sala (scelta dell'utente del 29 ottobre): la zona va dai muri della sala (x da -20 a 20,
+## z da -24 a 20: tools/blender/ambiente_sala.py, X0..X1 e Y0..Y1) e dal fondo della piscina e della fossa dei bimbi
+## alla cupola, quindi sale passando le porte (gli interni, la torre, la Risalita e i tecnici restano fuori);
+## l'alone solo dalle lampade della sala (dietro i muri no).
+const NEBBIA_SALA := AABB(Vector3(-20.0, -3.5, -24.0), Vector3(40.0, 22.5, 44.0))
+
+
+func _nebbia_viola() -> void:
+	var z := ZonaNebbiaViola.new()
+	z.name = "NebbiaViola"
+	var cs := CollisionShape3D.new()
+	var b := BoxShape3D.new()
+	b.size = NEBBIA_SALA.size
+	cs.shape = b
+	cs.position = NEBBIA_SALA.get_center()
+	z.add_child(cs)
+	z.quota = 0.0
+	z.luci = [^"../Sala", ^"../LuciSala"]
+	add_child(z)
+
+
 func _ready() -> void:
 	# Prima del primo frame: meno varianti di shader, a parità di aspetto (UnificaMateriali).
 	UnificaMateriali.unifica(self)
 	_setup_hall()
+	_nebbia_viola()
 	if lamp_trigger:
 		lamp_trigger.body_entered.connect(_on_lamp_trigger)
 		# Ripartendo da un checkpoint già oltre il lampione la lampada è accesa: il trigger è

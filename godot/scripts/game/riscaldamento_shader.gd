@@ -43,7 +43,16 @@ static func materiali() -> Array[Material]:
 			out.append(m as Material)
 	for m in CampioniTunnel.carica(false):
 		out.append(m as Material)
+	# la nebbia viola delle zone (infermeria, sala, tunnel): la nebbia e il colore sullo schermo
+	var nv := _nebbia_viola()
+	if nv:
+		out.append_array(nv.materiali())
 	return out
+
+
+static func _nebbia_viola() -> NebbiaViola:
+	var g: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null(^"Grafica") if Engine.get_main_loop() is SceneTree else null
+	return g.get(&"nebbia_viola") as NebbiaViola if g else null
 
 
 ## L'ambiente della sala con le impostazioni grafiche di adesso (come Grafica lo applica nel gioco): la luce globale
@@ -160,6 +169,13 @@ func _disegna() -> void:
 			return
 		mi.queue_free()
 		fatti += 1
+	# la nebbia viola a schermo intero, accesa, e il suo colore sullo schermo (il quad e il ColorRect veri: le pipeline
+	# sono quelle del gioco, non della sfera)
+	var nv := _nebbia_viola()
+	if nv:
+		await nv.riscalda(sv, 3)
+		if not is_inside_tree():
+			return
 	# lei dietro gli oblò (mascotte, 25 ottobre) con l'oblò vero: le sue mesh con lo scheletro (le ossa cambiano il
 	# formato dei vertici: la sfera non basta) e quelle dell'oblò (piastra, vetro, vasca), un pezzo per volta
 	await _disegna_oblo(sv)

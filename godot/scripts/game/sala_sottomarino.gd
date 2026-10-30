@@ -347,7 +347,38 @@ func _passi() -> Array:
 	out.append(_acqua_presa)
 	out.append(_checkpoint)
 	out.append(_lei_crea)
+	out.append(_nebbia_viola)
 	return out
+
+
+## La nebbia viola nel tunnel dell'inseguimento (scelta dell'utente del 29 ottobre): una zona fatta di tratti di
+## [constant NEBBIA_TRATTO] m lungo la strada, larghi fra le facce interne dei muri e alti dal fondo della presa alla
+## chiave della volta, dalla testa (con la porta del bacino nel suo muro est) al portello: sale passando la porta.
+const NEBBIA_TRATTO := 2.0
+
+
+func _nebbia_viola() -> void:
+	var z := ZonaNebbiaViola.new()
+	z.name = "NebbiaViola"
+	z.quota = piano
+	var largo := 2.0 * (muro - spessore * 0.5)
+	var basso := PRESA_FONDO - 0.5
+	var lung := lunghezza()
+	var s0 := -TESTA
+	while s0 < lung - 0.01:
+		var s1 := minf(s0 + NEBBIA_TRATTO, lung)
+		var m := (s0 + s1) * 0.5
+		var d := direzione(m)
+		var cs := CollisionShape3D.new()
+		var b := BoxShape3D.new()
+		# (un po' più lunghi: nelle curve i tratti si toccano)
+		b.size = Vector3(largo, chiave - basso, s1 - s0 + 0.3)
+		cs.shape = b
+		var p := punto(m)
+		cs.transform = Transform3D(Basis.looking_at(d, Vector3.UP), Vector3(p.x, (chiave + basso) * 0.5, p.z))
+		z.add_child(cs)
+		s0 = s1
+	add_child(z)
 
 
 ## L'acqua profonda della presa (da s -4,5 a 6, il fondo scende fino a -36): una WaterBody solo per la vista
