@@ -243,6 +243,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_parkour_gommoni.gd
 
+      - name: Test dei gommoni del tunnel mentre si costruiscono (niente passa dall'origine del mondo, sopra il centro della piscina)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_gommoni_origine.gd
+
       - name: Test degli oblò con lei dietro il vetro (compare fuori vista, ti segue con l'occhio, se ne va se guardi via o ti avvicini, una volta sola, resta nella vasca)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_oblo_lei.gd
