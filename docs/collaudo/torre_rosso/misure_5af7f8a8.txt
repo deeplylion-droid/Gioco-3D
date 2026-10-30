@@ -1,0 +1,13 @@
+ROSSO prima_vuota    vetro (300 px): R 70.3 G 33.3 B 30.4
+ROSSO pipeline alla comparsa di lei: disegno +0, specializzazione +0
+ROSSO lei_9.0_m      vetro (122 px): R 95.2 G 45.3 B 57.5
+ROSSO lei_6.0_m      vetro (183 px): R 92.0 G 43.6 B 48.9
+ROSSO lei_3.5_m      vetro (300 px): R 83.8 G 39.5 B 40.9
+ROSSO lei_2.0_m      vetro (300 px): R 85.0 G 34.8 B 34.4
+ROSSO lei_1.2_m      vetro (300 px): R 106.2 G 44.1 B 44.3
+ROSSO sotto          vetro (300 px): R 20.4 G 4.9 B 11.5
+ROSSO scatto condotte_a
+ROSSO scatto condotte_b
+ROSSO dopo il distacco: stato 3, lei c'è ancora
+ROSSO dopo_vuota     vetro (300 px): R 79.2 G 37.1 B 37.1
+ROSSO pipeline dopo la comparsa, in tutti gli scatti e nel distacco: disegno +0, specializzazione +0

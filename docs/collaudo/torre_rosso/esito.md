@@ -120,3 +120,15 @@ Nello scatto `prima_vuota`, prima che lei compaia, al centro del vetro si vede u
 - Da sistemare:
   - l'ombra netta a sinistra della lampada sopra l'oblò;
   - il puntino rosso nel vetro a vasca vuota.
+
+# Passaggio breve: lavoro/torre-rosso 5af7f8a8 (light_specular 0 sul faretto RossoFaccia)
+
+- **Il puntino non c'è più.** A vasca vuota il centro del vetro è liscio (`5af7f8a8_puntino_prima_dopo.jpg`: aff0a946 a
+  sinistra, 5af7f8a8 a destra). Era il riflesso del faretto sul vetro.
+- **Lei da 2 e 1,2 m è come in aff0a946:** rossa, satura, con le ombre. Il vetro misura R 85 e 106, contro 86 e 107.
+  - Si perde solo il piccolo riflesso bianco del faretto sul suo occhio, da 1,2 m.
+  - Il riflesso della lampada in alto nel vetro resta, come nella 0.3.15.
+  - Il confronto delle tre versioni è in `5af7f8a8_confronto.jpg`.
+- **Condotte:** nessuna riga, come in aff0a946. Nella 0.3.15 c'erano.
+- **Pipeline e errori:** +0 alla comparsa di lei e in tutti gli scatti e nel distacco; nessuna riga "ERROR: BUG,".
+- **Esito: superato.** Resta per dopo la build l'ombra netta sul muro sopra l'oblò, a sinistra della lampada.
