@@ -171,6 +171,43 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 		oblo.fine_preparazione()
 
 
+## Il rosso dentro la vasca dell'oblò (scelta B dell'utente del 29 ottobre, "com'era prima: si rimette un po' di rosso
+## solo dentro la vasca"). Fino alla 0.3.15 lei e la vasca prendevano il rosso della lampada d'emergenza del muro est,
+## che senza ombra passava il muro (e faceva la riga rossa nelle condotte) e la illuminava da davanti. Ora quella
+## lampada fa ombra; il suo rosso lo ridanno:
+## - un faretto appena fuori dal foro del muro, all'altezza del vetro, puntato dentro la vasca, largo e corto (1,8 m: non
+##   arriva alle condotte dietro), con l'ombra: lei accesa da davanti, tutta, capelli, faccia, corpo e mani, satura e
+##   con le ombre, come nella 0.3.15 (più in alto e più stretto i capelli facevano ombra e il corpo restava grigio);
+## - i veli dell'acqua torbida della vasca appena accesi (ObloLei.veli_colore): il fondo rosso dietro di lei;
+## - il vetro quasi spento (ObloLei.vetro_colore): acceso faceva un velo rosa piatto su lei vista da vicino.
+## Niente nebbia e niente luci libere nella vasca: riportavano la riga nelle condotte (prove del 29 ottobre,
+## docs/report/collaudo_29ottobre_g2/torre_rosso). Sotto l'oblò: la preparazione della torre li disegna con lui.
+@export var oblo_rosso_faccia := 2.5
+@export var oblo_veli_rossi := ROSSO * 0.15
+@export var oblo_vetro_rosso := Color(0.0, 0.0, 0.0)
+## Nell'oblò: x lungo il muro, y in su, z verso la torre (il vetro è a -0,4, la faccia della torre a 0).
+const OBLO_ROSSO_FACCIA := Vector3(0.0, 0.2, 0.2)
+
+
+func _rosso_vasca() -> void:
+	if oblo == null or oblo_rosso_faccia <= 0.0:
+		return
+	var l := SpotLight3D.new()
+	l.name = "RossoFaccia"
+	l.light_color = ROSSO
+	l.light_energy = oblo_rosso_faccia
+	l.spot_range = 1.8
+	l.spot_angle = 70.0
+	l.shadow_enabled = true
+	l.light_volumetric_fog_energy = 0.0
+	# (senza riflessi: sul vetro dell'oblò, liscio, il faretto faceva un puntino rosso acceso al centro, a vasca vuota;
+	# ricontrollo di ambienti-1 del 29 ottobre)
+	l.light_specular = 0.0
+	l.set_meta(&"risveglio_ignora", true)
+	l.position = OBLO_ROSSO_FACCIA     # (guarda lungo -z: dentro la vasca)
+	oblo.add_child(l)
+
+
 ## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
 func _passi() -> Array:
 	var out: Array = []
@@ -726,6 +763,8 @@ func _oblo_lei() -> void:
 	# (e attorno alla vasca il guscio che fa solo ombra: la cisterna fuori, nel GLB delle condotte, è di lamiere da una
 	# faccia sola, e dal suo spigolo in alto passava ancora una riga rosa; ricontrollo del 29 ottobre)
 	oblo.guscio_ombra = 0.03
+	oblo.veli_colore = oblo_veli_rossi
+	oblo.vetro_colore = oblo_vetro_rosso
 	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
 	var v: Array = dati["vasca_fondo"]["rett"]
 	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
@@ -735,6 +774,7 @@ func _oblo_lei() -> void:
 	oblo.muro = _muro_oblo()
 	oblo.transform = global_transform.affine_inverse() * xf
 	add_child(oblo)
+	_rosso_vasca()
 	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
 	var bocca := Area3D.new()
 	bocca.name = "BoccaOblo"
@@ -1115,6 +1155,12 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	# sul muro est, quello in comune con la sala delle condotte, con l'ombra: senza, la luce passava il muro e faceva
 	# una riga rossa su uno spigolo delle condotte accanto alla cisterna dell'oblò (ricontrollo del 29 ottobre)
 	l.shadow_enabled = absf(p.x - MURO_CONDOTTE_X) < 1.0
+	# (e il corpo della lampada non fa ombra sul suo muro, e l'ombra della condotta è sfocata: netta faceva una zona
+	# scura accanto a lei, dove nella 0.3.15 era rosso; ricontrollo di ambienti-1 del 29 ottobre. L'ombra resta piena:
+	# meno opaca la riga delle condotte tornava; con la grandezza della luce, ombre morbide, 36 pipeline nuove)
+	if l.shadow_enabled:
+		corpo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		l.shadow_blur = 4.0
 	radice.add_child(l)
 	l.global_position = p + verso * 0.4
 
