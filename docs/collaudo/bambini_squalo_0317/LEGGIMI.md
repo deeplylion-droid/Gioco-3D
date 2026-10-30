@@ -46,3 +46,23 @@ Il ricontrollo è sul branch `lavoro/collaudo-bambini-squalo-0317`, in `docs/col
   - `test_interni` ora controlla anche gomiti e artigli, non solo i polsi, contro bocca, mascella e mento: al più vicino 0,30 m.
 - Foglio: `5_squalo_girata_secondo_ricontrollo.jpg`, la 0.3.16 sopra e la versione corretta sotto, da sopra e dagli occhi (render Blender del modello vero).
 - Strumento in più: `tests/collaudo/scatti_piscina_vuota.gd` fa gli scatti dal fondo della piscina a onde vuota, con la nebbia viola, per il ricontrollo della nebbia.
+
+## Terzo ricontrollo di enigmi: la mano sinistra tremava alla porta
+
+La spinta che tiene le braccia lontane dal muso si accendeva e si spegneva a fotogrammi alterni. Ora è continua:
+- la spinta voluta ha una direzione fissa rispetto al corpo: in fuori, in giù e un poco indietro; alla porta solo in giù;
+- la sua quantità è la minima che basta, cercata a passi di 1 cm, quindi cambia in modo continuo;
+- la spinta vera la segue con una molla smorzata (`MOLLA` in `mostro_rig.py`), con velocità continua sia quando si accende sia quando si spegne;
+- il margine `MANO_MUSO` (0,42 m) lascia spazio al ritardo della molla.
+
+Insieme alla spinta sono cambiate tre pose:
+- nel giro il braccio destro alzato sta un poco più in fuori e più in basso, e così la spinta non serve quasi mai;
+- alla porta le mani raccolte stanno più in basso;
+- nella corsa la mano sinistra sta un poco meno alta e col polso piegato in giù, perché prima gli artigli puntavano al mento.
+
+Misure dal GLB, ai fotogrammi dell'animazione (30 al secondo), dal richiamo a dopo la porta:
+- il salto più grande della velocità di una mano rispetto al petto è 2,25 m/s; nella 0.3.16 era 2,65;
+- alla porta, fra 10,6 e 10,8 s, la mano sinistra fa 0,56, 0,32, 0,39, 0,68, 0,66, 2,00, 1,68, 0,50 m/s: un solo movimento mentre si china, non più il su e giù;
+- il punto più vicino a bocca, mascella e mento è a 0,264 m (il gomito destro).
+
+`test_interni` controlla anche che la velocità delle mani rispetto al petto non cambi più di 2,7 m/s in un fotogramma: la 0.3.16 arrivava a 2,65. Ora il salto più grande è 2,57 m/s, misurato a 60 fps nel gioco.
