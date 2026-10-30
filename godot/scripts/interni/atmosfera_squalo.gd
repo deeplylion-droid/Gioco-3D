@@ -21,6 +21,12 @@ extends Node3D
 ## La controluce: un faro che sta dietro lo squalo (dalla parte della porta) e illumina solo lui (lo strato dello
 ## squalo): il bordo viola acceso, la faccia verso di te al buio. Non illumina la nebbia né le pareti.
 @export var energia_bordo := 9.0
+## Il riflesso del viola sulla sua faccia mentre ti ruggisce addosso (dalla minaccia a quando arretra): una luce tenue
+## dalla parte del giocatore, solo sullo squalo e senza ombra, perché la faccia con la bocca aperta si legga. Con
+## l'ombra del bagliore della porta (anche al minimo, grafica_priorita_ombra 0) la faccia restava tutta nera
+## (riscontro dell'utente sulla 0.3.16: "quando ti ruggisce in faccia è troppo buio, totalmente nero").
+@export var energia_riflesso := 1.2
+@export var portata_riflesso := 3.2
 ## Al richiamo di lei la luce cresce ancora un po' (il boato), poi torna.
 @export var richiamo_in_piu := 0.35
 ## Quanto resta della luce della corsa (quella che illumina lo squalo di fronte) col viola acceso.
@@ -39,6 +45,7 @@ extends Node3D
 
 var luce: SpotLight3D
 var bordo: SpotLight3D
+var riflesso: OmniLight3D
 var nebbia: FogVolume
 var _mat: FogMaterial
 var _r: RisveglioSqualo
@@ -91,6 +98,19 @@ func _ready() -> void:
 	bordo.light_bake_mode = Light3D.BAKE_DISABLED
 	bordo.light_specular = 2.0      # i bordi lucidi: denti, bava, pelle bagnata
 	add_child(bordo)
+	riflesso = OmniLight3D.new()
+	riflesso.name = "RiflessoViola"
+	riflesso.light_color = colore
+	riflesso.light_energy = 0.0
+	riflesso.light_cull_mask = RisveglioSqualo.STRATO_SQUALO
+	riflesso.omni_range = portata_riflesso
+	riflesso.omni_attenuation = 1.2
+	riflesso.shadow_enabled = false
+	riflesso.light_volumetric_fog_energy = 0.0
+	riflesso.light_indirect_energy = 0.0
+	riflesso.light_bake_mode = Light3D.BAKE_DISABLED
+	riflesso.light_specular = 0.8   # (i denti e la bava luccicano anche davanti)
+	add_child(riflesso)
 	nebbia = FogVolume.new()
 	nebbia.name = "NebbiaCorridoio"
 	nebbia.shape = RenderingServer.FOG_VOLUME_SHAPE_BOX
@@ -134,6 +154,7 @@ func _process(delta: float) -> void:
 		# la luce della corsa di mascotte (davanti a lui, solo sullo squalo) più bassa: col viola dietro resta una
 		# sagoma, leggibile ma non illuminata di fronte (RisveglioSqualo la rifà a ogni fotogramma, prima di qui)
 		_metti_bordo(porta_chiusa, boato)
+		_metti_riflesso(porta_chiusa, t)
 		if not _sagoma_fatta and _r.squalo and is_instance_valid(_r.squalo):
 			_sagoma()
 		var lc := _r.get(&"_luce_corsa") as OmniLight3D
@@ -146,6 +167,7 @@ func _process(delta: float) -> void:
 			_dirada_t = 0.0
 			luce.light_energy = 0.0
 			bordo.light_energy = 0.0
+			riflesso.light_energy = 0.0
 			_rimetti_luci()
 	elif _dirada_t >= 0.0:
 		_dirada_t += delta
@@ -181,6 +203,25 @@ func _metti_bordo(porta_chiusa: bool, boato: float) -> void:
 	bordo.light_energy = energia_bordo * (1.0 + richiamo_in_piu * boato)
 
 
+## Il riflesso viola sulla faccia (vedi [member energia_riflesso]): fra il giocatore e la bocca, poco sopra gli occhi,
+## acceso dalla minaccia (in 0,4 s) fino a quando arretra (si spegne in 0,6 s, poi c'è la luce della corsa).
+func _metti_riflesso(porta_chiusa: bool, t: float) -> void:
+	var sq: Node3D = _r.squalo
+	if porta_chiusa or sq == null or not is_instance_valid(sq) or not sq.visible or _r.get(&"_p") == null:
+		riflesso.light_energy = 0.0
+		return
+	var m: float = _r.tempi.get("minaccia", 2.4)
+	var a: float = _r.tempi.get("arretra", 6.05)
+	var k := clampf((t - m + 0.4) / 0.4, 0.0, 1.0) * clampf(1.0 - (t - a) / 0.6, 0.0, 1.0)
+	if k <= 0.0:
+		riflesso.light_energy = 0.0
+		return
+	var occhio: Vector3 = (_r.get(&"_p") as Player).camera.global_position
+	var bocca: Vector3 = _r.call(&"_punto_bocca")
+	riflesso.global_position = occhio.lerp(bocca, 0.3) + Vector3.UP * 0.35
+	riflesso.light_energy = energia_riflesso * k * k * (3.0 - 2.0 * k)
+
+
 ## La sagoma: le luci del corridoio (le lampade rosse) non illuminano più lo squalo, che sta solo sul suo strato: lo
 ## toccano solo la controluce, il bagliore dalla porta e la luce della corsa (bassa). La faccia verso di te resta scura,
 ## col bordo acceso. Le luci tornano com'erano quando torna il controllo.
@@ -191,7 +232,7 @@ func _sagoma() -> void:
 	var radice := get_tree().current_scene if get_tree().current_scene else _r.get_parent()
 	for l in radice.find_children("*", "Light3D", true, false):
 		var luce3 := l as Light3D
-		if luce3 == luce or luce3 == bordo or luce3 == _r.get(&"_luce_corsa"):
+		if luce3 == luce or luce3 == bordo or luce3 == riflesso or luce3 == _r.get(&"_luce_corsa"):
 			continue
 		if luce3.light_cull_mask & RisveglioSqualo.STRATO_SQUALO:
 			_luci_tolte.append([luce3, luce3.light_cull_mask])
