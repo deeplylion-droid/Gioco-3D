@@ -1,0 +1,28 @@
+TUBI: ins_A_scolo_0: 21 punti, in fondo dopo 1.5 s, uscito dal tubo al fotogramma 99, fermo al più 64 fotogrammi di fila; camera al più 0.79 m dalla linea (raggio 0.78) in (55.21, -21.18, -13.6); arrivo in (59.45, -25.98, -11.51), in acqua ?
+TUBI: ins_A_scolo_0 arrivo in_piedi: occhi (59.45, -25.06, -11.51), piedi (59.45, -25.98, -11.51)
+TUBI: ins_A_scolo_0 arrivo accovacciato: occhi (59.66, -24.76, -12.85), piedi (59.45, -25.98, -11.51)
+TUBI: finito
+TUBI: ins_A_scolo_1: 30 punti, in fondo dopo -1.0 s, uscito dal tubo al fotogramma -1, fermo al più 1060 fotogrammi di fila; camera al più 0.78 m dalla linea (raggio 0.78) in (64.0, -24.18, -24.8); arrivo in (58.41, -28.17, -25.81), in acqua ?
+TUBI: ins_A_scolo_1 arrivo in_piedi: occhi (58.41, -27.25, -25.81), piedi (58.41, -28.17, -25.81)
+TUBI: ins_A_scolo_1 arrivo accovacciato: occhi (58.41, -27.25, -25.81), piedi (58.41, -28.17, -25.81)
+TUBI: finito
+TUBI: ins_A_scolo_2: 33 punti, in fondo dopo -1.0 s, uscito dal tubo al fotogramma -1, fermo al più 229 fotogrammi di fila; camera al più 0.79 m dalla linea (raggio 0.78) in (72.71, -27.18, -6.6); arrivo in (75.62, -30.49, -11.66), in acqua ?
+TUBI: ins_A_scolo_2 arrivo in_piedi: occhi (75.62, -29.57, -11.66), piedi (75.62, -30.49, -11.65)
+TUBI: ins_A_scolo_2 arrivo accovacciato: occhi (75.62, -29.57, -11.65), piedi (75.52, -30.48, -11.65)
+TUBI: finito
+TUBI: ins_A_tubo_0: 43 punti, in fondo dopo 2.9 s, uscito dal tubo al fotogramma 183, fermo al più 63 fotogrammi di fila; camera al più 0.74 m dalla linea (raggio 0.78) in (37.6, -17.41, -17.4); arrivo in (51.25, -22.58, -15.19), in acqua ?
+TUBI: ins_A_tubo_0 arrivo in_piedi: occhi (51.25, -20.98, -15.19), piedi (51.25, -22.58, -15.19)
+TUBI: ins_A_tubo_0 arrivo accovacciato: occhi (51.25, -21.66, -15.19), piedi (51.25, -22.58, -15.19)
+TUBI: finito
+TUBI: ins_A_tubo_1: 51 punti, in fondo dopo 3.3 s, uscito dal tubo al fotogramma 205, fermo al più 49 fotogrammi di fila; camera al più 0.79 m dalla linea (raggio 0.78) in (55.21, -21.18, -16.4); arrivo in (64.31, -25.58, -27.48), in acqua ?
+TUBI: ins_A_tubo_1 arrivo in_piedi: occhi (64.31, -23.98, -27.48), piedi (64.31, -25.58, -27.48)
+TUBI: ins_A_tubo_1 arrivo accovacciato: occhi (64.31, -24.66, -27.48), piedi (64.31, -25.58, -27.48)
+TUBI: finito
+TUBI: ins_A_tubo_2: 63 punti, in fondo dopo 3.8 s, uscito dal tubo al fotogramma 230, fermo al più 64 fotogrammi di fila; camera al più 0.79 m dalla linea (raggio 0.78) in (67.0, -24.18, -24.79); arrivo in (68.89, -28.58, -6.78), in acqua ?
+TUBI: ins_A_tubo_2 arrivo in_piedi: occhi (68.89, -26.98, -6.78), piedi (68.89, -28.58, -6.78)
+TUBI: ins_A_tubo_2 arrivo accovacciato: occhi (68.89, -27.66, -6.78), piedi (68.89, -28.58, -6.78)
+TUBI: finito
+TUBI: ins_A_tubo_3: 149 punti, in fondo dopo 10.0 s, uscito dal tubo al fotogramma 604, fermo al più 62 fotogrammi di fila; camera al più 0.79 m dalla linea (raggio 0.78) in (66.3, -27.17, -3.61); arrivo in (49.81, -34.0, -6.89), in acqua ?
+TUBI: ins_A_tubo_3 arrivo in_piedi: occhi (49.81, -32.4, -6.89), piedi (49.81, -34.0, -6.89)
+TUBI: ins_A_tubo_3 arrivo accovacciato: occhi (49.81, -33.08, -6.89), piedi (49.81, -34.0, -6.89)
+TUBI: finito

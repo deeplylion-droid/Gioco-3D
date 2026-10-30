@@ -1,0 +1,44 @@
+  ok    sette tubi nel gruppo "scivolo" (7)
+  ok    sei paratie, ognuna col suo pannello e il bersaglio
+  ok    tre giuste e tre sbagliate
+  ok    la grata è alzata
+  ok    quattro checkpoint: le tre vasche e il bacino
+  ok    la scaletta del bacino
+  ok    lei non c'è
+  ok    40 luci, nessuna si spegne col blackout ripartendo
+  ok    nel tubo si scivola accovacciati
+  ok    si arriva nella vasca 1 ((51.35142, -22.57911, -15.08509), 3.5 s)
+  ok    checkpoint: vasca 1 (SalaInseguimento/Checkpoint_vasca_1)
+  ok    fuori dal tubo ci si rialza
+  ok    chiusa, la paratia non si passa
+  ok    col getto sul bersaglio la giusta si alza
+  ok    mezzo secondo di getto non basta per l'altra
+  ok    il pannello è salito di 2.0 m
+  ok    dopo un po' lei sale dall'acqua
+  ok    e incombe (inseguimento/incombe)
+  ok    un getto in faccia la ricaccia sotto
+  ok    si copre il viso e torna sotto (inseguimento/respinta)
+  ok    torna sott'acqua
+  ok    se resti nella vasca torna
+  ok    se la lasci, ti prende
+  ok    con la presa (inseguimento/presa)
+  ok    si riparte nella vasca 1
+  ok    nella vasca di scolo lei ti prende (arrivo (59.42797, -25.97901, -11.48574), lei: scolo_0)
+  ok    e si riparte dalla vasca 1
+  ok    paratia 0 aperta
+  ok    giù per il tubo fino a: vasca_2 (5.3 s, (64.2703, -25.57908, -27.72075))
+  ok    checkpoint vasca_2 (SalaInseguimento/Checkpoint_vasca_2)
+  ok    paratia 2 aperta
+  ok    giù per il tubo fino a: vasca_3 (5.1 s, (68.92198, -28.57913, -6.566397))
+  ok    checkpoint vasca_3 (SalaInseguimento/Checkpoint_vasca_3)
+  ok    paratia 4 aperta
+  ok    giù per il tubo fino a: bacino (11.0 s, (49.95261, -33.99912, -6.831538))
+  ok    checkpoint bacino (SalaInseguimento/Checkpoint_bacino)
+  ok    nel bacino la grata cala dietro
+  ok    e lei ci arriva contro
+  ok    andando verso la scaletta parte SB1
+  ok    il giocatore si ferma
+  ok    lei sbuca dal pozzo, affacciata
+  ok    e la camera la guarda (1.00)
+  ok    nero: fine del capitolo
+RISULTATO: 43 controlli ok, 0 falliti

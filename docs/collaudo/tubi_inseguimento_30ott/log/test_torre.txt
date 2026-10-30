@@ -1,0 +1,95 @@
+  ok    tolta a metà della costruzione: nessun errore ()
+  ok       e la torre torna sui suoi strati
+  ok    tolta a metà della preparazione: nessun errore ()
+  ok       e la torre torna sui suoi strati
+  ok    9 pezzi di discesa e 6 rampe d'imbocco: 15 corpi nel gruppo "scivolo"
+  ok    7 checkpoint: il portone, le 5 pedane d'arrivo, il fondo (7)
+  ok    i checkpoint vanno in ordine e sempre più in basso
+  ok    c'è la Polaroid 10
+  ok    la Polaroid 10 non è coperta né compenetrata []
+  ok    la Polaroid 10 è appoggiata sul lettino (0.1 cm sopra)
+  ok    c'è la Polaroid 12, appoggiata sul grigliato del pianerottolo del portone (4.0 mm sopra le barre)
+  ok    niente zone che uccidono senza una caduta vera (V1)
+  ok    sotto i cinque salti le vasche di raccolta, con l'acqua e la scaletta di servizio
+  ok    un portale su ogni imbocco della discesa
+  ok    la struttura, i tubi e i prop sono solidi (71 corpi statici)
+  ok    la parete ovest sta in x 20.240, davanti al retro della sala grande (0 facce nel suo piano)
+  ok    ogni checkpoint ha il pavimento sotto (7/7)
+  ok    sotto ogni punto della discesa c'è un canale del gruppo "scivolo" (61/61)
+  ok    sopra il canale ci sono 2 m liberi (61/61 punti)
+  ok    4 salti normali e 2 col getto
+  ok    i salti normali sono sempre più lunghi e il primo è corto
+  ok    tratto 0 (Checkpoint_portone -> Checkpoint_NEm3, salti ["salto"]): arrivato
+  ok       sulla pedana Checkpoint_NEm3 si arriva all'imbocco dopo camminando (1 m libero, senza salti)
+  ok       entrando spostati di 0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di -0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di 22 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di -22 gradi: arrivato
+  ok    tratto 1 (Checkpoint_NEm3 -> Checkpoint_SEm6, salti ["salto"]): arrivato
+  ok       sulla pedana Checkpoint_SEm6 si arriva all'imbocco dopo camminando (1 m libero, senza salti)
+  ok       entrando spostati di 0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di -0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di 22 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di -22 gradi: arrivato
+  ok    tratto 2 (Checkpoint_SEm6 -> Checkpoint_SOm9, salti ["salto"]): arrivato
+  ok       sulla pedana Checkpoint_SOm9 si arriva all'imbocco dopo camminando (1 m libero, senza salti)
+  ok       entrando spostati di 0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di -0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di 22 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di -22 gradi: arrivato
+  ok    tratto 3 (Checkpoint_SOm9 -> Checkpoint_NOm12, salti ["getto"]): arrivato
+  ok       sulla pedana Checkpoint_NOm12 si arriva all'imbocco dopo camminando (1 m libero, senza salti)
+  ok       entrando spostati di 0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di -0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di 22 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di -22 gradi: arrivato
+  ok       senza il getto non si arriva (caduto nella vasca di raccolta)
+  ok    tratto 4 (Checkpoint_NOm12 -> Checkpoint_NEm15, salti ["getto"]): arrivato
+  ok       sulla pedana Checkpoint_NEm15 si arriva all'imbocco dopo camminando (1 m libero, senza salti)
+  ok       entrando spostati di 0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di -0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di 22 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di -22 gradi: arrivato
+  ok       senza il getto non si arriva (caduto nella vasca di raccolta)
+  ok    tratto 5 (Checkpoint_NEm15 -> Checkpoint_fondo, salti ["salto"]): arrivato
+  ok       entrando spostati di 0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di -0.45 m e storti di 0 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di 22 gradi: arrivato
+  ok       entrando spostati di 0.00 m e storti di -22 gradi: arrivato
+  ok    salto 0 sbagliato: si cade nella vasca di raccolta ((31.0, -4.478291, -22.12461))
+  ok       e la scaletta lo riporta sulla pedana di partenza (NO 0, (28.02103, -0.009002, -19.22668))
+  ok    salto 1 sbagliato: si cade nella vasca di raccolta ((38.08078, -7.165207, -15.0))
+  ok       e la scaletta lo riporta sulla pedana di partenza (NE -3, (35.19643, -3.008998, -18.00285))
+  ok    salto 2 sbagliato: si cade nella vasca di raccolta ((31.0, -10.68514, -7.966509))
+  ok       e la scaletta lo riporta sulla pedana di partenza (SE -6, (33.99923, -6.008994, -10.89659))
+  ok    salto 3 sbagliato: si cade nella vasca di raccolta ((23.36403, -13.77968, -16.96764))
+  ok       e la scaletta lo riporta sulla pedana di partenza (SO -9, (26.79669, -9.009003, -12.00056))
+  ok    salto 4 sbagliato: si cade nella vasca di raccolta ((32.76304, -16.77968, -22.75853))
+  ok       e la scaletta lo riporta sulla pedana di partenza (NO -12, (28.00088, -12.009, -19.20322))
+  ok    prima che il portone si apra la torre non è caricata
+  ok    la sala tiene pronti gli shader dei materiali che la torre crea da codice (42)
+  ok    il portone fa caricare la torre in un thread (3.7 s)
+  ok    il guscio vecchio dietro il portone non c'è più
+  ok    se il caricamento nel thread fallisce la torre si carica subito lo stesso
+  ok    entrando sulla passerella il portone si richiude alle spalle
+  ok    interni e tecnici si scaricano, col portone chiuso
+  ok    checkpoint all'ingresso (SalaTorre/Checkpoint_portone)
+  ok    pedana Checkpoint_NEm3: checkpoint
+  ok    pedana Checkpoint_SEm6: checkpoint
+  ok    pedana Checkpoint_SOm9: checkpoint
+  ok    pedana Checkpoint_NOm12: checkpoint
+  ok    pedana Checkpoint_NEm15: checkpoint
+  ok    col blackout le luci della torre sono accese (94)
+  ok    cadendo nel vuoto fino in fondo si muore (caduta vera)
+  ok       ma solo toccando il fondo, dopo una caduta lunga (a -20.0 m)
+  ok    si riparte con la torre già lì
+  ok    dall'ultimo checkpoint (Checkpoint_NEm15)
+  ok    col portone chiuso alle spalle
+  ok    dopo la morte le luci della torre sono ancora accese (94 su 94)
+  ok    nella vasca del fondo la discesa non finisce più: c'è l'inseguimento
+  ok    l'inseguimento è già nella sala, dietro il muro est
+  ok    dall'acqua della vasca del fondo si salgono i gradini fino alla bocca ((37.0, -18.87786, -16.73405))
+  ok    dalla bocca il tubo porta alla vasca 1 dell'inseguimento (checkpoint)
+  ok    alla fine dell'inseguimento finisce il capitolo (la demo)
+  ok    nessun errore degli script ()
+RISULTATO: 94 controlli ok, 0 falliti

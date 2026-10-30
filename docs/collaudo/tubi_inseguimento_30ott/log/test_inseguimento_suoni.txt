@@ -1,0 +1,18 @@
+  ok    i suoni ci sono: 5 battiti e 6 colpi
+  ok    la voce di lei c'è (Statua)
+  ok    mentre riemerge niente cuore né ritmo (0, 0)
+  ok    lontana il cuore a circa 72 al minuto (24 in 20 s)
+  ok    vicina il cuore a circa 128 al minuto (41 in 20 s)
+  ok    lontana il ritmo rado (13 colpi pieni in 20 s, 14 coi doppi)
+  ok    vicina il ritmo fitto (35 colpi pieni in 20 s, 42 coi doppi)
+  ok    vicina il cuore più forte (-5.0 contro -14.0 dB)
+  ok    vicina il cuore 5 dB sotto il canto, come nell'esempio (-5.0 dB)
+  ok    vicino il ritmo 3,5 dB più basso, come nell'esempio (-3.5 dB)
+  ok    mentre si ritrae il cuore rallenta (128 -> 113 al minuto)
+  ok    e il ritmo si dirada (2 colpi in 2 s)
+  ok    inseguimento/presa: niente cuore né ritmo (0, 0)
+  ok    inseguimento/schianto: niente cuore né ritmo (0, 0)
+  ok    sparita: niente cuore né ritmo (0, 0)
+  ok    solo il ritmo (0, 11)
+  ok    solo il cuore (7, 0)
+RISULTATO: 17 controlli ok, 0 falliti

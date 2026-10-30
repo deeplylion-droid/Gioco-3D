@@ -1,0 +1,14 @@
+  ok   la sala principale è caricata
+  ok   la torre è caricata
+  ok   c'è l'inseguimento
+  ok   il nero dell'inseguimento finisce il capitolo (la demo)
+  ok   lo schermo è nero (livello 80)
+  ok   la scritta sta sopra il nero e sotto il menu di pausa (livello 90)
+  ok   la scritta si vede: «FINE DEL CAPITOLO 1 / La discesa continua nel buio. / Grazie per aver giocato!»
+  ok   alla fine della torre la scritta ha anche la riga della torre
+  ok   il resto dell'interfaccia (mirino, zaino, messaggi) resta sotto il nero
+  ok   in pausa non torna al titolo
+  ok   a 5 s di scritta è ancora la fine della demo
+  ok   finita la scritta, torna da solo al titolo (res://scenes/ui/menu_principale.tscn)
+  ok   e non ci torna una seconda volta
+RISULTATO: 13 controlli ok, 0 falliti

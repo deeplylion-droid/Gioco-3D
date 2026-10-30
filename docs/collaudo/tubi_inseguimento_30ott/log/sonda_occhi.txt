@@ -1,0 +1,8 @@
+OCCHI ins_A_tubo_0: minimo 0.052 m sopra il pelo (-21.72), a (50.87836, -21.66791, -15.29598)
+OCCHI ins_A_tubo_1: minimo 0.051 m sopra il pelo (-24.72), a (63.27979, -24.66921, -28.07159)
+OCCHI ins_A_tubo_2: minimo 0.056 m sopra il pelo (-27.72), a (69.185, -27.66416, -7.436856)
+OCCHI ins_A_tubo_3: minimo 0.071 m sopra il pelo (-33.15), a (50.48863, -33.07893, -6.688462)
+OCCHI ins_A_scolo_0: minimo 0.107 m sopra il pelo (-25.22), a (59.13091, -25.11328, -11.72081)
+OCCHI ins_A_scolo_1: minimo inf m sopra il pelo (-28.22), a (0.0, 0.0, 0.0)
+OCCHI ins_A_scolo_2: minimo inf m sopra il pelo (-30.22), a (0.0, 0.0, 0.0)
+RISULTATO: occhio sotto il pelo nei tubi giusti: no (peggio 0.000)

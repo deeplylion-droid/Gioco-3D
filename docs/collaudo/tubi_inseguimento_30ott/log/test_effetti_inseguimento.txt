@@ -1,0 +1,14 @@
+  ok      la sala crea gli effetti con lei
+  ok      a 12.0 m i bordi restano chiari
+  ok      la luce rosa è accesa e guarda la strada davanti al giocatore
+  ok      la luce nasce da lei
+  ok      lontana niente morsi né tremito
+  ok      a 4.9 m i bordi si scuriscono ma non del tutto
+  ok      a ogni morso la camera trema appena
+  ok      a 3 m i bordi sono al massimo (0.60)
+  ok      dopo il morso la camera torna esattamente a posto
+  ok      con l'oscillazione della camera spenta non trema
+  ok      con gli effetti se corri lei resta fra 8 e 18 m
+  ok      quando ti prende la camera è subito libera
+  ok      quando lei non c'è i bordi e la luce si spengono
+RISULTATO: 13 controlli ok, 0 falliti
