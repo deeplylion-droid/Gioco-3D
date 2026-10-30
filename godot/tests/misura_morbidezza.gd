@@ -145,6 +145,12 @@ func inizia() -> void:
 	if not m.modification_processed.is_connected(_su_uscita):
 		m.modification_processed.connect(_su_uscita)
 	_attiva = true
+	# (collaudo dei picchi: MORB_CARICA=1 carica intanto nel thread, coi sotto-thread del pool, tre scene pesanti, come
+	# i caricamenti delle zone mentre si gioca)
+	if OS.has_environment("MORB_CARICA"):
+		for scena in ["res://scenes/sala/torre/sala_torre.tscn", "res://scenes/risalita/risalita.tscn",
+				"res://scenes/sala/inseguimento/sala_inseguimento.tscn"]:
+			ResourceLoader.load_threaded_request(scena, "", true, ResourceLoader.CACHE_MODE_IGNORE)
 
 
 func ferma() -> void:
