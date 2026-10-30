@@ -18,6 +18,7 @@ uniform float lontano = 14.0;     // fin dove si calcola, in metri
 uniform float oltre = 100.0;      // da qui (metri dall'occhio) la nebbia si dirada...
 uniform float cala = 0.0;         // ...di tanto per metro (0: uguale dappertutto)
 uniform float quota = 0.0;        // l'altezza del pavimento
+uniform float fondo = 1e6;        // dove poggia il giocatore: sotto la quota (il fondo della piscina) lo strato sta lì
 uniform float densita = 0.08;     // la nebbia dappertutto, per metro
 uniform float strato = 0.8;       // in più vicino al pavimento...
 uniform float altezza = 3.0;      // ...che si dirada salendo
@@ -70,7 +71,10 @@ void fragment() {
 	// lo strato più fitto sta sul pavimento; guardando giù sotto il pavimento (il fondo della piscina, il canale) scende
 	// un po' verso quello che si vede (il 40% della differenza): il fondo ha appena un filo di nebbia più del pavimento
 	// alla stessa distanza, non una vasca piena di nebbia (riscontro dell'utente sulla 0.3.16)
-	float q = quota + min(occhio.y + rd.y * min(vista, 1e3) - quota, 0.0) * 0.4;
+	// In piedi sotto il pavimento (sul fondo della piscina vuota) lo strato sta dove si cammina: attorno c'è la nebbia
+	// del pavimento della sala, appena di più (ricontrollo di enigmi sulla 0.3.17)
+	float q0 = min(quota, fondo);
+	float q = q0 + min(occhio.y + rd.y * min(vista, 1e3) - q0, 0.0) * 0.4;
 	float dt = L / float(passi);
 	// un inizio diverso per ogni punto dello schermo (rumore a gradiente intrecciato)
 	float j = fract(52.9829189 * fract(dot(FRAGCOORD.xy, vec2(0.06711056, 0.00583715))));
