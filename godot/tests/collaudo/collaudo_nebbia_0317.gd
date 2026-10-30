@@ -9,7 +9,8 @@ extends Node
 ## Stampa "MISURA" con la luminosità media dello schermo e della metà bassa. Scatti in <cartella>.
 ## Uso: xvfb-run -a -s "-screen 0 960x540x24" godot --path godot --rendering-driver vulkan --resolution 960x540 \
 ##        --script res://tests/run.gd -- res://tests/collaudo/collaudo_nebbia_0317.gd <cartella> <piscina|infermeria> \
-##        <shader della 0.3.16 (percorso assoluto)>
+##        <shader della 0.3.16 (percorso assoluto)> [solo_vuota]
+## (la sala a parti è lenta col renderer software: piena e vuota insieme passano i 40 minuti; "solo_vuota" fa la seconda)
 
 const SALA := "res://scenes/sala_principale.tscn"
 const PARTI := ["Sala", "LuciSala", "Vasca", "Piscina/Pozza", "Piscina/AcquaPozza", "Vasche", "Mascotte", "Scarabocchi"]
@@ -109,7 +110,8 @@ func _piscina() -> void:
 		await get_tree().process_frame
 	n.zona(z, true, true)
 	var pozza := _radice.find_child("Pozza", true, false)
-	for stato in ["piena", "vuota"]:
+	var stati := ["vuota"] if OS.get_cmdline_user_args().size() > 4 and OS.get_cmdline_user_args()[4] == "solo_vuota" else ["piena", "vuota"]
+	for stato in stati:
 		if stato == "vuota" and pozza and &"fill" in pozza:
 			pozza.set(&"fill", 0.0)
 			for i in 300:
