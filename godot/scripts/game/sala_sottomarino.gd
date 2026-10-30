@@ -2617,11 +2617,14 @@ func _gommone(s: float, off: float) -> void:
 	corpo.collision_mask = 0
 	corpo.sync_to_physics = true
 	corpo.set_meta(&"superficie", &"gomma")
-	nodo.add_child(corpo)
 	var giro := float(int(s * 13.0) % 60) * 0.1
 	# (la posa di partenza la si tiene a parte: con sync_to_physics il corpo la prende al passo della fisica)
 	var posa0 := Transform3D(Basis.looking_at(d, Vector3.UP).rotated(Vector3.UP, giro), centro)
-	corpo.global_transform = posa0
+	# la posa prima di entrare nella scena: entrato all'origine, con sync_to_physics il corpo ci restava fino al passo della
+	# fisica dopo, cioè sopra il centro della piscina della sala (collaudo finale del 30 ottobre: un gommone per
+	# fotogramma, all'altezza del bordo, mentre si costruisce il tunnel)
+	corpo.transform = nodo.global_transform.affine_inverse() * posa0
+	nodo.add_child(corpo)
 	_collisione_gommone(corpo)
 	var colori := [Color(0.95, 0.42, 0.12), Color(0.2, 0.62, 0.3), Color(0.95, 0.78, 0.15)]
 	var gomma := StandardMaterial3D.new()
