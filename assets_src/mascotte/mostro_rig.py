@@ -243,6 +243,8 @@ def _matrice_osso(B3, y_dir, testa):
 NORD_MAX = [-9.0]
 VICINO_MUSO = [9.0]
 SPINTA = {'L': Vector((0, 0, 0)), 'R': Vector((0, 0, 0))}
+VEL_SPINTA = {'L': Vector((0, 0, 0)), 'R': Vector((0, 0, 0))}
+MOLLA = 10.0             # rad/s della molla che porta la spinta delle braccia (via dal muso) dove serve
 VICINO_MUSO_DOVE = ['']
 
 
@@ -367,51 +369,47 @@ def cuoci(arm, piedi, nome='risveglio'):
             # al mento). Dopo il richiamo gomito, polso, mano e artigli restano ad almeno A.MANO_MUSO da bocca,
             # mascella e mento: se no la mano si sposta via (e un poco in giù), o il gomito si apre di lato
             polo = polo0.copy()
-            # (la spinta via dal muso del fotogramma prima, che si spegne piano: senza, ogni fotogramma la mano poteva
-            # passare dall'altra parte del mento, con un salto di 75 cm, e a 60 fps nel mezzo il gomito gli passava
-            # dentro)
+            # (si parte dalla spinta via dal muso del fotogramma prima: senza, ogni fotogramma la mano poteva passare
+            # dall'altra parte del mento, con un salto di 75 cm, e a 60 fps nel mezzo il gomito gli passava dentro)
             obiettivo = mano.copy()
-            base = SPINTA[s] * 0.9
+            base = SPINTA[s]
             mano = _nord(mano + base)
             punti = _ik(mano, polo)
             # (solo intorno al giro: fuori, la 0.3.16 restava già ad almeno 26 cm, e spinte qui le braccia raccolte alla
             # porta entravano nel battente)
             tp_ = A.tempo_alla_porta()
-            alla_porta = tp_ - 0.8 < t < tp_ + 0.7
+            alla_porta = tp_ - 0.5 < t < tp_ + 0.7
             if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
                 bocca = pbs['bocca'].head.copy()
                 muso = [bocca, bocca.lerp(pbs['mento_punta'].head, 0.45), pbs['mento_punta'].head.copy(),
                         pbs['mascella'].head.copy(), pbs['mascella'].tail.copy(), pbs['testa'].tail.copy()]
-                for _ in range(40):
-                    peggio, chi, via = 9.0, None, None
-                    for nome_p, h in punti:
-                        for q in muso:
-                            if (h - q).length < peggio:
-                                peggio, chi, via = (h - q).length, nome_p, (h - q)
-                    if peggio >= A.MANO_MUSO + 0.01:
+                # quanto spingere: in una direzione fissa rispetto al corpo (in fuori, in giù e un poco indietro; alla
+                # porta solo in giù: di lato le braccia entravano nel battente), di quanto basta perché gomito, polso,
+                # mano e artigli stiano ad almeno A.MANO_MUSO da bocca, mascella e mento. La quantità cambia in modo
+                # continuo da un fotogramma all'altro (cercata a passi di 1 cm), anche la direzione: la mano non salta
+                # più dall'altra parte del mento (75 cm in un fotogramma) e non trema (terzo ricontrollo del 30 ottobre)
+                if alla_porta:
+                    verso = Vector((0, 0, -1.0))
+                else:
+                    verso = (lato + Vector((0, 0, -0.6)) - avanti * 0.3).normalized()
+                k = 0.0
+                while k < 0.6:
+                    prova = _nord(obiettivo + verso * k)
+                    punti = _ik(prova, polo)
+                    if min((h - q).length for _n, h in punti for q in muso) >= A.MANO_MUSO:
                         break
-                    if chi == 'gomito':
-                        # (il gomito si apre di lato e la mano scende: col braccio quasi teso il polo non basta)
-                        # (il gomito: si sposta la mano, il polo resta quello liscio; cambiato qui di colpo il gomito
-                        # saltava da un lato all'altro fra due fotogrammi, e nel mezzo, a 60 fps, passava nel mento)
-                        mano = _nord(mano + via.normalized() * 0.03)
-                    elif alla_porta:
-                        # (alla porta, chino per passare, le braccia raccolte sotto il mento: solo in giù, di lato
-                        # entravano nel battente)
-                        via = Vector((0, 0, -1.0)) * (A.MANO_MUSO + 0.02 - peggio) / 0.96
-                        mano = mano + via
-                        punti = _ik(mano, polo)
-                        continue
-                    else:
-                        via = via.normalized() + Vector((0, 0, -0.4))
-                        mano = _nord(mano + via.normalized() * (A.MANO_MUSO + 0.02 - peggio))
-                    punti = _ik(mano, polo)
-                # (al più 10 cm di differenza per fotogramma nella spinta)
-                nuova = mano - obiettivo
-                d_sp = nuova - base
-                if d_sp.length > 0.10:
-                    mano = _nord(obiettivo + base + d_sp.normalized() * 0.10)
-                    punti = _ik(mano, polo)
+                    k += 0.01
+                mano = prova
+                voluta = mano - obiettivo
+            else:
+                voluta = Vector((0, 0, 0))
+            # la spinta segue quella voluta con una molla smorzata (velocità continua: niente scatti, né quando si
+            # accende né quando si spegne; terzo ricontrollo del 30 ottobre, la mano sinistra tremava alla porta)
+            dt_ = 1.0 / A.FPS
+            VEL_SPINTA[s] += (MOLLA ** 2 * (voluta - SPINTA[s]) - 2.0 * MOLLA * VEL_SPINTA[s]) * dt_
+            mano = _nord(obiettivo + SPINTA[s] + VEL_SPINTA[s] * dt_)
+            punti = _ik(mano, polo)
+            if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
                 for nome_p, h in punti:
                     for q in muso:
                         if (h - q).length < VICINO_MUSO[0]:

@@ -13,6 +13,10 @@ var _passed := 0
 var _failed := 0
 
 
+## Il salto più grande della velocità di una mano rispetto al petto in un fotogramma, nella scena dello squalo (m/s):
+## quello della 0.3.16 (2,65, nella corsa).
+const SALTO_MANI := 2.7
+
 func _ready() -> void:
 	_run.call_deferred()
 
@@ -185,6 +189,10 @@ func _scena_squalo(start: Marker3D) -> void:
 	var richiamo_t: float = s.tempi.get("richiamo", 5.4)
 	var mano_bocca := INF
 	var coda_porta := INF
+	var mani_prima := {}
+	var mani_vel := {}
+	var mani_salto := 0.0
+	var mani_salto_quando := ""
 	var coda_porta_quando := ""
 	var mano_bocca_quando := ""
 	var pelle_muro := 0.0
@@ -251,6 +259,21 @@ func _scena_squalo(start: Marker3D) -> void:
 				braccio_punti["polso." + lato] = m.origin
 				# (la mano è lunga circa 26 cm, gli artigli 10 cm oltre: lungo l'asse dell'osso, la y)
 				braccio_punti["artigli." + lato] = m.origin + m.basis.y.normalized() * 0.36 * sk.global_transform.basis.get_scale().x
+			# le mani non tremano (terzo ricontrollo del 30 ottobre: alla porta la sinistra saltava fra un fotogramma e
+			# l'altro): la velocità rispetto al petto non cambia più di SALTO_MANI in un fotogramma (la 0.3.16 al più
+			# 2,65 m/s, nella corsa)
+			var petto := sk.global_transform * sk.get_bone_global_pose(sk.find_bone("petto"))
+			for lato in ["L", "R"]:
+				var nel_petto: Vector3 = petto.affine_inverse() * (braccio_punti["polso." + lato] as Vector3)
+				if mani_prima.has(lato):
+					var v: Vector3 = (nel_petto - (mani_prima[lato] as Vector3)) * 60.0
+					if mani_vel.has(lato):
+						var salto := (v - (mani_vel[lato] as Vector3)).length()
+						if salto > mani_salto:
+							mani_salto = salto
+							mani_salto_quando = "mano.%s a %.2f s" % [lato, t]
+					mani_vel[lato] = v
+				mani_prima[lato] = nel_petto
 			for nome in braccio_punti:
 				for k in testa_punti.size():
 					var dmb := (braccio_punti[nome] as Vector3).distance_to(testa_punti[k])
@@ -295,6 +318,7 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(dentro, "lo squalo resta dentro il corridoio (niente muri attraversati)")
 	check(mani_z.x > -2.4 and mani_z.y < -0.2, "anche le mani, fino alla porta: nel giro non entrano nei muri (polsi fra z %.2f e %.2f, i muri a -2,5 e -0,1; la più a nord: %s)" % [mani_z.x, mani_z.y, mani_quando])
 	check(mano_bocca >= 0.26, "le braccia restano accanto al muso: gomiti, polsi e artigli ad almeno 26 cm da bocca, mascella e mento (al più vicino %.2f m, %s)" % [mano_bocca, mano_bocca_quando])
+	check(mani_salto <= SALTO_MANI, "le mani si muovono lisce: la velocità rispetto al petto cambia al più di %.2f m/s in un fotogramma (al più %.2f; %s)" % [mani_salto, SALTO_MANI, mani_salto_quando])
 	check(coda_porta > 22.02, "con la porta chiusa la coda è tutta oltre il battente (il punto più indietro a x %.2f, il battente fino a 22,00; %s)" % [coda_porta, coda_porta_quando])
 	check(pelle_muro < 0.01, "la pelle non entra nei muri, neanche oltre la porta (al più %.3f m%s)" % [pelle_muro, (", " + pelle_muro_dove) if pelle_muro > 0.0 else ""])
 	check(pelle_min > 0.18, "la camera non entra mai nello squalo, anche con le scosse (al più vicino %.2f m dalla sua pelle)" % pelle_min)
