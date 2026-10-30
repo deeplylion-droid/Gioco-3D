@@ -14,11 +14,14 @@ Cosa guarda, riga per riga (senza commenti e stringhe):
 - una variabile di un for su un contenitore senza tipo accanto a un operatore;
 - ogni % e ogni / fra due interi (letterali senza punto, variabili int, .size()).
 Uso: python3 tools/ci/morbidezza_operatori.py [file]   (esce con 1 se trova qualcosa)
+     python3 tools/ci/morbidezza_operatori.py --prova  (il controllo stesso: sul file di prova tools/ci/prove/operatori_prova.gd
+     deve trovare tutte e sole le righe segnate "# A RISCHIO")
 """
 import re
 import sys
 
 FILE = sys.argv[1] if len(sys.argv) > 1 else "godot/scripts/environment/morbidezza_lei.gd"
+PROVA = "tools/ci/prove/operatori_prova.gd"
 RADICE = "_lavora"
 
 OPERATORI = ["+=", "-=", "*=", "/=", "%=", "==", "!=", "<=", ">=", "+", "-", "*", "/", "%", "<", ">"]
@@ -94,6 +97,28 @@ def chiudi(s, i):
     return len(s)
 
 
+def fine_catena(s, i):
+    """Dalla fine di un elemento senza tipo, segue altri indici, metodi e proprietà (fo[0].size(), mo[3][1].end): il
+    risultato è ancora senza tipo. Restituisce dove finisce la catena."""
+    while i < len(s):
+        if s[i] == "[":
+            i = chiudi(s, i)
+            continue
+        m = re.match(r"\.\w+", s[i:])
+        if m:
+            i += m.end()
+            if i < len(s) and s[i] == "(":
+                i = chiudi(s, i)
+            continue
+        break
+    return i
+
+
+# Le funzioni globali che restituiscono Variant (le versioni con la f, absf, clampf, maxf..., e quelle con la i sono
+# tipizzate): dentro un operatore il risultato è senza tipo.
+FUNZIONI_VARIANT = ["abs", "sign", "floor", "ceil", "round", "clamp", "lerp", "snapped", "wrap", "max", "min"]
+
+
 def vicino_a_operatore(s, a, b):
     """L'espressione s[a:b] ha un operatore subito prima o subito dopo (e non è un cast o una conversione)?"""
     prima = s[:a].rstrip()
@@ -104,10 +129,11 @@ def vicino_a_operatore(s, a, b):
         return False
     if re.search(r"\b(int|float|bool|str)\($", prima) or re.search(r"\(\s*$", prima) and re.match(r"^\)\s*as\b", dopo):
         return False
-    if re.match(r"^\.", dopo) or re.match(r"^\[", dopo):
-        return False      # un metodo o un altro indice: non un operatore su questo valore
+    if re.match(r"^\[", dopo):
+        return False      # un altro indice: lo guarda chi chiama, alla fine della catena
     for o in OPERATORI:
-        if dopo.startswith(o) and not dopo.startswith("=" ) and not (o in "<>" and dopo.startswith(o + o)):
+        assegna = dopo.startswith("=") and not dopo.startswith("==")
+        if dopo.startswith(o) and not assegna and not (o in "<>" and dopo.startswith(o + o)):
             if o in ("-", "+") and dopo.startswith(o + ">"):
                 continue
             return True
@@ -147,7 +173,7 @@ def operando_intero(t, interi_nomi):
     return False
 
 
-def controlla(percorso):
+def controlla(percorso, righe_trovate=None):
     righe = open(percorso, encoding="utf-8").read().split("\n")
     f = funzioni(righe)
     if RADICE not in f:
@@ -200,11 +226,15 @@ def controlla(percorso):
             # elementi di contenitori senza tipo accanto a un operatore
             for x in locali | cicli:
                 for m in re.finditer(r"(?<![\w.])" + re.escape(x) + r"\[", l):
-                    fine = chiudi(l, m.end() - 1)
-                    while fine < len(l) and l[fine] == "[":
-                        fine = chiudi(l, fine)
+                    fine = fine_catena(l, chiudi(l, m.end() - 1))
                     if vicino_a_operatore(l, m.start(), fine):
                         trovati.append((num, nome, f"{x}[…] senza tipo accanto a un operatore", righe[num - 1].strip()))
+            for fn in FUNZIONI_VARIANT:
+                for m in re.finditer(r"(?<![\w.])" + fn + r"\(", l):
+                    fine = fine_catena(l, chiudi(l, m.end() - 1))
+                    if vicino_a_operatore(l, m.start(), fine):
+                        trovati.append((num, nome, f"{fn}() restituisce Variant: accanto a un operatore",
+                                righe[num - 1].strip()))
             for x in cicli:
                 for m in re.finditer(r"(?<![\w.])" + re.escape(x) + r"(?![\w\[(])", l):
                     if re.match(r"\s*for ", l):
@@ -220,8 +250,22 @@ def controlla(percorso):
     for t in trovati:
         print(f"  {percorso}:{t[0]} ({t[1]}): {t[2]}\n      {t[3]}")
     print(f"RISULTATO: {len(trovati)} operatori a rischio")
+    if righe_trovate is not None:
+        righe_trovate.update(t[0] for t in trovati)
     return 1 if trovati else 0
 
 
+def prova():
+    """Il controllo sul file di prova: tutte e sole le righe di codice segnate "# A RISCHIO"."""
+    righe = open(PROVA, encoding="utf-8").read().split("\n")
+    attese = {i + 1 for i, l in enumerate(righe) if l.rstrip().endswith("# A RISCHIO")}
+    trovate = set()
+    controlla(PROVA, trovate)
+    mancate = sorted(attese - trovate)
+    in_piu = sorted(trovate - attese)
+    print(f"PROVA: {len(attese)} righe a rischio nel file di prova; mancate {mancate}, trovate in più {in_piu}")
+    return 1 if mancate or in_piu else 0
+
+
 if __name__ == "__main__":
-    sys.exit(controlla(FILE))
+    sys.exit(prova() if FILE == "--prova" else controlla(FILE))

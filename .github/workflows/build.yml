@@ -75,7 +75,9 @@ jobs:
 
       - name: Morbidezza in parallelo, nessun operatore senza tipo sui thread (crash di Godot 4.7.2 alla prima esecuzione)
         if: steps.progetto.outputs.presente == 'si'
-        run: python3 tools/ci/morbidezza_operatori.py
+        run: |
+          python3 tools/ci/morbidezza_operatori.py --prova
+          python3 tools/ci/morbidezza_operatori.py
 
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'
