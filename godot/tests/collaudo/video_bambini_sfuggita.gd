@@ -222,16 +222,19 @@ func _insegui(dentro_fino_in_fondo: bool) -> void:
 	_registra = true
 	var dopo := 0
 	while t < 30.0 and dopo < 45:
+		# (accucciato nelle bocche e nella galleria, alla velocità da accucciato; fuori allo sprint)
+		var giu: bool = (qui - al.call(s0, sala.muro)).dot(r) > -0.15 and k >= 3
+		var vel := _p.crouch_speed if giu else _p.run_speed
 		if k < strada.size():
 			var verso: Vector3 = strada[k] - qui
-			if verso.length() <= 5.8 * dt:
+			if verso.length() <= vel * dt:
 				qui = strada[k]
 				k += 1
 			else:
-				qui += verso.normalized() * 5.8 * dt
-		var giu: bool = (qui - al.call(s0, sala.muro)).dot(r) > -0.15 and k >= 3
-		var occhio := qui + Vector3.UP * (0.95 if giu else 1.6)
-		var mira: Vector3 = strada[mini(k, strada.size() - 1)] + Vector3.UP * (0.95 if giu else 1.6)
+				qui += verso.normalized() * vel * dt
+		_p.set(&"_eye_height", _p.crouch_eye_height if giu else _p.stand_eye_height)
+		var occhio := qui + Vector3.UP * (_p.crouch_eye_height if giu else _p.stand_eye_height)
+		var mira: Vector3 = strada[mini(k, strada.size() - 1)] + Vector3.UP * (_p.crouch_eye_height if giu else _p.stand_eye_height)
 		if b.stato == BambinoSfuggita.Stato.GUARDA or b.stato == BambinoSfuggita.Stato.SCAPPA:
 			mira = b.bambino.punto_testa()
 		_p.global_position = qui
