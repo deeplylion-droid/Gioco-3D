@@ -147,6 +147,7 @@ func _tunnel() -> void:
 	_trova(sala)
 	_zona(sala)
 	await _frames(30)
+	var pre := OS.get_environment("PREFISSO")
 	# un tratto con le lampade calde e uno nel giardino dei coralli (le lampade sono ogni 9 m da s 3)
 	var calda := -1.0
 	var coralli := -1.0
@@ -158,23 +159,24 @@ func _tunnel() -> void:
 		if amb == 1 and coralli < 0.0:
 			coralli = s
 		s += 9.0
-	print("TRATTI calda s %.0f, coralli s %.0f" % [calda, coralli])
-	for v in [["tunnel_1_calde", calda], ["tunnel_2_coralli", coralli]]:
-		if float(v[1]) < 0.0:
-			continue
-		var s0: float = v[1]
-		# la lampada di quel tratto da vicino
-		var p := sala.punto(s0)
-		var vicina: MeshInstance3D = null
-		for g in globi:
-			if vicina == null or g.global_position.distance_to(p) < vicina.global_position.distance_to(p):
-				vicina = g
-		if vicina:
-			await _vicino(v[0] + "_0_lampada_vicino", vicina)
-		# dagli occhi del giocatore sulla banchina, 7 m prima, guardando avanti lungo il tunnel
-		var da := _occhio(sala, s0 - 7.0, 1.0, 1.6)
-		var verso := _occhio(sala, s0 + 6.0, 0.0, 1.2)
-		await _coppia(v[0], da, verso)
+	var L := sala.lunghezza()
+	print("TRATTI calda s %.0f, coralli s %.0f, lunghezza %.0f" % [calda, coralli, L])
+	# (nome, da s, a s, di lato da, di lato verso)
+	var viste := [["1_calde", calda - 7.0, calda + 6.0, 1.0, 0.0], ["2_coralli", coralli - 7.0, coralli + 6.0, 1.0, 0.0],
+		["3_presa", 6.0, -2.0, 1.0, 0.0], ["4_approdo", L - SalaSottomarino.BALLATOIO - 14.0, L, 1.0, 0.0],
+		["5_portello", L - SalaSottomarino.BALLATOIO - 5.0, L - SalaSottomarino.BALLATOIO + 1.0, 1.0, 1.0]]
+	for v in viste:
+		cam.look_at_from_position(_occhio(sala, v[1], v[3], 1.6), _occhio(sala, v[2], v[4], 1.4), Vector3.UP)
+		await _frames(40)
+		await _scatto(pre + "tunnel_" + v[0])
+	# una lampada calda da vicino
+	var p := sala.punto(calda)
+	var vicina: MeshInstance3D = null
+	for g in globi:
+		if vicina == null or g.global_position.distance_to(p) < vicina.global_position.distance_to(p):
+			vicina = g
+	if vicina:
+		await _vicino(pre + "tunnel_6_lampada_vicino", vicina)
 
 
 func _occhio(sala: SalaSottomarino, s: float, lato: float, su: float) -> Vector3:
