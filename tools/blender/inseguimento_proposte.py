@@ -63,6 +63,10 @@ X0_GIOCO = 40.4
 BOCCA_TORRE = [(37.6, 17.4, -18.15), (38.8, 17.4, -18.38), (41.0, 17.4, -18.6)]   # come in torre_a.py (GIOCO), nel verso della discesa
 MOBILI = []                              # i pezzi che si muovono (pannelli delle paratie, sbarre della grata)
 GIOCO_DATI = dict(paratie=[], grata=None, tubi={}, scale=[])
+# Nel gioco il pelo delle vasche dei bivi e del bacino è 10 cm più giù (correzione della 0.3.17): l'acqua era alta
+# 98 cm e l'occhio di chi ci sta accovacciato (anche solo atterrando dal tubo) a 92, sotto il pelo, e da sotto l'acqua
+# sembrava aria. Ora è alta 88 cm (il bacino 85).
+PELO_GIU = 0.0
 
 
 # --- pezzi comuni -----------------------------------------------------------------------------------
@@ -222,6 +226,10 @@ def appendi_tubo(c, pts, r, soffitto, ogni=3.5, pedane=(), mat='metallo', altri=
         s += (pts[i] - pts[i - 1]).length
         if s < prossimo:
             continue
+        # (non dove il tubo curva stretto: lì la fascia, dritta, dal lato interno della curva entrava nel tubo, nello
+        # scolo 0 di 4 cm, correzione della 0.3.17; si sposta avanti al primo tratto quasi dritto)
+        if 3 <= i < len(pts) - 3 and (pts[i] - pts[i - 3]).angle(pts[i + 3] - pts[i]) > math.radians(8.0):
+            continue
         prossimo += ogni
         p = pts[i]
         d = (pts[i + 1] - pts[i - 1]).normalized()
@@ -357,7 +365,7 @@ def vasca_bocche(c, x0, y0, x1, y1, z, alto, nome_acqua, bocche, largo=1.8):
             else:
                 c.scatola((a, u0, z), (b, u1, z + alto), 'vasca_bimbi', smusso=0.02)
     c.scatola((x0 + sp, y0 + sp, z), (x1 - sp, y1 - sp, z + 0.02), 'vasca')
-    return P.acqua_piano(nome_acqua, x0 + sp, y0 + sp, x1 - sp, y1 - sp, z + alto - 0.12)
+    return P.acqua_piano(nome_acqua, x0 + sp, y0 + sp, x1 - sp, y1 - sp, z + alto - 0.12 - PELO_GIU)
 
 
 def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
@@ -691,7 +699,7 @@ def versione_A(mats):
         muri_bacino.append(((BX[2] - 0.3, BX[1]), (BX[2], BX[3])))
     for (a, b) in muri_bacino:
         c.scatola((a[0], a[1], z0), (b[0], b[1], T + 0.55), 'vasca_bimbi', smusso=0.03)
-    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35))
+    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35 - PELO_GIU))
     # la grata di sicurezza sulla bocca del tubo finale (chiusa: è calata davanti a lei)
     grata(c, (BX[2] - 0.1, 6.5, z0 + 2.0), (1, 0), not GIOCO, largo=3.0, alto=4.0)   # nel gioco alzata: cala dopo
     # la strada per uscire: scaletta sul bordo ovest del bacino, passerella, porta di servizio
@@ -883,9 +891,9 @@ def versione_A(mats):
             pa['tubo'] = tb
             pa['vasca'] = v
         GIOCO_DATI.update(
-            vasche=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 1.1 - 0.12) for v in (C1, C2, C3)],
+            vasche=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 1.1 - 0.12 - PELO_GIU) for v in (C1, C2, C3)],
             scolo=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 0.9 - 0.12) for v in D],
-            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35),
+            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35 - PELO_GIU),
             allagato=dict(acqua=T, fondo=z0),
             pozzo=dict(rett=[43.6, 7.9, 45.8, 10.1], fondo=z0 - 4.5, bordo=T + 0.12),
             pozzetto_grata=dict(rett=list(POZZETTO_GRATA[:4]), fondo=z0 - POZZETTO_GRATA[4], bordo=POZZETTO_GRATA[5]),
@@ -958,6 +966,10 @@ def sostieni_canale(c, pts, z_terra, ogni=3.0):
     for i in range(1, len(pts) - 1):
         s += (pts[i] - pts[i - 1]).length
         if s < prossimo:
+            continue
+        # (non dove il tubo curva stretto: lì la fascia, dritta, dal lato interno della curva entrava nel tubo, nello
+        # scolo 0 di 4 cm, correzione della 0.3.17; si sposta avanti al primo tratto quasi dritto)
+        if 3 <= i < len(pts) - 3 and (pts[i] - pts[i - 3]).angle(pts[i + 3] - pts[i]) > math.radians(8.0):
             continue
         prossimo += ogni
         p = pts[i]
@@ -1357,7 +1369,9 @@ def main():
     if gioco:
         assert nome == 'A', "nel gioco c'è solo la A (scelta dell'utente del 19 ottobre)"
         global GIOCO, X0, SOTTO_PEDANA
+        global PELO_GIU
         GIOCO, X0, SOTTO_PEDANA = True, X0_GIOCO, 0.26
+        PELO_GIU = 0.1
         uscita, prefisso = GIOCO_USCITA, 'inseguimento'
     gruppi, percorso, luci, info = VERSIONI[nome](mats)
     os.makedirs(uscita, exist_ok=True)
