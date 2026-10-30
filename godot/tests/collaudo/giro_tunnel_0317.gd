@@ -57,13 +57,19 @@ func _run() -> void:
 	effetti = sala.get(&"effetti")
 	p.set_physics_process(false)
 	sala.attiva_tunnel()
-	for c in STRADA:
-		var s: float = c[1]
-		var mira := _lato(float(c[3]), float(c[4])) + Vector3.UP * float(c[5])
-		await _scatta(cartella, "%s_%s" % [c[0], nome], _lato(s, float(c[2])), s, float(c[6]), mira)
+	# [param solo_lei] (terzo argomento "lei"): solo lei che si avvicina, nel tratto dritto da s 100
+	var solo_lei := a.size() > 3 and a[3] == "lei"
+	if not solo_lei:
+		for c in STRADA:
+			var s: float = c[1]
+			var mira := _lato(float(c[3]), float(c[4])) + Vector3.UP * float(c[5])
+			await _scatta(cartella, "%s_%s" % [c[0], nome], _lato(s, float(c[2])), s, float(c[6]), mira)
+	var s_lei := 100.0
 	for d in AVVICINA:
-		var s := 300.0
-		await _scatta(cartella, "09_lei_a_%02dm_%s" % [int(d), nome], _lato(s, -1.0), s, d, _lato(s + 10.0, -1.0) + Vector3.UP * 1.2)
+		await _scatta(cartella, "10_lei_a_%02dm_avanti_%s" % [int(d), nome], _lato(s_lei, -1.0), s_lei, d,
+				_lato(s_lei + 10.0, -1.0) + Vector3.UP * 1.2)
+	for d in AVVICINA:
+		await _scatta(cartella, "11_lei_a_%02dm_dietro_%s" % [int(d), nome], _lato(s_lei, -1.0), s_lei, d, Vector3.INF)
 	get_tree().quit()
 
 
@@ -73,14 +79,15 @@ func _scatta(cartella: String, nome: String, piedi: Vector3, s: float, dietro: f
 	sala.insegui_da(s - dietro)
 	for i in 50:
 		sala.set(&"_s_bersaglio", s)
-		p.look_at_point(mira)
+		# (Vector3.INF: si guarda lei)
+		p.look_at_point(mira if mira != Vector3.INF else (sala.lei.get_eye_position() if sala.lei else _lato(s - dietro, -1.0) + Vector3.UP * 1.6))
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	var img := get_viewport().get_texture().get_image()
 	img.save_jpg(cartella.path_join(nome + ".jpg"), 0.9)
 	var gap: float = float(sala.get(&"_s_bersaglio")) - float(sala.get(&"lei_s"))
 	var luce: Node = effetti.get(&"luce") if effetti else null
-	print("GIRO %s: media %.1f, 10%% %.1f (lei a %.1f m; luce rosa %s)" % [nome, _lum(img), _perc(img, 0.1), gap,
+	print("GIRO %s: media %.1f, 10%% %.1f, rosa (R-G) %.1f (lei a %.1f m; luce rosa %s)" % [nome, _lum(img), _perc(img, 0.1), _rosa(img), gap,
 			"%.1f" % float(luce.light_energy) if luce and luce.visible else "-"])
 
 
@@ -99,6 +106,18 @@ static func _lum(img: Image) -> float:
 		for x in range(0, img.get_width(), 4):
 			var c := img.get_pixel(x, y)
 			s += 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+			k += 1
+	return s / maxf(k, 1) * 255.0
+
+
+## Quanto è rosa lo schermo: la media di rosso meno verde (0..255).
+static func _rosa(img: Image) -> float:
+	var s := 0.0
+	var k := 0
+	for y in range(0, img.get_height(), 4):
+		for x in range(0, img.get_width(), 4):
+			var c := img.get_pixel(x, y)
+			s += maxf(c.r - c.g, 0.0)
 			k += 1
 	return s / maxf(k, 1) * 255.0
 
