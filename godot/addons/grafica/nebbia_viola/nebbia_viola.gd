@@ -24,6 +24,9 @@ const OLTRE := 1.8
 const CALA := 0.8
 ## La forza dell'alone di ogni lampada (come negli scatti).
 const ALONE := 0.18
+## L'aria viola e la polvere della B (nebbia_viola.gdshader); le zone le scalano (ZonaNebbiaViola.aria, .polvere).
+const ARIA := Vector3(0.02, 0.018, 0.055)
+const POLVERE := 0.35
 ## I secondi per passare da spenta a piena (entrando) e viceversa (uscendo, o cambiando l'opzione).
 const DURATA := 3.0
 ## Oltre questo spostamento della camera in un fotogramma è un salto (checkpoint): la zona nuova vale subito.
@@ -64,6 +67,8 @@ var _scelte: Array[Light3D] = []
 var _luci_zona: Array[Light3D] = []
 var _t_scelta := 0.0
 var _t_elenco := 0.0
+## L'alone della zona in cui si è entrati per ultima (ZonaNebbiaViola.alone).
+var _alone := 1.0
 
 
 func _ready() -> void:
@@ -120,11 +125,21 @@ func zona(z: Node, dentro: bool, subito := false) -> void:
 		_t_elenco = 0.0
 		if &"quota" in z:
 			_mat.set_shader_parameter(&"quota", float(z.get(&"quota")))
+		_valori_zona(z)
 	elif not dentro:
 		_zone.erase(z)
 		_t_elenco = 0.0
 	if subito or Engine.get_process_frames() - _fotogramma_salto < 10:
 		quanto = _obiettivo()
+
+
+## I valori della zona [param z] (l'ultima in cui si entra): l'aria, la polvere e l'alone.
+func _valori_zona(z: Node) -> void:
+	var a: float = float(z.get(&"aria")) if &"aria" in z else 1.0
+	var p: float = float(z.get(&"polvere")) if &"polvere" in z else 1.0
+	_alone = float(z.get(&"alone")) if &"alone" in z else 1.0
+	_mat.set_shader_parameter(&"aria", ARIA * a)
+	_mat.set_shader_parameter(&"particelle", POLVERE * p)
 
 
 ## Vero se il giocatore è in una zona con la nebbia (anche con l'opzione spenta).
@@ -211,7 +226,7 @@ func _aggiorna_luci(cam: Camera3D, delta: float) -> void:
 		var acceso := 1.0 if l.is_visible_in_tree() and l.light_energy > 0.05 else 0.0
 		var c := l.light_color
 		pos.append(l.global_position)
-		col.append(Vector3(c.r, c.g, c.b) * ALONE * float(s[1]) * acceso)
+		col.append(Vector3(c.r, c.g, c.b) * ALONE * _alone * float(s[1]) * acceso)
 	_mat.set_shader_parameter(&"luci_pos", pos)
 	_mat.set_shader_parameter(&"luci_col", col)
 	_mat.set_shader_parameter(&"n_luci", 4)
