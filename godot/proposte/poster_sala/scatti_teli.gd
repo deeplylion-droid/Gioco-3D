@@ -1,9 +1,9 @@
 extends Node
 ## Scatti dei due teli di Jilly ai lati della statua (sala_cartellone_mascotte_0 e _1), prima e dopo averli bruciati e
-## scarabocchiati (richiesta dell'utente del 30 ottobre), dagli occhi del giocatore (1,6 m) con le luci del gioco e la
-## torcia accesa in mano: come le trova all'inizio (prima del risveglio) e al buio dopo il blackout. Le viste "_zoom" sono dallo stesso punto con
-## la camera stretta, per vedere i buchi sulla lamiera; le "_radente" da sotto e di lato, per vedere come la carta sta
-## sulla lamiera della cornice.
+## scarabocchiati (richiesta dell'utente del 30 ottobre), dagli occhi del giocatore (1,6 m) con le luci vere del gioco
+## (la torcia nel gioco non c'è più dalla 0.3.12): all'arrivo nella sala e dopo che si accende il lampione della statua.
+## Le viste "_zoom" sono dallo stesso punto con la camera stretta. Alla fine i ravvicinati tecnici "_torcia": solo per
+## vedere i bordi dei buchi sulla lamiera, con una torcia che nel gioco non c'è.
 ## La sala intera, renderizzata, non sta nei 15 GB della macchina di prova: come in proposte/nebbia_viola/scatti_sala.gd
 ## si caricano solo le parti che si vedono, nella loro posizione, con l'ambiente della sala, e a ogni vista si accendono
 ## solo le mesh entro [constant RAGGIO] m. Le luci dei teli e quelle d'emergenza come le regola sala_principale.gd.
@@ -17,10 +17,15 @@ const CAMERE := {
 	"ingresso": [Vector3(0.0, 1.6, 19.2), Vector3(0.0, 3.4, 9.8), 62.0],
 	"arcobaleno": [Vector3(-3.6, 1.6, 15.6), Vector3(-5.6, 5.1, 9.8), 62.0],
 	"arcobaleno_zoom": [Vector3(-3.6, 1.6, 15.6), Vector3(-5.6, 5.2, 9.8), 24.0],
-	"arcobaleno_radente": [Vector3(-8.2, 1.6, 12.4), Vector3(-5.6, 5.2, 9.8), 40.0],
 	"bagnina": [Vector3(3.6, 1.6, 15.6), Vector3(5.6, 5.1, 9.8), 62.0],
 	"bagnina_zoom": [Vector3(3.6, 1.6, 15.6), Vector3(5.6, 5.2, 9.8), 24.0],
-	"bagnina_radente": [Vector3(8.2, 1.6, 12.4), Vector3(5.6, 5.2, 9.8), 40.0],
+}
+## I ravvicinati tecnici con la torcia (nel gioco non c'è): di fronte e di lato, da sotto.
+const TECNICI := {
+	"arcobaleno_torcia": [Vector3(-3.6, 1.6, 15.6), Vector3(-5.6, 5.2, 9.8), 24.0],
+	"arcobaleno_torcia_lato": [Vector3(-8.2, 1.6, 12.4), Vector3(-5.6, 5.2, 9.8), 40.0],
+	"bagnina_torcia": [Vector3(3.6, 1.6, 15.6), Vector3(5.6, 5.2, 9.8), 24.0],
+	"bagnina_torcia_lato": [Vector3(8.2, 1.6, 12.4), Vector3(5.6, 5.2, 9.8), 40.0],
 }
 const RAGGIO := 16.0
 
@@ -72,34 +77,43 @@ func _run() -> void:
 	cam.near = 0.05
 	cam.far = 60.0
 	_radice.add_child(cam)
-	# la torcia del giocatore, accesa come all'inizio del gioco (nella sala buia i teli si vedono con quella)
-	cam.add_child(Torcia.new())
 	get_tree().root.add_child(_radice)
 	cam.make_current()
 	_luci_come_nel_gioco(_radice.get_node(^"Sala/Luci"))
 	if dopo:
 		var sp := load("res://scripts/game/sala_principale.gd") as Script
 		print("TELI rovinati: %d superfici" % int(sp.call(&"metti_teli_rovinati", _radice.get_node(^"Sala/Architettura"))))
-	for stato in [GameState.Luci.PRIMA_DEL_RISVEGLIO, GameState.Luci.BLACKOUT]:
-		GameState.imposta_luci(stato)
-		var suffisso := "luci" if stato == GameState.Luci.PRIMA_DEL_RISVEGLIO else "buio"
+	# il lampione della statua, come lo prepara sala_principale.gd: spento all'arrivo, si accende avvicinandosi
+	var sfarfallio := _radice.get_node_or_null(^"Vasca/Sfarfallio") as FlickerLight
+	var lampione := _radice.get_node_or_null(^"Sala/Luci/luce_lampione") as Light3D
+	if sfarfallio and lampione:
+		sfarfallio.set_targets(lampione, null)
+		sfarfallio.turn_off()
+	for stato in ["arrivo", "lampione"]:
+		if stato == "lampione" and sfarfallio:
+			sfarfallio.turn_on(true)
 		for nome in CAMERE:
-			var c: Array = CAMERE[nome]
-			cam.global_position = c[0]
-			cam.look_at(c[1], Vector3.UP)
-			cam.fov = c[2]
-			_accendi(c[0], c[1])
-			for i in 40:
-				await get_tree().process_frame
-			await RenderingServer.frame_post_draw
-			var f := out.path_join("%s_%s.jpg" % [nome, suffisso])
-			get_viewport().get_texture().get_image().save_jpg(f, 0.9)
-			print("TELI scatto ", f)
+			await _scatta(cam, CAMERE[nome], out.path_join("%s_%s.jpg" % [nome, stato]))
+	cam.add_child(Torcia.new())
+	for nome in TECNICI:
+		await _scatta(cam, TECNICI[nome], out.path_join("%s.jpg" % nome))
 	print("TELI pipeline: disegno %d, specializzazione %d" % [
 			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_DRAW),
 			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION)])
 	print("TELI memoria massima %d MB" % (OS.get_static_memory_peak_usage() / 1048576))
 	get_tree().quit()
+
+
+func _scatta(cam: Camera3D, c: Array, f: String) -> void:
+	cam.global_position = c[0]
+	cam.look_at(c[1], Vector3.UP)
+	cam.fov = c[2]
+	_accendi(c[0], c[1])
+	for i in 40:
+		await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_jpg(f, 0.9)
+	print("TELI scatto ", f)
 
 
 ## Le luci della sala come le regola sala_principale.gd (_setup_hall): i faretti caldi sui teli, le emergenze.
