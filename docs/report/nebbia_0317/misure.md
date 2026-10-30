@@ -45,3 +45,16 @@ Renderer vero (llvmpipe), dagli occhi del giocatore, preset alto. Strumenti: `go
 ## Pipeline
 
 `test_riscaldamento_pipeline` 11/11 col renderer e senza_bug: accendendo la nebbia, surface 0, draw 0, sottofondo 0.
+
+## Luce rosa guardando avanti (ricontrollo di ambienti-1)
+
+Con `giro_tunnel_0317.gd` di lavoro/collaudo-nebbia-0317 (d1c274b6), argomenti `lei 0317` e `lei 0316`: tratto dritto a s 100, preset alto, guardando 10 m avanti (`rosa_avanti_0316_0317.jpg`). Rosa = media di R-G sullo schermo.
+
+| lei dietro | 0.3.16: rosa / energia | 0.3.17: rosa / energia |
+|---|---|---|
+| 11 m | 0,2 / 12,7 | 0,2 / 9,9 |
+| 8 m | 0,2 / 16,4 | 0,2 / 14,5 |
+| 6 m | 0,3 / 18,0 | 0,3 / 16,9 |
+| 3 m | 0,6 / 19,7 | 0,6 / 19,6 |
+
+Da vicino la 0.3.17 è uguale alla 0.3.16 (stessa energia piena, 20): non è calata, e non va rialzata. Da lontano l'energia è più bassa, come voluto, ma lo schermo non cambia (0,2).
