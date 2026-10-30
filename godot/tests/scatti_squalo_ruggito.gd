@@ -6,7 +6,8 @@ extends Node
 ## nero"). Per il coordinatore, non per l'utente.
 ## Uso (con --fixed-fps i tempi della scena sono gli stessi a ogni giro, anche se llvmpipe è lento):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##     --fixed-fps 30 --script res://tests/run.gd -- res://tests/scatti_squalo_ruggito.gd <cartella> <basso|medio|alto|ultra>
+##     --fixed-fps 30 --script res://tests/run.gd -- res://tests/scatti_squalo_ruggito.gd <cartella> <basso|medio|alto|ultra> \
+##     [energia del riflesso viola sulla faccia, AtmosferaSqualo.energia_riflesso]
 
 const LEVEL := "res://scenes/interni/interni.tscn"
 const LATO := 120
@@ -33,6 +34,10 @@ func _run() -> void:
 	var level := get_tree().current_scene
 	var p := GameState.player
 	var s := level.get_node("Gioco/RisveglioSqualo") as RisveglioSqualo
+	var atm := s.get_node_or_null("Atmosfera")
+	if args.size() > 3 and atm and &"energia_riflesso" in atm:
+		atm.set(&"energia_riflesso", float(args[3]))
+		preset += "_r%s" % args[3]
 	var m: float = s.tempi.get("minaccia", 2.4)
 	var r: float = s.tempi.get("richiamo", 5.4)
 	var momenti := [[m + 0.4, "1_ruggito"], [m + 1.0, "2_ruggito"], [(m + r) * 0.5 + 0.3, "3_ruggito"], [r - 0.2, "4_prima_del_richiamo"]]

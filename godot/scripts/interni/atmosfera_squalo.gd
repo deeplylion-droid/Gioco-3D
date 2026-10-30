@@ -25,7 +25,7 @@ extends Node3D
 ## dalla parte del giocatore, solo sullo squalo e senza ombra, perché la faccia con la bocca aperta si legga. Con
 ## l'ombra del bagliore della porta (anche al minimo, grafica_priorita_ombra 0) la faccia restava tutta nera
 ## (riscontro dell'utente sulla 0.3.16: "quando ti ruggisce in faccia è troppo buio, totalmente nero").
-@export var energia_riflesso := 1.2
+@export var energia_riflesso := 0.3
 @export var portata_riflesso := 3.2
 ## Al richiamo di lei la luce cresce ancora un po' (il boato), poi torna.
 @export var richiamo_in_piu := 0.35
