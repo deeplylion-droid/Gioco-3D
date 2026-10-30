@@ -447,9 +447,10 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	var muffa := load("res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_muffa.png") as Texture2D
 	# sotto l'oblò, dal bordo della flangia al pavimento, a sud della Polaroid 13 (che resta fuori dal decal)
 	_decal("ColatureOblo", colature, Vector3(est, Y + 0.7, OBLO_FIUME.z - 0.3), Vector3.LEFT, 0.9, 1.4, Color.WHITE, 1.0)
-	# la muffa accanto all'oblò, verso la scala, e sul muro di fronte, fra il carrello e la griglia (sotto i tubi)
+	# la muffa accanto all'oblò, verso la scala, e sul muro di fronte, sopra la griglia (sotto i tubi)
 	_decal("MuffaOblo", muffa, Vector3(est, Y + 1.7, OBLO_FIUME.z - 1.4), Vector3.LEFT, 1.0, 0.75, Color.WHITE, 1.0)
-	_decal("MuffaMuroOvest", muffa, Vector3(xc, Y + 1.05, 58.3), Vector3.RIGHT, 1.9, 1.4, Color.WHITE, 1.0)
+	# (verso la lampada vicino alla porta: a metà corridoio, fra le due lampade, al buio non si vedeva)
+	_decal("MuffaMuroOvest", muffa, Vector3(xc, Y + 1.05, 59.6), Vector3.RIGHT, 1.9, 1.4, Color.WHITE, 1.0)
 	# la pozza: dalla colatura (piede del muro est, z 57,45) alla griglia di scolo (x -5,6, z 60,3), lunga e stretta;
 	# la P13 (x -4,06, z 58,4) resta a 15 cm dal suo bordo
 	var da := Vector2(est - 0.2, OBLO_FIUME.z - 0.55)
@@ -465,8 +466,9 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	var m := _mat_pav.duplicate() as ShaderMaterial
 	m.set_shader_parameter(&"base_wetness", 1.0)
 	m.set_shader_parameter(&"wetness_variation", 0.0)
-	m.set_shader_parameter(&"puddle_amount", 1.0)
-	m.set_shader_parameter(&"wet_darkening", 0.3)
+	# (non uno specchio pieno: rifletteva il buio della volta e restava nero; cemento fradicio e lucido)
+	m.set_shader_parameter(&"puddle_amount", 0.45)
+	m.set_shader_parameter(&"wet_darkening", 0.35)
 	m.set_shader_parameter(&"puddle_tint", Color(0.85, 0.86, 0.85))
 	p.material_override = m
 	add_child(p)

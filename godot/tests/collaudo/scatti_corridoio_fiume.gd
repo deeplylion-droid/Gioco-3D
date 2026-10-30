@@ -122,7 +122,7 @@ func _run() -> void:
 				["r06_valvola", Vector3(-4.9, Y + 1.7, 53.3), Vector3(o + 0.2, Y + 2.25, 54.0)],
 				["r07_carrello", Vector3(-4.9, Y + 1.3, 56.0), Vector3(o + 0.2, Y + 0.6, 56.0)],
 				["r08_carrello_base", Vector3(-5.0, Y + 0.6, 57.0), Vector3(o + 0.25, Y + 0.05, 56.2)],
-				["r09_muffa_ovest", Vector3(-4.3, Y + 1.5, 58.3), Vector3(o, Y + 1.0, 58.3)],
+				["r09_muffa_ovest", Vector3(-4.3, Y + 1.5, 59.4), Vector3(o, Y + 1.0, 59.6)],
 				["r10_oblo_muffa_e_colatura", Vector3(-5.2, Y + 1.4, 57.6), Vector3(-3.9, Y + 0.9, 57.9)],
 				["r11_pozza_e_p13", Vector3(-5.3, Y + 1.5, 57.2), Vector3(-4.6, Y, 58.6)],
 				["r12_griglia_e_pozza", Vector3(-4.8, Y + 1.3, 59.6), Vector3(o + 0.3, Y, 60.3)],
