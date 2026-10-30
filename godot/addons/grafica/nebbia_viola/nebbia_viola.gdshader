@@ -32,6 +32,7 @@ uniform float forza = 1.0;        // tutta la luce della nebbia (l'originale è 
 uniform vec3 luci_pos[4];
 uniform vec3 luci_col[4];         // il colore per la forza
 uniform int n_luci = 0;
+uniform bool misura = false;     // solo per le misure: la nebbia toglie luce e non ne aggiunge (lo schermo × T)
 
 // il rumore in 3D con una lettura sola: nel rosso la tabella, nel verde la stessa spostata di (37, 17)
 float rumore(vec3 x) {
@@ -73,7 +74,9 @@ void fragment() {
 		float t = (float(i) + j) * dt;
 		vec3 p = occhio + rd * t;
 		float n = fbm(p * vec3(scala, scala * 1.8, scala) + vento * TIME);
-		float d = (densita + strato * exp(-max(p.y - quota, 0.0) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
+		// lo strato più fitto sta sul pavimento e si dirada salendo e anche scendendo: sotto il pavimento (la piscina, il
+		// canale) non è pieno, così il fondo ha appena un filo di nebbia più del pavimento (riscontro dell'utente sulla 0.3.16)
+		float d = (densita + strato * exp(-abs(p.y - quota) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
 		d /= 1.0 + max(t - oltre, 0.0) * cala;
 		d *= quanto;
 		vec3 luce = aria;
@@ -92,6 +95,6 @@ void fragment() {
 		T *= tr;
 	}
 	// (premoltiplicato: lo schermo diventa schermo × T + S)
-	ALBEDO = S;
+	ALBEDO = misura ? vec3(0.0) : S;
 	ALPHA = 1.0 - T;
 }
