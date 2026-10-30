@@ -544,3 +544,25 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
 - **Enigma nuovo: A, "I giocattoli al loro posto"** nella piscina a onde, con la nota: "ma facciamo che puoi spingere i giocattoli anche una volta che hai svuotato la piscina". I giocattoli si spingono col getto sia sull'acqua della pozza sia sul fondo vuoto, quindi l'ordine (prima i giocattoli o prima lo svuotamento) è libero. Scartate B (disegni a cera) e C (telecamera).
 - **Lavoro della notte: A**, tutte le squadre insieme, accettando il rischio di un altro fermo per il limite settimanale.
 - **Prossima build: B**, niente 0.3.16 al mattino: al mattino solo le cose nuove da guardare, e la build quando la chiede l'utente.
+
+**Scelte del 29 ottobre** (pagina "Proposte del 29 ottobre", con i video e gli scatti fatti nel motore):
+- **Bambini visti di sfuggita: approvati.** Sono due punti:
+  - il bambino col cubo nel corridoio del fiume della risalita, solo dopo lei all'oblò;
+  - l'agnellino davanti alla prima galleria di servizio del tunnel.
+  
+  Approvate anche le animazioni rifatte per tutti i bambini. **Terzo punto: A**, bastano questi due. **Agnellino della scala: A**, si tuffa nel buco come nel video. Entrano dopo l'ultima correzione del collaudo: il bambino del corridoio sparisce solo quando è tutto coperto.
+- **Enigma dei giocattoli: approvato** come nel video. Paperella, pallone e balena si spingono col getto sui loro cerchi, sull'acqua o sul fondo vuoto. I gonfiabili e i palloni da spiaggia vanno sulla spiaggia della piscina. **Disegno al buio: A**, un filo di luce propria, come i pastelli fosforescenti del bordo dei cerchi. **Suoni: A**:
+  - il tonfo dei cerchi è la fine della saracinesca, più grave;
+  - il risucchio degli scarichi è lo svuotamento della piscina, rallentato.
+- **Scarabocchi a pastello: approvati**, i 18 muri in 7 zone dei fogli. **Nella luce rossa della risalita e nel fiume: A**, restano così e si scoprono avvicinandosi.
+- **Squalo che si gira: A**, lo spazio fra il braccio alzato e la testa resta, perché fa parte della posa.
+- **Lei nell'oblò della torre: B**, com'era prima. Si rimette un po' di rosso solo dentro la vasca, senza far tornare le righe rosa viste dalle condotte.
+- **0.3.16: B**, più avanti, quando la chiede l'utente.
+- **Lavoro: A**, tutte le squadre insieme.
+
+**La nebbia viola (29 ottobre)**: l'utente ha passato la "nebbia viola" del suo gioco NotHuman, fatta per Three.js. È una nebbia volumetrica calcolata con la profondità, più un filtro colore viola. È stata tradotta in Godot e provata nell'infermeria, nella sala principale e nell'inseguimento del tunnel.
+- Forza 1,2 ("la 1,2 ci sta", "la 2,2 è troppa").
+- Meno nebbia lontano: "riducila un po' nella visuale lontana della stanza, è troppa". Scelta la **B**, che arriva fino a 4,5 m e si dirada da 1,8 m.
+- "Potremmo anche tenerla solo in alcuni ambienti", e "assicurati solo di farla apparire gradualmente quando entri negli ambienti dove ci sarà".
+- Nella prossima build va in infermeria, sala principale e inseguimento nel tunnel sottomarino. Compare piano entrando nella zona e svanisce uscendo.
+- Nelle opzioni c'è la voce "Nebbia viola: sì/no", accesa di serie ("sì e sì" dell'utente, 29 ottobre).
