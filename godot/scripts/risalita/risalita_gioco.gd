@@ -460,6 +460,15 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	p.size = Vector2(da.distance_to(a), 0.55)
 	p.irregularity = 0.18
 	p.shape_seed = 5
+	# il cemento del pavimento tutto bagnato (lo stesso shader e la stessa texture in coordinate del mondo): col materiale
+	# delle pozze degli interni (grigio scuro uniforme) sotto la luce rossa sembrava un buco nero nel pavimento
+	var m := _mat_pav.duplicate() as ShaderMaterial
+	m.set_shader_parameter(&"base_wetness", 1.0)
+	m.set_shader_parameter(&"wetness_variation", 0.0)
+	m.set_shader_parameter(&"puddle_amount", 1.0)
+	m.set_shader_parameter(&"wet_darkening", 0.3)
+	m.set_shader_parameter(&"puddle_tint", Color(0.85, 0.86, 0.85))
+	p.material_override = m
 	add_child(p)
 	var c := (da + a) * 0.5
 	p.position = Vector3(c.x, Y, c.y)

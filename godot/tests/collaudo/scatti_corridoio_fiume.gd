@@ -9,6 +9,9 @@ extends Node
 
 var _p: Player
 var _cartella := ""
+## "veloce": per le prove, meno fotogrammi per scatto e senza le stanze del fiume e dell'infermeria (si vedono solo dalla
+## porta del capannone)
+var _veloce := false
 
 
 func _ready() -> void:
@@ -27,8 +30,12 @@ func _guarda(occhio: Vector3, punto: Vector3) -> void:
 
 
 func _scatto(nome: String, occhio: Vector3, punto: Vector3) -> void:
+	# "solo=a,b": solo gli scatti col nome che comincia così (per le prove)
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("solo=") and not Array(a.substr(5).split(",")).any(func(x): return nome.begins_with(x)):
+			return
 	_guarda(occhio, punto)
-	await _frames(40)
+	await _frames(14 if _veloce else 40)
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(_cartella)
 	get_viewport().get_texture().get_image().save_jpg(_cartella.path_join(nome + ".jpg"), 0.9)
@@ -41,7 +48,15 @@ func _run() -> void:
 	Grafica.salva_su_disco = false
 	var a := OS.get_cmdline_user_args()
 	_cartella = a[1] if a.size() > 1 else "user://scatti_corridoio_fiume"
-	get_tree().change_scene_to_file("res://tests/scene/risalita_prova.tscn")
+	_veloce = OS.get_cmdline_user_args().has("veloce")
+	if _veloce:
+		var sc := (load("res://tests/scene/risalita_prova.tscn") as PackedScene).instantiate()
+		var r := sc.get_node(^"Risalita")
+		r.set(&"a_richiesta", true)
+		r.set_process(false)
+		get_tree().change_scene_to_node(sc)
+	else:
+		get_tree().change_scene_to_file("res://tests/scene/risalita_prova.tscn")
 	var t0 := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t0 < 120000:
 		await get_tree().process_frame
@@ -72,6 +87,12 @@ func _run() -> void:
 	if oblo:
 		oblo.attivo = false
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	if _veloce:
+		ris.set_process(false)
+		for k in [&"fiume", &"infermeria"]:
+			var n: Node = ris.get(k)
+			if n:
+				n.queue_free()
 	var m := ris.get_node(^"Marker")
 	var cima := (m.get_node(^"CimaScalaFiume") as Node3D).global_position
 	var fondo := (m.get_node(^"FondoScalaFiume") as Node3D).global_position
@@ -79,7 +100,7 @@ func _run() -> void:
 	_guarda(cima + Vector3.UP * 1.6, fondo + Vector3.UP)
 	for i in 1800:
 		await get_tree().process_frame
-		if not bool(ris.call(&"lavori_in_corso")) and i > 300:
+		if not bool(ris.call(&"lavori_in_corso")) and i > (30 if _veloce else 300):
 			break
 	var e := Vector3.UP * 1.6
 	var solo_giro := _cartella.ends_with("_giro") or OS.get_cmdline_user_args().has("giro")
