@@ -73,6 +73,10 @@ jobs:
           python3 tools/ci/test_texture_compresse.py
           python3 tools/ci/texture_compresse.py godot
 
+      - name: Morbidezza in parallelo, nessun operatore senza tipo sui thread (crash di Godot 4.7.2 alla prima esecuzione)
+        if: steps.progetto.outputs.presente == 'si'
+        run: python3 tools/ci/morbidezza_operatori.py
+
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/check_scripts.gd
