@@ -104,7 +104,8 @@ func _sul_bordo(s: Ladder, dietro := 0.6) -> void:
 func _scendi(s: Ladder, modo: String) -> Dictionary:
 	_rilascia()
 	var n := s.get_climb_normal()
-	await _sul_bordo(s)
+	# (1 m dietro: la scatola dei corrimano va 70 cm sul bordo, e il giocatore deve partire fuori)
+	await _sul_bordo(s, 1.0)
 	var verso_piscina := modo.begins_with("verso la piscina")
 	var dir := n if verso_piscina else -n
 	p.look_at_point(p.global_position + Vector3.UP * 1.5 + dir * 5.0)
@@ -128,14 +129,19 @@ func _scendi(s: Ladder, modo: String) -> Dictionary:
 	return {"giu": giu, "tempo": t, "basso": basso, "presa": presa, "fine": fine}
 
 
-## Dal bordo, 0,8 m dietro, contro i corrimano verso la piscina (dritto o di sbieco), 3 s: il giocatore non deve
+## Dal bordo, 1 m dietro (fuori dalla scatola dei corrimano), contro i corrimano verso la piscina (dritto, o di sbieco
+## da 50 cm di lato mirando al centro della scala), 3 s: il giocatore non deve
 ## finire oltre il muro della piscina senza essere sulla scala (cioè passare attraverso i corrimano).
 func _corrimano(s: Ladder, modo: String) -> Dictionary:
 	_rilascia()
 	var n := s.get_climb_normal()
-	await _sul_bordo(s, 0.8)
-	var dir := n if modo == "dritto" else n.rotated(Vector3.UP, deg_to_rad(25.0))
-	p.look_at_point(p.global_position + Vector3.UP * 1.5 + dir * 5.0)
+	await _sul_bordo(s, 1.0)
+	if modo != "dritto":
+		var lato := n.cross(Vector3.UP).normalized()
+		p.teleport(p.global_position + lato * 0.5)
+		await _frames(10)
+	var mira := Vector3(s.global_position.x, p.global_position.y + 1.5, s.global_position.z)
+	p.look_at_point(mira)
 	p.pitch = 0.0
 	Input.action_press(&"move_forward")
 	var oltre := -INF
@@ -192,5 +198,7 @@ func _uscita(s: Ladder) -> Dictionary:
 	await _frames(90)
 	_rilascia()
 	var via := Vector2(p.global_position.x - da.x, p.global_position.z - da.z).length()
-	return {"ok": not dentro and via > 1.0 and not p.is_on_ladder(),
-			"dettaglio": "uscito a %s, dopo 7 s fermo %s, tocca ancora la scala %s, eccezioni %d, poi via di %.2f m, fine %s" % [uscito.snapped(Vector3.ONE * 0.01), dopo7.snapped(Vector3.ONE * 0.01), dentro, eccezioni, via, p.global_position.snapped(Vector3.ONE * 0.01)]}
+	# fermi 7 s dopo l'uscita: niente spinte di colpo (prima, a 6 s, l'eccezione scadeva dentro i corrimano)
+	var salto := Vector2(dopo7.x - uscito.x, dopo7.z - uscito.z).length()
+	return {"ok": salto < 0.2 and via > 1.0 and not p.is_on_ladder(),
+			"dettaglio": "spinta da fermi %.2f m, uscito a %s, dopo 7 s fermo %s, tocca ancora la scala %s, eccezioni %d, poi via di %.2f m, fine %s" % [salto, uscito.snapped(Vector3.ONE * 0.01), dopo7.snapped(Vector3.ONE * 0.01), dentro, eccezioni, via, p.global_position.snapped(Vector3.ONE * 0.01)]}
