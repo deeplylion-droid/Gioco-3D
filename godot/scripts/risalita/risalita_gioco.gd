@@ -433,8 +433,9 @@ func _scala_fiume() -> void:
 ## L'arredo del corridoio del fiume (riscontro dell'utente sulla v0.3.16, "c'è un corridoio vuoto prima della zona del
 ## fiume"; scelta A+C del 30 ottobre, docs/proposte/corridoio_fiume/LEGGIMI.md): il corridoio di servizio, con i tubi
 ## delle pompe, il quadro, i fusti, il carrello e il cartello contro il muro ovest (tools/blender/corridoio_fiume.py), e
-## l'acqua che filtra dalla vasca dell'oblò: macchie umide e muffa intorno all'oblò e sul muro di fronte, le gocce dal
-## soffitto in un punto e la pozza che va verso la griglia di scolo. La luce resta quella di prima.
+## l'acqua che filtra dalla vasca dell'oblò: macchie umide e muffa intorno all'oblò e sul muro di fronte, e la pozza che
+## dalla colatura sotto l'oblò attraversa il corridoio fino alla griglia di scolo (le gocce dal soffitto no: non erano
+## nella A+C descritta all'utente). La luce resta quella di prima.
 func _arredo_corridoio_fiume(xc: float) -> void:
 	var arredo := ARREDO_CORRIDOIO.instantiate() as Node3D
 	arredo.name = "ArredoCorridoioFiume"
@@ -443,27 +444,24 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	var muffa := load("res://assets/ambiente/dettagli/gltf/texture/macchia_muffa_col.png") as Texture2D
 	var umido := load("res://assets/ambienti_interni/shader_tex/decal_macchia.png") as Texture2D
 	var scuro := Color(0.16, 0.15, 0.12)
-	# intorno all'oblò (sopra la Polaroid 13, che resta fuori dal decal) e la colatura sotto
-	_decal("MuffaOblo", muffa, Vector3(est, Y + 1.25, OBLO_FIUME.z + 0.2), Vector3.LEFT, 2.2, 1.8, Color.WHITE, 0.85)
-	_decal("UmidoOblo", umido, Vector3(est, Y + 0.75, OBLO_FIUME.z - 0.1), Vector3.LEFT, 1.0, 1.1, scuro, 0.7)
+	# intorno all'oblò e, sotto, la colatura verso il pavimento, a sud della Polaroid 13 (la P13 resta fuori dai decal)
+	_decal("MuffaOblo", muffa, Vector3(est, Y + 1.35, OBLO_FIUME.z + 0.1), Vector3.LEFT, 2.2, 1.7, Color.WHITE, 0.85)
+	_decal("UmidoOblo", umido, Vector3(est, Y + 0.5, OBLO_FIUME.z - 0.35), Vector3.LEFT, 0.8, 0.8, scuro, 0.7)
 	# sul muro di fronte, fra il carrello e la griglia (sotto i tubi)
 	_decal("MuffaMuroOvest", muffa, Vector3(xc, Y + 1.0, 58.3), Vector3.RIGHT, 2.0, 1.5, Color.WHITE, 0.8)
-	# le gocce dal soffitto, la macchia sopra e la pozza che scende verso la griglia di scolo (x -5,6, z 60,3)
-	var goccia := Vector3(xc + 0.95, Y + 2.6, 59.0)
-	_decal("UmidoSoffitto", umido, goccia, Vector3.DOWN, 0.9, 0.7, scuro, 0.75)
-	var g := WaterDripEmitter.new()
-	g.name = "GocceCorridoioFiume"
-	g.interval_min = 0.9
-	g.interval_max = 2.8
-	add_child(g)
-	g.position = goccia - Vector3(0, 0.02, 0)
-	var verso := Vector2(xc + 0.3 - goccia.x, 60.3 - goccia.z).normalized()
+	# la pozza: dalla colatura (piede del muro est, z 57,45) alla griglia di scolo (x -5,6, z 60,3), lunga e stretta;
+	# la P13 (x -4,06, z 58,4) resta a 15 cm dal suo bordo
+	var da := Vector2(est - 0.2, OBLO_FIUME.z - 0.55)
+	var a := Vector2(xc + 0.4, 60.15)
+	var verso := (a - da).normalized()
 	var p := WaterPuddle.new()
 	p.name = "PozzaCorridoioFiume"
-	p.size = Vector2(1.3, 0.75)
+	p.size = Vector2(da.distance_to(a), 0.55)
+	p.irregularity = 0.18
 	p.shape_seed = 5
 	add_child(p)
-	p.position = Vector3(goccia.x + verso.x * 0.5, Y, goccia.z + verso.y * 0.5)
+	var c := (da + a) * 0.5
+	p.position = Vector3(c.x, Y, c.y)
 	p.rotation.y = atan2(-verso.y, verso.x)
 
 
