@@ -1,0 +1,50 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  ok      fuori è spenta e non si disegna
+  ok      entrando sale piano fino a piena
+  ok      da una zona all'altra non cala
+  ok      uscendo scende piano e si spegne
+  ok      ripartendo da un checkpoint dentro è piena dal primo fotogramma
+  ok      ripartendo fuori è spenta dal primo fotogramma
+  ok      una zona che nasce col giocatore dentro (Continua, caricamento) è piena subito, prima del fotogramma
+  ok      con una camera nuova dentro la zona è piena dal primo fotogramma
+  ok      togliendo la zona scende
+  ok      spenta dalle opzioni dentro la zona scende piano e non si disegna; riaccesa sale piano
+  ok      l'alone: prima la luce di lei, poi le 3 lampade più vicine davanti (non quella dietro)
+  ok      una lampada spenta (sfarfallio) non fa più alone
+  ok      una lampada che esce dall'alone cala piano e una nuova prende il suo posto
+  ok      luci e zona liberate di colpo con la nebbia accesa (la sala ricaricata dopo una presa): nessun errore
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:536)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:510)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _zone_del_gioco (res://tests/test_zona_nebbia.gd:186)
+         [5] _run (res://tests/test_zona_nebbia.gd:99)
+         [6] _alone (res://tests/test_zona_nebbia.gd:179)
+         [7] _per (res://tests/test_zona_nebbia.gd:270)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:536)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:510)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _zone_del_gioco (res://tests/test_zona_nebbia.gd:186)
+         [5] _run (res://tests/test_zona_nebbia.gd:99)
+         [6] _alone (res://tests/test_zona_nebbia.gd:179)
+         [7] _per (res://tests/test_zona_nebbia.gd:270)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:536)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:510)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _zone_del_gioco (res://tests/test_zona_nebbia.gd:186)
+         [5] _run (res://tests/test_zona_nebbia.gd:99)
+         [6] _alone (res://tests/test_zona_nebbia.gd:179)
+         [7] _per (res://tests/test_zona_nebbia.gd:270)
+  ok      l'infermeria ha la zona della nebbia viola
+  ok      il tunnel ha la zona della nebbia viola dalla testa al portello, fra i muri
+  ok      la sala principale ha la zona della nebbia viola (dentro l'ingresso e la vasca, fuori gli interni e la torre)
+RISULTATO: 17 controlli ok, 0 falliti

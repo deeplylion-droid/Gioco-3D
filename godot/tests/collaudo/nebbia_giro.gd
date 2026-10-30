@@ -14,8 +14,9 @@ const SCENE := {
 	"tunnel": "res://scenes/test/sottomarino_prova.tscn",
 }
 const SALA := "res://scenes/sala_principale.tscn"
-const TOGLI := ["Interni", "Tecnici", "Risalita", "AngoloScatoloni", "AngoloPalloni", "BambiniBalconata", "Mascotte",
-	"Gioco/EnigmaAcquari", "Atmosfera", "Sala/TorreScivoli", "Sala/AreaBimbi"]
+const TOGLI := ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata",
+		"Mascotte", "Sala/Dettagli", "Gioco/EnigmaAcquari", "Atmosfera", "Polaroid", "Vasche", "Piscina", "Vasca",
+		"Sala/Piscina", "Sala/VascaCentrale", "Sala/Cupola", "Sala/AreaBimbi", "Sala/Oggetti", "Sala/TorreScivoli"]
 var cart := ""
 var zona_nome := ""
 var p: Player
@@ -66,6 +67,8 @@ func _run() -> void:
 	var sc := get_tree().current_scene
 	if sc.get(&"sala_sottomarino_scena") != null:
 		sc.set(&"sala_sottomarino_scena", "")
+	if zona_nome == "sala" and sc.has_method(&"applica_preset"):
+		sc.call(&"applica_preset", "basso")
 	var z: ZonaNebbiaViola = null
 	t0 = Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t0 < 240000 and z == null:
@@ -74,6 +77,12 @@ func _run() -> void:
 		if not lavori:
 			for n in get_tree().root.find_children("*", "ZonaNebbiaViola", true, false):
 				z = n
+		# il tunnel della scena di prova si costruisce più avanti nella partita: qui lo si costruisce subito
+		if z == null and Time.get_ticks_msec() - t0 > 30000 and Time.get_ticks_msec() - t0 < 30100:
+			for n in get_tree().root.find_children("*", "SalaSottomarino", true, false):
+				if n.has_method(&"costruisci") and not bool(n.get(&"costruita")):
+					print("NEBBIA: costruisco %s" % n.get_path())
+					n.call(&"costruisci")
 	await _frames(120)
 	if z == null:
 		print("NEBBIA: ERRORE nessuna ZonaNebbiaViola")
@@ -94,9 +103,23 @@ func _run() -> void:
 	print("NEBBIA: zona %s, scatola %s, quota %.2f" % [z.get_path(), bb, z.quota])
 	var varco := _varco(z, bb)
 	if varco.is_empty():
-		print("NEBBIA: ERRORE nessun varco libero sul bordo della zona")
-		get_tree().quit()
-		return
+		# le porte della stanza chiuse (scena di prova): si aprono, come più avanti nel gioco
+		var aperte := 0
+		for n in get_tree().root.find_children("*", "", true, false):
+			if n.has_method(&"apri") and n is Node3D and bb.grow(1.0).has_point((n as Node3D).global_position):
+				n.call(&"apri")
+				aperte += 1
+		print("NEBBIA: nessun varco, aperte %d porte" % aperte)
+		await _frames(240)
+		varco = _varco(z, bb)
+	var salto := false
+	if varco.is_empty():
+		# senza varco: fuori e dentro col salto della camera (come Continua e i checkpoint)
+		salto = true
+		var de := _pavimento(z.get_world_3d().direct_space_state, bb.get_center(), z.quota)
+		var fu := p.global_position if not z.contiene(p.global_position + Vector3.UP) else bb.get_center() + Vector3(bb.size.x, 0, 0)
+		varco = [fu, de if de.x != INF else bb.get_center()]
+		print("NEBBIA: nessun varco anche con le porte aperte: entro ed esco col salto della camera")
 	var fuori: Vector3 = varco[0]
 	var dentro: Vector3 = varco[1]
 	print("NEBBIA: varco: fuori %s, dentro %s" % [fuori.snapped(Vector3.ONE * 0.01), dentro.snapped(Vector3.ONE * 0.01)])
@@ -105,9 +128,15 @@ func _run() -> void:
 	p.look_at_point(dentro + Vector3.UP * 1.4)
 	await _frames(180)
 	await _scatto("fuori")
-	# dentro, camminando
+	# dentro, camminando (o col salto)
+	if salto:
+		p.teleport(dentro)
+		p.look_at_point(dentro + Vector3(1, 1.4, 0))
+		for k in 4:
+			await _frames(15)
+			await _scatto("salto_dentro")
 	Input.action_press(&"move_forward")
-	for k in 10:
+	for k in (0 if salto else 10):
 		for i in 30:
 			p.look_at_point(dentro + (dentro - fuori).normalized() * 6.0 + Vector3.UP * 1.4)
 			await get_tree().physics_frame
@@ -126,8 +155,13 @@ func _run() -> void:
 		await _scatto("opzione_accesa")
 	# fuori, camminando
 	var qui := p.global_position
+	if salto:
+		p.teleport(fuori)
+		for k in 6:
+			await _frames(30)
+			await _scatto("salto_fuori")
 	Input.action_press(&"move_forward")
-	for k in 10:
+	for k in (0 if salto else 10):
 		for i in 30:
 			p.look_at_point(fuori + (fuori - qui).normalized() * 6.0 + Vector3.UP * 1.4)
 			await get_tree().physics_frame
