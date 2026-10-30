@@ -23,6 +23,9 @@ func _run() -> void:
 	var cartella: String = args[1] if args.size() > 1 else "user://scatti_ruggito"
 	var preset: String = args[2] if args.size() > 2 else "alto"
 	DirAccess.make_dir_recursive_absolute(cartella)
+	# (le opzioni cambiate qui si salvano nelle impostazioni: alla fine si rimettono com'erano, se no restano per i
+	# test dopo, come la nebbia viola spenta in test_riscaldamento_pipeline)
+	var opzioni_prima: Dictionary = Grafica.valori.duplicate()
 	Grafica.applica_preset(preset)
 	get_tree().change_scene_to_file(LEVEL)
 	for i in 300:
@@ -51,6 +54,8 @@ func _run() -> void:
 			await _scatto(cartella, "%s_%s" % [preset, momenti[k][1]], s, t)
 			k += 1
 	print("SCATTI: fatti in ", cartella)
+	Grafica.valori = opzioni_prima
+	Grafica.salva()
 	get_tree().quit()
 
 

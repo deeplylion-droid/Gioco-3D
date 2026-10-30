@@ -24,6 +24,9 @@ func _run() -> void:
 	var args := OS.get_cmdline_user_args()
 	var cartella: String = args[1] if args.size() > 1 else "user://scatti_tunnel_inseguimento"
 	DirAccess.make_dir_recursive_absolute(cartella)
+	# (le opzioni cambiate qui si salvano nelle impostazioni: alla fine si rimettono com'erano, se no restano per i
+	# test dopo, come la nebbia viola spenta in test_riscaldamento_pipeline)
+	var opzioni_prima: Dictionary = Grafica.valori.duplicate()
 	Grafica.imposta("nebbia_viola", false)
 	var env := WorldEnvironment.new()
 	env.environment = load("res://addons/grafica/sala/ambiente_sala.tres") as Environment
@@ -70,6 +73,8 @@ func _run() -> void:
 			print("TUNNEL %s luce %.2f a %.1f m dietro, luminanza %.1f" % [nome, e.luce.light_energy if e.luce.visible else 0.0,
 				sala._s_bersaglio - sala.lei_s, _luma(img)])
 	print("SCATTI: fatti in ", cartella)
+	Grafica.valori = opzioni_prima
+	Grafica.salva()
 	get_tree().quit()
 
 
