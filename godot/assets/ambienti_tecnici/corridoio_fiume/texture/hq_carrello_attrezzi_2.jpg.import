@@ -3,27 +3,28 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3rqvrr51kcgl"
-path="res://.godot/imported/hq_carrello_attrezzi_2.jpg-96e681e726123c3b3b47d6a967a17667.ctex"
+path.s3tc="res://.godot/imported/hq_carrello_attrezzi_2.jpg-96e681e726123c3b3b47d6a967a17667.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/ambienti_tecnici/corridoio_fiume/texture/hq_carrello_attrezzi_2.jpg"
-dest_files=["res://.godot/imported/hq_carrello_attrezzi_2.jpg-96e681e726123c3b3b47d6a967a17667.ctex"]
+dest_files=["res://.godot/imported/hq_carrello_attrezzi_2.jpg-96e681e726123c3b3b47d6a967a17667.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
