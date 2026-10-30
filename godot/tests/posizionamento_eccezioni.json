@@ -829,5 +829,18 @@
 		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/ArredoCorridoioFiume/quadro_elettrico",
+		"problema": "ingombro",
+		"pos": [
+			-5.5,
+			-5.4,
+			52.5
+		],
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"motivo": "a muro (regola del coordinatore del 23 ottobre): il quadro elettrico del corridoio del fiume è avvitato al muro ovest, sporge 22 cm, fra 1,15 e 1,83 m; non pende nel passaggio; passaggio libero 1,78 m all'altezza della testa (corridoio largo 2 m, di fronte solo l'oblò a filo e le lampade sopra i 2,1 m) (ambienti-1, arredo A+C del 30 ottobre)"
 	}
 ]
