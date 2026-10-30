@@ -56,6 +56,8 @@ extends SkeletonModifier3D
 const SEZIONI := "res://assets/models/medusa/medusa_sezioni_tentacoli.json"
 ## Quanto la pelle resta staccata dal mondo, oltre la sua sezione (m).
 const MARGINE := 0.01
+## L'osso (dalla radice, 0 il primo) con la sezione tonda (vedi _sezioni_qui).
+const OSSO_TONDO := 1
 ## In più sopra le facce verso l'alto (pavimento, cima del bordo): le strisce di bava (BavaRosa) stanno 1,2 cm sopra il
 ## pavimento, e i tentacoli ci passano sopra, non sotto (collaudo, 23 ottobre).
 const SOPRA := 0.015
@@ -318,6 +320,13 @@ func _sezioni_qui(k: int, n: int, exz: PackedVector3Array, tg: PackedVector3Arra
 		var s := sin(e.x)
 		ea[j] = (ex * c + ez * s) * e.y
 		eb[j] = (ez * c - ex * s) * e.z
+		# il secondo osso dalla radice tondo (la misura più larga da tutte le parti): fra lui e il primo, che segue la posa,
+		# i tentacoli si piegano di più e la pelle al giunto gira, e sporgeva dal lato stretto dell'ellisse (tuffo a 60
+		# fps: 1,4 cm dentro la parete della fossa, con la sezione che diceva 3,9 cm e la pelle a 6,3)
+		if j == OSSO_TONDO:
+			var rt := maxf(e.y, e.z)
+			ea[j] = ea[j].normalized() * rt
+			eb[j] = eb[j].normalized() * rt
 	for i in n + 1:
 		var j1 := maxi(i - 1, 0)
 		var j2 := mini(i, n - 1)
@@ -952,11 +961,13 @@ func _fai_lavoro(lv: Array) -> void:
 		for i in range(1, n + 1):
 			var f := float(i) / n
 			var voluto := pred[i - 1] + (pred[i] - pred[i - 1]).normalized() * lung[i]
-			# mai oltre il doppio (rete di sicurezza: la molla dura di sopra di solito basta)
+			# mai oltre il doppio (rete di sicurezza: la molla dura di sopra di solito basta). La rete riprende il punto al
+			# più di velocita_massima per secondo: tutto in un passo, nel tratto veloce del tuffo un punto vicino alla radice
+			# rimasto indietro faceva 0,43 m in un fotogramma (a 60 fps 25 m/s di scatto; collaudo della 0.3.16)
 			var lim := 2.0 * distacco_massimo * f
 			var scarto := voluto - rif[i] - sposta
 			if scarto.length() > lim:
-				voluto = rif[i] + sposta + scarto.normalized() * lim
+				voluto = rif[i] + sposta + scarto.normalized() * maxf(lim, scarto.length() - velocita_massima * h_k)
 				voluto = pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
 			voluto = _fuori(voluto, lerpf(raggio_radice, raggio_punta, f), forme, x[i], false, i)
 			corr[i] = voluto - pred[i]
