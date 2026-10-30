@@ -193,10 +193,40 @@ func _collisione_struttura_gioco() -> void:
 	mi.add_child(corpo)
 
 
+## Le scalette della piscina a onde (sala_scaletta_e e _o nel GLB): la loro collisione è una scatola sola, dal fondo
+## fino alla cima dei corrimano, 95 cm sopra il bordo. In cima alla scala (Ladder) il giocatore ci sbatteva contro e
+## ricadeva giù: dalla piscina si usciva solo dalla spiaggia (riscontro della 0.3.16, col controller). La scatola si
+## ferma al bordo: sotto resta com'era (la scala nell'acqua, i giocattoli non ci passano sotto), sopra i corrimano si
+## attraversano (fra i due ci sono 54 cm, il giocatore è largo 70).
+const SCALETTE_PISCINA := ["sala_scaletta_e", "sala_scaletta_o"]
+
+
+func _scalette_piscina() -> void:
+	var piscina := get_node_or_null(^"Sala/Piscina")
+	if piscina == null:
+		return
+	for nome in SCALETTE_PISCINA:
+		for corpo in piscina.find_children(nome, "StaticBody3D", true, false):
+			for cs in corpo.get_children():
+				var forma := (cs as CollisionShape3D).shape as ConvexPolygonShape3D if cs is CollisionShape3D else null
+				if forma == null:
+					continue
+				var xf := (cs as CollisionShape3D).global_transform
+				# il bordo (y 0 nel mondo) nelle coordinate della forma, 2 cm più giù
+				var taglio := (xf.affine_inverse() * Vector3(xf.origin.x, -0.02, xf.origin.z)).y
+				var punti := PackedVector3Array()
+				for q in forma.points:
+					punti.append(Vector3(q.x, minf(q.y, taglio), q.z))
+				var nuova := ConvexPolygonShape3D.new()
+				nuova.points = punti
+				(cs as CollisionShape3D).shape = nuova
+
+
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
 	_cordone_vasca()
 	_collisione_struttura_gioco()
+	_scalette_piscina()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D

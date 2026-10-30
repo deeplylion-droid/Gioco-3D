@@ -271,6 +271,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scaletta_bacino.gd
 
+      - name: Test delle scalette della piscina a onde (piena e vuota, su col giocatore vero in sette modi fin sul bordo; e dalla spiaggia)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scalette_piscina.gd
+
       - name: Test delle gallerie di servizio del tunnel sottomarino (dentro col giocatore vero, centrati e spostati di 30 cm, senza fermarsi)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_gallerie_sottomarino.gd

@@ -69,10 +69,13 @@ func _run() -> void:
 	vasca = level.get_node(^"Piscina/Pozza") as WaterTank
 	var scalette: Array[Ladder] = [level.get_node(^"Piscina/ScalettaEst") as Ladder, level.get_node(^"Piscina/ScalettaOvest") as Ladder]
 	var modi := ["dritto", "in alto", "in basso", "corsa", "stick a metà", "accovacciato", "di lato"]
-	for stato in ["vuota", "piena"]:
-		vasca.fill = 0.0 if stato == "vuota" else vasca.max_fill
+	# (prima piena, com'è all'inizio: svuotata, la piscina non tiene più l'acqua)
+	for stato in ["piena", "vuota"]:
+		if stato == "vuota":
+			vasca.fill = 0.0
 		await _frames(30)
 		print("piscina %s (fill %.2f)" % [stato, vasca.fill])
+		check(vasca.fill > 0.5 if stato == "piena" else vasca.fill < 0.01, "la piscina è %s (fill %.2f)" % [stato, vasca.fill])
 		for s in scalette:
 			for modo in modi:
 				var r: Dictionary = await _sali(s, modo)
@@ -138,19 +141,37 @@ func _sali(s: Ladder, modo: String) -> Dictionary:
 ## Dal fondo della parte profonda verso nord (la spiaggia), avanti tenuto premuto.
 func _spiaggia() -> Dictionary:
 	_rilascia()
-	p.teleport(_fondo(Vector3(0.0, 0.0, 3.0)) + Vector3.UP * 0.05)
+	# (di lato, a est: al centro sul fondo ci sono i giocattoli dell'enigma, che fermano chi ci cammina contro dritto)
+	p.teleport(_fondo(Vector3(4.5, 0.0, 3.0)) + Vector3.UP * 0.05)
 	await _frames(20)
 	p.look_at_point(p.global_position + Vector3(0.0, 1.5, -10.0))
 	p.pitch = 0.0
 	Input.action_press(&"move_forward")
 	var t := 0.0
 	var fuori := false
+	var fermo := 0.0
+	var gira := 0.0
 	for f in 60 * 20:
 		await get_tree().physics_frame
 		t += 1.0 / 60.0
 		if p.is_on_floor() and p.global_position.y > -0.05:
 			fuori = true
 			break
+		# fermo contro un giocattolo dell'enigma (sul fondo, o a galla davanti): gli si gira attorno, a destra
+		fermo = fermo + 1.0 / 60.0 if Vector2(p.velocity.x, p.velocity.z).length() < 0.3 else 0.0
+		if fermo > 0.4 and gira <= 0.0:
+			gira = 0.7
+		if gira > 0.0:
+			gira -= 1.0 / 60.0
+			Input.action_press(&"move_right")
+			if gira <= 0.0:
+				Input.action_release(&"move_right")
+		if OS.has_environment("DIAG") and f % 30 == 0:
+			var urti := []
+			for k in p.get_slide_collision_count():
+				var c := p.get_slide_collision(k)
+				urti.append("%s n%s" % [(c.get_collider() as Node).name if c.get_collider() is Node else "?", c.get_normal().snapped(Vector3.ONE * 0.01)])
+			print("    DIAG spiaggia %s v %s pavimento %s urti %s" % [p.global_position.snapped(Vector3.ONE * 0.01), p.velocity.snapped(Vector3.ONE * 0.01), p.is_on_floor(), urti])
 	var fine := str(p.global_position.snapped(Vector3.ONE * 0.01))
 	_rilascia()
 	return {"fuori": fuori, "tempo": t, "fine": fine}

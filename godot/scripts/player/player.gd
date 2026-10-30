@@ -810,7 +810,9 @@ func _update_ladder() -> void:
 		return
 	var input := _move_input()
 	var wish := Basis(Vector3.UP, yaw) * Vector3(input.x, 0.0, input.y)
-	var toward := wish.dot(-found.get_climb_normal()) > 0.5
+	# (la direzione, non quanto è spinto lo stick: con lo stick a metà, 0,5, non ci si aggrappava mai; riscontro della
+	# 0.3.16, scalette della piscina col controller)
+	var toward := wish.length() > 0.2 and wish.normalized().dot(-found.get_climb_normal()) > 0.5
 	var falling_onto := not is_on_floor() and velocity.y < -0.5 and global_position.y < found.get_top_y() - 0.3
 	if toward or falling_onto:
 		ladder = found
