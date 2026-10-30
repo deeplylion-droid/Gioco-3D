@@ -241,6 +241,7 @@ def _matrice_osso(B3, y_dir, testa):
 
 
 NORD_MAX = [-9.0]
+VICINO_MUSO = [9.0]
 
 
 def cuoci(arm, piedi, nome='risveglio'):
@@ -325,6 +326,29 @@ def cuoci(arm, piedi, nome='risveglio'):
             if mano.x > A.MANI_NORD - 0.12 and t < A.tempo_alla_porta():
                 mano.x = A.MANI_NORD - 0.12 + 0.12 * math.tanh((mano.x - A.MANI_NORD + 0.12) / 0.12)
             NORD_MAX[0] = max(NORD_MAX[0], (spalla + off).x)
+            # il braccio alzato resta accanto al muso, non ci entra (lo spazio fra braccio e testa, scelta A
+            # dell'utente; ricontrollo del 30 ottobre: nel giro la testa resta sul giocatore e gira verso la mano
+            # destra, che entrava nel muso con gli artigli fuori dalla bocca). Dopo il richiamo il polso resta ad
+            # almeno A.MANO_MUSO dalla bocca e dal muso; anche la punta della mano, un poco più in là del polso
+            if t > A.FASI['RICHIAMO']:
+                bocca = pbs['bocca'].head.copy()
+                muso = [bocca, bocca.lerp(pbs['mento_punta'].head, 0.45), pbs['testa'].tail.copy()]
+                for _ in range(8):
+                    punta = mano + (mano - spalla).normalized() * 0.15
+                    peggio, via = 9.0, None
+                    for q in muso:
+                        for h in (mano, punta):
+                            if (h - q).length < peggio:
+                                peggio, via = (h - q).length, (h - q)
+                    if peggio >= A.MANO_MUSO or via is None:
+                        break
+                    # (via dal muso e un poco in giù: tirata solo via, verso la spalla, la mano non ci arrivava)
+                    via = via.normalized() + Vector((0, 0, -0.4))
+                    mano = mano + via.normalized() * (A.MANO_MUSO - peggio)
+                # (spinta via dal muso, di nuovo non oltre il muro nord)
+                if mano.x > A.MANI_NORD - 0.12 and t < A.tempo_alla_porta():
+                    mano.x = A.MANI_NORD - 0.12 + 0.12 * math.tanh((mano.x - A.MANI_NORD + 0.12) / 0.12)
+                VICINO_MUSO[0] = min(VICINO_MUSO[0], min((mano - q).length for q in muso))
             l1, l2 = lung[f'braccio.{s}'], lung[f'avambraccio.{s}']
             d = mano - spalla
             dist = min(max(d.length, abs(l1 - l2) + 0.02), (l1 + l2) * 0.995)
@@ -377,7 +401,7 @@ def esporta(mesh, arm, dati):
     with open(USCITA.replace('.glb', '_labbra.json'), 'w') as f:
         json.dump(BOCCA.LABBRA, f)
     print('ESPORTATO', USCITA, dati)
-    print('MANI: la più a nord senza il muro a x %.2f' % NORD_MAX[0])
+    print('MANI: la più a nord senza il muro a x %.2f; il polso più vicino al muso %.2f m' % (NORD_MAX[0], VICINO_MUSO[0]))
 
 
 def anteprime(cartella, tempi, dati):

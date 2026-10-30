@@ -17,7 +17,7 @@ const CorpiMesh := preload("res://tests/corpi_dalle_mesh.gd")
 ## Quanto corre chi gli va dietro (lo sprint del giocatore) e l'altezza degli occhi, in piedi e accucciato.
 const SPRINT := 5.8
 const OCCHI := 1.6
-const OCCHI_GIU := 0.95
+const OCCHI_GIU := 0.92
 const TERRA_MAX := 0.05
 ## Il bambino come capsula (l'agnellino è più piccolo: la misura del più grande, il bambino a cubo).
 const RAGGIO := 0.22
@@ -246,7 +246,7 @@ func _dist_segmento(p: Vector3, a: Vector3, b: Vector3) -> float:
 
 ## Il giocatore gli corre dietro (riscontro dell'utente sulla 0.3.16: "il bambino pecorella si vede che sparisce perché
 ## gli corri dietro"), con la camera vera che lo guarda sempre: a tutta velocità lungo la banchina, poi dentro la galleria
-## accucciato (sempre allo sprint, anche scivolando: il caso peggiore) fin fuori dalla bocca d'uscita; oppure fermo
+## accucciato (alla velocità da accucciato) fin fuori dalla bocca d'uscita; oppure fermo
 ## alla bocca d'entrata a guardare dentro la galleria. Quando sparisce, nessun osso del corpo dev'essere
 ## nell'inquadratura senza qualcosa che si vede in mezzo (raggi dalla camera sulle mesh, CorpiMesh, senza tolleranza),
 ## e dev'essere già fuori dalla bocca d'uscita: in mezzo alla galleria, dritta e illuminata, si vedrebbe che non c'è più.
@@ -290,16 +290,20 @@ func _insegui_su(b: BambinoSfuggita, sala: SalaSottomarino, strada: Array, al: C
 	var dt := 1.0 / 60.0
 	var r := sala.destra(s0) * lato
 	while t < 25.0 and b.stato != BambinoSfuggita.Stato.FINITO:
+		# accucciato nelle bocche e nella galleria (è alta 1,25 m): lì si va al più a crouch_speed (1,7 m/s; allo
+		# sprint il giocatore lo raggiungeva e gli passava attraverso, ricontrollo del 30 ottobre)
+		var giu: bool = (qui - al.call(s0, sala.muro)).dot(r) > -0.15 and k >= 3
+		var vel := _p.crouch_speed if giu else SPRINT
 		if k < strada.size():
 			var verso: Vector3 = strada[k] - qui
-			if verso.length() <= SPRINT * dt:
+			if verso.length() <= vel * dt:
 				qui = strada[k]
 				k += 1
 			else:
-				qui += verso.normalized() * SPRINT * dt
+				qui += verso.normalized() * vel * dt
 		_p.global_position = qui
-		# accucciato nelle bocche e nella galleria (è alta 1,25 m)
-		var giu: bool = (qui - al.call(s0, sala.muro)).dot(r) > -0.15 and k >= 3
+		# (gli occhi con cui il bambino decide se è visto alla stessa altezza della camera)
+		_p.set(&"_eye_height", OCCHI_GIU if giu else OCCHI)
 		var occhio := qui + Vector3.UP * (OCCHI_GIU if giu else OCCHI)
 		var mira: Vector3 = strada[mini(k, strada.size() - 1)] + Vector3.UP * (OCCHI_GIU if giu else OCCHI)
 		if b.stato == BambinoSfuggita.Stato.GUARDA or b.stato == BambinoSfuggita.Stato.SCAPPA:
