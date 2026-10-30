@@ -90,11 +90,18 @@ func _run() -> void:
 		hud.visible = false
 	# i piedi sul fondo del tubo, poco dopo il punto di partenza
 	p.teleport(linea[da] + Vector3.DOWN * (SalaInseguimento.R_TUBO - 0.1))
+	# (come arrivando dalla vasca della torre: si entra spingendo avanti, poi si scivola)
+	await _fotogrammi(2)
+	p.look_at_point(linea[mini(da + 6, linea.size() - 1)] + Vector3.UP * 0.1)
+	p.velocity = (linea[da + 2] - linea[da]).normalized() * 3.0
+	Input.action_press(&"move_forward")
 	var k := 0
 	var ultimo := da
 	var arrivato := 0
 	for f in 60 * 12:
 		await get_tree().physics_frame
+		if f == 40:
+			Input.action_release(&"move_forward")
 		# il punto della linea più vicino ai piedi, e lo sguardo 3 m più avanti
 		var piedi := p.global_position
 		var i_vicino := ultimo
