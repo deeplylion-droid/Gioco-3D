@@ -34,20 +34,22 @@ func _run() -> void:
 	for i in 60:
 		await get_tree().physics_frame
 	var spazio := level.get_world_3d().direct_space_state
-	var attorno := PhysicsShapeQueryParameters3D.new()
-	var box := BoxShape3D.new()
-	box.size = Vector3(8.0, 4.0, 8.0)
-	attorno.shape = box
-	attorno.transform = Transform3D.IDENTITY
-	attorno.collision_mask = Layers.WORLD
+	# (raggi dall'alto attorno all'origine, fra un metro sopra e un metro sotto il bordo della piscina: lì sopra la
+	# piscina vuota non c'è niente; un gommone all'origine lo prendono, col fondo a 6 cm e il tubolare a 40)
+	var raggi: Array[PhysicsRayQueryParameters3D] = []
+	for xx in 5:
+		for zz in 5:
+			var da := Vector3((xx - 2) * 0.5, 1.0, (zz - 2) * 0.5)
+			raggi.append(PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * 2.0, Layers.WORLD))
 	var visti := {}
 	level.call(&"_precarica_torre")
 	var chiesta := false
 	var costruita := -1
 	for f in 60 * 150:
 		await get_tree().physics_frame
-		for r in spazio.intersect_shape(attorno, 32):
-			var co := r.get("collider") as Node
+		for q in raggi:
+			var h := spazio.intersect_ray(q)
+			var co := h.get("collider") as Node
 			if co and String(co.get_path()).contains("SalaSottomarino"):
 				visti[String(co.get_path())] = f
 		if not chiesta and level.get(&"_torre_pronta") != null:
