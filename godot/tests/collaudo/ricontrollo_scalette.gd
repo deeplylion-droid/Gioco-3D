@@ -83,8 +83,9 @@ func _run() -> void:
 				check(r["giu"] and r["presa"], "piscina %s, %s, discesa %s: ci si aggrappa e si arriva in basso (in %.1f s, il più in basso %.2f, cima %.2f, presa %s, fine %s)" % [
 						stato, s.name, modo, r["tempo"], r["basso"], s.get_top_y(), r["presa"], r["fine"]])
 				if r["giu"]:
+					check(r["a_terra"], "piscina %s, %s, discesa %s: in fondo si lascia la scala e si sta sul fondo (fine %s)" % [stato, s.name, modo, r["fine"]])
 					var su: Dictionary = await _risali(s)
-					check(su["fuori"], "piscina %s, %s, dopo la discesa %s: dal fondo ci si riaggrappa e si esce sul bordo (in %.1f s, prese %d, fine %s)" % [
+					check(su["fuori"] and su["prese"] >= 1, "piscina %s, %s, dopo la discesa %s: dal fondo, staccati dalla scala, ci si riaggrappa e si esce sul bordo (in %.1f s, prese %d, fine %s)" % [
 							stato, s.name, modo, su["tempo"], su["prese"], su["fine"]])
 			for modo in ([] if OS.get_environment("SOLO_USCITA") == "1" else ["dritto", "di sbieco"]):
 				var c: Dictionary = await _corrimano(s, modo)
@@ -133,9 +134,17 @@ func _scendi(s: Ladder, modo: String) -> Dictionary:
 		if p.global_position.y < s.get_top_y() - 1.2:
 			giu = true
 			break
+	# arrivati in basso, si tiene premuto fino al fondo: lì si lascia la scala (sott'acqua o sul fondo asciutto)
+	var a_terra := false
+	if giu:
+		for f in 60 * 6:
+			await get_tree().physics_frame
+			if not p.is_on_ladder() and p.is_on_floor():
+				a_terra = true
+				break
 	var fine := "%s%s" % [p.global_position.snapped(Vector3.ONE * 0.01), " sulla scala" if p.is_on_ladder() else ""]
 	_rilascia()
-	return {"giu": giu, "tempo": t, "basso": basso, "presa": presa, "fine": fine}
+	return {"giu": giu, "a_terra": a_terra, "tempo": t, "basso": basso, "presa": presa, "fine": fine}
 
 
 ## Dopo una discesa: si lascia tutto, fermi 1 s, poi avanti verso la scala (girati verso il muro) fino a 12 s; si deve
