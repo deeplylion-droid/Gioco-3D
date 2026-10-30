@@ -24,6 +24,8 @@ const SCATTI := [
 	["pallone", Vector2(2.6, 1.8), Vector3(3.9, -1.85, 3.3)],
 	["paperella_balena", Vector2(-2.2, 1.2), Vector3(-3.9, -1.85, 1.6)],
 	["su_verso_sala", Vector2(-1.0, 3.0), Vector3(2.0, 3.0, 10.0)],
+	# (in piedi sul pavimento della sala, guardando il pavimento alla stessa distanza: il confronto)
+	["pavimento_sala", Vector2(13.0, 6.4), Vector3(13.0, 0.0, 0.6)],
 ]
 
 var raggio := float(OS.get_environment("SCATTI_RAGGIO")) if OS.has_environment("SCATTI_RAGGIO") else 30.0
@@ -123,7 +125,7 @@ func _run() -> void:
 		t0 += get_process_delta_time()
 	for s in SCATTI:
 		var xz: Vector2 = s[1]
-		var h: Dictionary = spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(xz.x, 0.0, xz.y), Vector3(xz.x, -5.0, xz.y), Layers.WORLD))
+		var h: Dictionary = spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(xz.x, 3.0, xz.y), Vector3(xz.x, -5.0, xz.y), Layers.WORLD))
 		var fondo: float = (h.position as Vector3).y if not h.is_empty() else -2.05
 		p.global_position = Vector3(xz.x, fondo, xz.y)
 		var occhio := p.get_eye_position()
