@@ -51,6 +51,8 @@ var _testata: Control
 var _logo: TextureRect
 var _sottomenu: CanvasLayer
 var _pausa_fuoco := true
+## La partenza da riga di comando (vedi [method _partenza_da_riga]) si fa una volta sola, al primo titolo.
+static var _riga_fatta := false
 
 
 func _ready() -> void:
@@ -67,6 +69,45 @@ func _ready() -> void:
 	_audio(&"ferma_tutto")
 	_audio(&"musica_titolo")
 	_voci[0].grab_focus.call_deferred()
+	_partenza_da_riga.call_deferred()
+
+
+## Per le prove (la prova su Windows nella CI, il collaudo), dopo il -- della riga di comando: --partenza=<id> parte
+## subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...), --esci-dopo=<s> chiude
+## il gioco dopo quei secondi, e intanto ogni 5 s si scrive nel registro la memoria e la scena. Senza, niente.
+func _partenza_da_riga() -> void:
+	if _riga_fatta:
+		return
+	_riga_fatta = true
+	var partenza := ""
+	var esci := 0.0
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--partenza="):
+			partenza = a.get_slice("=", 1)
+		elif a.begins_with("--esci-dopo="):
+			esci = a.get_slice("=", 1).to_float()
+	if partenza == "" and esci <= 0.0:
+		return
+	var albero := get_tree()
+	var conta := Timer.new()
+	conta.wait_time = 5.0
+	conta.process_mode = Node.PROCESS_MODE_ALWAYS
+	conta.timeout.connect(func() -> void:
+		var sc := albero.current_scene
+		print("PROVA t=%d scena=%s memoria=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
+				Time.get_ticks_msec() / 1000, String(sc.name) if sc else "-", OS.get_static_memory_usage() >> 20,
+				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.RENDER_BUFFER_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.OBJECT_COUNT)), int(Engine.get_frames_per_second())]))
+	albero.root.add_child(conta)
+	conta.start()
+	if esci > 0.0:
+		albero.create_timer(esci, true, false, true).timeout.connect(func() -> void:
+			print("PROVA: esco dopo ", esci, " s")
+			albero.quit())
+	if partenza != "":
+		print("PROVA: parto da ", partenza, " -> ", MenuProva.parti(albero, partenza))
 
 
 func _exit_tree() -> void:
