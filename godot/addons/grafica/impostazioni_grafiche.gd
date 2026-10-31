@@ -338,6 +338,12 @@ func _applica_ombre() -> void:
 		_applica_luce(luce as Light3D)
 
 
+func _applica_luce_id(id: int) -> void:
+	var luce := instance_from_id(id) as Light3D
+	if luce:
+		_applica_luce(luce)
+
+
 func _applica_luce(luce: Light3D) -> void:
 	if not luce.has_meta("grafica_ombra_originale"):
 		luce.set_meta("grafica_ombra_originale", luce.shadow_enabled)
@@ -504,7 +510,9 @@ func _applica_fov() -> void:
 
 func _su_nodo_aggiunto(n: Node) -> void:
 	if n is Light3D:
-		_applica_luce.call_deferred(n)
+		# (per id: la luce può essere già cancellata quando la chiamata arriva, come gli interni nelle ripartenze oltre il
+		# portone, SalaPrincipale._libera_ambienti_subito)
+		_applica_luce_id.call_deferred(n.get_instance_id())
 	elif n is VoxelGI:
 		_applica_voxel_gi.call_deferred(n)
 	elif n is WorldEnvironment:

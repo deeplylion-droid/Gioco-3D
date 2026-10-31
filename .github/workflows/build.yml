@@ -389,6 +389,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_partenze_prova.gd
 
+      - name: Le ripartenze oltre il portone (torre, condotte, tunnel) senza interni e tecnici in memoria insieme alla torre e al tunnel
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_ripartenza_oltre_portone.gd
+
       - name: Test della voce Continua del titolo (con e senza salvataggio, una ripresa per zona, checkpoint scritti su disco, morte e chiusura)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_continua.gd
