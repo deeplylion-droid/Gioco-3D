@@ -4,6 +4,8 @@
   - manifesto_rovinato.glb: copia di manifesto.glb (che resta com'è, lo usa anche lo sfondo del menu) con la
     texture rovinata e l'alfa anche sul retro della carta, così i buchi si aprono sul muro.
 Lo stesso cambio è in tools/blender/ambienti1_build.py (mat_immagine con clip=True), per le prossime build.
+I due teli di Jilly della sala principale (rovina.py telo_arcobaleno e telo_bagnina) non passano di qui: il GLB della
+sala lo usa anche lo spot VHS, dove i teli restano nuovi, e i rovinati li mette sala_principale.gd (metti_teli_rovinati).
 Uso: python3 assets_src/ambienti_interni/poster/applica_rovinati.py
 """
 import json, os, shutil, struct, sys
