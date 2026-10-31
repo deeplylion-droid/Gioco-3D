@@ -26,7 +26,8 @@ const PORTA_X := -1.7
 ## dell'infermeria è a x 0.
 const INFERMERIA_X := -1.1
 const SALA := "res://scripts/game/enigma_pozze.gd"
-## L'ordine dei due checkpoint: lo stesso dell'ultimo dell'infermeria (14) e prima del magazzino (15).
+## L'ordine del checkpoint d'ingresso: lo stesso dell'ultimo dell'infermeria (14); quello a enigma risolto ha il 15, come
+## il magazzino (la serranda è il 16).
 const ORDINE := 14
 
 ## Costruzione un passo per fotogramma (vedi [method costruisci_a_pezzi]).
@@ -311,7 +312,7 @@ func _checkpoint() -> void:
 	n.add_child(ingresso)
 	var risolto := Checkpoint.new()
 	risolto.name = "CheckpointRisolto"
-	risolto.order = ORDINE
+	risolto.order = ORDINE + 1
 	risolto.monitoring = false
 	risolto.position = Vector3(PORTA_X, 0, -MEZZA + 0.7)
 	var spawn2 := Marker3D.new()
