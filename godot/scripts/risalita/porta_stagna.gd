@@ -10,7 +10,9 @@ extends Node3D
 
 ## Larghezza e altezza del vano; spessore del muro (il telaio lo riveste tutto).
 const LARGO := 0.9
-const ALTO := 2.0
+const ALTO := 2.1
+## La fascia del telaio: il vano nel muro è largo LARGO + 2 FASCIA e alto ALTO + FASCIA (il telaio lo riempie).
+const FASCIA := 0.12
 const MURO := 0.2
 ## Secondi per aprirsi (il suono della porta del ponte dura 3,4 s) e gradi d'apertura.
 const DURATA := 2.6
@@ -90,7 +92,7 @@ func _costruisci() -> void:
 	var telaio := Node3D.new()
 	telaio.name = "Telaio"
 	add_child(telaio)
-	var fascia := 0.12
+	var fascia := FASCIA
 	var prof := MURO + 0.16
 	var zc := -MURO * 0.5
 	for s in [-1.0, 1.0]:
@@ -101,7 +103,8 @@ func _costruisci() -> void:
 	# il battente: sul cardine a -X, sulla faccia di fuori del muro (z -MURO), chiuso fra gli stipiti
 	_cardine = Node3D.new()
 	_cardine.name = "Cardine"
-	_cardine.position = Vector3(-LARGO * 0.5, 0, -MURO - 0.08)
+	# (5 mm davanti alla faccia del telaio: il battente non lo tocca)
+	_cardine.position = Vector3(-LARGO * 0.5, 0, -MURO - 0.08 - 0.005)
 	add_child(_cardine)
 	_battente = AnimatableBody3D.new()
 	_battente.name = "Battente"
@@ -118,12 +121,14 @@ func _costruisci() -> void:
 	f.position = Vector3(lb * 0.5 - 0.05, ab * 0.5 + 0.02, -sp * 0.5)
 	_battente.add_child(f)
 	# le cerniere, le sei chiusure a leva sul bordo e il volantino al centro, dalla parte della stanza e di fuori
+	# (le cerniere dalla parte di fuori, davanti al telaio)
 	for y in [0.35, ALTO - 0.35]:
-		_box(_battente, Vector3(0.06, 0.18, 0.1), Vector3(-0.05, y, -sp * 0.5), grigio)
+		_box(_battente, Vector3(0.06, 0.18, 0.08), Vector3(-0.05, y, -sp * 0.5 - 0.02), grigio)
 	for faccia: float in [1.0, -1.0]:
 		var zf := (0.0 if faccia > 0.0 else -sp) + faccia * 0.015
+		# (le chiusure dentro il vano: a 6 cm dallo stipite)
 		for y in [0.3, ALTO * 0.5, ALTO - 0.3]:
-			_box(_battente, Vector3(0.14, 0.04, 0.03), Vector3(lb - 0.16, y, zf), grigio)
+			_box(_battente, Vector3(0.14, 0.04, 0.03), Vector3(lb - 0.2, y, zf), grigio)
 		var v := MeshInstance3D.new()
 		var t := TorusMesh.new()
 		t.inner_radius = 0.15

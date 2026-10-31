@@ -129,7 +129,7 @@ def muro_ovest(obs, acciaio):
     out.append(q)
     lo, hi = _scatola(q)
     grigio = C.mat_pbr('canalina', base=(0.62, 0.63, 0.6), roughness=0.6)
-    y0 = hi.z - 0.02
+    y0 = hi.z            # (dalla cima del quadro: ci si appoggia sopra)
     obs.append(C.box('canalina_quadro', g(-M + 0.022, (y0 + ALTA + 0.02) / 2, 0.6), (0.04, 0.07, ALTA + 0.02 - y0), grigio))
     # il cartello del pavimento bagnato (solo il disegno), a 1,6 m
     c = metti('cartello_bagnato', 'cartello_pericolo', (-M + 0.05, 1.45, 2.0), alto=0.38, rz=90, prof_max=0.03)

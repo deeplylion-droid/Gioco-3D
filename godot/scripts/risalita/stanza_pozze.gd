@@ -171,7 +171,8 @@ func _stanza() -> void:
 	_muro(false, -m - MURO, m + MURO, -m - MURO * 0.5, MURO)
 	# (l'est finisce al muro dell'infermeria, che va da z MEZZA a MEZZA + 0,1 fino a x MEZZA + 1,5)
 	_muro(false, -m - MURO, m, m + MURO * 0.5, MURO)
-	_muro(true, -m - MURO, m + MURO, -m - MURO * 0.5, MURO, [PORTA_X, PortaStagna.LARGO * 0.5, PortaStagna.ALTO])
+	_muro(true, -m - MURO, m + MURO, -m - MURO * 0.5, MURO, [PORTA_X, PortaStagna.LARGO * 0.5 + PortaStagna.FASCIA,
+			PortaStagna.ALTO + PortaStagna.FASCIA])
 	_muro(true, -m - MURO, INFERMERIA_X, m + MURO * 0.5, MURO)
 	# sopra il muro dell'infermeria (alto 3 m, col soffitto fino a 3,1) la fascia fino al soffitto della stanza
 	_box(Vector3(m + MURO - INFERMERIA_X, ALTA - 3.1, MURO), Vector3((INFERMERIA_X + m + MURO) * 0.5, (3.1 + ALTA) * 0.5, m + MURO * 0.5), mat_intonaco)
@@ -210,7 +211,7 @@ func _arredo() -> void:
 
 func _porta() -> void:
 	# il pavimento nel vano, sotto lo spessore del muro (fra la passerella e il pianerottolo della scala)
-	_box(Vector3(PortaStagna.LARGO + 0.04, 0.2, MURO), Vector3(PORTA_X, -0.1, -MEZZA - MURO * 0.5), mat_cemento)
+	_box(Vector3(PortaStagna.LARGO + 2.0 * PortaStagna.FASCIA, 0.2, MURO), Vector3(PORTA_X, -0.1, -MEZZA - MURO * 0.5), mat_cemento)
 	var p := PortaStagna.new()
 	p.name = "PortaStagna"
 	p.position = Vector3(PORTA_X, 0, -MEZZA)
