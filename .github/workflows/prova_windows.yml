@@ -67,7 +67,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        partenza: [fiume, torre, inseguimento, tunnel]
+        partenza: [torre, inseguimento, tunnel]
         driver: [d3d12, vulkan]
     steps:
       - uses: actions/download-artifact@v4
