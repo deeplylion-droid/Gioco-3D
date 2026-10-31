@@ -44,7 +44,7 @@ func _ready() -> void:
 		luce.light_volumetric_fog_energy = 1.2
 		add_child(luce)
 	luce.light_color = colore_lampo
-	luce.light_cull_mask &= ~STRATO_NO_LAMPO
+	Strati.maschera_luce(luce, luce.light_cull_mask & ~STRATO_NO_LAMPO)
 	luce.light_energy = 0.0
 	luce.visible = false
 	_attesa = randf_range(2.0, intervallo_min)

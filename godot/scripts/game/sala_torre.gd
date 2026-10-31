@@ -1189,7 +1189,7 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 		l.shadow_caster_mask = 0xFFFFF & ~STRATO_SENZA_OMBRA_EST
 		var ta := find_child("torre_A", true, false) as GeometryInstance3D
 		if ta:
-			ta.layers = STRATO_SENZA_OMBRA_EST
+			Strati.metti(ta, STRATO_SENZA_OMBRA_EST)
 		else:
 			push_warning("torre: niente torre_A per lo strato senza l'ombra del muro est")
 	radice.add_child(l)
