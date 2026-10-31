@@ -108,8 +108,10 @@ const PASSO_MAX := 1.0 / 30.0
 ## Il passo più lungo per un tentacolo simulato a fotogrammi alterni (posa quasi ferma).
 const PASSO_LENTO := 1.0 / 15.0
 ## Sotto questa velocità (m/s) i punti di un tentacolo con la posa quasi ferma si possono simulare un fotogramma sì e
-## uno no (vedi _process_modification).
-const LENTI := 1.0
+## uno no (vedi _process_modification). All'inizio del tuffo i punti che raggiungono la posa vanno a circa 15 m/s; con lei
+## affacciata ondeggiano più piano: con 1 m/s si simulavano ogni fotogramma e un tentacolo usciva sulla strada accanto
+## alla fossa (controllo di posizionamento, stato lei_fossa).
+const LENTI := 3.0
 
 var _catene: Array[PackedInt32Array] = []
 var _lunghezze: Array[PackedFloat32Array] = []   # per catena: la lunghezza di riposo di ogni tratto (mondo)
