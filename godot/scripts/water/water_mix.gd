@@ -12,13 +12,26 @@ const BLU := "blu"
 const VERDE := "verde"
 const TORBIDA := "torbida"
 
+## I colori della stanza delle pozze (scelta dell'utente del 31 ottobre: arancione, rosa, viola, turchese e bianco
+## latte, diversi da quelli degli acquari e delle turbine della sala pompe; vedi EnigmaPozze).
+const ARANCIONE := "arancione"
+const ROSA := "rosa"
+const VIOLA := "viola"
+const TURCHESE := "turchese"
+const BIANCO_LATTE := "bianco_latte"
+
 ## I colori, approvati dall'utente il 18 ottobre e poi resi più saturi (sua richiesta: "i colori dei
-## liquidi falli più saturi e meno trasparenti"). Il torbido resta scuro com'era.
+## liquidi falli più saturi e meno trasparenti"). Il torbido resta scuro com'era. Poi quelli delle pozze.
 const COLORI := {
 	GIALLO: Color(1.0, 0.76, 0.0),
 	BLU: Color(0.0, 0.2, 1.0),
 	VERDE: Color(0.1, 0.82, 0.0),
 	TORBIDA: Color(0.36, 0.3, 0.18),
+	ARANCIONE: Color(1.0, 0.42, 0.02),
+	ROSA: Color(1.0, 0.45, 0.7),
+	VIOLA: Color(0.5, 0.12, 0.85),
+	TURCHESE: Color(0.0, 0.78, 0.72),
+	BIANCO_LATTE: Color(0.94, 0.92, 0.84),
 }
 ## Le tinte tra blu (0) e giallo (1), in base alla parte di giallo sul totale di giallo e blu: con
 ## 2 di giallo e 1 di blu viene il verde.

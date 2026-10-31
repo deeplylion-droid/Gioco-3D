@@ -54,6 +54,7 @@ func _run() -> void:
 	await _secondi(0.2)
 	await _cammina_verso(fuori, 3.0)
 	check(inf.to_local(p.global_position).z > -3.25, "e non si passa (il giocatore si ferma a z %.2f)" % inf.to_local(p.global_position).z)
+	_cartello_pozze(inf)
 
 	print("2. Il getto sull'interruttore")
 	_zaino()
@@ -76,6 +77,16 @@ func _run() -> void:
 	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "col suono della porta del ponte")
 	await _secondi(3.0)
 	check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "fino ad aprirsi contro il muro (anta a %.1f gradi)" % anta.rotation_degrees.y)
+	var cartello := inf.get_node_or_null(^"CartelloPozze") as MeshInstance3D
+	if cartello:
+		var ab := _aabb_locale(inf, cartello)
+		var aa := AABB()
+		var prima_a := true
+		for m in anta.find_children("*", "MeshInstance3D", true, false):
+			var b := _aabb_locale(inf, m as MeshInstance3D)
+			aa = b if prima_a else aa.merge(b)
+			prima_a = false
+		check(not prima_a and not ab.grow(0.02).intersects(aa), "l'anta aperta non copre il cartello delle pozze (anta da x %.2f a %.2f)" % [aa.position.x, aa.end.x])
 	p.teleport(inf.to_global(Vector3(-2.2, 0.0, -2.2)), 0.0, 0.0)
 	await _secondi(0.2)
 	await _cammina_verso(fuori, 3.0)
@@ -216,6 +227,35 @@ func _run() -> void:
 		check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "(%.2f, %.2f): andato via il giocatore, l'anta finisce aperta contro il muro (%.1f gradi)" % [
 			punto.x, punto.y, anta.rotation_degrees.y])
 	_fine()
+
+
+## Il cartello di divieto con i tre quadratini a pastello, l'indizio della stanza delle pozze (GDD, "La stanza delle pozze
+## colorate"): accanto alla porta nord, a ovest, all'altezza degli occhi, a contatto col muro, con la texture giusta e la
+## lampadina bianca sopra, accesa e puntata su di lui.
+func _cartello_pozze(inf: Node3D) -> void:
+	var c := inf.get_node_or_null(^"CartelloPozze") as MeshInstance3D
+	check(c != null, "c'è il cartello delle pozze accanto alla porta nord")
+	if c == null:
+		return
+	var L: float = inf.get_script().get_script_constant_map().get("L", 3.2)
+	var b := _aabb_locale(inf, c)
+	check(absf(b.position.z - (-L)) < 0.001, "a contatto col muro nord (retro a %.4f, muro a %.2f)" % [b.position.z, -L])
+	check(b.position.x > -L + 0.05 and b.end.x < -2.7 - 0.05, "fra l'angolo e lo stipite della porta, a ovest (x da %.2f a %.2f)" % [b.position.x, b.end.x])
+	check(b.get_center().y > 1.3 and b.get_center().y < 1.7, "all'altezza degli occhi (centro a %.2f m)" % b.get_center().y)
+	var f := inf.get_node_or_null(^"CartelloPozzeFaccia") as MeshInstance3D
+	var tex: Texture2D = (f.material_override as StandardMaterial3D).albedo_texture if f and f.material_override is StandardMaterial3D else null
+	check(tex != null and tex.resource_path.ends_with("pozze_colorate/cartello_divieto.png"), "col disegno del divieto e dei tre quadratini a pastello")
+	var luce := inf.get_node_or_null(^"FarettoCartelloPozze/Luce") as SpotLight3D
+	var verso := Vector3.ZERO
+	if luce:
+		verso = (c.global_position - luce.global_position).normalized()
+	check(luce != null and luce.visible and luce.light_color.s < 0.15 and -luce.global_basis.z.dot(verso) > 0.97,
+		"con sopra la lampadina bianca, accesa e puntata sul cartello")
+
+
+func _aabb_locale(inf: Node3D, m: MeshInstance3D) -> AABB:
+	var x := inf.global_transform.affine_inverse() * m.global_transform
+	return x * m.get_aabb()
 
 
 ## Vero se il corpo del giocatore entra nella collisione dell'anta nord (di più di 1 cm: appoggiato all'anta chiusa, come a
