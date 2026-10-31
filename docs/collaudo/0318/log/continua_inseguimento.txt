@@ -1,0 +1,2 @@
+CONTINUA: CONFRONTO inseguimento: checkpoint SalaTorre/SalaInseguimento/Checkpoint_vasca_1 / atteso SalaTorre/SalaInseguimento/Checkpoint_vasca_1; distanza dal posto salvato 0.02 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
+CONTINUA: MORTE inseguimento: ripartito true dopo 8.1 s, checkpoint SalaTorre/SalaInseguimento/Checkpoint_vasca_1 (prima SalaTorre/SalaInseguimento/Checkpoint_vasca_1), a 0.02 m dal posto salvato, in piedi true

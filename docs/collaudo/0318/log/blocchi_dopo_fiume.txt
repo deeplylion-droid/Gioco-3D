@@ -1,0 +1,7 @@
+BLOCCHI: partenza fiume arrivata dopo 8.6 s (Risalita/Fiume/Checkpoint/CheckpointIngresso)
+BLOCCHI: partenza fiume, lavori finiti dopo 0.5 s; fotogramma più lungo 105 ms (SalaPrincipale)
+BLOCCHI: elenco fiume: mesh 2751, forme 1864, luci 190, checkpoint 26 (attivi 23), porte 2
+BLOCCHI: elenco fiume_30s: mesh 2755, forme 1864, luci 201, checkpoint 26 (attivi 23), porte 2
+BLOCCHI: morte in fiume (checkpoint Risalita/Fiume/Checkpoint/CheckpointIngresso)
+BLOCCHI: ripartenza dopo 4.3 s, checkpoint Risalita/Fiume/Checkpoint/CheckpointIngresso (prima Risalita/Fiume/Checkpoint/CheckpointIngresso), giocatore (-7.6, -5.4, 66.0)
+BLOCCHI: elenco fiume_dopo_morte: mesh 2751, forme 1864, luci 191, checkpoint 26 (attivi 23), porte 2

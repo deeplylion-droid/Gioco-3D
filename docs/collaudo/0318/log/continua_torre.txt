@@ -1,0 +1,2 @@
+CONTINUA: CONFRONTO torre: checkpoint SalaTorre/Checkpoint_NEm3 / atteso SalaTorre/Checkpoint_NEm3; distanza dal posto salvato 0.01 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
+CONTINUA: MORTE torre: ripartito true dopo 7.9 s, checkpoint SalaTorre/Checkpoint_NEm3 (prima SalaTorre/Checkpoint_NEm3), a 0.01 m dal posto salvato, in piedi true

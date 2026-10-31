@@ -1,0 +1,7 @@
+BLOCCHI: partenza tunnel arrivata dopo 7.6 s (SalaSottomarino/Checkpoint_6)
+BLOCCHI: partenza tunnel, lavori finiti dopo 0.4 s; fotogramma più lungo 46 ms (SalaPrincipale)
+BLOCCHI: elenco tunnel: mesh 2277, forme 1595, luci 55, checkpoint 12 (attivi 12), porte 1
+BLOCCHI: elenco tunnel_30s: mesh 2295, forme 1595, luci 67, checkpoint 12 (attivi 12), porte 1
+BLOCCHI: morte in tunnel (checkpoint SalaSottomarino/Checkpoint_6)
+BLOCCHI: ripartenza dopo 3.9 s, checkpoint SalaSottomarino/Checkpoint_6 (prima SalaSottomarino/Checkpoint_6), giocatore (38.0, -30.0, -1.0)
+BLOCCHI: elenco tunnel_dopo_morte: mesh 2281, forme 1595, luci 56, checkpoint 12 (attivi 12), porte 1

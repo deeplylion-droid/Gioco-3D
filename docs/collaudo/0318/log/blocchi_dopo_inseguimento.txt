@@ -1,0 +1,7 @@
+BLOCCHI: partenza inseguimento arrivata dopo 7.4 s (SalaTorre/Checkpoint_fondo)
+BLOCCHI: partenza inseguimento, lavori finiti dopo 3.9 s; fotogramma più lungo 383 ms (SalaPrincipale)
+BLOCCHI: elenco inseguimento: mesh 2653, forme 1745, luci 259, checkpoint 23 (attivi 23), porte 1
+BLOCCHI: elenco inseguimento_30s: mesh 2653, forme 1745, luci 263, checkpoint 23 (attivi 23), porte 1
+BLOCCHI: morte in inseguimento (checkpoint SalaTorre/Checkpoint_fondo)
+BLOCCHI: ripartenza dopo 5.1 s, checkpoint SalaTorre/Checkpoint_fondo (prima SalaTorre/Checkpoint_fondo), giocatore (37.91, -19.98, -14.84)
+BLOCCHI: elenco inseguimento_dopo_morte: mesh 2652, forme 1745, luci 260, checkpoint 23 (attivi 23), porte 1

@@ -1,0 +1,1 @@
+CONTINUA: salvataggio su disco prima SalaTorre/SalaInseguimento/Checkpoint_vasca_1, dopo SalaSottomarino/Checkpoint_160 (riscritto true)

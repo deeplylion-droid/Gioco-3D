@@ -1,0 +1,7 @@
+BLOCCHI: partenza torre arrivata dopo 7.9 s (SalaTorre/Checkpoint_portone)
+BLOCCHI: partenza torre, lavori finiti dopo 3.4 s; fotogramma più lungo 341 ms (SalaPrincipale)
+BLOCCHI: elenco torre: mesh 2645, forme 1747, luci 258, checkpoint 23 (attivi 23), porte 1
+BLOCCHI: elenco torre_30s: mesh 2646, forme 1747, luci 261, checkpoint 23 (attivi 23), porte 1
+BLOCCHI: morte in torre (checkpoint SalaTorre/Checkpoint_portone)
+BLOCCHI: ripartenza dopo 5.4 s, checkpoint SalaTorre/Checkpoint_portone (prima SalaTorre/Checkpoint_portone), giocatore (21.4, 0.0, -15.0)
+BLOCCHI: elenco torre_dopo_morte: mesh 2647, forme 1747, luci 257, checkpoint 23 (attivi 23), porte 1

@@ -1,0 +1,7 @@
+BLOCCHI: partenza risalita arrivata dopo 8.2 s (Tecnici/Logica/Checkpoint/CheckpointT7Inizio)
+BLOCCHI: partenza risalita, lavori finiti dopo 0.3 s; fotogramma più lungo 15 ms (SalaPrincipale)
+BLOCCHI: elenco risalita: mesh 2752, forme 1865, luci 192, checkpoint 26 (attivi 23), porte 2
+BLOCCHI: elenco risalita_30s: mesh 2756, forme 1865, luci 201, checkpoint 26 (attivi 23), porte 2
+BLOCCHI: morte in risalita (checkpoint Tecnici/Logica/Checkpoint/CheckpointT7Inizio)
+BLOCCHI: ripartenza dopo 4.3 s, checkpoint Tecnici/Logica/Checkpoint/CheckpointT7Inizio (prima Tecnici/Logica/Checkpoint/CheckpointT7Inizio), giocatore (-1.4, -9.05, 48.86)
+BLOCCHI: elenco risalita_dopo_morte: mesh 2752, forme 1865, luci 191, checkpoint 26 (attivi 23), porte 2

@@ -1,0 +1,1 @@
+RISULTATO: 20 controlli ok, 0 falliti
