@@ -16,6 +16,8 @@ static var _somma := [  # su più righe si segnala la prima  # A RISCHIO
 	1,
 	1 + 1,
 ]
+static var _da_funzione := _calcola()  # A RISCHIO
+static var _da_costante := _costante()
 var stile: Resource
 var distanza := 2.0 * 3.0
 
@@ -23,3 +25,11 @@ var distanza := 2.0 * 3.0
 func _ready() -> void:
 	var x := 1 + 2
 	distanza = x * 2.0
+
+
+static func _calcola() -> float:
+	return 2.0 * 3.0
+
+
+static func _costante() -> float:
+	return 6.0

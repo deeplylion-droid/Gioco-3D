@@ -1,0 +1,6 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bprovauid"]
+
+[ext_resource type="Script" uid="uid://cprovauid" path="res://figlia_prova.gd" id="1_figlia"]
+
+[resource]
+script = ExtResource("1_figlia")
