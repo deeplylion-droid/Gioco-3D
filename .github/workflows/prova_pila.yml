@@ -51,7 +51,7 @@ jobs:
       - name: Swap da 16 GB, Vulkan software e Xvfb
         run: |
           sudo swapoff -a || true
-          sudo fallocate -l 16G /swapfile_prova && sudo chmod 600 /swapfile_prova
+          (sudo fallocate -l 16G /swapfile_prova || sudo fallocate -l 10G /swapfile_prova) && sudo chmod 600 /swapfile_prova
           sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
           sudo apt-get update -qq
           sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
@@ -72,6 +72,10 @@ jobs:
           grep -n -A60 -E 'received signal|Program crashed|Dumping the backtrace' $L | head -80
           echo "--- gli errori (in debug una chiamata su un oggetto liberato è un errore, in release un segfault):"
           grep -n -E 'ERROR|SCRIPT ERROR|freed|Invalid|null instance|Nonexistent' $L | grep -v 'RGB8 not supported' | head -60
+          echo "--- quando: le righe PROVA e la prima e l'ultima ERROR: BUG, coi numeri di riga"
+          grep -n -E 'PROVA: |ERROR: BUG' $L | awk -F: '/ERROR: BUG/{if(!b){print; b=1} last=$0; next} {print} END{print last}'
+          echo "--- le 30 righe prima del primo ERROR: BUG:"
+          grep -n -B30 -m1 'ERROR: BUG' $L | grep -v 'RGB8 not supported\|_validate_texture_format\|GDScript backtrace\|\[[0-9]\] ' | head -40
           echo "--- con lo stack GDScript:"
           grep -n -B2 -A8 -E 'previously freed|freed instance|null instance|SCRIPT ERROR' $L | head -120
 
