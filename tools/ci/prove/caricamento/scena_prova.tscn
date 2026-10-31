@@ -6,6 +6,33 @@
 [sub_resource type="Resource" id="Resource_1"]
 script = ExtResource("1_stile")
 
+[sub_resource type="GDScript" id="GDScript_risorsa"]
+script/source = "extends Resource
+## Prova: uno script incorporato, usato da una sottorisorsa (Resource_2): le regole degli script di Resource.
+
+var nome := &\"incorporato\"
+var somma := 1 + 1  # A RISCHIO
+"
+
+[sub_resource type="Resource" id="Resource_2"]
+script = SubResource("GDScript_risorsa")
+
+[sub_resource type="GDScript" id="GDScript_nodo"]
+script/source = "extends Node
+## Prova: uno script incorporato di un nodo: solo le static var.
+
+static var lato := 2 * 3  # A RISCHIO
+var distanza := 2.0 * 3.0
+
+
+func _ready() -> void:
+	distanza = distanza + 1.0
+"
+
 [node name="Prova" type="Node"]
 script = ExtResource("2_nodo")
 stile = SubResource("Resource_1")
+altro = SubResource("Resource_2")
+
+[node name="Figlio" type="Node" parent="."]
+script = SubResource("GDScript_nodo")

@@ -32,9 +32,32 @@ func _fai_lavoro(lv: Array) -> void:
 	var j := (n + 1) % 4  # A RISCHIO
 	var q := n / 2  # A RISCHIO
 	var r := float(n) / 2
-	_altro(p)
+	var u := parti_usec.get("a", 0) + 1  # A RISCHIO
+	var w := int(parti_usec.get("a", 0)) + 1
+	var t := _senza_tipo() + 1  # A RISCHIO
+	var t2 := 1.0 + _variant()  # A RISCHIO
+	var t3 := _tipata() + 1.0
+	var zz = 3
+	var zy := zz + 1  # A RISCHIO
+	_altro(p, 2)
 
 
-func _altro(p: Vector3) -> void:
+func _altro(p: Vector3, nudo) -> void:
 	var a := abs(p.x) - 1.0  # A RISCHIO
 	var ok := absf(p.x) - 1.0
+	var b := nudo * 2  # A RISCHIO
+	_senza_tipo()
+	_variant()
+	_tipata()
+
+
+func _senza_tipo():
+	return 1
+
+
+func _variant() -> Variant:
+	return 1.0
+
+
+func _tipata() -> float:
+	return 1.0
