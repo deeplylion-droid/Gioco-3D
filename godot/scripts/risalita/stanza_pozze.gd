@@ -199,6 +199,8 @@ func _pozze() -> void:
 
 
 func _porta() -> void:
+	# il pavimento nel vano, sotto lo spessore del muro (fra la passerella e il pianerottolo della scala)
+	_box(Vector3(PortaStagna.LARGO + 0.04, 0.2, MURO), Vector3(PORTA_X, -0.1, -MEZZA - MURO * 0.5), mat_cemento)
 	var p := PortaStagna.new()
 	p.name = "PortaStagna"
 	p.position = Vector3(PORTA_X, 0, -MEZZA)

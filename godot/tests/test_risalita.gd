@@ -74,9 +74,11 @@ func _run() -> void:
 	var uscito := await _cammina(fuori, 3.0)
 	check(not uscito and inf.to_local(p.global_position).z > -3.25, "la porta nord è chiusa: non si esce (%s)" % str(inf.to_local(p.global_position)))
 	print("  (scorciatoia: il pulsantone colpito col getto, lo prova test_infermeria_gioco)")
+	# (l'anta si apre verso dentro: prima un passo indietro, fuori da dove gira, e si aspetta che sia contro il muro; se no
+	# spinge il giocatore oltre la porta, e dal 31 ottobre lì dietro ci sono le pozze)
+	var indietro: Array[Vector3] = [inf.to_global(Vector3(-2.2, 0, -1.6))]
+	await _cammina(indietro, 5.0)
 	inf.get_node(^"Interruttore").set(&"powered", true)
-	# (l'anta si apre verso dentro in 2,6 s: si aspetta che sia contro il muro, se no spinge il giocatore oltre la porta, e
-	# dal 31 ottobre lì dietro ci sono le pozze)
 	for i in 200:
 		await get_tree().physics_frame
 	check(await _cammina(fuori, 20.0), "col pulsantone colpito la porta nord è aperta e se ne esce (%s)" % str(p.global_position))
