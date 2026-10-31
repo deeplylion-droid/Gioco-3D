@@ -110,6 +110,7 @@ func _controlla(id: String, quando: String) -> void:
 		_check(not t.is_empty() and not t["interni"] and not t["tecnici"], "%s: quando entra il tunnel, interni e tecnici sono già via (%s)" % [tag, t])
 	else:
 		_check(false, "%s: checkpoint oltre il portone (%s)" % [tag, cp])
+	_check(not GameState.is_dying, "%s: vivo all'arrivo" % tag)
 	# qualche secondo di gioco: niente torna, e nel tunnel niente torre
 	var t0 := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t0 < 4000:
@@ -121,7 +122,11 @@ func _controlla(id: String, quando: String) -> void:
 				"%s: nel tunnel la torre non si prepara" % tag)
 	else:
 		_check(sala.get(&"sala_torre") is Node and not "torre_nascosta" in _visti, "%s: la torre c'è, una sola" % tag)
-	_check(not GameState.is_dying, "%s: vivo" % tag)
+	# (nel tunnel lei insegue: stando fermi ti raggiunge e ti prende, come nel gioco. I 4 s sono in tempo vero, e con
+	# --fixed-fps 60 su una macchina veloce diventano molti più secondi di gioco: lì la presa di lei non è un errore;
+	# CI di main 41225795359, "KO tunnel: vivo", mentre la stessa prova era verde sul branch)
+	var presa := cp.begins_with("SalaSottomarino") and GameState.last_death_cause == &"medusa"
+	_check(not GameState.is_dying or presa, "%s: vivo (o presa da lei nel tunnel; causa %s)" % [tag, GameState.last_death_cause])
 
 
 func _aspetta_ripresa() -> void:
