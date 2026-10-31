@@ -6,7 +6,9 @@ name: Prova su Windows
 
 on:
   push:
-    branches: ["lavoro/prova-windows"]
+    branches: ["lavoro/prova-windows", "lavoro/prova-windows-0316"]
+    # (la prova su Linux ha il suo workflow: cambiandolo non si rifà quella su Windows)
+    paths-ignore: [".github/workflows/prova_linux.yml"]
   workflow_dispatch:
 
 permissions:
