@@ -54,3 +54,20 @@ Script: `godot/proposte/poster_sala/scatti_muro_nord.gd`.
 - **Come.** Dagli occhi del giocatore, con le luci vere del gioco: all'arrivo e col lampione della statua acceso.
 - **Prima e dopo.** Gli stessi punti, con lo stesso seme per i neon.
 - **La sala a pezzi.** Si caricano solo le sue parti, come per i teli, con le mesh entro 22 m.
+
+| Foglio | Cosa mostra |
+|---|---|
+| `candidati_*.jpg` | i tre cartelloni numerati, prima della scelta |
+| `1_giro_arrivo_prima_dopo.jpg` | il giro all'arrivo: dall'ingresso, dal centro della piscina, da ovest, da est, sotto il muro |
+| `2_giro_lampione_prima_dopo.jpg` | dal centro e sotto il muro, col lampione acceso |
+| `3_da_vicino_prima_dopo.jpg` | da vicino, sotto il delfino e la balena, e il delfino di lato: come stanno sul muro; più il polpo, che non cambia |
+
+**Cosa si vede**
+- Da vicino si leggono le bruciature coi buchi sulla lamiera, i ghigni coi denti e gli occhi crocettati.
+- Dal centro della piscina i due cartelloni sono piccoli e in penombra: si vede che sono rovinati, ma non i dettagli.
+- L'appoggio al muro non cambia: la cornice e la lamiera sono le stesse, e cambia solo la carta.
+
+**Controlli**
+- 0 "ERROR: BUG," nei due giri.
+- `test_sala` verde in locale.
+- Il controllo di posizionamento in locale è in fondo al messaggio di consegna.
