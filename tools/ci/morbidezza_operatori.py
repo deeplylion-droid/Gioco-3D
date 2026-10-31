@@ -22,8 +22,9 @@ E nei thread di caricamento (ResourceLoader.load_threaded_request), in tutto god
   setter o getter, nessun operatore nei valori dei var;
 - nelle classi che quei var costruiscono (Altro.new(), con un class_name o un const preload, o preload("...").new()):
   nessun _init e nessun operatore nei valori dei var;
-- nelle static var di ogni script (anche incorporato) nessun operatore nel valore e nessuna chiamata a una funzione dello
-  stesso script che ha operatori (gira quando la classe si carica).
+- nelle static var di ogni script (anche incorporato) nessun operatore nel valore, nessuna chiamata a una funzione dello
+  stesso script che ha operatori, e per le classi che costruiscono le stesse regole di sopra; e nessun operatore in
+  _static_init() (girano quando la classe si carica).
 Il meno di un numero (-1.0) no: lo calcola il compilatore.
 Non guarda (oggi nessun caso; da guardare a mano se arrivano): le funzioni di altri script senza tipo di ritorno dentro
 un operatore (Altro.f() + 1); le proprietà di un oggetto senza tipo (o.x + 1); in una static var le funzioni di altri
@@ -510,6 +511,13 @@ def controlla_script_nel_thread(radice, chiave, motivo, completo, sorg, classi, 
         controlla_script_nel_thread(radice, base, f"base di {chiave} ({motivo})", completo, sorg, classi, visti, trovati)
 
 
+def corpo_con_operatori(righe, a, b):
+    """Un operatore nel corpo della funzione che va dalla riga a alla b (non contano = e := delle assegnazioni)."""
+    corpo = [codice(l) for l in righe[a + 1:b + 1]]
+    return any(ha_operatore(re.sub(r"^\s*(var\s+\w+\s*(:\s*[\w\[\]]+\s*)?:?=|return\b|\w+(\.\w+)*\s*=(?!=))", " ", l))
+            for l in corpo)
+
+
 def controlla_caricamento(radice, righe_trovate=None):
     trovati = []
     sorg = sorgenti(radice)
@@ -531,12 +539,17 @@ def controlla_caricamento(radice, righe_trovate=None):
                     continue
                 # una funzione dello stesso script con un operatore dentro
                 for m in re.finditer(r"(?<![\w.])(\w+)\(", v):
-                    if m.group(1) in f:
-                        a, b = f[m.group(1)]
-                        corpo = [codice(l) for l in righe[a + 1:b + 1]]
-                        if any(ha_operatore(re.sub(r"^\s*(var\s+\w+\s*(:\s*[\w\[\]]+\s*)?:?=|return\b|\w+(\.\w+)*\s*=(?!=))", " ", l)) for l in corpo):
-                            trovati.append((chiave, num, f"una static var chiama {m.group(1)}(), che ha operatori (gira quando la classe si carica, anche nel thread)", t))
-                            break
+                    if m.group(1) in f and corpo_con_operatori(righe, *f[m.group(1)]):
+                        trovati.append((chiave, num, f"una static var chiama {m.group(1)}(), che ha operatori (gira quando la classe si carica, anche nel thread)", t))
+                        break
+                # un'altra classe costruita: i valori dei suoi var e il suo _init girano anche loro
+                for k in costruite(radice, v + " " + senza_commento(righe[num - 1]), righe, classi):
+                    controlla_script_nel_thread(radice, k, f"costruito con new() da una static var di {chiave} (quando la classe si carica, anche nel thread)",
+                            False, sorg, classi, visti, trovati)
+            # _static_init gira quando la classe si carica, anche nel thread
+            m = re.match(r"static\s+func\s+_static_init\b", t)
+            if m and "_static_init" in f and corpo_con_operatori(righe, *f["_static_init"]):
+                trovati.append((chiave, num, "_static_init() con operatori (gira quando la classe si carica, anche nel thread)", t))
     print(f"caricamento: {len(risorse)} script di Resource salvati nei file, static var di tutti gli script")
     for t in trovati:
         print(f"  {t[0]}:{t[1]}: {t[2]}\n      {t[3].strip()}")
