@@ -111,10 +111,14 @@ func _controlla(id: String, quando: String) -> void:
 	else:
 		_check(false, "%s: checkpoint oltre il portone (%s)" % [tag, cp])
 	_check(not GameState.is_dying, "%s: vivo all'arrivo" % tag)
-	# qualche secondo di gioco: niente torna, e nel tunnel niente torre
-	var t0 := Time.get_ticks_msec()
-	while Time.get_ticks_msec() - t0 < 4000:
-		await get_tree().process_frame
+	# 4 s di gioco: niente torna, e nel tunnel niente torre. In fotogrammi, non in tempo vero: con --fixed-fps 60 su una
+	# macchina veloce 4 s veri erano molti più secondi di gioco, e nel tunnel lei raggiunge il giocatore fermo e lo prende
+	# dopo circa 400 fotogrammi (6,8 s), come nel gioco (CI di main 41225795359, "KO tunnel: vivo")
+	for i in 240:
+		await get_tree().physics_frame
+	if not is_instance_valid(sala):
+		_check(false, "%s: la sala c'è ancora dopo 4 s (una morte l'ha ricaricata?)" % tag)
+		return
 	_check(sala.get_node_or_null(^"Interni") == null and sala.get_node_or_null(^"Tecnici") == null, "%s: interni e tecnici non ci sono" % tag)
 	if cp.begins_with("SalaSottomarino"):
 		_check(not "torre" in _visti and not "torre_nascosta" in _visti and sala.get(&"sala_torre") == null \
@@ -122,11 +126,7 @@ func _controlla(id: String, quando: String) -> void:
 				"%s: nel tunnel la torre non si prepara" % tag)
 	else:
 		_check(sala.get(&"sala_torre") is Node and not "torre_nascosta" in _visti, "%s: la torre c'è, una sola" % tag)
-	# (nel tunnel lei insegue: stando fermi ti raggiunge e ti prende, come nel gioco. I 4 s sono in tempo vero, e con
-	# --fixed-fps 60 su una macchina veloce diventano molti più secondi di gioco: lì la presa di lei non è un errore;
-	# CI di main 41225795359, "KO tunnel: vivo", mentre la stessa prova era verde sul branch)
-	var presa := cp.begins_with("SalaSottomarino") and GameState.last_death_cause == &"medusa"
-	_check(not GameState.is_dying or presa, "%s: vivo (o presa da lei nel tunnel; causa %s)" % [tag, GameState.last_death_cause])
+	_check(not GameState.is_dying, "%s: vivo dopo 4 s di gioco (causa %s)" % [tag, GameState.last_death_cause])
 
 
 func _aspetta_ripresa() -> void:
