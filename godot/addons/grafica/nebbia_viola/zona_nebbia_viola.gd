@@ -10,6 +10,11 @@ const GRUPPO := &"zone_nebbia_viola"
 
 ## Il pavimento della zona (y): la nebbia è più fitta lì vicino.
 @export var quota := 0.0
+## Quanto della nebbia in questa zona, rispetto alla B (1): l'aria viola che si accumula (nei posti bui alza i neri),
+## l'alone delle lampade e la polvere nella luce.
+@export var aria := 1.0
+@export var alone := 1.0
+@export var polvere := 1.0
 ## Dove cercare le lampade per l'alone (vuoto: il genitore della zona).
 @export var luci: Array[NodePath] = []
 

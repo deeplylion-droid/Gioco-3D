@@ -59,6 +59,16 @@ func _run() -> void:
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
+	# i due teli di Jilly ai lati della statua bruciati e scarabocchiati (30 ottobre): texture rovinata con l'alfa
+	var teli_ok := 0
+	for nome in ["sala_cartellone_mascotte_0", "sala_cartellone_mascotte_1"]:
+		var telo := level.get_node("Sala/Architettura").find_child(nome, true, false) as MeshInstance3D
+		for i in (telo.mesh.get_surface_count() if telo and telo.mesh else 0):
+			var m := telo.get_surface_override_material(i) as StandardMaterial3D
+			if m and m.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR and m.albedo_texture \
+					and m.albedo_texture.resource_path.contains("cartelloni_rovinati/telo_"):
+				teli_ok += 1
+	check(teli_ok == 2, "i due teli di Jilly ai lati della statua sono rovinati, coi buchi (%d di 2)" % teli_ok)
 	# la P11, la pecora che brilla, sta nella cassaforte dell'infermeria della risalita: la controlla
 	# test_infermeria_gioco (qui l'infermeria è nascosta, lontana dal giocatore)
 	var risalita := level.get_node_or_null(^"Risalita")

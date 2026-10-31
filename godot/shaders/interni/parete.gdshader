@@ -120,13 +120,12 @@ void fragment() {
 	rug *= verticale * (pannelli ? 1.0 : 0.0);
 	alb = mix(alb, vec3(0.36, 0.15, 0.05), rug * 0.9);
 	rgh = mix(rgh, 0.8, rug);
-	// --- aloni d'acqua scesi dal soffitto, con il bordo più scuro (pannelli a caso)
+	// --- aloni d'acqua scesi dal soffitto (pannelli a caso); senza la riga scura sul bordo: era una linea a zig-zag
+	// stirata da un pannello all'altro (riscontro dell'utente del 30 ottobre, "me la togli ovunque")
 	float ha = hash(vec2(pan, 7.0));
 	float bordo = 1.75 + rum(vec2(lungo * 0.6, 3.3)) * 0.5 - ha * 0.35;
 	float alone = smoothstep(bordo - 0.02, bordo + 0.25, altezza) * step(0.45, ha) * verticale;
-	float linea = exp(-pow((altezza - bordo) / 0.02, 2.0)) * step(0.45, ha) * verticale;
 	alb = mix(alb, alb * vec3(0.5, 0.43, 0.32), alone * 0.85);
-	alb *= 1.0 - linea * 0.55;
 	// --- strisciate in basso (urti, carrelli, scarpe)
 	float str = texture(rumore, vec2(lungo * 0.9, altezza * 9.0) + 1.7).r;
 	float strisc = smoothstep(0.55, 0.75, str) * (1.0 - smoothstep(0.05, 0.6, altezza)) * step(0.04, altezza) * verticale;

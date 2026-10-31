@@ -7,6 +7,8 @@ extends Node
 ## - l'opzione "Nebbia viola" spenta dentro la zona: scende piano e non si disegna più; riaccesa sale piano;
 ## - l'alone: fino a 4 lampade della zona davanti alla camera, prima la luce del gruppo dell'alone (lei); una lampada
 ##   che esce dall'alone si spegne piano, non di colpo;
+## - lo strato fitto e il fondo ("fondo" dello shader): sul pavimento resta la quota; scendendo a piedi sul fondo della
+##   piscina vuota segue i piedi piano, senza salti; saltando resta dov'era; dopo un salto della camera è subito giusto;
 ## - le zone del gioco: l'infermeria, la sala principale e il tunnel dell'inseguimento ne hanno una.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_zona_nebbia.gd
 
@@ -96,6 +98,7 @@ func _run() -> void:
 
 	await _opzione()
 	await _alone()
+	await _fondo()
 	await _zone_del_gioco()
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
@@ -242,6 +245,51 @@ func _in_zona(z: ZonaNebbiaViola, p: Vector3) -> bool:
 			if absf(loc.x) <= h.x and absf(loc.y) <= h.y and absf(loc.z) <= h.z:
 				return true
 	return false
+
+
+## Lo strato sul fondo della piscina vuota: una zona con la quota a 0 e una vasca col fondo a -2.
+func _fondo() -> void:
+	var z := _zona(Vector3(60, 0, 0), Vector3(20, 8, 20))
+	var fondo := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var b := BoxShape3D.new()
+	b.size = Vector3(10, 0.2, 10)
+	cs.shape = b
+	fondo.add_child(cs)
+	fondo.position = Vector3(60, -2.1, 0)
+	add_child(fondo)
+	corpo.global_position = Vector3(0, 0, 200)
+	await _per(0.2)
+	corpo.global_position = Vector3(60, 0, 3)
+	await get_tree().process_frame
+	await _per(0.2)
+	var u := func() -> float: return float(n._mat.get_shader_parameter(&"fondo"))
+	_controlla(absf(u.call()) < 0.01, "sul pavimento lo strato resta alla quota", [u.call()])
+	# giù per la scala della vasca, a terra sul fondo
+	corpo.global_position = Vector3(60, -2.0, 1.5)
+	await get_tree().physics_frame
+	corpo.velocity = Vector3.DOWN
+	corpo.move_and_slide()
+	await _per(0.1)
+	var presto: float = u.call()
+	await _per(0.9)
+	_controlla(corpo.is_on_floor() and presto < -0.05 and presto > -0.6 and absf(u.call() + 2.0) < 0.02,
+			"sul fondo della piscina lo strato scende ai piedi, piano", [corpo.is_on_floor(), presto, u.call()])
+	# un salto: in aria resta dov'era
+	corpo.global_position = Vector3(60, -1.0, 1.5)
+	corpo.velocity = Vector3.UP
+	corpo.move_and_slide()
+	await _per(0.3)
+	_controlla(not corpo.is_on_floor() and absf(u.call() + 2.0) < 0.02, "saltando resta sul fondo", [u.call()])
+	# un checkpoint sul fondo: subito giusto
+	corpo.global_position = Vector3(0, 0, 200)
+	await _per(0.2)
+	corpo.global_position = Vector3(60, -2.0, 0)
+	await get_tree().process_frame
+	_controlla(absf(u.call() + 2.0) < 0.02, "ripartendo sul fondo lo strato è subito lì", [u.call()])
+	z.queue_free()
+	fondo.queue_free()
+	await _per(0.1)
 
 
 func _zona(dove: Vector3, misure: Vector3) -> ZonaNebbiaViola:
