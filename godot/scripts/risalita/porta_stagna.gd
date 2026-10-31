@@ -100,7 +100,8 @@ func _costruisci() -> void:
 	_box(telaio, Vector3(LARGO + 2.0 * fascia, fascia, prof), Vector3(0, ALTO + fascia * 0.5, zc), grigio)
 	# le bandelle delle cerniere, fisse sulla faccia di fuori del telaio: le cerniere del battente ci stanno contro
 	for y in [0.35, ALTO - 0.35]:
-		_box(telaio, Vector3(0.08, 0.18, 0.02), Vector3(-LARGO * 0.5 - 0.04, y, -MURO - 0.09), grigio)
+		# (spesse quanto lo stacco del battente, 5 mm: toccano il telaio e il battente senza entrarci)
+		_box(telaio, Vector3(0.08, 0.18, 0.005), Vector3(-LARGO * 0.5 - 0.04, y, -MURO - 0.0825), grigio)
 	# la soglia rialzata di 6 cm, come sulle navi (si passa camminando)
 	_box(telaio, Vector3(LARGO, 0.06, prof), Vector3(0, 0.03, zc), grigio)
 	# il battente: sul cardine a -X, sulla faccia di fuori del muro (z -MURO), chiuso fra gli stipiti
