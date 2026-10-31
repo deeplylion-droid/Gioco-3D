@@ -51,6 +51,10 @@ var _testata: Control
 var _logo: TextureRect
 var _sottomenu: CanvasLayer
 var _pausa_fuoco := true
+## La partenza da riga di comando (vedi [method _partenza_da_riga]) si guarda una volta sola, al primo titolo.
+static var _riga_fatta := false
+## Il file di --registro-prova (vuoto: nessuno).
+static var _registro_prova := ""
 
 
 func _ready() -> void:
@@ -67,6 +71,127 @@ func _ready() -> void:
 	_audio(&"ferma_tutto")
 	_audio(&"musica_titolo")
 	_voci[0].grab_focus.call_deferred()
+	_partenza_da_riga.call_deferred()
+
+
+## Per le prove (il controllo "Prova su Vulkan" della CI, .github/workflows/prova_vulkan.yml, e il collaudo), dopo il --
+## della riga di comando; senza questi argomenti non fa niente (tests/test_partenza_da_riga.gd):
+## --partenza=<id>   parte subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...);
+## --preset=<nome>   mette prima quel preset grafico;
+## --muori-dopo=<s>  quei secondi dopo l'arrivo il giocatore muore (GameState.kill_player) e si riparte dal checkpoint,
+##                   come la morte nelle vasche dopo la torre (crash della 0.3.17); il resto conta dal secondo arrivo;
+## --resta=<s>       chiude il gioco quei secondi dopo l'arrivo (finita la schermata di caricamento e i caricamenti nel
+##                   thread);
+## --esci-dopo=<s>   chiude il gioco dopo quei secondi comunque;
+## --registro-prova=<file>  scrive le righe PROVA anche in quel file, aperto e chiuso a ogni riga (il registro di Godot,
+##                   se il gioco si chiude di colpo, può restare indietro).
+## Ogni 5 s una riga con la memoria, il picco della memoria video (a ogni fotogramma), la scena e il giocatore.
+func _partenza_da_riga() -> void:
+	if _riga_fatta:
+		return
+	_riga_fatta = true
+	var partenza := ""
+	var preset := ""
+	var esci := 0.0
+	var resta := 0.0
+	var muori := -1.0
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--partenza="):
+			partenza = a.get_slice("=", 1)
+		elif a.begins_with("--preset="):
+			preset = a.get_slice("=", 1)
+		elif a.begins_with("--esci-dopo="):
+			esci = a.get_slice("=", 1).to_float()
+		elif a.begins_with("--resta="):
+			resta = a.get_slice("=", 1).to_float()
+		elif a.begins_with("--muori-dopo="):
+			muori = a.get_slice("=", 1).to_float()
+		elif a.begins_with("--registro-prova="):
+			_registro_prova = a.substr(17)
+	if partenza == "" and esci <= 0.0 and resta <= 0.0:
+		return
+	# (nella prova non c'è nessuno davanti alla finestra: senza il fuoco il gioco andrebbe in pausa appena lasciato il
+	# titolo, e la sequenza di morte, che si ferma con la pausa, non finirebbe; come nei test)
+	_pausa_fuoco = false
+	Game.pause_on_focus_loss = false
+	# e niente calibrazione della luminosità del primo avvio (col profilo nuovo della prova si aprirebbe e terrebbe il
+	# gioco in pausa: nei test la salta --script, Game.is_automated); chiusa, toglie la pausa da sola
+	for c in Game.get_children():
+		if c is CanvasLayer and String(c.scene_file_path).ends_with("calibrazione_luminosita.tscn"):
+			c.queue_free()
+	if _registro_prova != "":
+		var f := FileAccess.open(_registro_prova, FileAccess.WRITE)
+		if f:
+			f.close()
+	if preset != "":
+		Grafica.applica_preset(preset)
+		_prova("PROVA: preset %s" % preset)
+	var albero := get_tree()
+	# lo stato: [quando si è arrivati (-1 non ancora), la scena dell'arrivo, se si è già morti]
+	var stato := [-1.0, 0, false]
+	# il picco della memoria video a ogni fotogramma, in tutto e dall'ultimo arrivo (le righe ogni 5 s non lo vedono)
+	var picco := [0, 0]
+	albero.process_frame.connect(func() -> void:
+		var v := int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20
+		picco[0] = maxi(int(picco[0]), v)
+		if float(stato[0]) >= 0.0:
+			picco[1] = maxi(int(picco[1]), v))
+	var conta := Timer.new()
+	conta.name = "PartenzaDaRiga"
+	conta.wait_time = 5.0
+	conta.process_mode = Node.PROCESS_MODE_ALWAYS
+	conta.timeout.connect(func() -> void:
+		var sc := albero.current_scene
+		var g := albero.get_first_node_in_group(&"player") as Node3D
+		var adesso := Time.get_ticks_msec() / 1000.0
+		# arrivati: finita la schermata di caricamento, niente nel thread, il giocatore c'è; dopo una morte, nella sala
+		# nuova (un'altra scena)
+		if float(stato[0]) < 0.0 and sc and String(sc.name) != "Caricamento" and String(sc.name) != "MenuPrincipale" \
+				and not Game.caricamenti_in_corso() and g and not GameState.is_dying \
+				and (not bool(stato[2]) or sc.get_instance_id() != int(stato[1])):
+			stato[0] = adesso
+			stato[1] = sc.get_instance_id()
+			picco[1] = 0
+			_prova("PROVA: ARRIVATO%s a %d s, giocatore a %s" % [" DOPO LA MORTE" if bool(stato[2]) else "", int(adesso),
+					g.global_position])
+		if muori >= 0.0 and not bool(stato[2]) and float(stato[0]) >= 0.0 and adesso - float(stato[0]) >= muori:
+			stato[2] = true
+			stato[0] = -1.0
+			GameState.kill_player(&"prova")
+			_prova("PROVA: MUORE (picco video dall'arrivo %d MB; giocatore %s, muore %s, in pausa %s)" % [int(picco[1]),
+					GameState.player != null and is_instance_valid(GameState.player), GameState.is_dying, albero.paused])
+		if resta > 0.0 and float(stato[0]) >= 0.0 and (muori < 0.0 or bool(stato[2])) and adesso - float(stato[0]) >= resta:
+			_prova("PROVA: RESTATO %d s dopo l'arrivo, esco; picco video in tutto %d MB, dall'arrivo %d MB" % [int(resta),
+					int(picco[0]), int(picco[1])])
+			albero.quit()
+		_prova("PROVA t=%d scena=%s caricamenti=%s pos=%s memoria=%d MB picco_video=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
+				int(adesso), String(sc.name) if sc else "-", Game.caricamenti_in_corso(), g.global_position if g else "-",
+				OS.get_static_memory_usage() >> 20, int(picco[0]),
+				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.RENDER_BUFFER_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.OBJECT_COUNT)), int(Engine.get_frames_per_second())]))
+	albero.root.add_child(conta)
+	conta.start()
+	if esci > 0.0:
+		albero.create_timer(esci, true, false, true).timeout.connect(func() -> void:
+			_prova("PROVA: esco dopo %s s" % esci)
+			albero.quit())
+	if partenza != "":
+		_prova("PROVA: parto da %s -> %s" % [partenza, MenuProva.parti(albero, partenza)])
+
+
+## Una riga PROVA: nel registro di Godot e, se c'è, nel file della prova (aperto e chiuso subito: resta anche se il gioco
+## si chiude di colpo).
+static func _prova(riga: String) -> void:
+	print(riga)
+	if _registro_prova == "":
+		return
+	var f := FileAccess.open(_registro_prova, FileAccess.READ_WRITE)
+	if f:
+		f.seek_end()
+		f.store_line("%s %s" % [Time.get_time_string_from_system(), riga])
+		f.close()
 
 
 func _exit_tree() -> void:

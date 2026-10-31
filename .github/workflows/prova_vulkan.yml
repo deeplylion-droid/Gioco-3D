@@ -1,0 +1,182 @@
+# Prova su Vulkan (controllo stabile contro i crash delle ripartenze, approvato dal coordinatore il 31 ottobre): l'export
+# release Linux, Vulkan software (llvmpipe) su Xvfb, e per ogni partenza diretta del menu di prova (--partenza, vedi
+# MenuPrincipale._partenza_da_riga) l'arrivo, una morte e la ripartenza dal checkpoint, poi 60 s di gioco. Il crash della
+# 0.3.17 (segfault nelle ripartenze oltre il portone, lo stesso già nella 0.3.16) qui si vedeva; la 0.3.18 lo toglie.
+# Blocca se una partenza non arriva, non arriva di nuovo dopo la morte, non resta 60 s, non esce normalmente (un segnale
+# qualsiasi), o se il picco della memoria video di torre, inseguimento o tunnel supera quello del fiume della stessa corsa
+# più il 10% (il fiume regge sul PC dell'utente; il confronto è relativo, i numeri di llvmpipe non contano da soli).
+# Il coordinatore lo guarda verde prima di ogni unione in main, come il collaudo. Dura circa 50 minuti.
+name: Prova su Vulkan
+
+on:
+  push:
+    branches: ["lavoro/godot", "lavoro/controllo-vulkan", "lavoro/candidata-*", "lavoro/correttiva-*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prova-vulkan-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+  # la regola del picco: le ripartenze al più il fiume più questo margine (in percento)
+  MARGINE_PICCO: "10"
+
+jobs:
+  esporta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache di Godot e dei template
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_BIN_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+
+      - name: Scarica Godot e i template
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Importa il progetto (come la build)
+        run: |
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Esporta Linux
+        run: |
+          mkdir -p build/linux
+          godot --headless --path godot --export-release "Linux" ../build/linux/JillyJubilee.x86_64
+          test -f build/linux/JillyJubilee.x86_64 -a -f build/linux/JillyJubilee.pck
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: build/linux
+          retention-days: 3
+
+  partenza:
+    needs: esporta
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    strategy:
+      fail-fast: false
+      matrix:
+        partenza: [torre, inseguimento, tunnel, fiume]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux
+          path: gioco
+
+      - name: Swap da 16 GB (llvmpipe compila le pipeline nella RAM; senza, il runner veniva spento a 6-7 min)
+        run: |
+          sudo swapoff -a || true
+          sudo fallocate -l 16G /swapfile_prova && sudo chmod 600 /swapfile_prova
+          sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
+          free -m
+
+      - name: Vulkan software, Xvfb e gdb
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq mesa-vulkan-drivers xvfb gdb > /dev/null
+          chmod +x gioco/JillyJubilee.x86_64
+
+      - name: Partenza ${{ matrix.partenza }}, morte e ripartenza, 60 s
+        run: |
+          p=${{ matrix.partenza }}
+          prova="$PWD/prova_$p.log"
+          # la memoria della macchina ogni 5 s, nel log del job (resta anche se il runner muore)
+          ( while sleep 5; do
+              pid=$(pgrep -f 'gioco/JillyJubilee.x86_64 --rendering' | tail -1)
+              [ -n "$pid" ] && echo "MEM $(date +%T) rss=$(( $(awk '/VmRSS/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB libera=$(( $(awk '/MemAvailable/{print $2}' /proc/meminfo) / 1024 )) MB swap_usato=$(( ( $(awk '/SwapTotal/{print $2}' /proc/meminfo) - $(awk '/SwapFree/{print $2}' /proc/meminfo) ) / 1024 )) MB"
+            done ) &
+          M=$!
+          ( sleep 20; tail -F "$prova" 2>/dev/null | sed 's/^/PROVA_LIVE /' ) &
+          T=$!
+          set +e
+          timeout 160m xvfb-run -a -s "-screen 0 640x360x24" gdb -q -batch -ex run -ex bt -ex "thread apply all bt 15" \
+            --args gioco/JillyJubilee.x86_64 --rendering-driver vulkan --resolution 640x360 -- \
+            --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --registro-prova="$prova" > godot_$p.log 2>&1
+          kill $M $T 2>/dev/null; pkill -f 'tail -F' || true
+          # l'esito per il verdetto: arrivato, arrivato di nuovo dopo la morte, restato, uscita normale, picco
+          arrivato=$(grep -c 'PROVA: ARRIVATO a' "$prova")
+          di_nuovo=$(grep -c 'PROVA: ARRIVATO DOPO LA MORTE' "$prova")
+          restato=$(grep -c 'PROVA: RESTATO' "$prova")
+          normale=$(grep -c 'exited normally' godot_$p.log)
+          picco=$(grep -o 'picco video in tutto [0-9]* MB' "$prova" | grep -o '[0-9]*' | tail -1)
+          echo "$p arrivato=$arrivato di_nuovo=$di_nuovo restato=$restato normale=$normale picco=${picco:-0}" | tee esito_$p.txt
+          echo "--- segnali e backtrace:"
+          grep -E 'received signal|^#[0-9]+ ' godot_$p.log | head -40
+          exit 0
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: esito-${{ matrix.partenza }}
+          path: |
+            esito_*.txt
+            godot_*.log
+            prova_*.log
+          retention-days: 14
+
+  verdetto:
+    needs: partenza
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: esito-*
+          merge-multiple: true
+
+      - name: Le regole (bloccanti)
+        run: |
+          cat esito_*.txt || true
+          python3 - <<'EOF'
+          import os, re, sys
+          esiti = {}
+          for p in ["torre", "inseguimento", "tunnel", "fiume"]:
+              try:
+                  riga = open(f"esito_{p}.txt").read()
+              except OSError:
+                  print(f"ROSSO {p}: nessun esito (il job non è arrivato in fondo)")
+                  esiti[p] = None
+                  continue
+              esiti[p] = {k: int(v) for k, v in re.findall(r"(\w+)=(\d+)", riga)}
+          rosso = [p for p, e in esiti.items() if e is None]
+          for p, e in esiti.items():
+              if e is None:
+                  continue
+              for k, cosa in [("arrivato", "non arriva"), ("di_nuovo", "non arriva di nuovo dopo la morte"),
+                              ("restato", "non resta 60 s"), ("normale", "non esce normalmente (un segnale?)")]:
+                  if e.get(k, 0) < 1:
+                      print(f"ROSSO {p}: {cosa}")
+                      rosso.append(p)
+          margine = int(os.environ.get("MARGINE_PICCO", "10"))
+          fiume = (esiti.get("fiume") or {}).get("picco", 0)
+          if fiume > 0:
+              limite = fiume * (100 + margine) // 100
+              for p in ["torre", "inseguimento", "tunnel"]:
+                  pic = (esiti.get(p) or {}).get("picco", 0)
+                  print(f"picco video {p} {pic} MB, fiume {fiume} MB, limite {limite} MB")
+                  if pic > limite:
+                      print(f"ROSSO {p}: picco della memoria video {pic} MB oltre il fiume più il {margine}% ({limite} MB)")
+                      rosso.append(p)
+          else:
+              print("ROSSO fiume: nessun picco del fiume, il confronto non si fa")
+              rosso.append("fiume")
+          print("RISULTATO:", "rosso (" + ", ".join(sorted(set(rosso))) + ")" if rosso else "verde")
+          sys.exit(1 if rosso else 0)
+          EOF
