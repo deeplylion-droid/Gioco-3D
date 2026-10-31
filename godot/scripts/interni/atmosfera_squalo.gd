@@ -88,7 +88,7 @@ func _ready() -> void:
 	bordo.name = "ControluceViola"
 	bordo.light_color = colore
 	bordo.light_energy = 0.0
-	bordo.light_cull_mask = RisveglioSqualo.STRATO_SQUALO
+	Strati.maschera_luce(bordo, RisveglioSqualo.STRATO_SQUALO)
 	bordo.spot_range = 7.0
 	bordo.spot_angle = 50.0
 	bordo.spot_attenuation = 0.5
@@ -102,7 +102,7 @@ func _ready() -> void:
 	riflesso.name = "RiflessoViola"
 	riflesso.light_color = colore
 	riflesso.light_energy = 0.0
-	riflesso.light_cull_mask = RisveglioSqualo.STRATO_SQUALO
+	Strati.maschera_luce(riflesso, RisveglioSqualo.STRATO_SQUALO)
 	riflesso.omni_range = portata_riflesso
 	riflesso.omni_attenuation = 1.2
 	riflesso.shadow_enabled = false
@@ -228,7 +228,7 @@ func _metti_riflesso(porta_chiusa: bool, t: float) -> void:
 func _sagoma() -> void:
 	_sagoma_fatta = true
 	for vi in _r.squalo.find_children("*", "VisualInstance3D", true, false):
-		(vi as VisualInstance3D).layers = RisveglioSqualo.STRATO_SQUALO
+		Strati.metti(vi as VisualInstance3D, RisveglioSqualo.STRATO_SQUALO)
 	var radice := get_tree().current_scene if get_tree().current_scene else _r.get_parent()
 	for l in radice.find_children("*", "Light3D", true, false):
 		var luce3 := l as Light3D
@@ -236,12 +236,12 @@ func _sagoma() -> void:
 			continue
 		if luce3.light_cull_mask & RisveglioSqualo.STRATO_SQUALO:
 			_luci_tolte.append([luce3, luce3.light_cull_mask])
-			luce3.light_cull_mask &= ~RisveglioSqualo.STRATO_SQUALO
+			Strati.maschera_luce(luce3, luce3.light_cull_mask & ~RisveglioSqualo.STRATO_SQUALO)
 
 
 func _rimetti_luci() -> void:
 	for e in _luci_tolte:
 		if is_instance_valid(e[0]):
-			(e[0] as Light3D).light_cull_mask = int(e[1])
+			Strati.maschera_luce(e[0] as Light3D, int(e[1]))
 	_luci_tolte.clear()
 	_sagoma_fatta = false

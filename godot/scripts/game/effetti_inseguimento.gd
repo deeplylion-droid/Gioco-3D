@@ -80,7 +80,7 @@ func _ready() -> void:
 	luce.spot_angle = luce_angolo
 	luce.spot_angle_attenuation = 1.6
 	luce.spot_attenuation = 0.3   # (cala piano: arriva oltre il giocatore)
-	luce.light_cull_mask = 0xFFFFF & ~2   # (non la lancia in mano: livello 2, viewmodel)
+	Strati.maschera_luce(luce, 0xFFFFF & ~2)   # (non la lancia in mano: livello 2, viewmodel)
 	luce.spot_range = 30.0
 	luce.light_volumetric_fog_energy = 0.5
 	luce.shadow_enabled = false      # (senza ombre: zero pipeline nuove, e costa poco; nasce davanti a lei)

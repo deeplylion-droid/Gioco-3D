@@ -808,7 +808,7 @@ func giro_nella_sua_luce(principale: Viewport, fotogrammi := 2) -> void:
 	var gioc := GameState.player
 	if gioc and is_instance_valid(gioc) and gioc.camera and gioc.is_inside_tree():
 		var luce := OmniLight3D.new()
-		luce.layers = SalaTorre.STRATO_PREPARA   # (prima di entrare nell'albero: nessuno strato cambiato dopo)
+		Strati.metti(luce, SalaTorre.STRATO_PREPARA)   # (prima di entrare nell'albero: nessuno strato cambiato dopo)
 		luce.light_color = LeiOblo.ROSA
 		luce.light_energy = 4.0
 		luce.omni_range = 4.0

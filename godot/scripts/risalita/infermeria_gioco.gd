@@ -938,7 +938,7 @@ func _luci() -> void:
 		# il corpo della lampada non fa ombra con la sua luce (sul soffitto restava la sua ombra nera, collaudo del 25
 		# ottobre): la lampada sta nel suo strato, che la sua luce non prende fra chi fa ombra; le altre luci sì
 		for g in l.find_children("*", "GeometryInstance3D", true, false):
-			(g as GeometryInstance3D).layers = STRATO_LAMPADA
+			Strati.metti(g as GeometryInstance3D, STRATO_LAMPADA)
 		luce.shadow_caster_mask = 0xFFFFF & ~STRATO_LAMPADA
 	# il cartello d'uscita verde sopra la porta della scala, acceso (luce d'emergenza a batteria)
 	var mf := StandardMaterial3D.new()

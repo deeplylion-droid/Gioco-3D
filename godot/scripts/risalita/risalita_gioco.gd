@@ -484,7 +484,7 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 		if mi and mi.material_override == _mat_pav:
 			var box := mi.transform * mi.get_aabb()
 			if box.grow(0.01).has_point(Vector3(c.x, Y - 0.1, c.y)):
-				mi.layers |= STRATO_POZZA
+				Strati.metti(mi, mi.layers | STRATO_POZZA)
 	var alone := Decal.new()
 	alone.name = "PozzaCorridoioFiumeAlone"
 	alone.texture_albedo = load("res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone.png")

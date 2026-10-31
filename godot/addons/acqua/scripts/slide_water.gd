@@ -49,7 +49,7 @@ func _rebuild() -> void:
 		_mesh = MeshInstance3D.new()
 		_mesh.name = "Water"
 		_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		_mesh.layers = WaterBody.WATER_LAYER
+		_mesh.layers = WaterBody.WATER_LAYER  # strati: fuori scena (prima di add_child)
 		add_child(_mesh, false, Node.INTERNAL_MODE_FRONT)
 	if material == null:
 		material = ShaderMaterial.new()

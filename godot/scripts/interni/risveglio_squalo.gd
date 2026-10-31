@@ -140,10 +140,10 @@ func _crea_squalo() -> void:
 	# nella corsa il corridoio è buio e la nebbia rossa se lo mangia: una luce morbida, solo per lui, lo
 	# tiene leggibile fino alla porta (il corridoio resta com'è)
 	for vi in squalo.find_children("*", "VisualInstance3D", true, false):
-		(vi as VisualInstance3D).layers |= STRATO_SQUALO
+		Strati.metti(vi as VisualInstance3D, (vi as VisualInstance3D).layers | STRATO_SQUALO)
 	_luce_corsa = OmniLight3D.new()
 	_luce_corsa.name = "LuceCorsa"
-	_luce_corsa.light_cull_mask = STRATO_SQUALO
+	Strati.maschera_luce(_luce_corsa, STRATO_SQUALO)
 	_luce_corsa.light_color = Color(1.0, 0.45, 0.32)
 	_luce_corsa.light_energy = 0.0
 	_luce_corsa.omni_range = 3.2
