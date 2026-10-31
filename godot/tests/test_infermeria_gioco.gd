@@ -230,6 +230,9 @@ func _senza_colpo() -> void:
 	# (nome, da dove parte, verso dove cammina un attimo per appoggiarsi all'anta chiusa o fermarsi lì, dove va dopo)
 	var casi := [
 		["dentro, appoggiato all'anta chiusa", Vector2(-2.2, -2.2), Vector2(-2.2, -4.5), Vector2(0.0, 0.0)],
+		# (dove si ferma il test della risalita camminando 3 s verso l'uscita a porta chiusa: lì l'anta che saltava a 180
+		# gradi lo lanciava a 146 m/s oltre la porta, nelle pozze)
+		["dentro, fermo contro l'anta come nel test della risalita", Vector2(-2.117, -2.773), Vector2(-2.117, -2.773), Vector2(0.0, 0.0)],
 		["dentro, nell'arco vicino al cardine", Vector2(-1.76, -2.55), Vector2(-1.76, -2.55), Vector2(0.0, 0.0)],
 		["dentro, nell'arco in fondo all'anta", Vector2(-2.45, -2.6), Vector2(-2.45, -2.6), Vector2(0.0, 0.0)],
 		["dietro, appoggiato all'anta chiusa", Vector2(-2.2, -4.3), Vector2(-2.2, -2.0), Vector2(-2.2, -4.6)],
@@ -251,6 +254,7 @@ func _senza_colpo() -> void:
 			await _cammina_verso(inf.to_global(Vector3(verso.x, 0.0, verso.y)), 1.2)
 		await _secondi(0.4)
 		var prima: Vector3 = inf.to_local(p.global_position)
+		print("  %s: il giocatore a %s" % [c[0], prima])
 		# (solo acceso, senza il colpo)
 		inter.powered = true
 		var spinta := 0.0
