@@ -1,0 +1,115 @@
+# La prova del gioco esportato su Windows vero (crash della 0.3.17 sulle partenze dopo la torre): esporta Windows
+# come la build, poi su windows-latest lancia ogni partenza diretta (--partenza=<id>, vedi menu_principale.gd) con D3D12
+# e con Vulkan software (lavapipe di mesa-dist-win), e salva il registro di Godot, il codice d'uscita e le ultime righe.
+# Gira solo sul branch lavoro/prova-windows (e a mano); la build normale su questo branch non parte (build.yml).
+name: Prova su Windows
+
+on:
+  push:
+    branches: ["lavoro/prova-windows"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prova-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+
+jobs:
+  esporta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache di Godot e dei template
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_BIN_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+
+      - name: Scarica Godot e i template
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Importa il progetto (come la build)
+        run: |
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Esporta Windows
+        run: |
+          mkdir -p build/windows
+          godot --headless --path godot --export-release "Windows Desktop" ../build/windows/JillyJubilee.exe
+          test -f build/windows/JillyJubilee.exe -a -f build/windows/JillyJubilee.pck
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: build/windows
+          retention-days: 3
+
+  prova:
+    needs: esporta
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        partenza: [fiume, torre, inseguimento, tunnel]
+        driver: [d3d12, vulkan]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows
+          path: gioco
+
+      - name: Vulkan software (lavapipe di mesa-dist-win)
+        if: matrix.driver == 'vulkan'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $rel = Invoke-RestMethod -Headers @{Authorization = "Bearer $env:GH_TOKEN"} https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest
+          $a = $rel.assets | Where-Object { $_.name -match 'release-msvc\.7z$' } | Select-Object -First 1
+          Write-Host "mesa-dist-win: $($rel.tag_name) $($a.name)"
+          Invoke-WebRequest $a.browser_download_url -OutFile mesa.7z
+          7z x mesa.7z -omesa | Out-Null
+          $icd = Get-ChildItem -Recurse mesa\x64 -Filter 'lvp_icd*.json' | Select-Object -First 1
+          Write-Host "ICD: $($icd.FullName)"
+          "VK_DRIVER_FILES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
+          "VK_ICD_FILENAMES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
+
+      - name: Partenza ${{ matrix.partenza }} con ${{ matrix.driver }}
+        shell: pwsh
+        run: |
+          $log = "$PWD\godot_${{ matrix.partenza }}_${{ matrix.driver }}.log"
+          $arg = "--rendering-driver ${{ matrix.driver }} --resolution 1280x720 --log-file `"$log`" -- --partenza=${{ matrix.partenza }} --esci-dopo=300"
+          $p = Start-Process -FilePath gioco\JillyJubilee.exe -ArgumentList $arg -PassThru
+          $finito = $p.WaitForExit(1800 * 1000)
+          if (-not $finito) { Write-Host "ANCORA ACCESO dopo 30 min: lo chiudo"; $p.Kill(); $p.WaitForExit() }
+          $codice = $p.ExitCode
+          Write-Host ("CODICE D'USCITA: {0} (0x{1:X8})" -f $codice, $codice)
+          "${{ matrix.partenza }} ${{ matrix.driver }} codice=$codice finito=$finito" | Out-File esito.txt
+          if (Test-Path $log) { Get-Content $log -Tail 80 } else { Write-Host "NESSUN REGISTRO" }
+          Get-WinEvent -FilterHashtable @{LogName='Application'; Id=1000,1001} -MaxEvents 4 -ErrorAction SilentlyContinue | Format-List TimeCreated, Message
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: registro-${{ matrix.partenza }}-${{ matrix.driver }}
+          path: |
+            godot_*.log
+            esito.txt
+          retention-days: 7
