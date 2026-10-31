@@ -5,6 +5,9 @@
 # Blocca se una partenza non arriva, non arriva di nuovo dopo la morte, non resta 60 s, non esce normalmente (un segnale
 # qualsiasi), o se il picco della memoria video di torre, inseguimento o tunnel supera quello del fiume della stessa corsa
 # più il 10% (il fiume regge sul PC dell'utente; il confronto è relativo, i numeri di llvmpipe non contano da soli).
+# In parallelo la stessa prova col binario di Godot (debug): blocca se nel registro c'è una chiamata su un oggetto già
+# liberato ("previously freed") o un errore interno del motore ("ERROR: BUG", per esempio "indexing did not unpair
+# geometries from light", che c'era nella ripartenza della torre della 0.3.17), che nell'export release sono segfault.
 # Il coordinatore lo guarda verde prima di ogni unione in main, come il collaudo. Dura circa 50 minuti.
 name: Prova su Vulkan
 
@@ -83,7 +86,7 @@ jobs:
       - name: Swap da 16 GB (llvmpipe compila le pipeline nella RAM; senza, il runner veniva spento a 6-7 min)
         run: |
           sudo swapoff -a || true
-          sudo fallocate -l 16G /swapfile_prova && sudo chmod 600 /swapfile_prova
+          (sudo fallocate -l 16G /swapfile_prova || sudo fallocate -l 10G /swapfile_prova) && sudo chmod 600 /swapfile_prova
           sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
           free -m
 
@@ -131,8 +134,78 @@ jobs:
             prova_*.log
           retention-days: 14
 
+  # La stessa prova col binario di Godot (una build di debug), in parallelo all'export: lì una chiamata su un oggetto
+  # già liberato è un errore nel registro ("previously freed"), nell'export release un segfault (il crash delle
+  # ripartenze della 0.3.17 su Vulkan si vedeva solo in release). Il cancello resta l'export; questo dice dove.
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        partenza: [torre, inseguimento, tunnel]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache di Godot e dei template
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_BIN_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+
+      - name: Scarica Godot
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Importa il progetto (come la build)
+        run: |
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Swap da 16 GB, Vulkan software e Xvfb
+        run: |
+          sudo swapoff -a || true
+          (sudo fallocate -l 16G /swapfile_prova || sudo fallocate -l 10G /swapfile_prova) && sudo chmod 600 /swapfile_prova
+          sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
+
+      - name: Partenza ${{ matrix.partenza }} in debug, morte e ripartenza, 60 s
+        run: |
+          p=${{ matrix.partenza }}
+          prova="$PWD/prova_debug_$p.log"
+          L=godot_debug_$p.log
+          set +e
+          timeout 100m xvfb-run -a -s "-screen 0 640x360x24" godot --path godot --rendering-driver vulkan \
+            --resolution 640x360 -- --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --registro-prova="$prova" > $L 2>&1
+          echo "CODICE D'USCITA: $?"
+          grep -E 'PROVA: ' "$prova" | tail -6
+          liberati=$(grep -c -E 'previously freed|freed instance' $L)
+          bug=$(grep -c 'ERROR: BUG' $L)
+          echo "chiamate su oggetti liberati: $liberati; errori interni del motore (ERROR: BUG): $bug"
+          grep -n -B2 -A10 -E 'previously freed|freed instance' $L | head -60
+          grep -n -E 'PROVA: |ERROR: BUG' $L | awk '/ERROR: BUG/{if(!b){print; b=1} last=$0; next} {print} END{if(last) print last}'
+          echo "$p liberati=$liberati bug=$bug restato=$(grep -c 'PROVA: RESTATO' "$prova")" > esito_debug_$p.txt
+          exit 0
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: esito-debug-${{ matrix.partenza }}
+          path: |
+            esito_debug_*.txt
+            godot_debug_*.log
+            prova_debug_*.log
+          retention-days: 14
+
   verdetto:
-    needs: partenza
+    needs: [partenza, debug]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -177,6 +250,22 @@ jobs:
           else:
               print("ROSSO fiume: nessun picco del fiume, il confronto non si fa")
               rosso.append("fiume")
+          for p in ["torre", "inseguimento", "tunnel"]:
+              try:
+                  e = {k: int(v) for k, v in re.findall(r"(\w+)=(\d+)", open(f"esito_debug_{p}.txt").read())}
+              except OSError:
+                  print(f"ROSSO {p} (debug): nessun esito")
+                  rosso.append(p + " debug")
+                  continue
+              if e.get("liberati", 0) > 0:
+                  print(f"ROSSO {p} (debug): {e['liberati']} chiamate su oggetti già liberati (in release è un segfault)")
+                  rosso.append(p + " debug")
+              if e.get("bug", 0) > 0:
+                  print(f"ROSSO {p} (debug): {e['bug']} ERROR: BUG del motore (in release può essere un segfault)")
+                  rosso.append(p + " debug")
+              if e.get("restato", 0) < 1:
+                  print(f"ROSSO {p} (debug): non resta 60 s")
+                  rosso.append(p + " debug")
           print("RISULTATO:", "rosso (" + ", ".join(sorted(set(rosso))) + ")" if rosso else "verde")
           sys.exit(1 if rosso else 0)
           EOF
