@@ -143,6 +143,33 @@ def _dist_segmento(P, a, b):
     return np.linalg.norm(P - (a + np.outer(t, ab)), axis=1)
 
 
+def _mano_tutta(P, W, nomi, s):
+    """Pesi della mano [param s] (vedi pesa): la pelle più vicina all'osso della mano che a quello della testa, entro
+    MANO_RAGGIO dal polso, va solo alle ossa del braccio (sfumando negli ultimi 10 cm), e oltre il polso alla mano."""
+    braccio = [nomi.index(f'{o}.{s}') for o in ('braccio', 'avambraccio', 'mano')]
+    polso, punta = np.array(G[f'polso.{s}']), np.array(G[f'mano.{s}'])
+    asse = (punta - polso) / np.linalg.norm(punta - polso)
+    d_mano = _dist_segmento(P, polso, punta)
+    d_testa = _dist_segmento(P, np.array(G['testa']), np.array(G['muso']))
+    d_polso = np.linalg.norm(P - polso, axis=1)
+    idx = np.where((d_mano < d_testa) & (d_polso < MANO_RAGGIO))[0]
+    Wb = W[np.ix_(idx, braccio)]
+    sb = Wb.sum(1, keepdims=True)
+    Wb = np.where(sb > 1e-6, Wb / np.maximum(sb, 1e-6), np.array([[0.0, 0.0, 1.0]]))
+    # oltre il polso tutta alla mano (con 4 cm per passare dall'avambraccio)
+    oltre = np.clip(((P[idx] - polso) @ asse + 0.01) / 0.04, 0.0, 1.0)[:, None]
+    Wb = Wb * (1.0 - oltre) + np.array([[0.0, 0.0, 1.0]]) * oltre
+    nuovi = np.zeros((len(idx), W.shape[1]))
+    nuovi[:, braccio] = Wb
+    f = np.clip((MANO_RAGGIO - d_polso[idx]) / 0.10, 0.0, 1.0)[:, None]
+    W[idx] = W[idx] * (1.0 - f) + nuovi * f
+    print('MANO %s: %d vertici al braccio, %d tutti alla mano' % (s, len(idx), int((oltre[:, 0] * f[:, 0] > 0.999).sum())))
+
+
+# quanto si allarga la pelle della mano dal polso (m): le dita arrivano a 30 cm, il gomito sta a 27
+MANO_RAGGIO = 0.45
+
+
 def pesa(mesh, arm, bocca):
     """Pesi fatti qui (il calore di Blender non riesce su questa mesh): per ogni vertice le ossa più
     vicine (distanza dal segmento dell'osso, con un raggio per osso), poi lisciati lungo la superficie
@@ -193,6 +220,13 @@ def pesa(mesh, arm, bocca):
     W = altre
     W[:, kt] = ht * (1.0 - pm)
     W[:, km] = ht * pm
+    # la mano destra: nel modello è alzata davanti al muso, e le dita lunghe (fino a 30 cm oltre il polso) per distanza
+    # andavano più alla testa, al petto e alla spina che alla mano, e soprattutto all'avambraccio. Lontano dalla posa
+    # del modello la testa le tirava via dalla mano: dita allungate a strisce fino al muso, e fra le strisce si vedeva
+    # il soffitto, come un taglio nel corpo dal bordo chiaro (collaudo della 0.3.17, a 6,0 s, sopra la camera). Qui la
+    # pelle più vicina alla mano che alla testa, attorno al polso, segue solo le ossa del braccio, e oltre il polso solo
+    # la mano
+    _mano_tutta(P, W, nomi, 'R')
     for o in bpy.context.selected_objects:
         o.select_set(False)
     gruppi = {}
