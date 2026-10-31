@@ -82,10 +82,13 @@ func _ready() -> void:
 ##                   come la morte nelle vasche dopo la torre (crash della 0.3.17); il resto conta dal secondo arrivo;
 ## --resta=<s>       chiude il gioco quei secondi dopo l'arrivo (finita la schermata di caricamento e i caricamenti nel
 ##                   thread);
+## --fotogrammi=<n> in più, sia per la morte sia per l'uscita, almeno quei fotogrammi di gioco (senza pausa) dall'arrivo:
+##                   su llvmpipe dopo l'arrivo il gioco va a circa 1 fps e i secondi in tempo vero sarebbero pochi
+##                   fotogrammi; le righe MUORE, RESTATO e PROVA dicono quanti ne ha fatti;
 ## --esci-dopo=<s>   chiude il gioco dopo quei secondi comunque;
 ## --registro-prova=<file>  scrive le righe PROVA anche in quel file, aperto e chiuso a ogni riga (il registro di Godot,
 ##                   se il gioco si chiude di colpo, può restare indietro).
-## Ogni 5 s una riga con la memoria, il picco della memoria video (a ogni fotogramma), la scena e il giocatore.
+## Ogni 5 s una riga coi fotogrammi di gioco, il picco della memoria video (a ogni fotogramma), la scena e il giocatore.
 func _partenza_da_riga() -> void:
 	if _riga_fatta:
 		return
@@ -95,6 +98,7 @@ func _partenza_da_riga() -> void:
 	var esci := 0.0
 	var resta := 0.0
 	var muori := -1.0
+	var fotogrammi := 0
 	for a: String in OS.get_cmdline_user_args():
 		if a.begins_with("--partenza="):
 			partenza = a.get_slice("=", 1)
@@ -106,6 +110,8 @@ func _partenza_da_riga() -> void:
 			resta = a.get_slice("=", 1).to_float()
 		elif a.begins_with("--muori-dopo="):
 			muori = a.get_slice("=", 1).to_float()
+		elif a.begins_with("--fotogrammi="):
+			fotogrammi = a.get_slice("=", 1).to_int()
 		elif a.begins_with("--registro-prova="):
 			_registro_prova = a.substr(17)
 	if partenza == "" and esci <= 0.0 and resta <= 0.0:
@@ -131,7 +137,13 @@ func _partenza_da_riga() -> void:
 	var stato := [-1.0, 0, false]
 	# il picco della memoria video a ogni fotogramma, in tutto e dall'ultimo arrivo (le righe ogni 5 s non lo vedono)
 	var picco := [0, 0]
+	# i fotogrammi di gioco (l'albero non in pausa): in tutto e dall'ultimo arrivo
+	var giocati := [0, 0]
 	albero.process_frame.connect(func() -> void:
+		if not albero.paused:
+			giocati[0] = int(giocati[0]) + 1
+			if float(stato[0]) >= 0.0:
+				giocati[1] = int(giocati[1]) + 1
 		var v := int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20
 		picco[0] = maxi(int(picco[0]), v)
 		if float(stato[0]) >= 0.0:
@@ -152,21 +164,24 @@ func _partenza_da_riga() -> void:
 			stato[0] = adesso
 			stato[1] = sc.get_instance_id()
 			picco[1] = 0
+			giocati[1] = 0
 			_prova("PROVA: ARRIVATO%s a %d s, giocatore a %s" % [" DOPO LA MORTE" if bool(stato[2]) else "", int(adesso),
 					g.global_position])
-		if muori >= 0.0 and not bool(stato[2]) and float(stato[0]) >= 0.0 and adesso - float(stato[0]) >= muori:
+		if muori >= 0.0 and not bool(stato[2]) and float(stato[0]) >= 0.0 and adesso - float(stato[0]) >= muori \
+				and int(giocati[1]) >= fotogrammi:
 			stato[2] = true
 			stato[0] = -1.0
 			GameState.kill_player(&"prova")
-			_prova("PROVA: MUORE (picco video dall'arrivo %d MB; giocatore %s, muore %s, in pausa %s)" % [int(picco[1]),
-					GameState.player != null and is_instance_valid(GameState.player), GameState.is_dying, albero.paused])
-		if resta > 0.0 and float(stato[0]) >= 0.0 and (muori < 0.0 or bool(stato[2])) and adesso - float(stato[0]) >= resta:
-			_prova("PROVA: RESTATO %d s dopo l'arrivo, esco; picco video in tutto %d MB, dall'arrivo %d MB" % [int(resta),
-					int(picco[0]), int(picco[1])])
+			_prova("PROVA: MUORE dopo %d fotogrammi di gioco (picco video dall'arrivo %d MB; giocatore %s, muore %s, in pausa %s)" % [
+					int(giocati[1]), int(picco[1]), GameState.player != null and is_instance_valid(GameState.player), GameState.is_dying, albero.paused])
+		if resta > 0.0 and float(stato[0]) >= 0.0 and (muori < 0.0 or bool(stato[2])) and adesso - float(stato[0]) >= resta \
+				and int(giocati[1]) >= fotogrammi:
+			_prova("PROVA: RESTATO %d s e %d fotogrammi di gioco dopo l'arrivo, esco; picco video in tutto %d MB, dall'arrivo %d MB" % [
+					int(adesso - float(stato[0])), int(giocati[1]), int(picco[0]), int(picco[1])])
 			albero.quit()
-		_prova("PROVA t=%d scena=%s caricamenti=%s pos=%s memoria=%d MB picco_video=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
+		_prova("PROVA t=%d scena=%s caricamenti=%s pos=%s fotogrammi=%d dall_arrivo=%d picco_video=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
 				int(adesso), String(sc.name) if sc else "-", Game.caricamenti_in_corso(), g.global_position if g else "-",
-				OS.get_static_memory_usage() >> 20, int(picco[0]),
+				int(giocati[0]), int(giocati[1]), int(picco[0]),
 				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20,
 				int(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) >> 20,
 				int(Performance.get_monitor(Performance.RENDER_BUFFER_MEM_USED)) >> 20,
