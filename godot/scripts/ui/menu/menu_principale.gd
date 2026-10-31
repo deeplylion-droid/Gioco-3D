@@ -73,26 +73,39 @@ func _ready() -> void:
 
 
 ## Per le prove (la prova su Windows nella CI, il collaudo), dopo il -- della riga di comando: --partenza=<id> parte
-## subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...), --esci-dopo=<s> chiude
-## il gioco dopo quei secondi, --resta=<s> lo chiude quei secondi dopo che si è arrivati (finita la schermata di
-## caricamento e i caricamenti nel thread), e intanto ogni 5 s si scrive nel registro la memoria, la scena e dove è il
-## giocatore. Senza, niente.
+## subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...), --preset=<nome> mette
+## prima quel preset grafico, --esci-dopo=<s> chiude il gioco dopo quei secondi, --resta=<s> lo chiude quei secondi dopo
+## che si è arrivati (finita la schermata di caricamento e i caricamenti nel thread), --registro-prova=<file> scrive le
+## righe PROVA anche in quel file, aperto e chiuso a ogni riga (il registro di Godot, se il gioco si chiude di colpo, può
+## restare indietro). Ogni 5 s una riga con la memoria, la scena e dove è il giocatore. Senza, niente.
 func _partenza_da_riga() -> void:
 	if _riga_fatta:
 		return
 	_riga_fatta = true
 	var partenza := ""
+	var preset := ""
 	var esci := 0.0
 	var resta := 0.0
 	for a: String in OS.get_cmdline_user_args():
 		if a.begins_with("--partenza="):
 			partenza = a.get_slice("=", 1)
+		elif a.begins_with("--preset="):
+			preset = a.get_slice("=", 1)
 		elif a.begins_with("--esci-dopo="):
 			esci = a.get_slice("=", 1).to_float()
 		elif a.begins_with("--resta="):
 			resta = a.get_slice("=", 1).to_float()
+		elif a.begins_with("--registro-prova="):
+			_registro_prova = a.substr(17)
 	if partenza == "" and esci <= 0.0 and resta <= 0.0:
 		return
+	if _registro_prova != "":
+		var f := FileAccess.open(_registro_prova, FileAccess.WRITE)
+		if f:
+			f.close()
+	if preset != "":
+		Grafica.applica_preset(preset)
+		_prova("PROVA: preset %s" % preset)
 	var albero := get_tree()
 	var conta := Timer.new()
 	conta.wait_time = 5.0
@@ -104,13 +117,13 @@ func _partenza_da_riga() -> void:
 		if arrivato[0] < 0.0 and sc and String(sc.name) != "Caricamento" and String(sc.name) != "MenuPrincipale" \
 				and not Game.caricamenti_in_corso():
 			arrivato[0] = Time.get_ticks_msec() / 1000.0
-			print("PROVA: ARRIVATO a %d s, giocatore a %s" % [int(arrivato[0]), g.global_position if g else "-"])
+			_prova("PROVA: ARRIVATO a %d s, giocatore a %s" % [int(arrivato[0]), g.global_position if g else "-"])
 		if resta > 0.0 and arrivato[0] >= 0.0 and Time.get_ticks_msec() / 1000.0 - arrivato[0] >= resta:
-			print("PROVA: RESTATO %d s dopo l'arrivo, esco" % int(resta))
+			_prova("PROVA: RESTATO %d s dopo l'arrivo, esco" % int(resta))
 			albero.quit()
-		print("PROVA pos=%s" % [g.global_position if g else "-"])
-		print("PROVA t=%d scena=%s memoria=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
-				Time.get_ticks_msec() / 1000, String(sc.name) if sc else "-", OS.get_static_memory_usage() >> 20,
+		_prova("PROVA t=%d scena=%s caricamenti=%s pos=%s memoria=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
+				Time.get_ticks_msec() / 1000, String(sc.name) if sc else "-", Game.caricamenti_in_corso(),
+				g.global_position if g else "-", OS.get_static_memory_usage() >> 20,
 				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20,
 				int(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) >> 20,
 				int(Performance.get_monitor(Performance.RENDER_BUFFER_MEM_USED)) >> 20,
@@ -119,10 +132,27 @@ func _partenza_da_riga() -> void:
 	conta.start()
 	if esci > 0.0:
 		albero.create_timer(esci, true, false, true).timeout.connect(func() -> void:
-			print("PROVA: esco dopo ", esci, " s")
+			_prova("PROVA: esco dopo %s s" % esci)
 			albero.quit())
 	if partenza != "":
-		print("PROVA: parto da ", partenza, " -> ", MenuProva.parti(albero, partenza))
+		_prova("PROVA: parto da %s -> %s" % [partenza, MenuProva.parti(albero, partenza)])
+
+
+## Il file di --registro-prova (vuoto: nessuno).
+static var _registro_prova := ""
+
+
+## Una riga PROVA: nel registro di Godot e, se c'è, nel file della prova (aperto e chiuso subito: resta anche se il gioco
+## si chiude di colpo).
+static func _prova(riga: String) -> void:
+	print(riga)
+	if _registro_prova == "":
+		return
+	var f := FileAccess.open(_registro_prova, FileAccess.READ_WRITE)
+	if f:
+		f.seek_end()
+		f.store_line("%s %s" % [Time.get_time_string_from_system(), riga])
+		f.close()
 
 
 func _exit_tree() -> void:

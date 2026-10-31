@@ -67,17 +67,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # il driver di serie (D3D12, come l'utente); descrittori: il limite di D3D12 per la prova, scritto in override.cfg
-        # accanto all'exe (65536 è quello di serie della 0.3.17; fra 65536 e 524288 si vede quanti ne servono al picco)
+        # driver: d3d12 è quello di serie (come l'utente); swiftshader è Vulkan software, quello di Chrome sul runner.
+        # descrittori: il limite di D3D12 della prova, in override.cfg accanto all'exe (65536 è quello di serie della 0.3.17)
         include:
-          - {partenza: torre, descrittori: 65536}
-          - {partenza: torre, descrittori: 131072}
-          - {partenza: torre, descrittori: 262144}
-          - {partenza: torre, descrittori: 524288}
-          - {partenza: inseguimento, descrittori: 65536}
-          - {partenza: inseguimento, descrittori: 524288}
-          - {partenza: tunnel, descrittori: 524288}
-          - {partenza: fiume, descrittori: 524288}
+          - {partenza: torre, descrittori: 65536, preset: alto, driver: d3d12}
+          - {partenza: torre, descrittori: 524288, preset: alto, driver: d3d12}
+          - {partenza: torre, descrittori: 524288, preset: basso, driver: d3d12}
+          - {partenza: inseguimento, descrittori: 524288, preset: alto, driver: d3d12}
+          - {partenza: inseguimento, descrittori: 524288, preset: basso, driver: d3d12}
+          - {partenza: torre, descrittori: 524288, preset: basso, driver: swiftshader}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -90,31 +88,54 @@ jobs:
           "[rendering]`nrendering_device/d3d12/max_resource_descriptors=${{ matrix.descrittori }}`n" | Out-File -Encoding ascii gioco\override.cfg
           Get-Content gioco\override.cfg
 
-      - name: Partenza ${{ matrix.partenza }}, descrittori ${{ matrix.descrittori }}
+      - name: Vulkan con lo SwiftShader di Chrome
+        if: matrix.driver == 'swiftshader'
         shell: pwsh
         run: |
-          $nome = "${{ matrix.partenza }}_${{ matrix.descrittori }}"
+          $icd = Get-ChildItem -Recurse "C:\Program Files\Google\Chrome\Application" -Filter 'vk_swiftshader_icd.json' -ErrorAction SilentlyContinue | Select-Object -First 1
+          Write-Host "ICD: $($icd.FullName)"
+          "VK_ICD_FILENAMES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
+          "VK_DRIVER_FILES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
+
+      - name: Partenza ${{ matrix.partenza }}, descrittori ${{ matrix.descrittori }}, preset ${{ matrix.preset }}, ${{ matrix.driver }}
+        shell: pwsh
+        run: |
+          $nome = "${{ matrix.partenza }}_${{ matrix.descrittori }}_${{ matrix.preset }}_${{ matrix.driver }}"
           $log = "$PWD\godot_$nome.log"
-          $arg = "--resolution 1280x720 --log-file `"$log`" -- --partenza=${{ matrix.partenza }} --resta=60"
+          $prova = "$PWD\prova_$nome.log"
+          $drv = if ("${{ matrix.driver }}" -eq "swiftshader") { "--rendering-driver vulkan " } else { "" }
+          $arg = "$drv--resolution 1280x720 --log-file `"$log`" -- --partenza=${{ matrix.partenza }} --preset=${{ matrix.preset }} --resta=60 --registro-prova=`"$prova`""
+          Write-Host "ARGOMENTI: $arg"
           $p = Start-Process -FilePath gioco\JillyJubilee.exe -ArgumentList $arg -PassThru
-          $finito = $p.WaitForExit(165 * 60 * 1000)
-          if (-not $finito) { Write-Host "ANCORA ACCESO dopo 165 min: lo chiudo"; $p.Kill(); $p.WaitForExit() }
+          $fine = (Get-Date).AddMinutes(165)
+          while (-not $p.HasExited -and (Get-Date) -lt $fine) {
+            Start-Sleep -Seconds 5
+            $p.Refresh()
+            $os = Get-CimInstance Win32_OperatingSystem
+            if (-not $p.HasExited) {
+              Write-Host ("MEM {0:HH:mm:ss} privata={1} MB working_set={2} MB picco_ws={3} MB ram_libera={4} MB" -f (Get-Date), [int]($p.PrivateMemorySize64 / 1MB), [int]($p.WorkingSet64 / 1MB), [int]($p.PeakWorkingSet64 / 1MB), [int]($os.FreePhysicalMemory / 1KB))
+            }
+          }
+          if (-not $p.HasExited) { Write-Host "ANCORA ACCESO dopo 165 min: lo chiudo"; $p.Kill(); $p.WaitForExit() }
           $codice = $p.ExitCode
           Write-Host ("CODICE D'USCITA: {0} (0x{1:X8})" -f $codice, $codice)
-          "$nome codice=$codice finito=$finito" | Out-File esito.txt
+          "$nome codice=$codice" | Out-File esito.txt
+          Write-Host "--- registro della prova:"
+          if (Test-Path $prova) { Get-Content $prova | Select-Object -Last 25 } else { Write-Host "NESSUN REGISTRO DELLA PROVA" }
           if (Test-Path $log) {
-            Select-String -Path $log -Pattern 'Using Device|PROVA: |descriptor heap|CRASH|Exception' | Select-Object -First 12 | ForEach-Object { $_.Line }
-            Write-Host "--- errori dei descrittori: $((Select-String -Path $log -Pattern 'descriptor heap').Count)"
-            Write-Host "--- ultime righe PROVA:"
-            Select-String -Path $log -Pattern '^PROVA' | Select-Object -Last 6 | ForEach-Object { $_.Line }
-          } else { Write-Host "NESSUN REGISTRO" }
+            Write-Host "--- dal registro di Godot:"
+            Select-String -Path $log -Pattern 'Using Device' | Select-Object -First 2 | ForEach-Object { $_.Line }
+            Write-Host "errori dei descrittori: $((Select-String -Path $log -Pattern 'descriptor heap').Count)"
+            Get-Content $log | Select-Object -Last 15
+          }
           Get-WinEvent -FilterHashtable @{LogName='Application'; Id=1000} -MaxEvents 1 -ErrorAction SilentlyContinue | Format-List TimeCreated, Message
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: registro-${{ matrix.partenza }}-${{ matrix.descrittori }}
+          name: registro-${{ matrix.partenza }}-${{ matrix.descrittori }}-${{ matrix.preset }}-${{ matrix.driver }}
           path: |
             godot_*.log
+            prova_*.log
             esito.txt
           retention-days: 7
