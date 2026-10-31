@@ -43,6 +43,8 @@ func _run() -> void:
 	for i in 30:
 		await get_tree().process_frame
 	print("PRONTO giocatore a %s, %d luci" % [p.global_position, torre.find_children("*", "Light3D", true, false).size()])
+	# (lei non prende: la presa farebbe ripartire dalla sala intera, che renderizzata qui non ci sta in memoria)
+	ins.tempo_presa = 9999.0
 	ins.call(&"_lei_sale", "vasca_0", ins.call(&"_posto_vasca", 0))
 	for s in SECONDI:
 		await get_tree().create_timer(1.0, true, false, true).timeout
