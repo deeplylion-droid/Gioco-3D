@@ -70,12 +70,14 @@ jobs:
         # driver: d3d12 è quello di serie (come l'utente); swiftshader è Vulkan software, quello di Chrome sul runner.
         # descrittori: il limite di D3D12 della prova, in override.cfg accanto all'exe (65536 è quello di serie della 0.3.17)
         include:
-          - {partenza: torre, descrittori: 65536, preset: alto, driver: d3d12}
-          - {partenza: torre, descrittori: 524288, preset: alto, driver: d3d12}
-          - {partenza: torre, descrittori: 524288, preset: basso, driver: d3d12}
-          - {partenza: inseguimento, descrittori: 524288, preset: alto, driver: d3d12}
-          - {partenza: inseguimento, descrittori: 524288, preset: basso, driver: d3d12}
-          - {partenza: torre, descrittori: 524288, preset: basso, driver: swiftshader}
+          # bisezione sulla 0.3.17 (torre, 524288, basso): "base" si chiude a 0x29efc55; A senza shadow_caster_mask e
+          # strato 14, B acqua delle condotte della 0.3.16, C tutte e due
+          - {partenza: torre, descrittori: 524288, preset: basso, driver: d3d12, variante: base, argomenti: ""}
+          - {partenza: torre, descrittori: 524288, preset: basso, driver: d3d12, variante: A, argomenti: "--senza-maschera"}
+          - {partenza: torre, descrittori: 524288, preset: basso, driver: d3d12, variante: B, argomenti: "--acqua-0316"}
+          - {partenza: torre, descrittori: 524288, preset: basso, driver: d3d12, variante: C, argomenti: "--senza-maschera --acqua-0316"}
+          - {partenza: tunnel, descrittori: 524288, preset: basso, driver: d3d12, variante: base, argomenti: ""}
+          - {partenza: torre, descrittori: 524288, preset: basso, driver: dozen, variante: base, argomenti: ""}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -97,14 +99,29 @@ jobs:
           "VK_ICD_FILENAMES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
           "VK_DRIVER_FILES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
 
-      - name: Partenza ${{ matrix.partenza }}, descrittori ${{ matrix.descrittori }}, preset ${{ matrix.preset }}, ${{ matrix.driver }}
+      - name: Vulkan sopra D3D12 (Dozen di mesa-dist-win)
+        if: matrix.driver == 'dozen'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $rel = Invoke-RestMethod -Headers @{Authorization = "Bearer $env:GH_TOKEN"} https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest
+          $a = $rel.assets | Where-Object { $_.name -match 'release-msvc\.7z$' } | Select-Object -First 1
+          Invoke-WebRequest $a.browser_download_url -OutFile mesa.7z
+          7z x mesa.7z -omesa | Out-Null
+          $icd = Get-ChildItem -Recurse mesa\x64 -Filter 'dzn_icd*.json' | Select-Object -First 1
+          Write-Host "ICD: $($icd.FullName)"
+          "VK_ICD_FILENAMES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
+          "VK_DRIVER_FILES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
+
+      - name: Partenza ${{ matrix.partenza }}, descrittori ${{ matrix.descrittori }}, preset ${{ matrix.preset }}, ${{ matrix.driver }}, variante ${{ matrix.variante }}
         shell: pwsh
         run: |
-          $nome = "${{ matrix.partenza }}_${{ matrix.descrittori }}_${{ matrix.preset }}_${{ matrix.driver }}"
+          $nome = "${{ matrix.partenza }}_${{ matrix.descrittori }}_${{ matrix.preset }}_${{ matrix.driver }}_${{ matrix.variante }}"
           $log = "$PWD\godot_$nome.log"
           $prova = "$PWD\prova_$nome.log"
-          $drv = if ("${{ matrix.driver }}" -eq "swiftshader") { "--rendering-driver vulkan " } else { "" }
-          $arg = "$drv--resolution 1280x720 --log-file `"$log`" -- --partenza=${{ matrix.partenza }} --preset=${{ matrix.preset }} --resta=60 --registro-prova=`"$prova`""
+          $drv = if ("${{ matrix.driver }}" -in @("swiftshader", "dozen")) { "--rendering-driver vulkan " } else { "" }
+          $arg = "$drv--resolution 1280x720 --log-file `"$log`" -- --partenza=${{ matrix.partenza }} --preset=${{ matrix.preset }} --resta=60 --registro-prova=`"$prova`" ${{ matrix.argomenti }}"
           Write-Host "ARGOMENTI: $arg"
           $p = Start-Process -FilePath gioco\JillyJubilee.exe -ArgumentList $arg -PassThru
           $fine = (Get-Date).AddMinutes(165)
@@ -133,7 +150,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: registro-${{ matrix.partenza }}-${{ matrix.descrittori }}-${{ matrix.preset }}-${{ matrix.driver }}
+          name: registro-${{ matrix.partenza }}-${{ matrix.descrittori }}-${{ matrix.preset }}-${{ matrix.driver }}-${{ matrix.variante }}
           path: |
             godot_*.log
             prova_*.log

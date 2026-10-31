@@ -1169,9 +1169,12 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	if l.shadow_enabled:
 		corpo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		l.shadow_blur = 4.0
-		l.shadow_caster_mask = 0xFFFFF & ~STRATO_SENZA_OMBRA_EST
+		# (SOLO NEL BRANCH DELLA PROVA SU WINDOWS: -- --senza-maschera, la bisezione del crash della 0.3.17)
 		var ta := find_child("torre_A", true, false) as GeometryInstance3D
-		if ta:
+		if OS.get_cmdline_user_args().has("--senza-maschera"):
+			pass
+		elif ta:
+			l.shadow_caster_mask = 0xFFFFF & ~STRATO_SENZA_OMBRA_EST
 			ta.layers = STRATO_SENZA_OMBRA_EST
 		else:
 			push_warning("torre: niente torre_A per lo strato senza l'ombra del muro est")

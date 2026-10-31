@@ -103,6 +103,15 @@ func _partenza_da_riga() -> void:
 		var f := FileAccess.open(_registro_prova, FileAccess.WRITE)
 		if f:
 			f.close()
+	# (bisezione del crash della 0.3.17: l'acqua delle vasche delle condotte con lo shader della 0.3.16; il materiale resta
+	# in memoria qui, così chi lo carica dopo trova lo stesso, già cambiato)
+	if OS.get_cmdline_user_args().has("--acqua-0316"):
+		var m := load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial
+		m.shader = load("res://shaders/water_inseguimento_0316.gdshader") as Shader
+		_tenuti.append(m)
+		_prova("PROVA: acqua delle condotte con lo shader della 0.3.16")
+	if OS.get_cmdline_user_args().has("--senza-maschera"):
+		_prova("PROVA: lampade del muro est senza shadow_caster_mask e torre_A sui suoi strati")
 	if preset != "":
 		Grafica.applica_preset(preset)
 		_prova("PROVA: preset %s" % preset)
@@ -138,6 +147,8 @@ func _partenza_da_riga() -> void:
 		_prova("PROVA: parto da %s -> %s" % [partenza, MenuProva.parti(albero, partenza)])
 
 
+## Le risorse cambiate per la prova (restano in memoria).
+static var _tenuti: Array[Resource] = []
 ## Il file di --registro-prova (vuoto: nessuno).
 static var _registro_prova := ""
 
