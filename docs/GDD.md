@@ -243,6 +243,17 @@ Le parole dell'utente: "Una stanza quadrata con un 5x5 di piccole pozze quadrate
 - **Da decidere con l'utente** prima di costruire: il posto e la stanza precedente col cartello; come si toglie un colore; cosa succede se sbagli; cosa apre l'enigma risolto; come ci si muove con le pozze contigue.
 - **Già deciso**: 25 pozze quadrate in 5x5, contigue a scacchiera; acqua colorata; stanza ben illuminata; si risolve togliendo 3 colori esatti; l'indizio sono i 3 colori disegnati a pastello su un cartello di vietato l'accesso nella stanza prima. Vale la regola delle scritte: il cartello è solo disegni.
 
+**Scelte dell'utente (31 ottobre, pagina "La stanza delle pozze", https://claude.ai/artifact/PnY4VnxtpQxUWfvLoco66Y; proposte di enigmi). Tutte le consigliate:**
+- **Posto 1, dopo l'infermeria**: la strada diventa fiume lento, infermeria, pozze, scala di servizio, magazzino, sala grande. Il cartello sta accanto alla porta nord dell'infermeria, da cui si esce, all'altezza degli occhi, con sopra una piccola lampadina bianca, perché la luce verde dell'uscita falserebbe i pastelli; l'infermeria per il resto resta buia. La stanza è illuminata perché le sue luci sono sulla linea delle pompe riaccese. Si esce da una porta stagna sul piede della scala di servizio, che si sposta di qualche metro. La stanza si carica con fiume e infermeria, non nella sala grande.
+- **Togliere un colore, A**: le pozze dello stesso colore sono collegate sotto il pavimento. Aspirando da una pozza col zaino si svuotano col gorgo tutte quelle del suo colore; bastano 3 aspirate. Il serbatoio prende il colore aspirato, e quello di prima si butta da solo, come agli acquari.
+- **Colori, A e A**: 5 colori, 5 pozze per colore mescolate nella griglia, ognuno con almeno una pozza sul bordo. I colori sono arancione, rosa, viola, turchese e bianco latte, diversi da quelli degli acquari (giallo, blu, verde) e delle turbine della sala pompe (blu, giallo, rosso).
+- **Se sbagli, A**: il controllo si fa al terzo colore tolto. Se uno è sbagliato si accende una lampada rossa, si sente lo scarico e in pochi secondi tutte le pozze si riempiono di nuovo; si riprova, non si muore.
+- **Risolto, A**: si apre la porta d'uscita, una porta stagna con una lampada rossa finché è chiusa e verde quando si apre.
+- **Come ci si muove, A**: una passerella di grigliato larga 1,2 m tutto intorno; le pozze sono profonde 70-80 cm, a filo del pavimento, con un bordino di piastrelle, e si aspira dalla passerella.
+- **Cartello, A**: il cartello di divieto del parco (cerchio rosso, barra bianca, sagoma di un bambino con la mano alzata) e sopra, disegnati a pastello dai bambini, tre quadratini pieni dei 3 colori giusti, come tre pozze, con la stessa mano del disegno degli acquari. Nessuna scritta.
+- **Vederla prima: no**: la squadra la costruisce, un'altra squadra la ricontrolla, e l'utente la vede nella build.
+- Checkpoint all'ingresso della stanza e a enigma risolto. Prima di costruire si controlla lo spazio dietro l'infermeria.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
