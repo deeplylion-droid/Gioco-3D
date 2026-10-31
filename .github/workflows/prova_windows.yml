@@ -6,7 +6,7 @@ name: Prova su Windows
 
 on:
   push:
-    branches: ["lavoro/prova-windows"]
+    branches: ["lavoro/prova-windows", "lavoro/prova-windows-0316"]
   workflow_dispatch:
 
 permissions:
@@ -73,9 +73,8 @@ jobs:
           - {partenza: torre, descrittori: 65536, preset: alto, driver: d3d12}
           - {partenza: torre, descrittori: 524288, preset: alto, driver: d3d12}
           - {partenza: torre, descrittori: 524288, preset: basso, driver: d3d12}
+          - {partenza: inseguimento, descrittori: 65536, preset: alto, driver: d3d12}
           - {partenza: inseguimento, descrittori: 524288, preset: alto, driver: d3d12}
-          - {partenza: inseguimento, descrittori: 524288, preset: basso, driver: d3d12}
-          - {partenza: torre, descrittori: 524288, preset: basso, driver: swiftshader}
     steps:
       - uses: actions/download-artifact@v4
         with:

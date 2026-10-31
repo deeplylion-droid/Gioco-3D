@@ -6,7 +6,7 @@ name: Build del gioco
 on:
   push:
     # (lavoro/prova-windows ha la sua prova, prova_windows.yml: lì la build intera non serve)
-    branches: ["**", "!lavoro/prova-windows"]
+    branches: ["**", "!lavoro/prova-windows", "!lavoro/prova-windows-0316"]
   workflow_dispatch:
 
 permissions:
