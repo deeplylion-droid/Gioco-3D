@@ -8,6 +8,8 @@ extends Node
 ## - "_davanti": dagli occhi del giocatore sul pavimento davanti al cartellone (il più vicino trovato coi raggi);
 ## - "_vicino": ravvicinato tecnico a 1,5 m dal centro, per vedere come la carta sta sulla cornice e sul muro.
 ## Con LUCE_TECNICA nell'ambiente, nei ravvicinati una lampadina accanto alla camera (solo tecnica, nel gioco non c'è).
+## Con VICINO_M=<m> il ravvicinato a quella distanza (sotto 1 m col campo largo). Stampa anche quanto spazio c'è davanti
+## a ogni cartellone (il primo ostacolo coi raggi dalla carta in fuori).
 ## Con SOLO=<nome> nell'ambiente solo quel cartellone, due volte dopo e due prima (per vedere cosa cambia fra due scatti).
 ## Uso (sotto il lock): xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --fixed-fps 60
 ##   --resolution 1280x720 --script res://tests/run.gd -- res://proposte/poster_sala/scatti_cartelloni_torre.gd <cartella>
@@ -97,7 +99,17 @@ func _run() -> void:
 					break
 			if trovato:
 				break
-		viste.append(["%s_vicino" % nome, centro + davanti * 1.5, centro, 70.0])
+		# quanto spazio c'è davanti al cartellone (raggi dalla carta in fuori, su una griglia 5 x 3)
+		var minimo := INF
+		for i in 5:
+			for j in 3:
+				var q := c.global_transform * Vector3(-1.4 + i * 0.7, 0.2 + j * 0.7, 0.04)
+				var h := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(q, q + davanti * 3.0, Layers.WORLD))
+				if not h.is_empty():
+					minimo = minf(minimo, q.distance_to(h.position))
+		print("TORRE %s: davanti alla carta il primo ostacolo a %.2f m" % [nome, minimo])
+		var vicino := float(OS.get_environment("VICINO_M")) if OS.get_environment("VICINO_M") != "" else 1.5
+		viste.append(["%s_vicino" % nome, centro + davanti * vicino, centro, 70.0 if vicino >= 1.0 else 100.0])
 	# con LUCE_TECNICA una lampadina neutra accanto alla camera nei ravvicinati, solo per vedere il cartellone al buio (nel
 	# gioco non c'è)
 	var lampadina: OmniLight3D = null
