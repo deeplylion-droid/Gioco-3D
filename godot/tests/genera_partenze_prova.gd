@@ -43,6 +43,8 @@ const FATTI := {
 		"Risalita/Infermeria/Interruttore": {"powered": true},
 		"Risalita/Infermeria/Cassetto14": {"aperto": true},
 		"Risalita/Infermeria/Cassaforte": {"aperta": true},
+		# la stanza delle pozze colorate risolta: tolti i tre colori del cartello, la porta stagna aperta (EnigmaPozze)
+		"Risalita/StanzaPozze/EnigmaPozze": {"stato": 2, "tolti": ["turchese", "viola", "arancione"], "svuotando": []},
 		"Tecnici/Logica/LettoreTessera": {"aperto": true},
 		"Tecnici/Logica/SerrandaMagazzino": {"aperta": true, "latched": true, "open": 1.0},
 	},
