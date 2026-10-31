@@ -111,6 +111,13 @@ func _partenza_da_riga() -> void:
 	conta.wait_time = 5.0
 	conta.process_mode = Node.PROCESS_MODE_ALWAYS
 	var arrivato := [-1.0]
+	# il picco della memoria video a ogni fotogramma: in tutto, e dall'arrivo (le righe ogni 5 s non lo vedono)
+	var picco := [0, 0]
+	albero.process_frame.connect(func() -> void:
+		var v := int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20
+		picco[0] = maxi(int(picco[0]), v)
+		if arrivato[0] >= 0.0:
+			picco[1] = maxi(int(picco[1]), v))
 	conta.timeout.connect(func() -> void:
 		var sc := albero.current_scene
 		var g := albero.get_first_node_in_group(&"player") as Node3D
@@ -119,11 +126,12 @@ func _partenza_da_riga() -> void:
 			arrivato[0] = Time.get_ticks_msec() / 1000.0
 			_prova("PROVA: ARRIVATO a %d s, giocatore a %s" % [int(arrivato[0]), g.global_position if g else "-"])
 		if resta > 0.0 and arrivato[0] >= 0.0 and Time.get_ticks_msec() / 1000.0 - arrivato[0] >= resta:
-			_prova("PROVA: RESTATO %d s dopo l'arrivo, esco" % int(resta))
+			_prova("PROVA: RESTATO %d s dopo l'arrivo, esco; picco video in tutto %d MB, dall'arrivo %d MB" % [int(resta),
+					int(picco[0]), int(picco[1])])
 			albero.quit()
-		_prova("PROVA t=%d scena=%s caricamenti=%s pos=%s memoria=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
+		_prova("PROVA t=%d scena=%s caricamenti=%s pos=%s memoria=%d MB picco_video=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
 				Time.get_ticks_msec() / 1000, String(sc.name) if sc else "-", Game.caricamenti_in_corso(),
-				g.global_position if g else "-", OS.get_static_memory_usage() >> 20,
+				g.global_position if g else "-", OS.get_static_memory_usage() >> 20, int(picco[0]),
 				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20,
 				int(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) >> 20,
 				int(Performance.get_monitor(Performance.RENDER_BUFFER_MEM_USED)) >> 20,
