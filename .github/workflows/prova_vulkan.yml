@@ -2,9 +2,12 @@
 # release Linux, Vulkan software (llvmpipe) su Xvfb, e per ogni partenza diretta del menu di prova (--partenza, vedi
 # MenuPrincipale._partenza_da_riga) l'arrivo, una morte e la ripartenza dal checkpoint, poi 60 s di gioco. Il crash della
 # 0.3.17 (segfault nelle ripartenze oltre il portone, lo stesso già nella 0.3.16) qui si vedeva; la 0.3.18 lo toglie.
-# Blocca se una partenza non arriva, non arriva di nuovo dopo la morte, non resta 60 s, non esce normalmente (un segnale
-# qualsiasi), o se il picco della memoria video di torre, inseguimento o tunnel supera quello del fiume della stessa corsa
+# Ogni fase (prima della morte e dopo il riarrivo) dura i secondi e almeno FOTOGRAMMI fotogrammi di gioco (su llvmpipe
+# dopo l'arrivo si va a circa 1 fps). Blocca se una partenza non arriva, non arriva di nuovo dopo la morte, non resta,
+# non esce normalmente, o se il picco della memoria video di torre, inseguimento o tunnel supera quello del fiume della stessa corsa
 # più il 10% (il fiume regge sul PC dell'utente; il confronto è relativo, i numeri di llvmpipe non contano da soli).
+# Un rosso dice la causa: la memoria del runner (OOM o SIGKILL; il runner è al limite, RSS fino a 14,8 GB e swap fino a
+# 12,9 su 16), il tempo scaduto, o un segnale del gioco (SIGSEGV...): solo l'ultimo è un crash.
 # In parallelo la stessa prova col binario di Godot (debug): blocca se nel registro c'è una chiamata su un oggetto già
 # liberato ("previously freed") o un errore interno del motore ("ERROR: BUG", per esempio "indexing did not unpair
 # geometries from light", che c'era nella ripartenza della torre della 0.3.17), che nell'export release sono segfault.
@@ -28,6 +31,9 @@ env:
   GODOT_BIN_DIR: /home/runner/godot-bin
   # la regola del picco: le ripartenze al più il fiume più questo margine (in percento)
   MARGINE_PICCO: "10"
+  # dopo ogni arrivo (anche quello dopo la morte) almeno questi fotogrammi di gioco, oltre ai secondi: su llvmpipe dopo
+  # l'arrivo si va a circa 1 fps, e 20 s o 60 s in tempo vero sarebbero una ventina di fotogrammi
+  FOTOGRAMMI: "300"
 
 jobs:
   esporta:
@@ -103,7 +109,7 @@ jobs:
           # la memoria della macchina ogni 5 s, nel log del job (resta anche se il runner muore)
           ( while sleep 5; do
               pid=$(pgrep -f 'gioco/JillyJubilee.x86_64 --rendering' | tail -1)
-              [ -n "$pid" ] && echo "MEM $(date +%T) rss=$(( $(awk '/VmRSS/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB libera=$(( $(awk '/MemAvailable/{print $2}' /proc/meminfo) / 1024 )) MB swap_usato=$(( ( $(awk '/SwapTotal/{print $2}' /proc/meminfo) - $(awk '/SwapFree/{print $2}' /proc/meminfo) ) / 1024 )) MB"
+              [ -n "$pid" ] && echo "MEM $(date +%T) rss=$(( $(awk '/VmRSS/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB libera=$(( $(awk '/MemAvailable/{print $2}' /proc/meminfo) / 1024 )) MB swap_usato=$(( ( $(awk '/SwapTotal/{print $2}' /proc/meminfo) - $(awk '/SwapFree/{print $2}' /proc/meminfo) ) / 1024 )) MB" | tee -a mem_$p.txt
             done ) &
           M=$!
           ( sleep 20; tail -F "$prova" 2>/dev/null | sed 's/^/PROVA_LIVE /' ) &
@@ -111,7 +117,9 @@ jobs:
           set +e
           timeout 160m xvfb-run -a -s "-screen 0 640x360x24" gdb -q -batch -ex run -ex bt -ex "thread apply all bt 15" \
             --args gioco/JillyJubilee.x86_64 --rendering-driver vulkan --resolution 640x360 -- \
-            --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --registro-prova="$prova" > godot_$p.log 2>&1
+            --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --fotogrammi=$FOTOGRAMMI --registro-prova="$prova" \
+            > godot_$p.log 2>&1
+          codice=$?
           kill $M $T 2>/dev/null; pkill -f 'tail -F' || true
           # l'esito per il verdetto: arrivato, arrivato di nuovo dopo la morte, restato, uscita normale, picco
           arrivato=$(grep -c 'PROVA: ARRIVATO a' "$prova")
@@ -119,7 +127,17 @@ jobs:
           restato=$(grep -c 'PROVA: RESTATO' "$prova")
           normale=$(grep -c 'exited normally' godot_$p.log)
           picco=$(grep -o 'picco video in tutto [0-9]* MB' "$prova" | grep -o '[0-9]*' | tail -1)
-          echo "$p arrivato=$arrivato di_nuovo=$di_nuovo restato=$restato normale=$normale picco=${picco:-0}" | tee esito_$p.txt
+          fotogrammi=$(grep -o 'e [0-9]* fotogrammi di gioco dopo' "$prova" | grep -o '[0-9]*' | tail -1)
+          # perché non è uscito normalmente: tempo scaduto (timeout dà 124), la memoria del runner (l'OOM killer del
+          # kernel, o il processo ucciso con SIGKILL), o un segnale del gioco (SIGSEGV, SIGABRT...)
+          scaduto=$([ $codice -eq 124 ] && echo 1 || echo 0)
+          oom=$( (sudo dmesg 2>/dev/null; sudo journalctl -k -q 2>/dev/null) | grep -ciE 'out of memory|oom-kill|oom_reaper')
+          segnale=$(grep -oE 'received signal SIG[A-Z]+|terminated with signal SIG[A-Z]+' godot_$p.log | grep -oE 'SIG[A-Z]+' | head -1)
+          rss_max=$(grep -o 'rss=[0-9]*' mem_$p.txt 2>/dev/null | grep -o '[0-9]*' | sort -n | tail -1)
+          swap_max=$(grep -o 'swap_usato=[0-9]*' mem_$p.txt 2>/dev/null | grep -o '[0-9]*' | sort -n | tail -1)
+          echo "$p arrivato=$arrivato di_nuovo=$di_nuovo restato=$restato normale=$normale picco=${picco:-0}" \
+            "fotogrammi=${fotogrammi:-0} codice=$codice scaduto=$scaduto oom=$oom rss_max=${rss_max:-0} swap_max=${swap_max:-0}" \
+            "segnale=${segnale:-nessuno}" | tee esito_$p.txt
           echo "--- segnali e backtrace:"
           grep -E 'received signal|^#[0-9]+ ' godot_$p.log | head -40
           exit 0
@@ -132,6 +150,7 @@ jobs:
             esito_*.txt
             godot_*.log
             prova_*.log
+            mem_*.txt
           retention-days: 14
 
   # La stessa prova col binario di Godot (una build di debug), in parallelo all'export: lì una chiamata su un oggetto
@@ -139,7 +158,7 @@ jobs:
   # ripartenze della 0.3.17 su Vulkan si vedeva solo in release). Il cancello resta l'export; questo dice dove.
   debug:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 140
     strategy:
       fail-fast: false
       matrix:
@@ -182,16 +201,21 @@ jobs:
           prova="$PWD/prova_debug_$p.log"
           L=godot_debug_$p.log
           set +e
-          timeout 100m xvfb-run -a -s "-screen 0 640x360x24" godot --path godot --rendering-driver vulkan \
-            --resolution 640x360 -- --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --registro-prova="$prova" > $L 2>&1
-          echo "CODICE D'USCITA: $?"
+          timeout 120m xvfb-run -a -s "-screen 0 640x360x24" godot --path godot --rendering-driver vulkan \
+            --resolution 640x360 -- --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --fotogrammi=$FOTOGRAMMI \
+            --registro-prova="$prova" > $L 2>&1
+          codice=$?
+          echo "CODICE D'USCITA: $codice"
+          scaduto=$([ $codice -eq 124 ] && echo 1 || echo 0)
+          oom=$( (sudo dmesg 2>/dev/null; sudo journalctl -k -q 2>/dev/null) | grep -ciE 'out of memory|oom-kill|oom_reaper')
           grep -E 'PROVA: ' "$prova" | tail -6
           liberati=$(grep -c -E 'previously freed|freed instance' $L)
           bug=$(grep -c 'ERROR: BUG' $L)
           echo "chiamate su oggetti liberati: $liberati; errori interni del motore (ERROR: BUG): $bug"
           grep -n -B2 -A10 -E 'previously freed|freed instance' $L | head -60
           grep -n -E 'PROVA: |ERROR: BUG' $L | awk '/ERROR: BUG/{if(!b){print; b=1} last=$0; next} {print} END{if(last) print last}'
-          echo "$p liberati=$liberati bug=$bug restato=$(grep -c 'PROVA: RESTATO' "$prova")" > esito_debug_$p.txt
+          echo "$p liberati=$liberati bug=$bug restato=$(grep -c 'PROVA: RESTATO' "$prova") codice=$codice scaduto=$scaduto oom=$oom" \
+            | tee esito_debug_$p.txt
           exit 0
 
       - uses: actions/upload-artifact@v4
@@ -219,24 +243,41 @@ jobs:
           cat esito_*.txt || true
           python3 - <<'EOF'
           import os, re, sys
+          def causa(e, riga=""):
+              # perché una prova non è andata: la macchina (memoria del runner, tempo scaduto) o il gioco (un segnale)
+              m = re.search(r"segnale=(SIG[A-Z]+)", riga)
+              sig = m.group(1) if m else ""
+              if e.get("oom", 0) > 0 or sig == "SIGKILL":
+                  return ("MEMORIA DEL RUNNER (OOM: il kernel ha ucciso il processo; non è un crash del gioco; "
+                          f"rss max {e.get('rss_max', 0)} MB, swap max {e.get('swap_max', 0)} MB)")
+              if e.get("scaduto", 0) > 0:
+                  return "TEMPO SCADUTO (timeout: il gioco era ancora vivo; non è un crash)"
+              if sig:
+                  return f"SEGNALE {sig} DEL GIOCO (crash; il backtrace è nel log del job)"
+              return f"codice d'uscita {e.get('codice', '?')}, senza segnale né OOM"
           esiti = {}
+          righe = {}
           for p in ["torre", "inseguimento", "tunnel", "fiume"]:
               try:
                   riga = open(f"esito_{p}.txt").read()
               except OSError:
-                  print(f"ROSSO {p}: nessun esito (il job non è arrivato in fondo)")
+                  print(f"ROSSO {p}: nessun esito: il runner è morto prima di scriverlo, quasi sempre la MEMORIA DEL "
+                        "RUNNER (non è un crash del gioco: vedi le ultime righe MEM nel log del job)")
                   esiti[p] = None
                   continue
+              righe[p] = riga
               esiti[p] = {k: int(v) for k, v in re.findall(r"(\w+)=(\d+)", riga)}
           rosso = [p for p, e in esiti.items() if e is None]
           for p, e in esiti.items():
               if e is None:
                   continue
               for k, cosa in [("arrivato", "non arriva"), ("di_nuovo", "non arriva di nuovo dopo la morte"),
-                              ("restato", "non resta 60 s"), ("normale", "non esce normalmente (un segnale?)")]:
+                              ("restato", "non resta 60 s e i fotogrammi"), ("normale", "non esce normalmente")]:
                   if e.get(k, 0) < 1:
-                      print(f"ROSSO {p}: {cosa}")
+                      print(f"ROSSO {p}: {cosa}: {causa(e, righe[p])}")
                       rosso.append(p)
+              print(f"{p}: {e.get('fotogrammi', 0)} fotogrammi di gioco dopo il riarrivo, rss max {e.get('rss_max', 0)} MB, "
+                    f"swap max {e.get('swap_max', 0)} MB")
           margine = int(os.environ.get("MARGINE_PICCO", "10"))
           fiume = (esiti.get("fiume") or {}).get("picco", 0)
           if fiume > 0:
@@ -264,7 +305,7 @@ jobs:
                   print(f"ROSSO {p} (debug): {e['bug']} ERROR: BUG del motore (in release può essere un segfault)")
                   rosso.append(p + " debug")
               if e.get("restato", 0) < 1:
-                  print(f"ROSSO {p} (debug): non resta 60 s")
+                  print(f"ROSSO {p} (debug): non resta 60 s e i fotogrammi: {causa(e)}")
                   rosso.append(p + " debug")
           print("RISULTATO:", "rosso (" + ", ".join(sorted(set(rosso))) + ")" if rosso else "verde")
           sys.exit(1 if rosso else 0)
