@@ -80,6 +80,135 @@
    ],
    "aperta": true
   },
+  "Risalita/StanzaPozze/EnigmaPozze": {
+   "stato": 2,
+   "tolti": [
+    "turchese",
+    "viola",
+    "arancione"
+   ],
+   "svuotando": []
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_0": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_0": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_0": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_0": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_0": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_1": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_1": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_1": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_1": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_1": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_2": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_2": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_2": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_2": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_2": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_3": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_3": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_3": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_3": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_3": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_4": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_4": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_4": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_4": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_4": {
+   "fill": 0.0,
+   "mix": {}
+  },
   "Risalita/ObloPersonale": {
    "finito": false
   },
@@ -152,11 +281,11 @@
    "mix": {}
   },
   "Vasche/VascaBimbi1": {
-   "fill": 0.65680620145651,
+   "fill": 0.656589147196555,
    "mix": {}
   },
   "Vasche/VascaBimbi2": {
-   "fill": 0.470759689828613,
+   "fill": 0.470542635568658,
    "mix": {}
   },
   "Tecnici/AgnellinoScala": {
@@ -265,6 +394,6 @@
   ]
  },
  "luci": 2,
- "time": 1793287288.97541,
+ "time": 1793478864.08052,
  "partenza_prova": "tunnel"
 }
