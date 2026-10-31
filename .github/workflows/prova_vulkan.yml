@@ -196,6 +196,20 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
 
+      - name: Strati e luci col motore vero, anche la morte a metà del riscaldamento (test_strati_luci, una volta sola)
+        if: matrix.partenza == 'torre'
+        run: |
+          set +e
+          timeout 20m xvfb-run -a -s "-screen 0 640x360x24" godot --path godot --rendering-driver vulkan \
+            --resolution 640x360 --script res://tests/run.gd -- res://tests/test_strati_luci.gd > godot_debug_strati.log 2>&1
+          codice=$?
+          grep -E 'PROVA STRATI|  ok  |  FAIL|RISULTATO|ERROR: BUG|SCRIPT ERROR' godot_debug_strati.log
+          bug=$(grep -c 'ERROR: BUG' godot_debug_strati.log)
+          script=$(grep -c 'SCRIPT ERROR' godot_debug_strati.log)
+          ok=$(grep -c 'RISULTATO: [0-9]* controlli ok, 0 falliti' godot_debug_strati.log)
+          echo "strati bug=$bug script=$script ok=$ok codice=$codice" | tee esito_debug_strati.txt
+          exit 0
+
       - name: Partenza ${{ matrix.partenza }} in debug, morte e ripartenza, 60 s
         run: |
           p=${{ matrix.partenza }}
@@ -313,6 +327,18 @@ jobs:
               if e.get("restato", 0) < 1:
                   print(f"ROSSO {p} (debug): non resta 60 s e i fotogrammi: {causa(e)}")
                   rosso.append(p + " debug")
+          # gli strati e le luci col motore vero (test_strati_luci, nel job di debug della torre)
+          try:
+              e = {k: int(v) for k, v in re.findall(r"(\w+)=(\d+)", open("esito_debug_strati.txt").read())}
+              if e.get("bug", 0) > 0 or e.get("script", 0) > 0 or e.get("ok", 0) < 1:
+                  print(f"ROSSO strati: test_strati_luci con {e.get('bug', 0)} ERROR: BUG, {e.get('script', 0)} SCRIPT ERROR, "
+                        f"controlli {'ok' if e.get('ok', 0) else 'non tutti ok'} (codice {e.get('codice', '?')})")
+                  rosso.append("strati")
+              else:
+                  print("strati: test_strati_luci ok, 0 ERROR: BUG, 0 SCRIPT ERROR")
+          except OSError:
+              print("ROSSO strati: nessun esito di test_strati_luci")
+              rosso.append("strati")
           print("RISULTATO:", "rosso (" + ", ".join(sorted(set(rosso))) + ")" if rosso else "verde")
           sys.exit(1 if rosso else 0)
           EOF
