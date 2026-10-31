@@ -25,11 +25,27 @@ static func metti(radice: Node, voci: Dictionary) -> int:
 			var m := mi.mesh.surface_get_material(i) as StandardMaterial3D
 			if m == null or m.resource_name != voce[0]:
 				continue
-			var r := m.duplicate() as StandardMaterial3D
-			r.albedo_texture = load(voce[1]) as Texture2D
-			r.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-			r.alpha_scissor_threshold = 0.5
-			r.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
-			mi.set_surface_override_material(i, r)
+			mi.set_surface_override_material(i, _rovinato(m.duplicate() as StandardMaterial3D, load(voce[1]) as Texture2D))
 			fatti += 1
 	return fatti
+
+
+## Un materiale come quelli che [method metti] mette sui cartelloni della torre degli scivoli (il materiale importato da
+## torre_prop.glb ha le due facce e la texture del disegno, senza i colori dei vertici che hanno quelli della sala), per
+## SalaTorre.materiali_campione: lo shader di quel tipo Godot lo crea la prima volta sul thread principale (400 ms col
+## renderer software in locale, 128 nella CI), e così succede entrando nella sala e non in un passo della costruzione
+## a pezzi.
+static func campione_torre() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	m.roughness = 0.55
+	return _rovinato(m, load(DELFINO) as Texture2D)
+
+
+## [param m] con la texture rovinata [param tex] e l'alpha scissor.
+static func _rovinato(m: StandardMaterial3D, tex: Texture2D) -> StandardMaterial3D:
+	m.albedo_texture = tex
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	m.alpha_scissor_threshold = 0.5
+	m.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
+	return m

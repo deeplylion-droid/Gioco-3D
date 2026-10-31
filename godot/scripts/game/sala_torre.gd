@@ -1342,8 +1342,8 @@ static func _materiale_fondo_pozzo() -> StandardMaterial3D:
 const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 
 
-## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo, l'oblò), più
-## l'acqua torbida. Godot fa uno shader per tipo di materiale e lo condivide, ma la prima volta lo crea sul
+## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo, l'oblò, i cartelloni
+## rovinati), più l'acqua torbida. Godot fa uno shader per tipo di materiale e lo condivide, ma la prima volta lo crea sul
 ## thread principale: con il gruppo di shader avanzato acceso (nel gioco lo è sempre, vedi
 ## Grafica._attiva_shader_avanzati) costa 100-150 ms sulla CPU della CI, troppo per un passo della
 ## costruzione a pezzi. La sala principale li crea entrando (a schermo nero) e li tiene finché c'è: i passi
@@ -1357,6 +1357,8 @@ static func materiali_campione(crea := true) -> Array[Material]:
 	# (e lei dietro l'oblò, che nasce in tre passi della costruzione: i suoi materiali bagnati, la campana, l'occhio)
 	for m in LeiOblo.materiali_campione():
 		out.append(m)
+	# (i cartelloni rovinati, CARTELLONI_ROVINATI)
+	out.append(PosterRovinati.campione_torre())
 	if crea:
 		for m in out:
 			m.get_rid()   # lo shader si crea adesso, non al primo uso

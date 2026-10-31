@@ -88,6 +88,7 @@ Il polpo (`torre_cartellone_2`) resta com'è.
 **Nel codice**
 - La sostituzione del materiale è la stessa della sala, in `scripts/game/poster_rovinati.gd` (`PosterRovinati`), comune a sala e torre.
 - `SalaTorre` la fa in un passo subito dopo i tre GLB, prima di `prepara_materiali`, che compila già il materiale nuovo.
+- **Lo shader del materiale nuovo si crea entrando nella sala**, a schermo nero, con gli altri di `SalaTorre.materiali_campione` (`PosterRovinati.campione_torre`), e non in un passo della costruzione a pezzi. Serve un campione a parte perché il materiale dei cartelloni della torre non ha i colori dei vertici e quello della sala sì: gli shader sono diversi. Senza il campione il passo durava 400 ms in locale e 128 nella CI (`test_oblo_leggeri` ne accetta al più 100), anche nel gioco vero, mentre il giocatore è agli acquari. Con il campione il passo dura 8 ms in locale: le due texture da sole si caricavano in 27 ms, il resto era lo shader.
 - Il GLB della torre non cambia, e le luci sono intatte.
 - `test_torre` controlla che siano rovinati i tre cartelloni e non il polpo.
 
