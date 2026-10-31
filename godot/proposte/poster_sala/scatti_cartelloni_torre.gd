@@ -81,7 +81,7 @@ func _run() -> void:
 		var trovato := false
 		for d in [3.0, 4.5, 6.0, 8.0]:
 			for lato in [0.0, -1.5, 1.5]:
-				var x := centro + davanti * d + davanti.cross(Vector3.UP).normalized() * lato
+				var x: Vector3 = centro + davanti * float(d) + davanti.cross(Vector3.UP).normalized() * float(lato)
 				var h := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(x + Vector3.UP * 1.0, x + Vector3.DOWN * 25.0, Layers.WORLD))
 				if h.is_empty():
 					continue
