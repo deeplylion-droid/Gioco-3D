@@ -1039,11 +1039,25 @@ func _apri_porta_nord(animata: bool) -> void:
 	if _anta_nord == null or porta_nord_aperta:
 		return
 	porta_nord_aperta = true
-	if not animata:
+	# (senza animazione l'anta salterebbe a 180 gradi passando attraverso chi sta dove gira, e la fisica lo sbalzerebbe
+	# oltre la porta, dal 31 ottobre nelle pozze: col giocatore sulla sua strada si apre a passi come col colpo, e si
+	# ferma davanti a lui; [method _giocatore_sulla_strada])
+	if not animata and not _giocatore_sulla_strada():
 		_apertura_nord = -1.0
 		_anta_nord.rotation_degrees.y = 180.0
 		return
 	_apertura_nord = 0.0
+
+
+## Vero se l'anta nord, girando da dov'è fino a 180 gradi, toccherebbe il giocatore (ogni 3 gradi: l'anta con il suo
+## margine copre i 5 cm in mezzo fino a 1 m dal cardine).
+func _giocatore_sulla_strada() -> bool:
+	var a := _anta_nord.rotation_degrees.y
+	while a < 180.0:
+		if _anta_tocca_giocatore(a):
+			return true
+		a += 3.0
+	return _anta_tocca_giocatore(180.0)
 
 
 ## L'apertura col pulsantone, un passo per fotogramma della fisica: l'anta va avanti solo se nella posizione nuova non

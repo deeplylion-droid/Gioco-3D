@@ -11,6 +11,8 @@ extends Node
 ## 5. La cassaforte: un codice sbagliato non la apre, 4-1-7 sì; dentro la keycard e la Polaroid.
 ## 6. Checkpoint: tutto resta com'era (negatoscopio acceso con la radiografia, cassaforte aperta,
 ##    keycard nell'inventario e non più nella cassaforte, porta nord già aperta, senza suono).
+## 7. Il giocatore fermo dove gira l'anta della porta nord quando colpisce il pulsantone: l'anta non lo spinge.
+## 8. La porta nord che si apre senza il colpo, col giocatore fermo davanti o dietro l'anta: non lo sposta né lo lancia.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
 
 const SCENA := "res://tests/scene/infermeria_gioco_prova.tscn"
@@ -215,7 +217,80 @@ func _run() -> void:
 			await get_tree().physics_frame
 		check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "(%.2f, %.2f): andato via il giocatore, l'anta finisce aperta contro il muro (%.1f gradi)" % [
 			punto.x, punto.y, anta.rotation_degrees.y])
+	await _senza_colpo()
 	_fine()
+
+
+## 8. La porta nord che si apre senza il colpo (il pulsantone acceso da un'istantanea, da una stanza che si ricarica, dalle
+## scorciatoie dei test) col giocatore fermo davanti o dietro l'anta: prima saltava a 180 gradi attraverso di lui e la fisica
+## lo lanciava oltre la porta, dal 31 ottobre nelle pozze (test della risalita di ambienti-1). Ora non lo sposta: al più
+## pochi cm, nessuna velocità da lancio, e l'anta finisce aperta contro il muro quando lui non è più sulla sua strada.
+func _senza_colpo() -> void:
+	print("8. La porta nord che si apre senza il colpo, col giocatore fermo davanti o dietro l'anta")
+	# (nome, da dove parte, verso dove cammina un attimo per appoggiarsi all'anta chiusa o fermarsi lì, dove va dopo)
+	var casi := [
+		["dentro, appoggiato all'anta chiusa", Vector2(-2.2, -2.2), Vector2(-2.2, -4.5), Vector2(0.0, 0.0)],
+		["dentro, nell'arco vicino al cardine", Vector2(-1.76, -2.55), Vector2(-1.76, -2.55), Vector2(0.0, 0.0)],
+		["dentro, nell'arco in fondo all'anta", Vector2(-2.45, -2.6), Vector2(-2.45, -2.6), Vector2(0.0, 0.0)],
+		["dietro, appoggiato all'anta chiusa", Vector2(-2.2, -4.3), Vector2(-2.2, -2.0), Vector2(-2.2, -4.6)],
+		["dietro, a mezzo metro", Vector2(-2.2, -4.0), Vector2(-2.2, -4.0), Vector2(-2.2, -4.6)],
+	]
+	for c in casi:
+		get_tree().change_scene_to_file(SCENA)
+		await _aspetta_livello()
+		var inf := level.get_node(^"Infermeria") as Node3D
+		var inter := inf.get_node(^"Interruttore") as WaterButton
+		var anta := inf.get(&"_anta_nord") as Node3D
+		# (nella scena di prova dietro la porta nord non c'è niente: un pavimento per starci, come il pianerottolo della scala)
+		_pavimento_dietro(inf)
+		var da: Vector2 = c[1]
+		var verso: Vector2 = c[2]
+		p.teleport(inf.to_global(Vector3(da.x, 0.0, da.y)), 0.0, 0.0)
+		await _secondi(0.3)
+		if verso != da:
+			await _cammina_verso(inf.to_global(Vector3(verso.x, 0.0, verso.y)), 1.2)
+		await _secondi(0.4)
+		var prima: Vector3 = inf.to_local(p.global_position)
+		# (solo acceso, senza il colpo)
+		inter.powered = true
+		var spinta := 0.0
+		var veloce := 0.0
+		var dentro := 0
+		for i in int(3.2 * 60.0):
+			await get_tree().physics_frame
+			var ora: Vector3 = inf.to_local(p.global_position)
+			spinta = maxf(spinta, Vector2(ora.x - prima.x, ora.z - prima.z).length())
+			veloce = maxf(veloce, Vector2(p.velocity.x, p.velocity.z).length())
+			if _dentro_anta(inf):
+				dentro += 1
+		check(spinta < 0.03 and veloce < 0.5 and dentro == 0 and absf(ora_y(inf) - prima.y) < 0.05,
+			"%s: l'anta non lo sposta (%.3f m, velocità al più %.2f m/s, %d fotogrammi dentro l'anta; anta a %.0f gradi)" % [
+			c[0], spinta, veloce, dentro, anta.rotation_degrees.y])
+		var dopo: Vector2 = c[3]
+		await _cammina_verso(inf.to_global(Vector3(dopo.x, 0.0, dopo.y)), 2.0)
+		for i in int(4.0 * 60.0):
+			if absf(anta.rotation_degrees.y - 180.0) < 0.5:
+				break
+			await get_tree().physics_frame
+		check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "%s: poi l'anta finisce aperta contro il muro (%.1f gradi)" % [
+			c[0], anta.rotation_degrees.y])
+
+
+func _pavimento_dietro(inf: Node3D) -> void:
+	var corpo := StaticBody3D.new()
+	corpo.collision_layer = Layers.WORLD
+	var f := CollisionShape3D.new()
+	var b := BoxShape3D.new()
+	b.size = Vector3(3.0, 0.2, 2.0)
+	f.shape = b
+	corpo.add_child(f)
+	inf.add_child(corpo)
+	# (da 5 cm oltre il filo della porta, sotto l'anta chiusa non c'è)
+	corpo.position = Vector3(-2.2, -0.1, -3.2 - 1.0)
+
+
+func ora_y(inf: Node3D) -> float:
+	return inf.to_local(p.global_position).y
 
 
 ## Vero se il corpo del giocatore entra nella collisione dell'anta nord (di più di 1 cm: appoggiato all'anta chiusa, come a
