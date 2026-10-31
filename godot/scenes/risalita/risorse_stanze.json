@@ -256,6 +256,7 @@
 	"res://assets/models/polaroid/texture/normale.png",
 	"res://assets/models/polaroid/texture/retro.jpg",
 	"res://assets/models/polaroid/texture/retro_rugosita.jpg",
+	"res://assets/pozze_colorate/cartello_divieto.png",
 	"res://assets/tessera/texture/tessera_1.png",
 	"res://scenes/props/polaroid.tscn"
 ]

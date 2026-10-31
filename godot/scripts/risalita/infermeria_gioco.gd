@@ -116,6 +116,7 @@ func _costruisci() -> void:
 	_luci()
 	await _pausa()
 	_bambini()
+	_cartello_pozze()
 	await _pausa()
 	_metti_listelli()
 	_checkpoint()
@@ -949,6 +950,25 @@ func _luci() -> void:
 	_box(Vector3(0.5, 0.26, 0.08), Vector3(PORTA_NORD, 2.38, -L + 0.04), _colore(Color(0.8, 0.8, 0.76)))
 	_quad(Vector2(0.46, 0.23), Vector3(PORTA_NORD, 2.38, -L + 0.082), Vector3.ZERO, mf)
 	_luce(Vector3(PORTA_NORD, 2.2, -L + 0.4), Color(0.2, 1.0, 0.4), 0.35, 3.0, false)
+
+
+## L'indizio della stanza delle pozze colorate (GDD, "La stanza delle pozze colorate", scelte dell'utente del 31 ottobre):
+## il cartello di divieto d'accesso del parco con sopra i tre quadratini a pastello dei bambini, i colori da togliere
+## (EnigmaPozze.GIUSTI; texture di assets_src/pozze_colorate/cartello.py). Accanto alla porta nord, da cui si esce verso
+## le pozze, all'altezza degli occhi: a ovest della porta, fra lo stipite e l'angolo (8 cm per parte), perché a est si
+## appoggia l'anta aperta. Lamiera smaltata a contatto col muro (il listello si interrompe da solo). Sopra, un faretto
+## a soffitto con una lampadina bianca: la luce verde dell'uscita falserebbe i pastelli; il resto resta buio.
+func _cartello_pozze() -> void:
+	var c := Vector3(-2.95, 1.5, -L)
+	var misura := Vector2(0.34, 0.46)
+	var lastra := _box(Vector3(misura.x, misura.y, 0.008), c + Vector3(0, 0, 0.004), _colore(Color(0.62, 0.62, 0.6), 0.7, 0.4))
+	lastra.name = "CartelloPozze"
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = load("res://assets/pozze_colorate/cartello_divieto.png")
+	m.roughness = 0.42
+	_quad(misura, c + Vector3(0, 0, 0.0085), Vector3.ZERO, m, lastra.get_parent() as Node3D).name = "CartelloPozzeFaccia"
+	_faretto_soffitto("FarettoCartelloPozze", Vector3(c.x, H, -2.6), c + Vector3(0, 0.02, 0), Vector3(c.x, H, -L),
+			Color(1.0, 0.98, 0.93), 0.9, 19.0)
 
 
 func _bambini() -> void:

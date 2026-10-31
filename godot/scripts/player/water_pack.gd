@@ -521,9 +521,14 @@ func _update_suction(want: bool, delta: float) -> void:
 	if want:
 		source = find_suction_source()
 		# Aspirando un colore (gli acquari dell'enigma) lo zaino butta via da solo l'acqua chiara che
-		# aveva (scelta B dell'utente, 18 ottobre): restano solo i colori già dentro.
+		# aveva (scelta B dell'utente, 18 ottobre): restano solo i colori già dentro. Dalle pozze colorate
+		# (EnigmaPozze, meta "scarta_altri_colori") butta via tutto quello che non è del colore della pozza
+		# (scelta dell'utente del 31 ottobre: "quello di prima si butta da solo").
 		if source and tank_enabled and &"fill_pigment" in source and String(source.get(&"fill_pigment")) != "":
-			scarta_acqua_chiara()
+			if source.has_meta(&"scarta_altri_colori"):
+				scarta_altri_colori(String(source.get(&"fill_pigment")))
+			else:
+				scarta_acqua_chiara()
 		if tank_enabled and tank_amount >= tank_capacity - 0.001:
 			source = null
 			if not _full_notified:
@@ -620,6 +625,17 @@ func scarta_acqua_chiara() -> void:
 	var m := WaterMix.solo_colori(water_mix)
 	_set_amount(tank_amount * k)
 	set_water_mix(m)
+
+
+## Butta via l'acqua del serbatoio se non è tutta del pigmento [param pigmento] (le pozze colorate): poi si riempie
+## solo di quel colore.
+func scarta_altri_colori(pigmento: String) -> void:
+	if tank_amount <= 0.001:
+		return
+	if WaterMix.frazione(water_mix, pigmento) >= 0.9999:
+		return
+	_set_amount(0.0)
+	set_water_mix({})
 
 
 ## Cambia il colore dell'acqua nel serbatoio (vedi WaterMix).
