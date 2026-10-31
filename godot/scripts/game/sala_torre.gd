@@ -31,6 +31,14 @@ extends Node3D
 signal discesa_finita
 
 const DIR := "res://assets/ambiente/torre/"
+## I cartelloni della torre col delfino e con la balena, gli stessi disegni dei due del muro nord della sala: rovinati
+## come quelli, con le stesse texture (richiesta dell'utente del 31 ottobre: "gli stessi disegni ci sono anche nella torre
+## degli scivoli, sostituiscili con questi rovinati"). Il polpo (torre_cartellone_2) resta com'è, e il GLB non cambia.
+const CARTELLONI_ROVINATI := {
+	"torre_cartellone_0": ["M_amb_cartellone_p1", PosterRovinati.DELFINO],
+	"torre_cartellone_1": ["M_amb_cartellone_p2", PosterRovinati.BALENA],
+	"torre_cartellone_3": ["M_amb_cartellone_p1", PosterRovinati.DELFINO],
+}
 const ROSSO := Color(1.0, 0.035, 0.02)
 const CALDO := Color(1.0, 0.66, 0.36)
 const ROSA := Color(1.0, 0.32, 0.62)
@@ -217,6 +225,7 @@ func _passi() -> Array:
 	var out: Array = []
 	for i in 3:
 		out.append(func(): _modello(i))
+	out.append(_cartelloni_rovinati)
 	out.append(_prepara_dati)
 	out.append_array(_passi_scivoli())
 	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _polaroid])
@@ -233,6 +242,14 @@ func _passi() -> Array:
 	out.append(_aggiungi_inseguimento)
 	out.append(_fuori_dal_blackout)
 	return out
+
+
+## I cartelloni col delfino e la balena rovinati ([constant CARTELLONI_ROVINATI]): prima di prepara_materiali, che li
+## disegna già col materiale nuovo.
+func _cartelloni_rovinati() -> void:
+	var prop := get_node_or_null(^"TorreProp")
+	if prop:
+		PosterRovinati.metti(prop, CARTELLONI_ROVINATI)
 
 
 func _aggiungi_inseguimento() -> void:

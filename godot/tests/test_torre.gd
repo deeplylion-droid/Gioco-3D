@@ -108,6 +108,17 @@ func _run() -> void:
 		ordini_ok = ordini_ok and torre.checkpoint[i].order > torre.checkpoint[i - 1].order \
 			and torre.checkpoint[i].global_position.y < torre.checkpoint[i - 1].global_position.y + 0.1
 	check(ordini_ok, "i checkpoint vanno in ordine e sempre più in basso")
+	# i cartelloni col delfino e la balena rovinati come quelli del muro nord della sala (31 ottobre); il polpo no
+	var rovinati := []
+	for nome in ["torre_cartellone_0", "torre_cartellone_1", "torre_cartellone_2", "torre_cartellone_3"]:
+		var c := torre.find_child(nome, true, false) as MeshInstance3D
+		for i in (c.mesh.get_surface_count() if c and c.mesh else 0):
+			var m := c.get_surface_override_material(i) as StandardMaterial3D
+			if m and m.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR and m.albedo_texture \
+					and m.albedo_texture.resource_path.contains("cartelloni_rovinati/cartellone_"):
+				rovinati.append(nome)
+	check(rovinati == ["torre_cartellone_0", "torre_cartellone_1", "torre_cartellone_3"],
+		"i cartelloni del delfino e della balena sono rovinati come nella sala, il polpo no (%s)" % str(rovinati))
 	check(torre.get_node_or_null("Polaroid10") != null, "c'è la Polaroid 10")
 	var p10 := torre.get_node_or_null("Polaroid10") as Node3D
 	if p10:
