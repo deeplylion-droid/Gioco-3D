@@ -89,10 +89,14 @@ jobs:
           name: linux
           path: gioco
 
-      - name: Swap da 16 GB (llvmpipe compila le pipeline nella RAM; senza, il runner veniva spento a 6-7 min)
+      - name: Swap da 24 GB (llvmpipe compila le pipeline nella RAM; senza, il runner veniva spento a 6-7 min)
         run: |
+          # (lo swap da 16 GB arrivava pieno, 16383 MB, con rss 15 GB: il posto per 24 si fa togliendo dotnet, android e
+          # ghc, che la prova non usa, circa 20 GB)
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup || true
+          df -h / | tail -1
           sudo swapoff -a || true
-          (sudo fallocate -l 16G /swapfile_prova || sudo fallocate -l 10G /swapfile_prova) && sudo chmod 600 /swapfile_prova
+          (sudo fallocate -l 24G /swapfile_prova || sudo fallocate -l 16G /swapfile_prova) && sudo chmod 600 /swapfile_prova
           sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
           free -m
 
@@ -188,10 +192,14 @@ jobs:
           python3 tools/godot_vram_textures.py godot
           godot --headless --path godot --import
 
-      - name: Swap da 16 GB, Vulkan software e Xvfb
+      - name: Swap da 24 GB, Vulkan software e Xvfb
         run: |
+          # (lo swap da 16 GB arrivava pieno, 16383 MB, con rss 15 GB: il posto per 24 si fa togliendo dotnet, android e
+          # ghc, che la prova non usa, circa 20 GB)
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup || true
+          df -h / | tail -1
           sudo swapoff -a || true
-          (sudo fallocate -l 16G /swapfile_prova || sudo fallocate -l 10G /swapfile_prova) && sudo chmod 600 /swapfile_prova
+          (sudo fallocate -l 24G /swapfile_prova || sudo fallocate -l 16G /swapfile_prova) && sudo chmod 600 /swapfile_prova
           sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
           sudo apt-get update -qq
           sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
