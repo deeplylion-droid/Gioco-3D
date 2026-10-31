@@ -158,6 +158,7 @@ anti_aliasing/quality/msaa_3d=2
 anti_aliasing/quality/use_debanding=true
 environment/defaults/default_clear_color=Color(0.02, 0.02, 0.025, 1)
 anti_aliasing/quality/screen_space_aa=2
+rendering_device/d3d12/max_resource_descriptors=524288
 
 [shader_globals]
 
