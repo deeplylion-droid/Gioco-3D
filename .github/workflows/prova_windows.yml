@@ -63,52 +63,57 @@ jobs:
   prova:
     needs: esporta
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
-        partenza: [torre, inseguimento, tunnel]
-        driver: [d3d12, vulkan]
+        # il driver di serie (D3D12, come l'utente); descrittori: il limite di D3D12 per la prova, scritto in override.cfg
+        # accanto all'exe (65536 è quello di serie della 0.3.17; fra 65536 e 524288 si vede quanti ne servono al picco)
+        include:
+          - {partenza: torre, descrittori: 65536}
+          - {partenza: torre, descrittori: 131072}
+          - {partenza: torre, descrittori: 262144}
+          - {partenza: torre, descrittori: 524288}
+          - {partenza: inseguimento, descrittori: 65536}
+          - {partenza: inseguimento, descrittori: 524288}
+          - {partenza: tunnel, descrittori: 524288}
+          - {partenza: fiume, descrittori: 524288}
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: windows
           path: gioco
 
-      - name: Vulkan software (lavapipe di mesa-dist-win)
-        if: matrix.driver == 'vulkan'
+      - name: Limite dei descrittori ${{ matrix.descrittori }}
         shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          $rel = Invoke-RestMethod -Headers @{Authorization = "Bearer $env:GH_TOKEN"} https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest
-          $a = $rel.assets | Where-Object { $_.name -match 'release-msvc\.7z$' } | Select-Object -First 1
-          Write-Host "mesa-dist-win: $($rel.tag_name) $($a.name)"
-          Invoke-WebRequest $a.browser_download_url -OutFile mesa.7z
-          7z x mesa.7z -omesa | Out-Null
-          $icd = Get-ChildItem -Recurse mesa\x64 -Filter 'lvp_icd*.json' | Select-Object -First 1
-          Write-Host "ICD: $($icd.FullName)"
-          "VK_DRIVER_FILES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
-          "VK_ICD_FILENAMES=$($icd.FullName)" | Out-File -Append $env:GITHUB_ENV
+          "[rendering]`nrendering_device/d3d12/max_resource_descriptors=${{ matrix.descrittori }}`n" | Out-File -Encoding ascii gioco\override.cfg
+          Get-Content gioco\override.cfg
 
-      - name: Partenza ${{ matrix.partenza }} con ${{ matrix.driver }}
+      - name: Partenza ${{ matrix.partenza }}, descrittori ${{ matrix.descrittori }}
         shell: pwsh
         run: |
-          $log = "$PWD\godot_${{ matrix.partenza }}_${{ matrix.driver }}.log"
-          $arg = "--rendering-driver ${{ matrix.driver }} --resolution 1280x720 --log-file `"$log`" -- --partenza=${{ matrix.partenza }} --esci-dopo=300"
+          $nome = "${{ matrix.partenza }}_${{ matrix.descrittori }}"
+          $log = "$PWD\godot_$nome.log"
+          $arg = "--resolution 1280x720 --log-file `"$log`" -- --partenza=${{ matrix.partenza }} --resta=60"
           $p = Start-Process -FilePath gioco\JillyJubilee.exe -ArgumentList $arg -PassThru
-          $finito = $p.WaitForExit(1800 * 1000)
-          if (-not $finito) { Write-Host "ANCORA ACCESO dopo 30 min: lo chiudo"; $p.Kill(); $p.WaitForExit() }
+          $finito = $p.WaitForExit(165 * 60 * 1000)
+          if (-not $finito) { Write-Host "ANCORA ACCESO dopo 165 min: lo chiudo"; $p.Kill(); $p.WaitForExit() }
           $codice = $p.ExitCode
           Write-Host ("CODICE D'USCITA: {0} (0x{1:X8})" -f $codice, $codice)
-          "${{ matrix.partenza }} ${{ matrix.driver }} codice=$codice finito=$finito" | Out-File esito.txt
-          if (Test-Path $log) { Get-Content $log -Tail 80 } else { Write-Host "NESSUN REGISTRO" }
-          Get-WinEvent -FilterHashtable @{LogName='Application'; Id=1000,1001} -MaxEvents 4 -ErrorAction SilentlyContinue | Format-List TimeCreated, Message
+          "$nome codice=$codice finito=$finito" | Out-File esito.txt
+          if (Test-Path $log) {
+            Select-String -Path $log -Pattern 'Using Device|PROVA: |descriptor heap|CRASH|Exception' | Select-Object -First 12 | ForEach-Object { $_.Line }
+            Write-Host "--- errori dei descrittori: $((Select-String -Path $log -Pattern 'descriptor heap').Count)"
+            Write-Host "--- ultime righe PROVA:"
+            Select-String -Path $log -Pattern '^PROVA' | Select-Object -Last 6 | ForEach-Object { $_.Line }
+          } else { Write-Host "NESSUN REGISTRO" }
+          Get-WinEvent -FilterHashtable @{LogName='Application'; Id=1000} -MaxEvents 1 -ErrorAction SilentlyContinue | Format-List TimeCreated, Message
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: registro-${{ matrix.partenza }}-${{ matrix.driver }}
+          name: registro-${{ matrix.partenza }}-${{ matrix.descrittori }}
           path: |
             godot_*.log
             esito.txt

@@ -74,26 +74,41 @@ func _ready() -> void:
 
 ## Per le prove (la prova su Windows nella CI, il collaudo), dopo il -- della riga di comando: --partenza=<id> parte
 ## subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...), --esci-dopo=<s> chiude
-## il gioco dopo quei secondi, e intanto ogni 5 s si scrive nel registro la memoria e la scena. Senza, niente.
+## il gioco dopo quei secondi, --resta=<s> lo chiude quei secondi dopo che si è arrivati (finita la schermata di
+## caricamento e i caricamenti nel thread), e intanto ogni 5 s si scrive nel registro la memoria, la scena e dove è il
+## giocatore. Senza, niente.
 func _partenza_da_riga() -> void:
 	if _riga_fatta:
 		return
 	_riga_fatta = true
 	var partenza := ""
 	var esci := 0.0
+	var resta := 0.0
 	for a: String in OS.get_cmdline_user_args():
 		if a.begins_with("--partenza="):
 			partenza = a.get_slice("=", 1)
 		elif a.begins_with("--esci-dopo="):
 			esci = a.get_slice("=", 1).to_float()
-	if partenza == "" and esci <= 0.0:
+		elif a.begins_with("--resta="):
+			resta = a.get_slice("=", 1).to_float()
+	if partenza == "" and esci <= 0.0 and resta <= 0.0:
 		return
 	var albero := get_tree()
 	var conta := Timer.new()
 	conta.wait_time = 5.0
 	conta.process_mode = Node.PROCESS_MODE_ALWAYS
+	var arrivato := [-1.0]
 	conta.timeout.connect(func() -> void:
 		var sc := albero.current_scene
+		var g := albero.get_first_node_in_group(&"player") as Node3D
+		if arrivato[0] < 0.0 and sc and String(sc.name) != "Caricamento" and String(sc.name) != "MenuPrincipale" \
+				and not Game.caricamenti_in_corso():
+			arrivato[0] = Time.get_ticks_msec() / 1000.0
+			print("PROVA: ARRIVATO a %d s, giocatore a %s" % [int(arrivato[0]), g.global_position if g else "-"])
+		if resta > 0.0 and arrivato[0] >= 0.0 and Time.get_ticks_msec() / 1000.0 - arrivato[0] >= resta:
+			print("PROVA: RESTATO %d s dopo l'arrivo, esco" % int(resta))
+			albero.quit()
+		print("PROVA pos=%s" % [g.global_position if g else "-"])
 		print("PROVA t=%d scena=%s memoria=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
 				Time.get_ticks_msec() / 1000, String(sc.name) if sc else "-", OS.get_static_memory_usage() >> 20,
 				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20,
