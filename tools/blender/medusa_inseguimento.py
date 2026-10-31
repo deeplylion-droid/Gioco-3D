@@ -29,7 +29,8 @@ Animazioni (30 fps):
   colpo_grata (0,5 s, in ciclo): carica e sbatte i palmi contro la grata, a GRATA metri davanti;
   colpo_grata_sbieco (0,5 s, in ciclo): lo stesso con la grata girata di SBIECO gradi (dal pozzetto dietro la grata);
   affacciata_sb1 (5,4 s): sbuca dal pozzo in 1,3 s e si aggrappa al bordo (BORDO_SB1: a tanto davanti e
-      tanto in alto rispetto all'origine), la testa girata di lato, poi la gira verso di te e ti fissa.
+      tanto in alto rispetto all'origine), la testa girata di lato, poi la gira verso di te e ti fissa;
+  scende_sb1 (1,2 s): dall'ultimo fotogramma di affacciata_sb1 lascia il bordo e scivola giu' nel pozzo, mai su.
 Il tunnel del viaggio sottomarino (24 ottobre), a bocca spalancata (nel json anche "fauce": quanto e' aperta la
 fauce a ogni fotogramma, per le blend shape):
   insegue_aperta (ciclo 2,6 s): fluttua intera, inclinata in avanti, braccia tese, scia dei tentacoli;
@@ -596,6 +597,39 @@ def pose_sb1(arm, C, Z, t):
     Z.segui()
 
 
+def pose_scende_sb1(arm, C, Z, t, T=1.2):
+    """Dopo affacciata_sb1, dal suo ultimo fotogramma (5,4 s): lascia il bordo e scivola giu' nel pozzo, senza mai
+    salire (riscontro dell'utente sulla 0.3.18: con "scende", che parte dalla posa di incombe, prima saliva di
+    scatto di 3 m e poi scendeva). Le mani si staccano per prime e scendono accanto alle spalle, mai sopra il bordo;
+    il corpo parte da fermo e va giu' sempre piu' in fretta; la testa ti guarda e va sotto per ultima."""
+    d, h = BORDO_SB1
+    u = t / T
+    tent = campiona(C, 'insegue', (5.4 + t) * 0.5)
+    aff = campiona(C, 'affacciata', 0.0)
+    applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, aff))
+    Z.leggi()
+    for n in ('colonna_1', 'colonna_2', 'petto', 'collo', 'testa'):
+        arm.pose.bones[n].matrix_basis = aff[n]
+    aggiorna()
+    vita = mondo(arm, arm.pose.bones['colonna_1'].head)
+    voglio = Vector((0.0, -(d - 1.06), h - 0.57))
+    sposta(arm, voglio - vita + Vector((0, 0, GIU * u ** 2.2)))
+    testa(arm, giro=0.0, su=2.0 + 10.0 * liscio(0.0, 1.0, 0.1, 0.7, u), piega=-6.0, collo=0.5)
+    k = liscio(0.0, 1.0, 0.0, 0.35, u)
+    for suf, s in (('.L', 1), ('.R', -1)):
+        bordo = Vector((s * 0.58, -(d + 0.12), h + 0.04))
+        pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
+        lasciato = pc + Vector((s * 0.42, -0.30, 0.30))
+        polso = bordo.lerp(lasciato, k)
+        polso.z = min(polso.z, bordo.z)
+        if k <= 0.0:
+            dm, ds = (0.0, -1.0, -0.15), (0.0, 0.0, 1.0)     # come in affacciata_sb1
+        else:
+            dm, ds = gira_mano((0.0, -1.0, -0.15), (0.0, 0.0, 1.0), (0.0, -0.4, 1.0), (0.0, 1.0, 0.4), k)
+        braccio_mondo(arm, suf, polso, (0.9, 0.3, -0.2), dm, ds)
+    Z.segui()
+
+
 # --------------------------------------------------------------------------------------------- il tunnel
 
 # Il tunnel del viaggio sottomarino (scelte del 24 ottobre): lei fluttua intera sopra il canale a bocca spalancata,
@@ -1040,6 +1074,7 @@ ANIMAZIONI = {
     'colpo_grata': (0.5, True, lambda a, C, Z, t: pose_grata(a, C, Z, t)),
     'colpo_grata_sbieco': (0.5, True, lambda a, C, Z, t: pose_grata(a, C, Z, t, sbieco=SBIECO)),
     'affacciata_sb1': (5.4, False, pose_sb1),
+    'scende_sb1': (1.2, False, lambda a, C, Z, t: pose_scende_sb1(a, C, Z, t)),
     # il tunnel del viaggio sottomarino
     'insegue_aperta': (T_APERTA, True, pose_insegue_aperta),
     'insegue_morde': (T_APERTA, True, pose_insegue_morde),
