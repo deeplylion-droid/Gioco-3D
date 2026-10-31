@@ -87,8 +87,8 @@ func _run() -> void:
 	var oltre: Array[Vector3] = [pozze.to_global(Vector3(porta_x, 0, -5.4))]
 	check(not await _cammina(oltre, 3.0) and pozze.to_local(p.global_position).z > -4.0,
 		"la porta stagna è chiusa: non si esce (%s)" % str(pozze.to_local(p.global_position)))
-	print("  (scorciatoia: la porta stagna aperta come a enigma risolto, l'enigma lo prova test_pozze di enigmi)")
-	(pozze.get_node(^"PortaStagna") as PortaStagna).apri(true)
+	print("  (scorciatoia: l'enigma risolto, con le pozze dei colori giusti vuote e la porta stagna aperta; lo prova test_pozze)")
+	_risolvi_pozze(pozze)
 	await get_tree().physics_frame
 	check(await _cammina(oltre, 10.0), "con la porta stagna aperta si esce sul piede della scala (%s)" % str(p.global_position))
 	var cima := ris.get_node(^"Marker/CimaScala") as Node3D
@@ -163,3 +163,13 @@ func _fine() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
+
+
+## L'enigma delle pozze risolto come lo fanno le partenze dopo le pozze (enigmi): così i checkpoint più avanti salvano le
+## pozze risolte e la porta stagna resta aperta ripartendo da lì.
+func _risolvi_pozze(pozze: Node3D) -> void:
+	var enigma := pozze.get_node_or_null(^"EnigmaPozze")
+	if enigma and enigma.has_method(&"load_state"):
+		enigma.call(&"load_state", {"stato": EnigmaPozze.Stato.RISOLTO, "tolti": EnigmaPozze.GIUSTI})
+	else:
+		(pozze.get_node(^"PortaStagna") as PortaStagna).apri(true)
