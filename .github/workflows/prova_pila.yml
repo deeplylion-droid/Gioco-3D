@@ -1,0 +1,89 @@
+# La pila del crash della ripartenza oltre il portone (0.3.16 e 0.3.17, segfault su Vulkan): il progetto lanciato col
+# binario di Godot (non l'export), che col suo gestore dei crash stampa la pila C++ e lo stack GDScript. Vulkan llvmpipe
+# su Xvfb, swap da 16 GB, partenza torre dal menu (--partenza), --verbose. Solo a mano o sul branch della prova.
+name: Pila del crash della ripartenza
+
+on:
+  push:
+    branches: ["lavoro/correttiva-0318-vulkan"]
+    paths: [".github/workflows/prova_pila.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+
+jobs:
+  pila:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        partenza: [torre, inseguimento, tunnel]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache di Godot e dei template
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_BIN_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+
+      - name: Scarica Godot
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Importa il progetto (come la build)
+        run: |
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Swap da 16 GB, Vulkan software e Xvfb
+        run: |
+          sudo swapoff -a || true
+          (sudo fallocate -l 16G /swapfile_prova || sudo fallocate -l 10G /swapfile_prova) && sudo chmod 600 /swapfile_prova
+          sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
+
+      - name: Partenza ${{ matrix.partenza }} col binario di Godot
+        run: |
+          prova="$PWD/prova_${{ matrix.partenza }}.log"
+          ( sleep 30; tail -F "$prova" 2>/dev/null | sed 's/^/PROVA_LIVE /' ) &
+          set +e
+          timeout 130m xvfb-run -a -s "-screen 0 640x360x24" godot --path godot --rendering-driver vulkan \
+            --resolution 640x360 --verbose -- --partenza=${{ matrix.partenza }} --preset=basso --muori-dopo=20 --resta=60 \
+            --registro-prova="$prova" > godot_${{ matrix.partenza }}.log 2>&1
+          echo "CODICE D'USCITA: $?"
+          pkill -f 'tail -F' || true
+          echo "--- registro della prova:"; tail -8 "$prova" 2>/dev/null
+          L=godot_${{ matrix.partenza }}.log
+          echo "--- il crash (gestore di Godot), se c'è:"
+          grep -n -A60 -E 'received signal|Program crashed|Dumping the backtrace' $L | head -80
+          echo "--- gli errori (in debug una chiamata su un oggetto liberato è un errore, in release un segfault):"
+          grep -n -E 'ERROR|SCRIPT ERROR|freed|Invalid|null instance|Nonexistent' $L | grep -v 'RGB8 not supported' | head -60
+          echo "--- quando: le righe PROVA e la prima e l'ultima ERROR: BUG, coi numeri di riga"
+          grep -n -E 'PROVA: |ERROR: BUG' $L | awk -F: '/ERROR: BUG/{if(!b){print; b=1} last=$0; next} {print} END{print last}'
+          echo "--- le 30 righe prima del primo ERROR: BUG:"
+          grep -n -B30 -m1 'ERROR: BUG' $L | grep -v 'RGB8 not supported\|_validate_texture_format\|GDScript backtrace\|\[[0-9]\] ' | head -40
+          echo "--- con lo stack GDScript:"
+          grep -n -B2 -A8 -E 'previously freed|freed instance|null instance|SCRIPT ERROR' $L | head -120
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pila-${{ matrix.partenza }}
+          path: |
+            godot_*.log
+            prova_*.log
+          retention-days: 7
