@@ -96,13 +96,15 @@ Il polpo (`torre_cartellone_2`) resta com'è.
 | Foglio | Cosa mostra |
 |---|---|
 | `4_torre_giocatore_prima_dopo.jpg` | dagli occhi del giocatore: dal checkpoint più vicino da cui ogni cartellone si vede, e dal pavimento davanti |
-| `5_torre_da_vicino_prima_dopo.jpg` | ravvicinati a 1,5 m. Il delfino 0 è al buio: il suo ravvicinato è con una lampadina solo tecnica, che nel gioco non c'è |
+| `5_torre_da_vicino_prima_dopo.jpg` | ravvicinati a 1,5 m. Il delfino 0 è al buio e coperto: il suo ravvicinato è a 0,4 m, fra il tubo e il muro, con una lampadina solo tecnica che nel gioco non c'è |
 
 **Cosa si vede**
 - La balena e il delfino 3 si vedono bene dalle pedane e dal fondo, e si leggono bruciati e scarabocchiati.
-- Il delfino 0 sta in alto dietro i tubi degli scivoli e al buio: anche prima dalle pedane si vedeva poco o niente.
+- Il delfino 0 sta in alto dietro i tubi degli scivoli e al buio: anche prima dalle pedane si vedeva poco o niente. Un tubo blu gli passa davanti a 0,85 m dalla carta, misurato coi raggi, senza toccarla.
 - L'appoggio sulla cornice e sul muro non cambia, perché cambia solo la carta.
 
-**Una macchia bianca.** In un primo scatto del delfino 3 c'era una macchia bianca sotto il cartellone. Rifacendo la stessa vista quattro volte non c'era più: era qualcosa di passaggio nella torre, non il cartellone.
+**Una macchia bianca.** In un primo scatto del delfino 3 c'era una macchia bianca sotto il cartellone. Rifacendo la stessa vista quattro volte non c'era più: era qualcosa di passaggio nella torre, non il cartellone. Nel foglio 4 c'è lo scatto rifatto.
+
+**Controlli.** Controllo di posizionamento locale con la torre cambiata: 0 da correggere, 0 casi nuovi (64 già noti). `test_torre`: 95 controlli ok.
 
 **Pipeline.** In costruzione e preparazione la torre ne compila 2+4 in più, quelle del materiale nuovo, durante la preparazione e non mentre si gioca. 0 "ERROR: BUG,".
