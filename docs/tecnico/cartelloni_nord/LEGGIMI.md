@@ -71,3 +71,38 @@ Script: `godot/proposte/poster_sala/scatti_muro_nord.gd`.
 - 0 "ERROR: BUG," nei due giri.
 - `test_sala` verde in locale.
 - Il controllo di posizionamento in locale è in fondo al messaggio di consegna.
+
+## La torre degli scivoli (31 ottobre)
+
+Richiesta dell'utente: «gli stessi disegni ci sono anche nella torre degli scivoli, sostituiscili con questi rovinati».
+
+Nella torre (`torre_prop.glb`) ci sono quattro cartelloni uguali a quelli della sala. Tre hanno ora le stesse texture rovinate della sala:
+- `torre_cartellone_0`, delfino, in alto sul muro nord;
+- `torre_cartellone_1`, balena, sul muro sud sopra la lampada rossa;
+- `torre_cartellone_3`, delfino, in basso sul muro nord, vicino al fondo.
+
+Il polpo (`torre_cartellone_2`) resta com'è.
+
+**Altri posti.** Nel resto del gioco questi disegni non ci sono. Le altre copie stanno solo in `godot/proposte` (torre_A_prop, inseguimento_B) e nella texture dello spot VHS, che resta pulita.
+
+**Nel codice**
+- La sostituzione del materiale è la stessa della sala, in `scripts/game/poster_rovinati.gd` (`PosterRovinati`), comune a sala e torre.
+- `SalaTorre` la fa in un passo subito dopo i tre GLB, prima di `prepara_materiali`, che compila già il materiale nuovo.
+- Il GLB della torre non cambia, e le luci sono intatte.
+- `test_torre` controlla che siano rovinati i tre cartelloni e non il polpo.
+
+**Scatti** (`godot/proposte/poster_sala/scatti_cartelloni_torre.gd`, la torre costruita e preparata come nel gioco):
+
+| Foglio | Cosa mostra |
+|---|---|
+| `4_torre_giocatore_prima_dopo.jpg` | dagli occhi del giocatore: dal checkpoint più vicino da cui ogni cartellone si vede, e dal pavimento davanti |
+| `5_torre_da_vicino_prima_dopo.jpg` | ravvicinati a 1,5 m. Il delfino 0 è al buio: il suo ravvicinato è con una lampadina solo tecnica, che nel gioco non c'è |
+
+**Cosa si vede**
+- La balena e il delfino 3 si vedono bene dalle pedane e dal fondo, e si leggono bruciati e scarabocchiati.
+- Il delfino 0 sta in alto dietro i tubi degli scivoli e al buio: anche prima dalle pedane si vedeva poco o niente.
+- L'appoggio sulla cornice e sul muro non cambia, perché cambia solo la carta.
+
+**Una macchia bianca.** In un primo scatto del delfino 3 c'era una macchia bianca sotto il cartellone. Rifacendo la stessa vista quattro volte non c'era più: era qualcosa di passaggio nella torre, non il cartellone.
+
+**Pipeline.** In costruzione e preparazione la torre ne compila 2+4 in più, quelle del materiale nuovo, durante la preparazione e non mentre si gioca. 0 "ERROR: BUG,".
