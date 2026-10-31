@@ -67,10 +67,13 @@ jobs:
           echo "CODICE D'USCITA: $?"
           pkill -f 'tail -F' || true
           echo "--- registro della prova:"; tail -8 "$prova" 2>/dev/null
-          echo "--- il crash (gestore di Godot):"
-          grep -n -A60 -E 'received signal|Program crashed|Dumping the backtrace|GDScript backtrace' godot_${{ matrix.partenza }}.log | head -120
-          echo "--- le ultime righe prima del crash:"
-          grep -n -B40 -m1 -E 'received signal|Program crashed|Dumping the backtrace' godot_${{ matrix.partenza }}.log | head -45
+          L=godot_${{ matrix.partenza }}.log
+          echo "--- il crash (gestore di Godot), se c'è:"
+          grep -n -A60 -E 'received signal|Program crashed|Dumping the backtrace' $L | head -80
+          echo "--- gli errori (in debug una chiamata su un oggetto liberato è un errore, in release un segfault):"
+          grep -n -E 'ERROR|SCRIPT ERROR|freed|Invalid|null instance|Nonexistent' $L | grep -v 'RGB8 not supported' | head -60
+          echo "--- con lo stack GDScript:"
+          grep -n -B2 -A8 -E 'previously freed|freed instance|null instance|SCRIPT ERROR' $L | head -120
 
       - uses: actions/upload-artifact@v4
         if: always()
