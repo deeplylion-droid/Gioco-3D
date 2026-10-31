@@ -409,7 +409,7 @@ func _forme_zona_ferme(zp: Vector3, zf: Vector3) -> Array:
 	var out: Array = []
 	if _forme.size() <= 24:
 		for fo in _forme:
-			if (zf - fo[7]).min(fo[8] - zp).sign() == Vector3.ONE:
+			if (zf - (fo[7] as Vector3)).min((fo[8] as Vector3) - zp).sign() == Vector3.ONE:
 				out.append(fo)
 	else:
 		_fai_griglia()
@@ -420,7 +420,7 @@ func _forme_zona_ferme(zp: Vector3, zf: Vector3) -> Array:
 			for y in range(a.y, b.y + 1):
 				for z in range(a.z, b.z + 1):
 					for fo in _griglia.get(Vector3i(x, y, z), []):
-						if not visti.has(fo[6]) and (zf - fo[7]).min(fo[8] - zp).sign() == Vector3.ONE:
+						if not visti.has(fo[6]) and (zf - (fo[7] as Vector3)).min((fo[8] as Vector3) - zp).sign() == Vector3.ONE:
 							visti[fo[6]] = true
 							out.append(fo)
 	return out
@@ -666,6 +666,15 @@ func _process_modification() -> void:
 ## fine1 > inizio2 e fine2 > inizio1 su ogni asse, cioè (fine1 - inizio2).min(fine2 - inizio1).sign() == ONE;
 ## expand e grow come lì (la fine è inizio + misura, calcolata come la calcola AABB).
 const _AIUTI := 4                          # thread al più, compreso questo
+## Falso: tutti i tentacoli in questo thread, uno dopo l'altro (gli stessi conti, identici).
+## ATTENZIONE, negli aiuti (_lavora, _fai_lavoro e tutto quello che chiamano) nessun operatore con un operando senza
+## tipo (un elemento di un Array o di un Dictionary senza tipo, per esempio fo[9] o parti_usec["giri"]) e nessun int / int
+## o int % int: in Godot 4.7.2 la prima volta che un operatore così gira (OPCODE_OPERATOR) si scrive nel bytecode senza
+## che chi legge prenda il lucchetto, e un altro thread può chiamare un puntatore nullo (signal 11 nella CI in
+## test_morbidezza_tunnel alla presa, 30 ottobre; gdscript_vm.cpp, docs/tecnico/crash_operatori_thread). Nel debug
+## int / int e int % int sono a posto, nel release no. Si scrive (fo[9] as Vector3), int(parti_usec["x"]) + ...; lo
+## controlla tools/ci/morbidezza_operatori.py (CI).
+const IN_PARALLELO := true
 const LAVORO_PASSI := 0
 const LAVORO_PARTENZA := 1
 const LAVORO_ZONA := 2
@@ -692,7 +701,7 @@ func _notification(what: int) -> void:
 ## Fa i lavori dei tentacoli ([param lavori], da _process_modification) negli aiuti, in parallelo, e aspetta.
 func _esegui_lavori(lavori: Array) -> void:
 	if _aiuti.is_empty():
-		_thread = clampi(OS.get_processor_count(), 1, _AIUTI)
+		_thread = clampi(OS.get_processor_count(), 1, _AIUTI) if IN_PARALLELO else 1
 		for i in maxi(_catene.size(), 1) if _thread > 1 else 1:
 			_aiuti.append((get_script() as GDScript).new())
 	# (la griglia delle forme si fa qui: gli aiuti la usano insieme, senza cambiarla)
@@ -856,7 +865,7 @@ func _fai_lavoro(lv: Array) -> void:
 			var sp := x[i].min(q)
 			var sf := sp + ((x[i] + Vector3.ZERO).max(q) - sp)
 			for fo in forme:
-				if (sf - fo[9]).min(fo[10] - sp).sign() == Vector3.ONE:
+				if (sf - (fo[9] as Vector3)).min((fo[10] as Vector3) - sp).sign() == Vector3.ONE:
 					vmax = vi
 					break
 		var servono := mini(3, ceili(vmax * dt_k / 0.12 - 0.01))
@@ -910,8 +919,8 @@ func _fai_lavoro(lv: Array) -> void:
 		rif[i] = tgf[i]
 		tgf[i] += (lato * sin(fase) + lato2 * 0.5 * cos(fase * 0.7)) * onda_ampiezza * f * f
 	var u1 := Time.get_ticks_usec()
-	parti_usec["bersagli"] += u1 - u0
-	parti_usec["conta_passi"] += passi_k
+	parti_usec["bersagli"] = int(parti_usec["bersagli"]) + u1 - u0
+	parti_usec["conta_passi"] = int(parti_usec["conta_passi"]) + passi_k
 	for passo in passi_k:
 		var pred := PackedVector3Array()
 		pred.resize(n + 1)
@@ -957,7 +966,7 @@ func _fai_lavoro(lv: Array) -> void:
 		var tocca := _vicine(pred, forme, scatole)
 		if not tocca.is_empty():
 			for giro in 3:
-				parti_usec["conta_giri"] += 1
+				parti_usec["conta_giri"] = int(parti_usec["conta_giri"]) + 1
 				var prima_giro := pred.duplicate()
 				for i in range(1, n + 1):
 					var d := pred[i] - pred[i - 1]
@@ -980,7 +989,7 @@ func _fai_lavoro(lv: Array) -> void:
 				# (il terzo giro solo se il secondo ha mosso ancora più di 5 mm: lo strappo del tuffo sul bordo)
 				if mosso < (1e-6 if giro == 0 else 2.5e-5):
 					break
-		parti_usec["giri"] += Time.get_ticks_usec() - ug
+		parti_usec["giri"] = int(parti_usec["giri"]) + Time.get_ticks_usec() - ug
 		for i in range(1, n + 1):
 			var nv := (pred[i] - x[i]) / h_k
 			if i < n:
@@ -990,7 +999,7 @@ func _fai_lavoro(lv: Array) -> void:
 			v[i] = vp[i] + (nv - vp[i]).limit_length(velocita_massima)
 			x[i] = pred[i]
 		x[0] = tg[0]
-	parti_usec["passi"] += Time.get_ticks_usec() - u1
+	parti_usec["passi"] = int(parti_usec["passi"]) + Time.get_ticks_usec() - u1
 	ris.append_array([x, v, bers_nuovi, bers_posa_nuovi, forme,
 			[_s1a.duplicate(), _s1b.duplicate(), _s2a.duplicate(), _s2b.duplicate(), _smax.duplicate(), _ssu.duplicate()]
 			if lv[16] else null])
@@ -1058,7 +1067,7 @@ func _vicine(pt: PackedVector3Array, forme: Array, scatole := PackedVector3Array
 				out.append(forme[q])
 		return out
 	for fo in forme:
-		if (bf - fo[9]).min(fo[10] - bp).sign() == Vector3.ONE:
+		if (bf - (fo[9] as Vector3)).min((fo[10] as Vector3) - bp).sign() == Vector3.ONE:
 			out.append(fo)
 	return out
 
@@ -1127,7 +1136,7 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			var c := q2
 			var dm := INF
 			for j in _fossa_dentro.size():
-				var e := Geometry2D.get_closest_point_to_segment(q2, _fossa_dentro[j], _fossa_dentro[(j + 1) % _fossa_dentro.size()])
+				var e := Geometry2D.get_closest_point_to_segment(q2, _fossa_dentro[j], _fossa_dentro[j + 1 if j + 1 < _fossa_dentro.size() else 0])
 				if e.distance_squared_to(q2) < dm:
 					dm = e.distance_squared_to(q2)
 					c = e
@@ -1147,7 +1156,7 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			var su: int = fo[2]
 			if su < 0:
 				continue
-			if (sf - fo[9]).min(fo[10] - sp).sign() != Vector3.ONE:
+			if (sf - (fo[9] as Vector3)).min((fo[10] as Vector3) - sp).sign() != Vector3.ONE:
 				continue
 			var cima: Plane = fo[0][su]
 			if not _tratto_dentro(out[i - 1], out[i], fo[0], 0.0):
@@ -1571,7 +1580,7 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 		var bp := a.min(b) - Vector3.ONE * rmax
 		var bf := bp + ((a + Vector3.ZERO).max(b) - a.min(b) + Vector3.ONE * (2.0 * rmax))
 		for fo in _forme_in((pt[i - 1] + pt[i]) * 0.5, forme):
-			if (bf - fo[7]).min(fo[8] - bp).sign() != Vector3.ONE:
+			if (bf - (fo[7] as Vector3)).min((fo[8] as Vector3) - bp).sign() != Vector3.ONE:
 				continue
 			# (prima con la misura più grande: se così non tocca, la pelle non tocca)
 			if not _tratto_dentro(a, b, fo[0], rmax):
