@@ -143,6 +143,7 @@ func _run() -> void:
 	var inf := ris.get_node(^"Infermeria") as Node3D
 	print("  (scorciatoia: il pulsantone dell'infermeria colpito col getto, la porta nord si apre; lo prova test_infermeria_gioco)")
 	inf.get_node(^"Interruttore").set(&"powered", true)
+	await _frames(200)   # (l'anta si apre verso dentro in 2,6 s: si passa quando è contro il muro)
 	await _vai("dall'approdo, porta di servizio, zona del personale, infermeria, porta nord", [
 		porta.global_position + porta.global_basis.z * 0.8, porta.global_position - porta.global_basis.z * 1.5,
 		inf.to_global(Vector3(1.6, 0, 3.6)), inf.to_global(Vector3(1.8, 0, 1.6)), inf.to_global(Vector3(0.0, 0, 0.0)),
