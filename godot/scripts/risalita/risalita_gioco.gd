@@ -19,6 +19,9 @@ extends Node3D
 
 const SCENA_FIUME := "res://scenes/risalita/fiume.tscn"
 const SCENA_INFERMERIA := "res://scenes/risalita/infermeria.tscn"
+## La stanza delle pozze colorate, dietro la porta nord dell'infermeria (GDD, scelte dell'utente del 31 ottobre): si
+## carica con il fiume e l'infermeria.
+const SCENA_POZZE := "res://scenes/risalita/stanza_pozze.tscn"
 ## I file che le due stanze caricano con load() mentre si costruiscono (modelli, materiali, texture): il thread li
 ## carica prima, così la costruzione non ferma il gioco. Lo rifà tests/aggiorna_risorse_risalita.gd;
 ## test_risalita_tardi controlla che sia completo.
@@ -47,6 +50,7 @@ const ORDINE_DA := 6
 const ORDINE_A := 16
 const F := preload("res://scripts/risalita/fiume_gioco.gd")
 const I := preload("res://scripts/risalita/infermeria_gioco.gd")
+const P := preload("res://scripts/risalita/stanza_pozze.gd")
 
 ## La quota dei pavimenti nuovi (la sala grande è a 0).
 const Y := -5.4
@@ -54,6 +58,9 @@ const Y := -5.4
 const CENTRO_FIUME := Vector3(-35.0, Y, 92.0)
 ## L'infermeria: la porta sud allineata con la porta dell'approdo, 3 m più a nord.
 const CENTRO_INFERMERIA := Vector3(-35.0 - I.PORTA_SUD, Y, 51.0 - 3.0 - I.L)
+## La stanza delle pozze: il centro della griglia delle pozze sul pavimento, davanti alla porta nord dell'infermeria;
+## l'interno va fino al muro dell'infermeria (vedi stanza_pozze.gd).
+const CENTRO_POZZE := Vector3(CENTRO_INFERMERIA.x + I.PORTA_NORD, Y, CENTRO_INFERMERIA.z - I.L - 0.1 - P.MEZZA)
 ## La porta nel muro ovest del corridoio C3 (z da 37,95 a 38,95, tra i gonfiabili e gli oggetti appesi).
 const PORTA_C3 := Vector3(-16.15, 0.0, 38.45)
 ## La porta di servizio nel muro est del tratto basso di C2 (x da 4,6 a 5,6, pavimento a -1,8; la fa
@@ -91,6 +98,7 @@ const ARREDO_CORRIDOIO := preload("res://assets/ambienti_tecnici/corridoio_fiume
 @export var a_richiesta := true
 var fiume: Node3D
 var infermeria: Node3D
+var pozze: Node3D
 var _in_caricamento := false
 # i file chiesti al thread, e quelli già arrivati (tenuti finché le stanze non sono costruite)
 var _richiesti: PackedStringArray = []
@@ -135,6 +143,8 @@ func _ready() -> void:
 	# le zone dove le stanze si vedono: il capannone, l'infermeria con i corridoi, e un margine
 	_zone.append(AABB(Vector3(-64.0, Y - 2.0, 50.0), Vector3(58.5, 12.0, 71.0)))
 	_zone.append(AABB(Vector3(-41.0, Y - 2.0, 36.5), Vector3(26.0, 11.0, 15.0)))
+	# la stanza delle pozze e il piede della scala di servizio, a nord dell'infermeria
+	_zone.append(AABB(Vector3(-43.5, Y - 2.0, 30.5), Vector3(17.0, 11.0, 11.5)))
 	_zone.append(AABB(Vector3(CORRIDOIO_FIUME_X, Y - 1.0, 46.0), Vector3(13.0, 7.0, 22.0)))
 	# subito: senza richiesta, senza giocatore (strumenti), o ripartendo vicino alle stanze (un checkpoint
 	# della strada nuova: l'istantanea si applica dopo, alle stanze già al loro posto)
@@ -341,19 +351,22 @@ func _zona_personale() -> void:
 	PolaroidPhoto.metti(self, 15, Vector3(x + 0.84, Y + 0.03, CENTRO_FIUME.z + F.X0 - 0.48), 65.0)
 
 
-## La scala di servizio: dalla porta nord dell'infermeria un pianerottolo, poi verso est due rampe da
-## 15 gradini (18 cm) con un pianerottolo in mezzo, fino alla quota della sala, e un corridoio dritto
-## fino alla porta nel muro ovest di C3.
+## La scala di servizio: dalla porta stagna della stanza delle pozze (nel suo muro nord) un pianerottolo, poi verso est
+## due rampe da 15 gradini (18 cm) con un pianerottolo in mezzo, fino alla quota della sala; in cima un tratto in piano
+## verso sud e il corridoio dritto, quello di prima con l'oblò, fino alla porta nel muro ovest di C3. Prima della stanza
+## delle pozze (31 ottobre) la scala partiva dalla porta nord dell'infermeria e correva 6 m più a sud, lungo il corridoio.
 func _scala_di_servizio() -> void:
-	var xp := CENTRO_INFERMERIA.x + I.PORTA_NORD           # la porta nord dell'infermeria
-	var zn := CENTRO_INFERMERIA.z - I.L - 0.1               # la faccia di fuori del suo muro nord (spesso 10 cm)
-	var z0 := PORTA_C3.z - SCALA_LARGA * 0.5
-	var z1 := PORTA_C3.z + SCALA_LARGA * 0.5
-	# dalla porta al corridoio della scala
-	_corridoio(Vector3(xp - 1.0, Y, z1), Vector3(xp + 1.0, Y, zn))
-	var x := xp - 1.0
-	# il pianerottolo in basso, davanti alla porta (a sud si apre verso l'infermeria)
-	_corridoio(Vector3(x, Y, z0), Vector3(x + 2.0, Y, z1), 2.6, "no")
+	var xs := CENTRO_POZZE.x + P.PORTA_X                    # la porta stagna
+	var zs := CENTRO_POZZE.z - P.MEZZA - P.MURO             # la faccia di fuori del muro nord della stanza
+	# la fascia della scala: 2 m, a nord del muro della stanza (il muro sud delle rampe gli sta addosso)
+	var z0 := zs - 0.2 - SCALA_LARGA
+	var z1 := zs - 0.2
+	# il corridoio in piano di prima, con l'oblò
+	var c0 := PORTA_C3.z - SCALA_LARGA * 0.5
+	var c1 := PORTA_C3.z + SCALA_LARGA * 0.5
+	var x := xs - 1.0
+	# il pianerottolo in basso, davanti alla porta stagna: a sud c'è il muro della stanza, a est la prima rampa
+	_corridoio(Vector3(x, Y, z0), Vector3(x + 2.0, Y, zs), 2.6, "no")
 	x += 2.0
 	var y := Y
 	for rampa in 2:
@@ -363,14 +376,22 @@ func _scala_di_servizio() -> void:
 		if rampa == 0:
 			_corridoio(Vector3(x, y, z0), Vector3(x + 1.5, y, z1), 2.6, "ns")
 			x += 1.5
-	# il corridoio in piano fino a C3
-	_corridoio(Vector3(x, 0.0, z0), Vector3(PORTA_C3.x - 0.15, 0.0, z1), 2.6, "", {"n": [OBLO_SERVIZIO, ObloLei.PIASTRA * 0.5, FORO_OBLO]})
-	# l'oblò nel muro nord del tratto in piano, a sinistra salendo verso C3: lei a testa in giù, col corpo in alto
-	# (la vasca sale 5,8 m sopra il centro); compare mentre sali le rampe
-	_oblo("ObloServizio", OBLO_SERVIZIO, Vector3.BACK, "capovolta", AABB(Vector3(-40.0, Y - 0.2, 37.3), Vector3(24.0, 8.4, 4.3)),
+	# in cima il tratto verso sud fino al corridoio di prima: a ovest arriva la rampa (sotto) e poi muro, a est muro fino
+	# all'angolo (oltre c'è la vasca dell'oblò, da x -26,9)
+	var xe := x + SCALA_LARGA
+	_corridoio(Vector3(x, 0.0, z0), Vector3(xe, 0.0, c0), 2.6, "ne")
+	_muro(Vector3(0.2, 2.6, c0 - z1), Vector3(x - 0.1, 1.3, (z1 + c0) * 0.5), 0.0)
+	# il corridoio in piano fino a C3: chiuso a ovest e a sud; a nord il muro con l'oblò comincia dopo l'angolo
+	_corridoio(Vector3(x, 0.0, c0), Vector3(PORTA_C3.x - 0.15, 0.0, c1), 2.6, "so")
+	var n0 := xe + 0.2
+	var n1 := PORTA_C3.x - 0.15 + 0.2
+	_muro(Vector3(n1 - n0, 2.6, 0.2), Vector3((n0 + n1) * 0.5, 1.3, c0 - 0.1), 0.0, [OBLO_SERVIZIO, ObloLei.PIASTRA * 0.5, FORO_OBLO])
+	# l'oblò nel muro nord del tratto in piano, a sinistra andando verso C3: lei a testa in giù, col corpo in alto
+	# (la vasca sale 5,8 m sopra il centro); compare mentre sali le rampe o sei nella stanza delle pozze
+	_oblo("ObloServizio", OBLO_SERVIZIO, Vector3.BACK, "capovolta", AABB(Vector3(-39.5, Y - 0.2, z0 - 0.2), Vector3(23.5, 8.4, c1 - z0 + 0.4)),
 			{"vasca_larga": 10.2, "vasca_spostata": -0.3, "vasca_fonda": 5.6, "vasca_sotto": 3.6, "vasca_sopra": 5.8})
-	_lampada_rossa(Vector3(x + 0.5, 2.2, z1 - 0.05), Vector3(0, -0.5, -1))
-	_lampada_rossa(Vector3(xp + 0.9, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
+	_lampada_rossa(Vector3(x + 1.0, 2.2, c1 - 0.05), Vector3(0, -0.5, -1))
+	_lampada_rossa(Vector3(xs + 0.6, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
 	var m := Node3D.new()
 	m.name = "Marker"
 	add_child(m)
@@ -659,15 +680,28 @@ func _metti_infermeria(scena_infermeria: PackedScene, f: Node3D, dopo: bool) -> 
 	infermeria.position = CENTRO_INFERMERIA
 	add_child(infermeria)
 	move_child(infermeria, f.get_index() + 1)
+	pozze = (_scena_tenuta(SCENA_POZZE)).instantiate() as Node3D
+	pozze.name = "StanzaPozze"
+	pozze.position = CENTRO_POZZE
+	add_child(pozze)
+	move_child(pozze, infermeria.get_index() + 1)
 	fiume = f
 	_tenuti.clear()
 	AttesaZone.pronta(&"risalita")
 	if dopo:
-		UnificaMateriali.unifica(fiume)
-		UnificaMateriali.unifica(infermeria)
-		GameState.ripristina.call_deferred(fiume)
-		GameState.ripristina.call_deferred(infermeria)
+		for n in [fiume, infermeria, pozze]:
+			UnificaMateriali.unifica(n)
+		for n in [fiume, infermeria, pozze]:
+			GameState.ripristina.call_deferred(n)
 		_aggiorna_visibilita()
+
+
+## La scena della stanza delle pozze: quella arrivata dal thread (tenuta), o caricata adesso.
+func _scena_tenuta(percorso: String) -> PackedScene:
+	for r in _tenuti:
+		if r is PackedScene and (r as PackedScene).resource_path == percorso:
+			return r as PackedScene
+	return load(percorso) as PackedScene
 
 
 ## Le stanze a gioco avviato, coi file già caricati dal thread: il capannone si costruisce a pezzi (nascosto e
@@ -710,27 +744,41 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 		if is_instance_valid(inf):
 			inf.queue_free()
 		return
-	for n in [f, inf]:
+	# poi la stanza delle pozze, anche lei a pezzi
+	var poz := _scena_tenuta(SCENA_POZZE).instantiate() as Node3D
+	poz.name = "StanzaPozze"
+	poz.position = CENTRO_POZZE
+	poz.visible = false
+	poz.process_mode = Node.PROCESS_MODE_DISABLED
+	GameState.in_costruzione(poz)
+	poz.set(&"costruzione_a_pezzi", true)
+	add_child(poz)
+	move_child(poz, inf.get_index() + 1)
+	await poz.call(&"costruisci_a_pezzi")
+	var nuove: Array[Node3D] = [inf, poz]
+	if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
+		_libera(nuove)
+		return
+	for n in [f, inf, poz]:
 		await get_tree().process_frame
 		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
-			if is_instance_valid(inf):
-				inf.queue_free()
+			_libera(nuove)
 			return
 		UnificaMateriali.unifica(n)
 	# disegnate una volta fuori vista: le pipeline dei loro materiali si compilano adesso, non al primo sguardo
-	for n in [f, inf]:
+	for n in [f, inf, poz]:
 		await RiscaldamentoShader.disegna_fuori_vista(n, get_viewport())
 		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
-			if is_instance_valid(inf):
-				inf.queue_free()
+			_libera(nuove)
 			return
 	_fiume_nuovo = null
 	fiume = f
 	infermeria = inf
+	pozze = poz
 	_tenuti.clear()
 	_accelerata = false
 	_riaccendendo = true
-	for n in [f, inf]:
+	for n in [f, inf, poz]:
 		# (riaccese a pezzi: tutte insieme fermavano il gioco)
 		await AccensioneAPezzi.accendi(n)
 		if not is_instance_valid(n) or not n.is_inside_tree():
@@ -741,6 +789,12 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 	# costruite, disegnate fuori vista e riaccese: la porta del ponte si può aprire
 	AttesaZone.pronta(&"risalita")
 	_aggiorna_visibilita()
+
+
+func _libera(nodi: Array[Node3D]) -> void:
+	for n in nodi:
+		if is_instance_valid(n):
+			n.queue_free()
 
 
 ## Vero mentre le stanze si costruiscono, si disegnano fuori vista o si riaccendono a pezzi: prima di liberare la sala
@@ -758,13 +812,14 @@ func _togli_stanze() -> void:
 	_tenuti.clear()
 	if fiume == null:
 		return
-	for n in [fiume, infermeria]:
+	for n in [fiume, infermeria, pozze]:
 		if is_instance_valid(n):
 			GameState.parcheggia(n)
 			remove_child(n)
 			n.queue_free()
 	fiume = null
 	infermeria = null
+	pozze = null
 	AttesaZone.non_pronta(&"risalita")
 
 
@@ -821,7 +876,7 @@ func _process(_delta: float) -> void:
 
 ## Chiede al thread le due scene e i file che usano mentre si costruiscono.
 func _richiedi_tutto() -> void:
-	_richiesti = [SCENA_FIUME, SCENA_INFERMERIA]
+	_richiesti = [SCENA_FIUME, SCENA_INFERMERIA, SCENA_POZZE]
 	var elenco = JSON.parse_string(FileAccess.get_file_as_string(ELENCO_RISORSE)) if FileAccess.file_exists(ELENCO_RISORSE) else []
 	for percorso in (elenco if elenco is Array else []):
 		if String(percorso).begins_with("res://") and ResourceLoader.exists(percorso):
@@ -852,6 +907,7 @@ func _controlla_thread() -> void:
 		elif percorso == SCENA_FIUME or percorso == SCENA_INFERMERIA:
 			scene.append(r as PackedScene)
 		else:
+			# (anche la scena della stanza delle pozze: la prende _scena_tenuta)
 			_tenuti.append(r)
 	_richiesti.clear()
 	var p: Node3D = GameState.player if GameState.player and is_instance_valid(GameState.player) else null
@@ -918,3 +974,5 @@ func _aggiorna_visibilita() -> void:
 	if fiume and fiume.visible != dentro:
 		fiume.visible = dentro
 		infermeria.visible = dentro
+		if is_instance_valid(pozze):
+			pozze.visible = dentro

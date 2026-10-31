@@ -147,8 +147,13 @@ func _run() -> void:
 		porta.global_position + porta.global_basis.z * 0.8, porta.global_position - porta.global_basis.z * 1.5,
 		inf.to_global(Vector3(1.6, 0, 3.6)), inf.to_global(Vector3(1.8, 0, 1.6)), inf.to_global(Vector3(0.0, 0, 0.0)),
 		inf.to_global(Vector3(-2.2, 0, -2.4)), inf.to_global(Vector3(-2.2, 0, -3.8))])
-	await _vai("su per la scala di servizio fino alla porta di C3", [Vector3(p.global_position.x, 0, _mr("PortaC3").z),
-		_mr("CimaScala"), _mr("PortaC3")])
+	var pozze := ris.get_node(^"StanzaPozze") as Node3D
+	await _vai("nella stanza delle pozze, sulla passerella fino alla porta stagna", [pozze.to_global(Vector3(0, 0, 3.4)),
+		pozze.to_global(Vector3(-3.4, 0, 3.4)), pozze.to_global(Vector3(-3.4, 0, -3.4)), pozze.to_global(Vector3(-1.7, 0, -3.4))])
+	print("  (scorciatoia: la porta stagna aperta come a enigma risolto, l'enigma lo prova test_pozze di enigmi)")
+	(pozze.get_node(^"PortaStagna") as PortaStagna).apri(true)
+	await _vai("su per la scala di servizio fino alla porta di C3", [pozze.to_global(Vector3(-1.7, 0, -5.4)),
+		Vector3(_mr("CimaScala").x, 0, pozze.to_global(Vector3(0, 0, -5.4)).z), _mr("CimaScala"), _mr("PortaC3")])
 
 	print("C3, il magazzino, la serranda, la sala")
 	await _vai("da C3 al magazzino dei gonfiabili", [tec.to_global(Vector3(37.09, 9.05, 15.0)), tec.to_global(Vector3(30.0, 9.05, 15.0)),

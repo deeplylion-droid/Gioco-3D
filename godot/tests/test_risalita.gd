@@ -5,7 +5,8 @@ extends Node
 ## 1. Dall'ingresso del capannone si arriva all'imbarco; il fiume funziona anche girato.
 ## 2. Il giro giusto (paratie girate come servono) porta all'approdo.
 ## 3. Dall'approdo, per la porta di servizio e la zona del personale, si entra nell'infermeria; dalla porta
-##    nord la scala di servizio sale fino alla quota della sala e arriva alla porta di C3.
+##    nord la stanza delle pozze, e dalla sua porta stagna la scala di servizio sale fino alla quota della sala e arriva
+##    alla porta di C3.
 ## 4. Le stanze non si disegnano col giocatore lontano.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita.gd
 
@@ -77,9 +78,22 @@ func _run() -> void:
 	for i in 3:
 		await get_tree().physics_frame
 	check(await _cammina(fuori, 20.0), "col pulsantone colpito la porta nord è aperta e se ne esce (%s)" % str(p.global_position))
+	# la stanza delle pozze (31 ottobre): sulla passerella fino alla porta stagna, chiusa finché l'enigma non è risolto
+	var pozze := ris.get_node(^"StanzaPozze") as Node3D
+	var porta_x: float = (pozze.get_script() as Script).get_script_constant_map().get("PORTA_X", -1.7)
+	var giro: Array[Vector3] = [pozze.to_global(Vector3(0, 0, 3.4)), pozze.to_global(Vector3(-3.4, 0, 3.4)),
+		pozze.to_global(Vector3(-3.4, 0, -3.4)), pozze.to_global(Vector3(porta_x, 0, -3.4))]
+	check(await _cammina(giro, 30.0), "sulla passerella intorno alle pozze fino alla porta stagna (%s)" % str(p.global_position))
+	var oltre: Array[Vector3] = [pozze.to_global(Vector3(porta_x, 0, -5.4))]
+	check(not await _cammina(oltre, 3.0) and pozze.to_local(p.global_position).z > -4.0,
+		"la porta stagna è chiusa: non si esce (%s)" % str(pozze.to_local(p.global_position)))
+	print("  (scorciatoia: la porta stagna aperta come a enigma risolto, l'enigma lo prova test_pozze di enigmi)")
+	(pozze.get_node(^"PortaStagna") as PortaStagna).apri(true)
+	await get_tree().physics_frame
+	check(await _cammina(oltre, 10.0), "con la porta stagna aperta si esce sul piede della scala (%s)" % str(p.global_position))
 	var cima := ris.get_node(^"Marker/CimaScala") as Node3D
 	var c3 := ris.get_node(^"Marker/PortaC3") as Node3D
-	var scala: Array[Vector3] = [Vector3(p.global_position.x, 0, c3.global_position.z), cima.global_position, c3.global_position]
+	var scala: Array[Vector3] = [Vector3(cima.global_position.x, 0, p.global_position.z), cima.global_position, c3.global_position]
 	check(await _cammina(scala, 40.0), "la scala di servizio porta alla porta di C3 (%s)" % str(p.global_position))
 	check(absf(p.global_position.y) < 0.15, "alla quota della sala (%.2f)" % p.global_position.y)
 
