@@ -73,7 +73,7 @@ jobs:
           python3 tools/ci/test_texture_compresse.py
           python3 tools/ci/texture_compresse.py godot
 
-      - name: Morbidezza in parallelo, nessun operatore senza tipo sui thread (crash di Godot 4.7.2 alla prima esecuzione)
+      - name: Morbidezza in parallelo e thread di caricamento, nessun operatore senza tipo sui thread (crash di Godot 4.7.2 alla prima esecuzione)
         if: steps.progetto.outputs.presente == 'si'
         run: |
           python3 tools/ci/morbidezza_operatori.py --prova
