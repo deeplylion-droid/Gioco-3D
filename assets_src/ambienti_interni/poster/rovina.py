@@ -820,6 +820,171 @@ def telo_bagnina():
     salva(a, un_pezzo(alfa), os.path.join(SALA_ROV, 'telo_bagnina_rovinato.png'))
 
 
+# ---------------------------------------------------------------- 7-9. i cartelloni del muro nord della sala principale
+# (la richiesta dell'utente del 30 ottobre era per questi: "i due sul muro in fondo, uno ha una balena tipo", 31 ottobre).
+# 3,2 x 1,8 m, incollati sulla lamiera della cornice appoggiata al muro: dove la carta brucia o si strappa si vede la
+# lamiera. Più segni chiari (vernice bianca e rossa) e meno fuliggine dei teli, perché si leggano anche con la poca luce
+# della sala. Ognuno rovinato in modo diverso. Li mette sala_principale.gd (metti_cartelloni_rovinati): il GLB resta
+# pulito per lo spot VHS.
+
+def _cartellone_nord(chiave):
+    src = Image.open(os.path.join(SALA_SRC, 'cartellone_%s_col.jpg' % chiave)).convert('RGB')
+    W, H = src.size
+    a = f32(src)
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    return a, np.ones((H, W), np.float32), W, H, yy, xx
+
+
+def _fine_cartellone(a, alfa, nome, seme):
+    H, W = alfa.shape
+    a = macchie_acqua(a, blob((H, W), seme, 3) + np.linspace(0, 1, H)[:, None] * 0.4 - 0.05, (0.66, 0.78))
+    a = muffa(a, np.clip((blob((H, W), seme + 1, 5) + np.linspace(0, 1, H)[:, None] * 0.35 - 0.72) * 4, 0, 1), seme + 2, 0.015)
+    a = colature(a, alfa, 8, seme + 3, forza=0.3, colore=(0.12, 0.09, 0.07), da_y=0.0)
+    a = bordo_strappato(a, alfa, 2.0, 0.55)
+    os.makedirs(SALA_ROV, exist_ok=True)
+    salva(a, un_pezzo(alfa), os.path.join(SALA_ROV, nome))
+
+
+def cartellone_balena():
+    """Il cartellone della balena col cappellino da marinaio (sala_cartellone_n1, al centro del muro nord): l'occhio a
+    spirale con la croce bianca, un ghigno enorme coi denti bianchi sulla bocca, il cappellino annerito, il sole
+    cancellato a spirale con le croci, zig-zag neri sul cielo, una croce rossa a vernice sul corpo, le stelle con gli
+    occhi crocettati; bruciato dall'angolo in basso a destra fino alle stelle, una lingua di fuoco dal bordo sinistro in
+    basso e un buco tondo sulla pancia, buchi di
+    sigaretta, uno strappo che scende dal bordo in alto a sinistra, acqua e muffa."""
+    a, alfa, W, H, yy, xx = _cartellone_nord('p2')
+    nero, bianco, rosso = (14, 12, 12), (238, 234, 224), (170, 16, 18)
+    p = Pennarello(W, H, 402)
+    ex, ey = 1166, 444
+    p.spirale(ex, ey, 60, 12, nero, giri=34)
+    p.croce(ex, ey, 90, 14, bianco, volte=2)
+    p.denti(1150, 560, 520, 150, 12, nero, (60, 6, 8), bianco, 10, arco=0.35)
+    p.nervose(ex, ey, 260, 30, 8, nero, lung=(0.5, 1.2))
+    p.tratteggio(1040, 170, 1260, 290, 22, 9, nero)
+    p.spirale(660, 300, 190, 12, nero, giri=12)
+    p.croce(600, 270, 40, 9, bianco)
+    p.croce(720, 270, 40, 9, bianco)
+    for (x0, y0, x1, y1) in ((40, 40, 520, 200), (1300, 30, 1900, 180), (60, 620, 640, 760)):
+        zigzag(p, x0, y0, x1, y1, 12, 11, nero)
+    for (x, y) in ((330, 930), (1880, 240), (1850, 800), (1720, 980), (540, 980)):
+        p.croce(x, y, 34, 7, nero, volte=2)
+    for i in range(9):
+        x = p.rng.uniform(80, 1960)
+        p.linea((x, p.rng.uniform(30, 200)), (x + p.rng.normal(0, 160), p.rng.uniform(700, 1120)), 7, bianco, n=14, trem=3,
+                curva=p.rng.normal(0, 0.06))
+    a = p.applica(a, alfa)
+    q = Pennarello(W, H, 403)
+    q.croce(980, 640, 230, 22, rosso, volte=2)
+    q.denti(640, 420, 300, 110, 9, rosso, (90, 4, 8), (245, 240, 230), 10, arco=0.3)
+    a = q.applica_pastello(a, alfa, 404)
+    a = graffi(a, alfa, 40, 405, lung=(80, 320))
+    n = blob((H, W), 406, 5) * 0.65 + blob((H, W), 407, 18) * 0.35
+    dist = np.hypot((xx - W * 1.03) / W * 1.1, (yy - H * 1.05) / H)
+    a, alfa = bruciatura(a, alfa, 1 - dist * 1.02 + (n - 0.5) * 0.55, 0.42, 0.16, 408, fuliggine=1.3, verso=(-0.2, -1))
+    dist2 = np.hypot((xx - W * -0.02) / W * 1.6, (yy - H * 0.82) / H * 0.9)
+    a, alfa = bruciatura(a, alfa, 1 - dist2 * 2.2 + (blob((H, W), 415, 7) - 0.5) * 0.6, 0.46, 0.14, 416, fuliggine=1.0,
+                         verso=(0.15, -1))
+    d3 = np.hypot((xx - 860) / 120, (yy - 700) / 105)
+    a, alfa = bruciatura(a, alfa, 1 - d3 * 0.6 + (blob((H, W), 409, 8) - 0.5) * 0.35, 0.45, 0.2, 410, fuliggine=1.0,
+                         verso=(0.1, -1))
+    a, alfa = buchi_sigaretta(a, alfa, [(ex + 10, ey + 6), (1240, 360), (980, 520), (420, 380), (1500, 560), (300, 760),
+                                        (1100, 900)], [11, 9, 10, 9, 10, 9, 11], 411)
+    ns = blob((H, W), 412, 14)
+    linea_x = 380 + yy * 0.22 + (ns - 0.5) * 50
+    larga = 12 + 30 * blob((H, W), 413, 6) * (1 - yy / (H * 0.62))
+    alfa = alfa * ~((np.abs(xx - linea_x) < larga) & (yy < 0.62 * H))
+    _fine_cartellone(a, alfa, 'cartellone_balena_rovinato.png', 414)
+
+
+def cartellone_delfino():
+    """Il cartellone del delfino con l'ombrellone (sala_cartellone_n0, a ovest del muro nord): l'occhio annerito a
+    spirale con la croce rossa, il ghigno coi denti bianchi, l'ombrellone cancellato a righe nere fitte, la barchetta
+    crocettata, graffi bianchi, una croce bianca e denti rossi a pastello sulle onde; bruciato dall'angolo in alto a
+    sinistra giù lungo il bordo e dal basso al centro, con un buco tondo sull'ombrellone, tagli di coltello sul delfino, l'angolo in basso a
+    destra ripiegato, acqua e muffa."""
+    a, alfa, W, H, yy, xx = _cartellone_nord('p1')
+    nero, bianco, rosso = (14, 12, 12), (238, 234, 224), (170, 16, 18)
+    p = Pennarello(W, H, 502)
+    ex, ey = 1300, 420
+    p.spirale(ex, ey, 52, 11, nero, giri=34)
+    p.croce(ex, ey, 80, 13, rosso, volte=2)
+    p.denti(1380, 530, 300, 110, 9, nero, (60, 6, 8), bianco, 8, arco=0.4)
+    p.nervose(ex, ey, 220, 26, 7, nero, lung=(0.5, 1.2))
+    p.tratteggio(220, 90, 1150, 470, 40, 10, nero)
+    p.croce(300, 600, 50, 8, nero)
+    for (x0, y0, x1, y1) in ((1500, 60, 1980, 260), (980, 760, 1700, 980)):
+        zigzag(p, x0, y0, x1, y1, 12, 10, nero)
+    for i in range(9):
+        x = p.rng.uniform(80, 1960)
+        p.linea((x, p.rng.uniform(30, 200)), (x + p.rng.normal(0, 160), p.rng.uniform(700, 1120)), 7, bianco, n=14, trem=3,
+                curva=p.rng.normal(0, 0.06))
+    a = p.applica(a, alfa)
+    q = Pennarello(W, H, 503)
+    q.croce(600, 860, 200, 20, bianco, volte=2)
+    q.denti(1500, 860, 420, 130, 11, rosso, (90, 4, 8), (245, 240, 230), 10, arco=0.3)
+    a = q.applica_pastello(a, alfa, 504)
+    a = graffi(a, alfa, 40, 505, lung=(80, 320))
+    for (p0, p1, lw, s) in (((1080, 300), (1500, 700), 6, 506), ((1500, 320), (1100, 680), 5, 507), ((900, 700), (1300, 900), 4, 508)):
+        a, alfa = taglio(alfa, a, p0, p1, lw, s)
+    n = blob((H, W), 509, 5) * 0.65 + blob((H, W), 510, 18) * 0.35
+    dist = np.hypot((xx - W * -0.02) / W * 1.3, (yy - H * -0.05) / H * 0.8)
+    a, alfa = bruciatura(a, alfa, 1 - dist * 1.22 + (n - 0.5) * 0.55, 0.42, 0.16, 511, fuliggine=1.2, verso=(0.15, -1))
+    dist2 = np.hypot((xx - W * 0.42) / W * 1.2, (yy - H * 1.08) / H * 0.85)
+    a, alfa = bruciatura(a, alfa, 1 - dist2 * 1.9 + (blob((H, W), 517, 7) - 0.5) * 0.6, 0.44, 0.15, 518, fuliggine=1.2,
+                         verso=(0.0, -1))
+    d3 = np.hypot((xx - 760) / 110, (yy - 300) / 95)
+    a, alfa = bruciatura(a, alfa, 1 - d3 * 0.6 + (blob((H, W), 512, 8) - 0.5) * 0.35, 0.45, 0.2, 513, fuliggine=1.0,
+                         verso=(0.1, -1))
+    a, alfa = buchi_sigaretta(a, alfa, [(ex + 8, ey + 4), (1200, 560), (1700, 400), (600, 700), (1000, 1000), (1850, 900)],
+                              [11, 9, 10, 9, 10, 9], 514)
+    a, alfa = angolo_ripiegato(a, alfa, 'bd', 230, ombra=0.55, seme=515)
+    _fine_cartellone(a, alfa, 'cartellone_delfino_rovinato.png', 516)
+
+
+def cartellone_polpo():
+    """Il cartellone del polpo col pallone (sala_cartellone_n2, a est del muro nord): gli occhi del polpo anneriti a
+    spirale con le croci bianche, il ghigno coi denti, i tentacoli ripassati in rosso, il pallone cancellato a spirale,
+    il cavalluccio con l'occhio crocettato e il ghigno; bruciato dal basso a sinistra e con un buco tondo fra il polpo e
+    il cavalluccio, buchi di sigaretta, uno strappo di traverso dal bordo destro, acqua e muffa."""
+    a, alfa, W, H, yy, xx = _cartellone_nord('p3')
+    nero, bianco, rosso = (14, 12, 12), (238, 234, 224), (170, 16, 18)
+    p = Pennarello(W, H, 602)
+    for (ex, ey) in ((560, 470), (680, 430)):
+        p.spirale(ex, ey, 46, 10, nero, giri=30)
+        p.croce(ex, ey, 62, 11, bianco, volte=2)
+    p.denti(640, 570, 280, 110, 9, nero, (60, 6, 8), bianco, 8, arco=0.45)
+    p.nervose(620, 460, 240, 28, 7, nero, lung=(0.5, 1.2))
+    p.spirale(1080, 280, 170, 11, nero, giri=12)
+    p.spirale(1480, 440, 30, 7, nero, giri=20)
+    p.denti(1400, 470, 140, 50, 7, nero, (60, 6, 8), bianco, 5, arco=0.4)
+    for (x0, y0, x1, y1) in ((60, 60, 700, 220), (1500, 60, 1980, 240), (1200, 820, 1900, 1000)):
+        zigzag(p, x0, y0, x1, y1, 12, 10, nero)
+    for i in range(9):
+        x = p.rng.uniform(80, 1960)
+        p.linea((x, p.rng.uniform(30, 200)), (x + p.rng.normal(0, 160), p.rng.uniform(700, 1120)), 7, bianco, n=14, trem=3,
+                curva=p.rng.normal(0, 0.06))
+    a = p.applica(a, alfa)
+    q = Pennarello(W, H, 603)
+    for i in range(8):
+        x = 260 + i * 100
+        q.linea((x, 620), (x + q.rng.normal(0, 70), 950 + q.rng.normal(0, 40)), 12, rosso, n=12, trem=4)
+    q.croce(1080, 300, 150, 18, rosso, volte=2)
+    a = q.applica_pastello(a, alfa, 604)
+    a = graffi(a, alfa, 40, 605, lung=(80, 320))
+    n = blob((H, W), 606, 5) * 0.65 + blob((H, W), 607, 18) * 0.35
+    dist = np.hypot((xx - W * 0.1) / W, (yy - H * 1.08) / H * 0.9)
+    a, alfa = bruciatura(a, alfa, 1 - dist * 1.35 + (n - 0.5) * 0.55, 0.42, 0.16, 608, fuliggine=1.3, verso=(0.1, -1))
+    d3 = np.hypot((xx - 1250) / 100, (yy - 620) / 115)
+    a, alfa = bruciatura(a, alfa, 1 - d3 * 0.6 + (blob((H, W), 609, 8) - 0.5) * 0.35, 0.45, 0.2, 610, fuliggine=1.0,
+                         verso=(0.1, -1))
+    a, alfa = buchi_sigaretta(a, alfa, [(565, 472), (900, 300), (1600, 700), (300, 300), (1800, 500)], [11, 9, 10, 9, 10], 611)
+    ns = blob((H, W), 612, 14)
+    linea_y = 560 + (W - xx) * 0.12 + (ns - 0.5) * 50
+    larga = 12 + 30 * blob((H, W), 613, 6)
+    alfa = alfa * ~((np.abs(yy - linea_y) < larga) & (xx > 0.38 * W))
+    _fine_cartellone(a, alfa, 'cartellone_polpo_rovinato.png', 614)
+
+
 if __name__ == '__main__':
     scelti = sys.argv[1:] or ['cartellone', 'bagnino', 'manifesto', 'infermeria', 'telo_arcobaleno', 'telo_bagnina']
     for s in scelti:

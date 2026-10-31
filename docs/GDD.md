@@ -236,6 +236,13 @@ Risposte alle domande (18 ottobre):
 
 **Scelta dell'utente (22 ottobre): P1**, quella costruita. È nella v0.3.8.
 
+## La stanza delle pozze colorate (idea dell'utente, 31 ottobre)
+
+Le parole dell'utente: "Una stanza quadrata con un 5x5 di piccole pozze quadrate piene d'acqua colorata. Stanza discretamente illuminata, per vedere bene i colori. L'enigma si risolve rimuovendo 3 colori esatti. Saranno i colori riportati a disegno pastello su un cartello di vietato l'accesso posizionato da qualche parte nella stanza precedente a questa." E subito dopo: "le pozze quadrate sono disposte a scacchiera, senza spazi vuoti, contigue."
+- **Dove**: lo propone la squadra ("dove metterla mi fai tu delle proposte"), con una pagina di proposte per l'utente.
+- **Da decidere con l'utente** prima di costruire: il posto e la stanza precedente col cartello; come si toglie un colore; cosa succede se sbagli; cosa apre l'enigma risolto; come ci si muove con le pozze contigue.
+- **Già deciso**: 25 pozze quadrate in 5x5, contigue a scacchiera; acqua colorata; stanza ben illuminata; si risolve togliendo 3 colori esatti; l'indizio sono i 3 colori disegnati a pastello su un cartello di vietato l'accesso nella stanza prima. Vale la regola delle scritte: il cartello è solo disegni.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
@@ -298,6 +305,8 @@ L'utente: "al momento, arrivare alla porta della torre si impiegano 5 minuti". C
 - **due stanze nuove con un enigma**: il **fiume lento**, un canale buio con la corrente che ti trascina, dove col getto colpisci le chiuse per deviare la corrente verso l'uscita giusta (se sbagli, il giro ti riporta all'inizio), e l'**infermeria**, la stanza del medico del parco con una cassaforte il cui codice è nascosto tra cartelle e Polaroid, e la storia delle pecore modificate con i geni della medusa.
 Le stanze sono due, in sequenza: prima il fiume lento, poi l'infermeria. Il posto l'ha scelto l'utente: "possiamo collocarle lungo il percorso in risalita da dopo la stanza dei generatori, evitando che si apra la serranda che riporta alla sala centrale, finché non hai preso una keycard dall'infermeria. Aggiungi una lettore per leggere la keycard a quella serranda e fallo illuminato." Quindi le stanze stanno lungo la strada di risalita, dopo la sala dei generatori. Nell'infermeria si prende una keycard, e la serranda del magazzino che riporta nella sala grande si apre solo passando la keycard in un lettore illuminato accanto alla serranda, che si vede anche al buio.
 Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che ci sono già, più esplorazione e Polaroid) si valutano dopo.
+
+**Durata misurata dall'utente, 31 ottobre (0.3.17)**: "Andando dritto a risolvere gli enigmi e senza mai morire ci si mette 15 minuti", per il capitolo intero, dal risveglio alla fine del tunnel. È il tempo di chi sa già tutte le soluzioni; il capitolo era pensato per circa 40 minuti (percorso A).
 
 **La logica, approvata dall'utente il 18 ottobre** (nota di enigma-logica in `docs/proposte/fiume_infermeria/nota_logica.md`):
 - **Fiume lento** (4-6 minuti la prima volta, 80 s un giro giusto). La corrente c'è perché le pompe sono ripartite dopo la tappa 6. Si sta su una ciambella del parco a 2,2 m/s. Ci si guarda intorno, si spruzza e si aspira; spruzzando all'indietro si accelera fino a 3,2 m/s, in avanti si frena fino a 1,2 m/s. Tre bivi su un anello: prima di ognuno, 12-15 m prima, col getto si colpisce un disco a strisce di 80 cm che gira la paratia. Al bivio 1 la paratia va girata; al 2 è già giusta, e se la colpisci la sbagli; al 3 il disco si vede solo dopo averlo passato, quindi si spara all'indietro. L'indizio sono i cartelli verdi d'uscita d'emergenza: dopo il blackout sono accesi solo sui rami giusti (scelta dell'utente). Se sbagli, un ramo corto e uno scivolo ti riportano all'imbarco, e le paratie restano come le hai lasciate. Non si cade e non si muore.
