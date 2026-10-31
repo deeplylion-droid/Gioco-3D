@@ -760,9 +760,10 @@ func _quando_radice(anim: StringName, sotto: float, salita: bool) -> float:
 	return 0.0 if salita else a.length
 
 
+## Porta la salita al tempo [param t] e mette subito la posa, anche da 0: se no nel primo fotogramma lo scheletro ha ancora
+## la posa di prima (l'ultima discesa, altrove) nel posto nuovo, e i tentacoli che ripartono da lì scattano al
+## fotogramma dopo (scolo_2 dopo scolo_1 in test_morbidezza_inseguimento: 64 m/s).
 func _salta_a(t: float) -> void:
-	if t <= 0.0:
-		return
 	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if ap:
 		ap.seek(t, true)
@@ -785,8 +786,11 @@ func _scendi(respinta := false) -> void:
 	var nome := "respinta" if respinta else ("scende_sb1" if _lei_dove == "sb1" else "scende")
 	# respinta e scende partono dall'altezza della posa "su" (incombe): da più in basso (aggrappata al bordo a SB1, o
 	# ancora a metà salita) lei saliva di scatto fino a lì e poi scendeva (riscontro dell'utente sulla 0.3.18 a SB1:
-	# 3 m in 0,17 s). Nella fusione il nodo scende di quanto serve perché la radice resti dov'è
+	# 3 m in 0,17 s). Nella fusione il nodo scende di quanto serve perché la radice resti dov'è. (Sotto i 10 cm no: è il
+	# respiro di incombe, e la discesa resta com'era)
 	var giu := _salto_discesa(StringName("inseguimento/" + nome))
+	if giu < 0.10:
+		giu = 0.0
 	_anima(nome, 0.15)
 	if giu > 0.0:
 		create_tween().tween_property(lei, "global_position:y", lei.global_position.y - giu, 0.15)
