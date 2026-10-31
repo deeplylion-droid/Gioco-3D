@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+"""Controllo statico della morbidezza in parallelo (MorbidezzaLei): nelle funzioni che girano sui thread del pool
+(_lavora e tutto quello che chiama, nello stesso file) nessun operatore con un operando senza tipo e nessun int % int o
+int / int.
+
+Perché: in Godot 4.7.2 la prima volta che un operatore senza tipo gira (OPCODE_OPERATOR) la VM di GDScript riscrive il
+bytecode (firma, tipo, poi il puntatore della funzione) sotto un lucchetto che chi legge non prende: un altro thread
+che passa di lì nello stesso momento può chiamare un puntatore nullo (signal 11 in test_morbidezza_tunnel alla presa,
+30 ottobre; prova in docs/tecnico/crash_operatori_thread). Nel release passano di lì anche int / int e int % int.
+
+Cosa guarda, riga per riga (senza commenti e stringhe):
+- un elemento di un contenitore senza tipo (variabili, parametri e membri Array o Dictionary senza tipo, e le variabili
+  dei for su di loro) accanto a un operatore, se non è dentro (... as Tipo) o int(), float(), bool();
+- una variabile di un for su un contenitore senza tipo accanto a un operatore;
+- ogni % e ogni / fra due interi (letterali senza punto, variabili int, .size()).
+Uso: python3 tools/ci/morbidezza_operatori.py [file]   (esce con 1 se trova qualcosa)
+"""
+import re
+import sys
+
+FILE = sys.argv[1] if len(sys.argv) > 1 else "godot/scripts/environment/morbidezza_lei.gd"
+RADICE = "_lavora"
+
+OPERATORI = ["+=", "-=", "*=", "/=", "%=", "==", "!=", "<=", ">=", "+", "-", "*", "/", "%", "<", ">"]
+PAROLE = ["and", "or", "not", "in"]
+
+
+def senza_stringhe_e_commenti(riga):
+    out = []
+    dentro = None
+    for c in riga:
+        if dentro:
+            out.append(" ")
+            if c == dentro:
+                dentro = None
+            continue
+        if c in "\"'":
+            dentro = c
+            out.append(" ")
+            continue
+        if c == "#":
+            break
+        out.append(c)
+    return "".join(out)
+
+
+def funzioni(righe):
+    f = {}
+    cur = None
+    for i, l in enumerate(righe):
+        m = re.match(r"^(static )?func (\w+)\((.*)", l)
+        if m:
+            cur = m.group(2)
+            f[cur] = [i, i]
+            continue
+        if cur is not None:
+            if l and not l[0].isspace() and not l.startswith("#"):
+                cur = None
+            else:
+                f[cur][1] = i
+    return f
+
+
+def chiamate(righe, f):
+    out = {}
+    for nome, (a, b) in f.items():
+        corpo = "\n".join(senza_stringhe_e_commenti(l) for l in righe[a:b + 1])
+        out[nome] = {g for g in f if g != nome and re.search(r"(?<![\w])" + g + r"\(", corpo)}
+    return out
+
+
+def senza_tipo_membri(righe):
+    nomi = set()
+    for l in righe:
+        if l.startswith("var ") or l.startswith("static var "):
+            m = re.match(r"^(?:static )?var (\w+)\s*(:\s*(Array|Dictionary)\s*(=|$)|:=\s*(\[|\{))", l)
+            if m:
+                nomi.add(m.group(1))
+    return nomi
+
+
+def chiudi(s, i):
+    """Indice dopo la parentesi che chiude quella aperta in s[i]."""
+    apre = s[i]
+    chiude = {"[": "]", "(": ")"}[apre]
+    p = 0
+    for j in range(i, len(s)):
+        if s[j] in "[(":
+            p += 1
+        elif s[j] in "])":
+            p -= 1
+            if p == 0:
+                return j + 1
+    return len(s)
+
+
+def vicino_a_operatore(s, a, b):
+    """L'espressione s[a:b] ha un operatore subito prima o subito dopo (e non è un cast o una conversione)?"""
+    prima = s[:a].rstrip()
+    dopo = s[b:].lstrip()
+    if re.match(r"^\s*for [\w: \[\]]+ in$", prima) and dopo.startswith(":"):
+        return False      # il contenitore di un for, non l'operatore in
+    if dopo.startswith("as ") or re.match(r"^\)\s*as\b", dopo):
+        return False
+    if re.search(r"\b(int|float|bool|str)\($", prima) or re.search(r"\(\s*$", prima) and re.match(r"^\)\s*as\b", dopo):
+        return False
+    if re.match(r"^\.", dopo) or re.match(r"^\[", dopo):
+        return False      # un metodo o un altro indice: non un operatore su questo valore
+    for o in OPERATORI:
+        if dopo.startswith(o) and not dopo.startswith("=" ) and not (o in "<>" and dopo.startswith(o + o)):
+            if o in ("-", "+") and dopo.startswith(o + ">"):
+                continue
+            return True
+        if prima.endswith(o) and not prima.endswith(":=") and not re.search(r"(^|[^=!<>:+\-*/%])=$", prima):
+            if o == ">" and prima.endswith("->"):
+                continue
+            return True
+    for w in PAROLE:
+        if re.match(r"^" + w + r"\b", dopo) or re.search(r"\b" + w + r"$", prima):
+            return True
+    return False
+
+
+def interi(corpo_righe, params):
+    nomi = set()
+    for p in params:
+        m = re.match(r"\s*(\w+)\s*:\s*int\b", p)
+        if m:
+            nomi.add(m.group(1))
+    for l in corpo_righe:
+        for m in re.finditer(r"\bvar (\w+)\s*(:\s*int\b|:=\s*-?\d+\s*$|:=\s*-?\d+\s*[^.\d])", l):
+            nomi.add(m.group(1))
+        m = re.match(r"\s*for (\w+) in (range\(|\w+\s*:|\d|n\b|[\w.]+\.size\(\)|\w+ \+ \d)", l)
+        if m:
+            nomi.add(m.group(1))
+    return nomi
+
+
+def operando_intero(t, interi_nomi):
+    t = t.strip()
+    if re.fullmatch(r"\d+", t):
+        return True
+    if t in interi_nomi:
+        return True
+    if re.fullmatch(r"[\w.\[\]]+\.size\(\)", t):
+        return True
+    return False
+
+
+def controlla(percorso):
+    righe = open(percorso, encoding="utf-8").read().split("\n")
+    f = funzioni(righe)
+    if RADICE not in f:
+        print(f"morbidezza_operatori: {RADICE} non c'è in {percorso}")
+        return 1
+    ch = chiamate(righe, f)
+    viste = set()
+    da_fare = [RADICE]
+    while da_fare:
+        n = da_fare.pop()
+        if n in viste:
+            continue
+        viste.add(n)
+        da_fare += list(ch.get(n, []))
+    membri = senza_tipo_membri(righe)
+    senza_tipo_ritorno = {n for n, (a0, _b) in f.items()
+            if re.search(r"->\s*(Array|Dictionary)\s*:", righe[a0])}
+    trovati = []
+    for nome in sorted(viste, key=lambda n: f[n][0]):
+        a, b = f[nome]
+        intest = senza_stringhe_e_commenti(righe[a])
+        params = intest[intest.find("(") + 1:intest.rfind(")")].split(",")
+        locali = set(membri)
+        for p in params:
+            m = re.match(r"\s*(\w+)\s*(:\s*(Array|Dictionary)\s*(=|$)|$)", p)
+            if m and m.group(1):
+                locali.add(m.group(1))
+        corpo = [senza_stringhe_e_commenti(l) for l in righe[a + 1:b + 1]]
+        cicli = set()
+        for l in corpo:
+            m = re.match(r"\s*var (\w+)\s*(:\s*(Array|Dictionary)\s*=|:=\s*(\[|\{))", l)
+            if m:
+                locali.add(m.group(1))
+            # := dal risultato di una funzione del file che restituisce un Array o un Dictionary senza tipo
+            m = re.match(r"\s*var (\w+)\s*:=\s*(\w+)\(", l)
+            if m and m.group(2) in senza_tipo_ritorno:
+                locali.add(m.group(1))
+        # le variabili dei for senza tipo su un contenitore senza tipo (o su una funzione che restituisce Array)
+        for l in corpo:
+            m = re.match(r"\s*for (\w+) in (.+):\s*$", l)
+            if m:
+                it = m.group(2)
+                if re.search(r"\.size\(\)\s*$|^range\(|^\d+$", it.strip()):
+                    continue      # un for sugli interi
+                if any(re.search(r"\b" + re.escape(x) + r"\b", it) for x in locali) or re.search(r"_forme_in\(|\.get\(", it):
+                    cicli.add(m.group(1))
+        interi_nomi = interi(corpo, params)
+        for k, l in enumerate(corpo):
+            num = a + 2 + k
+            # elementi di contenitori senza tipo accanto a un operatore
+            for x in locali | cicli:
+                for m in re.finditer(r"(?<![\w.])" + re.escape(x) + r"\[", l):
+                    fine = chiudi(l, m.end() - 1)
+                    while fine < len(l) and l[fine] == "[":
+                        fine = chiudi(l, fine)
+                    if vicino_a_operatore(l, m.start(), fine):
+                        trovati.append((num, nome, f"{x}[…] senza tipo accanto a un operatore", righe[num - 1].strip()))
+            for x in cicli:
+                for m in re.finditer(r"(?<![\w.])" + re.escape(x) + r"(?![\w\[(])", l):
+                    if re.match(r"\s*for ", l):
+                        continue
+                    if vicino_a_operatore(l, m.start(), m.end()):
+                        trovati.append((num, nome, f"{x} (senza tipo) accanto a un operatore", righe[num - 1].strip()))
+            if re.search(r"(?<![%])%(?![=%])", l):
+                trovati.append((num, nome, "% (int % int passa dall'operatore a rischio nel release)", righe[num - 1].strip()))
+            for m in re.finditer(r"([\w.\[\]()]+)\s*/\s*([\w.\[\]()]+)", l):
+                if operando_intero(m.group(1), interi_nomi) and operando_intero(m.group(2), interi_nomi):
+                    trovati.append((num, nome, "int / int (passa dall'operatore a rischio nel release)", righe[num - 1].strip()))
+    print(f"morbidezza_operatori: {len(viste)} funzioni sui thread ({', '.join(sorted(viste))})")
+    for t in trovati:
+        print(f"  {percorso}:{t[0]} ({t[1]}): {t[2]}\n      {t[3]}")
+    print(f"RISULTATO: {len(trovati)} operatori a rischio")
+    return 1 if trovati else 0
+
+
+if __name__ == "__main__":
+    sys.exit(controlla(FILE))

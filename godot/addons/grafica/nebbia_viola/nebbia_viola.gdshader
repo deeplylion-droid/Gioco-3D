@@ -18,6 +18,7 @@ uniform float lontano = 14.0;     // fin dove si calcola, in metri
 uniform float oltre = 100.0;      // da qui (metri dall'occhio) la nebbia si dirada...
 uniform float cala = 0.0;         // ...di tanto per metro (0: uguale dappertutto)
 uniform float quota = 0.0;        // l'altezza del pavimento
+uniform float fondo = 1e6;        // dove poggia il giocatore: sotto la quota (il fondo della piscina) lo strato sta lì
 uniform float densita = 0.08;     // la nebbia dappertutto, per metro
 uniform float strato = 0.8;       // in più vicino al pavimento...
 uniform float altezza = 3.0;      // ...che si dirada salendo
@@ -32,6 +33,7 @@ uniform float forza = 1.0;        // tutta la luce della nebbia (l'originale è 
 uniform vec3 luci_pos[4];
 uniform vec3 luci_col[4];         // il colore per la forza
 uniform int n_luci = 0;
+uniform bool misura = false;     // solo per le misure: la nebbia toglie luce e non ne aggiunge (lo schermo × T)
 
 // il rumore in 3D con una lettura sola: nel rosso la tabella, nel verde la stessa spostata di (37, 17)
 float rumore(vec3 x) {
@@ -58,12 +60,21 @@ void fragment() {
 	vec4 vicino = INV_PROJECTION_MATRIX * vec4(ndc, 1.0, 1.0);
 	vec3 dir_vista = normalize(vicino.xyz / vicino.w);
 	float L = lontano;
+	float vista = 1e6;
 	if (z > 0.0) {
 		vec4 v = INV_PROJECTION_MATRIX * vec4(ndc, z, 1.0);
-		L = min(length(v.xyz / v.w), lontano);
+		vista = length(v.xyz / v.w);
+		L = min(vista, lontano);
 	}
 	vec3 occhio = INV_VIEW_MATRIX[3].xyz;
 	vec3 rd = normalize((INV_VIEW_MATRIX * vec4(dir_vista, 0.0)).xyz);
+	// lo strato più fitto sta sul pavimento; guardando giù sotto il pavimento (il fondo della piscina, il canale) scende
+	// un po' verso quello che si vede (il 40% della differenza): il fondo ha appena un filo di nebbia più del pavimento
+	// alla stessa distanza, non una vasca piena di nebbia (riscontro dell'utente sulla 0.3.16)
+	// In piedi sotto il pavimento (sul fondo della piscina vuota) lo strato sta dove si cammina: attorno c'è la nebbia
+	// del pavimento della sala, appena di più (ricontrollo di enigmi sulla 0.3.17)
+	float q0 = min(quota, fondo);
+	float q = q0 + min(occhio.y + rd.y * min(vista, 1e3) - q0, 0.0) * 0.4;
 	float dt = L / float(passi);
 	// un inizio diverso per ogni punto dello schermo (rumore a gradiente intrecciato)
 	float j = fract(52.9829189 * fract(dot(FRAGCOORD.xy, vec2(0.06711056, 0.00583715))));
@@ -73,7 +84,8 @@ void fragment() {
 		float t = (float(i) + j) * dt;
 		vec3 p = occhio + rd * t;
 		float n = fbm(p * vec3(scala, scala * 1.8, scala) + vento * TIME);
-		float d = (densita + strato * exp(-max(p.y - quota, 0.0) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
+		// (lo strato si dirada salendo e anche scendendo sotto la sua quota)
+		float d = (densita + strato * exp(-abs(p.y - q) * altezza)) * mix(1.0, smoothstep(0.3, 0.75, n) * 2.0, ciuffi);
 		d /= 1.0 + max(t - oltre, 0.0) * cala;
 		d *= quanto;
 		vec3 luce = aria;
@@ -92,6 +104,6 @@ void fragment() {
 		T *= tr;
 	}
 	// (premoltiplicato: lo schermo diventa schermo × T + S)
-	ALBEDO = S;
+	ALBEDO = misura ? vec3(0.0) : S;
 	ALPHA = 1.0 - T;
 }

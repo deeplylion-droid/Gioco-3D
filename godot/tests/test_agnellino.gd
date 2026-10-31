@@ -61,6 +61,10 @@ func _run() -> void:
 	var compenetra := ""
 	var piedi_sotto := INF
 	var piega_scorre := 0.0
+	var scappa_da := -1
+	var girato_a := -1
+	var rot_prima := NAN
+	var girata := 0.0
 	var piega_n := 0
 	Input.action_press(&"move_forward")
 	Input.action_press(&"sprint")
@@ -82,6 +86,17 @@ func _run() -> void:
 		if b and is_instance_valid(b) and b.visible:
 			minima = minf(minima, b.global_position.distance_to(p.global_position))
 			if b.modalita == Bambino.Modalita.SCAPPA:
+				# la girata per scappare: veloce, correndo (com'era nella 0.3.15; riscontro dell'utente sulla 0.3.16)
+				if scappa_da < 0:
+					scappa_da = i
+				# (girato: dopo più di 90 gradi, quando smette di girare)
+				if girato_a < 0:
+					if not is_nan(rot_prima):
+						var dr := absf(angle_difference(rot_prima, b.rotation.y))
+						girata += dr
+						if girata > deg_to_rad(90.0) and dr < deg_to_rad(0.5):
+							girato_a = i
+					rot_prima = b.rotation.y
 				for ap in b.find_children("*", "AnimationPlayer", true, false):
 					tempo_anim = (ap as AnimationPlayer).speed_scale
 				# (l'animazione va alla velocità del corpo, misurata sui piedi: Bambino._passo_animazione)
@@ -104,6 +119,7 @@ func _run() -> void:
 	check(_comparso, "salendo la rampa F2 l'agnellino compare in cima alla scala di C2")
 	check(is_equal_approx(ag.velocita_corsa, 3.0) and tempo_anim > 0.0 and absf(tempo_anim - tempo_atteso) < 0.01,
 			"corre piano (%.1f m/s), con l'animazione a tempo (velocità %.2f)" % [ag.velocita_corsa, tempo_anim])
+	check(scappa_da >= 0 and girato_a >= 0 and girato_a - scappa_da <= 24, "si volta per scappare in fretta, correndo (di %.0f gradi in %d fotogrammi; al più 24, 0,4 s)" % [rad_to_deg(girata), girato_a - scappa_da])
 	check(_sparito_a >= 0, "si infila nel buco e sparisce (dopo %d frame di corsa)" % _sparito_a)
 	check(_sparito_a >= 0 and not _fuori_dalla_cavita, "quando sparisce è tutto dentro la cavità, al buio")
 	check(piega_scorre / maxf(piega_n, 1) < 0.5, "piegato per il buco nessun piede striscia a terra (in media %.2f m/s, %d fotogrammi a terra)" % [piega_scorre / maxf(piega_n, 1), piega_n])

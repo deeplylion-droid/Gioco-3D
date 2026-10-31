@@ -134,6 +134,11 @@ var _normale: Array[Vector3] = [Vector3.UP, Vector3.UP, Vector3.UP]
 var _ultimo_fondo: Array[float] = [0.0, 0.0, 0.0]
 var _trovato: Array[bool] = [true, true, true]
 var _senza_fondo: Array[int] = [0, 0, 0]
+## Dove sta il fondo della piscina (la vasca della sala e il portellone): solo quello, i piatti e i gonfiabili contano
+## come fondo per [method _fondo]. Vuoto (una scena senza la sala): conta tutto.
+var _radici_fondo: Array[Node] = []
+## Quante volte la rete di sicurezza ha rimesso un giocattolo alla partenza (per i test).
+var reti := 0
 ## L'animazione del piatto che scende col suo giocattolo ([method _scendi]).
 var _discese: Array[Tween] = [null, null, null]
 var _fondo_cerchi: Array[float] = [0.0, 0.0, 0.0]
@@ -437,6 +442,10 @@ func _appoggia() -> void:
 		_fondo_cerchi[i] = c.global_position.y
 		_metti_piatto(i, _giu[i])
 	_ostacoli = _ostacoli_fondo()
+	_radici_fondo.clear()
+	for r in [sala.get_node_or_null(^"Piscina") if sala else null, piscina.get(&"scarico") if piscina else null]:
+		if r is Node:
+			_radici_fondo.append(r)
 	for i in 3:
 		# (sul piatto sceso al centro del cerchio com'è adesso, appoggiato e inclinato: un load_state di prima, come quello
 		# delle partenze di prova, l'aveva messo al centro di prima, qualche micron più in là, e lo stato salvato non
@@ -643,10 +652,17 @@ func _fondo(i: int) -> float:
 	var basso := (vasca.get_floor_global_y() if vasca else global_position.y - 2.3) - 0.6
 	var spazio := get_world_3d().direct_space_state
 	for o: Vector2 in SCOSTAMENTI:
-		var q := PhysicsRayQueryParameters3D.create(Vector3(p.x + o.x, alto, p.z + o.y), Vector3(p.x + o.x, basso, p.z + o.y),
-			Layers.WORLD, escludi)
-		var h := spazio.intersect_ray(q)
-		if not h.is_empty():
+		var ex := escludi.duplicate()
+		# (quello che non è il fondo della piscina lo si salta e si guarda sotto: _del_fondo)
+		for k in 4:
+			var q := PhysicsRayQueryParameters3D.create(Vector3(p.x + o.x, alto, p.z + o.y), Vector3(p.x + o.x, basso, p.z + o.y),
+				Layers.WORLD, ex)
+			var h := spazio.intersect_ray(q)
+			if h.is_empty():
+				break
+			if not _del_fondo(h):
+				ex.append(h.rid)
+				continue
 			_normale[i] = h.normal if (h.normal as Vector3).y > 0.85 else Vector3.UP
 			_trovato[i] = true
 			_ultimo_fondo[i] = (h.position as Vector3).y
@@ -655,11 +671,30 @@ func _fondo(i: int) -> float:
 	return p.y
 
 
+## Vero se il colpo [param h] di un raggio è sul fondo della piscina: la vasca della sala, il portellone, un piatto, un
+## gonfiabile. Il resto non conta: i gommoni del tunnel, che si costruisce a gioco avviato, nel primo passo della fisica
+## stanno al centro del mondo, cioè proprio sopra il centro della piscina (collaudo finale del 30 ottobre: la rete
+## rimetteva alla partenza i giocattoli che stavano lì sotto).
+func _del_fondo(h: Dictionary) -> bool:
+	if _radici_fondo.is_empty() or _rid_gonfiabili.has(h.rid):
+		return true
+	var n := h.collider as Node
+	if n == null:
+		return false
+	if is_ancestor_of(n):
+		return true
+	for r in _radici_fondo:
+		if r == n or r.is_ancestor_of(n):
+			return true
+	return false
+
+
 ## Rete di sicurezza (ricontrollo di ambienti-2): un giocattolo finito sotto il fondo della piscina, fuori dall'area o
 ## che da mezzo secondo non trova il fondo sotto di sé torna alla sua partenza, appena il giocatore non guarda né lui
 ## né la partenza. Non dovrebbe servire mai: se serve, lo scrive.
 func _rete(i: int) -> void:
-	if _giu[i]:
+	# (a enigma risolto i giocattoli sono tutti sui piatti scesi e non si toccano più)
+	if _giu[i] or risolto_ok:
 		return
 	var g := _giocattoli[i]
 	_senza_fondo[i] = 0 if _trovato[i] else _senza_fondo[i] + 1
@@ -675,6 +710,7 @@ func _rete(i: int) -> void:
 		return
 	print("EnigmaGiocattoli: %s perso in %s (fondo %s), torna alla partenza" % [g.name, g.global_position,
 		_ultimo_fondo[i] if _trovato[i] else "non trovato"])
+	reti += 1
 	_alla_partenza(i)
 
 

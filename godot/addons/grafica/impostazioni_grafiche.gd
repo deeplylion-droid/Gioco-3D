@@ -19,7 +19,8 @@ const PERCORSO := "user://settings.cfg"
 const SEZIONE := "grafica"
 ## Sale quando cambiano i valori di serie che vanno imposti anche a chi ha già salvato.
 ## 2: glow e grana spenti di serie (riscontro dell'utente sulla v0.2.1).
-const VERSIONE := 2
+## 3: la grana di nuovo spenta per tutti, una volta (sulla 0.3.16 con la nebbia viola stonava: richiesta dell'utente).
+const VERSIONE := 3
 const POST_SHADER := preload("res://addons/grafica/post_processing.gdshader")
 
 const RISOLUZIONI: Array[Vector2i] = [
@@ -224,6 +225,8 @@ func carica() -> void:
 	# Impostazioni salvate da una versione vecchia: glow e grana tornano ai nuovi valori di serie.
 	if int(cfg.get_value(SEZIONE, "versione", 1)) < 2:
 		valori["glow"] = false
+		valori["grana"] = false
+	if int(cfg.get_value(SEZIONE, "versione", 1)) < 3:
 		valori["grana"] = false
 
 
@@ -486,11 +489,11 @@ func _applica_camera() -> void:
 
 
 ## L'opzione (cambiata dentro una zona la nebbia sale o scende piano, come entrando e uscendo) e i passi per la
-## qualità della nebbia: al minimo la metà.
+## qualità della nebbia (i passi per preset: NebbiaViola.PASSI_PRESET).
 func _applica_nebbia_viola() -> void:
 	if nebbia_viola:
 		nebbia_viola.accesa = bool(valori["nebbia_viola"])
-		nebbia_viola.imposta_qualita(int(valori["nebbia"]))
+		nebbia_viola.imposta_qualita(int(valori["nebbia"]), String(valori["preset"]))
 
 
 func _applica_fov() -> void:

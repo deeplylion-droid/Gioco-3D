@@ -362,6 +362,57 @@ func _run() -> void:
 	check(Vector2(g.position.x, g.position.z).distance_to(Vector2(0.0, 3.6)) < 0.3 and absf(g.global_position.y - _fondo_dall_alto(g.global_position)) < 0.02,
 		"salvato sulla giunzione (0, 3,6) e riaperto in una sala nuova, il pallone è lì sul fondo (%s)" % g.global_position.snapped(Vector3.ONE * 0.001))
 	_controlla_sotto("ripartendo dal checkpoint")
+
+	# collaudo finale del 30 ottobre: finita la torre si costruisce il tunnel, e ogni gommone nel primo passo della fisica
+	# stava al centro del mondo, cioè sopra il centro della piscina; la rete rimetteva alla partenza i giocattoli lì sotto
+	print("9. La torre e il tunnel si caricano coi giocattoli sui piatti e sul fondo: non si muovono")
+	await _carica()
+	vasca.fill = 0.0
+	enigma.load_state({"pos": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [-0.2, -0.8, 2.0944]], "giu": [true, true, false]})
+	await _frames(90)
+	# il fondo che conta: dall'alto, sulla parte profonda, la vasca, il portellone, un piatto o un gonfiabile
+	var spazio := (level as Node3D).get_world_3d().direct_space_state
+	var estranei := []
+	var a9 := enigma.area
+	for xx in 13:
+		for zz in 9:
+			var q9 := Vector3(a9.position.x + xx * a9.size.x / 12.0, 0.6, a9.position.y + zz * a9.size.y / 8.0)
+			var ex9: Array[RID] = []
+			for k in 3:
+				ex9.append(enigma.giocattolo(k).get_rid())
+			var h9 := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(q9, q9 + Vector3.DOWN * 3.5, Layers.WORLD, ex9))
+			if not h9.is_empty() and not enigma.call(&"_del_fondo", h9):
+				estranei.append("%s %s" % [Vector2(q9.x, q9.z), (h9.collider as Node).get_path() if h9.collider is Node else h9.collider])
+	check(estranei.is_empty(), "sulla parte profonda il fondo che conta è la vasca, il portellone, i piatti o i gonfiabili (altro: %s)" % [estranei])
+	var fermi := []
+	for k in 3:
+		fermi.append(enigma.giocattolo(k).global_position)
+	var reti0: int = enigma.reti
+	var gommoni := 0
+	var spostati := 0.0
+	level.call(&"_precarica_torre")
+	var chiesta := false
+	var costruita := -1
+	for f in 60 * 120:
+		await get_tree().physics_frame
+		for k in 3:
+			spostati = maxf(spostati, enigma.giocattolo(k).global_position.distance_to(fermi[k]))
+		var hc := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0.0, 0.6, 0.0), Vector3(0.0, -3.0, 0.0), Layers.WORLD))
+		if not hc.is_empty() and hc.collider is Node and String((hc.collider as Node).get_path()).contains("SalaSottomarino"):
+			gommoni += 1
+		if not chiesta and level.get(&"_torre_pronta") != null:
+			level.call(&"_carica_torre")
+			chiesta = true
+		var t9 = level.get(&"sala_torre")
+		if costruita < 0 and t9 is Node and bool((t9 as Node).get(&"costruita")):
+			costruita = f
+		if costruita >= 0 and f > costruita + 600:
+			break
+	print("    torre costruita al fotogramma %d; il tunnel sopra il centro della piscina in %d fotogrammi" % [costruita, gommoni])
+	check(costruita >= 0 and spostati < 0.005 and enigma.reti == reti0,
+		"mentre si caricano la torre e il tunnel i giocattoli sui piatti e sul fondo non si muovono (al più %.4f m) e la rete non scatta (%d volte)" % [
+		spostati, enigma.reti - reti0])
+	_controlla_sotto("caricando la torre e il tunnel")
 	_fine()
 
 
@@ -608,10 +659,16 @@ func _fondo_dall_alto(punto: Vector3) -> float:
 	for k in 3:
 		ex.append(enigma.giocattolo(k).get_rid())
 	for o in [Vector2.ZERO, Vector2(0.004, 0.003), Vector2(-0.003, -0.004)]:
-		var q := PhysicsRayQueryParameters3D.create(Vector3(punto.x + o.x, 0.6, punto.z + o.y), Vector3(punto.x + o.x, -3.0, punto.z + o.y),
-			Layers.WORLD, ex)
-		var h := space.intersect_ray(q)
-		if not h.is_empty():
+		# (come _fondo dell'enigma: quello che non è il fondo della piscina lo si salta, per esempio un gommone del tunnel)
+		for k in 4:
+			var q := PhysicsRayQueryParameters3D.create(Vector3(punto.x + o.x, 0.6, punto.z + o.y), Vector3(punto.x + o.x, -3.0, punto.z + o.y),
+				Layers.WORLD, ex)
+			var h := space.intersect_ray(q)
+			if h.is_empty():
+				break
+			if not enigma.call(&"_del_fondo", h):
+				ex.append(h.rid)
+				continue
 			return (h.position as Vector3).y
 	return -99.0
 

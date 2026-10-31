@@ -24,18 +24,26 @@ const OLTRE := 1.8
 const CALA := 0.8
 ## La forza dell'alone di ogni lampada (come negli scatti).
 const ALONE := 0.18
+## L'aria viola e la polvere della B (nebbia_viola.gdshader); le zone le scalano (ZonaNebbiaViola.aria, .polvere).
+const ARIA := Vector3(0.02, 0.018, 0.055)
+const POLVERE := 0.35
 ## I secondi per passare da spenta a piena (entrando) e viceversa (uscendo, o cambiando l'opzione).
 const DURATA := 3.0
 ## Oltre questo spostamento della camera in un fotogramma è un salto (checkpoint): la zona nuova vale subito.
 const SALTO := 3.0
+## Quanto in fretta lo strato segue il fondo su cui poggia il giocatore (metri al secondo).
+const SEGUI_FONDO := 3.0
 ## Le lampade per l'alone: entro questa distanza, davanti alla camera; ogni quanto si scelgono; in quanto si
 ## dissolvono quando cambiano; ogni quanto si rileggono quelle della zona (le zone costruite a pezzi le aggiungono).
 const RAGGIO_LUCI := 16.0
 const OGNI_SCELTA := 0.2
 const CAMBIO_LUCE := 0.5
 const OGNI_ELENCO := 3.0
-## I passi lungo il raggio per la qualità della nebbia di Grafica (0 semplice, 1 volumetrica, 2 alta).
-const PASSI := [10, 20, 20]
+## I passi lungo il raggio per preset (più passi, meno grana: riscontro dell'utente sulla 0.3.16, "la film grain con la
+## nebbia stona"; il trattino fisso dell'inizio sfalsato si vedeva a 20 passi e molto a 10). Con le impostazioni fatte a
+## mano, per la qualità della nebbia di Grafica (0 semplice, 1 volumetrica, 2 alta).
+const PASSI_PRESET := {"basso": 16, "medio": 24, "alto": 32, "ultra": 32}
+const PASSI := [16, 32, 32]
 
 ## L'opzione "Nebbia viola" (Grafica): spenta, la nebbia scende piano e non si disegna più.
 var accesa := true
@@ -64,6 +72,11 @@ var _scelte: Array[Light3D] = []
 var _luci_zona: Array[Light3D] = []
 var _t_scelta := 0.0
 var _t_elenco := 0.0
+## L'alone della zona in cui si è entrati per ultima (ZonaNebbiaViola.alone).
+var _alone := 1.0
+## Dove poggiano i piedi del giocatore (l'ultima volta che era a terra) e il valore che segue, per lo shader ("fondo").
+var _fondo_obiettivo := INF
+var _fondo := INF
 
 
 func _ready() -> void:
@@ -107,9 +120,10 @@ func materiali() -> Array[Material]:
 	return [_mat]
 
 
-## La qualità (0..2, come la nebbia di Grafica): i passi lungo il raggio.
-func imposta_qualita(q: int) -> void:
-	_mat.set_shader_parameter(&"passi", PASSI[clampi(q, 0, PASSI.size() - 1)])
+## La qualità: i passi lungo il raggio per il [param preset] di Grafica, o per la qualità [param q] della nebbia (0..2).
+func imposta_qualita(q: int, preset := "") -> void:
+	var passi: int = PASSI_PRESET.get(preset, PASSI[clampi(q, 0, PASSI.size() - 1)])
+	_mat.set_shader_parameter(&"passi", passi)
 
 
 ## Il giocatore entra in una zona ([param zona]) o ne esce. Subito dopo un salto della camera, o con [param subito]:
@@ -120,11 +134,21 @@ func zona(z: Node, dentro: bool, subito := false) -> void:
 		_t_elenco = 0.0
 		if &"quota" in z:
 			_mat.set_shader_parameter(&"quota", float(z.get(&"quota")))
+		_valori_zona(z)
 	elif not dentro:
 		_zone.erase(z)
 		_t_elenco = 0.0
 	if subito or Engine.get_process_frames() - _fotogramma_salto < 10:
 		quanto = _obiettivo()
+
+
+## I valori della zona [param z] (l'ultima in cui si entra): l'aria, la polvere e l'alone.
+func _valori_zona(z: Node) -> void:
+	var a: float = float(z.get(&"aria")) if &"aria" in z else 1.0
+	var p: float = float(z.get(&"polvere")) if &"polvere" in z else 1.0
+	_alone = float(z.get(&"alone")) if &"alone" in z else 1.0
+	_mat.set_shader_parameter(&"aria", ARIA * a)
+	_mat.set_shader_parameter(&"particelle", POLVERE * p)
 
 
 ## Vero se il giocatore è in una zona con la nebbia (anche con l'opzione spenta).
@@ -153,9 +177,26 @@ func _process(delta: float) -> void:
 			quanto = _obiettivo()
 		_ultima_pos = pos
 		_ultima_cam = cam.get_instance_id()
+		_segui_fondo(p if is_instance_valid(p) else null, delta)
 	quanto = move_toward(quanto, _obiettivo(), delta / DURATA)
 	if quanto > 0.0 and cam:
 		_aggiorna_luci(cam, delta)
+
+
+## Lo strato fitto sta sul pavimento della zona ("quota"); in piedi più in basso (il fondo della piscina vuota) scende
+## dove si cammina. Si guardano i piedi solo a terra (saltando o nuotando resta dov'era) e si segue piano, ma dopo un salto
+## della camera subito.
+func _segui_fondo(p: Object, delta: float) -> void:
+	var giocatore: CharacterBody3D = p as CharacterBody3D if is_instance_valid(p) else null
+	if giocatore == null or not giocatore.is_inside_tree():
+		_fondo_obiettivo = INF
+		_fondo = INF
+	else:
+		var salto := Engine.get_process_frames() == _fotogramma_salto or _fondo == INF
+		if giocatore.is_on_floor() or salto:
+			_fondo_obiettivo = giocatore.global_position.y
+		_fondo = _fondo_obiettivo if salto else move_toward(_fondo, _fondo_obiettivo, SEGUI_FONDO * delta)
+	_mat.set_shader_parameter(&"fondo", _fondo if is_finite(_fondo) else 1e6)
 
 
 ## L'alone: ogni [constant OGNI_SCELTA] s le luci giuste; ogni fotogramma i pesi verso quelle (le vecchie si spengono
@@ -211,7 +252,7 @@ func _aggiorna_luci(cam: Camera3D, delta: float) -> void:
 		var acceso := 1.0 if l.is_visible_in_tree() and l.light_energy > 0.05 else 0.0
 		var c := l.light_color
 		pos.append(l.global_position)
-		col.append(Vector3(c.r, c.g, c.b) * ALONE * float(s[1]) * acceso)
+		col.append(Vector3(c.r, c.g, c.b) * ALONE * _alone * float(s[1]) * acceso)
 	_mat.set_shader_parameter(&"luci_pos", pos)
 	_mat.set_shader_parameter(&"luci_col", col)
 	_mat.set_shader_parameter(&"n_luci", 4)
