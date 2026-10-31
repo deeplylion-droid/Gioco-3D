@@ -595,7 +595,8 @@ func _abisso_lampade() -> void:
 		var l := nodo.get_child(nodo.get_child_count() - 2) as Node3D
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
-			g.material_override = _mat("globo_blu", Color(0.35, 0.5, 1.0), 0.4, 0.0, Color(0.25, 0.42, 1.0), 2.5)
+			# (lampade tonde a muro anche queste: al 20%, SalaSottomarino.LAMPADE_TONDE; la luce la scala già sala._lampada)
+			g.material_override = _mat("globo_blu", Color(0.35, 0.5, 1.0), 0.4, 0.0, Color(0.25, 0.42, 1.0), 2.5 * SalaSottomarino.LAMPADE_TONDE)
 		var o := nodo.get_child(nodo.get_child_count() - 1) as OmniLight3D
 		o.light_color = Color(0.32, 0.48, 1.0)
 		s += ABISSO_LAMPADE_OGNI

@@ -83,6 +83,8 @@ const ALZATA := 0.18
 const PEDATA := 0.28
 ## Il bambino col cubo dei bambini visti di sfuggita, nel corridoio del fiume (preload: si carica col thread della zona).
 const BAMBINO_CUBO := preload("res://scenes/creature/bambino_cubo.tscn")
+## L'arredo del corridoio del fiume (tools/blender/corridoio_fiume.py), nelle coordinate della sala.
+const ARREDO_CORRIDOIO := preload("res://assets/ambienti_tecnici/corridoio_fiume/corridoio_fiume.gltf")
 
 ## Falso: le stanze si caricano subito in _ready e restano sempre, come prima (strumenti e test che le vogliono
 ## sempre). Lo stesso con Engine.set_meta(&"risalita_subito", true).
@@ -409,6 +411,7 @@ func _scala_fiume() -> void:
 	# la Polaroid 13 (quella notte, il bagliore nel mare accanto alla nave, proposta del 25 ottobre notte): per terra
 	# contro il muro, sotto l'oblò da cui si vede il mare
 	PolaroidPhoto.metti(self, 13, Vector3(OBLO_FIUME.x - 0.16, Y + 0.03, OBLO_FIUME.z + 0.4), 20.0)
+	_arredo_corridoio_fiume(xc)
 	# il muro ovest, aperto davanti alla porta del capannone (alta 2,3 m come la sua)
 	_muro(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), Y)
 	_muro(Vector3(0.2, 2.6, fine - porta1), Vector3(xc - 0.1, Y + 1.3, (porta1 + fine) * 0.5), Y)
@@ -425,6 +428,88 @@ func _scala_fiume() -> void:
 		k.name = d[0]
 		k.position = d[1]
 		m.add_child(k)
+
+
+## L'arredo del corridoio del fiume (riscontro dell'utente sulla v0.3.16, "c'è un corridoio vuoto prima della zona del
+## fiume"; scelta A+C del 30 ottobre, docs/proposte/corridoio_fiume/LEGGIMI.md): il corridoio di servizio, con i tubi
+## delle pompe, il quadro, i fusti, il carrello e il cartello contro il muro ovest (tools/blender/corridoio_fiume.py), e
+## l'acqua che filtra dalla vasca dell'oblò: macchie umide e muffa intorno all'oblò e sul muro di fronte, e la pozza che
+## dalla colatura sotto l'oblò attraversa il corridoio fino alla griglia di scolo (le gocce dal soffitto no: non erano
+## nella A+C descritta all'utente). La luce resta quella di prima.
+func _arredo_corridoio_fiume(xc: float) -> void:
+	var arredo := ARREDO_CORRIDOIO.instantiate() as Node3D
+	arredo.name = "ArredoCorridoioFiume"
+	add_child(arredo)
+	var est := xc + 2.0
+	# (le macchie: assets_src/corridoio_fiume/genera_macchie.py; sotto la luce rossa si leggono per luminosità, scure e
+	# bagnate col bordo chiaro di calcare: il verde scuro della muffa da solo non si vedeva)
+	var colature := load("res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_colature.png") as Texture2D
+	var muffa := load("res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_muffa.png") as Texture2D
+	# sotto l'oblò, dal bordo della flangia al pavimento, a sud della Polaroid 13 (che resta fuori dal decal)
+	_decal("ColatureOblo", colature, Vector3(est, Y + 0.7, OBLO_FIUME.z - 0.3), Vector3.LEFT, 0.9, 1.4, Color.WHITE, 1.0)
+	# la muffa accanto all'oblò, verso la scala, e sul muro di fronte, sopra la griglia (sotto i tubi)
+	_decal("MuffaOblo", muffa, Vector3(est, Y + 1.7, OBLO_FIUME.z - 1.4), Vector3.LEFT, 1.0, 0.75, Color.WHITE, 1.0)
+	# (verso la lampada vicino alla porta: a metà corridoio, fra le due lampade, al buio non si vedeva)
+	_decal("MuffaMuroOvest", muffa, Vector3(xc, Y + 1.05, 59.6), Vector3.RIGHT, 1.9, 1.4, Color.WHITE, 1.0)
+	# la pozza: dalla colatura (piede del muro est, z 57,45) alla griglia di scolo (x -5,6, z 60,3), lunga e stretta;
+	# la P13 (x -4,06, z 58,4) resta a 15 cm dal suo bordo
+	var da := Vector2(est - 0.2, OBLO_FIUME.z - 0.55)
+	var a := Vector2(xc + 0.4, 60.15)
+	var verso := (a - da).normalized()
+	var p := WaterPuddle.new()
+	p.name = "PozzaCorridoioFiume"
+	p.size = Vector2(da.distance_to(a), 0.55)
+	p.irregularity = 0.18
+	p.shape_seed = 5
+	# il cemento del pavimento tutto bagnato (lo stesso shader e la stessa texture in coordinate del mondo): col materiale
+	# delle pozze degli interni (grigio scuro uniforme) sotto la luce rossa sembrava un buco nero nel pavimento
+	var m := _mat_pav.duplicate() as ShaderMaterial
+	m.set_shader_parameter(&"base_wetness", 1.0)
+	m.set_shader_parameter(&"wetness_variation", 0.0)
+	# (non uno specchio pieno: rifletteva il buio della volta e restava nero; cemento fradicio e lucido)
+	m.set_shader_parameter(&"puddle_amount", 0.45)
+	m.set_shader_parameter(&"wet_darkening", 0.25)
+	m.set_shader_parameter(&"puddle_tint", Color(0.85, 0.86, 0.85))
+	p.material_override = m
+	add_child(p)
+	var c := (da + a) * 0.5
+	p.position = Vector3(c.x, Y, c.y)
+	p.rotation.y = atan2(-verso.y, verso.x)
+	# attorno, il cemento bagnato che sfuma verso l'asciutto (ricontrollo di grafica del 30 ottobre: da metà corridoio la
+	# pozza era una striscia scura col bordo netto). Il decal prende solo il pavimento del corridoio (lo strato 19, messo
+	# qui alla sua mesh): non scurisce la P13 accanto alla pozza
+	const STRATO_POZZA := 1 << 18
+	for n in get_children():
+		var mi := n as MeshInstance3D
+		if mi and mi.material_override == _mat_pav:
+			var box := mi.transform * mi.get_aabb()
+			if box.grow(0.01).has_point(Vector3(c.x, Y - 0.1, c.y)):
+				mi.layers |= STRATO_POZZA
+	var alone := Decal.new()
+	alone.name = "PozzaCorridoioFiumeAlone"
+	alone.texture_albedo = load("res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone.png")
+	alone.texture_orm = load("res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone_orm.png")
+	alone.size = Vector3(p.size.x + 0.7, 0.3, p.size.y + 0.45)
+	alone.cull_mask = STRATO_POZZA
+	add_child(alone)
+	alone.position = Vector3(c.x, Y, c.y)
+	alone.rotation.y = p.rotation.y
+
+
+func _decal(nome: String, tex: Texture2D, pos: Vector3, normale: Vector3, w: float, h: float, colore: Color, mix: float) -> void:
+	var d := Decal.new()
+	d.name = nome
+	d.texture_albedo = tex
+	d.modulate = colore
+	d.albedo_mix = mix
+	d.size = Vector3(w, 0.3, h)
+	d.cull_mask = 1
+	add_child(d)
+	# il decal proietta lungo il suo -Y: Y = la normale della superficie, X orizzontale sui muri
+	var y := normale.normalized()
+	var ref := Vector3.UP if absf(y.y) < 0.9 else Vector3(0, 0, -1)
+	var x := ref.cross(y).normalized()
+	d.transform = Transform3D(Basis(x, y, x.cross(y).normalized()), pos)
 
 
 ## Il bambino visto di sfuggita del corridoio del fiume (proposta approvata dall'utente il 25 ottobre, "i bambini visti
