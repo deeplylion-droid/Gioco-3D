@@ -51,10 +51,10 @@ const N := 5
 @export var checkpoint_risolto: Checkpoint
 
 @export_group("Griglia")
-## Il lato interno di una pozza (m).
-@export var lato := 1.2
-## Da centro a centro di due pozze vicine (m): il lato più il bordino di piastrelle.
-@export var passo := 1.3
+## Il lato interno di una pozza (m; la stanza di ambienti-1: 1 m).
+@export var lato := 1.0
+## Da centro a centro di due pozze vicine (m): il lato più il bordino di piastrelle (10 cm).
+@export var passo := 1.1
 ## Profondità interna delle pozze (m).
 @export var profondita := 0.75
 ## Fin dove arriva l'acqua (frazione della profondità): 0,93 lascia circa 5 cm di bordo asciutto.
