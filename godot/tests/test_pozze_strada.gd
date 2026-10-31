@@ -56,7 +56,7 @@ func _run() -> void:
 		"accanto alla porta nord dell'infermeria c'è il cartello col faretto acceso")
 	check(_tutte_piene() and e.stato == EnigmaPozze.Stato.APERTO and not _porta_aperta(), "le pozze sono piene e la porta stagna è chiusa")
 	var ingresso := String(GameState.salvataggio().get("checkpoint", ""))
-	check(ingresso.begins_with("Risalita/") and int(GameState.salvataggio().get("order", 0)) == 15,
+	check(ingresso.begins_with("Risalita/") and ingresso.ends_with("CheckpointIngresso"),
 		"entrando si scrive su disco il checkpoint d'ingresso (%s, ordine %d)" % [ingresso, int(GameState.salvataggio().get("order", 0))])
 
 	print("2. Continua a metà")
