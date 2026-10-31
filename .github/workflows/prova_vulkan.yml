@@ -158,7 +158,8 @@ jobs:
   # ripartenze della 0.3.17 su Vulkan si vedeva solo in release). Il cancello resta l'export; questo dice dove.
   debug:
     runs-on: ubuntu-latest
-    timeout-minutes: 140
+    # checkout circa 5 min, import 12, prova al più 110: l'esito si scrive sempre
+    timeout-minutes: 160
     strategy:
       fail-fast: false
       matrix:
@@ -201,7 +202,7 @@ jobs:
           prova="$PWD/prova_debug_$p.log"
           L=godot_debug_$p.log
           set +e
-          timeout 120m xvfb-run -a -s "-screen 0 640x360x24" godot --path godot --rendering-driver vulkan \
+          timeout 110m xvfb-run -a -s "-screen 0 640x360x24" godot --path godot --rendering-driver vulkan \
             --resolution 640x360 -- --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --fotogrammi=$FOTOGRAMMI \
             --registro-prova="$prova" > $L 2>&1
           codice=$?
@@ -247,13 +248,18 @@ jobs:
               # perché una prova non è andata: la macchina (memoria del runner, tempo scaduto) o il gioco (un segnale)
               m = re.search(r"segnale=(SIG[A-Z]+)", riga)
               sig = m.group(1) if m else ""
+              # senza gdb (il job di debug) il segnale c'è solo nel codice d'uscita: 128 + il numero del segnale
+              codice = e.get("codice", 0)
+              if not sig and codice > 128 and codice != 124:
+                  nomi = {6: "SIGABRT", 7: "SIGBUS", 8: "SIGFPE", 9: "SIGKILL", 11: "SIGSEGV", 15: "SIGTERM"}
+                  sig = nomi.get(codice - 128, f"segnale {codice - 128}")
               if e.get("oom", 0) > 0 or sig == "SIGKILL":
                   return ("MEMORIA DEL RUNNER (OOM: il kernel ha ucciso il processo; non è un crash del gioco; "
                           f"rss max {e.get('rss_max', 0)} MB, swap max {e.get('swap_max', 0)} MB)")
               if e.get("scaduto", 0) > 0:
                   return "TEMPO SCADUTO (timeout: il gioco era ancora vivo; non è un crash)"
               if sig:
-                  return f"SEGNALE {sig} DEL GIOCO (crash; il backtrace è nel log del job)"
+                  return f"SEGNALE {sig} DEL GIOCO (crash; il backtrace, se c'è gdb, è nel log del job)"
               return f"codice d'uscita {e.get('codice', '?')}, senza segnale né OOM"
           esiti = {}
           righe = {}
