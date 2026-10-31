@@ -1,0 +1,114 @@
+# La prova del gioco esportato su Linux con Vulkan (llvmpipe), come lo gioca chi ha Vulkan: esporta Linux come la build,
+# poi ogni partenza diretta (--partenza=<id>, vedi menu_principale.gd) sotto gdb su Xvfb, e salva il registro della prova
+# (scritto a ogni riga), la memoria del processo e della macchina ogni 5 s e il backtrace se si chiude.
+# Gira sui branch delle prove (lavoro/prova-windows è la 0.3.17, lavoro/prova-windows-0316 la 0.3.16) e a mano.
+name: Prova su Linux con Vulkan
+
+on:
+  push:
+    branches: ["lavoro/prova-ripartenza"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prova-linux-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+
+jobs:
+  esporta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache di Godot e dei template
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_BIN_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+
+      - name: Scarica Godot e i template
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Importa il progetto (come la build)
+        run: |
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Esporta Linux
+        run: |
+          mkdir -p build/linux
+          godot --headless --path godot --export-release "Linux" ../build/linux/JillyJubilee.x86_64
+          test -f build/linux/JillyJubilee.x86_64 -a -f build/linux/JillyJubilee.pck
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: build/linux
+          retention-days: 3
+
+  prova:
+    needs: esporta
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        partenza: [torre, inseguimento, tunnel, fiume]
+        preset: [alto]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux
+          path: gioco
+
+      - name: Vulkan software, Xvfb e gdb
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq mesa-vulkan-drivers xvfb gdb > /dev/null
+          chmod +x gioco/JillyJubilee.x86_64
+
+      - name: Partenza ${{ matrix.partenza }}, preset ${{ matrix.preset }}
+        run: |
+          nome="${{ matrix.partenza }}_${{ matrix.preset }}"
+          prova="$PWD/prova_$nome.log"
+          # la memoria del processo (RSS) e della macchina ogni 5 s, anche se il gioco muore senza scrivere
+          ( while sleep 5; do
+              pid=$(pgrep -f 'gioco/JillyJubilee.x86_64 --rendering' | tail -1)
+              [ -n "$pid" ] && echo "MEM $(date +%T) rss=$(( $(awk '/VmRSS/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB picco=$(( $(awk '/VmHWM/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB libera=$(( $(awk '/MemAvailable/{print $2}' /proc/meminfo) / 1024 )) MB"
+            done ) > mem_$nome.log 2>&1 &
+          G=$!
+          set +e
+          timeout 165m xvfb-run -a -s "-screen 0 1280x720x24" gdb -q -batch -ex run -ex bt -ex "thread apply all bt 15" \
+            --args gioco/JillyJubilee.x86_64 --rendering-driver vulkan --resolution 1280x720 -- \
+            --partenza=${{ matrix.partenza }} --preset=${{ matrix.preset }} --resta=60 --registro-prova="$prova" \
+            > godot_$nome.log 2>&1
+          echo "CODICE D'USCITA: $?"
+          kill $G
+          echo "--- registro della prova:"; tail -25 "$prova" 2>/dev/null || echo "NESSUN REGISTRO DELLA PROVA"
+          echo "--- memoria:"; tail -4 mem_$nome.log; grep -o 'picco=[0-9]* MB' mem_$nome.log | sort -t= -k2 -n | tail -1
+          echo "--- segnali e backtrace:"; grep -E 'Thread .* received signal|^#[0-9]+ |SIGSEGV|SIGABRT|SIGKILL|exited with code|exited normally' godot_$nome.log | head -40
+          echo "--- dal registro di Godot:"; grep -E 'Using Device|descriptor|ERROR: BUG' godot_$nome.log | head -5
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: linux-${{ matrix.partenza }}-${{ matrix.preset }}
+          path: |
+            godot_*.log
+            prova_*.log
+            mem_*.log
+          retention-days: 7
