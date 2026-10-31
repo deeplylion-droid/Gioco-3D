@@ -169,12 +169,21 @@ func _run() -> void:
 	# (la porta nord resta chiusa finché non colpisci il pulsantone: richiesta dell'utente del 25 ottobre)
 	print("  (scorciatoia: il pulsantone dell'infermeria colpito col getto, la porta nord si apre; lo prova test_infermeria_gioco)")
 	inf.get_node(^"Interruttore").set(&"powered", true)
+	await _frames(200)   # (l'anta si apre verso dentro in 2,6 s: si passa quando è contro il muro)
 	await _vai("dall'approdo, porta di servizio, zona del personale, infermeria, porta nord", [
 		porta.global_position + porta.global_basis.z * 0.8, porta.global_position - porta.global_basis.z * 1.5,
 		inf.to_global(Vector3(1.6, 0, 3.6)), inf.to_global(Vector3(1.8, 0, 1.6)), inf.to_global(Vector3(0.0, 0, 0.0)),
 		inf.to_global(Vector3(-2.2, 0, -2.4)), inf.to_global(Vector3(-2.2, 0, -3.8))])
-	await _vai("su per la scala di servizio fino alla porta di C3", [Vector3(p.global_position.x, 0, _mr("PortaC3").z),
-		_mr("CimaScala"), _mr("PortaC3")])
+	# la stanza delle pozze colorate (31 ottobre), come in test_strada: sulla passerella fino alla porta stagna
+	var pozze := ris.get_node(^"StanzaPozze") as Node3D
+	await _vai("nella stanza delle pozze, sulla passerella fino alla porta stagna", [pozze.to_global(Vector3(0, 0, 3.4)),
+		pozze.to_global(Vector3(-3.4, 0, 3.4)), pozze.to_global(Vector3(-3.4, 0, -3.4)), pozze.to_global(Vector3(-1.7, 0, -3.4))])
+	print("  (scorciatoia: l'enigma delle pozze risolto, con le pozze dei colori giusti vuote e la porta stagna aperta; lo prova test_pozze)")
+	var enigma := pozze.get_node(^"EnigmaPozze") as EnigmaPozze
+	enigma.load_state({"stato": EnigmaPozze.Stato.RISOLTO, "tolti": EnigmaPozze.GIUSTI})
+	await _frames(3)
+	await _vai("su per la scala di servizio fino alla porta di C3", [pozze.to_global(Vector3(-1.7, 0, -5.4)),
+		Vector3(_mr("CimaScala").x, 0, pozze.to_global(Vector3(0, 0, -5.4)).z), _mr("CimaScala"), _mr("PortaC3")])
 
 	print("C3, il magazzino, la serranda, la sala")
 	await _vai("da C3 al magazzino dei gonfiabili", [tec.to_global(Vector3(37.09, 9.05, 15.0)), tec.to_global(Vector3(30.0, 9.05, 15.0)),
