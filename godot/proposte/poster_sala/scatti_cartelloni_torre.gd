@@ -7,6 +7,8 @@ extends Node
 ##   checkpoint sono il portone, le pedane d'arrivo e il fondo: posti dove il giocatore sta);
 ## - "_davanti": dagli occhi del giocatore sul pavimento davanti al cartellone (il più vicino trovato coi raggi);
 ## - "_vicino": ravvicinato tecnico a 1,5 m dal centro, per vedere come la carta sta sulla cornice e sul muro.
+## Con LUCE_TECNICA nell'ambiente, nei ravvicinati una lampadina accanto alla camera (solo tecnica, nel gioco non c'è).
+## Con SOLO=<nome> nell'ambiente solo quel cartellone, due volte dopo e due prima (per vedere cosa cambia fra due scatti).
 ## Uso (sotto il lock): xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --fixed-fps 60
 ##   --resolution 1280x720 --script res://tests/run.gd -- res://proposte/poster_sala/scatti_cartelloni_torre.gd <cartella>
 
@@ -60,7 +62,10 @@ func _run() -> void:
 	# le viste di ogni cartellone
 	var spazio := torre.get_world_3d().direct_space_state
 	var viste := []
+	var solo := OS.get_environment("SOLO")
 	for nome: String in CARTELLONI:
+		if solo != "" and nome != solo:
+			continue
 		var c := torre.find_child(nome, true, false) as MeshInstance3D
 		var centro := c.global_transform * Vector3(0.0, 0.9, 0.03)
 		var davanti := (c.global_transform.basis * Vector3(0, 0, 1)).normalized()
@@ -93,8 +98,19 @@ func _run() -> void:
 			if trovato:
 				break
 		viste.append(["%s_vicino" % nome, centro + davanti * 1.5, centro, 70.0])
-	for modo in ["dopo", "prima"]:
-		if modo == "prima":
+	# con LUCE_TECNICA una lampadina neutra accanto alla camera nei ravvicinati, solo per vedere il cartellone al buio (nel
+	# gioco non c'è)
+	var lampadina: OmniLight3D = null
+	if OS.get_environment("LUCE_TECNICA") != "":
+		lampadina = OmniLight3D.new()
+		lampadina.light_color = Color(1.0, 0.95, 0.88)
+		lampadina.light_energy = 1.2
+		lampadina.omni_range = 5.0
+		lampadina.visible = false
+		add_child(lampadina)
+	var modi := ["dopo", "prima"] if solo == "" else ["dopo", "dopo2", "prima", "prima2"]
+	for modo: String in modi:
+		if modo.begins_with("prima"):
 			for nome: String in CARTELLONI:
 				var c := torre.find_child(nome, true, false) as MeshInstance3D
 				for i in c.mesh.get_surface_count():
@@ -103,6 +119,9 @@ func _run() -> void:
 			p.teleport(v[1] - OCCHI)
 			await _fotogrammi(4)
 			p.look_at_point(v[2])
+			if lampadina:
+				lampadina.visible = (v[0] as String).ends_with("_vicino")
+				lampadina.global_position = (v[1] as Vector3) + Vector3.UP * 0.4
 			p.camera.fov = v[3]
 			await _fotogrammi(30)
 			await RenderingServer.frame_post_draw
