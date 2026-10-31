@@ -818,12 +818,22 @@ func _update_ladder() -> void:
 	# (la direzione, non quanto è spinto lo stick: con lo stick a metà, 0,5, non ci si aggrappava mai; riscontro della
 	# 0.3.16, scalette della piscina col controller)
 	var toward := wish.length() > 0.2 and wish.normalized().dot(-found.get_climb_normal()) > 0.5
+	# (sul bordo, nell'area sopra la cima di una Ladder.dalla_cima, andando via dal vuoto non ci si aggrappa: si è appena
+	# usciti)
+	if toward and found.dalla_cima > 0.0 and (global_position - found.global_position).dot(found.get_climb_normal()) < 0.05:
+		toward = false
 	var falling_onto := not is_on_floor() and velocity.y < -0.5 and global_position.y < found.get_top_y() - 0.3
-	if toward or falling_onto:
+	# dalla cima (Ladder.dalla_cima): sul bordo, andando verso il vuoto, ci si aggrappa per scendere
+	var dalla_cima := found.dalla_cima > 0.0 and is_on_floor() and global_position.y >= found.get_top_y() - 0.35 \
+			and wish.length() > 0.2 and wish.normalized().dot(found.get_climb_normal()) > 0.5
+	if toward or falling_onto or dalla_cima:
 		ladder = found
 		velocity = Vector3.ZERO
 		_ladder_travel = 0.0
 		_ladder_from_top = global_position.y >= found.get_top_y() - 0.35
+		if dalla_cima:
+			# i corrimano si passano anche scendendo (come scavalcando la cima, vedi _scavalca)
+			_scavalca(found)
 		ladder_changed.emit(true)
 
 
@@ -842,13 +852,15 @@ func _scavalca(l: Ladder) -> void:
 	_scavalco_t = 0.0
 
 
-## Le eccezioni dello scavalco finiscono quando non si tocca più niente dei corpi della scala (fuori dai corrimano, da
-## una parte o dall'altra), o dopo 6 s.
+## Le eccezioni dello scavalco finiscono solo quando non si tocca più niente dei corpi della scala (fuori dai corrimano,
+## da una parte o dall'altra): fermi in mezzo ai corrimano restano (dopo 6 s il motore spingeva fuori il giocatore di
+## colpo, 80 cm, ricontrollo di ambienti-1). Lontano dalla scala (una ripartenza) finiscono comunque.
 func _attraversa_scala(delta: float) -> void:
 	if _scavalcata == null:
 		return
 	_scavalco_t += delta
-	if not is_instance_valid(_scavalcata) or _scavalco_t > 6.0 or (_scavalco_t > 0.3 and not _tocca_scavalcati()):
+	if not is_instance_valid(_scavalcata) or global_position.distance_to(_scavalcata.global_position) > 6.0 \
+			or (_scavalco_t > 0.3 and ladder == null and not _tocca_scavalcati()):
 		_fine_scavalco()
 
 
@@ -878,6 +890,9 @@ func _leave_ladder() -> void:
 	ladder = null
 	_ladder_cooldown = 0.35
 	_ladder_from_top = false
+	# (a ogni presa si riguarda dove si guarda per scendere o salire: scesa una scala guardando in basso e ripresa da
+	# sotto guardando dritto, restava "in discesa" e lasciava subito la presa sul fondo; ricontrollo della 0.3.17)
+	_ladder_giu_su = null
 	ladder_changed.emit(false)
 
 
@@ -915,6 +930,11 @@ func _move_on_ladder(delta: float) -> void:
 			_ladder_from_top = false
 		elif climb > 0.0:
 			climb = -climb
+	# presa dalla cima (Ladder.dalla_cima): prima si passa sopra il bordo, verso il vuoto, fino alla scala; poi giù
+	if ladder.dalla_cima > 0.0 and global_position.y >= ladder.get_top_y() - 0.5 \
+			and (global_position - ladder.global_position).dot(n) < ladder_hold_distance - 0.1:
+		velocity = n * 1.6
+		return
 	if is_on_floor() and climb < 0.0:
 		# In fondo alla scala: torna a camminare.
 		_leave_ladder()

@@ -5,7 +5,9 @@ extends Node
 ## avanti tenuto premuto, fino a 12 s:
 ## - guardando dritto, guardando in alto, guardando la scaletta un po' in basso (-15 gradi), con la corsa, con lo
 ##   stick a metà (come un controller), accovacciati (col tasto tenuto, che in cima si lascia) e spostati di lato;
-## si deve uscire sul bordo, fuori dalla piscina. E dalla spiaggia (a nord): camminando avanti dal fondo si esce.
+## si deve uscire sul bordo, fuori dalla piscina. E dalla spiaggia (a nord): camminando avanti dal fondo si esce. E dal bordo
+## si scende con la scaletta (col tasto e con lo stick a metà), e chi esce in cima e resta fermo fra i corrimano non viene
+## spinto via (ricontrollo di ambienti-1 della 0.3.17).
 ## Poi, negli stessi sette modi, tutte le altre scale che il giocatore usa (ricontrollo chiesto dal coordinatore): nei
 ## tecnici la scala del pozzo (col portello aperto, fino sul fondo della piscina vuota) e la scaletta della vasca; nella
 ## torre le scale delle vasche di raccolta e nelle condotte quelle degli scoli e del bacino. E chi passa accanto a una
@@ -77,19 +79,29 @@ func _run() -> void:
 	var scalette: Array[Ladder] = [level.get_node(^"Piscina/ScalettaEst") as Ladder, level.get_node(^"Piscina/ScalettaOvest") as Ladder]
 	var modi := MODI
 	# (prima piena, com'è all'inizio: svuotata, la piscina non tiene più l'acqua)
-	for stato in ([] if OS.get_environment("SOLO") == "tecnici" else ["piena", "vuota"]):
+	for stato in ([] if OS.get_environment("SOLO") == "tecnici" else (["piena"] if OS.get_environment("SOLO") == "discesa" else ["piena", "vuota"])):
 		if stato == "vuota":
 			vasca.fill = 0.0
 		await _frames(30)
 		print("piscina %s (fill %.2f)" % [stato, vasca.fill])
 		check(vasca.fill > 0.5 if stato == "piena" else vasca.fill < 0.01, "la piscina è %s (fill %.2f)" % [stato, vasca.fill])
-		for s in scalette:
+		for s in ([] if OS.get_environment("SOLO") == "discesa" else scalette):
 			for modo in modi:
 				var r: Dictionary = await _sali(s, modo)
 				check(r["fuori"], "piscina %s, %s, %s: si esce sul bordo (in %.1f s; il più in alto %.2f, %d prese della scala, fine %s)" % [
 						stato, s.name, modo, r["tempo"], r["alto"], r["prese"], r["fine"]])
 		var sp: Dictionary = await _spiaggia()
 		check(sp["fuori"], "piscina %s: dalla spiaggia si esce camminando (in %.1f s, fine %s)" % [stato, sp["tempo"], sp["fine"]])
+		# dal bordo si scende con la scala (ricontrollo di ambienti-1 della 0.3.17), col tasto e con lo stick a metà; e chi
+		# esce in cima e resta fermo fra i corrimano non viene spinto via dopo qualche secondo
+		for s in scalette:
+			for forza in [1.0, 0.5]:
+				var g: Dictionary = await _scendi(s, forza)
+				check(g["giu"], "piscina %s, %s, dal bordo con avanti a %.1f: si scende con la scala fino in fondo (in %.1f s, %d prese, il più basso %.2f, fine %s)" % [
+						stato, s.name, forza, g["tempo"], g["prese"], g["basso"], g["fine"]])
+			var f: Dictionary = await _fermo_in_cima(s)
+			check(f["salto"] < 0.08, "piscina %s, %s: fuori dalla scala e fermo 8 s fra i corrimano non si viene spinti (spostamento più grande in un fotogramma %.3f m, fermo a %s)" % [
+					stato, s.name, f["salto"], f["dove"]])
 		if stato == "vuota":
 			await _accanto(scalette[0])
 	# i tecnici (sotto la piscina, vuota): la scala del pozzo col portello aperto, e la scaletta della vasca di raccolta
@@ -102,7 +114,7 @@ func _run() -> void:
 		check(l != null, "c'è %s" % nome)
 		if l:
 			await _tutti_i_modi(l, "tecnici")
-	if OS.get_environment("SOLO") == "tecnici":
+	if OS.get_environment("SOLO") in ["tecnici", "discesa"]:
 		_fine()
 		return
 	# la torre con le condotte: le scale delle vasche di raccolta, degli scoli e del bacino
@@ -142,6 +154,67 @@ func _tutti_i_modi(l: Ladder, zona: String) -> void:
 		var r: Dictionary = await _sali(l, modo)
 		check(r["fuori"], "%s, %s, %s: si sale e si scavalca in cima (in %.1f s; il più in alto %.2f di %.2f, %d prese della scala, fine %s)" % [
 				zona, l.name, modo, r["tempo"], r["alto"], l.get_top_y(), r["prese"], r["fine"]])
+
+
+## Dal bordo, 1,6 m dietro la scaletta [param s] e girati verso la piscina, avanti tenuto premuto (a [param forza]): ci
+## si aggrappa, si passano i corrimano e si scende fino al fondo.
+func _scendi(s: Ladder, forza: float) -> Dictionary:
+	_rilascia()
+	var n := s.get_climb_normal()
+	var da := _fondo(s.global_position - n * 1.6, s.get_top_y() + 1.0) + Vector3.UP * 0.05
+	p.teleport(da)
+	await _frames(20)
+	p.look_at_point(p.global_position + Vector3.UP * 1.5 + n * 5.0)
+	p.pitch = deg_to_rad(-30.0)
+	Input.action_press(&"move_forward", forza)
+	var prese := 0
+	var era := false
+	var basso := INF
+	var t := 0.0
+	var giu := false
+	for fr in 60 * 12:
+		await get_tree().physics_frame
+		t += 1.0 / 60.0
+		if p.is_on_ladder() and not era:
+			prese += 1
+		era = p.is_on_ladder()
+		basso = minf(basso, p.global_position.y)
+		if p.is_on_floor() and not p.is_on_ladder() and p.global_position.y < s.global_position.y + 0.3 and prese > 0:
+			giu = true
+			break
+	var fine := str(p.global_position.snapped(Vector3.ONE * 0.01))
+	_rilascia()
+	return {"giu": giu, "tempo": t, "prese": prese, "basso": basso, "fine": fine}
+
+
+## Su per la scaletta [param s] fino a scavalcare la cima, poi fermi appena fuori (fra i corrimano) per 8 s: lo
+## spostamento più grande in un fotogramma (il motore che spinge fuori dalla scatola dei corrimano).
+func _fermo_in_cima(s: Ladder) -> Dictionary:
+	_rilascia()
+	var n := s.get_climb_normal()
+	p.teleport(_fondo(s.global_position + n * 1.0, s.global_position.y + 1.0) + Vector3.UP * 0.05)
+	await _frames(20)
+	p.look_at_point(Vector3(s.global_position.x, p.global_position.y + 1.5, s.global_position.z))
+	p.pitch = 0.0
+	Input.action_press(&"move_forward")
+	var su := false
+	for fr in 60 * 8:
+		await get_tree().physics_frame
+		if OS.has_environment("DIAG") and fr % 20 == 0:
+			print("    DIAG fermo %s scala %s pavimento %s v %s aree %s cooldown %.2f accovacciato %s eccezioni %d input %s" % [p.global_position.snapped(Vector3.ONE * 0.01), p.is_on_ladder(), p.is_on_floor(), p.velocity.snapped(Vector3.ONE * 0.01),
+					p.sensor.get_overlapping_areas().map(func(a): return a.name), p.get(&"_ladder_cooldown"), p.is_crouching, p.get_collision_exceptions().size(), p.input_enabled])
+		# appena scavalcato e posato sul bordo, dentro la scatola dei corrimano: si lascia tutto
+		if not p.is_on_ladder() and p.is_on_floor() and p.global_position.y > s.get_top_y() - 0.15:
+			su = true
+			break
+	_rilascia()
+	var salto := 0.0
+	var prima := p.global_position
+	for fr in 60 * 8:
+		await get_tree().physics_frame
+		salto = maxf(salto, Vector2(p.global_position.x - prima.x, p.global_position.z - prima.z).length())
+		prima = p.global_position
+	return {"salto": salto if su else 99.0, "dove": str(p.global_position.snapped(Vector3.ONE * 0.01)) + ("" if su else " (non è arrivato in cima)")}
 
 
 ## Chi passa accanto alla scaletta [param s] senza andarle contro non ci si aggrappa: sul bordo lungo la piscina, davanti

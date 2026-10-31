@@ -211,6 +211,8 @@ func _scalette_piscina() -> void:
 			continue
 		for corpo in sala.find_children(String(SCALETTE_PISCINA[percorso]), "StaticBody3D", true, false):
 			l.attraversa.append(l.get_path_to(corpo))
+		# e dal bordo si scende: i corrimano sporgono sul bordo fino a 85 cm dal muro (ricontrollo di ambienti-1)
+		l.dalla_cima = 1.3
 
 
 ## I due teli di Jilly ai lati della statua, bruciati e scarabocchiati (richiesta dell'utente del 30 ottobre: "vanno
