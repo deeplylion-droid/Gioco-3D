@@ -107,7 +107,7 @@ func _physics_process(delta: float) -> void:
 			in_attesa = false
 			attesa_finita.emit()
 			apri()
-	if _porta == null:
+	if not _anta_presente():
 		return
 	if is_open and _t < 1.0:
 		_t = minf(_t + delta / maxf(durata, 0.01), 1.0)
@@ -134,7 +134,14 @@ func save_state() -> Dictionary:
 
 func load_state(data: Dictionary) -> void:
 	bloccata = bool(data.get("bloccata", true))
-	if bool(data.get("aperta", false)) and _porta:
+	# (aperta anche con l'anta già scaricata, gli interni dopo la torre: lo stato resta quello dell'istantanea)
+	if bool(data.get("aperta", false)):
 		is_open = true
 		_t = 1.0
-		_metti(deg_to_rad(angolo_apertura))
+		if _anta_presente():
+			_metti(deg_to_rad(angolo_apertura))
+
+
+## L'anta c'è ed è nella scena (gli interni si scaricano dopo la torre, e nelle ripartenze oltre il portone non ci sono).
+func _anta_presente() -> bool:
+	return _porta != null and is_instance_valid(_porta) and _porta.is_inside_tree()

@@ -489,11 +489,15 @@ func _setup_torre() -> void:
 		if bool(enigma.get(&"comparsi")):
 			_precarica_torre.call_deferred()
 	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaSottomarino"):
-		# si riparte da un checkpoint del tunnel: torre e condotte non ci sono più, solo il tunnel
+		# si riparte da un checkpoint del tunnel: torre e condotte non ci sono più, solo il tunnel (e niente torre
+		# preparata nascosta quando gli acquari risultano comparsi: vedi _precarica_torre)
+		_torre_liberata = true
+		_libera_ambienti_subito()
 		_ripristina_sottomarino.call_deferred()
 		return
 	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaTorre"):
-		# si riparte da un checkpoint della torre: la si carica subito, si è già dentro
+		# si riparte da un checkpoint della torre: la si carica subito, si è già dentro; interni e tecnici prima via
+		_libera_ambienti_subito()
 		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
 		_entra_in_torre(false)
 	else:
@@ -528,7 +532,7 @@ func _carica_torre() -> void:
 
 ## Comincia a caricare la torre in un thread, senza metterla ancora nella sala.
 func _precarica_torre() -> void:
-	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "" or Game.uscendo:
+	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "" or Game.uscendo or _torre_liberata:
 		return
 	# già caricata prima di una ripartenza (GameState.tieni): niente thread, si prepara subito
 	var tenuta := GameState.tenuta(sala_torre_scena) as PackedScene
@@ -721,6 +725,24 @@ func _entra_in_torre(chiudi: bool) -> void:
 	elif portone and portone.has_method(&"resta_chiuso"):
 		portone.call(&"resta_chiuso")
 	_scarica_ambienti.call_deferred()
+
+
+## Ripartenza oltre il portone (un checkpoint della torre, delle condotte o del tunnel, e le partenze del menu di prova
+## che ci arrivano): interni e tecnici, che giocando di fila a quel punto non ci sono più, vanno via subito, nel _ready
+## della sala, prima che torre o tunnel entrino e prima del primo fotogramma: non arrivano mai al renderer (niente
+## istanze, ombre, sonde o pipeline loro) e non stanno in memoria insieme alla torre costruita tutta in una volta e al
+## tunnel che si carica nel thread. Prima andavano via a pezzi solo dopo (_scarica_ambienti), con tutto insieme per
+## qualche secondo (il sospetto per il crash della 0.3.17 su Windows, sempre in una ripartenza dopo la torre).
+## Lo stato dei loro oggetti resta quello dell'istantanea (GameState li tiene parcheggiati), come di fila.
+func _libera_ambienti_subito() -> void:
+	var via: Array = [tecnici, get_node_or_null(^"Interni")]
+	tecnici = null
+	risveglio = null
+	# (cancellati subito: le chiamate già in coda su di loro si saltano; quelle di Grafica sulle luci vanno per id)
+	for n in via:
+		if n and is_instance_valid(n):
+			(n as Node).get_parent().remove_child(n)
+			(n as Node).free()
 
 
 ## Interni e tecnici via, qualche frame dopo (chi ha chiamate in sospeso sulle loro luci le finisce prima).
