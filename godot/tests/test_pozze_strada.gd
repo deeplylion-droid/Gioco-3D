@@ -112,9 +112,10 @@ func _fino_alle_pozze() -> void:
 	p.teleport(porta_personale.global_position + porta_personale.global_basis.z * 0.8, p.yaw, 0.0)
 	await _frames(10)
 	var inf := ris.get_node(^"Infermeria") as Node3D
+	# (il giocatore è lontano, all'approdo: la porta nord dell'infermeria si apre verso dentro e spinge chi ci sta davanti)
 	inf.get_node(^"Interruttore").set(&"powered", true)
 	p.add_item(&"keycard", 1, "Keycard")
-	await _frames(10)
+	await _frames(60 * 3)
 	_prendi_nodi()
 	await _vai("dall'approdo nell'infermeria e dalla porta nord nella stanza delle pozze", [
 		porta_personale.global_position - porta_personale.global_basis.z * 1.5,
@@ -238,7 +239,7 @@ func _porta_aperta() -> bool:
 	var porta := e.porta if e else null
 	if porta == null:
 		return false
-	for k in [&"aperta", &"is_aperta"]:
+	for k in [&"e_aperta", &"aperta"]:
 		if k in porta:
 			return bool(porta.get(k))
 	return porta.has_method(&"is_aperta") and bool(porta.call(&"is_aperta"))
