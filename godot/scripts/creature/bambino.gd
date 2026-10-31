@@ -84,6 +84,10 @@ const PIEDE_A_TERRA := 0.11
 ## corsia stretta col giocatore che gli corre dietro (l'agnellino della scala).
 @export var accel_corsa := 4.5
 @export var giro_corsa := 260.0
+## Per voltarsi del tutto (chi lo guardava è dietro di lui) prima si gira sul posto coi passi della camminata, poi
+## parte. Falso: si gira correndo, mentre parte (l'agnellino della scala C2, com'era nella 0.3.15: all'utente piaceva
+## di più così, riscontro della 0.3.16).
+@export var girata_sul_posto := true
 
 @export_group("Fuga")
 ## Se il giocatore arriva più vicino di così, scappa (0 = mai).
@@ -100,6 +104,10 @@ const PIEDE_A_TERRA := 0.11
 @export var sparisce_fuori_vista := false
 ## Con [member sparisce_fuori_vista]: per almeno tanti secondi lo si vede correre via.
 @export var fuga_minima := 0.4
+## Con [member sparisce_fuori_vista]: fuori vista sparisce solo dopo aver passato tanti punti della fuga (quelli prima
+## sono dove si vedrebbe che non c'è più, come una galleria dritta e illuminata: riscontro dell'utente sulla 0.3.16,
+## "si vede che sparisce perché gli corri dietro"). 0: in qualsiasi punto.
+@export var sparisce_dopo := 0
 ## Quando sparisce si toglie dalla scena (altrimenti resta nascosto e si può riusare).
 @export var libera_quando_sparisce := true
 
@@ -123,6 +131,7 @@ var _visto_da := 0.0
 var _reazione_in_corso := false
 var _prossima_inclinazione := 0.0
 var _punti: Array[Vector3] = []
+var _n_punti_fuga := 0
 var _in_fuga := 0.0
 var _fermo_a_fine_fuga := false
 var _influenza := 0.0
@@ -282,6 +291,7 @@ func scappa_ora() -> void:
 		if via.length() < 0.01:
 			via = global_basis.z
 		_punti.append(global_position + via.normalized() * distanza_fuga_libera)
+	_n_punti_fuga = _punti.size()
 	_anima(&"corsa", 0.3)
 	_passo_animazione(vel_corsa_anim)
 	scappa.emit()
@@ -349,7 +359,8 @@ func _process(delta: float) -> void:
 			if not sparisce_fuori_vista:
 				if arrivato:
 					_sparisci()
-			elif (arrivato or _in_fuga >= fuga_minima) and not visibile_da(p):
+			elif (arrivato or _in_fuga >= fuga_minima) and _n_punti_fuga - _punti.size() >= sparisce_dopo \
+					and not visibile_da(p):
 				_sparisci()
 			elif arrivato and not _fermo_a_fine_fuga:
 				_fermo_a_fine_fuga = true
@@ -499,6 +510,8 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 	# guardava) prima si volta quasi sul posto, a passi lenti, e poi parte: non fa la curva larga dentro un muro.
 	# Vicino all'ultimo punto si ferma col passo
 	var voluta := vel_max * clampf(cos(errore), 0.2, 1.0) if errore < deg_to_rad(75.0) else 0.0
+	if not girata_sul_posto:
+		voluta = vel_max
 	# non più veloce di quanto serve per arrivare al punto girando (sennò gli gira intorno o lo manca)...
 	var d := verso.length()
 	var w := deg_to_rad(giro)
@@ -511,7 +524,7 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 		voluta = minf(voluta, sqrt(2.0 * accel * d))
 	_vel = move_toward(_vel, voluta, accel * delta)
 	# voltandosi sul posto fa i passi della camminata (a tempo con la svolta), poi riprende la sua andatura
-	var sul_posto := errore > deg_to_rad(75.0) and _vel < vel_anim * PASSO_MINIMO
+	var sul_posto := girata_sul_posto and errore > deg_to_rad(75.0) and _vel < vel_anim * PASSO_MINIMO
 	if sul_posto != _svolta:
 		_svolta = sul_posto
 		var andatura := &"corsa" if modalita == Modalita.SCAPPA else &"cammina"
@@ -524,11 +537,14 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 	# camminando o andando piano (partendo, finendo di voltarsi) il piede a terra resta fermo nel mondo e il corpo gira
 	# e avanza attorno a lui, come un passo vero (sennò il piede piantato striscia); già lanciato, piegato in avanti
 	# (l'agnellino che entra nel buco) o con tutti e due i piedi in aria va alla sua velocità, che è quella dei piedi
-	if (_vel < vel_anim * 0.8 or modalita == Modalita.CAMMINA) and absf(rotation.x) < 0.01 and _blocca_piede():
+	# (girandosi correndo, finché la girata non è quasi finita: niente perno, si va dritti verso il punto)
+	var girando := not girata_sul_posto and errore > deg_to_rad(30.0)
+	if not girando and (_vel < vel_anim * 0.8 or modalita == Modalita.CAMMINA) and absf(rotation.x) < 0.01 \
+			and _blocca_piede():
 		_passo_animazione(vel_anim)
 		return false
 	_perno_osso = -1
-	var avanti := global_basis.z
+	var avanti := global_basis.z if not girando else verso
 	avanti.y = 0.0
 	var passo := minf(_vel * delta, verso.length()) if _punti.size() == 1 else _vel * delta
 	global_position += avanti.normalized() * passo

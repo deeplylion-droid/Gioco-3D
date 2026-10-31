@@ -6,6 +6,8 @@ extends Node
 ## Uso:
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##     --fixed-fps 30 --script res://tests/run.gd -- res://tests/scatti_agnellino_buco.gd <cartella> [oltre]
+## Con "girata" (o "girata prima", la girata della 0.3.16, sul posto coi passi) salva invece ogni fotogramma da quando
+## scappa, per 1,2 s: come si volta.
 
 const SCENA := "res://tests/scene/tappa7_gioco_agnellino.tscn"
 ## Nelle coordinate della scena dei tecnici, come test_agnellino.gd.
@@ -20,6 +22,8 @@ var ag: AgnellinoScala
 var cartella := "/tmp/claude-0/agnellino_buco"
 var _fatti := {}
 var oltre := false
+var girata := false
+var prima := false
 
 
 func _ready() -> void:
@@ -27,6 +31,8 @@ func _ready() -> void:
 	if args.size() > 1:
 		cartella = args[1]
 	oltre = args.size() > 2 and args[2] == "oltre"
+	girata = args.size() > 2 and args[2] == "girata"
+	prima = args.size() > 3 and args[3] == "prima"
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -56,15 +62,32 @@ func _run() -> void:
 		await get_tree().physics_frame
 	GameState.luci_cambiate.emit(GameState.luci)
 	ag.compari()
+	if prima:
+		ag.bambino.tempo_per_vederlo = 0.3
+		ag.bambino.giro_corsa = 900.0
+		ag.bambino.girata_sul_posto = true
 	var sparito_a := -1
+	var scappa_da := -1
 	for i in 900:
 		var b := ag.bambino
 		# prima lo si guarda (dalla statua scappa solo dopo averti visto), poi si guarda il buco
 		var guarda := tec.to_global(Vector3(45.3, 9.4, ag.buco_z - (0.3 if not oltre else -0.1)))
 		if b and is_instance_valid(b) and b.modalita in [Bambino.Modalita.STATUA, Bambino.Modalita.OSSERVA]:
 			guarda = b.punto_testa()
+		if girata and b and is_instance_valid(b) and b.visible:
+			guarda = b.punto_testa()
 		var d := guarda - p.get_eye_position()
 		p.set_look(atan2(-d.x, -d.z), atan2(d.y, Vector2(d.x, d.z).length()))
+		if girata:
+			if b and is_instance_valid(b) and b.modalita == Bambino.Modalita.SCAPPA and scappa_da < 0:
+				scappa_da = i
+			if scappa_da >= 0:
+				if i - scappa_da < 36:
+					_scatta("girata_%02d" % (i - scappa_da))
+				else:
+					break
+			await get_tree().physics_frame
+			continue
 		if b and is_instance_valid(b) and b.visible and b.modalita == Bambino.Modalita.SCAPPA:
 			var l := tec.to_local(b.global_position)
 			if l.z > 2.9 and l.x < 44.6:

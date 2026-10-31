@@ -240,6 +240,14 @@ def _matrice_osso(B3, y_dir, testa):
     return M
 
 
+NORD_MAX = [-9.0]
+VICINO_MUSO = [9.0]
+SPINTA = {'L': Vector((0, 0, 0)), 'R': Vector((0, 0, 0))}
+VEL_SPINTA = {'L': Vector((0, 0, 0)), 'R': Vector((0, 0, 0))}
+MOLLA = 10.0             # rad/s della molla che porta la spinta delle braccia (via dal muso) dove serve
+VICINO_MUSO_DOVE = ['']
+
+
 def cuoci(arm, piedi, nome='risveglio'):
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='POSE')
@@ -317,21 +325,97 @@ def cuoci(arm, piedi, nome='risveglio'):
             off = posa['_mano.' + s].copy()
             off.rotate(Matrix.Rotation(yaw, 3, 'Z'))
             mano = spalla + off
+            # il muro nord del corridoio: la mano che ci va vicino si ritira verso il corpo, morbida, e il polso non
+            # passa A.MANI_NORD (nel giro, col corpo di traverso, la mano sinistra in avanti entrava nel muro)
+            if mano.x > A.MANI_NORD - 0.12 and t < A.tempo_alla_porta():
+                mano.x = A.MANI_NORD - 0.12 + 0.12 * math.tanh((mano.x - A.MANI_NORD + 0.12) / 0.12)
+            NORD_MAX[0] = max(NORD_MAX[0], (spalla + off).x)
+            # (lo stesso limite per la mano spostata via dal muso, qui sotto)
+            def _nord(m):
+                if m.x > A.MANI_NORD - 0.12 and t < A.tempo_alla_porta():
+                    m.x = A.MANI_NORD - 0.12 + 0.12 * math.tanh((m.x - A.MANI_NORD + 0.12) / 0.12)
+                return m
             l1, l2 = lung[f'braccio.{s}'], lung[f'avambraccio.{s}']
-            d = mano - spalla
-            dist = min(max(d.length, abs(l1 - l2) + 0.02), (l1 + l2) * 0.995)
-            u = d.normalized()
             lato = Vector((1 if s == 'L' else -1, 0, 0)); lato.rotate(Matrix.Rotation(yaw, 3, 'Z'))
-            polo = lato * 0.8 - avanti * 0.4 + Vector((0, 0, -0.2))
-            polo = (polo - u * polo.dot(u)).normalized()
-            aa = (l1 * l1 - l2 * l2 + dist * dist) / (2 * dist)
-            hh = math.sqrt(max(l1 * l1 - aa * aa, 0.0))
-            gomito = spalla + u * aa + polo * hh
-            pbs[f'braccio.{s}'].matrix = _matrice_osso(pbs[f'braccio.{s}'].matrix.to_3x3(), gomito - spalla, spalla)
-            bpy.context.view_layer.update()
-            pbs[f'avambraccio.{s}'].matrix = _matrice_osso(pbs[f'avambraccio.{s}'].matrix.to_3x3(),
-                                                           spalla + u * dist - gomito, gomito)
-            bpy.context.view_layer.update()
+            polo0 = lato * 0.8 - avanti * 0.4 + Vector((0, 0, -0.2))
+            # nel giro il gomito del braccio alzato va giù, in guardia: la testa resta sul giocatore e passa sopra la
+            # spalla destra (a 21 cm dal mento), e col gomito all'altezza della spalla gli passava a 8 cm
+            if s == 'R':
+                giu = A.liscio(0.0, 1.0, A.FASI['GIRO'] - 0.4, A.FASI['GIRO'] - 0.1, t) - \
+                    A.liscio(0.0, 1.0, A.FASI['CORSA'] + 0.4, A.FASI['CORSA'] + 0.8, t)
+                polo0 = polo0.lerp(lato * 0.6 - avanti * 0.5 + Vector((0, 0, -0.6)), giu)
+
+            def _ik(mano, polo):
+                d = mano - spalla
+                dist = min(max(d.length, abs(l1 - l2) + 0.02), (l1 + l2) * 0.995)
+                u = d.normalized()
+                pp = (polo - u * polo.dot(u)).normalized()
+                aa = (l1 * l1 - l2 * l2 + dist * dist) / (2 * dist)
+                hh = math.sqrt(max(l1 * l1 - aa * aa, 0.0))
+                gomito = spalla + u * aa + pp * hh
+                pbs[f'braccio.{s}'].matrix = _matrice_osso(pbs[f'braccio.{s}'].matrix.to_3x3(), gomito - spalla, spalla)
+                bpy.context.view_layer.update()
+                pbs[f'avambraccio.{s}'].matrix = _matrice_osso(pbs[f'avambraccio.{s}'].matrix.to_3x3(),
+                                                               spalla + u * dist - gomito, gomito)
+                bpy.context.view_layer.update()
+                pm = pbs[f'mano.{s}']
+                # (gli artigli vanno oltre la coda dell'osso della mano)
+                punta = pm.tail + (pm.tail - pm.head).normalized() * 0.10
+                return [('gomito', gomito), ('polso', pm.head.copy()), ('mano', pm.tail.copy()), ('artigli', punta)]
+
+            # il braccio alzato resta accanto al muso, non ci entra (lo spazio fra braccio e testa, scelta A
+            # dell'utente; ricontrolli del 30 ottobre: nel giro la testa resta sul giocatore e gira verso la mano
+            # destra, che entrava nel muso con gli artigli fuori dalla bocca, e poi il gomito e gli artigli passavano
+            # al mento). Dopo il richiamo gomito, polso, mano e artigli restano ad almeno A.MANO_MUSO da bocca,
+            # mascella e mento: se no la mano si sposta via (e un poco in giù), o il gomito si apre di lato
+            polo = polo0.copy()
+            # (si parte dalla spinta via dal muso del fotogramma prima: senza, ogni fotogramma la mano poteva passare
+            # dall'altra parte del mento, con un salto di 75 cm, e a 60 fps nel mezzo il gomito gli passava dentro)
+            obiettivo = mano.copy()
+            base = SPINTA[s]
+            mano = _nord(mano + base)
+            punti = _ik(mano, polo)
+            # (solo intorno al giro: fuori, la 0.3.16 restava già ad almeno 26 cm, e spinte qui le braccia raccolte alla
+            # porta entravano nel battente)
+            tp_ = A.tempo_alla_porta()
+            alla_porta = tp_ - 0.5 < t < tp_ + 0.7
+            if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
+                bocca = pbs['bocca'].head.copy()
+                muso = [bocca, bocca.lerp(pbs['mento_punta'].head, 0.45), pbs['mento_punta'].head.copy(),
+                        pbs['mascella'].head.copy(), pbs['mascella'].tail.copy(), pbs['testa'].tail.copy()]
+                # quanto spingere: in una direzione fissa rispetto al corpo (in fuori, in giù e un poco indietro; alla
+                # porta solo in giù: di lato le braccia entravano nel battente), di quanto basta perché gomito, polso,
+                # mano e artigli stiano ad almeno A.MANO_MUSO da bocca, mascella e mento. La quantità cambia in modo
+                # continuo da un fotogramma all'altro (cercata a passi di 1 cm), anche la direzione: la mano non salta
+                # più dall'altra parte del mento (75 cm in un fotogramma) e non trema (terzo ricontrollo del 30 ottobre)
+                if alla_porta:
+                    verso = Vector((0, 0, -1.0))
+                else:
+                    verso = (lato + Vector((0, 0, -0.6)) - avanti * 0.3).normalized()
+                k = 0.0
+                while k < 0.6:
+                    prova = _nord(obiettivo + verso * k)
+                    punti = _ik(prova, polo)
+                    if min((h - q).length for _n, h in punti for q in muso) >= A.MANO_MUSO:
+                        break
+                    k += 0.01
+                mano = prova
+                voluta = mano - obiettivo
+            else:
+                voluta = Vector((0, 0, 0))
+            # la spinta segue quella voluta con una molla smorzata (velocità continua: niente scatti, né quando si
+            # accende né quando si spegne; terzo ricontrollo del 30 ottobre, la mano sinistra tremava alla porta)
+            dt_ = 1.0 / A.FPS
+            VEL_SPINTA[s] += (MOLLA ** 2 * (voluta - SPINTA[s]) - 2.0 * MOLLA * VEL_SPINTA[s]) * dt_
+            mano = _nord(obiettivo + SPINTA[s] + VEL_SPINTA[s] * dt_)
+            punti = _ik(mano, polo)
+            if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
+                for nome_p, h in punti:
+                    for q in muso:
+                        if (h - q).length < VICINO_MUSO[0]:
+                            VICINO_MUSO[0] = (h - q).length
+                            VICINO_MUSO_DOVE[0] = '%s %s a %.2f s' % (nome_p, s, t)
+            SPINTA[s] = mano - obiettivo
             if f == int(9.0 * A.FPS):
                 print('MANO', s, 'spalla', tuple(round(c, 2) for c in spalla), 'obiettivo', tuple(round(c, 2) for c in mano),
                       'ottenuta', tuple(round(c, 2) for c in pbs[f'avambraccio.{s}'].tail))
@@ -369,6 +453,7 @@ def esporta(mesh, arm, dati):
     with open(USCITA.replace('.glb', '_labbra.json'), 'w') as f:
         json.dump(BOCCA.LABBRA, f)
     print('ESPORTATO', USCITA, dati)
+    print('MANI: la più a nord senza il muro a x %.2f; il braccio più vicino al muso %.2f m (%s)' % (NORD_MAX[0], VICINO_MUSO[0], VICINO_MUSO_DOVE[0]))
 
 
 def anteprime(cartella, tempi, dati):

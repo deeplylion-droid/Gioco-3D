@@ -361,6 +361,10 @@ func _nebbia_viola() -> void:
 	var z := ZonaNebbiaViola.new()
 	z.name = "NebbiaViola"
 	z.quota = piano
+	# (meno aria e alone che nella sala: nel tunnel buio l'aria viola alzava i neri, e con la 0.3.16 sembrava "troppo
+	# luminoso"; così i punti bui sono neri come nella 0.3.15 e la foschia resta vicino alle lampade)
+	z.aria = 0.25
+	z.alone = 0.7
 	var largo := 2.0 * (muro - spessore * 0.5)
 	var basso := PRESA_FONDO - 0.5
 	var lung := lunghezza()
@@ -989,7 +993,7 @@ func _fine() -> void:
 		gf.material_override = _mat_globo()
 	var of := OmniLight3D.new()
 	of.light_color = Color(1.0, 0.76, 0.5)
-	of.light_energy = 3.5
+	of.light_energy = 3.5 * LAMPADE_TONDE
 	of.omni_range = 9.0
 	of.omni_attenuation = 1.3
 	nodo.add_child(of)
@@ -1444,6 +1448,14 @@ func _nero() -> void:
 
 
 ## Le luci del tunnel: lampade a gabbia sui muri ogni 9 m, alternate, e oblò illuminati.
+## Le lampade tonde a muro (le lampade a gabbia col globo: ogni 9 m, sopra presa, portello, scala, bocche e ostacoli,
+## quelle blu dell'abisso) al 20% di com'erano, luce e globo acceso (scelta dell'utente del 30 ottobre sera: "sono
+## quelle tonde che sporgono dai muri del tunnel sottomarino. Abbassale al 20% di ora. tutte"). Le calde scendono
+## ancora al 40% con le luci bianche (VarianteLuci), come prima: quello che si vede è il 20% di prima. Restano come
+## sono la luce di lei, gli oblò, le plafoniere dentro le bocche e la lucina sul volantino del portello.
+const LAMPADE_TONDE := 0.2
+
+
 func _luci() -> void:
 	var nodo := Node3D.new()
 	nodo.name = "Luci"
@@ -1478,7 +1490,7 @@ func _luci() -> void:
 			g.material_override = _mat_globo_coralli() if coralli else _mat_globo_luci()
 		var o := OmniLight3D.new()
 		o.light_color = Color(0.55, 0.95, 0.85) if coralli else Color(1.0, 0.76, 0.5)
-		o.light_energy = 4.0
+		o.light_energy = 4.0 * LAMPADE_TONDE
 		o.omni_range = 12.0
 		o.omni_attenuation = 1.3
 		o.shadow_enabled = false
@@ -1540,7 +1552,7 @@ func _mat_globo_luci() -> StandardMaterial3D:
 		_globo_luci.albedo_color = Color(1.0, 0.85, 0.55)
 		_globo_luci.emission_enabled = true
 		_globo_luci.emission = Color(1.0, 0.7, 0.35)
-		_globo_luci.emission_energy_multiplier = 3.0
+		_globo_luci.emission_energy_multiplier = 3.0 * LAMPADE_TONDE
 	return _globo_luci
 
 
@@ -2065,6 +2077,9 @@ func _fascia_bocca(nodo: Node3D, sb: float, lato: float, y_bocca: float) -> void
 ## sfuggita"): l'agnellino sulla banchina sinistra, davanti alla bocca della prima galleria di servizio, girato verso
 ## chi arriva. Lo si vede da lontano mentre si scappa da lei; ti guarda, poi entra nella bocca della galleria (è
 ## piccolo, ci sta in piedi) e va dietro il muro, dove dalla banchina non si vede più, e sparisce.
+## Sparisce solo dopo essere uscito dalla bocca in fondo, dietro lo spigolo: la galleria è dritta e illuminata, e a
+## metà chi gli correva dietro e ci entrava vedeva che non c'era più (riscontro dell'utente sulla 0.3.16). Se lo si
+## guarda ancora, corre via sulla banchina dopo il crollo, nel buio.
 func _bambino_galleria() -> void:
 	var g: Dictionary = {}
 	for o in ostacoli:
@@ -2087,8 +2102,11 @@ func _bambino_galleria() -> void:
 	b.zona = AABB(lo, Vector3.ZERO).expand(hi).expand(al.call(s0 - 34.0, muro)).expand(al.call(s0 - 8.0, canale)).grow(0.3)
 	b.zona.size.y = 3.0
 	b.zona.position.y = piano - 0.2
+	var s1: float = float(g["s"]) + float(g["lungo"]) + GALLERIA_BOCCA    # dove finisce la bocca d'uscita
 	b.via = PackedVector3Array([al.call(s0 + 0.5, muro - 0.4), al.call(s0 + 0.7, dentro), al.call(s0 + 2.4, dentro),
-			al.call(s0 + 7.5, dentro)])
+			al.call(s1 - 0.7, dentro), al.call(s1 - 0.5, muro - 0.4), al.call(s1 + 1.0, muro - 1.1),
+			al.call(s1 + 16.0, muro - 1.2)])
+	b.sparisce_dopo = 5       # (fuori dalla bocca d'uscita, dietro la sua testa)
 	b.da_dove = al.call(s0 - 18.0, muro - 1.2) + Vector3.UP * 1.6
 	b.distanza_fuga = 12.0
 	b.compare_lontano = 26.0     # (si corre guardando avanti: compare lontano, nel buio, a più di 26 m)
@@ -2945,7 +2963,7 @@ func _lampada(nodo: Node3D, s: float, lato: float, y: float, energia: float) -> 
 		g.material_override = _mat_globo()
 	var o := OmniLight3D.new()
 	o.light_color = Color(1.0, 0.76, 0.5)
-	o.light_energy = energia
+	o.light_energy = energia * LAMPADE_TONDE
 	o.omni_range = 10.0
 	o.omni_attenuation = 1.3
 	nodo.add_child(o)
@@ -3016,7 +3034,7 @@ func _mat_corda() -> StandardMaterial3D:
 
 
 func _mat_globo() -> StandardMaterial3D:
-	return _mat("globo", Color(1.0, 0.85, 0.55), 0.4, 0.0, Color(1.0, 0.7, 0.35), 3.0)
+	return _mat("globo", Color(1.0, 0.85, 0.55), 0.4, 0.0, Color(1.0, 0.7, 0.35), 3.0 * LAMPADE_TONDE)
 
 
 func _mat_plafoniera() -> StandardMaterial3D:

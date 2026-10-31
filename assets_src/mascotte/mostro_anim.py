@@ -42,6 +42,8 @@ ALTO_CAVIGLIA = 0.22     # l'altezza della caviglia piantata (0,20: stinchi e pi
 PASSO_ARRETRA = 0.4
 ARRETRA_PIEDI = (('L', 0.4), ('R', 0.8), ('L', 1.2), ('R', 1.6), ('L', 2.0), ('R', 2.0))
 T_GIRO = 1.1
+MANI_NORD = 1.02          # fin dove arrivano i polsi verso il muro nord (x del modello), vedi mostro_rig.cuoci
+MANO_MUSO = 0.42          # quanto i polsi restano lontani dalla bocca e dal muso dopo il richiamo, vedi mostro_rig.cuoci
 FASI = dict(MINACCIA=2.4, RICHIAMO=5.4, ARRETRA=6.05)
 FASI.update(GIRO=round(FASI['ARRETRA'] + PASSO_ARRETRA * len(ARRETRA_PIEDI) + 0.12, 3))
 FASI.update(ESITA=round(FASI['GIRO'] + T_GIRO, 3))
@@ -72,6 +74,12 @@ def arretrato(t):
             break
     return 0.5 * (piedi['L'] + piedi['R'])
 FINE_Y = PORTA_Y + 1.6   # dove si ferma il conto (oltre la porta, ormai chiusa)
+# dietro la porta: dove si ferma la radice (il muro di fondo del vano è a Y 8,68; il muso, 1,5 m davanti alla radice
+# di corsa, fermo gira di lato, vedi TESTA_GIRA: così si ferma abbastanza avanti da avere la coda oltre la porta)
+Y_FERMO = 7.42
+CODA_SU = 15.0           # gradi per ogni osso della coda, alzata dietro la porta
+TESTA_GIRA = 70.0        # dietro la porta, fermandosi, gira la testa di lato (gradi, collo e testa insieme)
+PASSO_FINE = 2.3         # di quanto la radice è andata verso la porta, arretrando e girandosi, quando parte la corsa
 
 
 def liscio(a, b, t0, t1, t):
@@ -103,9 +111,48 @@ def rumore(t, f, seme):
             + math.sin(t * f * 5.13 * 6.283 + seme * 2.3) * 0.2)
 
 
+_RITARDO = {}
+
+
+def ritardo_braccia(t):
+    """Nel giro le braccia restano indietro rispetto al corpo che gira (l'inerzia) e alla fine vanno un poco
+    oltre e tornano: un angolo (radianti, attorno alla verticale) fatto da una molla che insegue la velocità
+    del giro. Calcolata una volta a passi di 1/240 s."""
+    if not _RITARDO:
+        dt, th, v, k = 1.0 / 240.0, 0.0, 0.0, 0
+        t0, t1 = FASI['GIRO'] - 0.2, FASI['CORSA'] + 1.2
+        while t0 + k * dt <= t1:
+            tt = t0 + k * dt
+            om = (radice(tt + dt)[2] - radice(tt - dt)[2]) / (2 * dt)
+            v += (-90.0 * (th + 0.055 * om) - 7.0 * v) * dt
+            th += v * dt
+            _RITARDO[k] = th
+            k += 1
+        _RITARDO['t0'], _RITARDO['dt'], _RITARDO['n'] = t0, dt, k
+    k = int(round((t - _RITARDO['t0']) / _RITARDO['dt']))
+    if k < 0 or k >= _RITARDO['n']:
+        return 0.0
+    return _RITARDO[k]
+
+
 # ---------------------------------------------------------------- moto della radice (corsa)
 def posizione_corsa(t):
-    """Distanza percorsa lungo +Y dopo il giro (ESITA ha mezzo passo), e velocità."""
+    """Distanza percorsa lungo +Y dopo il giro (ESITA ha mezzo passo), e velocità. Passata la porta frena e si
+    ferma con la radice a Y_FERMO: dietro la porta c'è un vano chiuso di 3 m, e di corsa il muso entrava fino a
+    1,3 m nel muro di fondo mentre la porta si chiudeva (ricontrollo del 30 ottobre; c'era già nella 0.3.16)."""
+    s, v = _corsa_libera(t)
+    s_frena = PORTA_Y - PASSO_FINE
+    if s <= s_frena:
+        return s, v
+    d = Y_FERMO - PORTA_Y
+    a = VEL_CORSA * VEL_CORSA / (2 * d)
+    tt = t - (FASI['CORSA'] + ACCEL + (s_frena - VEL_CORSA * ACCEL * 0.5) / VEL_CORSA)
+    if tt >= VEL_CORSA / a:
+        return s_frena + d, 0.0
+    return s_frena + VEL_CORSA * tt - 0.5 * a * tt * tt, VEL_CORSA - a * tt
+
+
+def _corsa_libera(t):
     t0 = FASI['CORSA']
     if t < t0:
         return 0.0, 0.0
@@ -185,7 +232,10 @@ def radice(t):
     s, _ = posizione_corsa(t)
     # di lato: all'inizio X0 verso il nord (la gamba destra stava nel cartello del corridoio), nel giro torna al
     # centro e nella corsa va verso il centro del vano della porta
-    x = chiavi(t, [(g_(0.12), X0), (g_(0.75), 0.0), (FASI['CORSA'] + 0.8, X_PORTA)])
+    # (arretrando 4 cm più a nord: al primo passo il fianco dietro entrava di qualche centimetro nel cartello del
+    # corridoio, ricontrollo del 30 ottobre)
+    x = chiavi(t, [(FASI['ARRETRA'], X0), (FASI['ARRETRA'] + 0.3, X0 + 0.04), (g_(0.12), X0 + 0.04), (g_(0.75), 0.0),
+                   (FASI['CORSA'] + 0.8, X_PORTA)])
     return x, avanti + passo + s, yaw
 
 
@@ -299,15 +349,27 @@ def posa(t, piedi):
         abbassa += corsa * (0.03 + 0.022 * math.cos(2 * fase))
     p['_abbassa'] = abbassa
     # alla porta (il vano è largo 1,22 m, lui con le braccia 1,8): la coda ondeggia meno
-    sbieco = liscio(0.0, 1.0, tp - 0.6, tp - 0.3, t) - liscio(0.0, 1.0, tp + 0.25, tp + 0.55, t)
-    # nel giro e alla porta le braccia raccolte al petto (nel giro la mano sinistra entrava nel muro nord)
-    stretto = max(liscio(0.0, 1.0, G - 0.25, G + 0.1, t) - liscio(0.0, 1.0, C + 0.1, C + 0.4, t),
-                  liscio(0.0, 1.0, tp - 0.75, tp - 0.45, t) - liscio(0.0, 1.0, tp + 0.35, tp + 0.65, t))
+    # (resta stretto anche dopo la porta, fino a quando sparisce: il vano dietro è largo 1,8 m, e fermo con le
+    # braccia e la coda larghe entrava nel muro sud)
+    sbieco = liscio(0.0, 1.0, tp - 0.6, tp - 0.3, t) - liscio(0.0, 1.0, tp + 1.0, tp + 1.3, t)
+    # alla porta le braccia raccolte al petto (il vano è stretto)
+    stretto = liscio(0.0, 1.0, tp - 0.95, tp - 0.45, t) - liscio(0.0, 1.0, tp + 1.0, tp + 1.3, t)
+    # nel giro le braccia si muovono col corpo (riscontro dell'utente sulla 0.3.16: "quando si gira mette male una
+    # pinna attaccata al braccio, anche il braccio stesso; animalo un po' di più"): prima le braccia raccolte al petto
+    # si incrociavano in un nodo fermo e la pinna dell'avambraccio spuntava sotto. Ora il braccio alzato resta su,
+    # di fianco alla testa come nella posa (lo spazio fra braccio e testa resta, scelta A dell'utente del 29 ottobre),
+    # quello che pende si piega davanti al fianco; a ogni passo dondolano opposte alle gambe, restano indietro
+    # mentre il corpo gira e alla fine vanno un poco oltre (ritardo_braccia). Senza allargarsi: nel giro la mano
+    # sinistra entrava nel muro nord.
+    nel_giro = liscio(0.0, 1.0, G - 0.25, G + 0.12, t) - liscio(0.0, 1.0, C - 0.1, C + 0.3, t)
+    a_g = min(max((t - G) / T_GIRO, 0.0), 1.0)
+    dondolo = math.sin(3.0 * math.pi * a_g) * (1.0 if 0.0 < a_g < 1.0 else 0.0)
+    ritardo = ritardo_braccia(t)
     # --- respiro (sempre): il petto si gonfia
     resp = math.sin(t * 2 * math.pi * (0.55 if t < R else 0.9))
     # --- bacino e busto
     # nella corsa più piegato in avanti (deciso) e con meno rollio (fluido)
-    dritto = 1.0 - 0.75 * (liscio(0.0, 1.0, tp - 0.6, tp - 0.3, t) - liscio(0.0, 1.0, tp + 0.25, tp + 0.55, t))
+    dritto = 1.0 - 0.75 * (liscio(0.0, 1.0, tp - 0.6, tp - 0.3, t) - liscio(0.0, 1.0, tp + 1.0, tp + 1.3, t))
     p['bacino'] = [('x', 5 * chino + 9 * corsa), ('z', 4 * corsa * math.sin(fase) * dritto),
                    ('y', 2.5 * corsa * math.sin(fase) * dritto)]
     # nell'esitazione si volta indietro con tutto il busto, non solo con la testa: dietro di lui il
@@ -340,11 +402,13 @@ def posa(t, piedi):
         for tc in (M + 0.7, M + 1.6, M + 2.5):
             scatti += math.exp(-((t - tc) / 0.09) ** 2) * 7.0
     tremito = rumore(t, 3.0, 1.0) * (1.0 if t < R else 0.4)
-    p['collo'] = [('x', 6 * chino + 0.5 * tremito - 4 * corsa), ('z', guarda * 0.45), ('x', alza * 0.5)]
+    # dietro la porta, fermandosi, gira la testa di lato (il muso non arriva al muro di fondo del vano)
+    gira_testa = liscio(0.0, TESTA_GIRA, tp + 0.05, tp + 0.4, t)
+    p['collo'] = [('x', 6 * chino + 0.5 * tremito - 4 * corsa), ('z', guarda * 0.45 + gira_testa * 0.45), ('x', alza * 0.5)]
     # con la bocca spalancata il muso si alza: l'apertura guarda in avanti, verso la faccia del giocatore
     muso_su = chiavi(t, [(0.0, 0.0), (1.2, -4.0), (M, -24.0), (R + 0.05, -24.0), (R + 0.50, 0.0)])
     p['testa'] = [('x', 4 * chino + muso_su + scatti - 6 * corsa - 3 * corsa * math.cos(2 * fase)),
-                  ('z', guarda * 0.55 + 1.5 * tremito), ('x', alza * 0.5), ('y', 6 * chino * math.sin(t * 0.9))]
+                  ('z', guarda * 0.55 + 1.5 * tremito + gira_testa * 0.55), ('x', alza * 0.5), ('y', 6 * chino * math.sin(t * 0.9))]
     # --- mascella: si apre piano al risveglio, spalancata nella minaccia, mezza chiusa al richiamo, sbuffo
     # nell'esitazione, ansima nella corsa
     # arretrando la bocca mezza aperta (ringhia); lo sbuffo prima del giro; nel giro si chiude
@@ -378,24 +442,44 @@ def posa(t, piedi):
         minaccia = Vector((0.40 * segno, GIOCATORE_Y + 0.42, 1.12 + (0.08 if s == 'R' else 0.0))) - spalla
         minaccia += Vector((0.0, 0.03, 0.03)) * rumore(t, 1.7, 2.0 + segno)
         # nella corsa la mano che pende si tiene su, davanti al petto (non deve strisciare a terra)
-        su = Vector((-0.05, -0.10, 0.42)) if s == 'L' else Vector((0.0, 0.0, -0.05))
+        # (meno su e più avanti di prima: alzata a 42 cm, con l'avambraccio in su, gli artigli puntavano al mento)
+        su = Vector((-0.05, -0.20, 0.30)) if s == 'L' else Vector((0.0, 0.0, -0.05))
         corsa_off = riposo + su + Vector((0.0, -0.18 * oscilla * segno, 0.07 * oscilla * segno))
         resto = max(0.0, 1.0 - braccia - corsa)
         mano = riposo * resto + minaccia * braccia + corsa_off * corsa
         # raccolte: davanti al petto, vicino al centro, i gomiti stretti
-        raccolta = Vector((0.13 if s == 'L' else -0.10, -0.85, 1.15)) - spalla
-        p['_mano.' + s] = mano.lerp(raccolta, stretto)
-    p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia)]
-    p['mano.R'] = [('x', 4 * rumore(t, 2.2, 5.0) * braccia)]
+        # (alla porta, chino per passare, il mento scende: le mani raccolte più in basso e un poco più larghe, se no la
+        # sinistra gli passava a 6 cm; terzo ricontrollo del 30 ottobre)
+        raccolta = Vector((0.22 if s == 'L' else -0.20, -0.70, 0.80)) - spalla
+        # nel giro (vedi nel_giro): la sinistra pende piegata davanti al fianco, la destra resta alzata accanto
+        # al muso; dondolano opposte ai passi (L, R, L) e restano indietro rispetto al giro
+        if s == 'L':
+            giro = Vector((0.0, -0.26 + 0.13 * dondolo, -0.40 + 0.05 * abs(dondolo)))
+        else:
+            # (un poco più in fuori e più giù della posa: nel giro la testa passa sopra la spalla destra, e qui la mano
+            # resta lontana dal mento senza bisogno di spinte, che davano scatti)
+            giro = Vector((-0.22, -0.32 + 0.08 * abs(dondolo), -0.18 + 0.04 * abs(dondolo)))
+        giro.rotate(Matrix.Rotation(ritardo, 3, 'Z'))
+        mano = mano.lerp(giro, nel_giro)
+        mano = mano.lerp(raccolta, stretto)
+        p['_mano.' + s] = mano
+    # (nel giro i polsi seguono il dondolo, in ritardo: le mani non restano rigide)
+    # (nella corsa il polso sinistro piegato in giù: gli artigli verso terra, non verso il mento)
+    p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia + 14 * dondolo * nel_giro + 30 * corsa),
+                   ('z', math.degrees(ritardo) * 0.6 * nel_giro)]
+    p['mano.R'] = [('x', 4 * rumore(t, 2.2, 5.0) * braccia - 12 * dondolo * nel_giro),
+                   ('z', math.degrees(ritardo) * 0.6 * nel_giro)]
     # --- coda: ondeggia lenta, nella corsa fa da contrappeso (in ritardo sul bacino)
     amp = (6 + 14 * corsa) * (1.0 - 0.8 * sbieco)
     # nel vano il busto si stringe di lato (mostro_rig: la scala x della spina): è largo 1,4 m, il vano 1,22 m
     p['_stringi'] = 1.0 - 0.27 * sbieco
     for k, b in enumerate(('coda1', 'coda2', 'coda3')):
         # quando si volta indietro la coda va dall'altra parte (contrappeso; e non copre il muso)
+        # passata la porta, fermo nel vano, la coda si alza e si raccoglie: la porta che si chiude dietro di lui
+        # la toccava (ricontrollo del 30 ottobre)
         p[b] = [('z', amp * math.sin((fase if corsa > 0 else t * 1.3) - 0.9 * (k + 1)) * (1 + 0.3 * k)
                  + 25 * torsione),
-                ('x', -4 * corsa)]
+                ('x', -4 * corsa + liscio(0.0, CODA_SU, tp + 0.0, tp + 0.4, t))]
     return p
 
 

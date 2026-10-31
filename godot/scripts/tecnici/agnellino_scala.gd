@@ -116,12 +116,14 @@ func compari() -> void:
 	bambino.name = "Agnellino"
 	bambino.modalita = Bambino.Modalita.STATUA
 	bambino.reazione = Bambino.Reazione.INCLINA_TESTA
-	bambino.tempo_per_vederlo = 0.3
+	bambino.tempo_per_vederlo = 0.5
 	bambino.distanza_fuga = distanza_fuga
 	bambino.velocita_corsa = velocita_corsa
-	# (si volta di scatto e parte svelto: la corsia è stretta e il giocatore gli corre dietro)
+	# (si volta di scatto correndo, come nella 0.3.15, e parte svelto: la corsia è stretta e il giocatore gli corre
+	# dietro; la svolta sul posto coi passi della 0.3.16 all'utente piaceva meno)
 	bambino.accel_corsa = 12.0
-	bambino.giro_corsa = 900.0
+	bambino.giro_corsa = 540.0
+	bambino.girata_sul_posto = false
 	bambino.sparisce_fuori_vista = false   # sparisce in fondo alla cavità, al buio
 	bambino.sparito.connect(_corre_nel_muro)
 	var da := genitore.to_global(posizione)

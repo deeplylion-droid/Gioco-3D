@@ -54,6 +54,9 @@ const MURO_PIAZZA := 3.6
 const Z_PIAZZA_NORD := -22.2
 ## Dove finisce la fila delle transenne, davanti alla cabina dell'imbarco.
 const FINE_FILA := Vector3(-VASCA - 3.2, 0, -VASCA - 3.4)
+## Le lampade calde del corridoio delle pile, dall'ingresso all'imbarco, al 60% (riscontro dell'utente sulla 0.3.16: "la
+## zona prima di prendere il salvagente è troppo luminosa"): le tre appese alle pile e le due del muro nord.
+const LUCE_CORRIDOIO := 0.6
 ## Velocità dei rami sbagliati (m/s).
 const VELOCITA_RITORNO := 3.0
 ## Lo scivolo in fondo ai rami sbagliati (scelta B dell'utente, 22 ottobre): negli ultimi SCIVOLO_L metri
@@ -1928,7 +1931,7 @@ func _pile() -> void:
 	# le tre lampade calde spostate dai muri dietro le pile: appese alla faccia della pila verso la strada, sul blocco di
 	# scatoloni della terza unità (a 3,3 m: sopra i 2 m della strada, sul cartone e non sul bancale), al centro di
 	# un'unità, ogni 8 m lungo la fila: a sinistra a 6 e 22 m, a destra a 14 m (i muri 3 e 1 cominciano a -7 e -3 m)
-	for l in [[3, 13.0, 3.0], [1, 17.0, 3.0], [3, 29.0, 2.5]]:
+	for l in [[3, 13.0, 3.0 * LUCE_CORRIDOIO], [1, 17.0, 3.0 * LUCE_CORRIDOIO], [3, 29.0, 2.5 * LUCE_CORRIDOIO]]:
 		var meglio: Array = []
 		for f in fronti:
 			if f[0] == l[0] and (meglio.is_empty() or absf(f[1] - l[1]) < absf(meglio[1] - l[1])):
@@ -2219,7 +2222,7 @@ func _imbarco() -> void:
 	# la luce lungo la fila: lampade calde sul muro nord e sul muro dell'approdo
 	# (le due del muro nord a x -12 e -2 e quella accesa del muro dell'approdo a z -18 sono rimaste dietro le pile di
 	# scatoloni: ora sono appese alle pile lungo la fila, vedi _pile; scelta "a" dell'utente, 23 ottobre)
-	_lampada_calda(Vector3(INGRESSO_X + 6.0, 3.0, Z0), 0.0, 3.0)
+	_lampada_calda(Vector3(INGRESSO_X + 6.0, 3.0, Z0), 0.0, 3.0 * LUCE_CORRIDOIO)
 	_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, -9.0), 90.0, 0.0)
 	await _pausa()
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
@@ -2259,7 +2262,7 @@ func _imbarco() -> void:
 	# (sulla banchina fra l'acqua e la roccia della riva)
 	_metti("salvagente", Vector3(-2.05, 0, -8.5), -90.0)
 	_ostacolo(Vector3(-2.05, 0, -8.5), 0.5, 1.4)
-	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
+	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0 * LUCE_CORRIDOIO)
 	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
 	# (la prima stava fra le transenne della fila, a 67 cm dal suo asse: ora 2,2 m fuori, sullo stesso lato)
 	await _pausa()

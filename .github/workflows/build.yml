@@ -22,7 +22,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
 
@@ -72,6 +72,10 @@ jobs:
         run: |
           python3 tools/ci/test_texture_compresse.py
           python3 tools/ci/texture_compresse.py godot
+
+      - name: Morbidezza in parallelo, nessun operatore senza tipo sui thread (crash di Godot 4.7.2 alla prima esecuzione)
+        if: steps.progetto.outputs.presente == 'si'
+        run: python3 tools/ci/morbidezza_operatori.py
 
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'
@@ -275,6 +279,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scaletta_bacino.gd
 
+      - name: Test delle scalette della piscina a onde (piena e vuota, su col giocatore vero in sette modi fin sul bordo; e dalla spiaggia)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scalette_piscina.gd
+
       - name: Test delle gallerie di servizio del tunnel sottomarino (dentro col giocatore vero, centrati e spostati di 30 cm, senza fermarsi)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_gallerie_sottomarino.gd
@@ -402,6 +410,10 @@ jobs:
       - name: Test della luce normale (luci bianche al 40%, fisse)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche.gd
+
+      - name: Test delle luci bianche al 40% nel gioco vero (fiume e tunnel da F9, anche dopo una morte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche_gioco.gd
 
       - name: Test del blocco del pool di thread (la sala al primo fotogramma con 4 worker; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'

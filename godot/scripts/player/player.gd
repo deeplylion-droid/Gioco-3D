@@ -120,9 +120,13 @@ const BODY_SIDES := 16
 @export var head_bob_vertical := 0.035
 ## Oscillazione laterale massima (m).
 @export var head_bob_horizontal := 0.022
-@export var step_length_walk := 0.75
-@export var step_length_run := 1.05
-@export var step_length_crouch := 0.55
+## La lunghezza di un passo (m): un passo, un suono e un'oscillazione verticale della camera. Più lunghi di prima
+## (0,75, 1,05 e 0,55: 4,5 passi al secondo camminando, "ticchettosi"), "una via di mezzo" fra prima e una persona vera
+## (scelta dell'utente del 30 ottobre, domanda 3 della pagina dei passi): camminando 3,4 passi al secondo, correndo 4,5,
+## accovacciati 2,4. L'oscillazione resta della stessa ampiezza (in metri), più lenta.
+@export var step_length_walk := 1.0
+@export var step_length_run := 1.3
+@export var step_length_crouch := 0.7
 ## Abbassamento massimo della camera all'atterraggio (m).
 @export var land_dip_max := 0.08
 
@@ -341,6 +345,7 @@ func _physics_process(delta: float) -> void:
 	rotation = Vector3(0.0, yaw, 0.0)
 	_update_crouch(delta)
 	_update_ladder()
+	_attraversa_scala(delta)
 	var pre_vy := velocity.y
 	var pre_floor := is_on_floor() and ladder == null
 	var pre_transform := global_transform
@@ -810,14 +815,73 @@ func _update_ladder() -> void:
 		return
 	var input := _move_input()
 	var wish := Basis(Vector3.UP, yaw) * Vector3(input.x, 0.0, input.y)
-	var toward := wish.dot(-found.get_climb_normal()) > 0.5
+	# (la direzione, non quanto è spinto lo stick: con lo stick a metà, 0,5, non ci si aggrappava mai; riscontro della
+	# 0.3.16, scalette della piscina col controller)
+	var toward := wish.length() > 0.2 and wish.normalized().dot(-found.get_climb_normal()) > 0.5
+	# (sul bordo, nell'area sopra la cima di una Ladder.dalla_cima, andando via dal vuoto non ci si aggrappa: si è appena
+	# usciti)
+	if toward and found.dalla_cima > 0.0 and (global_position - found.global_position).dot(found.get_climb_normal()) < 0.05:
+		toward = false
 	var falling_onto := not is_on_floor() and velocity.y < -0.5 and global_position.y < found.get_top_y() - 0.3
-	if toward or falling_onto:
+	# dalla cima (Ladder.dalla_cima): sul bordo, andando verso il vuoto, ci si aggrappa per scendere
+	var dalla_cima := found.dalla_cima > 0.0 and is_on_floor() and global_position.y >= found.get_top_y() - 0.35 \
+			and wish.length() > 0.2 and wish.normalized().dot(found.get_climb_normal()) > 0.5
+	if toward or falling_onto or dalla_cima:
 		ladder = found
 		velocity = Vector3.ZERO
 		_ladder_travel = 0.0
 		_ladder_from_top = global_position.y >= found.get_top_y() - 0.35
+		if dalla_cima:
+			# i corrimano si passano anche scendendo (come scavalcando la cima, vedi _scavalca)
+			_scavalca(found)
 		ladder_changed.emit(true)
+
+
+## I corpi che si passano scavalcando la cima di una scala ([member Ladder.attraversa]), la scala e da quanto.
+var _scavalcati: Array[PhysicsBody3D] = []
+var _scavalcata: Ladder = null
+var _scavalco_t := 0.0
+
+
+func _scavalca(l: Ladder) -> void:
+	_fine_scavalco()
+	for b in l.corpi_da_attraversare():
+		add_collision_exception_with(b)
+		_scavalcati.append(b)
+	_scavalcata = l
+	_scavalco_t = 0.0
+
+
+## Le eccezioni dello scavalco finiscono solo quando non si tocca più niente dei corpi della scala (fuori dai corrimano,
+## da una parte o dall'altra): fermi in mezzo ai corrimano restano (dopo 6 s il motore spingeva fuori il giocatore di
+## colpo, 80 cm, ricontrollo di ambienti-1). Lontano dalla scala (una ripartenza) finiscono comunque.
+func _attraversa_scala(delta: float) -> void:
+	if _scavalcata == null:
+		return
+	_scavalco_t += delta
+	if not is_instance_valid(_scavalcata) or global_position.distance_to(_scavalcata.global_position) > 6.0 \
+			or (_scavalco_t > 0.3 and ladder == null and not _tocca_scavalcati()):
+		_fine_scavalco()
+
+
+func _tocca_scavalcati() -> bool:
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = collision_shape.shape
+	q.transform = collision_shape.global_transform
+	q.margin = 0.04
+	q.collision_mask = collision_mask
+	for r in get_world_3d().direct_space_state.intersect_shape(q, 16):
+		if _scavalcati.has(r.collider):
+			return true
+	return false
+
+
+func _fine_scavalco() -> void:
+	for b in _scavalcati:
+		if is_instance_valid(b):
+			remove_collision_exception_with(b)
+	_scavalcati.clear()
+	_scavalcata = null
 
 
 func _leave_ladder() -> void:
@@ -826,6 +890,9 @@ func _leave_ladder() -> void:
 	ladder = null
 	_ladder_cooldown = 0.35
 	_ladder_from_top = false
+	# (a ogni presa si riguarda dove si guarda per scendere o salire: scesa una scala guardando in basso e ripresa da
+	# sotto guardando dritto, restava "in discesa" e lasciava subito la presa sul fondo; ricontrollo della 0.3.17)
+	_ladder_giu_su = null
 	ladder_changed.emit(false)
 
 
@@ -863,14 +930,21 @@ func _move_on_ladder(delta: float) -> void:
 			_ladder_from_top = false
 		elif climb > 0.0:
 			climb = -climb
+	# presa dalla cima (Ladder.dalla_cima): prima si passa sopra il bordo, verso il vuoto, fino alla scala; poi giù
+	if ladder.dalla_cima > 0.0 and global_position.y >= ladder.get_top_y() - 0.5 \
+			and (global_position - ladder.global_position).dot(n) < ladder_hold_distance - 0.1:
+		velocity = n * 1.6
+		return
 	if is_on_floor() and climb < 0.0:
 		# In fondo alla scala: torna a camminare.
 		_leave_ladder()
 		_move_on_ground(delta)
 		return
 	if climb > 0.0 and global_position.y >= ladder.get_top_y() - 0.08:
-		# In cima: scavalca il bordo.
+		# In cima: scavalca il bordo. I corpi della scala che sporgono sopra il bordo (Ladder.attraversa: i corrimano
+		# delle scalette della piscina) si passano mentre si scavalca, finché si è usciti (vedi _attraversa_scala).
 		velocity = -n * 2.4 + Vector3.UP * 1.6
+		_scavalca(ladder)
 		_leave_ladder()
 		return
 	var side := n.cross(Vector3.UP)

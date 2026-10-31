@@ -44,6 +44,8 @@ enum Stato { ATTESA, GUARDA, SCAPPA, FINITO }
 @export var compare_lontano := 0.0
 ## Quanto deve essere vicino al centro dello sguardo per contare come "visto" (gradi).
 @export var angolo_visto := 14.0
+## Fuori vista sparisce solo dopo aver passato tanti punti di [member via] (vedi [member Bambino.sparisce_dopo]).
+@export var sparisce_dopo := 0
 
 var stato := Stato.ATTESA
 var bambino: Bambino
@@ -61,6 +63,7 @@ func _ready() -> void:
 	bambino.modalita = Bambino.Modalita.SPARITO
 	bambino.libera_quando_sparisce = false
 	bambino.sparisce_fuori_vista = true
+	bambino.sparisce_dopo = sparisce_dopo
 	bambino.distanza_fuga = 0.0          # la fuga la decide questo nodo
 	bambino.reazione = Bambino.Reazione.NESSUNA
 	bambino.velocita_corsa = velocita_corsa

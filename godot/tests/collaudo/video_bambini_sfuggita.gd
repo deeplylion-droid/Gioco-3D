@@ -6,8 +6,11 @@ extends Node
 ## lo scatto in <cartella>; il video si monta con ffmpeg (tools/video_da_fotogrammi o a mano).
 ##   xvfb-run -a -s "-screen 0 960x540x24" godot --path godot --rendering-driver vulkan --resolution 960x540 \
 ##     --fixed-fps 30 --script res://tests/run.gd -- \
-##     res://tests/collaudo/video_bambini_sfuggita.gd corridoio|galleria <cartella>
-## "corridoio": il corridoio del fiume nella risalita (scena di prova); "galleria": il tunnel sottomarino.
+##     res://tests/collaudo/video_bambini_sfuggita.gd corridoio|galleria|insegui_bocca|insegui_dentro <cartella>
+## "corridoio": il corridoio del fiume nella risalita (scena di prova); "galleria": il tunnel sottomarino;
+## "insegui_bocca" e "insegui_dentro": gli corri dietro allo sprint fino alla bocca della galleria e ti fermi a
+## guardare dentro, oppure lo segui dentro fin fuori dalla bocca in fondo (come il test, test_bambini_sfuggita).
+## Per gli inseguimenti scrive in <cartella>/sparito.txt il fotogramma in cui sparisce.
 
 var _p: Player
 var _cartella := ""
@@ -32,6 +35,8 @@ func _run() -> void:
 	_cartella = a[2] if a.size() > 2 else ""
 	if cosa == "galleria":
 		await _galleria()
+	elif cosa.begins_with("insegui"):
+		await _insegui(cosa == "insegui_dentro")
 	else:
 		await _corridoio()
 	get_tree().quit(0)
@@ -175,3 +180,72 @@ func _galleria() -> void:
 	await _cammina(qui, occhi.call(s0 + 6.0, 3.9), occhi.call(bocca, 4.4), occhi.call(bocca + 1.0, 5.4), 3.0)
 	for i in 30:
 		await _fotogramma()
+
+
+func _insegui(dentro_fino_in_fondo: bool) -> void:
+	var env := WorldEnvironment.new()
+	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
+	env.environment.sdfgi_enabled = true
+	env.environment.sdfgi_cascades = 3
+	env.environment.volumetric_fog_density = 0.009
+	env.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
+	add_child(env)
+	_giocatore()
+	var sala := SalaSottomarino.new()
+	sala.name = "SalaSottomarino"
+	add_child(sala)
+	sala.costruisci()
+	var b := sala.find_child("BambinoGalleria", true, false) as BambinoSfuggita
+	await _frames(240)
+	var g: Dictionary = {}
+	for o in sala.ostacoli:
+		if o["tipo"] == "galleria":
+			g = o
+			break
+	var s0: float = float(g["s"]) - SalaSottomarino.GALLERIA_BOCCA
+	var s1: float = float(g["s"]) + float(g["lungo"]) + SalaSottomarino.GALLERIA_BOCCA
+	var lato: float = g["lato"]
+	var dentro := sala.muro + sala.spessore + SalaSottomarino.GALLERIA_LARGA * 0.5
+	var al := func(s: float, u: float) -> Vector3: return sala._al(sala.punto(s), sala.destra(s) * lato, Vector2(u, sala.piano))
+	var strada: Array = [al.call(s0 - 30.0, sala.muro - 1.2), al.call(s0 - 0.6, sala.muro - 1.2), al.call(s0 + 0.6, sala.muro - 0.3)]
+	if dentro_fino_in_fondo:
+		strada.append_array([al.call(s0 + 1.4, dentro), al.call(s1 - 1.4, dentro), al.call(s1 - 0.6, sala.muro - 0.3),
+				al.call(s1 + 1.0, sala.muro - 1.1), al.call(s1 + 20.0, sala.muro - 1.2)])
+	else:
+		strada.append(al.call(s0 + 0.9, sala.muro + sala.spessore))
+	var r := sala.destra(s0) * lato
+	var qui: Vector3 = strada[0]
+	var k := 1
+	var dt := 1.0 / 30.0
+	var t := 0.0
+	var sparito := -1
+	_registra = true
+	var dopo := 0
+	while t < 30.0 and dopo < 45:
+		# (accucciato nelle bocche e nella galleria, alla velocità da accucciato; fuori allo sprint)
+		var giu: bool = (qui - al.call(s0, sala.muro)).dot(r) > -0.15 and k >= 3
+		var vel := _p.crouch_speed if giu else _p.run_speed
+		if k < strada.size():
+			var verso: Vector3 = strada[k] - qui
+			if verso.length() <= vel * dt:
+				qui = strada[k]
+				k += 1
+			else:
+				qui += verso.normalized() * vel * dt
+		_p.set(&"_eye_height", _p.crouch_eye_height if giu else _p.stand_eye_height)
+		var occhio := qui + Vector3.UP * (_p.crouch_eye_height if giu else _p.stand_eye_height)
+		var mira: Vector3 = strada[mini(k, strada.size() - 1)] + Vector3.UP * (_p.crouch_eye_height if giu else _p.stand_eye_height)
+		if b.stato == BambinoSfuggita.Stato.GUARDA or b.stato == BambinoSfuggita.Stato.SCAPPA:
+			mira = b.bambino.punto_testa()
+		_p.global_position = qui
+		if (mira - occhio).length() > 0.05:
+			_p.camera.global_transform = Transform3D(Basis.looking_at(mira - occhio, Vector3.UP), occhio)
+		await _fotogramma()
+		t += dt
+		if sparito < 0 and b.stato == BambinoSfuggita.Stato.FINITO:
+			sparito = _n - 1
+		if sparito >= 0:
+			dopo += 1
+	if _cartella != "":
+		var f := FileAccess.open(_cartella.path_join("sparito.txt"), FileAccess.WRITE)
+		f.store_line(str(sparito))
