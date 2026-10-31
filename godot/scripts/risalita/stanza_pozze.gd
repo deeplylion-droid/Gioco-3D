@@ -96,8 +96,9 @@ func _costruisci() -> void:
 	_luci()
 	await _pausa()
 	_lampeggiante()
-	_enigma()
+	# (prima i checkpoint: EnigmaPozze nel suo _ready cerca CheckpointRisolto)
 	_checkpoint()
+	_enigma()
 	costruita = true
 
 
@@ -264,6 +265,20 @@ func _lampeggiante() -> void:
 	cupola.material_override = mc
 	cupola.position = Vector3(0, 0.11, 0.14)
 	l.add_child(cupola)
+	# la cupola accesa: EnigmaPozze la mostra mentre lampeggia
+	var acceso := MeshInstance3D.new()
+	acceso.name = "Acceso"
+	acceso.mesh = cs
+	var ma := StandardMaterial3D.new()
+	ma.albedo_color = Color(1.0, 0.2, 0.12)
+	ma.emission_enabled = true
+	ma.emission = Color(1.0, 0.12, 0.06)
+	ma.emission_energy_multiplier = 6.0
+	acceso.material_override = ma
+	acceso.position = cupola.position
+	acceso.scale = Vector3.ONE * 1.01
+	acceso.visible = false
+	l.add_child(acceso)
 	var o := OmniLight3D.new()
 	o.name = "Luce"
 	o.light_color = Color(1.0, 0.1, 0.06)
