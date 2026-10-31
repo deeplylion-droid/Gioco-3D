@@ -236,6 +236,13 @@ Risposte alle domande (18 ottobre):
 
 **Scelta dell'utente (22 ottobre): P1**, quella costruita. È nella v0.3.8.
 
+## La stanza delle pozze colorate (idea dell'utente, 31 ottobre)
+
+Le parole dell'utente: "Una stanza quadrata con un 5x5 di piccole pozze quadrate piene d'acqua colorata. Stanza discretamente illuminata, per vedere bene i colori. L'enigma si risolve rimuovendo 3 colori esatti. Saranno i colori riportati a disegno pastello su un cartello di vietato l'accesso posizionato da qualche parte nella stanza precedente a questa." E subito dopo: "le pozze quadrate sono disposte a scacchiera, senza spazi vuoti, contigue."
+- **Dove**: lo propone la squadra ("dove metterla mi fai tu delle proposte"), con una pagina di proposte per l'utente.
+- **Da decidere con l'utente** prima di costruire: il posto e la stanza precedente col cartello; come si toglie un colore; cosa succede se sbagli; cosa apre l'enigma risolto; come ci si muove con le pozze contigue.
+- **Già deciso**: 25 pozze quadrate in 5x5, contigue a scacchiera; acqua colorata; stanza ben illuminata; si risolve togliendo 3 colori esatti; l'indizio sono i 3 colori disegnati a pastello su un cartello di vietato l'accesso nella stanza prima. Vale la regola delle scritte: il cartello è solo disegni.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
