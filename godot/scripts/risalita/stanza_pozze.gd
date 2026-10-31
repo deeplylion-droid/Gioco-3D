@@ -26,6 +26,8 @@ const PORTA_X := -1.7
 ## dell'infermeria è a x 0.
 const INFERMERIA_X := -1.1
 const SALA := "res://scripts/game/enigma_pozze.gd"
+## L'arredo (tools/blender/stanza_pozze.py): collettore delle pompe, manometri, quadro, estintore, taniche, retino, secchio.
+const ARREDO := "res://assets/ambienti_tecnici/stanza_pozze/stanza_pozze.gltf"
 ## L'ordine del checkpoint d'ingresso: lo stesso dell'ultimo dell'infermeria (14); quello a enigma risolto ha il 15, come
 ## il magazzino (la serranda è il 16).
 const ORDINE := 14
@@ -94,6 +96,8 @@ func _costruisci() -> void:
 	await _pausa()
 	_porta()
 	_luci()
+	await _pausa()
+	_arredo()
 	await _pausa()
 	_lampeggiante()
 	# (prima i checkpoint: EnigmaPozze nel suo _ready cerca CheckpointRisolto)
@@ -196,6 +200,12 @@ func _pozze() -> void:
 		var lungo := 2.0 * g + 0.1
 		_box(Vector3(0.1, PROFONDITA, lungo), Vector3(c, fondo * 0.5, 0), mat_piastrelle_pozza)
 		_box(Vector3(lungo, PROFONDITA, 0.1), Vector3(0, fondo * 0.5, c), mat_piastrelle_pozza)
+
+
+func _arredo() -> void:
+	var a := (load(ARREDO) as PackedScene).instantiate() as Node3D
+	a.name = "ArredoPozze"
+	add_child(a)
 
 
 func _porta() -> void:
