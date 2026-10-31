@@ -68,12 +68,21 @@ jobs:
       fail-fast: false
       matrix:
         partenza: [torre, inseguimento, tunnel, fiume]
-        preset: [alto]
+        preset: [basso]
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: linux
           path: gioco
+
+      - name: Swap da 16 GB (llvmpipe compila le pipeline nella RAM; senza, il runner veniva spento a 6-7 min)
+        run: |
+          sudo swapoff -a || true
+          sudo fallocate -l 16G /swapfile_prova
+          sudo chmod 600 /swapfile_prova
+          sudo mkswap /swapfile_prova > /dev/null
+          sudo swapon /swapfile_prova
+          free -m
 
       - name: Vulkan software, Xvfb e gdb
         run: |
@@ -88,16 +97,18 @@ jobs:
           # la memoria del processo (RSS) e della macchina ogni 5 s, anche se il gioco muore senza scrivere
           ( while sleep 5; do
               pid=$(pgrep -f 'gioco/JillyJubilee.x86_64 --rendering' | tail -1)
-              [ -n "$pid" ] && echo "MEM $(date +%T) rss=$(( $(awk '/VmRSS/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB picco=$(( $(awk '/VmHWM/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB libera=$(( $(awk '/MemAvailable/{print $2}' /proc/meminfo) / 1024 )) MB"
-            done ) > mem_$nome.log 2>&1 &
+              [ -n "$pid" ] && echo "MEM $(date +%T) rss=$(( $(awk '/VmRSS/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB picco=$(( $(awk '/VmHWM/{print $2}' /proc/$pid/status 2>/dev/null || echo 0) / 1024 )) MB libera=$(( $(awk '/MemAvailable/{print $2}' /proc/meminfo) / 1024 )) MB swap_usato=$(( ( $(awk '/SwapTotal/{print $2}' /proc/meminfo) - $(awk '/SwapFree/{print $2}' /proc/meminfo) ) / 1024 )) MB"
+            done ) 2>&1 | tee mem_$nome.log &
           G=$!
+          ( sleep 20; tail -F "$prova" 2>/dev/null | sed 's/^/PROVA_LIVE /' ) &
+          T=$!
           set +e
-          timeout 165m xvfb-run -a -s "-screen 0 1280x720x24" gdb -q -batch -ex run -ex bt -ex "thread apply all bt 15" \
-            --args gioco/JillyJubilee.x86_64 --rendering-driver vulkan --resolution 1280x720 -- \
+          timeout 165m xvfb-run -a -s "-screen 0 640x360x24" gdb -q -batch -ex run -ex bt -ex "thread apply all bt 15" \
+            --args gioco/JillyJubilee.x86_64 --rendering-driver vulkan --resolution 640x360 -- \
             --partenza=${{ matrix.partenza }} --preset=${{ matrix.preset }} --resta=60 --registro-prova="$prova" \
             > godot_$nome.log 2>&1
           echo "CODICE D'USCITA: $?"
-          kill $G
+          kill $G $T 2>/dev/null; pkill -f 'tail -F' || true
           echo "--- registro della prova:"; tail -25 "$prova" 2>/dev/null || echo "NESSUN REGISTRO DELLA PROVA"
           echo "--- memoria:"; tail -4 mem_$nome.log; grep -o 'picco=[0-9]* MB' mem_$nome.log | sort -t= -k2 -n | tail -1
           echo "--- segnali e backtrace:"; grep -E 'Thread .* received signal|^#[0-9]+ |SIGSEGV|SIGABRT|SIGKILL|exited with code|exited normally' godot_$nome.log | head -40

@@ -51,6 +51,8 @@ var _testata: Control
 var _logo: TextureRect
 var _sottomenu: CanvasLayer
 var _pausa_fuoco := true
+## La partenza da riga di comando (vedi [method _partenza_da_riga]) si fa una volta sola, al primo titolo.
+static var _riga_fatta := false
 
 
 func _ready() -> void:
@@ -67,6 +69,109 @@ func _ready() -> void:
 	_audio(&"ferma_tutto")
 	_audio(&"musica_titolo")
 	_voci[0].grab_focus.call_deferred()
+	_partenza_da_riga.call_deferred()
+
+
+## Per le prove (la prova su Windows nella CI, il collaudo), dopo il -- della riga di comando: --partenza=<id> parte
+## subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...), --preset=<nome> mette
+## prima quel preset grafico, --esci-dopo=<s> chiude il gioco dopo quei secondi, --resta=<s> lo chiude quei secondi dopo
+## che si è arrivati (finita la schermata di caricamento e i caricamenti nel thread), --registro-prova=<file> scrive le
+## righe PROVA anche in quel file, aperto e chiuso a ogni riga (il registro di Godot, se il gioco si chiude di colpo, può
+## restare indietro). Ogni 5 s una riga con la memoria, la scena e dove è il giocatore. Senza, niente.
+func _partenza_da_riga() -> void:
+	if _riga_fatta:
+		return
+	_riga_fatta = true
+	var partenza := ""
+	var preset := ""
+	var esci := 0.0
+	var resta := 0.0
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--partenza="):
+			partenza = a.get_slice("=", 1)
+		elif a.begins_with("--preset="):
+			preset = a.get_slice("=", 1)
+		elif a.begins_with("--esci-dopo="):
+			esci = a.get_slice("=", 1).to_float()
+		elif a.begins_with("--resta="):
+			resta = a.get_slice("=", 1).to_float()
+		elif a.begins_with("--registro-prova="):
+			_registro_prova = a.substr(17)
+	if partenza == "" and esci <= 0.0 and resta <= 0.0:
+		return
+	if _registro_prova != "":
+		var f := FileAccess.open(_registro_prova, FileAccess.WRITE)
+		if f:
+			f.close()
+	# (bisezione del crash della 0.3.17: l'acqua delle vasche delle condotte con lo shader della 0.3.16; il materiale resta
+	# in memoria qui, così chi lo carica dopo trova lo stesso, già cambiato)
+	if OS.get_cmdline_user_args().has("--acqua-0316"):
+		var m := load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial
+		m.shader = load("res://shaders/water_inseguimento_0316.gdshader") as Shader
+		_tenuti.append(m)
+		_prova("PROVA: acqua delle condotte con lo shader della 0.3.16")
+	if OS.get_cmdline_user_args().has("--senza-maschera"):
+		_prova("PROVA: lampade del muro est senza shadow_caster_mask e torre_A sui suoi strati")
+	if preset != "":
+		Grafica.applica_preset(preset)
+		_prova("PROVA: preset %s" % preset)
+	var albero := get_tree()
+	var conta := Timer.new()
+	conta.wait_time = 5.0
+	conta.process_mode = Node.PROCESS_MODE_ALWAYS
+	var arrivato := [-1.0]
+	# il picco della memoria video a ogni fotogramma: in tutto, e dall'arrivo (le righe ogni 5 s non lo vedono)
+	var picco := [0, 0]
+	albero.process_frame.connect(func() -> void:
+		var v := int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20
+		picco[0] = maxi(int(picco[0]), v)
+		if arrivato[0] >= 0.0:
+			picco[1] = maxi(int(picco[1]), v))
+	conta.timeout.connect(func() -> void:
+		var sc := albero.current_scene
+		var g := albero.get_first_node_in_group(&"player") as Node3D
+		if arrivato[0] < 0.0 and sc and String(sc.name) != "Caricamento" and String(sc.name) != "MenuPrincipale" \
+				and not Game.caricamenti_in_corso():
+			arrivato[0] = Time.get_ticks_msec() / 1000.0
+			_prova("PROVA: ARRIVATO a %d s, giocatore a %s" % [int(arrivato[0]), g.global_position if g else "-"])
+		if resta > 0.0 and arrivato[0] >= 0.0 and Time.get_ticks_msec() / 1000.0 - arrivato[0] >= resta:
+			_prova("PROVA: RESTATO %d s dopo l'arrivo, esco; picco video in tutto %d MB, dall'arrivo %d MB" % [int(resta),
+					int(picco[0]), int(picco[1])])
+			albero.quit()
+		_prova("PROVA t=%d scena=%s caricamenti=%s pos=%s memoria=%d MB picco_video=%d MB video=%d MB texture=%d MB buffer=%d MB oggetti=%d fps=%d" % [
+				Time.get_ticks_msec() / 1000, String(sc.name) if sc else "-", Game.caricamenti_in_corso(),
+				g.global_position if g else "-", OS.get_static_memory_usage() >> 20, int(picco[0]),
+				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.RENDER_BUFFER_MEM_USED)) >> 20,
+				int(Performance.get_monitor(Performance.OBJECT_COUNT)), int(Engine.get_frames_per_second())]))
+	albero.root.add_child(conta)
+	conta.start()
+	if esci > 0.0:
+		albero.create_timer(esci, true, false, true).timeout.connect(func() -> void:
+			_prova("PROVA: esco dopo %s s" % esci)
+			albero.quit())
+	if partenza != "":
+		_prova("PROVA: parto da %s -> %s" % [partenza, MenuProva.parti(albero, partenza)])
+
+
+## Le risorse cambiate per la prova (restano in memoria).
+static var _tenuti: Array[Resource] = []
+## Il file di --registro-prova (vuoto: nessuno).
+static var _registro_prova := ""
+
+
+## Una riga PROVA: nel registro di Godot e, se c'è, nel file della prova (aperto e chiuso subito: resta anche se il gioco
+## si chiude di colpo).
+static func _prova(riga: String) -> void:
+	print(riga)
+	if _registro_prova == "":
+		return
+	var f := FileAccess.open(_registro_prova, FileAccess.READ_WRITE)
+	if f:
+		f.seek_end()
+		f.store_line("%s %s" % [Time.get_time_string_from_system(), riga])
+		f.close()
 
 
 func _exit_tree() -> void:
