@@ -1,0 +1,11 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://stile_prova.gd" id="1_stile"]
+[ext_resource type="Script" path="res://nodo_prova.gd" id="2_nodo"]
+
+[sub_resource type="Resource" id="Resource_1"]
+script = ExtResource("1_stile")
+
+[node name="Prova" type="Node"]
+script = ExtResource("2_nodo")
+stile = SubResource("Resource_1")
