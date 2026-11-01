@@ -54,6 +54,7 @@ func _run() -> void:
 		return
 	await _fino_alle_pozze()
 	await _posa("arrivo dalla partenza F9")
+	await _fermo("arrivo dalla partenza F9")
 	var inf := ris.get_node(^"Infermeria") as Node3D
 	check(inf.get_node_or_null(^"CartelloPozze") != null and (inf.get_node_or_null(^"FarettoCartelloPozze/Luce") as Light3D).visible,
 		"accanto alla porta nord dell'infermeria c'è il cartello col faretto acceso")
@@ -67,6 +68,11 @@ func _run() -> void:
 	check(WaterMix.TURCHESE in e.tolti, "tolto il turchese")
 	await _chiudi_e_continua()
 	await _posa("Continua dall'ingresso")
+	await _fermo("Continua dall'ingresso")
+	await _morte("nella stanza, dopo Continua dall'ingresso")
+	await _posa("ripartenza dopo la morte (checkpoint 14)")
+	await _fermo("ripartenza dopo la morte (checkpoint 14)")
+	check(e != null and _tutte_piene() and not _porta_aperta(), "dopo la morte: pozze piene e porta chiusa")
 	check(String(GameState.snapshot.get("checkpoint", "")) == ingresso, "Continua riparte dall'ingresso della stanza (%s)" % GameState.snapshot.get("checkpoint", ""))
 	check(e != null and _tutte_piene() and e.tolti.is_empty() and not _porta_aperta(),
 		"con le pozze tutte piene e la porta chiusa, come quando si è entrati")
@@ -80,6 +86,10 @@ func _run() -> void:
 	print("3. Continua da risolto, poi su per la scala di servizio")
 	await _chiudi_e_continua()
 	await _posa("Continua da risolto")
+	await _fermo("Continua da risolto")
+	await _morte("nella stanza risolta")
+	await _posa("ripartenza dopo la morte (checkpoint 15)")
+	await _fermo("ripartenza dopo la morte (checkpoint 15)")
 	check(String(GameState.snapshot.get("checkpoint", "")) == risolto, "Continua riparte dal checkpoint a enigma risolto")
 	check(e != null and e.stato == EnigmaPozze.Stato.RISOLTO and _porta_aperta(), "la porta stagna è già aperta")
 	var vuote := true
@@ -287,3 +297,39 @@ func _posa(dove: String) -> void:
 			_porta_aperta(), p.has_item(&"zaino_pompa"), p.water_pack.tank_amount if p.water_pack else -1.0, GameState.luci,
 			GameState.salvataggio().get("checkpoint", "")])
 	await _frames(1)
+
+
+## Il giocatore lasciato fermo per 3 s (senza tasti): quanto si sposta (la porta nord dell'infermeria che si apre senza
+## il colpo non lo deve spingere).
+func _fermo(dove: String) -> void:
+	for a in [&"move_forward", &"suck", &"jump", &"crouch"]:
+		Input.action_release(a)
+	var da := p.global_position
+	var mx := 0.0
+	for i in 180:
+		await get_tree().physics_frame
+		mx = maxf(mx, p.global_position.distance_to(da))
+	var porta := ris.get_node_or_null(^"Infermeria/PortaNord") if ris else null
+	print("SPINTA: %s: fermo 3 s, spostato al più %.3f m, alla fine %.3f m" % [dove, mx, p.global_position.distance_to(da)])
+	check(mx < 0.05, "%s: il giocatore fermo non si sposta (al più %.3f m)" % [dove, mx])
+
+
+## Una morte (come sonda_blocchi.gd) e la ripartenza dal checkpoint.
+func _morte(dove: String) -> void:
+	var cp := String(GameState.salvataggio().get("checkpoint", ""))
+	var vecchia := get_tree().current_scene
+	print("MORTE: %s (checkpoint %s)" % [dove, cp])
+	GameState.kill_player(&"generico")
+	var t0 := Time.get_ticks_msec()
+	Input.action_press(&"skip")
+	while Time.get_ticks_msec() - t0 < 180000:
+		await get_tree().process_frame
+		if get_tree().current_scene != vecchia and get_tree().current_scene != null:
+			var pl := GameState.player
+			if pl and is_instance_valid(pl) and pl.input_enabled and not GameState.is_dying:
+				break
+	Input.action_release(&"skip")
+	await _aspetta_ripresa()
+	await _frames(30)
+	print("MORTE: ripartenza dopo %.1f s" % ((Time.get_ticks_msec() - t0) / 1000.0))
+	check(String(GameState.snapshot.get("checkpoint", GameState.salvataggio().get("checkpoint", ""))) == cp or cp == "", "dopo la morte si riparte dal checkpoint %s" % cp)

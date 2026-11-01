@@ -143,6 +143,12 @@ func _libera(da: Vector3, verso: Vector3, nome: String, fov := 50.0) -> Image:
 	var su := Vector3.UP if absf((verso - da).normalized().y) < 0.98 else Vector3.FORWARD
 	c.look_at(verso, su)
 	c.current = true
+	if OS.has_environment("LUCE_TECNICA"):
+		# solo tecnica, nel gioco non c'è: per vedere i pezzi al buio
+		var o := OmniLight3D.new()
+		o.light_energy = 1.2
+		o.omni_range = 2.5
+		c.add_child(o)
 	await _frames(12)
 	var im := await _scatto(nome)
 	c.current = false
@@ -203,23 +209,24 @@ func _run() -> void:
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	for i in 3600:
 		await get_tree().process_frame
-		if not bool(ris.call(&"lavori_in_corso")) and i > 300 and ris.get(&"pozze") != null:
+		if not bool(ris.call(&"lavori_in_corso")) and i > 300 and (ris.get(&"pozze") != null or not ("pozze" in ris) or i > 1500):
 			break
-	st = ris.get(&"pozze") as Node3D
+	st = ris.get(&"pozze") as Node3D if "pozze" in ris else null
 	inf = ris.get(&"infermeria") as Node3D
-	e = st.get_node(^"EnigmaPozze") as Node3D
-	var zona := AABB(st.global_position + Vector3(-7.0, -1.5, -9.0), Vector3(36.0, 9.0, 16.0))
+	e = st.get_node(^"EnigmaPozze") as Node3D if st else null
+	var zona := AABB(inf.global_position + Vector3(-9.2, -1.5, -16.3), Vector3(36.0, 9.0, 16.0))
 	for m in ris.find_children("*", "MeshInstance3D", true, false):
 		var mi := m as MeshInstance3D
 		var ab := mi.global_transform * mi.get_aabb()
 		if ab.intersects(zona) and ab.size.x < 3.0 and ab.size.z < 3.0 and not String(mi.name).begins_with("Grigliato"):
 			_mesh_zona.append(mi)
-	print("POZZE: stanza in %s, infermeria in %s, mesh nella zona %d, luci %s" % [st.global_position.snapped(Vector3.ONE * 0.01),
+	print("POZZE: stanza in %s, infermeria in %s, mesh nella zona %d, luci %s" % [st.global_position.snapped(Vector3.ONE * 0.01) if st else "-",
 			inf.global_position.snapped(Vector3.ONE * 0.01), _mesh_zona.size(), GameState.luci])
 	# la porta nord dell'infermeria si apre con la luce riaccesa e la keycard (come test_pozze_strada)
 	var interr := inf.get_node_or_null(^"Interruttore")
-	if interr:
+	if interr and OS.get_environment("LUCE_INF") != "0":
 		interr.set(&"powered", true)
+	print("POZZE: luce dell'infermeria %s" % ("spenta" if OS.get_environment("LUCE_INF") == "0" else "accesa (interruttore)"))
 	p.add_item(&"keycard", 1, "Keycard")
 	p.teleport(I(Vector3(-1.0, 0.05, -1.0)))
 	await _frames(60)
@@ -233,6 +240,12 @@ func _run() -> void:
 		await _stati()
 	if "scala" in fasi:
 		await _scala()
+	if "infermeria" in fasi:
+		await _infermeria()
+	if "dettagli" in fasi:
+		await _dettagli()
+	if "cerniere" in fasi:
+		await _cerniere()
 	print("POZZE: finito")
 	get_tree().quit()
 
@@ -272,27 +285,132 @@ func _colori() -> void:
 	var c := I(Vector3(-2.95, 1.5, -3.2))
 	var quad := I(Vector3(-2.95, 1.73 - 0.405, -3.2 + 0.0085))
 	var lato := (I(Vector3(1, 0, 0)) - I(Vector3.ZERO)).normalized()
-	for d in [1.5, 0.8, 0.45]:
-		var da := I(Vector3(-2.95, 0, -3.2 + d))
-		var im := await _guarda(da, c, "cartello_%.1fm" % d, d < 0.6)
+	var smalto := I(Vector3(-2.95, 1.43, -3.2 + 0.0085)) + lato * 0.11
+	var viste := [["1.5m", I(Vector3(-2.95, 0, -3.2 + 1.5)), false], ["0.8m", I(Vector3(-2.95, 0, -3.2 + 0.8)), false],
+			["diagonale", I(Vector3(-1.4, 0, -1.6)), false], ["0.45m", I(Vector3(-2.95, 0, -3.2 + 0.45)), true]]
+	for v in viste:
+		var im := await _guarda(v[1], c, "cartello_%s" % v[0], v[2])
 		var righe := []
 		for k in [-1, 0, 1]:
 			var w: Vector3 = quad + lato * (0.092 * float(k))
-			if cam.is_position_behind(w):
-				continue
-			righe.append("%+d: %s" % [k, _c8(_media(im, cam.unproject_position(w), 3 if d > 1.0 else 6))])
-		righe.append("smalto: %s" % _c8(_media(im, cam.unproject_position(I(Vector3(-2.95, 1.73 - 0.37, -3.19))), 3)))
-		print("COLORI: cartello da %.2f m (x -1, 0, +1 lungo l'asse x dell'infermeria): %s" % [d, ", ".join(righe)])
-	# il cartello come si vede venendo verso la porta e in diagonale
-	await _guarda(I(Vector3(-1.4, 0, -1.6)), c, "cartello_diagonale")
+			righe.append("%s: %s" % [["viola", "arancione", "turchese"][k + 1], _hsv(_media_area(im, w, lato, 0.015))])
+		righe.append("smalto: %s" % _hsv(_media_area(im, smalto, lato, 0.015)))
+		print("COLORI: cartello %s: %s" % [v[0], ", ".join(righe)])
 	await _guarda(I(Vector3(-2.2, 0, -0.2)), I(Vector3(-2.2, 1.5, -3.2)), "porta_nord_da_dentro")
+	if st == null:
+		return
 	# le pozze giuste dalla passerella sud e da ovest
 	for c2 in ["turchese", "viola", "arancione", "rosa", "bianco_latte"]:
 		var t := _pozza_sud(c2)
 		var su := Vector3(t.global_position.x, t.get_surface_global_y(), t.global_position.z)
 		var im := await _guarda(S(Vector3(st.to_local(t.global_position).x, 0, 3.4)), su, "pozza_%s" % c2)
-		print("COLORI: pozza %s dalla passerella sud, al centro: %s" % [c2, _c8(_media(im, cam.unproject_position(su), 8))])
+		print("COLORI: pozza %s dalla passerella sud, al centro: %s" % [c2, _hsv(_media(im, _px(im, su), 8))])
 	await _guarda(S(Vector3(-3.4, 0, 0.0)), S(Vector3(0, 0, 0)), "pozze_da_ovest")
+
+
+## Il punto del mondo sull'immagine: unproject_position dà le coordinate della finestra di base (1280x720), gli scatti
+## sono grandi come lo schermo (come colori_cartello_pozze.gd di enigmi).
+func _px(im: Image, w: Vector3) -> Vector2:
+	var c := get_viewport().get_camera_3d()
+	return c.unproject_position(w) * Vector2(im.get_size()) / get_viewport().get_visible_rect().size
+
+
+## Il colore medio di un quadrato di lato 2 [param mezzo] m attorno a [param w], sul piano del cartello.
+func _media_area(im: Image, w: Vector3, lato: Vector3, mezzo: float) -> Color:
+	var r := maxi(1, int(absf(_px(im, w + lato * mezzo).x - _px(im, w - lato * mezzo).x) * 0.5))
+	return _media(im, _px(im, w), r)
+
+
+func _hsv(c: Color) -> String:
+	return "%s tinta %d° sat %.2f lum %.2f" % [_c8(c), int(c.h * 360.0), c.s, c.v]
+
+
+## L'infermeria intorno al cartello: le stesse viste e la luminosità del muro, del soffitto e del pavimento attorno
+## (per vedere che il faretto illumina solo il cartello e che l'infermeria resta buia), anche senza la stanza.
+func _infermeria() -> void:
+	var lato := (I(Vector3(1, 0, 0)) - I(Vector3.ZERO)).normalized()
+	var punti := {"muro sopra 25 cm": I(Vector3(-2.95, 1.98, -3.195)), "muro sopra 70 cm": I(Vector3(-2.95, 2.43, -3.195)),
+			"muro sotto 20 cm": I(Vector3(-2.95, 1.07, -3.195)), "muro sotto 60 cm": I(Vector3(-2.95, 0.67, -3.195)),
+			"muro ovest 40 cm davanti": I(Vector3(-3.195, 1.5, -2.8)), "pavimento davanti 40 cm": I(Vector3(-2.95, 0.0, -2.8)),
+			"pavimento davanti 1 m": I(Vector3(-2.95, 0.0, -2.2)), "soffitto sopra": I(Vector3(-2.95, 2.995, -2.9)),
+			"cartello centro": I(Vector3(-2.95, 1.5, -3.19))}
+	for v in [["da_1.5m", I(Vector3(-2.95, 0, -1.7)), I(Vector3(-2.95, 1.5, -3.2))], ["diagonale", I(Vector3(-1.4, 0, -1.6)), I(Vector3(-2.95, 1.5, -3.2))],
+			["porta_nord", I(Vector3(-2.2, 0, -0.2)), I(Vector3(-2.2, 1.5, -3.2))], ["insieme", I(Vector3(1.0, 0, 1.5)), I(Vector3(-2.6, 1.2, -3.2))],
+			["dall_ingresso", I(Vector3(1.6, 0, 3.6)), I(Vector3(-2.2, 1.4, -3.2))]]:
+		var im := await _guarda(v[1], v[2], "inf_%s" % v[0])
+		var righe := []
+		for k in punti:
+			var w: Vector3 = punti[k]
+			if cam.is_position_behind(w):
+				continue
+			var px := _px(im, w)
+			if px.x < 0 or px.y < 0 or px.x >= im.get_width() or px.y >= im.get_height():
+				continue
+			righe.append("%s %.3f" % [k, _media(im, px, 4).get_luminance()])
+		var tot := 0.0
+		for y in range(0, im.get_height(), 4):
+			for x in range(0, im.get_width(), 4):
+				tot += im.get_pixel(x, y).get_luminance()
+		print("LUCE: %s: media dello schermo %.3f; %s" % [v[0], tot / float((im.get_height() / 4) * (im.get_width() / 4)), ", ".join(righe)])
+
+
+## I ravvicinati delle cose cambiate: il faretto spostato, la porta stagna aperta (cerniere, perni, ali), la lampada
+## rossa in cima alla seconda rampa della scala, e il muro sud dalle due parti.
+func _dettagli() -> void:
+	var f := inf.find_child("FarettoCartelloPozze", true, false) as Node3D
+	if f:
+		var ab := AABB()
+		var primo := true
+		for m: MeshInstance3D in f.find_children("*", "MeshInstance3D", true, false):
+			var b := inf.global_transform.affine_inverse() * (m.global_transform * m.get_aabb())
+			ab = b if primo else ab.merge(b)
+			primo = false
+		print("DETTAGLI: faretto (infermeria locale) da %s a %s; dal soffitto (y 3) %.1f cm, dal muro nord (z -3,2) %.1f cm" % [
+				ab.position.snapped(Vector3.ONE * 0.001), ab.end.snapped(Vector3.ONE * 0.001), (3.0 - ab.end.y) * 100.0, (ab.position.z + 3.2) * 100.0])
+		var cc := ab.get_center()
+		await _libera(I(cc + Vector3(0.6, -0.35, 0.3)), I(cc), "det_faretto_lato")
+		await _libera(I(cc + Vector3(-0.15, -0.5, 0.6)), I(cc + Vector3(0, 0.05, -0.1)), "det_faretto_davanti")
+		await _libera(I(Vector3(-2.6, 2.75, -2.0)), I(Vector3(-2.95, 2.95, -3.2)), "det_faretto_cavo_al_muro")
+		await _libera(I(Vector3(-2.3, 1.6, -1.6)), I(Vector3(-2.95, 2.1, -3.2)), "det_faretto_e_cartello")
+	if st == null:
+		return
+	e.call(&"load_state", {"stato": 2, "tolti": ["turchese", "viola", "arancione"]})
+	await _frames(240)
+	var porta := e.get(&"porta") as Node3D
+	var cardine := porta.get_node(^"Cardine") as Node3D
+	var batt := cardine.get_node(^"Battente") as Node3D
+	print("DETTAGLI: porta stagna aperta %s, cardine a %.1f gradi" % [porta.get(&"e_aperta"), cardine.rotation_degrees.y])
+	for y in [0.35, 1.75]:
+		var perno: Vector3 = cardine.global_position + Vector3.UP * float(y)
+		var fuori := porta.global_basis.z * -1.0
+		var lungo := porta.global_basis.x
+		await _libera(perno + fuori * 0.35 + lungo * 0.25 + Vector3.UP * 0.05, perno, "det_cerniera_%.2f_fuori" % y, 45.0)
+		await _libera(perno + fuori * 0.3 - lungo * 0.3 + Vector3.UP * 0.1, perno, "det_cerniera_%.2f_di_lato" % y, 45.0)
+		await _libera(perno + Vector3.UP * 0.35 + fuori * 0.12 + lungo * 0.08, perno, "det_cerniera_%.2f_dall_alto" % y, 45.0)
+	await _libera(S(Vector3(-1.7, 1.5, -2.6)), S(Vector3(-2.2, 1.0, -4.3)), "det_porta_aperta_dalla_stanza", 65.0)
+	await _libera(S(Vector3(-0.9, 1.5, -5.8)), S(Vector3(-2.2, 1.0, -4.3)), "det_porta_aperta_dal_pianerottolo", 65.0)
+	# la lampada rossa in cima alla seconda rampa: quella della scala più vicina alla cima
+	var cima := (ris.get_node(^"Marker/CimaScala") as Node3D).global_position
+	var migliore: Node3D = null
+	for n in ris.find_children("*", "LampadaMuro", true, false):
+		var l := n as Node3D
+		if migliore == null or l.global_position.distance_to(cima) < migliore.global_position.distance_to(cima):
+			migliore = l
+	for n in ris.find_children("*", "LampadaMuro", true, false):
+		print("DETTAGLI: lampada %s in %s" % [ris.get_path_to(n), (n as Node3D).global_position.snapped(Vector3.ONE * 0.01)])
+	if migliore:
+		var lp := migliore.global_position
+		var dir := migliore.global_basis.z
+		await _libera(lp + dir * 0.6 + Vector3.UP * -0.2, lp, "det_lampada_scala_davanti", 50.0)
+		var lat := dir.cross(Vector3.UP).normalized()
+		await _libera(lp + dir * 0.25 + lat * 0.5, lp, "det_lampada_scala_di_lato", 50.0)
+	# il muro sud dalla stanza e dall'infermeria
+	await _libera(S(Vector3(1.5, 1.6, 0.5)), S(Vector3(1.5, 1.4, 4.0)), "det_muro_sud_dalla_stanza", 70.0)
+	await _libera(S(Vector3(-0.8, 1.6, 2.4)), S(Vector3(-1.1, 1.4, 4.0)), "det_muro_sud_giunta", 60.0)
+	await _libera(I(Vector3(0.5, 1.6, 0.5)), I(Vector3(-0.5, 1.4, -3.2)), "det_muro_nord_infermeria", 70.0)
+	# il grigliato da lontano e dall'alto
+	await _guarda(S(Vector3(3.4, 0, -3.4)), S(Vector3(-3.4, 0, 3.4)), "det_grigliato_lontano")
+	await _libera(S(Vector3(0, 3.3, 0)), S(Vector3(-3.0, 0, 3.0)), "det_grigliato_dall_alto", 75.0)
 
 
 func _pozza_sud(c: String) -> WaterTank:
@@ -523,3 +641,47 @@ func _scala() -> void:
 	var giu := punti.duplicate()
 	giu.reverse()
 	await _cammina(giu.slice(1), "scala_giu", false, 15)
+
+
+## Le cerniere della porta stagna aperta e la lampada rossa in cima alla seconda rampa, da vicino (con LUCE_TECNICA).
+func _cerniere() -> void:
+	e.call(&"load_state", {"stato": 2, "tolti": ["turchese", "viola", "arancione"]})
+	await _frames(240)
+	var porta := e.get(&"porta") as Node3D
+	var cardine := porta.get_node(^"Cardine") as Node3D
+	var fuori := porta.global_basis.z * -1.0
+	var lungo := porta.global_basis.x
+	for y in [0.35, 1.75]:
+		var perno: Vector3 = cardine.global_position + Vector3.UP * float(y)
+		await _libera(perno + fuori * 0.3 + lungo * 0.22 + Vector3.UP * 0.04, perno, "cer_%.2f_fuori" % y, 40.0)
+		await _libera(perno + fuori * 0.05 - lungo * 0.32 + Vector3.UP * 0.05, perno, "cer_%.2f_dal_telaio" % y, 40.0)
+		await _libera(perno + Vector3.UP * 0.3 + fuori * 0.1 + lungo * 0.06, perno, "cer_%.2f_dall_alto" % y, 40.0)
+		await _libera(perno + fuori * 0.35 - lungo * 0.05 + Vector3.UP * 0.05, perno, "cer_%.2f_di_fronte" % y, 40.0)
+	await _libera(cardine.global_position + fuori * 1.2 + lungo * 0.6 + Vector3.UP * 1.3, cardine.global_position + Vector3.UP * 1.0, "cer_insieme", 60.0)
+	# le lampade rosse della Risalita: luci rosse vicino alla scala
+	var cima := (ris.get_node(^"Marker/CimaScala") as Node3D).global_position
+	var luci := []
+	for n in ris.find_children("*", "OmniLight3D", true, false):
+		var l := n as OmniLight3D
+		if l.light_color.r > 0.9 and l.light_color.g < 0.3 and l.global_position.distance_to(cima) < 14.0:
+			luci.append(l)
+	luci.sort_custom(func(a, b): return a.global_position.distance_to(cima) < b.global_position.distance_to(cima))
+	for l: OmniLight3D in luci:
+		print("CERNIERE: luce rossa %s in %s, a %.1f m dalla cima" % [ris.get_path_to(l), l.global_position.snapped(Vector3.ONE * 0.01), l.global_position.distance_to(cima)])
+	var k := 0
+	for l: OmniLight3D in luci.slice(0, 3):
+		# la lampada: la mesh più vicina alla luce
+		var mesh: MeshInstance3D = null
+		for m in ris.find_children("*", "MeshInstance3D", true, false):
+			var mi := m as MeshInstance3D
+			if mi.global_position.distance_to(l.global_position) < 0.6 and (mesh == null or mi.global_position.distance_to(l.global_position) < mesh.global_position.distance_to(l.global_position)):
+				mesh = mi
+		var dove := mesh.global_position if mesh else l.global_position
+		var dir := (l.global_position - dove).normalized() if mesh else Vector3.UP
+		if mesh:
+			var ab := mesh.global_transform * mesh.get_aabb()
+			print("CERNIERE: lampada %s, scatola da %s a %s" % [ris.get_path_to(mesh), ab.position.snapped(Vector3.ONE * 0.001), ab.end.snapped(Vector3.ONE * 0.001)])
+		var lat := Vector3(dir.x, 0, dir.z).normalized().cross(Vector3.UP)
+		await _libera(dove + dir * 0.6 + Vector3.DOWN * 0.15, dove, "lampada_%d_davanti" % k, 50.0)
+		await _libera(dove + dir * 0.2 + lat * 0.45, dove, "lampada_%d_di_lato" % k, 50.0)
+		k += 1
