@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        versione: ["531e7bfc", "9e1c2638"]
+        versione: ["531e7bfcfd104f3a4b4dd01355e5eb404d7b7f52", "9e1c26389b221f916e960e8e8ca1d0977c74a026"]
         partenza: ["risalita", "fiume"]
     steps:
       - uses: actions/checkout@v4
