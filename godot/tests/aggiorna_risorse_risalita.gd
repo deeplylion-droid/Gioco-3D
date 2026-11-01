@@ -1,5 +1,5 @@
 extends Node
-## Rifà i due file che servono a caricare le stanze della Risalita (fiume e infermeria) a gioco avviato senza fermi
+## Rifà i due file che servono a caricare le stanze della Risalita (fiume, infermeria e pozze) a gioco avviato senza fermi
 ## (risalita_gioco.gd):
 ## - scenes/risalita/risorse_stanze.json: i file che le stanze caricano mentre si costruiscono, che il thread carica prima;
 ## - scenes/risalita/materiali_campione.tres: un materiale (senza texture) per ogni shader delle stanze che la sala
@@ -47,13 +47,15 @@ func _run() -> void:
 	Game.esci(0)
 
 
-## I file usati dalle stanze costruite, in ordine (senza le due scene, che si chiedono a parte).
+## I file usati dalle stanze costruite, in ordine (senza le tre scene, che si chiedono a parte).
 static func elenco(ris: Node) -> PackedStringArray:
 	var percorsi := {}
-	for r in [ris.get(&"fiume"), ris.get(&"infermeria")]:
-		RisorseNodi.raccogli(r, percorsi)
+	for r in [ris.get(&"fiume"), ris.get(&"infermeria"), ris.get(&"pozze")]:
+		if r:
+			RisorseNodi.raccogli(r, percorsi)
 	percorsi.erase(ris.get(&"SCENA_FIUME"))
 	percorsi.erase(ris.get(&"SCENA_INFERMERIA"))
+	percorsi.erase(ris.get(&"SCENA_POZZE"))
 	var l := PackedStringArray(percorsi.keys())
 	l.sort()
 	return l
@@ -62,8 +64,9 @@ static func elenco(ris: Node) -> PackedStringArray:
 ## Gli shader delle stanze che non sono fra quelli di [param sala] (chiave -> materiale): [chiave, materiale].
 static func shader_nuovi(ris: Node, sala: Dictionary) -> Array:
 	var stanze := {}
-	for r in [ris.get(&"fiume"), ris.get(&"infermeria")]:
-		RisorseNodi.materiali_per_shader(r, stanze)
+	for r in [ris.get(&"fiume"), ris.get(&"infermeria"), ris.get(&"pozze")]:
+		if r:
+			RisorseNodi.materiali_per_shader(r, stanze)
 	var out := []
 	for k in stanze:
 		if not sala.has(k):

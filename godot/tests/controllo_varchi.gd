@@ -45,10 +45,14 @@ const VARCHI := [
 		[Vector3(-4.9, -5.4, 49.2), Vector3(-4.9, -5.4, 66.0), Vector3(-7.6, -5.4, 66.0)]],
 	["risalita: dall'approdo all'infermeria (porta di servizio, porta sud)", "inizio",
 		[Vector3(-35.0, -5.4, 54.0), Vector3(-35.0, -5.4, 46.6)]],   # (1 m dentro l'infermeria, prima del carrello)
-	["risalita: dalla porta nord dell'infermeria alla scala di servizio (si apre col pulsantone)", "aperte",
-		[Vector3(-38.8, -5.4, 43.0), Vector3(-38.8, -5.4, 39.0)]],
-	["risalita: dalla cima della scala alla porta di C3", "inizio",
-		[Vector3(-26.9, 0, 38.45), Vector3(-15.4, 0, 38.45)]],
+	["risalita: dalla porta nord dell'infermeria nella stanza delle pozze (si apre col pulsantone)", "aperte",
+		[Vector3(-38.8, -5.4, 43.0), Vector3(-38.8, -5.4, 40.9)]],
+	# (sulla passerella intorno alle pozze, fino alla porta stagna nel muro nord e sul pianerottolo della scala)
+	["risalita: la stanza delle pozze, dalla passerella alla porta stagna (si apre a enigma risolto)", "aperte",
+		[Vector3(-38.8, -5.4, 40.9), Vector3(-42.2, -5.4, 40.9), Vector3(-42.2, -5.4, 34.1), Vector3(-40.5, -5.4, 34.1),
+		Vector3(-40.5, -5.4, 32.1)]],
+	["risalita: dalla cima della scala di servizio alla porta di C3", "inizio",
+		[Vector3(-28.6, 0, 32.1), Vector3(-28.6, 0, 38.45), Vector3(-15.4, 0, 38.45)]],
 	["raccordo: da C3 al magazzino dei gonfiabili", "inizio",
 		[Vector3(-15.4, 0, 38.45), Vector3(-15.3, 0, 37.3), Vector3(-15.0, 0, 36.5), Vector3(-15.0, 0, 29.0)]],
 	["raccordo: la serranda del magazzino", "aperte",
@@ -151,6 +155,10 @@ func _apri_tutto(level: Node) -> void:
 		paratia.call(&"load_state", {"chiusa": false, "aperta": true})
 	for portone in level.find_children("*", "PortoneTorre", true, false):
 		portone.call(&"load_state", {"aperto": true, "chiuso_dietro": false})
+	# la porta stagna della stanza delle pozze si apre a enigma risolto
+	var stagna := level.get_node_or_null(^"Risalita/StanzaPozze/PortaStagna")
+	if stagna:
+		stagna.call(&"apri", true)
 	# la porta nord dell'infermeria si apre col pulsantone (25 ottobre)
 	var inter := level.get_node_or_null(^"Risalita/Infermeria/Interruttore")
 	if inter:

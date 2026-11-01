@@ -405,6 +405,10 @@ func _prepara(stato: String) -> void:
 				c.call(&"load_state", {"cifre": [4, 1, 7], "aperta": true})
 			for n in _radice.find_children("*", "Negatoscopio", true, false):
 				n.call(&"load_state", {"con_radiografia": true})
+			# la stanza delle pozze risolta: le pozze dei tre colori giusti vuote e la porta stagna aperta (collaudo del 1
+			# novembre: l'anta aperta entrava nel telaio e il controllo guardava solo la porta chiusa)
+			for e in _radice.find_children("*", "EnigmaPozze", true, false):
+				e.call(&"load_state", {"stato": EnigmaPozze.Stato.RISOLTO, "tolti": EnigmaPozze.GIUSTI})
 			for i in 240:
 				await get_tree().physics_frame
 			return
