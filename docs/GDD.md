@@ -254,6 +254,15 @@ Le parole dell'utente: "Una stanza quadrata con un 5x5 di piccole pozze quadrate
 - **Vederla prima: no**: la squadra la costruisce, un'altra squadra la ricontrolla, e l'utente la vede nella build.
 - Checkpoint all'ingresso della stanza e a enigma risolto. Prima di costruire si controlla lo spazio dietro l'infermeria.
 
+**Com'è nella 0.3.19** (ambienti-1 ed enigmi, lavoro/stanza-pozze; dettagli in `docs/tecnico/pozze_colorate/LEGGIMI.md`):
+- **La stanza**: 7,9 x 7,9 m, alta 3,6 m, a nord dell'infermeria. Le pozze hanno il lato interno di 1 m (1,1 m da centro a centro) e sono profonde 0,75 m. La passerella di grigliato zincato è larga 1,2 m. Il muro sud è grigio come gli altri dal lato delle pozze.
+- **I colori giusti**: turchese, viola e arancione; restano il rosa e il bianco latte. Il colore di ogni pozza è (colonna + 2 riga) mod 5: ogni riga e ogni colonna ha tutti i colori, due pozze dello stesso colore non si toccano nemmeno in diagonale, e dalla passerella sud se ne vede una per colore.
+- **Togliere un colore**: si aspirano 2 litri da una pozza e quelle del suo colore si svuotano col gorgo in 3,5 s. Lo zaino butta da solo l'acqua di un altro colore (dal fiume arriva pieno). Le pozze non prendono il getto.
+- **Se sbagli**: al terzo colore la lampada rossa lampeggia e si sente lo scarico; dopo 1,5 s le pozze si riempiono di nuovo in 4 s.
+- **Risolto**: la porta stagna si apre in 2,6 s e la sua lampada passa dal rosso al verde. Checkpoint 14 all'ingresso, 15 a enigma risolto. Dietro la porta c'è la scala di servizio, con una lampada rossa in cima alla seconda rampa.
+- **Il cartello**: 34 x 46 cm, a ovest della porta nord dell'infermeria, col centro a 1,5 m. Il faretto è bianco neutro, forte e stretto, a soffitto a 1,2 m dal muro, perché i quadratini abbiano i colori delle pozze; il resto dell'infermeria resta buio.
+- **Niente caustiche** sul fondo delle pozze: l'addon dell'acqua tiene al più 12 masse d'acqua, e le pozze stanno fuori per non togliere il posto alle vasche e ai canali del resto del gioco.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
