@@ -359,7 +359,10 @@ func _veli_bocche() -> void:
 	for v in dati["scolo"]:
 		acque.append(v)
 	acque.append(dati["bacino"])
-	var mat: Material = load("res://assets/materials/inseguimento/acqua_inseguimento.tres")
+	# (l'acqua delle vasche, senza riflessi e piena com'è l'acqua che ha dietro: vedi water_inseguimento.gdshader)
+	var mat := (load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
+	mat.set_shader_parameter(&"lucido", 0.0)
+	mat.set_shader_parameter(&"pieno_fisso", 0.97)
 	for nome: String in dati["tubi"]:
 		var linea: Array = dati["tubi"][nome]
 		var p0: Array = linea[0]
