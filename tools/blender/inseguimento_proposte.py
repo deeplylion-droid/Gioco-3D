@@ -67,10 +67,13 @@ GIOCO_DATI = dict(paratie=[], grata=None, tubi={}, scale=[])
 # alta 98 cm e l'occhio di chi ci sta accovacciato a 92, sotto il pelo, e da sotto l'acqua sembrava aria. Nella 0.3.17
 # 10 cm (88 cm d'acqua): ancora poco, l'occhio accovacciato scende di 8 cm atterrando e di 3,5 col passo (Player,
 # land_dip_max e head_bob_vertical), più i 5 cm del piano vicino della camera (riscontro dell'utente sulla 0.3.19). Ora
-# 26 cm: l'acqua è alta 72 cm (il bacino 69), l'occhio accovacciato nel punto più basso resta 8 cm sopra il pelo.
+# 26 cm: l'acqua è alta 72 cm, l'occhio accovacciato nel punto più basso resta 8 cm sopra il pelo.
 PELO_GIU = 0.0
 # Le vasche di scolo, per lo stesso motivo: da 78 a 72 cm d'acqua (sono di torre_proposte.vasca, il pelo si abbassa qui).
 SCOLO_GIU = 0.0
+# Il bacino meno: il pelo resta 2 cm sopra il bordo del pozzo di SB1 e del pozzetto della grata (T + 0,12), dove galleggiano
+# i tentacoli di lei quando sale (sotto il bordo ci entravano, test_morbidezza_inseguimento): 74 cm d'acqua.
+BACINO_GIU = 0.0
 
 
 # --- pezzi comuni -----------------------------------------------------------------------------------
@@ -705,7 +708,7 @@ def versione_A(mats):
         muri_bacino.append(((BX[2] - 0.3, BX[1]), (BX[2], BX[3])))
     for (a, b) in muri_bacino:
         c.scatola((a[0], a[1], z0), (b[0], b[1], T + 0.55), 'vasca_bimbi', smusso=0.03)
-    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35 - PELO_GIU))
+    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35 - BACINO_GIU))
     # la grata di sicurezza sulla bocca del tubo finale (chiusa: è calata davanti a lei)
     grata(c, (BX[2] - 0.1, 6.5, z0 + 2.0), (1, 0), not GIOCO, largo=3.0, alto=4.0)   # nel gioco alzata: cala dopo
     # la strada per uscire: scaletta sul bordo ovest del bacino, passerella, porta di servizio
@@ -899,7 +902,7 @@ def versione_A(mats):
         GIOCO_DATI.update(
             vasche=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 1.1 - 0.12 - PELO_GIU) for v in (C1, C2, C3)],
             scolo=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 0.9 - 0.12 - SCOLO_GIU) for v in D],
-            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35 - PELO_GIU),
+            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35 - BACINO_GIU),
             allagato=dict(acqua=T, fondo=z0),
             pozzo=dict(rett=[43.6, 7.9, 45.8, 10.1], fondo=z0 - 4.5, bordo=T + 0.12),
             pozzetto_grata=dict(rett=list(POZZETTO_GRATA[:4]), fondo=z0 - POZZETTO_GRATA[4], bordo=POZZETTO_GRATA[5]),
@@ -1375,9 +1378,9 @@ def main():
     if gioco:
         assert nome == 'A', "nel gioco c'è solo la A (scelta dell'utente del 19 ottobre)"
         global GIOCO, X0, SOTTO_PEDANA
-        global PELO_GIU, SCOLO_GIU
+        global PELO_GIU, SCOLO_GIU, BACINO_GIU
         GIOCO, X0, SOTTO_PEDANA = True, X0_GIOCO, 0.26
-        PELO_GIU, SCOLO_GIU = 0.26, 0.06
+        PELO_GIU, SCOLO_GIU, BACINO_GIU = 0.26, 0.06, 0.21
         uscita, prefisso = GIOCO_USCITA, 'inseguimento'
     gruppi, percorso, luci, info = VERSIONI[nome](mats)
     os.makedirs(uscita, exist_ok=True)
