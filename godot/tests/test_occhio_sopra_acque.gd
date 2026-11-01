@@ -64,7 +64,7 @@ func _run() -> void:
 		var mi := m as MeshInstance3D
 		var box := mi.global_transform * mi.get_aabb()
 		acque.append({"nome": String(mi.name), "pelo": box.end.y, "box": box})
-	for v in ins.find_children(SalaInseguimento.NOME_VELO + "*", "MeshInstance3D", false, false):
+	for v in ins.find_children("VeloBocca_*", "MeshInstance3D", false, false):
 		veli.append(v as MeshInstance3D)
 	check(veli.size() == 6, "le pareti d'acqua nelle bocche dei 6 tubi che partono sotto il pelo (%d)" % veli.size())
 	check(acque.size() >= 16, "le acque della torre e dell'inseguimento ci sono tutte (%d)" % acque.size())
