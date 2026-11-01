@@ -27,11 +27,19 @@ const MINIMA := 0.002   # le scatole più piccole (m³) non contano
 const STRATI := 3       # le facce in su per colonna (il pavimento sotto una staffa, sotto un tubo)
 const CELLA_OGGETTI := 0.75   # le celle in cui si dividono le mesh degli oggetti (m)
 const FORO := 0.75      # il raggio del foro nel pavimento dove lei sale (m)
-## Le scatole messe a mano (coordinate della sala) dove la struttura ha pezzi tondi e sottili che i raggi lungo gli assi
-## non prendono: alla grata il palo tondo (8 facce, 6 cm) accanto al pozzetto, da -33 fin sopra -26 (con l'acqua del
-## bacino più bassa, lavoro/vasche-sotto, la pelle di un tentacolo ci entrava di 5 cm: test_morbidezza_inseguimento a 60
-## fps; misurato coi raggi dentro e fuori, 1 novembre).
-const A_MANO := {"grata": [[51.495, -33.0, -7.46, 51.555, -26.0, -7.39]]}
+## Le scatole messe a mano (coordinate della sala) dove la struttura ha pezzi tondi che i raggi lungo gli assi non
+## prendono (misurati coi raggi, 1 novembre; con l'acqua più bassa, lavoro/vasche-sotto, i tentacoli ci arrivano):
+## - grata: il palo tondo (8 facce, 7 cm) accanto al pozzetto, da -33 fin sopra -12,5 (la pelle di un tentacolo ci
+##   entrava di 5 cm: test_morbidezza_inseguimento a 60 fps);
+## - scolo_1: i due piedi tondi sotto il piano a -32,81, a 1,5 m da lei: la base larga 72 cm, il corpo 32 cm, l'attacco
+##   al piano.
+const A_MANO := {
+	"grata": [[51.489, -33.0, -7.461, 51.561, -12.0, -7.389]],
+	"scolo_1": [[55.94, -34.0, -22.56, 56.66, -33.93, -21.84], [56.14, -34.0, -22.36, 56.46, -33.03, -22.04],
+			[56.40, -33.06, -22.12, 56.50, -32.81, -22.0],
+			[55.94, -34.0, -25.36, 56.66, -33.93, -24.64], [56.14, -34.0, -25.16, 56.46, -33.03, -24.84],
+			[56.40, -33.06, -25.2, 56.50, -32.81, -25.08]],
+}
 
 var spazio: PhysicsDirectSpaceState3D
 
