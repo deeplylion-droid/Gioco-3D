@@ -33,3 +33,7 @@ static func _calcola() -> float:
 
 static func _costante() -> float:
 	return 6.0
+
+
+static func _static_init() -> void:  # A RISCHIO
+	_cache["a"] = 1 + 1
