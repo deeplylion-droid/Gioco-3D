@@ -62,4 +62,4 @@ func _ready() -> void:
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Strato 20: la luce del lampo non lo illumina. Granelli minuscoli e molto luminosi
 	# mandano in crisi il TAA/FSR 2 di Godot (diventano puntini neri).
-	layers = Tempesta.STRATO_NO_LAMPO
+	Strati.metti(self, Tempesta.STRATO_NO_LAMPO)

@@ -92,15 +92,15 @@ func _run() -> void:
 			lampada.shadow_enabled = modo != "0315"
 			if modo == "correzione":
 				# (solo lo strato nuovo: con anche il primo la maschera delle ombre lo prendeva lo stesso)
-				torre_a.layers = strati_a
+				Strati.metti(torre_a, strati_a)
 				lampada.shadow_caster_mask = mask
 			else:
-				torre_a.layers = 1
+				Strati.metti(torre_a, 1)
 				lampada.shadow_caster_mask = 0xFFFFF
 			await _fotogrammi(30)
 			await _scatto("%s_%s" % [v[0], modo], lp if v[0] == "muro" else Vector3.INF)
 	# com'era nel codice
-	torre_a.layers = strati_a
+	Strati.metti(torre_a, strati_a)
 	lampada.shadow_caster_mask = mask
 	lampada.shadow_enabled = true
 	var pipe1 := _pipeline()

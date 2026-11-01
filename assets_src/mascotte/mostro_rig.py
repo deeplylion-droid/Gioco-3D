@@ -143,6 +143,33 @@ def _dist_segmento(P, a, b):
     return np.linalg.norm(P - (a + np.outer(t, ab)), axis=1)
 
 
+def _mano_tutta(P, W, nomi, s):
+    """Pesi della mano [param s] (vedi pesa): la pelle più vicina all'osso della mano che a quello della testa, entro
+    MANO_RAGGIO dal polso, va solo alle ossa del braccio (sfumando negli ultimi 10 cm), e oltre il polso alla mano."""
+    braccio = [nomi.index(f'{o}.{s}') for o in ('braccio', 'avambraccio', 'mano')]
+    polso, punta = np.array(G[f'polso.{s}']), np.array(G[f'mano.{s}'])
+    asse = (punta - polso) / np.linalg.norm(punta - polso)
+    d_mano = _dist_segmento(P, polso, punta)
+    d_testa = _dist_segmento(P, np.array(G['testa']), np.array(G['muso']))
+    d_polso = np.linalg.norm(P - polso, axis=1)
+    idx = np.where((d_mano < d_testa) & (d_polso < MANO_RAGGIO))[0]
+    Wb = W[np.ix_(idx, braccio)]
+    sb = Wb.sum(1, keepdims=True)
+    Wb = np.where(sb > 1e-6, Wb / np.maximum(sb, 1e-6), np.array([[0.0, 0.0, 1.0]]))
+    # oltre il polso tutta alla mano (con 4 cm per passare dall'avambraccio)
+    oltre = np.clip(((P[idx] - polso) @ asse + 0.01) / 0.04, 0.0, 1.0)[:, None]
+    Wb = Wb * (1.0 - oltre) + np.array([[0.0, 0.0, 1.0]]) * oltre
+    nuovi = np.zeros((len(idx), W.shape[1]))
+    nuovi[:, braccio] = Wb
+    f = np.clip((MANO_RAGGIO - d_polso[idx]) / 0.10, 0.0, 1.0)[:, None]
+    W[idx] = W[idx] * (1.0 - f) + nuovi * f
+    print('MANO %s: %d vertici al braccio, %d tutti alla mano' % (s, len(idx), int((oltre[:, 0] * f[:, 0] > 0.999).sum())))
+
+
+# quanto si allarga la pelle della mano dal polso (m): le dita arrivano a 30 cm, il gomito sta a 27
+MANO_RAGGIO = 0.45
+
+
 def pesa(mesh, arm, bocca):
     """Pesi fatti qui (il calore di Blender non riesce su questa mesh): per ogni vertice le ossa più
     vicine (distanza dal segmento dell'osso, con un raggio per osso), poi lisciati lungo la superficie
@@ -193,6 +220,13 @@ def pesa(mesh, arm, bocca):
     W = altre
     W[:, kt] = ht * (1.0 - pm)
     W[:, km] = ht * pm
+    # la mano destra: nel modello è alzata davanti al muso, e le dita lunghe (fino a 30 cm oltre il polso) per distanza
+    # andavano più alla testa, al petto e alla spina che alla mano, e soprattutto all'avambraccio. Lontano dalla posa
+    # del modello la testa le tirava via dalla mano: dita allungate a strisce fino al muso, e fra le strisce si vedeva
+    # il soffitto, come un taglio nel corpo dal bordo chiaro (collaudo della 0.3.17, a 6,0 s, sopra la camera). Qui la
+    # pelle più vicina alla mano che alla testa, attorno al polso, segue solo le ossa del braccio, e oltre il polso solo
+    # la mano
+    _mano_tutta(P, W, nomi, 'R')
     for o in bpy.context.selected_objects:
         o.select_set(False)
     gruppi = {}
@@ -225,6 +259,10 @@ def _rot_mondo(lista):
             continue
         R = Matrix.Rotation(math.radians(gradi), 3, ASSI[asse]) @ R
     return R
+
+
+def lerp(a, b, w):
+    return a + (b - a) * w
 
 
 def _matrice_osso(B3, y_dir, testa):
@@ -347,7 +385,16 @@ def cuoci(arm, piedi, nome='risveglio'):
 
             def _ik(mano, polo):
                 d = mano - spalla
-                dist = min(max(d.length, abs(l1 - l2) + 0.02), (l1 + l2) * 0.995)
+                # (quasi teso il gomito si muove di colpo per pochi centimetri della mano: la distanza si ferma piano
+                # all'88% della lunghezza del braccio, dal richiamo in poi (la minaccia resta com'era); gomito sinistro a scatti a
+                # 9,9-10,0 s, ricontrollo del 30 ottobre)
+                lun = l1 + l2
+                dd = d.length
+                if dd > 0.8 * lun:
+                    # (entra piano dopo il richiamo: di colpo il gomito destro scattava)
+                    w = A.liscio(0.0, 1.0, A.FASI['RICHIAMO'], A.FASI['RICHIAMO'] + 0.6, t)
+                    dd = lerp(dd, 0.8 * lun + 0.08 * lun * math.tanh((dd - 0.8 * lun) / (0.08 * lun)), w)
+                dist = min(max(dd, abs(l1 - l2) + 0.02), lun * 0.995)
                 u = d.normalized()
                 pp = (polo - u * polo.dot(u)).normalized()
                 aa = (l1 * l1 - l2 * l2 + dist * dist) / (2 * dist)
@@ -377,21 +424,19 @@ def cuoci(arm, piedi, nome='risveglio'):
             punti = _ik(mano, polo)
             # (solo intorno al giro: fuori, la 0.3.16 restava già ad almeno 26 cm, e spinte qui le braccia raccolte alla
             # porta entravano nel battente)
-            tp_ = A.tempo_alla_porta()
-            alla_porta = tp_ - 0.5 < t < tp_ + 0.7
-            if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
+            # (alla porta niente spinta: le mani raccolte stanno già più in basso, e spinte solo in giù non ci arrivavano
+            # mai, il braccio si tendeva e il gomito sinistro scattava di 10 cm; ricontrollo del 30 ottobre)
+            nel_giro = A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8
+            if nel_giro:
                 bocca = pbs['bocca'].head.copy()
                 muso = [bocca, bocca.lerp(pbs['mento_punta'].head, 0.45), pbs['mento_punta'].head.copy(),
                         pbs['mascella'].head.copy(), pbs['mascella'].tail.copy(), pbs['testa'].tail.copy()]
-                # quanto spingere: in una direzione fissa rispetto al corpo (in fuori, in giù e un poco indietro; alla
-                # porta solo in giù: di lato le braccia entravano nel battente), di quanto basta perché gomito, polso,
+                # quanto spingere: in una direzione fissa rispetto al corpo (in fuori, in giù e un poco indietro), di
+                # quanto basta perché gomito, polso,
                 # mano e artigli stiano ad almeno A.MANO_MUSO da bocca, mascella e mento. La quantità cambia in modo
                 # continuo da un fotogramma all'altro (cercata a passi di 1 cm), anche la direzione: la mano non salta
                 # più dall'altra parte del mento (75 cm in un fotogramma) e non trema (terzo ricontrollo del 30 ottobre)
-                if alla_porta:
-                    verso = Vector((0, 0, -1.0))
-                else:
-                    verso = (lato + Vector((0, 0, -0.6)) - avanti * 0.3).normalized()
+                verso = (lato + Vector((0, 0, -0.6)) - avanti * 0.3).normalized()
                 k = 0.0
                 while k < 0.6:
                     prova = _nord(obiettivo + verso * k)
@@ -409,7 +454,7 @@ def cuoci(arm, piedi, nome='risveglio'):
             VEL_SPINTA[s] += (MOLLA ** 2 * (voluta - SPINTA[s]) - 2.0 * MOLLA * VEL_SPINTA[s]) * dt_
             mano = _nord(obiettivo + SPINTA[s] + VEL_SPINTA[s] * dt_)
             punti = _ik(mano, polo)
-            if A.FASI['GIRO'] - 0.4 < t < A.FASI['CORSA'] + 0.8 or alla_porta:
+            if nel_giro:
                 for nome_p, h in punti:
                     for q in muso:
                         if (h - q).length < VICINO_MUSO[0]:

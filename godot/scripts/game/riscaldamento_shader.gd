@@ -322,18 +322,19 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 		alla_fine := Callable()) -> void:
 	if principale == null or not radice.is_inside_tree():
 		return
+	var albero := radice.get_tree()
 	var stato := _fuori_vista(radice)
 	var sv := _camera(radice, principale, stato["aabb"])
 	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
 	for i in fotogrammi + 1:
 		if i == fotogrammi / 2 and a_meta.is_valid():
 			a_meta.call()
-		await radice.get_tree().process_frame
-		if not is_instance_valid(radice) or not radice.is_inside_tree():
+		await albero.process_frame
+		if not _viva(radice):
 			break
 	if is_instance_valid(sv):
 		sv.queue_free()
-	if alla_fine.is_valid() and is_instance_valid(radice) and radice.is_inside_tree():
+	if alla_fine.is_valid() and _viva(radice):
 		await alla_fine.call()
 	_rimetti(radice, stato)
 
@@ -348,37 +349,39 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 		alla_fine := Callable()) -> void:
 	if principale == null or not radice.is_inside_tree():
 		return
+	var albero := radice.get_tree()
 	var stato := _fuori_vista(radice)
 	var pezzi: Array[GeometryInstance3D] = []
 	for vi in (stato["strati"] as Dictionary):
 		if vi is GeometryInstance3D:
 			pezzi.append(vi)
-			(vi as GeometryInstance3D).layers = 0
+			Strati.metti(vi as GeometryInstance3D, 0)
 	var sv := _camera(radice, principale, stato["aabb"])
-	var vivo := func() -> bool: return is_instance_valid(radice) and radice.is_inside_tree()
 	for gi in pezzi:
-		await radice.get_tree().process_frame
-		if not vivo.call():
+		await albero.process_frame
+		if not _viva(radice):
 			break
 		if is_instance_valid(gi):
-			gi.layers = SalaTorre.STRATO_PREPARA
+			Strati.metti(gi, SalaTorre.STRATO_PREPARA)
 		for i in fotogrammi:
-			await radice.get_tree().process_frame
+			await albero.process_frame
+		if not _viva(radice):
+			break
 		if is_instance_valid(gi):
-			gi.layers = 0
+			Strati.metti(gi, 0)
 	# e alla fine tutti insieme, come quando compare davvero: un pezzo per volta, lei mostrata intera compilava ancora
 	# 8 "draw" al primo fotogramma (test_riscaldamento_pipeline del 25 ottobre)
-	if vivo.call():
+	if _viva(radice):
 		if a_meta.is_valid():
 			a_meta.call()
 		for gi in pezzi:
 			if is_instance_valid(gi):
-				gi.layers = SalaTorre.STRATO_PREPARA
+				Strati.metti(gi, SalaTorre.STRATO_PREPARA)
 		for i in fotogrammi + 1:
-			await radice.get_tree().process_frame
+			await albero.process_frame
 	if is_instance_valid(sv):
 		sv.queue_free()
-	if alla_fine.is_valid() and vivo.call():
+	if alla_fine.is_valid() and _viva(radice):
 		await alla_fine.call()
 	_rimetti(radice, stato)
 
@@ -386,7 +389,7 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 ## Rende visibile [param radice] e mette sullo strato fuori vista i suoi nodi visibili, luci comprese (la camera del
 ## gioco non le vede): torna lo stato da rimettere con [method _rimetti].
 static func _fuori_vista(radice: Node3D) -> Dictionary:
-	var stato := {"visibile": radice.visible, "strati": {}, "aabb": AABB()}
+	var stato := {"visibile": radice.visible, "strati": {}, "aabb": AABB(), "rimesso": false}
 	radice.visible = true
 	var primo := true
 	for v in radice.find_children("*", "VisualInstance3D", true, false):
@@ -397,12 +400,20 @@ static func _fuori_vista(radice: Node3D) -> Dictionary:
 		# (alle luci solo lo strato: la camera del gioco non le usa più. La loro cull mask non si tocca: cambiata, se
 		# poi la zona restava nascosta fino all'uscita il motore non staccava le mesh dalla luce, "BUG, indexing did
 		# not unpair geometries from light"; prove di mascotte su test_torre_ingresso, 25 ottobre)
-		vi.layers = SalaTorre.STRATO_PREPARA
+		Strati.metti(vi, SalaTorre.STRATO_PREPARA)
 		if vi is GeometryInstance3D:
 			var box := vi.global_transform * vi.get_aabb()
 			stato["aabb"] = box if primo else (stato["aabb"] as AABB).merge(box)
 			primo = false
+	# se la zona esce dalla scena a metà (la morte mentre si disegna: la sala si libera), gli strati tornano subito,
+	# coi nodi ancora nella scena; la coroutine poi trova la zona uscita e si ferma
+	radice.tree_exiting.connect(_rimetti.bind(radice, stato), CONNECT_ONE_SHOT)
 	return stato
+
+
+## La zona c'è ancora ed è nella scena (dopo un await: la morte può averla liberata).
+static func _viva(radice: Variant) -> bool:
+	return is_instance_valid(radice) and (radice as Node).is_inside_tree()
 
 
 ## La camera fuori vista: da fuori, guardando il centro di [param aabb], tutta la zona nell'inquadratura.
@@ -428,9 +439,13 @@ static func _camera(radice: Node3D, principale: Viewport, aabb: AABB) -> SubView
 
 ## Rimette gli strati (a nodi visibili: chi nel frattempo si è nascosto si mostra un attimo, nello stesso
 ## fotogramma) e poi la visibilità della radice.
-static func _rimetti(radice: Node3D, stato: Dictionary) -> void:
-	if not is_instance_valid(radice):
+static func _rimetti(radice: Variant, stato: Dictionary) -> void:
+	if bool(stato["rimesso"]) or not is_instance_valid(radice):
 		return
+	# (una volta sola: alla fine del disegno, o prima se la zona esce dalla scena; la connessione a tree_exiting resta
+	# e poi non fa niente)
+	stato["rimesso"] = true
+	radice = radice as Node3D
 	radice.visible = true
 	for vi in (stato["strati"] as Dictionary):
 		if not is_instance_valid(vi):
@@ -446,7 +461,7 @@ static func _rimetti(radice: Node3D, stato: Dictionary) -> void:
 					giu.push_front(x)
 					(x as Node3D).visible = true
 				x = x.get_parent()
-		n.layers = stato["strati"][vi]
+		Strati.metti(n, stato["strati"][vi])
 		for g in giu:
 			g.visible = false
 	radice.visible = stato["visibile"]

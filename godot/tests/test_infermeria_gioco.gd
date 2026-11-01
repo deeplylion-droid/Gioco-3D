@@ -11,6 +11,8 @@ extends Node
 ## 5. La cassaforte: un codice sbagliato non la apre, 4-1-7 sì; dentro la keycard e la Polaroid.
 ## 6. Checkpoint: tutto resta com'era (negatoscopio acceso con la radiografia, cassaforte aperta,
 ##    keycard nell'inventario e non più nella cassaforte, porta nord già aperta, senza suono).
+## 7. Il giocatore fermo dove gira l'anta della porta nord quando colpisce il pulsantone: l'anta non lo spinge.
+## 8. La porta nord che si apre senza il colpo, col giocatore fermo davanti o dietro l'anta: non lo sposta né lo lancia.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
 
 const SCENA := "res://tests/scene/infermeria_gioco_prova.tscn"
@@ -54,6 +56,7 @@ func _run() -> void:
 	await _secondi(0.2)
 	await _cammina_verso(fuori, 3.0)
 	check(inf.to_local(p.global_position).z > -3.25, "e non si passa (il giocatore si ferma a z %.2f)" % inf.to_local(p.global_position).z)
+	_cartello_pozze(inf)
 
 	print("2. Il getto sull'interruttore")
 	_zaino()
@@ -76,6 +79,16 @@ func _run() -> void:
 	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "col suono della porta del ponte")
 	await _secondi(3.0)
 	check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "fino ad aprirsi contro il muro (anta a %.1f gradi)" % anta.rotation_degrees.y)
+	var cartello := inf.get_node_or_null(^"CartelloPozze") as MeshInstance3D
+	if cartello:
+		var ab := _aabb_locale(inf, cartello)
+		var aa := AABB()
+		var prima_a := true
+		for m in anta.find_children("*", "MeshInstance3D", true, false):
+			var b := _aabb_locale(inf, m as MeshInstance3D)
+			aa = b if prima_a else aa.merge(b)
+			prima_a = false
+		check(not prima_a and not ab.grow(0.02).intersects(aa), "l'anta aperta non copre il cartello delle pozze (anta da x %.2f a %.2f)" % [aa.position.x, aa.end.x])
 	p.teleport(inf.to_global(Vector3(-2.2, 0.0, -2.2)), 0.0, 0.0)
 	await _secondi(0.2)
 	await _cammina_verso(fuori, 3.0)
@@ -215,7 +228,121 @@ func _run() -> void:
 			await get_tree().physics_frame
 		check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "(%.2f, %.2f): andato via il giocatore, l'anta finisce aperta contro il muro (%.1f gradi)" % [
 			punto.x, punto.y, anta.rotation_degrees.y])
+	await _senza_colpo()
 	_fine()
+
+
+## Il cartello di divieto con i tre quadratini a pastello, l'indizio della stanza delle pozze (GDD, "La stanza delle pozze
+## colorate"): accanto alla porta nord, a ovest, all'altezza degli occhi, a contatto col muro, con la texture giusta e la
+## lampadina bianca sopra, accesa e puntata su di lui.
+func _cartello_pozze(inf: Node3D) -> void:
+	var c := inf.get_node_or_null(^"CartelloPozze") as MeshInstance3D
+	check(c != null, "c'è il cartello delle pozze accanto alla porta nord")
+	if c == null:
+		return
+	var L: float = inf.get_script().get_script_constant_map().get("L", 3.2)
+	var b := _aabb_locale(inf, c)
+	check(absf(b.position.z - (-L)) < 0.001, "a contatto col muro nord (retro a %.4f, muro a %.2f)" % [b.position.z, -L])
+	check(b.position.x > -L + 0.05 and b.end.x < -2.7 - 0.05, "fra l'angolo e lo stipite della porta, a ovest (x da %.2f a %.2f)" % [b.position.x, b.end.x])
+	check(b.get_center().y > 1.3 and b.get_center().y < 1.7, "all'altezza degli occhi (centro a %.2f m)" % b.get_center().y)
+	var f := inf.get_node_or_null(^"CartelloPozzeFaccia") as MeshInstance3D
+	var tex: Texture2D = (f.material_override as StandardMaterial3D).albedo_texture if f and f.material_override is StandardMaterial3D else null
+	check(tex != null and tex.resource_path.ends_with("pozze_colorate/cartello_divieto.png"), "col disegno del divieto e dei tre quadratini a pastello")
+	var luce := inf.get_node_or_null(^"FarettoCartelloPozze/Luce") as SpotLight3D
+	var verso := Vector3.ZERO
+	if luce:
+		verso = (c.global_position - luce.global_position).normalized()
+	check(luce != null and luce.visible and luce.light_color.s < 0.15 and -luce.global_basis.z.dot(verso) > 0.97,
+		"con sopra la lampadina bianca, accesa e puntata sul cartello")
+	# i colori dei quadratini come quelli delle pozze (collaudo del 1 novembre): luce bianca neutra e abbastanza forte da
+	# vincere il verde dell'uscita, che arriva sul cartello di fronte e non di taglio; smalto che non riflette la stanza
+	var normale := (inf.global_basis * Vector3(0, 0, 1)).normalized()
+	check(luce != null and luce.light_color.s < 0.02 and luce.light_energy >= 4.0 and -verso.dot(normale) > 0.5,
+		"il faretto è bianco neutro (saturazione %.2f), forte (%.1f) e illumina il cartello di fronte (%.2f)" % [
+			luce.light_color.s if luce else 1.0, luce.light_energy if luce else 0.0, -verso.dot(normale)])
+	var mf := f.material_override as StandardMaterial3D if f else null
+	check(mf != null and mf.roughness >= 0.6 and mf.metallic == 0.0, "lo smalto del cartello è opaco, senza metallo")
+
+
+func _aabb_locale(inf: Node3D, m: MeshInstance3D) -> AABB:
+	var x := inf.global_transform.affine_inverse() * m.global_transform
+	return x * m.get_aabb()
+
+
+## 8. La porta nord che si apre senza il colpo (il pulsantone acceso da un'istantanea, da una stanza che si ricarica, dalle
+## scorciatoie dei test) col giocatore fermo davanti o dietro l'anta: prima saltava a 180 gradi attraverso di lui e la fisica
+## lo lanciava oltre la porta, dal 31 ottobre nelle pozze (test della risalita di ambienti-1). Ora non lo sposta: al più
+## pochi cm, nessuna velocità da lancio, e l'anta finisce aperta contro il muro quando lui non è più sulla sua strada.
+func _senza_colpo() -> void:
+	print("8. La porta nord che si apre senza il colpo, col giocatore fermo davanti o dietro l'anta")
+	# (nome, da dove parte, verso dove cammina un attimo per appoggiarsi all'anta chiusa o fermarsi lì, dove va dopo)
+	var casi := [
+		["dentro, appoggiato all'anta chiusa", Vector2(-2.2, -2.2), Vector2(-2.2, -4.5), Vector2(0.0, 0.0)],
+		# (dove si ferma il test della risalita camminando 3 s verso l'uscita a porta chiusa: lì l'anta che saltava a 180
+		# gradi lo lanciava a 146 m/s oltre la porta, nelle pozze)
+		["dentro, fermo contro l'anta come nel test della risalita", Vector2(-2.117, -2.773), Vector2(-2.117, -2.773), Vector2(0.0, 0.0)],
+		["dentro, nell'arco vicino al cardine", Vector2(-1.76, -2.55), Vector2(-1.76, -2.55), Vector2(0.0, 0.0)],
+		["dentro, nell'arco in fondo all'anta", Vector2(-2.45, -2.6), Vector2(-2.45, -2.6), Vector2(0.0, 0.0)],
+		["dietro, appoggiato all'anta chiusa", Vector2(-2.2, -4.3), Vector2(-2.2, -2.0), Vector2(-2.2, -4.6)],
+		["dietro, a mezzo metro", Vector2(-2.2, -4.0), Vector2(-2.2, -4.0), Vector2(-2.2, -4.6)],
+	]
+	for c in casi:
+		get_tree().change_scene_to_file(SCENA)
+		await _aspetta_livello()
+		var inf := level.get_node(^"Infermeria") as Node3D
+		var inter := inf.get_node(^"Interruttore") as WaterButton
+		var anta := inf.get(&"_anta_nord") as Node3D
+		# (nella scena di prova dietro la porta nord non c'è niente: un pavimento per starci, come il pianerottolo della scala)
+		_pavimento_dietro(inf)
+		var da: Vector2 = c[1]
+		var verso: Vector2 = c[2]
+		p.teleport(inf.to_global(Vector3(da.x, 0.0, da.y)), 0.0, 0.0)
+		await _secondi(0.3)
+		if verso != da:
+			await _cammina_verso(inf.to_global(Vector3(verso.x, 0.0, verso.y)), 1.2)
+		await _secondi(0.4)
+		var prima: Vector3 = inf.to_local(p.global_position)
+		print("  %s: il giocatore a %s" % [c[0], prima])
+		# (solo acceso, senza il colpo)
+		inter.powered = true
+		var spinta := 0.0
+		var veloce := 0.0
+		var dentro := 0
+		for i in int(3.2 * 60.0):
+			await get_tree().physics_frame
+			var ora: Vector3 = inf.to_local(p.global_position)
+			spinta = maxf(spinta, Vector2(ora.x - prima.x, ora.z - prima.z).length())
+			veloce = maxf(veloce, Vector2(p.velocity.x, p.velocity.z).length())
+			if _dentro_anta(inf):
+				dentro += 1
+		check(spinta < 0.03 and veloce < 0.5 and dentro == 0 and absf(ora_y(inf) - prima.y) < 0.05,
+			"%s: l'anta non lo sposta (%.3f m, velocità al più %.2f m/s, %d fotogrammi dentro l'anta; anta a %.0f gradi)" % [
+			c[0], spinta, veloce, dentro, anta.rotation_degrees.y])
+		var dopo: Vector2 = c[3]
+		await _cammina_verso(inf.to_global(Vector3(dopo.x, 0.0, dopo.y)), 2.0)
+		for i in int(4.0 * 60.0):
+			if absf(anta.rotation_degrees.y - 180.0) < 0.5:
+				break
+			await get_tree().physics_frame
+		check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "%s: poi l'anta finisce aperta contro il muro (%.1f gradi)" % [
+			c[0], anta.rotation_degrees.y])
+
+
+func _pavimento_dietro(inf: Node3D) -> void:
+	var corpo := StaticBody3D.new()
+	corpo.collision_layer = Layers.WORLD
+	var f := CollisionShape3D.new()
+	var b := BoxShape3D.new()
+	b.size = Vector3(3.0, 0.2, 2.0)
+	f.shape = b
+	corpo.add_child(f)
+	inf.add_child(corpo)
+	# (da 5 cm oltre il filo della porta, sotto l'anta chiusa non c'è)
+	corpo.position = Vector3(-2.2, -0.1, -3.2 - 1.0)
+
+
+func ora_y(inf: Node3D) -> float:
+	return inf.to_local(p.global_position).y
 
 
 ## Vero se il corpo del giocatore entra nella collisione dell'anta nord (di più di 1 cm: appoggiato all'anta chiusa, come a

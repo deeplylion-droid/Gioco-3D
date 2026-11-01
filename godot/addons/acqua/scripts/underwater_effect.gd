@@ -37,7 +37,7 @@ func _ready() -> void:
 	_quad.material_override = _mat
 	_quad.extra_cull_margin = 16384.0
 	_quad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	_quad.layers = 1
+	_quad.layers = 1  # strati: fuori scena (prima di add_child)
 	_quad.visible = false
 	add_child(_quad)
 	if bubbles:

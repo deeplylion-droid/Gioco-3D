@@ -110,7 +110,7 @@ func _add_hand(scene: PackedScene, pos: Vector3, rot_deg: Vector3, mirror: bool)
 func _set_layers(n: Node) -> void:
 	var gi := n as GeometryInstance3D
 	if gi:
-		gi.layers = 2
+		Strati.metti(gi, 2)
 		gi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for c in n.get_children():
 		_set_layers(c)

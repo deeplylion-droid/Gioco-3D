@@ -333,7 +333,7 @@ func _rebuild_surface() -> void:
 	if _surface == null:
 		_surface = MeshInstance3D.new()
 		_surface.name = "Surface"
-		_surface.layers = WATER_LAYER
+		_surface.layers = WATER_LAYER  # strati: fuori scena (prima di add_child)
 		_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_surface.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
 		add_child(_surface, false, Node.INTERNAL_MODE_FRONT)

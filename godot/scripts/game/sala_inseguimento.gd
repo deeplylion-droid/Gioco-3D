@@ -39,6 +39,8 @@ const DIR := "res://assets/ambiente/inseguimento/"
 const ROSSO := Color(1.0, 0.035, 0.02)
 const CALDO := Color(1.0, 0.66, 0.36)
 const ROSA := Color(1.0, 0.32, 0.62)
+## L'energia della luce rosa di lei (si spegne piano quando torna sotto: _scendi).
+const LUCE_LEI := 6.0
 const VERDE := Color(0.25, 1.0, 0.45)
 const R_TUBO := 0.78
 
@@ -84,6 +86,7 @@ var _lei_dove := ""
 var _lei_su := Vector3.ZERO
 var _lei_giu := Vector3.ZERO
 var _lei_luce: OmniLight3D
+var _lei_luce_tw: Tween
 var _lei_testa: WaterHitbox
 ## Il movimento secondario di tentacoli e campana di lei (MorbidezzaLei).
 var _morbidezza: MorbidezzaLei
@@ -531,7 +534,7 @@ func _lei_crea() -> void:
 func _lei_parti() -> void:
 	_lei_luce = OmniLight3D.new()
 	_lei_luce.light_color = ROSA
-	_lei_luce.light_energy = 6.0
+	_lei_luce.light_energy = LUCE_LEI
 	_lei_luce.omni_range = 9.0
 	_lei_luce.light_volumetric_fog_energy = 3.0
 	_lei_luce.shadow_enabled = true
@@ -698,6 +701,10 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	_lei_giu = su + Vector3.DOWN * 5.0
 	lei.global_position = su
 	lei.visible = true
+	if _lei_luce_tw:
+		_lei_luce_tw.kill()
+	if _lei_luce:
+		_lei_luce.light_energy = LUCE_LEI
 	_morbidezza_qui(dove)
 	_getto_preso = 0.0
 	lei_stato = Lei.SALE
@@ -760,9 +767,10 @@ func _quando_radice(anim: StringName, sotto: float, salita: bool) -> float:
 	return 0.0 if salita else a.length
 
 
+## Porta la salita al tempo [param t] e mette subito la posa, anche da 0: se no nel primo fotogramma lo scheletro ha ancora
+## la posa di prima (l'ultima discesa, altrove) nel posto nuovo, e i tentacoli che ripartono da lì scattano al
+## fotogramma dopo (scolo_2 dopo scolo_1 in test_morbidezza_inseguimento: 64 m/s).
 func _salta_a(t: float) -> void:
-	if t <= 0.0:
-		return
 	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if ap:
 		ap.seek(t, true)
@@ -777,18 +785,55 @@ func respingi() -> void:
 	lei_respinta.emit()
 
 
-## Torna sotto: respinta (il getto in faccia, 1,2 s) o da sola (1 s).
+## Torna sotto: respinta (il getto in faccia, 1,2 s) o da sola (1 s; a SB1 scende_sb1, 1,2 s, che lascia il bordo).
 func _scendi(respinta := false) -> void:
 	lei_stato = Lei.SCENDE
 	_lei_t = 0.0
 	lei.segui_con_la_testa(0.0, 0.15)
-	var nome := "respinta" if respinta else "scende"
+	var nome := "respinta" if respinta else ("scende_sb1" if _lei_dove == "sb1" else "scende")
+	# respinta e scende partono dall'altezza della posa "su" (incombe): da più in basso (aggrappata al bordo a SB1, o
+	# ancora a metà salita) lei saliva di scatto fino a lì e poi scendeva (riscontro dell'utente sulla 0.3.18 a SB1:
+	# 3 m in 0,17 s). Nella fusione il nodo scende di quanto serve perché la radice resti dov'è. (Sotto i 10 cm no: è il
+	# respiro di incombe, e la discesa resta com'era)
+	var giu := _salto_discesa(StringName("inseguimento/" + nome))
+	if giu < 0.10:
+		giu = 0.0
 	_anima(nome, 0.15)
-	# sparisce quando è scesa di quanto c'è spazio sotto di lei (vedi _lei_sale)
-	set_meta(&"durata_discesa", _quando_radice(StringName("inseguimento/" + nome), _profondita(_lei_dove), false))
+	if giu > 0.0:
+		create_tween().tween_property(lei, "global_position:y", lei.global_position.y - giu, 0.15)
+	# sparisce quando è scesa di quanto c'è spazio sotto di lei (vedi _lei_sale), meno quello che è già sotto
+	var sotto := maxf(_profondita(_lei_dove) - giu, 0.05)
+	set_meta(&"durata_discesa", _quando_radice(StringName("inseguimento/" + nome), sotto, false))
+	# la sua luce rosa si spegne con lei, negli ultimi 0,4 s della discesa (quando spariva si spegneva in un fotogramma,
+	# a SB1 si vedeva sul muro: ricontrollo di grafica-2)
+	if _lei_luce:
+		var d := float(get_meta(&"durata_discesa"))
+		var spegni := minf(0.4, d)
+		if _lei_luce_tw:
+			_lei_luce_tw.kill()
+		_lei_luce_tw = create_tween()
+		_lei_luce_tw.tween_interval(d - spegni)
+		_lei_luce_tw.tween_property(_lei_luce, "light_energy", 0.0, spegni)
 	get_tree().create_timer(float(get_meta(&"durata_discesa")) * 0.6, false).timeout.connect(func():
 		if lei_stato == Lei.SCENDE:
 			Audio.suona(&"atterraggio_acqua", lei.global_position + Vector3.UP * 3.0, 2.0, 0.6))
+
+
+## Di quanto il primo fotogramma di [param anim] ha la radice più in alto di adesso (m, nel mondo; 0 se è più in basso).
+func _salto_discesa(anim: StringName) -> float:
+	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var sk := lei.find_child("Skeleton3D", true, false) as Skeleton3D
+	var a := ap.get_animation(anim) if ap and ap.has_animation(anim) else null
+	var osso := sk.find_bone("radice") if sk else -1
+	if a == null or osso < 0:
+		return 0.0
+	for i in a.get_track_count():
+		if a.track_get_type(i) == Animation.TYPE_POSITION_3D and String(a.track_get_path(i)).ends_with(":radice") \
+				and a.track_get_key_count(i) > 0:
+			var inizio := sk.global_transform * (a.track_get_key_value(i, 0) as Vector3)
+			var adesso := sk.global_transform * sk.get_bone_global_pose(osso).origin
+			return maxf(inizio.y - adesso.y, 0.0)
+	return 0.0
 
 
 func _girala_verso_giocatore() -> void:

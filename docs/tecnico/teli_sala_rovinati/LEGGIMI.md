@@ -6,7 +6,7 @@ Il coordinatore ha confermato che sono i due teli da 2 x 3 m appesi ai lati dell
 - `sala_cartellone_mascotte_0`: Jilly con l'arcobaleno, lo stesso disegno del cartellone A del corridoio;
 - `sala_cartellone_mascotte_1`: Jilly bagnina.
 
-I tre cartelloni piccoli del muro nord (delfino, balena, polpo) restano come sono.
+**Correzione del 31 ottobre.** La richiesta dell'utente era per i due cartelloni del muro nord che si vedono dal centro della sala: il delfino con l'ombrellone e la balena («i due sul muro in fondo, uno ha una balena tipo»). Ora sono rovinati anche quelli: vedi `docs/tecnico/cartelloni_nord/LEGGIMI.md`. I teli restano come nella 0.3.17, perché l'utente ha scelto «così»; il polpo del muro nord e il cartellone del muro sud restano com'erano.
 
 ## Come sono rovinati
 

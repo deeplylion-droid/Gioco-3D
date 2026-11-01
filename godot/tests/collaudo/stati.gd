@@ -81,3 +81,5 @@ static func mostra_nascosti(livello: Node) -> void:
 			n.set_process(false)
 			(n.get(&"fiume") as Node3D).visible = true
 			(n.get(&"infermeria") as Node3D).visible = true
+			if n.get(&"pozze") is Node3D:
+				(n.get(&"pozze") as Node3D).visible = true

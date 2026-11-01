@@ -1,6 +1,7 @@
 extends Node
 ## Test dei tentacoli morbidi di lei nell'inseguimento (scena di prova scenes/test/inseguimento_prova.tscn): in ogni
-## posto dove sale (le tre vasche, le tre vasche di scolo, la grata, SB1 dal pozzo) dalla salita a 2 s dopo:
+## posto dove sale (le tre vasche, le tre vasche di scolo, la grata, SB1 dal pozzo) dalla salita a 2 s dopo, e a SB1
+## anche quando se ne va (sb1_scende, dalla fine di affacciata_sb1):
 ## - nessun tratto dei tentacoli attraverso la collisione vera della sala (raggi: muri, pavimenti, vasche, gambe, tubi;
 ##   la sala è una mesh sola e la morbidezza qui non ha forme: le animazioni tengono già i tentacoli fuori);
 ## - niente scatti, tratti vicini alla lunghezza di riposo;
@@ -74,13 +75,23 @@ func _run() -> void:
 	var sk := m.get_parent() as Skeleton3D
 	var mis = Misura.new(sk, m)
 	print("catene ", mis.catene.size())
-	for dove in ["vasca_0", "vasca_1", "vasca_2", "scolo_0", "scolo_1", "scolo_2", "grata", "sb1"]:
+	for dove in ["vasca_0", "vasca_1", "vasca_2", "scolo_0", "scolo_1", "scolo_2", "grata", "sb1", "sb1_scende"]:
 		# (SOLO=sb1,grata: solo quei posti, per provare)
 		if OS.has_environment("SOLO") and not dove in OS.get_environment("SOLO").split(","):
 			continue
 		print("== ", dove)
+		# sb1_scende: SB1 fino alla fine di affacciata_sb1 (5,4 s), poi se ne va scendendo come dopo SB1 (scende_sb1,
+		# riscontro dell'utente sulla 0.3.18): si misura la discesa
+		if dove == "sb1_scende":
+			sala.call(&"_lei_sale", "sb1", sala.call(&"_posto_sb1"), 1.3)
+			var tt := 0.0
+			while tt < float(sala.get_meta(&"durata_salita", 1.3)) + 4.1:
+				await get_tree().process_frame
+				tt += get_process_delta_time()
 		mis.inizia()
 		match dove:
+			"sb1_scende":
+				sala.call(&"_scendi", false)
 			"grata":
 				sala.call(&"_lei_alla_grata")
 			"sb1":
@@ -95,7 +106,8 @@ func _run() -> void:
 						sala.set_meta(StringName("comparsa_%d" % kk), true)
 				var su: Vector3 = sala.call(&"_posto_vasca", int(dove[-1])) if dove.begins_with("vasca") else sala.call(&"_posto_scolo", int(dove[-1]))
 				sala.call(&"_lei_sale", dove, su, 1.2 if dove.begins_with("scolo") else 1.6)
-		var durata := float(sala.get_meta(&"durata_salita", 1.6)) + 2.0
+		var durata := float(sala.get_meta(&"durata_discesa", 1.0)) + 0.05 if dove == "sb1_scende" \
+			else float(sala.get_meta(&"durata_salita", 1.6)) + 2.0
 		var t := 0.0
 		while t < durata:
 			# (POOL_OCCUPATO=1: il WorkerThreadPool occupato a ogni fotogramma, come dai caricamenti nel thread)
@@ -116,8 +128,9 @@ func _run() -> void:
 		# (dove lei sale attraverso il pavimento allagato, il foro dove passa col corpo: a parte, come la radice)
 		var foro := []
 		var fori: Dictionary = sala.get(&"_forme_lei_fori")
-		if fori.has(dove):
-			var fo: Array = fori[dove]
+		var dove_fori: String = "sb1" if dove == "sb1_scende" else dove
+		if fori.has(dove_fori):
+			var fo: Array = fori[dove_fori]
 			foro = [sala.global_transform * Vector3(float(fo[0]), float(fo[1]), float(fo[2])), float(fo[3])]
 		var pe: Dictionary = mis.pelle(dove, 0, 2, 0.01, [] as Array[RID], foro, Layers.WORLD | CorpiMesh.STRATO)
 		_check(pe["pelle_dentro"] == 0, "%s: la pelle vera dei tentacoli fuori dalla sala (%d vertici dentro, al più %.1f cm)" % [dove, pe["pelle_dentro"], pe["pelle_massimo"] * 100.0])

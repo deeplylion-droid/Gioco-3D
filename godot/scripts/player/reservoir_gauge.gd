@@ -53,7 +53,7 @@ func _add_cylinder(r: float, h: float, rot: Vector3, mat: Material) -> MeshInsta
 	mi.mesh = m
 	mi.rotation = rot
 	mi.material_override = mat
-	mi.layers = 2
+	Strati.metti(mi, 2)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
 	return mi

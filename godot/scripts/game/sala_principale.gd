@@ -223,6 +223,15 @@ const TELI_ROVINATI := {
 	"sala_cartellone_mascotte_0": ["M_amb_cartellone_medusa", "res://assets/ambiente/sala/cartelloni_rovinati/telo_arcobaleno_rovinato.png"],
 	"sala_cartellone_mascotte_1": ["M_amb_cartellone_bagnino", "res://assets/ambiente/sala/cartelloni_rovinati/telo_bagnina_rovinato.png"],
 }
+## I due cartelloni del muro nord che si vedono dal centro della sala, il delfino con l'ombrellone e la balena (la richiesta
+## del 30 ottobre era per questi: "i due sul muro in fondo, uno ha una balena tipo", 31 ottobre). Rovinati con rovina.py
+## (cartellone_delfino, cartellone_balena) come i teli e allo stesso modo: il GLB resta pulito. Il polpo (n2), al buio, e
+## quello del muro sud (s0, con la stessa grafica del polpo) restano com'erano. Gli stessi disegni nella torre:
+## SalaTorre.CARTELLONI_ROVINATI.
+const CARTELLONI_ROVINATI := {
+	"sala_cartellone_n0": ["M_amb_cartellone_p1", PosterRovinati.DELFINO],
+	"sala_cartellone_n1": ["M_amb_cartellone_p2", PosterRovinati.BALENA],
+}
 
 
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
@@ -297,39 +306,28 @@ func _cordone_vasca() -> void:
 		(n as CollisionObject3D).collision_layer = Layers.BARRIERS
 
 
-## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override
-## (così si può cambiare l'emissione di quella mesh soltanto).
+## I teli e i cartelloni bruciati e scarabocchiati ([constant TELI_ROVINATI], [constant CARTELLONI_ROVINATI]).
 func _teli_rovinati() -> void:
 	var arch := get_node_or_null(^"Sala/Architettura")
 	if arch:
 		metti_teli_rovinati(arch)
+		metti_cartelloni_rovinati(arch)
 
 
-## Mette sui due teli di [param arch] (la sala importata) il materiale con la texture rovinata: copia di quello
-## importato (stessi colori dei vertici e ruvidezza) con l'alpha scissor come i M_amb_alfa_*. Torna quante superfici ha
-## cambiato (2). La usano anche gli scatti, che caricano la sala a pezzi (proposte/poster_sala/scatti_teli.gd).
+## Mette sui due teli di [param arch] (la sala importata) il materiale con la texture rovinata (vedi [PosterRovinati]).
+## Torna quante superfici ha cambiato (2). La usano anche gli scatti, che caricano la sala a pezzi
+## (proposte/poster_sala/scatti_teli.gd).
 static func metti_teli_rovinati(arch: Node) -> int:
-	var fatti := 0
-	for nome: String in TELI_ROVINATI:
-		var mi := arch.find_child(nome, true, false) as MeshInstance3D
-		if mi == null or mi.mesh == null:
-			push_warning("sala: niente %s per il telo rovinato" % nome)
-			continue
-		var voce: Array = TELI_ROVINATI[nome]
-		for i in mi.mesh.get_surface_count():
-			var m := mi.mesh.surface_get_material(i) as StandardMaterial3D
-			if m == null or m.resource_name != voce[0]:
-				continue
-			var r := m.duplicate() as StandardMaterial3D
-			r.albedo_texture = load(voce[1]) as Texture2D
-			r.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-			r.alpha_scissor_threshold = 0.5
-			r.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
-			mi.set_surface_override_material(i, r)
-			fatti += 1
-	return fatti
+	return PosterRovinati.metti(arch, TELI_ROVINATI)
 
 
+## Lo stesso per i due cartelloni del muro nord (proposte/poster_sala/scatti_muro_nord.gd). Torna 2.
+static func metti_cartelloni_rovinati(arch: Node) -> int:
+	return PosterRovinati.metti(arch, CARTELLONI_ROVINATI)
+
+
+## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override
+## (così si può cambiare l'emissione di quella mesh soltanto).
 static func _find_surface_material(n: Node, mat_name: String) -> StandardMaterial3D:
 	var mi := n as MeshInstance3D
 	if mi == null or mi.mesh == null:

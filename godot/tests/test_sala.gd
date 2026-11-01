@@ -69,6 +69,17 @@ func _run() -> void:
 					and m.albedo_texture.resource_path.contains("cartelloni_rovinati/telo_"):
 				teli_ok += 1
 	check(teli_ok == 2, "i due teli di Jilly ai lati della statua sono rovinati, coi buchi (%d di 2)" % teli_ok)
+	# e i due cartelloni del muro nord che si vedono dal centro (delfino e balena, 31 ottobre); il polpo e il muro sud no
+	var nord := {}
+	for nome in ["sala_cartellone_n0", "sala_cartellone_n1", "sala_cartellone_n2", "sala_cartellone_s0"]:
+		var c := level.get_node("Sala/Architettura").find_child(nome, true, false) as MeshInstance3D
+		for i in (c.mesh.get_surface_count() if c and c.mesh else 0):
+			var m := c.get_surface_override_material(i) as StandardMaterial3D
+			if m and m.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR and m.albedo_texture \
+					and m.albedo_texture.resource_path.contains("cartelloni_rovinati/cartellone_"):
+				nord[nome] = true
+	check(nord.keys() == ["sala_cartellone_n0", "sala_cartellone_n1"],
+		"i due cartelloni del muro nord (delfino e balena) sono rovinati, il polpo e quello del muro sud no (%s)" % str(nord.keys()))
 	# la P11, la pecora che brilla, sta nella cassaforte dell'infermeria della risalita: la controlla
 	# test_infermeria_gioco (qui l'infermeria è nascosta, lontana dal giocatore)
 	var risalita := level.get_node_or_null(^"Risalita")

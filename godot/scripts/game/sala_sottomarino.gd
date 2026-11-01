@@ -300,6 +300,13 @@ func _riscalda() -> void:
 		cam.attributes = cam_gioco.attributes
 		cam.fov = cam_gioco.fov
 	cam.current = true
+	var albero := get_tree()
+	# se la sala esce dalla scena a metà (la morte mentre si riscalda), la luce rosa si spegne subito, coi nodi ancora
+	# nella scena, e dopo l'await ci si ferma (prima: get_tree() nullo, "process_frame on null instance")
+	var spegni := func() -> void:
+		if is_instance_valid(effetti):
+			effetti.riscalda_da(cam, false)
+	tree_exiting.connect(spegni, CONNECT_ONE_SHOT)
 	# (la luce rosa degli effetti dell'inseguimento accesa davanti alla camera nascosta: le sue pipeline qui)
 	if effetti:
 		effetti.riscalda_da(cam, true)
@@ -315,7 +322,10 @@ func _riscalda() -> void:
 		if effetti:
 			effetti.riscalda_da(cam, true)
 		for i in 3:
-			await get_tree().process_frame
+			await albero.process_frame
+			if not is_inside_tree():
+				return
+	tree_exiting.disconnect(spegni)
 	if effetti:
 		effetti.riscalda_da(cam, false)
 	vp.queue_free()

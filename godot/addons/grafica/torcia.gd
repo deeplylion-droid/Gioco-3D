@@ -75,7 +75,7 @@ func _ready() -> void:
 	luce.light_size = dimensione_sorgente
 	luce.light_volumetric_fog_energy = energia_nebbia
 	luce.light_specular = 0.35
-	luce.light_cull_mask &= ~strati_esclusi
+	Strati.maschera_luce(luce, luce.light_cull_mask & ~strati_esclusi)
 	luce.shadow_enabled = true
 	luce.shadow_bias = 0.04
 	luce.shadow_normal_bias = 1.2

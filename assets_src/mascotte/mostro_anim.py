@@ -43,6 +43,8 @@ PASSO_ARRETRA = 0.4
 ARRETRA_PIEDI = (('L', 0.4), ('R', 0.8), ('L', 1.2), ('R', 1.6), ('L', 2.0), ('R', 2.0))
 T_GIRO = 1.1
 MANI_NORD = 1.02          # fin dove arrivano i polsi verso il muro nord (x del modello), vedi mostro_rig.cuoci
+MANO_R_FUORI = 0.10      # di quanto la mano destra va più in fuori nella minaccia (m), vedi posa
+MANO_R_POLSO = -30.0     # e di quanto gira il suo polso (gradi attorno a z)
 MANO_MUSO = 0.42          # quanto i polsi restano lontani dalla bocca e dal muso dopo il richiamo, vedi mostro_rig.cuoci
 FASI = dict(MINACCIA=2.4, RICHIAMO=5.4, ARRETRA=6.05)
 FASI.update(GIRO=round(FASI['ARRETRA'] + PASSO_ARRETRA * len(ARRETRA_PIEDI) + 0.12, 3))
@@ -436,6 +438,11 @@ def posa(t, piedi):
     # radice prima del giro (lo squalo guarda -Y). A riposo come nel modello; nella minaccia ai lati della
     # faccia del giocatore, gli artigli aperti; nella corsa pompano davanti al petto, opposte alle gambe.
     oscilla = math.sin(fase) if corsa > 0 else 0.0
+    # la mano destra nella minaccia un po' più in fuori e col polso girato: da quando la sua pelle segue solo il
+    # braccio (mostro_rig.pesa) le dita lunghe arrivavano a 7 cm dagli occhi, e la camera, tenuta fuori dalla pelle, si
+    # spostava indietro di 20 cm (la bocca del ruggito a 0,66 m invece di 0,49). Così stanno ad almeno 26 cm. Dal
+    # richiamo all'arretrare torna com'era
+    minaccia_r = chiavi(t, [(0.0, 1.0), (R + 0.1, 1.0), (A + 0.5, 0.0)])
     for s, segno in (('L', 1.0), ('R', -1.0)):
         spalla = Vector(SPALLE[s])
         riposo = Vector(MANI_RIPOSO[s]) - spalla
@@ -462,13 +469,15 @@ def posa(t, piedi):
         giro.rotate(Matrix.Rotation(ritardo, 3, 'Z'))
         mano = mano.lerp(giro, nel_giro)
         mano = mano.lerp(raccolta, stretto)
+        if s == 'R':
+            mano = mano + Vector((-MANO_R_FUORI * minaccia_r, 0.0, 0.0))
         p['_mano.' + s] = mano
     # (nel giro i polsi seguono il dondolo, in ritardo: le mani non restano rigide)
     # (nella corsa il polso sinistro piegato in giù: gli artigli verso terra, non verso il mento)
     p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia + 14 * dondolo * nel_giro + 30 * corsa),
                    ('z', math.degrees(ritardo) * 0.6 * nel_giro)]
     p['mano.R'] = [('x', 4 * rumore(t, 2.2, 5.0) * braccia - 12 * dondolo * nel_giro),
-                   ('z', math.degrees(ritardo) * 0.6 * nel_giro)]
+                   ('z', math.degrees(ritardo) * 0.6 * nel_giro + MANO_R_POLSO * minaccia_r)]
     # --- coda: ondeggia lenta, nella corsa fa da contrappeso (in ritardo sul bacino)
     amp = (6 + 14 * corsa) * (1.0 - 0.8 * sbieco)
     # nel vano il busto si stringe di lato (mostro_rig: la scala x della spina): è largo 1,4 m, il vano 1,22 m

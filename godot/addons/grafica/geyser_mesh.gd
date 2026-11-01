@@ -182,7 +182,7 @@ func _istanza(nome: String, m: Material) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.name = nome
 	mi.material_override = m
-	mi.layers = LIVELLO_ACQUA
+	Strati.metti(mi, LIVELLO_ACQUA)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	mi.custom_aabb = AABB(Vector3(-4, -1, -4), Vector3(8, 8, 8))
 	mi.visible = false

@@ -116,6 +116,7 @@ func _costruisci() -> void:
 	_luci()
 	await _pausa()
 	_bambini()
+	_cartello_pozze()
 	await _pausa()
 	_metti_listelli()
 	_checkpoint()
@@ -938,7 +939,7 @@ func _luci() -> void:
 		# il corpo della lampada non fa ombra con la sua luce (sul soffitto restava la sua ombra nera, collaudo del 25
 		# ottobre): la lampada sta nel suo strato, che la sua luce non prende fra chi fa ombra; le altre luci sì
 		for g in l.find_children("*", "GeometryInstance3D", true, false):
-			(g as GeometryInstance3D).layers = STRATO_LAMPADA
+			Strati.metti(g as GeometryInstance3D, STRATO_LAMPADA)
 		luce.shadow_caster_mask = 0xFFFFF & ~STRATO_LAMPADA
 	# il cartello d'uscita verde sopra la porta della scala, acceso (luce d'emergenza a batteria)
 	var mf := StandardMaterial3D.new()
@@ -949,6 +950,30 @@ func _luci() -> void:
 	_box(Vector3(0.5, 0.26, 0.08), Vector3(PORTA_NORD, 2.38, -L + 0.04), _colore(Color(0.8, 0.8, 0.76)))
 	_quad(Vector2(0.46, 0.23), Vector3(PORTA_NORD, 2.38, -L + 0.082), Vector3.ZERO, mf)
 	_luce(Vector3(PORTA_NORD, 2.2, -L + 0.4), Color(0.2, 1.0, 0.4), 0.35, 3.0, false)
+
+
+## L'indizio della stanza delle pozze colorate (GDD, "La stanza delle pozze colorate", scelte dell'utente del 31 ottobre):
+## il cartello di divieto d'accesso del parco con sopra i tre quadratini a pastello dei bambini, i colori da togliere
+## (EnigmaPozze.GIUSTI; texture di assets_src/pozze_colorate/cartello.py). Accanto alla porta nord, da cui si esce verso
+## le pozze, all'altezza degli occhi: a ovest della porta, fra lo stipite e l'angolo (8 cm per parte), perché a est si
+## appoggia l'anta aperta. Lamiera smaltata a contatto col muro (il listello si interrompe da solo). Sopra, un faretto
+## a soffitto con una lampadina bianca: la luce verde dell'uscita falserebbe i pastelli; il resto resta buio.
+## I quadratini si devono leggere coi colori delle pozze (collaudo del 1 novembre: col faretto debole e radente
+## l'arancione sembrava marrone, il viola blu e lo smalto prendeva il verde dell'uscita). Per questo il faretto è
+## bianco neutro, forte quanto basta a vincere il verde, a 1,2 m dal muro perché la luce arrivi di fronte e non
+## di taglio (come quello del negatoscopio), stretto sul cartello; lo smalto è opaco, così non riflette la stanza.
+## Misura: tests/collaudo/colori_cartello_pozze.gd.
+func _cartello_pozze() -> void:
+	var c := Vector3(-2.95, 1.5, -L)
+	var misura := Vector2(0.34, 0.46)
+	var lastra := _box(Vector3(misura.x, misura.y, 0.008), c + Vector3(0, 0, 0.004), _colore(Color(0.62, 0.62, 0.6), 0.7, 0.4))
+	lastra.name = "CartelloPozze"
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = load("res://assets/pozze_colorate/cartello_divieto.png")
+	m.roughness = 0.7
+	_quad(misura, c + Vector3(0, 0, 0.0085), Vector3.ZERO, m, lastra.get_parent() as Node3D).name = "CartelloPozzeFaccia"
+	_faretto_soffitto("FarettoCartelloPozze", Vector3(c.x, H, -L + 1.2), c + Vector3(0, 0.02, 0), Vector3(c.x, H, -L),
+			Color(1.0, 1.0, 1.0), 5.0, 15.0)
 
 
 func _bambini() -> void:
@@ -1039,11 +1064,25 @@ func _apri_porta_nord(animata: bool) -> void:
 	if _anta_nord == null or porta_nord_aperta:
 		return
 	porta_nord_aperta = true
-	if not animata:
+	# (senza animazione l'anta salterebbe a 180 gradi passando attraverso chi sta dove gira, e la fisica lo sbalzerebbe
+	# oltre la porta, dal 31 ottobre nelle pozze: col giocatore sulla sua strada si apre a passi come col colpo, e si
+	# ferma davanti a lui; [method _giocatore_sulla_strada])
+	if not animata and not _giocatore_sulla_strada():
 		_apertura_nord = -1.0
 		_anta_nord.rotation_degrees.y = 180.0
 		return
 	_apertura_nord = 0.0
+
+
+## Vero se l'anta nord, girando da dov'è fino a 180 gradi, toccherebbe il giocatore (ogni 3 gradi: l'anta con il suo
+## margine copre i 5 cm in mezzo fino a 1 m dal cardine).
+func _giocatore_sulla_strada() -> bool:
+	var a := _anta_nord.rotation_degrees.y
+	while a < 180.0:
+		if _anta_tocca_giocatore(a):
+			return true
+		a += 3.0
+	return _anta_tocca_giocatore(180.0)
 
 
 ## L'apertura col pulsantone, un passo per fotogramma della fisica: l'anta va avanti solo se nella posizione nuova non

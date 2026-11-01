@@ -31,6 +31,15 @@ jobs:
         run: |
           if [ -f godot/project.godot ]; then echo "presente=si" >> "$GITHUB_OUTPUT"; else echo "presente=no" >> "$GITHUB_OUTPUT"; echo "Nessun godot/project.godot su questo branch: salto la build."; fi
 
+      - name: Spazio sul disco (l'esportazione scrive circa 11 GB; il 1° novembre un runner ubuntu-26.04 è rimasto con 2 MB liberi a metà del pacchetto Windows)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          df -h / | tail -1
+          # dotnet, android, ghc, CodeQL e le immagini docker: la build non li usa (circa 20 GB, come nella Prova su Vulkan)
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          sudo docker image prune --all --force > /dev/null 2>&1 || true
+          df -h / | tail -1
+
       - name: Cache di Godot e dei template
         if: steps.progetto.outputs.presente == 'si'
         uses: actions/cache@v4
@@ -73,9 +82,17 @@ jobs:
           python3 tools/ci/test_texture_compresse.py
           python3 tools/ci/texture_compresse.py godot
 
-      - name: Morbidezza in parallelo, nessun operatore senza tipo sui thread (crash di Godot 4.7.2 alla prima esecuzione)
+      - name: Morbidezza in parallelo e thread di caricamento, nessun operatore senza tipo sui thread (crash di Godot 4.7.2 alla prima esecuzione)
         if: steps.progetto.outputs.presente == 'si'
-        run: python3 tools/ci/morbidezza_operatori.py
+        run: |
+          python3 tools/ci/morbidezza_operatori.py --prova
+          python3 tools/ci/morbidezza_operatori.py
+
+      - name: Strati e maschere delle luci cambiati solo con Strati (un cambio diretto lascia le mesh attaccate alle luci, il segfault delle ripartenze; le eccezioni scritte sulla riga)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          python3 tools/ci/strati_luci.py --prova
+          python3 tools/ci/strati_luci.py godot
 
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'
@@ -108,6 +125,10 @@ jobs:
       - name: Test del menu (titolo, caricamento, pausa)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
+
+      - name: Test dell'opzione nascosta della riga di comando del titolo (senza i suoi argomenti non fa niente; la usa la Prova su Vulkan)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_partenza_da_riga.gd
 
       - name: Test delle lingue (italiano e inglese; ogni testo a schermo ha la traduzione, nessuna chiave vuota)
         if: steps.progetto.outputs.presente == 'si'
@@ -187,6 +208,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza.gd
 
+      - name: Test dei tentacoli morbidi di lei a 60 fps (affacciata e tuffo, come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza.gd
+
       - name: Test dei tentacoli morbidi di lei che sbuca (collisioni bloccanti, costo solo stampato)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_sbuca.gd
@@ -199,9 +224,15 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
-      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata e a scolo_2 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata, a scolo_2 e quando lei se ne va da SB1 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
         if: steps.progetto.outputs.presente == 'si'
-        run: SOLO=scolo_2,grata godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+        run: SOLO=scolo_2,grata,sb1_scende godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+
+      - name: Test di lei che torna sotto senza salire prima (SB1 e le respinte, a 30 e a 60 fps)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lei_discese.gd
+          godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_lei_discese.gd
 
       - name: Test della vista subacquea (con la testa sopra il pelo di ogni acqua resta normale, anche con due acque sovrapposte)
         if: steps.progetto.outputs.presente == 'si'
@@ -290,6 +321,14 @@ jobs:
       - name: Test dell'enigma degli acquari
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acquari.gd
+
+      - name: Test della stanza delle pozze colorate (col giocatore vero, risolta nei due ordini, sbagliata e poi giusta, un quarto colore no, stato salvato a metà e risolto, si esce saltando da una pozza)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_pozze.gd
+
+      - name: Test della stanza delle pozze colorate sulla strada vera (dalla partenza F9 del fiume, Continua a metà e da risolto, su per la scala di servizio fino a C3)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_pozze_strada.gd
 
       - name: Test dell'uscita dal gioco con un caricamento nel thread in corso
         if: steps.progetto.outputs.presente == 'si'
@@ -464,6 +503,7 @@ jobs:
           python3 tools/verifica_pck.py build/linux/JillyJubilee.pck 0
           python3 tools/verifica_pck.py build/windows_unico/JillyJubilee.exe 0
           ls -la build
+          df -h / | tail -1
 
       - name: Carica la build Windows
         if: steps.progetto.outputs.presente == 'si'
