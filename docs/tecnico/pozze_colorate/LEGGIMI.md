@@ -51,6 +51,21 @@
   Nessuna scritta.
 - **La texture:** è procedurale, da `assets_src/pozze_colorate/cartello.py`, col pastello degli scarabocchi sui muri (`assets_src/scarabocchi/pastello.py`), così i colori sono proprio quelli delle pozze. È VRAM compressa, con le mipmap.
 - **La luce:** un faretto a soffitto con una lampadina bianca, puntato sul cartello. La luce verde dell'uscita falserebbe i pastelli; il resto dell'infermeria resta buio.
+- **I colori nel gioco** (collaudo del 1 novembre): col faretto di prima, debole (0,9), caldo e radente, i quadratini venivano scuri e spenti. L'arancione sembrava marrone, il viola blu, e lo smalto prendeva il verde dell'uscita. Ora:
+  - il faretto è bianco neutro, forte 5 e stretto 15°;
+  - sta a 1,2 m dal muro (come quello del negatoscopio), così la luce arriva di fronte;
+  - lo smalto è opaco (roughness 0,7);
+  - i quadratini sono a pastello più fitto, col turchese della cera più verde e l'arancione più acceso: la luce fredda della stanza sposta le tinte verso il blu.
+- **La misura:** `tests/collaudo/colori_cartello_pozze.gd` misura cartello e pozze dagli occhi del giocatore, anche con varianti di faretto, materiale e texture provate in un giro solo. A 0,8 m, in tinta, saturazione e luminosità, il cartello viene come le pozze; la saturazione è un po' più bassa perché fra i tratti di cera resta un po' di bianco:
+
+  | | cartello | pozza |
+  |---|---|---|
+  | viola | 248°, 0,62, 0,54 | 247°, 0,79, 0,60 |
+  | arancione | 21°, 0,62, 0,50 | 17°, 0,75, 0,50 |
+  | turchese | 183°, 0,58, 0,45 | 185°, 0,68, 0,49 |
+  | smalto | 211°, 0,11, 0,73 (grigio chiaro, non più verde) | |
+
+  Viene uguale con GI e nebbia accese. Il foglio prima/dopo è `docs/collaudo/stanza_pozze/colori_cartello_prima_dopo.jpg`.
 
 ## Test
 
@@ -61,7 +76,7 @@
   - un quarto colore no;
   - lo stato salvato a metà e da risolto;
   - si esce saltando da una pozza.
-- `tests/test_infermeria_gioco.gd`: il cartello (posto, muro, altezza, texture, faretto) e l'anta aperta che non lo copre.
+- `tests/test_infermeria_gioco.gd`: il cartello (posto, muro, altezza, texture, faretto bianco neutro e forte che lo illumina di fronte, smalto opaco) e l'anta aperta che non lo copre.
 - **Da fare con la stanza vera:**
   - la strada da F9 Fiume attraverso le pozze;
   - Continua a metà e da risolto;
