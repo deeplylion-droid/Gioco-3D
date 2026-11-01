@@ -63,10 +63,14 @@ X0_GIOCO = 40.4
 BOCCA_TORRE = [(37.6, 17.4, -18.15), (38.8, 17.4, -18.38), (41.0, 17.4, -18.6)]   # come in torre_a.py (GIOCO), nel verso della discesa
 MOBILI = []                              # i pezzi che si muovono (pannelli delle paratie, sbarre della grata)
 GIOCO_DATI = dict(paratie=[], grata=None, tubi={}, scale=[])
-# Nel gioco il pelo delle vasche dei bivi e del bacino è 10 cm più giù (correzione della 0.3.17): l'acqua era alta
-# 98 cm e l'occhio di chi ci sta accovacciato (anche solo atterrando dal tubo) a 92, sotto il pelo, e da sotto l'acqua
-# sembrava aria. Ora è alta 88 cm (il bacino 85).
+# Nel gioco il pelo delle vasche dei bivi e del bacino è più giù (correzioni della 0.3.17 e della 0.3.19): l'acqua era
+# alta 98 cm e l'occhio di chi ci sta accovacciato a 92, sotto il pelo, e da sotto l'acqua sembrava aria. Nella 0.3.17
+# 10 cm (88 cm d'acqua): ancora poco, l'occhio accovacciato scende di 8 cm atterrando e di 3,5 col passo (Player,
+# land_dip_max e head_bob_vertical), più i 5 cm del piano vicino della camera (riscontro dell'utente sulla 0.3.19). Ora
+# 26 cm: l'acqua è alta 72 cm (il bacino 69), l'occhio accovacciato nel punto più basso resta 8 cm sopra il pelo.
 PELO_GIU = 0.0
+# Le vasche di scolo, per lo stesso motivo: da 78 a 72 cm d'acqua (sono di torre_proposte.vasca, il pelo si abbassa qui).
+SCOLO_GIU = 0.0
 
 
 # --- pezzi comuni -----------------------------------------------------------------------------------
@@ -617,7 +621,9 @@ def versione_A(mats):
     # le vasche di scolo senza uscita (dove portano le paratie sbagliate), con la scaletta per risalire
     D = [(57.0, 10.2, 61.0, 13.4, -26.0), (56.0, 26.0, 60.0, 30.5, -29.0), (73.5, 12.0, 77.0, 16.0, -31.0)]
     for k, v in enumerate(D):
-        acque.append(vasca_sospesa(c, v[0], v[1], v[2], v[3], v[4], z0, f'acqua_scolo_{k}', alto=0.9))
+        acqua_scolo = vasca_sospesa(c, v[0], v[1], v[2], v[3], v[4], z0, f'acqua_scolo_{k}', alto=0.9)
+        acqua_scolo.location.z -= SCOLO_GIU
+        acque.append(acqua_scolo)
 
     da_appendere = []
 
@@ -892,7 +898,7 @@ def versione_A(mats):
             pa['vasca'] = v
         GIOCO_DATI.update(
             vasche=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 1.1 - 0.12 - PELO_GIU) for v in (C1, C2, C3)],
-            scolo=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 0.9 - 0.12) for v in D],
+            scolo=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 0.9 - 0.12 - SCOLO_GIU) for v in D],
             bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35 - PELO_GIU),
             allagato=dict(acqua=T, fondo=z0),
             pozzo=dict(rett=[43.6, 7.9, 45.8, 10.1], fondo=z0 - 4.5, bordo=T + 0.12),
@@ -1369,9 +1375,9 @@ def main():
     if gioco:
         assert nome == 'A', "nel gioco c'è solo la A (scelta dell'utente del 19 ottobre)"
         global GIOCO, X0, SOTTO_PEDANA
-        global PELO_GIU
+        global PELO_GIU, SCOLO_GIU
         GIOCO, X0, SOTTO_PEDANA = True, X0_GIOCO, 0.26
-        PELO_GIU = 0.1
+        PELO_GIU, SCOLO_GIU = 0.26, 0.06
         uscita, prefisso = GIOCO_USCITA, 'inseguimento'
     gruppi, percorso, luci, info = VERSIONI[nome](mats)
     os.makedirs(uscita, exist_ok=True)
