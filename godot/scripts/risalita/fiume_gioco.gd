@@ -1612,16 +1612,19 @@ func _muri_pile() -> Array:
 	var lato := Vector2(-dir.y, dir.x)      # a sinistra di chi va verso la vasca (sud-ovest)
 	# la strada larga 6 m (le transenne a 0,85 dall'asse; le transenne cadute, stese a terra, arrivano a 2,9 m)
 	var largo := 3.0
-	var fine_destra := da + dir * 18.0 - lato * largo
+	# (fino a 25 m: prima a 18 m la pila girava verso est e dalla strada si vedeva la piazza vuota, riscontro dell'utente
+	# sulla 0.3.19; il totem e la palma della piazza restano fuori, a sud e dietro)
+	var fine_destra := da + dir * 25.0 - lato * largo
 	# la pila di sinistra arriva fino a x -9,4, davanti alla tettoia della cabina, poi scende al ramo ovest
 	var fine_sinistra := (-9.4 - da.x + lato.x * -largo) / dir.x
 	var angolo := da + dir * fine_sinistra + lato * largo
 	return [
 		# lungo il muro nord, a chiudere l'angolo fra il muro e la pila di destra
 		[Vector2(INGRESSO_X + 2.4, Z0 + 0.32), Vector2(INGRESSO_X + 7.4, Z0 + 0.32), Vector2(0, 1)],
-		# a destra della fila, fino a 18 m, poi verso est fino alla roccia della riva
+		# a destra della fila, fino a 25 m, poi verso est fino alla roccia della riva
 		[da + dir * -3.0 - lato * largo, fine_destra, -lato],
-		[Vector2(fine_destra.x - 1.6, fine_destra.y), Vector2(-3.62, fine_destra.y), Vector2(0, -1)],
+		# (fino alla roccia: quello che non sta sulla banchina lo tiene fuori il controllo, il resto lo riempie una pila sciolta)
+		[Vector2(fine_destra.x - 1.6, fine_destra.y), Vector2(-3.0, fine_destra.y), Vector2(0, -1)],
 		# a sinistra della fila fino alla cabina dell'imbarco, poi verso sud fino al ramo ovest
 		[da + dir * -7.0 + lato * largo, angolo, lato],
 		# (dalla riva verso nord: la prima unità arriva al bordo dell'acqua, quello che avanza resta nell'angolo)
