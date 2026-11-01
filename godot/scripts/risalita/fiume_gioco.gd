@@ -1604,8 +1604,8 @@ const PILA_BLOCCO := 1.2
 const PILA_STACCO := 0.02
 
 
-## I muri di pile: [inizio, fine (la faccia verso la strada), verso dentro la pila]. Quelli con x oltre il muro
-## dell'approdo (MURO_APPRODO) stanno nell'approdo, gli altri nella piazza.
+## I muri di pile: [inizio, fine (la faccia verso la strada), verso dentro la pila, (la fila verso la strada, se non è
+## la prima)]. Quelli con x oltre il muro dell'approdo (MURO_APPRODO) stanno nell'approdo, gli altri nella piazza.
 func _muri_pile() -> Array:
 	var da := Vector2(INGRESSO_X, Z0 + 1.0)
 	var dir := (Vector2(FINE_FILA.x, FINE_FILA.z) - da).normalized()
@@ -1620,7 +1620,7 @@ func _muri_pile() -> Array:
 	var angolo := da + dir * fine_sinistra + lato * largo
 	return [
 		# lungo il muro nord, a chiudere l'angolo fra il muro e la pila di destra
-		[Vector2(INGRESSO_X + 2.4, Z0 + 0.32), Vector2(INGRESSO_X + 7.4, Z0 + 0.32), Vector2(0, 1)],
+		[Vector2(INGRESSO_X + 2.4, Z0 + 0.32), Vector2(INGRESSO_X + 7.4, Z0 + 0.32), Vector2(0, 1), 1],
 		# a destra della fila, fino a 25 m, poi verso est fino alla roccia della riva
 		[da + dir * -3.0 - lato * largo, fine_destra, -lato],
 		# (fino alla roccia: quello che non sta sulla banchina lo tiene fuori il controllo, il resto lo riempie una pila sciolta)
@@ -1828,27 +1828,33 @@ const PUNTI_ALLEGRI := [Vector2(-25.0, -26.0), Vector2(-7.5, -9.5)]
 const PUNTI_ALLEGRI_RAGGIO := 7.0
 
 
-## Le pile sfalsate (riscontro dell'utente sulla 0.3.19: "le scatole di quella parte sono dei muri troppo regolari, puoi
+## Le pile sfalsate (riscontri dell'utente sulla 0.3.19: "le scatole di quella parte sono dei muri troppo regolari, puoi
 ## renderle più sfalsate tra di loro e anche aderenti ai vari muri, in modo che non rimangano spazi aperti nel percorso
-## che fa il giocatore lì prima del salvagente?"): come si impila in un magazzino. Le colonne della fila davanti sporgono
-## un po' verso la strada, ognuna la sua; le unità sopra la prima (quella delle casse, la più pesante, sempre dritta)
-## sono un po' spostate e girate; la cima di qualche colonna è aperta, senza film, con qualche scatolone tolto e qualcuno
-## girato; le colonne davanti sono alte 2, 3 o 4 unità, ma più basse di 4 solo dove dietro c'è la fila di dietro, così
-## sopra non si vede il vuoto. Dove una colonna non ci sta (una roccia, una transenna, la cabina) si sposta lungo il muro,
-## e se non ci sta lo stesso al suo posto va una pila di scatoloni sciolti, più stretta: niente buchi fra le pile.
-## I passi: fra le colonne restano 6 cm (PILA_PASSO), fra le due file 6 cm (PILA_FRA_FILE), così le unità spostate e
-## girate non si toccano mai; ogni impronta si tiene allargata di PILA_MARGINE nei controlli.
+## che fa il giocatore lì prima del salvagente?", e sul primo giro: "Molto di più crea un pattern interessante,
+## disordinato, ma chiudendo bene tutto"): un magazzino riempito di fretta. Le colonne della fila verso la strada
+## sporgono fino a 30 cm o rientrano fino a 20 (la fila di dietro sta PILA_RIENTRO più in là, così chiude sempre),
+## qualcuna è girata storta o di traverso; le unità sopra la prima (quella delle casse, la più pesante, sempre a terra
+## sotto le altre) sono spostate e girate, i bancali storti; le colonne verso la strada sono alte da 1 a 4 unità, a
+## gradini, ma più basse di 4 solo dove dietro c'è la fila di dietro, così sopra non si vede il vuoto; tante cime sono
+## aperte, senza film, con scatoloni tolti, girati o caduti di lato, e sulle cime chiuse qualche scatolone caduto. Ogni
+## colonna si prova intera, con l'impronta vera di tutte le sue unità: se tocca qualcosa se ne prova un'altra più
+## tranquilla, spostata lungo il muro, e alla fine una pila di scatoloni sciolti, più stretta: niente buchi.
 const PILA_PASSO := 1.26
 const PILA_FRA_FILE := 0.06
-const PILA_MARGINE := 0.025
-## Le unità sopra la prima: quanto si spostano lungo il muro e quanto girano (radianti); nella fila davanti anche verso la
-## strada (fino a SPORGE_UNITA). Le colonne davanti sporgono verso la strada fino a SPORGE_COLONNA.
-const PILA_SPOSTA := 0.012
-const PILA_GIRA := 0.02
-const PILA_SPORGE_UNITA := 0.03
-const PILA_SPORGE_COLONNA := 0.1
+## Quanto la fila di dietro sta più in là del solito: il rientro massimo delle colonne davanti.
+const PILA_RIENTRO := 0.2
+## Le colonne verso la strada: quanto sporgono (fino a) e quanto girano, storte (radianti).
+const PILA_SPORGE := 0.3
+const PILA_STORTA := 0.16
+## Le unità sopra la prima: quanto si spostano (lungo il muro e in profondità) e quanto girano.
+const PILA_SPOSTA := 0.06
+const PILA_GIRA := 0.07
+## Lo stacco minimo fra le impronte di due colonne e fra una colonna e gli altri ingombri.
+const PILA_MARGINE := 0.015
 ## Uno scatolone: 0,6 lungo il muro, 0,4 d'altezza, 0,5 in profondità (come nelle unità).
 const SCATOLONE := Vector3(0.598, 0.398, 0.498)
+## Le altezze delle colonne verso la strada (unità: 1, 2, 3, 4) e le loro probabilità, a gradini.
+const PILA_ALTEZZE := [0.1, 0.24, 0.3, 0.36]
 
 
 func _pile() -> void:
@@ -1862,8 +1868,8 @@ func _pile() -> void:
 	for c in get_children():
 		if c is Node3D and (c as Node3D).position.y > 1.0 and not c is Light3D:
 			lampade.append((c as Node3D).position)
-	# 1. dove vanno le colonne: per ogni muro, le due file a mattoni; dove una colonna intera non ci sta si prova
-	# spostata, poi una pila sciolta (1 x 2 scatoloni per piano, poi 1 x 1)
+	# 1. dove vanno le colonne: per ogni muro le due file a mattoni. Per ogni posto qualche colonna disordinata, poi
+	# tranquilla e spostata lungo il muro, poi una pila sciolta (1 x 2 scatoloni per piano, poi 1 x 1)
 	var messe: Array[PackedVector2Array] = []
 	var colonne_messe: Array[Dictionary] = []
 	var muri := _muri_pile()
@@ -1872,10 +1878,19 @@ func _pile() -> void:
 		var a: Vector2 = m[0]
 		var b: Vector2 = m[1]
 		var n: Vector2 = m[2]
+		# la fila verso la strada: di solito la prima (quella sulla linea); lungo il muro nord la seconda
+		var fronte: int = m[3] if m.size() > 3 else 0
+		var verso := -n if fronte == 0 else n
 		var nell_approdo := (a.x + b.x) * 0.5 < MURO_APPRODO
 		var d := (b - a).normalized()
 		var lungo := a.distance_to(b)
+		# le colonne che portano le lampade calde restano dritte (la lampada sta sulla faccia della terza unità)
+		var ferme: Array[int] = []
+		for l in LAMPADE_PILE:
+			if l[0] == i_muro:
+				ferme.append(roundi((l[1] - PILA_LUNGO * 0.5) / PILA_PASSO))
 		var u := 0.0
+		var k_posto := 0
 		while u + PILA_LUNGO <= lungo + PILA_LUNGO * 0.5 + 0.001:
 			await _pausa()
 			for fila in 2:
@@ -1883,67 +1898,89 @@ func _pile() -> void:
 				var uu := u + fila * PILA_PASSO * 0.5
 				if uu + PILA_LUNGO > lungo + 0.001:
 					continue
-				var dentro := PILA_STACCO + fila * (PILA_PROFONDO + PILA_FRA_FILE)
-				var sporge := rng.randf_range(-PILA_SPORGE_COLONNA, 0.0) if fila == 0 else 0.0
+				var davanti := fila == fronte
+				var dentro := PILA_STACCO + fila * (PILA_PROFONDO + PILA_FRA_FILE + PILA_RIENTRO)
+				var ferma := davanti and k_posto in ferme
 				var col := {}
-				# la colonna intera, al suo posto o spostata lungo il muro
+				# le colonne intere: prima disordinate (davanti di più), poi tranquille e spostate lungo il muro
+				var prove := []
+				if not ferma:
+					for i in 5:
+						prove.append([rng.randf_range(-0.12, 0.12), 1.0 if davanti else 0.5])
 				for s in [0.0, -0.15, 0.15, -0.3, 0.3]:
-					var cc: Vector2 = a + d * (uu + s + PILA_LUNGO * 0.5) + n * (dentro + sporge + PILA_PROFONDO * 0.5)
-					if _colonna_ci_sta(cc, d, n, PILA_LUNGO, PILA_PROFONDO, nell_approdo, ingombri, messe):
-						col = {"c": cc, "largo": PILA_LUNGO, "prof": PILA_PROFONDO, "sciolta": false}
+					prove.append([s, 0.0])
+				for pr in prove:
+					var cc: Vector2 = a + d * (uu + pr[0] + PILA_LUNGO * 0.5) + n * (dentro + PILA_PROFONDO * 0.5)
+					var prova := _posa_colonna(rng, cc, d, n, verso, pr[1], davanti)
+					if _colonna_ci_sta(prova["poli"], prova["c"], nell_approdo, ingombri, messe):
+						col = prova
 						break
-				# la pila sciolta: 0,6 x 1,0 (o 0,6 x 0,5, davanti o dietro) dove nell'unità c'è posto
+				# la pila sciolta: 0,6 x 1,0 (o 0,6 x 0,5, davanti o dietro) dove nel posto c'è spazio
 				if col.is_empty():
-					for misura in [[0.6, PILA_PROFONDO, 0.0], [0.6, 0.5, 0.0], [0.6, 0.5, 0.5]]:
+					for misura in [[PILA_PROFONDO, 0.0], [0.5, 0.0], [0.5, 0.5]]:
 						for s in [0.0, 0.6, 0.3, -0.15, 0.75, 0.15, 0.45]:
-							var cc: Vector2 = a + d * (uu + s + 0.3) + n * (dentro + sporge * 0.5 + misura[2] + misura[1] * 0.5)
-							if _colonna_ci_sta(cc, d, n, misura[0], misura[1], nell_approdo, ingombri, messe):
-								col = {"c": cc, "largo": misura[0], "prof": misura[1], "sciolta": true}
+							var cc: Vector2 = a + d * (uu + s + 0.3) + n * (dentro + misura[1] + misura[0] * 0.5)
+							var prova := _posa_sciolta(rng, cc, d, n, misura[0])
+							if _colonna_ci_sta(prova["poli"], prova["c"], nell_approdo, ingombri, messe):
+								col = prova
 								break
 						if not col.is_empty():
 							break
 				if col.is_empty():
 					continue
+				# (qualche colonna davanti al posto di una intera: due pile sciolte una accanto all'altra)
 				col["muro"] = i_muro
 				col["fila"] = fila
+				col["davanti"] = davanti
+				col["ferma"] = ferma and not col["sciolta"]
 				col["u"] = (col["c"] - a).dot(d)
 				col["d"] = d
 				col["n"] = n
-				messe.append(_rettangolo(col["c"], d, n, col["largo"], col["prof"], PILA_MARGINE))
+				messe.append(col["poli"])
 				colonne_messe.append(col)
 			u += PILA_PASSO
-	# 2. le lampade calde sulla fila davanti dei muri 3 e 1 (vedi sotto): le colonne che le portano sono intere e alte 4
-	var portano: Array[Dictionary] = []
+			k_posto += 1
+	# 2. le lampade calde sulla fila davanti dei muri 3 e 1: sulle colonne ferme (o le più vicine fra quelle intere)
 	for l in LAMPADE_PILE:
 		var meglio := {}
 		for col in colonne_messe:
-			if col["muro"] == l[0] and col["fila"] == 0 and not col["sciolta"] and (meglio.is_empty() or absf(col["u"] - l[1]) < absf(meglio["u"] - l[1])):
+			if col["muro"] != l[0] or not col["davanti"] or col["sciolta"]:
+				continue
+			if meglio.is_empty() or (col["ferma"] and not meglio["ferma"]) or (col["ferma"] == meglio["ferma"] and absf(col["u"] - l[1]) < absf(meglio["u"] - l[1])):
 				meglio = col
 		if meglio.is_empty():
 			push_warning("pile: niente unità per la lampada %s" % str(l))
 			continue
 		meglio["lampada"] = l[2]
-		portano.append(meglio)
-	# 3. le altezze: dietro 4 unità; davanti 2, 3 o 4, ma più basse di 4 solo se la fila di dietro le copre tutte
+	# 3. le altezze: dietro 4 unità; davanti a gradini da 1 a 4, ma più basse di 4 solo se la fila di dietro le copre
 	for col in colonne_messe:
 		var piani := 4
-		if col["fila"] == 0 and not col.has("lampada"):
-			var r := rng.randf()
-			piani = 2 if r < 0.15 else (3 if r < 0.55 else 4)
-			if piani < 4 and not _coperta_dietro(col, colonne_messe):
-				piani = 4
 		var strati := 0
 		if col["sciolta"]:
-			# gli scatoloni sciolti: dietro fino a 8 piani (3,2 m), davanti 5-7; a 1 x 1 al massimo 5
-			strati = rng.randi_range(7, 8) if col["fila"] == 1 else rng.randi_range(5, 7)
+			# gli scatoloni sciolti: dietro 8 piani (3,2 m), davanti da 4 a 8; a 1 x 1 al massimo 6
+			strati = 8 if not col["davanti"] else rng.randi_range(4, 8)
 			if col["prof"] < PILA_PROFONDO - 0.01:
-				strati = mini(strati, 5)
-		# sotto una lampada sul muro la pila si ferma 15 cm sotto
-		var impronta := _rettangolo(col["c"], col["d"], col["n"], col["largo"], col["prof"], 0.0)
+				strati = mini(strati, 6)
+			if strati < 8 and col["davanti"] and not _coperta_dietro(col, colonne_messe):
+				strati = 8 if col["prof"] > PILA_PROFONDO - 0.01 else 6
+			strati = mini(strati, col["max_strati"])
+		elif col["davanti"] and not col.has("lampada"):
+			var r := rng.randf()
+			piani = 4
+			var somma := 0.0
+			for i in PILA_ALTEZZE.size():
+				somma += PILA_ALTEZZE[i]
+				if r < somma:
+					piani = i + 1
+					break
+			if piani < 4 and not _coperta_dietro(col, colonne_messe):
+				piani = 4
+		# sotto una lampada la pila si ferma 15 cm sotto (le capriate e le lampade appese del capannone, quelle sui muri)
+		var impronta: PackedVector2Array = col["poli"]
 		for l in lampade:
-			if Geometry2D.is_point_in_polygon(Vector2(l.x, l.z), _allarga(impronta, 0.6)):
+			if Geometry2D.is_point_in_polygon(Vector2(l.x, l.z), _allarga_poli(impronta, 0.6)):
 				piani = mini(piani, int((l.y - 0.3) / (PILA_BANCALE + PILA_BLOCCO)))
-				strati = mini(strati, int((l.y - 0.3) / 0.4))
+				strati = mini(strati, int((l.y - 0.3) / SCATOLONE.y))
 		col["piani"] = piani
 		col["strati"] = strati
 	# 4. le unità e gli scatoloni
@@ -1962,16 +1999,8 @@ func _pile() -> void:
 	var colonne := 0
 	for col in colonne_messe:
 		var c: Vector2 = col["c"]
-		var d: Vector2 = col["d"]
 		var n: Vector2 = col["n"]
-		var asse_x := Vector3(d.x, 0, d.y)
-		var asse_z := Vector3(n.x, 0, n.y)
-		# la base dev'essere una rotazione: con "dentro la pila" a destra del verso del muro veniva specchiata
-		# (determinante -1) e le scatole si vedevano rovesciate, vuote, da una parte sì e dall'altra no
-		# (riscontro dell'utente sulla v0.3.12); l'unità è simmetrica lungo il muro, quindi si gira l'asse x
-		if Basis(asse_x, Vector3.UP, asse_z).determinant() < 0.0:
-			asse_x = -asse_x
-		var dritta := Basis(asse_x, Vector3.UP, asse_z)
+		var base: Basis = col["base"]
 		var fitte := false
 		for q in PUNTI_ALLEGRI:
 			if (q as Vector2).distance_to(c) < PUNTI_ALLEGRI_RAGGIO:
@@ -1983,15 +2012,8 @@ func _pile() -> void:
 			var strati: int = col["strati"]
 			if strati < 1:
 				continue
-			var due: bool = col["prof"] > 0.75
 			for k in strati:
-				var y := SCATOLONE.y * (0.5 + k)   # uno sull'altro, a contatto
-				# le due in profondità solo spostate lungo il muro; quella da sola anche un po' girata
-				var giro := 0.0 if due or k < 2 else rng.randf_range(-0.03, 0.03)
-				for j in (2 if due else 1):
-					var z := (-0.25 + j * 0.5) if due else 0.0
-					var x := rng.randf_range(-0.015, 0.015) if k >= 2 else 0.0
-					var ts := Transform3D(dritta * Basis(Vector3.UP, giro), Vector3(c.x, y, c.y) + dritta * Vector3(x, 0, z))
+				for ts: Transform3D in col["strati_scatole"][k]:
 					if k < 2:
 						casse_sciolte.append(ts)   # sotto le casse di plastica, le più pesanti
 					elif rng_colori.randf() < quota:
@@ -2005,38 +2027,47 @@ func _pile() -> void:
 			var piani: int = col["piani"]
 			if piani < 1:
 				continue
-			var ferma: bool = col.has("lampada")
-			var aperta: bool = piani >= 2 and rng.randf() < 0.45
+			# le cime aperte (senza film, scatoloni tolti, girati e caduti): più spesso davanti, mai sotto la lampada
+			var aperta: bool = not col.has("lampada") and rng.randf() < (0.55 if col["davanti"] else 0.35)
 			for p in piani:
-				var base := dritta
-				var spost := Vector3.ZERO
-				# le casse sotto sono dritte; sopra ogni unità un po' spostata e girata (la fila di dietro meno)
-				if p > 0 and not (ferma and p <= 2):
-					if col["fila"] == 0:
-						base = dritta * Basis(Vector3.UP, rng.randf_range(-PILA_GIRA, PILA_GIRA))
-						spost = Vector3(rng.randf_range(-PILA_SPOSTA, PILA_SPOSTA), 0, rng.randf_range(-PILA_SPORGE_UNITA, 0.0))
-					else:
-						base = dritta * Basis(Vector3.UP, rng.randf_range(-PILA_GIRA, PILA_GIRA) * 0.5)
-						spost = Vector3(rng.randf_range(-PILA_SPOSTA, PILA_SPOSTA), 0, 0)
-				var t := Transform3D(base, Vector3(c.x, p * (PILA_BANCALE + PILA_BLOCCO), c.y) + dritta * spost)
+				var t: Transform3D = col["unita"][p]
 				if p == 0:
 					casse.append(t)
-					continue
-				var cima := aperta and p == piani - 1
-				if cima:
-					aperte.append(t)
-				else:
-					cartone.append(t)
-				for kk in 3:
-					var posti := _scatole_cima(rng) if cima and kk == 2 else _scatole_strato()
-					for ps in posti:
-						var ts := t * Transform3D(Basis(Vector3.UP, ps[2]), Vector3(ps[0], _centro_scatola(0, 0, kk).y, ps[1]))
-						if rng_colori.randf() < quota:
-							colorate.append(ts)
-							tinte_colorate.append(_tinta_colorata(rng_colori))
-						else:
-							scatole.append(ts)
-							tinte_scatole.append(marrone)
+				var cima := p == piani - 1
+				var strato_cima := []
+				if p > 0:
+					if cima and aperta:
+						aperte.append(t)
+						strato_cima = _scatole_cima(rng)
+					else:
+						cartone.append(t)
+				# gli scatoloni (nelle casse sono nella mesh dell'unità)
+				var posti := []
+				if p > 0:
+					for kk in 3:
+						for ps in (strato_cima if kk == 2 and cima and aperta else _scatole_strato()):
+							posti.append([ps, kk])
+				# sulle cime chiuse, qualche scatolone caduto lì sopra, di lato
+				if cima and not aperta and p > 0 and rng.randf() < 0.35:
+					for ps in _scatole_cadute(rng):
+						posti.append([ps, 3])
+				for pk in posti:
+					var ps: Array = pk[0]
+					var kk: int = pk[1]
+					var ts: Transform3D
+					if ps.size() > 3 and ps[3]:
+						# di lato (0,6 x 0,5 d'altezza x 0,4): sullo strato sotto (k 1) o sopra il film (k 3)
+						# (lo strato sotto finisce 1 mm sotto gli 80 cm: gli scatoloni sono 2 mm più piccoli)
+						var y0 := PILA_BANCALE + 0.799 if kk == 2 else PILA_BANCALE + PILA_BLOCCO + 0.004
+						ts = t * Transform3D(Basis(Vector3.UP, ps[2]) * Basis(Vector3.RIGHT, PI * 0.5), Vector3(ps[0], y0 + SCATOLONE.z * 0.5, ps[1]))
+					else:
+						ts = t * Transform3D(Basis(Vector3.UP, ps[2]), Vector3(ps[0], _centro_scatola(0, 0, kk).y, ps[1]))
+					if rng_colori.randf() < quota:
+						colorate.append(ts)
+						tinte_colorate.append(_tinta_colorata(rng_colori))
+					else:
+						scatole.append(ts)
+						tinte_scatole.append(marrone)
 			alto = piani * (PILA_BANCALE + PILA_BLOCCO)
 			if col.has("lampada"):
 				# la lampada calda appesa alla faccia della colonna verso la strada, sul blocco della terza unità
@@ -2045,9 +2076,10 @@ func _pile() -> void:
 		colonne += 1
 		var fc := CollisionShape3D.new()
 		var bc := BoxShape3D.new()
-		bc.size = Vector3(col["largo"], alto, col["prof"])
+		# (nella base della colonna: x lungo l'unità, anche quando è di traverso)
+		bc.size = Vector3(0.6, alto, col["prof"]) if col["sciolta"] else Vector3(PILA_LUNGO, alto, PILA_PROFONDO)
 		fc.shape = bc
-		fc.transform = Transform3D(dritta, Vector3(c.x, alto * 0.5, c.y))
+		fc.transform = Transform3D(base, Vector3(c.x, alto * 0.5, c.y))
 		_collisioni.add_child(fc)
 	await _pausa()
 	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
@@ -2073,18 +2105,111 @@ func _pile() -> void:
 const LAMPADE_PILE := [[3, 13.0, 3.0 * LUCE_CORRIDOIO], [1, 17.0, 3.0 * LUCE_CORRIDOIO], [3, 29.0, 2.5 * LUCE_CORRIDOIO]]
 
 
-## Il rettangolo in pianta della colonna (centro, verso del muro, verso dentro, misure), allargato di [param m].
-static func _rettangolo(c: Vector2, d: Vector2, n: Vector2, largo: float, prof: float, m: float) -> PackedVector2Array:
-	var e := d * (largo * 0.5 + m)
-	var f := n * (prof * 0.5 + m)
-	return PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f])
+## La base dritta di una colonna sul muro (x lungo il muro, z verso dentro la pila). Dev'essere una rotazione: con
+## "dentro la pila" a destra del verso del muro veniva specchiata (determinante -1) e le scatole si vedevano rovesciate,
+## vuote, da una parte sì e dall'altra no (riscontro dell'utente sulla v0.3.12); l'unità è simmetrica lungo il muro,
+## quindi si gira l'asse x.
+static func _base_muro(d: Vector2, n: Vector2) -> Basis:
+	var asse_x := Vector3(d.x, 0, d.y)
+	var asse_z := Vector3(n.x, 0, n.y)
+	if Basis(asse_x, Vector3.UP, asse_z).determinant() < 0.0:
+		asse_x = -asse_x
+	return Basis(asse_x, Vector3.UP, asse_z)
 
 
-func _colonna_ci_sta(c: Vector2, d: Vector2, n: Vector2, largo: float, prof: float, nell_approdo: bool,
-		ingombri: Array[PackedVector2Array], messe: Array[PackedVector2Array]) -> bool:
+## Una colonna intera di 4 unità (quante ne restano lo decide dopo [method _pile]) col centro della base in [param c],
+## [param disordine] da 0 (dritta) a 1 (davanti: sporge o rientra, storta o di traverso, unità spostate e girate).
+## Torna {c, base, largo, prof, unita (le 4 trasformazioni), poli (l'impronta in pianta di tutte le unità), sciolta}.
+func _posa_colonna(rng: RandomNumberGenerator, c: Vector2, d: Vector2, n: Vector2, verso: Vector2, disordine: float, davanti: bool) -> Dictionary:
+	var base := _base_muro(d, n)
+	var largo := PILA_LUNGO
+	var prof := PILA_PROFONDO
+	if disordine > 0.0:
+		if davanti:
+			# sporge verso la strada o rientra verso la fila di dietro
+			c += verso * rng.randf_range(-PILA_RIENTRO, PILA_SPORGE)
+			var r := rng.randf()
+			if r < 0.15:
+				# di traverso: 1,0 lungo il muro e 1,2 in profondità, i 20 cm in più verso la strada
+				base = base * Basis(Vector3.UP, PI * 0.5 + rng.randf_range(-0.05, 0.05))
+				largo = PILA_PROFONDO
+				prof = PILA_LUNGO
+				c += verso * 0.1
+			elif r < 0.5:
+				base = base * Basis(Vector3.UP, rng.randf_range(-PILA_STORTA, PILA_STORTA))
+		else:
+			base = base * Basis(Vector3.UP, rng.randf_range(-0.05, 0.05))
+	var unita: Array[Transform3D] = []
+	var punti := PackedVector2Array()
+	for p in 4:
+		var b := base
+		var sp := Vector3.ZERO
+		if p > 0 and disordine > 0.0:
+			b = base * Basis(Vector3.UP, rng.randf_range(-PILA_GIRA, PILA_GIRA) * disordine)
+			sp = Vector3(rng.randf_range(-PILA_SPOSTA, PILA_SPOSTA), 0, rng.randf_range(-PILA_SPOSTA, PILA_SPOSTA)) * disordine
+		var t := Transform3D(b, Vector3(c.x, p * (PILA_BANCALE + PILA_BLOCCO), c.y) + base * sp)
+		unita.append(t)
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				var v: Vector3 = t * Vector3(sx * (PILA_LUNGO * 0.5 + 0.004), 0, sz * (PILA_PROFONDO * 0.5 + 0.004))
+				punti.append(Vector2(v.x, v.z))
+	return {"c": c, "base": base, "largo": largo, "prof": prof, "unita": unita, "poli": Geometry2D.convex_hull(punti), "sciolta": false}
+
+
+## Una pila di scatoloni sciolti, 0,6 lungo il muro e [param prof] in profondità (1,0: due scatoloni per piano; 0,5:
+## uno), di 8 piani (quanti ne restano lo decide dopo [method _pile]), un po' girata, gli scatoloni spostati; in cima a
+## volte ne manca uno e l'altro è girato. Torna come [method _posa_colonna], con strati_scatole (le trasformazioni,
+## piano per piano).
+func _posa_sciolta(rng: RandomNumberGenerator, c: Vector2, d: Vector2, n: Vector2, prof: float) -> Dictionary:
+	var base := _base_muro(d, n) * Basis(Vector3.UP, rng.randf_range(-0.08, 0.08))
+	var due := prof > 0.75
+	var strati := []
+	var punti := PackedVector2Array()
+	for k in 8:
+		var y := SCATOLONE.y * (0.5 + k)   # uno sull'altro, a contatto
+		var piano: Array[Transform3D] = []
+		var quali := [0, 1] if due else [0]
+		# in cima (dal quarto piano in su, a volte) nelle pile da due ne resta uno solo, girato
+		var solo := due and k >= 3 and rng.randf() < 0.15
+		if solo:
+			quali = [rng.randi() % 2]
+		for j in quali:
+			var z: float = (-0.25 + j * 0.5) if due else 0.0
+			var giro := 0.0
+			var x := 0.0
+			if k >= 2:
+				x = rng.randf_range(-0.04, 0.04)
+				if not due:
+					giro = rng.randf_range(-0.12, 0.12)
+				elif solo:
+					giro = rng.randf_range(-0.25, 0.25)
+					z *= 0.5
+			var ts := Transform3D(base * Basis(Vector3.UP, giro), Vector3(c.x, y, c.y) + base * Vector3(x, 0, z))
+			piano.append(ts)
+			for sx in [-1.0, 1.0]:
+				for sz in [-1.0, 1.0]:
+					var v: Vector3 = ts * Vector3(sx * SCATOLONE.x * 0.5, 0, sz * SCATOLONE.z * 0.5)
+					punti.append(Vector2(v.x, v.z))
+		strati.append(piano)
+		if solo:
+			break   # sopra quello girato non si mette altro
+	return {"c": c, "base": base, "largo": 0.6, "prof": prof, "strati_scatole": strati, "poli": Geometry2D.convex_hull(punti),
+			"sciolta": true, "max_strati": strati.size()}
+
+
+## Vero se l'impronta [param poli] della colonna sta sulla banchina, dalla parte giusta del muro dell'approdo, e non
+## tocca gli ingombri né le altre colonne (con PILA_MARGINE di stacco).
+func _colonna_ci_sta(poli: PackedVector2Array, c: Vector2, nell_approdo: bool, ingombri: Array[PackedVector2Array],
+		messe: Array[PackedVector2Array]) -> bool:
 	if (c.x < MURO_APPRODO) != nell_approdo:
 		return false
-	return _pila_ci_sta(_rettangolo(c, d, n, largo, prof, PILA_MARGINE), ingombri, messe)
+	return _pila_ci_sta(_allarga_poli(poli, PILA_MARGINE), ingombri, messe)
+
+
+## Il poligono convesso [param poli] allargato di [param m] da ogni parte.
+static func _allarga_poli(poli: PackedVector2Array, m: float) -> PackedVector2Array:
+	var out := Geometry2D.offset_polygon(poli, m)
+	return out[0] if not out.is_empty() else poli
 
 
 ## Vero se le colonne della fila di dietro dello stesso muro coprono tutta la colonna davanti [param col].
@@ -2093,9 +2218,9 @@ static func _coperta_dietro(col: Dictionary, colonne_messe: Array[Dictionary]) -
 	var u1: float = col["u"] + col["largo"] * 0.5
 	var coperto := 0.0
 	for o in colonne_messe:
-		if o["muro"] != col["muro"] or o["fila"] != 1:
+		if o["muro"] != col["muro"] or o["davanti"] or o["sciolta"]:
 			continue
-		coperto += maxf(0.0, minf(u1, o["u"] + o["largo"] * 0.5 + 0.04) - maxf(u0, o["u"] - o["largo"] * 0.5 - 0.04))
+		coperto += maxf(0.0, minf(u1, o["u"] + o["largo"] * 0.5 + 0.1) - maxf(u0, o["u"] - o["largo"] * 0.5 - 0.1))
 	return coperto >= (u1 - u0) - 0.01
 
 
@@ -2110,36 +2235,65 @@ func _scatole_strato() -> Array:
 
 
 ## Lo strato in cima di un'unità aperta: qualche scatolone tolto, quelli rimasti spostati e girati (qualcuno di traverso),
-## senza toccarsi e senza uscire dal bancale.
+## e dove ne manca uno a volte uno caduto di lato sullo strato sotto: [x, z, giro, di lato]. Senza toccarsi e senza uscire
+## dal bancale.
 func _scatole_cima(rng: RandomNumberGenerator) -> Array:
 	var posti := []
+	var tolti := []
 	for ps in _scatole_strato():
-		if rng.randf() >= 0.3:
+		if rng.randf() >= 0.4:
 			posti.append(ps)
+		else:
+			tolti.append(ps)
 	if posti.is_empty():
-		posti.append(_scatole_strato()[rng.randi() % 4])
+		posti.append(tolti.pop_back())
 	var bordo := Rect2(-PILA_LUNGO * 0.5, -PILA_PROFONDO * 0.5, PILA_LUNGO, PILA_PROFONDO)
 	for i in posti.size():
 		for prova in 6:
-			var giro := rng.randf_range(-0.3, 0.3) if rng.randf() < 0.7 else PI * 0.5 + rng.randf_range(-0.1, 0.1)
+			var giro := rng.randf_range(-0.4, 0.4) if rng.randf() < 0.7 else PI * 0.5 + rng.randf_range(-0.15, 0.15)
 			var q := [posti[i][0] + rng.randf_range(-0.12, 0.12), posti[i][1] + rng.randf_range(-0.1, 0.1), giro]
-			var r := _impronta_scatolone(q, 0.002)
-			var va := true
-			for v in r:
-				if not bordo.has_point(v):
-					va = false
-			for j in posti.size():
-				if va and j != i and not Geometry2D.intersect_polygons(r, _impronta_scatolone(posti[j], 0.002)).is_empty():
-					va = false
-			if va:
+			if _scatolone_ci_sta(q, i, posti, bordo):
 				posti[i] = q
+				break
+	# i caduti di lato, nel posto di uno tolto (alti 0,5: sporgono 10 cm sopra lo strato)
+	for ps in tolti:
+		if rng.randf() < 0.5:
+			var q := [ps[0] + rng.randf_range(-0.05, 0.05), ps[1] + rng.randf_range(-0.04, 0.04), rng.randf_range(-0.3, 0.3), true]
+			if _scatolone_ci_sta(q, -1, posti, bordo):
+				posti.append(q)
+	return posti
+
+
+## Uno o due scatoloni caduti di lato sopra il film di un'unità chiusa: [x, z, giro, true].
+func _scatole_cadute(rng: RandomNumberGenerator) -> Array:
+	var posti := []
+	var bordo := Rect2(-PILA_LUNGO * 0.5, -PILA_PROFONDO * 0.5, PILA_LUNGO, PILA_PROFONDO)
+	for i in (1 if rng.randf() < 0.6 else 2):
+		for prova in 8:
+			var q := [rng.randf_range(-0.3, 0.3), rng.randf_range(-0.25, 0.25), rng.randf_range(-PI, PI), true]
+			if _scatolone_ci_sta(q, -1, posti, bordo):
+				posti.append(q)
 				break
 	return posti
 
 
+## Vero se lo scatolone [param q] sta dentro [param bordo] e non tocca gli altri di [param posti] (tranne l'i-esimo).
+static func _scatolone_ci_sta(q: Array, i: int, posti: Array, bordo: Rect2) -> bool:
+	var r := _impronta_scatolone(q, 0.002)
+	for v in r:
+		if not bordo.has_point(v):
+			return false
+	for j in posti.size():
+		if j != i and not Geometry2D.intersect_polygons(r, _impronta_scatolone(posti[j], 0.002)).is_empty():
+			return false
+	return true
+
+
+## L'impronta in pianta di uno scatolone [x, z, giro, di lato] (di lato: 0,6 x 0,4 invece di 0,6 x 0,5).
 static func _impronta_scatolone(ps: Array, m: float) -> PackedVector2Array:
+	var prof := SCATOLONE.y if ps.size() > 3 and ps[3] else SCATOLONE.z
 	var e := Vector2(SCATOLONE.x * 0.5 + m, 0).rotated(-ps[2])
-	var f := Vector2(0, SCATOLONE.z * 0.5 + m).rotated(-ps[2])
+	var f := Vector2(0, prof * 0.5 + m).rotated(-ps[2])
 	var c := Vector2(ps[0], ps[1])
 	return PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f])
 
@@ -2149,19 +2303,12 @@ func _tinta_colorata(rng_colori: RandomNumberGenerator) -> Color:
 	return col.lerp(Color(0.6, 0.56, 0.5), rng_colori.randf_range(0.0, 0.12))
 
 
-## Il rettangolo allargato di [param m] da ogni parte.
-static func _allarga(r: PackedVector2Array, m: float) -> PackedVector2Array:
-	var c := (r[0] + r[2]) * 0.5
-	var out := PackedVector2Array()
-	for q in r:
-		out.append(q + (q - c).normalized() * m * sqrt(2.0))
-	return out
-
-
-## Vero se l'impronta (un rettangolo in pianta) sta tutta sulla banchina, lontana dai muri e dall'acqua, e non tocca le
+## Vero se l'impronta (un poligono in pianta) sta tutta sulla banchina, lontana dai muri e dall'acqua, e non tocca le
 ## collisioni già messe né le altre colonne.
 func _pila_ci_sta(impronta: PackedVector2Array, ingombri: Array[PackedVector2Array], messe: Array[PackedVector2Array]) -> bool:
-	var centro := (impronta[0] + impronta[2]) * 0.5
+	var centro := Vector2.ZERO
+	for q in impronta:
+		centro += q / impronta.size()
 	for q in impronta:
 		if not _sulla_banchina(Vector3(q.x, 0, q.y), 0.15):
 			return false
