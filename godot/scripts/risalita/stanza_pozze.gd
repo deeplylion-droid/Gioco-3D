@@ -78,7 +78,10 @@ func _costruisci() -> void:
 	mat_grata.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 	mat_grata.metallic_texture = mat_grata.roughness_texture
 	mat_grata.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE
-	mat_grata.metallic = 1.0
+	# (poco metallo e più chiaro: lontano dalle plafoniere, metallo pieno senza riflessi era quasi nero e dall'alto la
+	# passerella sembrava un vuoto, collaudo del 1 novembre; acciaio zincato chiaro, si legge come pavimento)
+	mat_grata.metallic = 0.25
+	mat_grata.albedo_color = Color(2.6, 2.6, 2.55)   # (la texture è scura, media 48 su 255: così circa 125)
 	mat_grata.uv1_triplanar = true
 	mat_grata.uv1_world_triplanar = true
 	mat_grata.uv1_scale = Vector3.ONE * 1.0
@@ -174,6 +177,9 @@ func _stanza() -> void:
 	_muro(true, -m - MURO, m + MURO, -m - MURO * 0.5, MURO, [PORTA_X, PortaStagna.LARGO * 0.5 + PortaStagna.FASCIA,
 			PortaStagna.ALTO + PortaStagna.FASCIA])
 	_muro(true, -m - MURO, INFERMERIA_X, m + MURO * 0.5, MURO)
+	# il muro dell'infermeria dalla parte della stanza, rivestito come gli altri (piastrelle e intonaco grigi, 2 cm),
+	# col vano della sua porta nord; dalla parte dell'infermeria resta com'è (collaudo del 1 novembre)
+	_muro(true, INFERMERIA_X, m, m - 0.01, 0.02, [0.0, 0.5, 2.15])
 	# sopra il muro dell'infermeria (alto 3 m, col soffitto fino a 3,1) la fascia fino al soffitto della stanza
 	_box(Vector3(m + MURO - INFERMERIA_X, ALTA - 3.1, MURO), Vector3((INFERMERIA_X + m + MURO) * 0.5, (3.1 + ALTA) * 0.5, m + MURO * 0.5), mat_intonaco)
 	# il soffitto e la soletta sotto la passerella (dove non ci sono le pozze)

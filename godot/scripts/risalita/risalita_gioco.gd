@@ -390,6 +390,10 @@ func _scala_di_servizio() -> void:
 	# (la vasca sale 5,8 m sopra il centro); compare mentre sali le rampe o sei nella stanza delle pozze
 	_oblo("ObloServizio", OBLO_SERVIZIO, Vector3.BACK, "capovolta", AABB(Vector3(-39.5, Y - 0.2, z0 - 0.2), Vector3(23.5, 8.4, c1 - z0 + 0.4)),
 			{"vasca_larga": 10.2, "vasca_spostata": -0.3, "vasca_fonda": 5.6, "vasca_sotto": 3.6, "vasca_sopra": 5.8})
+	# le lampade rosse d'emergenza: in cima alla seconda rampa, sul muro nord del tratto verso sud (dove prima stava in
+	# cima alla rampa: senza, salendo c'erano 5 m di buio, collaudo del 1 novembre), in fondo a quel tratto e sul
+	# pianerottolo in basso
+	_lampada_rossa(Vector3(x + 1.0, 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
 	_lampada_rossa(Vector3(x + 1.0, 2.2, c1 - 0.05), Vector3(0, -0.5, -1))
 	_lampada_rossa(Vector3(xs + 0.6, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
 	var m := Node3D.new()
