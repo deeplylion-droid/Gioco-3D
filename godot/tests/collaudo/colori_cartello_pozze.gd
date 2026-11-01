@@ -24,6 +24,9 @@ const VARIANTI := {
 	"lontano_4_opaco": [4.0, Color(1, 1, 1), 1.2, 15.0, 0.75, false],
 	"lontano_3_opaco_tex": [3.0, Color(1, 1, 1), 1.2, 15.0, 0.75, true],
 	"lontano_4_opaco_tex": [4.0, Color(1, 1, 1), 1.2, 15.0, 0.75, true],
+	"bianco_2_tex": [2.0, Color(1, 1, 1), null, null, null, true],
+	"bianco_3_opaco_tex": [3.0, Color(1, 1, 1), null, null, 0.75, true],
+	"lontano_2_opaco_tex": [2.0, Color(1, 1, 1), 1.2, 15.0, 0.75, true],
 }
 
 var p: Player
@@ -81,6 +84,20 @@ func _guarda(da: Vector3, verso: Vector3, nome: String, accovacciato := false) -
 	var im := await _scatto(nome)
 	Input.action_release(&"crouch")
 	return im
+
+
+## Il punto del mondo [param w] sull'immagine dello schermo: unproject_position dà le coordinate della finestra di base
+## (1280x720, stretch canvas_items), l'immagine è grande quanto la finestra vera.
+func _px(im: Image, w: Vector3) -> Vector2:
+	var c := get_viewport().get_camera_3d()
+	return c.unproject_position(w) * Vector2(im.get_size()) / get_viewport().get_visible_rect().size
+
+
+## Il colore medio di un quadrato di lato 2 [param mezzo] (m) attorno a [param w], sul piano del cartello (lungo
+## [param lato] e in verticale).
+func _media_area(im: Image, w: Vector3, lato: Vector3, mezzo: float) -> Color:
+	var r := maxi(1, roundi(_px(im, w).distance_to(_px(im, w + lato * mezzo))))
+	return _media(im, _px(im, w), r)
 
 
 func _media(im: Image, px: Vector2, r := 4) -> Color:
@@ -199,9 +216,10 @@ func _cartello(v: String) -> void:
 			var w: Vector3 = quad + lato * (0.092 * float(k))
 			if cam.is_position_behind(w):
 				continue
+			# il centro del quadratino, 3 cm per lato (la cera e i buchi del pastello insieme, come li vede l'occhio)
 			print("COLORI: %s da %.2f m, %s: %s" % [v, d, ["viola", "arancione", "turchese"][k + 1],
-					_c(_media(im, cam.unproject_position(w), 3 if d > 1.0 else 6))])
-		print("COLORI: %s da %.2f m, smalto: %s" % [v, d, _c(_media(im, cam.unproject_position(I(Vector3(-2.95, 1.73 - 0.37, -3.19))), 3))])
+					_c(_media_area(im, w, lato, 0.015))])
+		print("COLORI: %s da %.2f m, smalto: %s" % [v, d, _c(_media_area(im, I(Vector3(-2.95, 1.43, -3.2 + 0.0085)) + lato * 0.11, lato, 0.015))])
 	# arrivando verso la porta, come lo vede il giocatore
 	await _guarda(I(Vector3(-1.4, 0, -1.6)), c, "%s_cartello_diagonale" % v)
 
@@ -211,7 +229,7 @@ func _pozze() -> void:
 		var t := _pozza_sud(c2)
 		var su := Vector3(t.global_position.x, t.get_surface_global_y(), t.global_position.z)
 		var im := await _guarda(S(Vector3(st.to_local(t.global_position).x, 0, 3.4)), su, "pozza_%s" % c2)
-		print("COLORI: pozza %s dalla passerella sud, al centro: %s" % [c2, _c(_media(im, cam.unproject_position(su), 8))])
+		print("COLORI: pozza %s dalla passerella sud, al centro: %s" % [c2, _c(_media(im, _px(im, su), 8))])
 
 
 func _pozza_sud(c: String) -> WaterTank:
