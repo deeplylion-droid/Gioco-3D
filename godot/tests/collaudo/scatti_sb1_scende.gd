@@ -61,7 +61,9 @@ func _run() -> void:
 		if t >= DA and f % OGNI == 0:
 			await RenderingServer.frame_post_draw
 			get_viewport().get_texture().get_image().save_jpg(cartella.path_join("sb1_%05.2f.jpg" % t), 0.9)
-			print("SB1 t %.2f stato %d anim %s occhio %+.3f" % [t, ins.lei_stato, ins.lei.animazione,
-				occhio.y - testa0 if testa0 != INF else 0.0])
+			var luce := ins.get(&"_lei_luce") as OmniLight3D
+			print("SB1 t %.2f stato %d anim %s occhio %+.3f luce %.2f%s" % [t, ins.lei_stato, ins.lei.animazione,
+				occhio.y - testa0 if testa0 != INF else 0.0, luce.light_energy if luce else -1.0,
+				"" if luce and luce.is_visible_in_tree() else " (spenta)"])
 	print("FINE")
 	get_tree().quit()
