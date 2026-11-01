@@ -1985,7 +1985,7 @@ func _pile() -> void:
 				continue
 			var due: bool = col["prof"] > 0.75
 			for k in strati:
-				var y := SCATOLONE.y * 0.5 + 0.0005 + k * (SCATOLONE.y + 0.001)
+				var y := SCATOLONE.y * (0.5 + k)   # uno sull'altro, a contatto
 				# le due in profondità solo spostate lungo il muro; quella da sola anche un po' girata
 				var giro := 0.0 if due or k < 2 else rng.randf_range(-0.03, 0.03)
 				for j in (2 if due else 1):
@@ -2000,7 +2000,7 @@ func _pile() -> void:
 					else:
 						scatole.append(ts)
 						tinte_scatole.append(marrone)
-			alto = strati * (SCATOLONE.y + 0.001)
+			alto = strati * SCATOLONE.y
 		else:
 			var piani: int = col["piani"]
 			if piani < 1:
