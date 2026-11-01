@@ -48,8 +48,9 @@ class Pastello:
         self.livelli.append((colore, im))
         return im
 
-    def tratto(self, pts, colore, larg_mm=17.0, volte=2, trem=1.0, pressione=235):
-        """Un segno di pastello lungo [pts] (in pixel), largo [larg_mm], ripassato [volte] volte un po' spostato."""
+    def tratto(self, pts, colore, larg_mm=17.0, volte=2, trem=1.0, pressione=235, variazione=0.25):
+        """Un segno di pastello lungo [pts] (in pixel), largo [larg_mm], ripassato [volte] volte un po' spostato.
+        Ogni passata preme fra (1 - [variazione]) e 1 volte [pressione] (meno si preme, più grana del muro resta)."""
         im = self._livello(colore)
         d = ImageDraw.Draw(im)
         k = self.k
@@ -57,7 +58,7 @@ class Pastello:
         for v in range(volte):
             sp = self.rng.normal(0, lw * 0.18, 2)
             pp = [(x * k + sp[0] + self.rng.normal(0, trem * k), y * k + sp[1] + self.rng.normal(0, trem * k)) for x, y in pts]
-            p = int(pressione * (0.75 + 0.25 * self.rng.random()))
+            p = int(pressione * (1.0 - variazione + variazione * self.rng.random()))
             for i in range(len(pp) - 1):
                 # lo spessore cambia un po' lungo il tratto (la mano preme e alleggerisce)
                 l = max(2, int(lw * (0.8 + 0.35 * self.rng.random())))

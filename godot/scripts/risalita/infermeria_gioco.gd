@@ -958,6 +958,11 @@ func _luci() -> void:
 ## le pozze, all'altezza degli occhi: a ovest della porta, fra lo stipite e l'angolo (8 cm per parte), perché a est si
 ## appoggia l'anta aperta. Lamiera smaltata a contatto col muro (il listello si interrompe da solo). Sopra, un faretto
 ## a soffitto con una lampadina bianca: la luce verde dell'uscita falserebbe i pastelli; il resto resta buio.
+## I quadratini si devono leggere coi colori delle pozze (collaudo del 1 novembre: col faretto debole e radente
+## l'arancione sembrava marrone, il viola blu e lo smalto prendeva il verde dell'uscita). Per questo il faretto è
+## bianco neutro, forte quanto basta a vincere il verde, a 1,2 m dal muro perché la luce arrivi di fronte e non
+## di taglio (come quello del negatoscopio), stretto sul cartello; lo smalto è opaco, così non riflette la stanza.
+## Misura: tests/collaudo/colori_cartello_pozze.gd.
 func _cartello_pozze() -> void:
 	var c := Vector3(-2.95, 1.5, -L)
 	var misura := Vector2(0.34, 0.46)
@@ -965,10 +970,10 @@ func _cartello_pozze() -> void:
 	lastra.name = "CartelloPozze"
 	var m := StandardMaterial3D.new()
 	m.albedo_texture = load("res://assets/pozze_colorate/cartello_divieto.png")
-	m.roughness = 0.42
+	m.roughness = 0.7
 	_quad(misura, c + Vector3(0, 0, 0.0085), Vector3.ZERO, m, lastra.get_parent() as Node3D).name = "CartelloPozzeFaccia"
-	_faretto_soffitto("FarettoCartelloPozze", Vector3(c.x, H, -2.6), c + Vector3(0, 0.02, 0), Vector3(c.x, H, -L),
-			Color(1.0, 0.98, 0.93), 0.9, 19.0)
+	_faretto_soffitto("FarettoCartelloPozze", Vector3(c.x, H, -L + 1.2), c + Vector3(0, 0.02, 0), Vector3(c.x, H, -L),
+			Color(1.0, 1.0, 1.0), 5.0, 15.0)
 
 
 func _bambini() -> void:

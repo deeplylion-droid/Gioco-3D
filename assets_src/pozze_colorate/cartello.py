@@ -26,10 +26,13 @@ MM = 0.5                       # millimetri per pixel
 W, H = int(340 / MM), int(460 / MM)
 SEME = 31
 
-# i pastelli dei tre colori giusti (le pozze: WaterMix.TURCHESE, VIOLA, ARANCIONE), cera un po' spenta
-TURCHESE = (24, 172, 162)
+# i pastelli dei tre colori giusti (le pozze: WaterMix.TURCHESE, VIOLA, ARANCIONE). Tarati nel gioco (collaudo del
+# 1 novembre, tests/collaudo/colori_cartello_pozze.gd): col faretto bianco e la luce della stanza, la tinta sullo schermo
+# viene come quella delle pozze (viola ~250°, arancione ~20°, turchese ~187°); la luce fredda della stanza sposta le
+# tinte verso il blu, per questo il turchese della cera è più verde di quello delle pozze
+TURCHESE = (20, 170, 140)
 VIOLA = (120, 52, 168)
-ARANCIONE = (232, 108, 22)
+ARANCIONE = (236, 100, 12)
 
 SMALTO = np.array([238, 234, 222], np.float32)
 ROSSO = (196, 28, 34)
@@ -101,7 +104,8 @@ def quadratini():
         rr = lato / math.sqrt(2)
         poli = [(cx + rr * (1 + rng.normal(0, 0.05)) * math.cos(t), cy + rr * (1 + rng.normal(0, 0.05)) * math.sin(t))
                 for t in ang]
-        p.riempi(poli, c, larg_mm=7.0, passo_mm=4.2, pressione=245)
+        # premuto forte e fitto (poco bianco fra i tratti, se no da lontano il colore si spegne), la grana resta
+        p.riempi(poli, c, larg_mm=7.5, passo_mm=3.0, pressione=250, variazione=0.04)
         p.tratto(poli + [poli[0], poli[1]], c, larg_mm=6.0, volte=2, trem=0.8, pressione=250)
     return p.finisci(bagnato=0.15, sbiadito=0.0)
 

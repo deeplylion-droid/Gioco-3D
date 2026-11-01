@@ -251,6 +251,14 @@ func _cartello_pozze(inf: Node3D) -> void:
 		verso = (c.global_position - luce.global_position).normalized()
 	check(luce != null and luce.visible and luce.light_color.s < 0.15 and -luce.global_basis.z.dot(verso) > 0.97,
 		"con sopra la lampadina bianca, accesa e puntata sul cartello")
+	# i colori dei quadratini come quelli delle pozze (collaudo del 1 novembre): luce bianca neutra e abbastanza forte da
+	# vincere il verde dell'uscita, che arriva sul cartello di fronte e non di taglio; smalto che non riflette la stanza
+	var normale := (inf.global_basis * Vector3(0, 0, 1)).normalized()
+	check(luce != null and luce.light_color.s < 0.02 and luce.light_energy >= 4.0 and -verso.dot(normale) > 0.5,
+		"il faretto è bianco neutro (saturazione %.2f), forte (%.1f) e illumina il cartello di fronte (%.2f)" % [
+			luce.light_color.s if luce else 1.0, luce.light_energy if luce else 0.0, -verso.dot(normale)])
+	var mf := f.material_override as StandardMaterial3D if f else null
+	check(mf != null and mf.roughness >= 0.6 and mf.metallic == 0.0, "lo smalto del cartello è opaco, senza metallo")
 
 
 func _aabb_locale(inf: Node3D, m: MeshInstance3D) -> AABB:
