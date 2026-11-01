@@ -27,6 +27,10 @@ const VARIANTI := {
 	"bianco_2_tex": [2.0, Color(1, 1, 1), null, null, null, true],
 	"bianco_3_opaco_tex": [3.0, Color(1, 1, 1), null, null, 0.75, true],
 	"lontano_2_opaco_tex": [2.0, Color(1, 1, 1), 1.2, 15.0, 0.75, true],
+	"lontano_5_tex": [5.0, Color(1, 1, 1), 1.2, 15.0, 0.7, true],
+	"lontano_6_tex": [6.0, Color(1, 1, 1), 1.2, 15.0, 0.7, true],
+	"bianco_5_tex": [5.0, Color(1, 1, 1), null, null, 0.7, true],
+	"bianco_6_tex": [6.0, Color(1, 1, 1), null, null, 0.7, true],
 }
 
 var p: Player
