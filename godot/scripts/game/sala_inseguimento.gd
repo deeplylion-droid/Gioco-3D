@@ -349,7 +349,8 @@ func _acque() -> void:
 ## "si vede ancora sotto l'acqua nella zona delle vasche con gli scivoli"). Con la parete, da sotto il pelo fra l'occhio
 ## e la superficie c'è sempre l'acqua; da sopra si vede la bocca piena d'acqua fino al pelo. Lo prova
 ## test_occhio_sopra_acque.
-const NOME_VELO := "VeloBocca_"
+## (comincia con "acqua": per il controllo di posizionamento è acqua, come le superfici, e non un ingombro)
+const NOME_VELO := "acqua_velo_bocca_"
 
 
 func _veli_bocche() -> void:

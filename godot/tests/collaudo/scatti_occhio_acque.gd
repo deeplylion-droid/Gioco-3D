@@ -95,6 +95,8 @@ func _run() -> void:
 	Input.action_press(&"crouch")
 	var sp := p.get_world_3d().direct_space_state
 	for m in torre.find_children("acqua*", "MeshInstance3D", true, false):
+		if String(m.name).begins_with(SalaInseguimento.NOME_VELO):
+			continue
 		var mi := m as MeshInstance3D
 		var box := mi.global_transform * mi.get_aabb()
 		var c := box.get_center().lerp(box.position, 0.35)

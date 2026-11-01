@@ -123,6 +123,8 @@ func _run() -> void:
 func _acque(radice: Node) -> Array:
 	var out := []
 	for m in radice.find_children("acqua*", "MeshInstance3D", true, false):
+		if String(m.name).begins_with(SalaInseguimento.NOME_VELO):
+			continue
 		var mi := m as MeshInstance3D
 		var box := mi.global_transform * mi.get_aabb()
 		out.append({"nome": String(mi.name), "pelo": box.end.y, "x0": box.position.x, "x1": box.end.x,

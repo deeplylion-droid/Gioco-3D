@@ -833,10 +833,10 @@ def versione_A(mats):
     # lampade industriali appese al soffitto sopra le macchine (cavo dal soffitto)
     luci['appese'] += [[51.5, 7.5, -16.5, True], [61.5, 17.5, -17.5, False], [70.5, 24.0, -18.5, True], [45.0, 22.5, -19.0, True],
                        [43.8, 28.5, -17.0, False], [61.0, 9.9, -23.5, True]]
-    # prop nell'acqua e sulle passerelle
+    # prop nell'acqua e sulle passerelle (la paperella galleggia nel bacino, 5 cm sotto il pelo: scende con lui)
     props = []
     for (nome, x, y, z, rot) in (('salvagente_nave', 47.0, 18.0, T - 0.05, 30), ('ciambella_gonfiabile', 68.0, 22.5, T - 0.1, 120),
-                                 ('paperella_gigante', 48.5, 4.0, T + 0.2, 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1] - (0.0101 if GIOCO else 0.0), 15),
+                                 ('paperella_gigante', 48.5, 4.0, T + 0.2 - max(BACINO_GIU - 0.1, 0.0), 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1] - (0.0101 if GIOCO else 0.0), 15),
                                  ('pallone_spiaggia', 72.0, 30.0, T - 0.15, 0)):
         props.append(P.prop(nome, (x, y, z), rot))
 
