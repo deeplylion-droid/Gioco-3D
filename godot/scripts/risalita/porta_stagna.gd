@@ -6,13 +6,17 @@ extends Node3D
 ## (EnigmaPozze, di enigmi) a enigma risolto, e con subito vero quando si riparte da un checkpoint o dal Continua dove è
 ## già risolto: lo stato lo salva l'enigma.
 ## Coordinate: l'origine è al centro del vano, sul pavimento, nel piano della faccia del muro dalla parte della stanza;
-## la stanza è verso +Z, il battente si apre verso -Z (fuori, sul pianerottolo della scala), sul cardine a -X.
+## la stanza è verso +Z, il battente si apre verso -Z (fuori, sul pianerottolo della scala), sul cardine a -X: l'asse
+## sta sul bordo del battente, davanti allo stipite (aperto, niente del battente gira dentro il telaio). Il telaio ha la
+## sua collisione: il vano libero è largo LARGO.
 
 ## Larghezza e altezza del vano; spessore del muro (il telaio lo riveste tutto).
 const LARGO := 0.9
 const ALTO := 2.1
 ## La fascia del telaio: il vano nel muro è largo LARGO + 2 FASCIA e alto ALTO + FASCIA (il telaio lo riempie).
 const FASCIA := 0.12
+## Lo stacco fra il battente chiuso e la faccia di fuori del telaio (lo riempiono le bandelle delle cerniere).
+const STACCO := 0.015
 const MURO := 0.2
 ## Secondi per aprirsi (il suono della porta del ponte dura 3,4 s) e gradi d'apertura.
 const DURATA := 2.6
@@ -98,17 +102,30 @@ func _costruisci() -> void:
 	for s in [-1.0, 1.0]:
 		_box(telaio, Vector3(fascia, ALTO + fascia, prof), Vector3(s * (LARGO + fascia) * 0.5, (ALTO + fascia) * 0.5, zc), grigio)
 	_box(telaio, Vector3(LARGO + 2.0 * fascia, fascia, prof), Vector3(0, ALTO + fascia * 0.5, zc), grigio)
-	# le bandelle delle cerniere, fisse sulla faccia di fuori del telaio: le cerniere del battente ci stanno contro
+	# le bandelle delle cerniere, fisse sulla faccia di fuori del telaio: i perni del battente ci stanno contro
 	for y in [0.35, ALTO - 0.35]:
-		# (spesse quanto lo stacco del battente, 5 mm: toccano il telaio e il battente senza entrarci)
-		_box(telaio, Vector3(0.08, 0.18, 0.005), Vector3(-LARGO * 0.5 - 0.04, y, -MURO - 0.0825), grigio)
+		_box(telaio, Vector3(0.08, 0.18, STACCO - 0.012), Vector3(-LARGO * 0.5 - 0.05, y, -MURO - 0.08 - (STACCO - 0.012) * 0.5), grigio)
+	# la collisione del telaio: i due stipiti e la traversa (la soglia si passa camminando)
+	var corpo := StaticBody3D.new()
+	corpo.name = "CollisioneTelaio"
+	telaio.add_child(corpo)
+	for d in [[Vector3(fascia, ALTO + fascia, prof), Vector3(-(LARGO + fascia) * 0.5, (ALTO + fascia) * 0.5, zc)],
+			[Vector3(fascia, ALTO + fascia, prof), Vector3((LARGO + fascia) * 0.5, (ALTO + fascia) * 0.5, zc)],
+			[Vector3(LARGO + 2.0 * fascia, fascia, prof), Vector3(0, ALTO + fascia * 0.5, zc)]]:
+		var fc := CollisionShape3D.new()
+		var bx := BoxShape3D.new()
+		bx.size = d[0]
+		fc.shape = bx
+		fc.position = d[1]
+		corpo.add_child(fc)
 	# la soglia rialzata di 6 cm, come sulle navi (si passa camminando)
 	_box(telaio, Vector3(LARGO, 0.06, prof), Vector3(0, 0.03, zc), grigio)
 	# il battente: sul cardine a -X, sulla faccia di fuori del muro (z -MURO), chiuso fra gli stipiti
 	_cardine = Node3D.new()
 	_cardine.name = "Cardine"
-	# (5 mm davanti alla faccia del telaio: il battente non lo tocca)
-	_cardine.position = Vector3(-LARGO * 0.5, 0, -MURO - 0.08 - 0.005)
+	# l'asse sul bordo del battente, 5 cm fuori dal vano (davanti allo stipite) e STACCO davanti alla faccia del telaio:
+	# girando, lo spigolo del battente passa a 3 mm dal telaio senza entrarci
+	_cardine.position = Vector3(-LARGO * 0.5 - 0.05, 0, -MURO - 0.08 - STACCO)
 	add_child(_cardine)
 	_battente = AnimatableBody3D.new()
 	_battente.name = "Battente"
@@ -117,22 +134,31 @@ func _costruisci() -> void:
 	var lb := LARGO + 0.1
 	var ab := ALTO + 0.06
 	var sp := 0.07
-	_box(_battente, Vector3(lb, ab, sp), Vector3(lb * 0.5 - 0.05, ab * 0.5 + 0.02, -sp * 0.5), scuro)
+	_box(_battente, Vector3(lb, ab, sp), Vector3(lb * 0.5, ab * 0.5 + 0.02, -sp * 0.5), scuro)
 	var f := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
 	bs.size = Vector3(lb, ab, sp)
 	f.shape = bs
-	f.position = Vector3(lb * 0.5 - 0.05, ab * 0.5 + 0.02, -sp * 0.5)
+	f.position = Vector3(lb * 0.5, ab * 0.5 + 0.02, -sp * 0.5)
 	_battente.add_child(f)
 	# le cerniere, le sei chiusure a leva sul bordo e il volantino al centro, dalla parte della stanza e di fuori
-	# (le cerniere dalla parte di fuori, davanti al telaio)
+	# i perni delle cerniere sull'asse (raggio 12 mm: girando restano dove sono) e le ali avvitate al battente
 	for y in [0.35, ALTO - 0.35]:
-		_box(_battente, Vector3(0.06, 0.18, 0.08), Vector3(-0.05, y, -sp * 0.5 - 0.02), grigio)
+		var perno := MeshInstance3D.new()
+		var cp := CylinderMesh.new()
+		cp.top_radius = 0.012
+		cp.bottom_radius = 0.012
+		cp.height = 0.18
+		perno.mesh = cp
+		perno.material_override = grigio
+		perno.position = Vector3(0, y, 0)
+		_battente.add_child(perno)
+		_box(_battente, Vector3(0.1, 0.16, 0.012), Vector3(0.062, y, -sp - 0.006), grigio)
 	for faccia: float in [1.0, -1.0]:
 		var zf := (0.0 if faccia > 0.0 else -sp) + faccia * 0.015
 		# (le chiusure dentro il vano: a 6 cm dallo stipite)
 		for y in [0.3, ALTO * 0.5, ALTO - 0.3]:
-			_box(_battente, Vector3(0.14, 0.04, 0.03), Vector3(lb - 0.2, y, zf), grigio)
+			_box(_battente, Vector3(0.14, 0.04, 0.03), Vector3(lb - 0.15, y, zf), grigio)
 		var v := MeshInstance3D.new()
 		var t := TorusMesh.new()
 		t.inner_radius = 0.15
@@ -142,7 +168,7 @@ func _costruisci() -> void:
 		v.mesh = t
 		v.material_override = rosso
 		v.rotation_degrees.x = 90.0
-		v.position = Vector3(lb * 0.5 - 0.05, ALTO * 0.55, zf + faccia * 0.03)
+		v.position = Vector3(lb * 0.5, ALTO * 0.55, zf + faccia * 0.03)
 		_battente.add_child(v)
 		for a: float in [0.0, 60.0, 120.0]:
 			var r := _box(_battente, Vector3(0.33, 0.02, 0.02), v.position, rosso)
