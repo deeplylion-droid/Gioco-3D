@@ -27,6 +27,11 @@ const MINIMA := 0.002   # le scatole più piccole (m³) non contano
 const STRATI := 3       # le facce in su per colonna (il pavimento sotto una staffa, sotto un tubo)
 const CELLA_OGGETTI := 0.75   # le celle in cui si dividono le mesh degli oggetti (m)
 const FORO := 0.75      # il raggio del foro nel pavimento dove lei sale (m)
+## Le scatole messe a mano (coordinate della sala) dove la struttura ha pezzi tondi e sottili che i raggi lungo gli assi
+## non prendono: alla grata il palo tondo (8 facce, 6 cm) accanto al pozzetto, da -33 fin sopra -26 (con l'acqua del
+## bacino più bassa, lavoro/vasche-sotto, la pelle di un tentacolo ci entrava di 5 cm: test_morbidezza_inseguimento a 60
+## fps; misurato coi raggi dentro e fuori, 1 novembre).
+const A_MANO := {"grata": [[51.495, -33.0, -7.46, 51.555, -26.0, -7.39]]}
 
 var spazio: PhysicsDirectSpaceState3D
 
@@ -97,6 +102,8 @@ func _run() -> void:
 			var b := inv * s.end
 			lista.append([snappedf(minf(a.x, b.x), 0.001), snappedf(minf(a.y, b.y), 0.001), snappedf(minf(a.z, b.z), 0.001),
 					snappedf(maxf(a.x, b.x), 0.001), snappedf(maxf(a.y, b.y), 0.001), snappedf(maxf(a.z, b.z), 0.001)])
+		for sc in A_MANO.get(nome, []):
+			lista.append(sc)
 		out[nome] = lista
 		# gli oggetti tondi vicini (le pompe, i tubi): la loro mesh in pezzi convessi, coi piani già fatti
 		var cv := _convessi(sala, c, raggio, inv)
