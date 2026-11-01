@@ -54,9 +54,10 @@ const MURO_PIAZZA := 3.6
 const Z_PIAZZA_NORD := -22.2
 ## Dove finisce la fila delle transenne, davanti alla cabina dell'imbarco.
 const FINE_FILA := Vector3(-VASCA - 3.2, 0, -VASCA - 3.4)
-## Le lampade calde del corridoio delle pile, dall'ingresso all'imbarco, al 60% (riscontro dell'utente sulla 0.3.16: "la
-## zona prima di prendere il salvagente è troppo luminosa"): le tre appese alle pile e le due del muro nord.
-const LUCE_CORRIDOIO := 0.6
+## Le lampade calde del corridoio delle pile, dall'ingresso all'imbarco: le tre appese alle pile e le due del muro nord.
+## Al 20% di com'erano nella 0.3.16, luce e globo, come le lampade tonde del tunnel (riscontro dell'utente sulla 0.3.19:
+## "ERANO AL 20 QUELLE"; prima, dalla 0.3.17, al 60% e col globo pieno).
+const LUCE_CORRIDOIO := 0.2
 ## Velocità dei rami sbagliati (m/s).
 const VELOCITA_RITORNO := 3.0
 ## Lo scivolo in fondo ai rami sbagliati (scelta B dell'utente, 22 ottobre): negli ultimi SCIVOLO_L metri
@@ -84,6 +85,8 @@ var _collisioni: StaticBody3D
 var _barriere: StaticBody3D
 var _poligoni_acqua_cache: Array = []
 var _mat_globo: StandardMaterial3D
+## Il globo delle lampade del corridoio delle pile, acceso quanto la loro luce (LUCE_CORRIDOIO).
+var _mat_globo_corridoio: StandardMaterial3D
 var _mat_faro: StandardMaterial3D
 ## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un po' per fotogramma.
 var costruzione_a_pezzi := false
@@ -878,9 +881,17 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0, roccia: Node3D =
 			g.material_override = mr
 		return
 	if g:
-		g.material_override = _mat_globo
+		# (le lampade del corridoio delle pile sono le sole così basse: al più 3 × LUCE_CORRIDOIO)
+		g.material_override = _globo_corridoio() if energia <= 3.0 * LUCE_CORRIDOIO + 0.001 else _mat_globo
 	var dir := Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1)
 	_luce(pos + dir * 0.35, Color(1.0, 0.76, 0.5), energia, 11.0)
+
+
+func _globo_corridoio() -> StandardMaterial3D:
+	if _mat_globo_corridoio == null:
+		_mat_globo_corridoio = _mat_globo.duplicate() as StandardMaterial3D
+		_mat_globo_corridoio.emission_energy_multiplier = _mat_globo.emission_energy_multiplier * LUCE_CORRIDOIO
+	return _mat_globo_corridoio
 
 
 ## Lampada d'emergenza rossa (modello Meshy + luce), che guarda verso [param verso]: [param pos] è sulla faccia
