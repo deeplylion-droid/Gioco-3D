@@ -55,6 +55,12 @@ jobs:
           bash tools/godot_ci_setup.sh
           echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
 
+      - name: Spazio sul disco (l'import e l'export riempivano il runner su ubuntu-26.04)
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          df -h / | tail -1
+
       - name: Importa il progetto (come la build)
         run: |
           godot --headless --path godot --import
@@ -183,6 +189,12 @@ jobs:
         run: |
           bash tools/godot_ci_setup.sh
           echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Spazio sul disco (l'import e l'export riempivano il runner su ubuntu-26.04)
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          df -h / | tail -1
 
       - name: Importa il progetto (come la build)
         run: |
