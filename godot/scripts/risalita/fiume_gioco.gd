@@ -2182,8 +2182,8 @@ func _posa_sciolta(rng: RandomNumberGenerator, c: Vector2, d: Vector2, n: Vector
 				if not due:
 					giro = rng.randf_range(-0.12, 0.12)
 				elif solo:
-					giro = rng.randf_range(-0.25, 0.25)
-					z *= 0.5
+					# (tutto sopra quello sotto: messo a metà fra i due sotto e girato, il controllo lo dava staccato)
+					giro = rng.randf_range(-0.25, 0.25) * 0.4
 			var ts := Transform3D(base * Basis(Vector3.UP, giro), Vector3(c.x, y, c.y) + base * Vector3(x, 0, z))
 			piano.append(ts)
 			for sx in [-1.0, 1.0]:
