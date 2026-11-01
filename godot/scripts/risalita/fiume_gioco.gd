@@ -58,6 +58,10 @@ const FINE_FILA := Vector3(-VASCA - 3.2, 0, -VASCA - 3.4)
 ## Al 20% di com'erano nella 0.3.16, luce e globo, come le lampade tonde del tunnel (riscontro dell'utente sulla 0.3.19:
 ## "ERANO AL 20 QUELLE"; prima, dalla 0.3.17, al 60% e col globo pieno).
 const LUCE_CORRIDOIO := 0.2
+## Tutte le altre lampade a gabbia del fiume (16 sulla roccia lungo l'anello, quella dell'approdo e quella sul muro
+## della piazza) al 20% di com'erano, luce e globo, come il corridoio e il tunnel (riscontro dell'utente sulla 0.3.19:
+## "A 20 anche quelle"). Le calde scendono ancora al 40% con le luci bianche (VarianteLuci), come prima.
+const LAMPADE_TONDE := 0.2
 ## Velocità dei rami sbagliati (m/s).
 const VELOCITA_RITORNO := 3.0
 ## Lo scivolo in fondo ai rami sbagliati (scelta B dell'utente, 22 ottobre): negli ultimi SCIVOLO_L metri
@@ -85,8 +89,6 @@ var _collisioni: StaticBody3D
 var _barriere: StaticBody3D
 var _poligoni_acqua_cache: Array = []
 var _mat_globo: StandardMaterial3D
-## Il globo delle lampade del corridoio delle pile, acceso quanto la loro luce (LUCE_CORRIDOIO).
-var _mat_globo_corridoio: StandardMaterial3D
 var _mat_faro: StandardMaterial3D
 ## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un po' per fotogramma.
 var costruzione_a_pezzi := false
@@ -131,7 +133,8 @@ func _costruisci() -> void:
 	_mat_globo.albedo_color = Color(1.0, 0.85, 0.55)
 	_mat_globo.emission_enabled = true
 	_mat_globo.emission = Color(1.0, 0.7, 0.35)
-	_mat_globo.emission_energy_multiplier = 3.0
+	# (al 20%, come la luce: LAMPADE_TONDE, e LUCE_CORRIDOIO nel corridoio, che vale lo stesso)
+	_mat_globo.emission_energy_multiplier = 3.0 * LAMPADE_TONDE
 	_mat_faro = StandardMaterial3D.new()
 	_mat_faro.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_mat_faro.albedo_color = Color(0.75, 0.95, 1.0) * 0.45
@@ -881,17 +884,12 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0, roccia: Node3D =
 			g.material_override = mr
 		return
 	if g:
-		# (le lampade del corridoio delle pile sono le sole così basse: al più 3 × LUCE_CORRIDOIO)
-		g.material_override = _globo_corridoio() if energia <= 3.0 * LUCE_CORRIDOIO + 0.001 else _mat_globo
+		g.material_override = _mat_globo
+	# le lampade del corridoio delle pile arrivano già abbassate (al più 3 × LUCE_CORRIDOIO); le altre al 20% qui
+	if energia > 3.0 * LUCE_CORRIDOIO + 0.001:
+		energia *= LAMPADE_TONDE
 	var dir := Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1)
 	_luce(pos + dir * 0.35, Color(1.0, 0.76, 0.5), energia, 11.0)
-
-
-func _globo_corridoio() -> StandardMaterial3D:
-	if _mat_globo_corridoio == null:
-		_mat_globo_corridoio = _mat_globo.duplicate() as StandardMaterial3D
-		_mat_globo_corridoio.emission_energy_multiplier = _mat_globo.emission_energy_multiplier * LUCE_CORRIDOIO
-	return _mat_globo_corridoio
 
 
 ## Lampada d'emergenza rossa (modello Meshy + luce), che guarda verso [param verso]: [param pos] è sulla faccia

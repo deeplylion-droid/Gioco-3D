@@ -19,3 +19,20 @@ Le altre lampade a gabbia col globo fuori dal tunnel (gioco vero, `godot/tests/c
 - fiume, sul muro della piazza: 1, luce 2,5, globo 3,0;
 - fiume, rotte (spente): 5;
 - sala, lampada della valvola dell'enigma degli acquari: 1, luce 6,0 (ffdba8), globo 8,0.
+
+## Le altre 18 lampade a gabbia del fiume al 20% ("A 20 anche quelle")
+
+LAMPADE_TONDE = 0,2 in _lampada_calda (16 sull'anello, approdo, piazza), globo comune a 0,6. Gioco vero: 21 lampade a 0,60 e 2 a 0,50, tutte col globo 0,60; le 5 rotte e la valvola degli acquari (6,0, globo 8,0) com'erano. Media / mediana / 10%:
+
+| punto | prima | dopo |
+|---|---|---|
+| piazza | 20.0 / 16.0 / 5.9 | 19.9 / 16.0 / 5.9 |
+| tiki | 16.8 / 16.4 / 4.2 | 8.9 / 8.3 / 3.2 |
+| bivio1 | 17.2 / 13.1 / 4.7 | 4.2 / 1.9 / 0.1 |
+| ramo | 29.5 / 25.9 / 11.8 | 14.5 / 11.5 / 5.5 |
+| bivio3 | 24.4 / 18.9 / 3.9 | 10.8 / 5.1 / 0.1 |
+| sponda_colonna | 25.5 / 24.7 / 10.9 | 11.3 / 9.8 / 2.2 |
+| approdo | 14.8 / 9.9 / 1.4 | 8.6 / 5.9 / 1.1 |
+| porta_approdo | 27.3 / 17.4 / 7.3 | 16.4 / 7.8 / 3.2 |
+
+Foglio: foglio_anello_20.jpg.
