@@ -31,6 +31,15 @@ jobs:
         run: |
           if [ -f godot/project.godot ]; then echo "presente=si" >> "$GITHUB_OUTPUT"; else echo "presente=no" >> "$GITHUB_OUTPUT"; echo "Nessun godot/project.godot su questo branch: salto la build."; fi
 
+      - name: Spazio sul disco (l'esportazione scrive circa 11 GB; il 1° novembre un runner ubuntu-26.04 è rimasto con 2 MB liberi a metà del pacchetto Windows)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          df -h / | tail -1
+          # dotnet, android, ghc, CodeQL e le immagini docker: la build non li usa (circa 20 GB, come nella Prova su Vulkan)
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          sudo docker image prune --all --force > /dev/null 2>&1 || true
+          df -h / | tail -1
+
       - name: Cache di Godot e dei template
         if: steps.progetto.outputs.presente == 'si'
         uses: actions/cache@v4
@@ -486,6 +495,7 @@ jobs:
           python3 tools/verifica_pck.py build/linux/JillyJubilee.pck 0
           python3 tools/verifica_pck.py build/windows_unico/JillyJubilee.exe 0
           ls -la build
+          df -h / | tail -1
 
       - name: Carica la build Windows
         if: steps.progetto.outputs.presente == 'si'
