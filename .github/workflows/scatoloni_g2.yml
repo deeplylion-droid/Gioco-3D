@@ -1,0 +1,81 @@
+# Indagine di grafica-2 (1 novembre, riscontro dell'utente sulla 0.3.19: "la parte con gli scatoloni è nuovamente più
+# luminosa"): il corridoio delle pile del fiume dopo il caricamento vero, renderizzato (Vulkan software, swap da 24 GB),
+# su 0.3.18 (531e7bfc) e 0.3.19 (9e1c2638), con la partenza F9 della risalita e, per confronto, quella del fiume.
+# Solo per l'indagine: il branch lavoro/scatoloni-luce non va unito.
+name: Scatoloni (indagine)
+
+on:
+  push:
+    branches: ["lavoro/scatoloni-luce"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+
+jobs:
+  percorso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        versione: ["531e7bfc", "9e1c2638"]
+        partenza: ["risalita", "fiume"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: indagine
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.versione }}
+          path: gioco
+      - name: Cache di Godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_BIN_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+      - name: Scarica Godot
+        run: |
+          cd gioco && bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+      - name: Importa (come la build)
+        run: |
+          cp indagine/godot/tests/collaudo/scatoloni_percorso_g2.gd gioco/godot/tests/
+          cd gioco
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+      - name: Swap da 24 GB, Vulkan software e Xvfb
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup || true
+          sudo swapoff -a || true
+          (sudo fallocate -l 24G /swapfile_prova || sudo fallocate -l 16G /swapfile_prova) && sudo chmod 600 /swapfile_prova
+          sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
+          free -m
+      - name: Corridoio delle pile dopo il caricamento (${{ matrix.versione }}, partenza ${{ matrix.partenza }})
+        run: |
+          set +e
+          cd gioco
+          PARTENZA=${{ matrix.partenza }} timeout 260m xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot \
+            --rendering-driver vulkan --resolution 1280x720 --script res://tests/run.gd -- \
+            res://tests/scatoloni_percorso_g2.gd "$GITHUB_WORKSPACE/scatti" > "$GITHUB_WORKSPACE/percorso.log" 2>&1
+          echo "codice $?"
+          grep -aE 'PERCORSO|SCRIPT ERROR|ERROR: BUG' "$GITHUB_WORKSPACE/percorso.log" | head -40
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scatoloni-${{ matrix.versione }}-${{ matrix.partenza }}
+          path: |
+            scatti
+            percorso.log
+          retention-days: 7
