@@ -2180,7 +2180,9 @@ func _posa_sciolta(rng: RandomNumberGenerator, c: Vector2, d: Vector2, n: Vector
 			if k >= 2:
 				x = rng.randf_range(-0.04, 0.04)
 				if not due:
-					giro = rng.randf_range(-0.12, 0.12)
+					# (appena: due scatoloni uguali girati fra loro hanno tutti gli spigoli fuori da quello dell'altro, e il
+					# controllo non vede l'appoggio; il giro lo dà tutta la pila)
+					giro = rng.randf_range(-0.12, 0.12) * 0.1
 				elif solo:
 					# (tutto sopra quello sotto: messo a metà fra i due sotto e girato, il controllo lo dava staccato)
 					giro = rng.randf_range(-0.25, 0.25) * 0.4
