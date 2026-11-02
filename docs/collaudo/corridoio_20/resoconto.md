@@ -42,3 +42,16 @@ Lo strumento è `godot/tests/collaudo/collaudo_fiume_20.gd`, sul branch `lavoro/
 - **Corridoio delle pile: la luce verde della ciambella si vede da ogni punto.** In tutti gli scatti in avanti si vede, in fondo, la luce verde della ciambella. La strada si legge bene all'inizio, vicino all'ingresso illuminato, e vicino alle lampade sulle pile. In mezzo la fila di transenne quasi non si vede (`corridoio_2` e `corridoio_3`, mediana sotto 1): si va dritti verso il verde.
 
 I miei valori sono più bassi di quelli di `docs/report/corridoio_20/misure.md`: lì c'erano la GI e il preset alto, qui no. Il confronto vale fra scatti presi allo stesso modo.
+
+## Ricontrollo delle correzioni (07dabc0c, 2 novembre)
+
+Ho controllato solo le due correzioni di ambienti-1. Foglio: `fogli/ricontrollo_07dabc0c.jpg`; gli scatti con la torcia sono quelli del tappo, della fuga e delle pile vicino all'ingresso.
+
+| Prova | Esito |
+|---|---|
+| Fessura fra i muri 3 e 4 | chiusa. Dalla fine della fila, vicino alla tettoia (-6,5; -6,7), nessun raggio passa più (prima ne passava uno a ogni altezza), e negli scatti a 0,6, 1,6 e 2,8 m non si vede più il buio |
+| Il tappo in (-9,55; -5,0) | una pila sciolta di traverso: 16 scatole, alta 3,18 m, con le casse nei due piani di sotto. È appoggiata (nessuna scatola staccata) e non tocca la roccia, la tettoia né altro (prova con 1 cm di margine) |
+| Fuga del bambino col cubo | nessuna scatola delle pile nel corridoio (0,42 m per lato) dalla porta alla rientranza. `test_bambini_sfuggita`: 53 ok, tratto 3 libero |
+| Pile nuove vicino all'ingresso | appoggiate e senza compenetrazioni, come tutte le pile (0 staccate, 0 affondate, 0 compenetrazioni); non toccano muri, transenne né l'anta |
+| La rientranza dalla strada | dalla soglia della porta e nei primi 2 m, girandosi a sinistra, si vede tutta: un angolo vuoto di circa 2 m, coi muri illuminati di rosso dalla lampada d'emergenza. Non è un buco nel buio, sembra un angolo del capannone senza scatoloni. Da 4 m in poi la coprono la prima colonna di sinistra e l'anta: ne resta una striscia di muro rosso. Anche i raggi la trovano dalla soglia: l'anta aperta non ha collisione, ma negli scatti non la copre da lì. Da decidere se va bene così |
+| Il resto | uguale al primo giro: lampade, buchi del muro 2 (la roccia della riva) e del muro nord (la nicchia della lampada); 0 righe "ERROR: BUG," |
