@@ -144,8 +144,10 @@ func _raccogli() -> void:
 			# il bancale soltanto: gli scatoloni sono a parte
 			ab = AABB(Vector3(-0.6, 0.0, -0.5), Vector3(1.2, F.PILA_BANCALE, 1.0))
 		var xf0 := fiume.global_transform.affine_inverse() * (c as Node3D).global_transform
-		for i in mm.instance_count:
-			var t := xf0 * mm.get_instance_transform(i)
+		# (le trasformazioni dal meta, come il controllo di posizionamento: senza renderer il MultiMesh non le tiene)
+		var tt: Array = c.get_meta(&"trasformazioni", [])
+		for i in tt.size():
+			var t := xf0 * (tt[i] as Transform3D)
 			var centro := t * ab.get_center()
 			var assi := Basis(t.basis.x.normalized() * ab.size.x * 0.5, t.basis.y.normalized() * ab.size.y * 0.5,
 					t.basis.z.normalized() * ab.size.z * 0.5)
@@ -279,11 +281,11 @@ func _numeri() -> void:
 			male.append([s[0], s[1], dove, toccano, gaps.map(func(g): return snappedf(g, 0.001))])
 	print("NUMERI: appoggi: %d staccati (più di %d cm), %d appoggiati male (meno di 3 punti su 5 e il centro staccato), %d affondati in quello sotto (più di %d cm)" % [
 			staccati.size(), roundi(STACCO * 100), male.size(), affondati.size(), roundi(STACCO * 100)])
-	for x in affondati:
+	for x in affondati.slice(0, 40):
 		print("NUMERI:   affondato %s #%d in %s: %.1f cm dentro quello che ha sotto" % [x[0], x[1], x[2], x[3] * 100.0])
-	for x in staccati:
+	for x in staccati.slice(0, 60):
 		print("NUMERI:   staccato %s #%d in %s: %.1f cm sopra quello che ha sotto" % [x[0], x[1], x[2], x[3] * 100.0])
-	for x in male:
+	for x in male.slice(0, 60):
 		print("NUMERI:   appoggiato male %s #%d in %s: %d punti su 5 (stacchi %s)" % x)
 	# 2. le compenetrazioni
 	var dentro := []
