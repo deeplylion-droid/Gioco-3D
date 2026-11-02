@@ -68,6 +68,10 @@ const PIEDE_A_TERRA := 0.11
 @export var spostamento_occhio := 0.1
 ## Ogni quanti secondi inclina la testa mentre osserva (0 = mai).
 @export var inclina_ogni := 8.0
+## Quanto in fretta la testa va dietro al giocatore (1/s: più basso, più ritardo).
+@export var ritardo_testa := 4.0
+## Quanto la testa si inclina di lato mentre si gira verso il giocatore (per grado di giro; 0: niente).
+@export var inclinazione_testa := 0.0
 
 @export_group("Cammina")
 @export var percorso: Array[Node3D] = []
@@ -83,6 +87,11 @@ const PIEDE_A_TERRA := 0.11
 ## Correndo: accelerazione (m/s²) e quanto gira al massimo (gradi al secondo). Più svelto dove scappa in una
 ## corsia stretta col giocatore che gli corre dietro (l'agnellino della scala).
 @export var accel_corsa := 4.5
+## Partendo di corsa il corpo accelera di continuo, coi passi della corsa alla sua velocità, senza tenere fermo il piede a
+## terra: col piede tenuto fermo il corpo andava a meno di mezzo metro al secondo mentre la velocità saliva da sola, e
+## lasciato il piede passava di colpo da 0,2 a 2 m/s (lo scatto da fermo alla corsa piena; il bambino col cubo, scelta A
+## dell'utente del 1° novembre).
+@export var partenza_continua := false
 @export var giro_corsa := 260.0
 ## Per voltarsi del tutto (chi lo guardava è dietro di lui) prima si gira sul posto coi passi della camminata, poi
 ## parte. Falso: si gira correndo, mentre parte (l'agnellino della scala C2, com'era nella 0.3.15: all'utente piaceva
@@ -124,6 +133,9 @@ var _perno_y := 0.0
 var _svolta := false
 var _player_anim: Array[AnimationPlayer] = []
 var _sguardi: Array[LookAtModifier3D] = []
+var _inclinazioni: Array[InclinaTesta] = []
+## Se c'è, la testa guarda lì invece che il giocatore (in OSSERVA): l'occhiata verso dove scapperà, prima di partire.
+var guarda_qui := Vector3.INF
 var _occhio_mat: StandardMaterial3D
 var _occhio_testa: Array = []          # [Skeleton3D, indice osso Head] del modello rivelato
 var _bersaglio: Marker3D
@@ -211,6 +223,18 @@ func _prepara_modello(m: Node3D) -> void:
 	sguardo.influence = 0.0
 	sk.add_child(sguardo)
 	_sguardi.append(sguardo)
+	if inclinazione_testa > 0.0:
+		# (dopo lo sguardo: inclina la testa che si è girata)
+		var inc := InclinaTesta.new()
+		inc.name = "InclinaTesta"
+		inc.osso = testa
+		inc.avanti_osso = inv * global_basis.z.normalized()
+		inc.su_corpo = (sk.global_basis.inverse() * global_basis.y).normalized()
+		inc.avanti_corpo = (sk.global_basis.inverse() * global_basis.z).normalized()
+		inc.quanto = inclinazione_testa
+		inc.influence = 0.0
+		sk.add_child(inc)
+		_inclinazioni.append(inc)
 	# L'occhio dell'agnellino (guscio a parte, attaccato all'osso della testa).
 	var occhio := m.find_child("occhio_bulbo*", true, false) as MeshInstance3D
 	if occhio == null:
@@ -292,7 +316,9 @@ func scappa_ora() -> void:
 			via = global_basis.z
 		_punti.append(global_position + via.normalized() * distanza_fuga_libera)
 	_n_punti_fuga = _punti.size()
-	_anima(&"corsa", 0.3)
+	# (con la partenza continua la corsa prende subito il posto della posa di prima: in una fusione lunga il piede a
+	# terra della posa di prima veniva trascinato in avanti dal corpo che accelera)
+	_anima(&"corsa", 0.1 if partenza_continua else 0.3)
 	_passo_animazione(vel_corsa_anim)
 	scappa.emit()
 
@@ -446,12 +472,19 @@ func punto_testa() -> Vector3:
 
 func _aggiorna_sguardo(delta: float, p: Player) -> void:
 	var vuole := p != null and segue_con_la_testa and modalita == Modalita.OSSERVA and not _reazione_in_corso
-	if vuole:
+	if guarda_qui != Vector3.INF and modalita == Modalita.OSSERVA:
+		# (un'occhiata veloce verso dove scapperà)
+		vuole = true
+		_bersaglio.global_position = _bersaglio.global_position.lerp(guarda_qui, 1.0 - exp(-7.0 * delta))
+	elif vuole:
 		var target := p.get_eye_position()
-		_bersaglio.global_position = _bersaglio.global_position.lerp(target, 1.0 - exp(-4.0 * delta))
+		# (la testa ti segue con un po' di ritardo: non è un mirino)
+		_bersaglio.global_position = _bersaglio.global_position.lerp(target, 1.0 - exp(-ritardo_testa * delta))
 	_influenza = move_toward(_influenza, quota_testa if vuole else 0.0, delta / 0.8)
 	for s in _sguardi:
 		s.influence = _influenza
+	for m in _inclinazioni:
+		m.influence = _influenza
 	_aggiorna_occhio(p)
 
 
@@ -540,7 +573,7 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 	# (girandosi correndo, finché la girata non è quasi finita: niente perno, si va dritti verso il punto)
 	var girando := not girata_sul_posto and errore > deg_to_rad(30.0)
 	if not girando and (_vel < vel_anim * 0.8 or modalita == Modalita.CAMMINA) and absf(rotation.x) < 0.01 \
-			and _blocca_piede():
+			and not (partenza_continua and modalita == Modalita.SCAPPA) and _blocca_piede():
 		_passo_animazione(vel_anim)
 		return false
 	_perno_osso = -1
@@ -642,7 +675,10 @@ func _curva_stretta() -> bool:
 
 ## L'animazione di camminata o corsa alla velocità del corpo (i piedi non scivolano); da fermo un passo minimo.
 func _passo_animazione(vel_anim: float) -> void:
-	var scala := clampf(_vel / maxf(vel_anim, 0.01), PASSO_MINIMO, 1.6)
+	# (partendo di corsa senza tenere fermo il piede, i passi vanno alla velocità del corpo anche piano piano: col passo
+	# minimo i piedi scivolavano nei primi fotogrammi)
+	var minimo := 0.06 if partenza_continua and modalita == Modalita.SCAPPA and not _svolta else PASSO_MINIMO
+	var scala := clampf(_vel / maxf(vel_anim, 0.01), minimo, 1.6)
 	for ap in _player_anim:
 		ap.speed_scale = scala
 

@@ -46,6 +46,15 @@ enum Stato { ATTESA, GUARDA, SCAPPA, FINITO }
 @export var angolo_visto := 14.0
 ## Fuori vista sparisce solo dopo aver passato tanti punti di [member via] (vedi [member Bambino.sparisce_dopo]).
 @export var sparisce_dopo := 0
+## Prima di scappare, per tanti secondi guarda verso dove andrà (il secondo punto di [member via]): un attimo di
+## preparazione, non lo scatto da fermo alla corsa (0: parte subito).
+@export var preparazione := 0.0
+## Vedi [member Bambino.partenza_continua].
+@export var partenza_continua := false
+## La testa che ti segue: il ritardo e l'inclinazione di lato (vedi [member Bambino.ritardo_testa] e
+## [member Bambino.inclinazione_testa]).
+@export var ritardo_testa := 4.0
+@export var inclinazione_testa := 0.0
 
 var stato := Stato.ATTESA
 var bambino: Bambino
@@ -68,6 +77,9 @@ func _ready() -> void:
 	bambino.reazione = Bambino.Reazione.NESSUNA
 	bambino.velocita_corsa = velocita_corsa
 	bambino.inclina_ogni = 3.5
+	bambino.partenza_continua = partenza_continua
+	bambino.ritardo_testa = ritardo_testa
+	bambino.inclinazione_testa = inclinazione_testa
 	bambino.gira_il_corpo = false        # sta girato com'è, ti segue con la testa
 	# (top_level: Bambino si gira e cammina in coordinate del mondo, e questo nodo può essere girato)
 	bambino.top_level = true
@@ -104,9 +116,12 @@ func _process(delta: float) -> void:
 				_visto += delta
 			var vicino := global_position.distance_to(p.global_position) < distanza_fuga
 			if _fuga_tra < 0.0 and (_visto >= tempo_visto or vicino):
-				_fuga_tra = 0.0 if vicino else attesa_prima_di_scappare
+				_fuga_tra = preparazione if vicino else attesa_prima_di_scappare
 			if _fuga_tra >= 0.0:
 				_fuga_tra -= delta
+				if _fuga_tra <= preparazione and preparazione > 0.0 and bambino.guarda_qui == Vector3.INF and not _punti.is_empty():
+					# un'occhiata verso dove andrà, poi parte
+					bambino.guarda_qui = _punti[mini(1, _punti.size() - 1)].global_position + Vector3.UP * 0.9
 				if _fuga_tra <= 0.0:
 					_scappa()
 			elif _t > tempo_max and not bambino.visibile_da(p):
@@ -155,6 +170,7 @@ func _guardato(p: Player) -> bool:
 
 func _scappa() -> void:
 	stato = Stato.SCAPPA
+	bambino.guarda_qui = Vector3.INF
 	bambino.scappa_ora()
 	scappato.emit()
 
@@ -181,7 +197,9 @@ func load_state(s: Dictionary) -> void:
 	else:
 		# ripartendo da prima: di nuovo in attesa, nascosto
 		stato = Stato.ATTESA
+		_fuga_tra = -1.0
 		if bambino:
+			bambino.guarda_qui = Vector3.INF
 			bambino.modalita = Bambino.Modalita.SPARITO
 			bambino.visible = false
 			bambino.process_mode = Node.PROCESS_MODE_DISABLED

@@ -5,8 +5,10 @@ come Mixamo: Hips, Spine02, Spine01, Spine, neck, Head, LeftArm, ...), salvato i
 assets_src/bambini/rig/<nome>.glb, e dalle sue animazioni di base con il solo scheletro
 (<nome>_walking_armature.glb, <nome>_running_armature.glb). Crea queste azioni:
 
-  fermo          curvo, respiro lento e piccolo ondeggiare (ciclo di 8 s)
-  inclina_testa  la testa si piega piano da una parte, resta lì e torna (ciclo di 6 s)
+  fermo          curvo, respiro lento e piccolo ondeggiare (ciclo di 8 s); con --vivo il peso passa da un piede
+                 all'altro (le anche di lato, il bacino che si inclina, il busto che compensa: i piedi restano a
+                 terra, con un IK a due ossa fatto a mano), il respiro più ampio e piccoli movimenti della testa
+  inclina_testa  la testa si piega piano da una parte, resta lì e torna (ciclo di 6 s; con --vivo anche il peso)
   cammina        la camminata di Meshy rallentata, curva e un po' storta (testa piegata,
                  una spalla più bassa, braccia molli)
   corsa          la corsa di Meshy, curva e con la testa bassa, per scappare
@@ -34,6 +36,9 @@ FPS = 24
 ap = argparse.ArgumentParser()
 ap.add_argument('nome'); ap.add_argument('uscita')
 ap.add_argument('--occhio', default='', help="GLB da cui prendere il guscio dell'occhio")
+ap.add_argument('--vivo', action='store_true',
+                help="fermo e inclina_testa vivi (il bambino col cubo, scelta A dell'utente del 1 novembre: "
+                     "\"A ma animalo meglio\")")
 A = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 
 
@@ -187,13 +192,97 @@ def unisci(*pose):
     return out
 
 
+# ---------------------------------------------------------------- il peso da un piede all'altro (--vivo)
+B_HIPS = arm.data.bones['Hips']
+# dallo spazio del mondo allo spazio di riposo dell'osso Hips (la location della posa è lì, scala dell'armatura compresa)
+M_HIPS = (arm.matrix_world @ B_HIPS.matrix_local).to_3x3().inverted()
+
+
+def peso(t, periodo):
+    """Dove sta il peso, da -1 (piede destro) a 1 (sinistro): resta su un piede e passa all'altro senza fretta."""
+    v = math.sin(2 * math.pi * t / periodo)
+    return math.tanh(2.0 * v) / math.tanh(2.0)
+
+
+def posa_viva(t, periodo, respiro):
+    """Il peso e il respiro più ampio, sopra posa_curva: rotazioni nel mondo, e lo spostamento delle anche (m)."""
+    w = peso(t, periodo)
+    r = onda(t, respiro)
+    # (le frequenze sono multipli di quella del ciclo: la clip si chiude)
+    micro = onda(t, periodo / 3, 0.1)
+    micro2 = onda(t, periodo / 5, 0.35)
+    rot = {
+        # il bacino scende dalla parte del piede libero, il busto e la testa compensano
+        'Hips': [(Y, -3.0 * w)],
+        'Spine02': [(Y, 1.2 * w)], 'Spine01': [(Y, 1.0 * w), (X, 0.8 * r)], 'Spine': [(Y, 0.8 * w), (X, 0.9 * r)],
+        'neck': [(Y, 0.6 * w), (X, 1.2 * micro)],
+        'Head': [(X, 1.5 * micro2), (Z, 2.0 * micro)],
+        'LeftShoulder': [(Y, -0.9 * r)], 'RightShoulder': [(Y, 0.9 * r)],
+        'LeftArm': [(X, 1.5 * w)], 'RightArm': [(X, -1.5 * w)],
+    }
+    spost = Vector((0.025 * w, 0.0, -0.008 * abs(w) - 0.004 * (0.5 + 0.5 * r)))
+    return rot, spost
+
+
+def metti_anche(spost):
+    arm.pose.bones['Hips'].location = M_HIPS @ spost
+
+
+# le caviglie e l'orientamento dei piedi nella posa di riposo (spazio dell'armatura): dove restano mentre il peso passa
+PIEDI_RIPOSO = {lato: arm.data.bones[f'{lato}Foot'].matrix_local.copy() for lato in ('Left', 'Right')}
+
+
+def _ruota(pb, q, perno):
+    """Ruota l'osso (spazio dell'armatura) di q intorno a perno; i figli seguono."""
+    m = Matrix.Translation(perno) @ q.to_matrix().to_4x4() @ Matrix.Translation(-perno) @ pb.matrix
+    pb.matrix = m
+    bpy.context.view_layer.update()
+
+
+def piedi_a_terra():
+    """IK a due ossa, fatto a mano (il vincolo IK di Blender con lo scheletro di Meshy, che ha le code delle ossa
+    sbagliate, sposta i piedi di 10-20 cm): per ogni gamba piega il ginocchio perché la distanza anca-caviglia sia
+    quella fino alla caviglia di riposo, poi gira la coscia perché la caviglia ci arrivi; il piede torna piatto com'è a
+    riposo."""
+    bpy.context.view_layer.update()
+    for lato in ('Left', 'Right'):
+        coscia = arm.pose.bones[f'{lato}UpLeg']
+        stinco = arm.pose.bones[f'{lato}Leg']
+        piede = arm.pose.bones[f'{lato}Foot']
+        T = PIEDI_RIPOSO[lato].to_translation()
+        for _ in range(2):
+            H, K, A_ = coscia.head.copy(), stinco.head.copy(), piede.head.copy()
+            a, b, c = (K - H).length, (A_ - K).length, min((T - H).length, (K - H).length + (A_ - K).length - 1e-4)
+            # il ginocchio: l'angolo fra coscia e stinco che dà la distanza c
+            ora = (H - K).angle(A_ - K)
+            voluto = math.acos(max(-1.0, min(1.0, (a * a + b * b - c * c) / (2 * a * b))))
+            n = (K - H).cross(A_ - K)
+            if n.length > 1e-8 and abs(voluto - ora) > 1e-6:
+                _ruota(stinco, Quaternion(n.normalized(), -(voluto - ora)), K)
+            # la coscia: la caviglia verso il suo posto
+            A2 = piede.head.copy()
+            q = (A2 - H).rotation_difference(T - H)
+            _ruota(coscia, q, H)
+        # il piede piatto com'era a riposo, dov'è la caviglia
+        piede.matrix = Matrix.Translation(piede.head) @ PIEDI_RIPOSO[lato].to_3x3().normalized().to_4x4()
+        bpy.context.view_layer.update()
+
+
 # ---------------------------------------------------------------- azioni fatte a mano
 def fermo():
     nuova_azione('fermo')
     n = 8 * FPS
     for f in range(n + 1):
-        applica(posa_curva(f / FPS))
-        chiave(f)
+        t = f / FPS
+        if A.vivo:
+            rot, spost = posa_viva(t, 8.0, 4.0)
+            applica(unisci(posa_curva(t), rot))
+            metti_anche(spost)
+            piedi_a_terra()
+            chiave(f, con_posizione=('Hips',))
+        else:
+            applica(posa_curva(t))
+            chiave(f)
 
 
 def inclina_testa():
@@ -204,9 +293,17 @@ def inclina_testa():
         k = liscio(t, 0.4, 2.4) - liscio(t, 3.9, 5.7)
         extra = 0.12 * liscio(t, 2.4, 3.9) * (1 - liscio(t, 3.9, 5.7))
         p = posa_curva(t, respiro=3.0, ondeggio=6.0)
-        applica(unisci(p, {'Head': [(Y, 18 * k + 18 * extra), (Z, 6 * k)],
-                           'neck': [(Y, 6 * k)]}))
-        chiave(f)
+        testa = {'Head': [(Y, 18 * k + 18 * extra), (Z, 6 * k)], 'neck': [(Y, 6 * k)]}
+        if A.vivo:
+            # (il peso va verso la parte dove si piega la testa, e torna)
+            rot, spost = posa_viva(t, 6.0, 3.0)
+            applica(unisci(p, rot, testa))
+            metti_anche(spost)
+            piedi_a_terra()
+            chiave(f, con_posizione=('Hips',))
+        else:
+            applica(unisci(p, testa))
+            chiave(f)
 
 
 def si_gira():
