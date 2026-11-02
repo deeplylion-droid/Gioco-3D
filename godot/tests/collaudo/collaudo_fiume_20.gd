@@ -95,6 +95,8 @@ func _run() -> void:
 		await _vicino()
 	if "luci" in _fasi:
 		await _luci()
+	if "ricontrollo" in _fasi:
+		await _ricontrollo()
 	print("FIUME: finito")
 	get_tree().quit()
 
@@ -583,4 +585,123 @@ func _luci() -> void:
 		cam.make_current()
 		var im := await _salva("luci_" + nome)
 		print("LUCI: %s: %s" % [nome, _luminosita(im)])
+	cam.queue_free()
+
+
+# --- ricontrollo delle correzioni (07dabc0c): la fuga del bambino e il tappo all'angolo dei muri 3 e 4 ---------------
+
+## Le scatole delle pile che toccano le forme di collisione che non sono pile (rocce, muri, transenne, anta), con 1 cm
+## di margine, entro [param raggio] m da [param centro] (in pianta).
+func _toccano(centro: Vector2, raggio: float) -> Array:
+	var out := []
+	var spazio := fiume.get_world_3d().direct_space_state
+	for s in _scatole:
+		var c: Vector3 = s[2]
+		if Vector2(c.x, c.z).distance_to(centro) > raggio:
+			continue
+		var assi: Basis = s[3]
+		var b := BoxShape3D.new()
+		b.size = Vector3(assi.x.length(), assi.y.length(), assi.z.length()) * 2.0 - Vector3.ONE * 0.02
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = b
+		q.transform = fiume.global_transform * Transform3D(Basis(assi.x.normalized(), assi.y.normalized(), assi.z.normalized()), c)
+		q.exclude = [_p.get_rid()]
+		for h in spazio.intersect_shape(q, 8):
+			if _e_pila(h):
+				continue
+			out.append("%s #%d in %s tocca %s" % [s[0], s[1], c.snapped(Vector3.ONE * 0.01), _forma(h)])
+	return out
+
+
+func _ricontrollo() -> void:
+	if _scatole.is_empty():
+		_raccogli()
+	# 1. la fuga del bambino: nessuna scatola delle pile nel corridoio largo FUGA_LARGO da ogni lato dell'asse
+	var fuga: Array[PackedVector2Array] = []
+	for k in F.FUGA_BAMBINO.size() - 1:
+		var p0: Vector2 = F.FUGA_BAMBINO[k]
+		var p1: Vector2 = F.FUGA_BAMBINO[k + 1]
+		var dd := (p1 - p0).normalized()
+		var e := dd * (p0.distance_to(p1) * 0.5)
+		var f := dd.orthogonal() * F.FUGA_LARGO
+		var c := (p0 + p1) * 0.5
+		fuga.append(PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f]))
+	var nella_fuga := []
+	var vicino_fuga := 0
+	for s in _scatole:
+		var c: Vector3 = s[2]
+		var assi: Basis = s[3]
+		var impronta := PackedVector2Array()
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				for sy in [-1.0, 1.0]:
+					var v: Vector3 = c + assi.x * sx + assi.y * sy + assi.z * sz
+					impronta.append(Vector2(v.x, v.z))
+		impronta = Geometry2D.convex_hull(impronta)
+		var minimo := INF
+		for g in fuga:
+			if not Geometry2D.intersect_polygons(impronta, g).is_empty():
+				nella_fuga.append("%s #%d in %s" % [s[0], s[1], c.snapped(Vector3.ONE * 0.01)])
+		for q in F.FUGA_BAMBINO:
+			minimo = minf(minimo, (q as Vector2).distance_to(Vector2(c.x, c.z)))
+		if minimo < 3.0:
+			vicino_fuga += 1
+	print("RICONTROLLO: fuga del bambino: %d scatole delle pile nel corridoio (largo %.2f m per lato); %d scatole entro 3 m dai punti della fuga" % [
+			nella_fuga.size(), F.FUGA_LARGO, vicino_fuga])
+	for x in nella_fuga:
+		print("RICONTROLLO:   nella fuga: %s" % x)
+	# 2. il tappo e le colonne nuove vicino all'ingresso: non entrano nella roccia, nei muri, nelle transenne, nell'anta
+	var tocca := _toccano(Vector2(-9.55, -5.0), 1.6) + _toccano(Vector2(-27.4, -27.1), 4.0)
+	print("RICONTROLLO: scatole del tappo e delle pile vicino alla fuga che toccano rocce, muri, transenne o l'anta (1 cm di margine): %d" % tocca.size())
+	for x in tocca:
+		print("RICONTROLLO:   %s" % x)
+	# il tappo: dove sta e quanto è alto
+	var alto := 0.0
+	var quante := 0
+	for s in _scatole:
+		var c: Vector3 = s[2]
+		if Vector2(c.x, c.z).distance_to(Vector2(-9.55, -5.0)) < 0.8:
+			quante += 1
+			alto = maxf(alto, c.y + absf((s[3] as Basis).x.y) + absf((s[3] as Basis).y.y) + absf((s[3] as Basis).z.y))
+	print("RICONTROLLO: tappo in (-9,55; -5,0): %d scatole, alto %.2f m" % [quante, alto])
+	# 3. gli scatti
+	var ingresso := fiume.to_local((fiume.get_node(^"Marker/Ingresso") as Node3D).global_position)
+	var viste := [
+		["fessura_dalla_fila", Vector3(-6.5, 1.6, -6.7), Vector3(-9.4, 1.6, -5.4)],
+		["fessura_dalla_fila_basso", Vector3(-6.5, 1.6, -6.7), Vector3(-9.4, 0.6, -5.4)],
+		["fessura_dalla_fila_alto", Vector3(-6.5, 1.6, -6.7), Vector3(-9.4, 2.8, -5.4)],
+		["fessura_poco_prima", Vector3(-7.2, 1.6, -7.5), Vector3(-9.4, 1.6, -5.4)],
+		["rientranza_dalla_porta", ingresso + Vector3(0, 1.6, 0), Vector3(-29.0, 1.0, -27.0)],
+		["rientranza_da_2m", ingresso + Vector3(1.4, 1.6, 1.4), Vector3(-28.5, 1.0, -27.0)],
+		["rientranza_da_4m", ingresso + Vector3(2.8, 1.6, 2.9), Vector3(-28.5, 1.0, -27.0)],
+		["ingresso_indietro_6m", ingresso + Vector3(4.2, 1.6, 4.4), ingresso + Vector3(-1.0, 1.4, -0.5)],
+	]
+	for v in viste:
+		_guarda(L(v[1]), L(v[2]))
+		await _salva("ricontrollo_" + v[0])
+	# i ravvicinati con la torcia: il tappo da sopra e di lato, le pile nuove vicino all'ingresso
+	var cam := Camera3D.new()
+	cam.fov = 60.0
+	cam.near = 0.02
+	get_tree().current_scene.add_child(cam)
+	var t := OmniLight3D.new()
+	t.light_energy = 1.2
+	t.omni_range = 6.0
+	t.shadow_enabled = true
+	cam.add_child(t)
+	var vicini := [
+		["tappo_sopra", Vector3(-8.4, alto + 1.3, -5.6), Vector3(-9.55, alto - 0.2, -5.0)],
+		["tappo_lato", Vector3(-8.2, 1.6, -5.9), Vector3(-9.55, 1.4, -5.0)],
+		["tappo_basso", Vector3(-8.4, 0.7, -5.8), Vector3(-9.55, 0.3, -5.0)],
+		["fuga_dall_alto", Vector3(-26.0, 6.5, -24.5), Vector3(-28.0, 0.0, -27.2)],
+		["fuga_al_suolo", Vector3(-26.2, 0.9, -27.6), Vector3(-30.0, 0.6, -26.9)],
+		["pile_ingresso_1", Vector3(-27.0, 2.2, -25.0), Vector3(-29.0, 1.2, -27.5)],
+		["pile_ingresso_2", Vector3(-25.0, 2.2, -25.5), Vector3(-23.5, 1.2, -27.8)],
+		["pile_ingresso_cime", Vector3(-26.5, 6.8, -24.8), Vector3(-29.0, 4.5, -28.0)],
+	]
+	for v in vicini:
+		cam.global_position = L(v[1])
+		cam.look_at(L(v[2]), Vector3.UP)
+		cam.make_current()
+		await _salva("ricontrollo_" + v[0])
 	cam.queue_free()
