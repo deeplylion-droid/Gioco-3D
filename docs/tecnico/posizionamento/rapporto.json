@@ -42,9 +42,9 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
 		"pos": [
 			19.25,
 			0.0,
@@ -56,9 +56,9 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4",
 		"pos": [
 			19.25,
 			0.0,
@@ -124,6 +124,20 @@
 		"squadra": "enigmi",
 		"stato": "voluto",
 		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.15 e 1.83 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa)",
+		"motivo": "a muro (regola del coordinatore del 23 ottobre): il quadro elettrico del corridoio del fiume è avvitato al muro ovest, sporge 22 cm, fra 1,15 e 1,83 m; non pende nel passaggio; passaggio libero 1,78 m all'altezza della testa (corridoio largo 2 m, di fronte solo l'oblò a filo e le lampade sopra i 2,1 m) (ambienti-1, arredo A+C del 30 ottobre)",
+		"nodo": "Risalita/ArredoCorridoioFiume/quadro_elettrico",
+		"pos": [
+			-5.5,
+			-5.4,
+			52.5
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "risalita"
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 1.10 m sopra il pavimento (6 celle da 25 cm) (pavimenti fra y -9.05 e -8.89), senza collisione (si attraversa)",
@@ -378,13 +392,13 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -34.00), senza collisione (si attraversa)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -34.00), senza collisione (si attraversa)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
 		"pos": [
 			50.5,
 			-34.0,
-			-6.0
+			-6.25
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -420,13 +434,13 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -25.58), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -25.58), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_1",
 		"pos": [
-			63.25,
+			63.0,
 			-25.58,
-			-28.25
+			-27.25
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -462,7 +476,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@25064, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@28995, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo)",
 		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
 		"nodo": "Risalita/Fiume/paratia/Mesh_0",
 		"pos": [
@@ -476,7 +490,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@25064, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@28995, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo)",
 		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
 		"nodo": "Risalita/Fiume/paratia4/Mesh_0",
 		"pos": [
@@ -490,7 +504,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@25064, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@28995, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo)",
 		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
 		"nodo": "Risalita/Fiume/paratia5/Mesh_0",
 		"pos": [
@@ -504,9 +518,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
 		"pos": [
 			19.25,
 			0.0,
@@ -518,9 +532,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
 		"pos": [
 			19.25,
 			0.0,
@@ -591,7 +605,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.03 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -27.00), senza collisione (si attraversa) (stato: sottomarino_t0)",
 		"firma": "|TorusMesh 0.54x0.08x0.54",
 		"motivo": "il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A)",
-		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@105531",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@135160",
 		"pos": [
 			-57.5,
 			-27.0,
@@ -606,7 +620,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.18 e 1.22 m sopra il pavimento (15 celle da 25 cm) (pavimento a y -27.20), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|CylinderMesh 0.05x4.35x0.05",
 		"motivo": "il corrimano della scala dell'approdo, a fianco di chi sale, all'altezza della mano",
-		"nodo": "Approdo/@MeshInstance3D@105512",
+		"nodo": "Approdo/@MeshInstance3D@135141",
 		"pos": [
 			-62.0,
 			-27.2,
@@ -635,7 +649,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|ArrayMesh 2.49x0.30x0.58",
 		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati",
-		"nodo": "Galleria_425/@MeshInstance3D@106203",
+		"nodo": "Galleria_425/@MeshInstance3D@135832",
 		"pos": [
 			-37.0,
 			-30.0,
@@ -650,7 +664,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|ArrayMesh 2.49x0.30x0.57",
 		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati",
-		"nodo": "Galleria_425/@MeshInstance3D@106202",
+		"nodo": "Galleria_425/@MeshInstance3D@135831",
 		"pos": [
 			-37.0,
 			-30.0,
@@ -679,7 +693,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@106208",
+		"nodo": "Galleria_425/@MeshInstance3D@135837",
 		"pos": [
 			-30.75,
 			-30.0,
@@ -694,7 +708,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@106206",
+		"nodo": "Galleria_425/@MeshInstance3D@135835",
 		"pos": [
 			-26.0,
 			-30.0,
@@ -723,7 +737,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|ArrayMesh 1.13x0.30x2.30",
 		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati",
-		"nodo": "Galleria_425/@MeshInstance3D@106200",
+		"nodo": "Galleria_425/@MeshInstance3D@135829",
 		"pos": [
 			-22.75,
 			-30.0,
@@ -780,7 +794,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|ArrayMesh 0.18x0.30x1.19",
 		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati",
-		"nodo": "Galleria_205/@MeshInstance3D@106132",
+		"nodo": "Galleria_205/@MeshInstance3D@135761",
 		"pos": [
 			1.75,
 			-30.0,
@@ -795,7 +809,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|ArrayMesh 0.17x0.30x1.19",
 		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati",
-		"nodo": "Galleria_205/@MeshInstance3D@106131",
+		"nodo": "Galleria_205/@MeshInstance3D@135760",
 		"pos": [
 			1.75,
 			-30.0,
@@ -810,7 +824,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_205/@MeshInstance3D@106137",
+		"nodo": "Galleria_205/@MeshInstance3D@135766",
 		"pos": [
 			0.5,
 			-30.0,
@@ -825,7 +839,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_205/@MeshInstance3D@106135",
+		"nodo": "Galleria_205/@MeshInstance3D@135764",
 		"pos": [
 			0.0,
 			-30.0,
@@ -868,7 +882,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|ArrayMesh 0.66x0.30x1.71",
 		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati",
-		"nodo": "Galleria_205/@MeshInstance3D@106129",
+		"nodo": "Galleria_205/@MeshInstance3D@135758",
 		"pos": [
 			-0.5,
 			-30.0,
@@ -880,7 +894,7 @@
 		"zona": "sottomarino"
 	},
 	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@106225 (stato: sottomarino_t0)",
+		"dettaglio": "il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@135854 (stato: sottomarino_t0)",
 		"motivo": "il corallo del diorama sta dentro la teca di vetro della vetrina caduta, appoggiato sulla sabbia del fondo: il vetro è una scatola chiusa e lo contiene tutto (tunnel sottomarino, 24 ottobre)",
 		"nodo": "Ostacolo_vetrina_484/corallo/Mesh_0",
 		"pos": [
