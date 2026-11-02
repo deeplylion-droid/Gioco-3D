@@ -1863,14 +1863,15 @@ func _pile() -> void:
 	rng.seed = 1023
 	# gli ingombri già a terra: le forme di collisione (transenne, rocce, pali, cabina, tettoia) in pianta
 	var ingombri := _ingombri()
-	# e la strada di fuga del bambino col cubo, libera come quella del giocatore
+	# la strada di fuga del bambino col cubo, libera come quella del giocatore (vedi sotto, dopo il punto 1)
+	var fuga: Array[PackedVector2Array] = []
 	for k in FUGA_BAMBINO.size() - 1:
 		var p0: Vector2 = FUGA_BAMBINO[k]
 		var p1: Vector2 = FUGA_BAMBINO[k + 1]
 		var dd := (p1 - p0).normalized()
 		if k == FUGA_BAMBINO.size() - 2:
 			p1 += dd * 0.3
-		ingombri.append(_rettangolo((p0 + p1) * 0.5, dd, dd.orthogonal(), p0.distance_to(p1), 2.0 * FUGA_LARGO, 0.0))
+		fuga.append(_rettangolo((p0 + p1) * 0.5, dd, dd.orthogonal(), p0.distance_to(p1), 2.0 * FUGA_LARGO, 0.0))
 	# le lampade sui muri (e quello che sta in alto): le pile ci passano sotto
 	var lampade: Array[Vector3] = []
 	for c in get_children():
@@ -1944,15 +1945,90 @@ func _pile() -> void:
 				col["u"] = (col["c"] - a).dot(d)
 				col["d"] = d
 				col["n"] = n
+				col["posto"] = [a, d, n, uu, dentro, verso, nell_approdo]
 				messe.append(col["poli"])
 				colonne_messe.append(col)
 			u += PILA_PASSO
 			k_posto += 1
+	# le correzioni dopo il ricontrollo (2 novembre), con un generatore loro: le colonne di prima restano tutte uguali.
+	# Quelle sulla strada di fuga del bambino si tolgono (consumano lo stesso il generatore, vedi i punti 3 e 4) e al
+	# loro posto si prova una colonna più tranquilla o una pila sciolta, fuori dalla strada
+	var rng2 := RandomNumberGenerator.new()
+	rng2.seed = 211
+	var con_fuga: Array[PackedVector2Array] = ingombri + fuga
+	for i in colonne_messe.size():
+		var col := colonne_messe[i]
+		var sulla_fuga := false
+		for g in fuga:
+			if not Geometry2D.intersect_polygons(_allarga_poli(col["poli"], PILA_MARGINE), g).is_empty():
+				sulla_fuga = true
+		if not sulla_fuga:
+			continue
+		col["togli"] = true
+		messe[i] = PackedVector2Array()
+	for i in colonne_messe.size():
+		var vecchia := colonne_messe[i]
+		if not vecchia.get("togli", false):
+			continue
+		var posto: Array = vecchia["posto"]
+		var a: Vector2 = posto[0]
+		var d: Vector2 = posto[1]
+		var n: Vector2 = posto[2]
+		var col := {}
+		for s in [0.0, -0.15, 0.15, -0.3, 0.3, -0.45, 0.45]:
+			var cc: Vector2 = a + d * (posto[3] + s + PILA_LUNGO * 0.5) + n * (posto[4] + PILA_PROFONDO * 0.5)
+			var prova := _posa_colonna(rng2, cc, d, n, posto[5], 0.0, vecchia["davanti"])
+			if _colonna_ci_sta(prova["poli"], prova["c"], posto[6], con_fuga, messe):
+				col = prova
+				break
+		if col.is_empty():
+			for misura in [[PILA_PROFONDO, 0.0], [0.5, 0.0], [0.5, 0.5]]:
+				for s in [0.0, 0.6, 0.3, -0.15, 0.75, 0.15, 0.45, -0.3, 0.9]:
+					var cc: Vector2 = a + d * (posto[3] + s + 0.3) + n * (posto[4] + misura[1] + misura[0] * 0.5)
+					var prova := _posa_sciolta(rng2, cc, d, n, misura[0])
+					if _colonna_ci_sta(prova["poli"], prova["c"], posto[6], con_fuga, messe):
+						col = prova
+						break
+				if not col.is_empty():
+					break
+		if col.is_empty():
+			continue
+		for k in ["muro", "fila", "davanti", "d", "n", "posto"]:
+			col[k] = vecchia[k]
+		col["ferma"] = false
+		col["u"] = (col["c"] - a).dot(d)
+		col["nuova"] = true
+		messe.append(col["poli"])
+		colonne_messe.append(col)
+	# i tappi: dove fra due colonne resta una fessura che dalla strada lascia vedere il buio, una pila sciolta dietro,
+	# di traverso sulla linea di vista, il più vicino possibile alla fessura
+	for tappo in TAPPI_PILE:
+		var punto: Vector2 = tappo[0]
+		var vista: Vector2 = (punto - (tappo[1] as Vector2)).normalized()
+		var t := 0.3
+		while t < 2.6:
+			var cc: Vector2 = punto + vista * t
+			var prova := _posa_sciolta(rng2, cc, vista, vista.orthogonal(), PILA_PROFONDO)
+			if _colonna_ci_sta(prova["poli"], cc, false, con_fuga, messe):
+				prova["muro"] = -1
+				prova["fila"] = 1
+				prova["davanti"] = false
+				prova["ferma"] = false
+				prova["u"] = 0.0
+				prova["d"] = vista
+				prova["n"] = vista.orthogonal()
+				prova["nuova"] = true
+				messe.append(prova["poli"])
+				colonne_messe.append(prova)
+				break
+			t += 0.15
+		if t >= 2.6:
+			push_warning("pile: niente posto per il tappo in %s" % str(punto))
 	# 2. le lampade calde sulla fila davanti dei muri 3 e 1: sulle colonne ferme (o le più vicine fra quelle intere)
 	for l in LAMPADE_PILE:
 		var meglio := {}
 		for col in colonne_messe:
-			if col["muro"] != l[0] or not col["davanti"] or col["sciolta"]:
+			if col["muro"] != l[0] or not col["davanti"] or col["sciolta"] or col.get("togli", false):
 				continue
 			if meglio.is_empty() or (col["ferma"] and not meglio["ferma"]) or (col["ferma"] == meglio["ferma"] and absf(col["u"] - l[1]) < absf(meglio["u"] - l[1])):
 				meglio = col
@@ -1962,23 +2038,24 @@ func _pile() -> void:
 		meglio["lampada"] = l[2]
 	# 3. le altezze: dietro 4 unità; davanti a gradini da 1 a 4, ma più basse di 4 solo se la fila di dietro le copre
 	for col in colonne_messe:
+		var r: RandomNumberGenerator = rng2 if col.get("nuova", false) else rng
 		var piani := 4
 		var strati := 0
 		if col["sciolta"]:
 			# gli scatoloni sciolti: dietro 8 piani (3,2 m), davanti da 4 a 8; a 1 x 1 al massimo 6
-			strati = 8 if not col["davanti"] else rng.randi_range(4, 8)
+			strati = 8 if not col["davanti"] else r.randi_range(4, 8)
 			if col["prof"] < PILA_PROFONDO - 0.01:
 				strati = mini(strati, 6)
 			if strati < 8 and col["davanti"] and not _coperta_dietro(col, colonne_messe):
 				strati = 8 if col["prof"] > PILA_PROFONDO - 0.01 else 6
 			strati = mini(strati, col["max_strati"])
 		elif col["davanti"] and not col.has("lampada"):
-			var r := rng.randf()
+			var caso := r.randf()
 			piani = 4
 			var somma := 0.0
 			for i in PILA_ALTEZZE.size():
 				somma += PILA_ALTEZZE[i]
-				if r < somma:
+				if caso < somma:
 					piani = i + 1
 					break
 			if piani < 4 and not _coperta_dietro(col, colonne_messe):
@@ -2003,9 +2080,16 @@ func _pile() -> void:
 	var casse_sciolte: Array[Transform3D] = []
 	var rng_colori := RandomNumberGenerator.new()
 	rng_colori.seed = 2410
+	var rng_colori2 := RandomNumberGenerator.new()
+	rng_colori2.seed = 212
 	var casse: Array[Transform3D] = []
 	var colonne := 0
 	for col in colonne_messe:
+		var r: RandomNumberGenerator = rng2 if col.get("nuova", false) else rng
+		var rc: RandomNumberGenerator = rng_colori2 if col.get("nuova", false) else rng_colori
+		# (quelle tolte si fanno lo stesso, per il generatore, poi si buttano)
+		var prima := [casse.size(), cartone.size(), aperte.size(), scatole.size(), tinte_scatole.size(), colorate.size(),
+				tinte_colorate.size(), casse_sciolte.size()]
 		var c: Vector2 = col["c"]
 		var n: Vector2 = col["n"]
 		var base: Basis = col["base"]
@@ -2014,7 +2098,7 @@ func _pile() -> void:
 			if (q as Vector2).distance_to(c) < PUNTI_ALLEGRI_RAGGIO:
 				fitte = true
 		var quota := SCATOLE_COLORATE_FITTE if fitte else SCATOLE_COLORATE
-		var marrone := Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), rng.randf())
+		var marrone := Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), r.randf())
 		var alto := 0.0
 		if col["sciolta"]:
 			var strati: int = col["strati"]
@@ -2024,9 +2108,9 @@ func _pile() -> void:
 				for ts: Transform3D in col["strati_scatole"][k]:
 					if k < 2:
 						casse_sciolte.append(ts)   # sotto le casse di plastica, le più pesanti
-					elif rng_colori.randf() < quota:
+					elif rc.randf() < quota:
 						colorate.append(ts)
-						tinte_colorate.append(_tinta_colorata(rng_colori))
+						tinte_colorate.append(_tinta_colorata(rc))
 					else:
 						scatole.append(ts)
 						tinte_scatole.append(marrone)
@@ -2036,7 +2120,7 @@ func _pile() -> void:
 			if piani < 1:
 				continue
 			# le cime aperte (senza film, scatoloni tolti, girati e caduti): più spesso davanti, mai sotto la lampada
-			var aperta: bool = not col.has("lampada") and rng.randf() < (0.55 if col["davanti"] else 0.35)
+			var aperta: bool = not col.has("lampada") and r.randf() < (0.55 if col["davanti"] else 0.35)
 			for p in piani:
 				var t: Transform3D = col["unita"][p]
 				if p == 0:
@@ -2046,7 +2130,7 @@ func _pile() -> void:
 				if p > 0:
 					if cima and aperta:
 						aperte.append(t)
-						strato_cima = _scatole_cima(rng)
+						strato_cima = _scatole_cima(r)
 					else:
 						cartone.append(t)
 				# gli scatoloni (nelle casse sono nella mesh dell'unità)
@@ -2056,8 +2140,8 @@ func _pile() -> void:
 						for ps in (strato_cima if kk == 2 and cima and aperta else _scatole_strato()):
 							posti.append([ps, kk])
 				# sulle cime chiuse, qualche scatolone caduto lì sopra, di lato
-				if cima and not aperta and p > 0 and rng.randf() < 0.35:
-					for ps in _scatole_cadute(rng):
+				if cima and not aperta and p > 0 and r.randf() < 0.35:
+					for ps in _scatole_cadute(r):
 						posti.append([ps, 3])
 				for pk in posti:
 					var ps: Array = pk[0]
@@ -2070,17 +2154,21 @@ func _pile() -> void:
 						ts = t * Transform3D(Basis(Vector3.UP, ps[2]) * Basis(Vector3.RIGHT, PI * 0.5), Vector3(ps[0], y0 + SCATOLONE.z * 0.5, ps[1]))
 					else:
 						ts = t * Transform3D(Basis(Vector3.UP, ps[2]), Vector3(ps[0], _centro_scatola(0, 0, kk).y, ps[1]))
-					if rng_colori.randf() < quota:
+					if rc.randf() < quota:
 						colorate.append(ts)
-						tinte_colorate.append(_tinta_colorata(rng_colori))
+						tinte_colorate.append(_tinta_colorata(rc))
 					else:
 						scatole.append(ts)
 						tinte_scatole.append(marrone)
 			alto = piani * (PILA_BANCALE + PILA_BLOCCO)
-			if col.has("lampada"):
+			if col.has("lampada") and not col.get("togli", false):
 				# la lampada calda appesa alla faccia della colonna verso la strada, sul blocco della terza unità
 				var faccia := c - n * (PILA_PROFONDO * 0.5 + 0.005)
 				_lampada_calda(Vector3(faccia.x, 2.0 * (PILA_BANCALE + PILA_BLOCCO) + PILA_BANCALE + 0.45, faccia.y), rad_to_deg(atan2(-n.x, -n.y)), col["lampada"])
+		if col.get("togli", false):
+			for arr in [[casse, 0], [cartone, 1], [aperte, 2], [scatole, 3], [tinte_scatole, 4], [colorate, 5], [tinte_colorate, 6], [casse_sciolte, 7]]:
+				(arr[0] as Array).resize(prima[arr[1]])
+			continue
 		colonne += 1
 		var fc := CollisionShape3D.new()
 		var bc := BoxShape3D.new()
@@ -2112,6 +2200,10 @@ func _pile() -> void:
 ## 20 cm di margine. Se cambiano i punti lì, vanno cambiati anche qui.
 const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -27.1), Vector2(-30.0, -26.9)]
 const FUGA_LARGO := 0.42
+## I tappi delle fessure fra le pile: [la fessura, da dove la si vede dalla strada]. All'angolo fra i muri 3 e 4, vista
+## dalla fine della fila vicino alla tettoia della cabina (ricontrollo di enigmi, 2 novembre: si vedeva il buio fino
+## alla roccia).
+const TAPPI_PILE := [[Vector2(-9.4, -5.4), Vector2(-6.5, -6.7)]]
 
 
 ## Le tre lampade calde spostate dai muri dietro le pile: [muro, posizione lungo il muro, energia]. Appese alla faccia
@@ -2243,7 +2335,7 @@ static func _coperta_dietro(col: Dictionary, colonne_messe: Array[Dictionary]) -
 	var u1: float = col["u"] + col["largo"] * 0.5
 	var coperto := 0.0
 	for o in colonne_messe:
-		if o["muro"] != col["muro"] or o["davanti"] or o["sciolta"]:
+		if o["muro"] != col["muro"] or o["davanti"] or o["sciolta"] or o.get("togli", false):
 			continue
 		coperto += maxf(0.0, minf(u1, o["u"] + o["largo"] * 0.5 + 0.1) - maxf(u0, o["u"] - o["largo"] * 0.5 - 0.1))
 	return coperto >= (u1 - u0) - 0.01
