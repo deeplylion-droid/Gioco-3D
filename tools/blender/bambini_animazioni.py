@@ -7,9 +7,16 @@ assets_src/bambini/rig/<nome>.glb, e dalle sue animazioni di base con il solo sc
 
   fermo          curvo, respiro lento e piccolo ondeggiare (ciclo di 8 s)
   inclina_testa  la testa si piega piano da una parte, resta lì e torna (ciclo di 6 s)
+  fermo_vivo, inclina_testa_viva   (con --vivo, in più) le stesse, ma il peso passa da un piede all'altro (le anche
+                 di lato, il bacino che si inclina, il busto che compensa: i piedi restano a terra, con un IK a due
+                 ossa fatto a mano), il respiro più ampio e piccoli movimenti della testa. Solo il bambino col cubo
+                 del corridoio del fiume le usa (Bambino.fermo_vivo); nella torre restano quelle di prima
   cammina        la camminata di Meshy rallentata, curva e un po' storta (testa piegata,
                  una spalla più bassa, braccia molli)
   corsa          la corsa di Meshy, curva e con la testa bassa, per scappare
+  parte          (con --vivo) il primo passo della fuga, 0,33 s: dalla posa di fermo a quella della corsa (il suo
+                 fotogramma 6, la punta sinistra a terra e il piede destro alzato); il ginocchio destro si piega prima
+                 della coscia, così il piede si stacca da terra prima di andare avanti (non striscia)
   si_gira        di spalle; gira prima la testa, poi tutto il corpo verso chi guarda (3,5 s,
                  una volta sola; finisce nella posa di "fermo")
 
@@ -34,6 +41,9 @@ FPS = 24
 ap = argparse.ArgumentParser()
 ap.add_argument('nome'); ap.add_argument('uscita')
 ap.add_argument('--occhio', default='', help="GLB da cui prendere il guscio dell'occhio")
+ap.add_argument('--vivo', action='store_true',
+                help="anche fermo_vivo e inclina_testa_viva (il bambino col cubo, scelta A dell'utente del 1 novembre: "
+                     "\"A ma animalo meglio\")")
 A = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 
 
@@ -187,26 +197,143 @@ def unisci(*pose):
     return out
 
 
+# ---------------------------------------------------------------- il peso da un piede all'altro (--vivo)
+B_HIPS = arm.data.bones['Hips']
+# dallo spazio del mondo allo spazio di riposo dell'osso Hips (la location della posa è lì, scala dell'armatura compresa)
+M_HIPS = (arm.matrix_world @ B_HIPS.matrix_local).to_3x3().inverted()
+
+
+def peso(t, periodo):
+    """Dove sta il peso, da -1 (piede destro) a 1 (sinistro): resta su un piede e passa all'altro senza fretta."""
+    v = math.sin(2 * math.pi * t / periodo)
+    return math.tanh(2.0 * v) / math.tanh(2.0)
+
+
+def posa_viva(t, periodo, respiro):
+    """Il peso e il respiro più ampio, sopra posa_curva: rotazioni nel mondo, e lo spostamento delle anche (m)."""
+    w = peso(t, periodo)
+    r = onda(t, respiro)
+    # (le frequenze sono multipli di quella del ciclo: la clip si chiude)
+    micro = onda(t, periodo / 3, 0.1)
+    micro2 = onda(t, periodo / 5, 0.35)
+    rot = {
+        # il bacino scende dalla parte del piede libero, il busto e la testa compensano
+        'Hips': [(Y, -3.0 * w)],
+        'Spine02': [(Y, 1.2 * w)], 'Spine01': [(Y, 1.0 * w), (X, 0.8 * r)], 'Spine': [(Y, 0.8 * w), (X, 0.9 * r)],
+        'neck': [(Y, 0.6 * w), (X, 1.2 * micro)],
+        'Head': [(X, 1.5 * micro2), (Z, 2.0 * micro)],
+        'LeftShoulder': [(Y, -0.9 * r)], 'RightShoulder': [(Y, 0.9 * r)],
+        'LeftArm': [(X, 1.5 * w)], 'RightArm': [(X, -1.5 * w)],
+    }
+    spost = Vector((0.025 * w, 0.0, -0.008 * abs(w) - 0.004 * (0.5 + 0.5 * r)))
+    return rot, spost
+
+
+def metti_anche(spost):
+    arm.pose.bones['Hips'].location = M_HIPS @ spost
+
+
+# le caviglie e l'orientamento dei piedi nella posa di riposo (spazio dell'armatura): dove restano mentre il peso passa
+PIEDI_RIPOSO = {lato: arm.data.bones[f'{lato}Foot'].matrix_local.copy() for lato in ('Left', 'Right')}
+
+
+def _ruota(pb, q, perno):
+    """Ruota l'osso (spazio dell'armatura) di q intorno a perno; i figli seguono."""
+    m = Matrix.Translation(perno) @ q.to_matrix().to_4x4() @ Matrix.Translation(-perno) @ pb.matrix
+    pb.matrix = m
+    bpy.context.view_layer.update()
+
+
+def ik_gamba(lato, T):
+    """Coscia e stinco perché la caviglia (testa dell'osso del piede) arrivi in T (spazio dell'armatura)."""
+    coscia = arm.pose.bones[f'{lato}UpLeg']
+    stinco = arm.pose.bones[f'{lato}Leg']
+    piede = arm.pose.bones[f'{lato}Foot']
+    for _ in range(2):
+        H, K, A_ = coscia.head.copy(), stinco.head.copy(), piede.head.copy()
+        a, b, c = (K - H).length, (A_ - K).length, min((T - H).length, (K - H).length + (A_ - K).length - 1e-4)
+        ora = (H - K).angle(A_ - K)
+        voluto = math.acos(max(-1.0, min(1.0, (a * a + b * b - c * c) / (2 * a * b))))
+        n = (K - H).cross(A_ - K)
+        if n.length > 1e-8 and abs(voluto - ora) > 1e-6:
+            _ruota(stinco, Quaternion(n.normalized(), -(voluto - ora)), K)
+        q = (piede.head - H).rotation_difference(T - H)
+        _ruota(coscia, q, H)
+
+
+def punta_verso(lato, P):
+    """Gira il piede intorno alla caviglia perché la punta (testa dell'osso della punta) vada verso P."""
+    piede = arm.pose.bones[f'{lato}Foot']
+    punta = arm.pose.bones[f'{lato}ToeBase']
+    q = (punta.head - piede.head).rotation_difference(P - piede.head)
+    _ruota(piede, q, piede.head.copy())
+
+
+def piedi_a_terra():
+    """IK a due ossa, fatto a mano (il vincolo IK di Blender con lo scheletro di Meshy, che ha le code delle ossa
+    sbagliate, sposta i piedi di 10-20 cm): per ogni gamba piega il ginocchio perché la distanza anca-caviglia sia
+    quella fino alla caviglia di riposo, poi gira la coscia perché la caviglia ci arrivi; il piede torna piatto com'è a
+    riposo."""
+    bpy.context.view_layer.update()
+    for lato in ('Left', 'Right'):
+        coscia = arm.pose.bones[f'{lato}UpLeg']
+        stinco = arm.pose.bones[f'{lato}Leg']
+        piede = arm.pose.bones[f'{lato}Foot']
+        T = PIEDI_RIPOSO[lato].to_translation()
+        for _ in range(2):
+            H, K, A_ = coscia.head.copy(), stinco.head.copy(), piede.head.copy()
+            a, b, c = (K - H).length, (A_ - K).length, min((T - H).length, (K - H).length + (A_ - K).length - 1e-4)
+            # il ginocchio: l'angolo fra coscia e stinco che dà la distanza c
+            ora = (H - K).angle(A_ - K)
+            voluto = math.acos(max(-1.0, min(1.0, (a * a + b * b - c * c) / (2 * a * b))))
+            n = (K - H).cross(A_ - K)
+            if n.length > 1e-8 and abs(voluto - ora) > 1e-6:
+                _ruota(stinco, Quaternion(n.normalized(), -(voluto - ora)), K)
+            # la coscia: la caviglia verso il suo posto
+            A2 = piede.head.copy()
+            q = (A2 - H).rotation_difference(T - H)
+            _ruota(coscia, q, H)
+        # il piede piatto com'era a riposo, dov'è la caviglia
+        piede.matrix = Matrix.Translation(piede.head) @ PIEDI_RIPOSO[lato].to_3x3().normalized().to_4x4()
+        bpy.context.view_layer.update()
+
+
 # ---------------------------------------------------------------- azioni fatte a mano
-def fermo():
-    nuova_azione('fermo')
+def fermo(vivo=False):
+    nuova_azione('fermo_vivo' if vivo else 'fermo')
     n = 8 * FPS
     for f in range(n + 1):
-        applica(posa_curva(f / FPS))
-        chiave(f)
+        t = f / FPS
+        if vivo:
+            rot, spost = posa_viva(t, 8.0, 4.0)
+            applica(unisci(posa_curva(t), rot))
+            metti_anche(spost)
+            piedi_a_terra()
+            chiave(f, con_posizione=('Hips',))
+        else:
+            applica(posa_curva(t))
+            chiave(f)
 
 
-def inclina_testa():
-    nuova_azione('inclina_testa')
+def inclina_testa(vivo=False):
+    nuova_azione('inclina_testa_viva' if vivo else 'inclina_testa')
     n = 6 * FPS
     for f in range(n + 1):
         t = f / FPS
         k = liscio(t, 0.4, 2.4) - liscio(t, 3.9, 5.7)
         extra = 0.12 * liscio(t, 2.4, 3.9) * (1 - liscio(t, 3.9, 5.7))
         p = posa_curva(t, respiro=3.0, ondeggio=6.0)
-        applica(unisci(p, {'Head': [(Y, 18 * k + 18 * extra), (Z, 6 * k)],
-                           'neck': [(Y, 6 * k)]}))
-        chiave(f)
+        testa = {'Head': [(Y, 18 * k + 18 * extra), (Z, 6 * k)], 'neck': [(Y, 6 * k)]}
+        if vivo:
+            # (il peso va verso la parte dove si piega la testa, e torna)
+            rot, spost = posa_viva(t, 6.0, 3.0)
+            applica(unisci(p, rot, testa))
+            metti_anche(spost)
+            piedi_a_terra()
+            chiave(f, con_posizione=('Hips',))
+        else:
+            applica(unisci(p, testa))
+            chiave(f)
 
 
 def si_gira():
@@ -258,6 +385,56 @@ def da_mocap(nome, src, act, lentezza, braccia, extra, ciclo_in=None):
     return act_new
 
 
+# il fotogramma della corsa da cui riparte il gioco dopo "parte" (Bambino.CORSA_PRIMO_PASSO = 6,4 / 24 s): la punta sinistra
+# a terra, proprio sotto le anche come nel fermo (il corpo non va indietro), e il piede destro alzato
+CORSA_PRIMO_PASSO = 6.4
+
+
+def posa_di(azione, frame):
+    """Rotazioni (e la posizione delle anche) dell'azione al fotogramma (anche a metà fra due)."""
+    arm.animation_data.action = bpy.data.actions[azione]
+    sc.frame_set(int(frame), subframe=frame - int(frame))
+    rot = {pb.name: pb.rotation_quaternion.copy() for pb in arm.pose.bones}
+    return rot, arm.pose.bones['Hips'].location.copy()
+
+
+def parte():
+    # (dal fermo vivo, quando le anche sono in mezzo: i piedi sono dove li tiene lui, a riposo)
+    a_rot, a_loc = posa_di('fermo_vivo', 0)
+    caviglie_a = {l: arm.pose.bones[f'{l}Foot'].head.copy() for l in ('Left', 'Right')}
+    punta_a = arm.pose.bones['RightToeBase'].head.copy()
+    b_rot, b_loc = posa_di('corsa', CORSA_PRIMO_PASSO)
+    caviglia_b = arm.pose.bones['RightFoot'].head.copy()
+    punta_b = arm.pose.bones['RightToeBase'].head.copy()
+    nuova_azione('parte')
+    n = 8
+    su = Vector((0, 0, 1))
+    su = (arm.matrix_world.to_3x3().inverted() @ su).normalized()     # il su del mondo nello spazio dell'armatura
+    for f in range(n + 1):
+        u = f / n
+        k = liscio(u, 0.0, 1.0)
+        # (la gamba sinistra, che resta a terra, e le anche cambiano solo quando il piede destro si è alzato: prima
+        # tutti e due i piedi toccano terra e il corpo non si deve muovere)
+        k_appoggio = liscio(u, 0.35, 1.0)
+        for pb in arm.pose.bones:
+            kk = k_appoggio if pb.name in ('Hips', 'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase') else k
+            pb.rotation_quaternion = a_rot[pb.name].slerp(b_rot[pb.name], kk)
+        arm.pose.bones['Hips'].location = a_loc.lerp(b_loc, k_appoggio)
+        bpy.context.view_layer.update()
+        # la gamba destra: la caviglia prima sale, poi va avanti; la punta resta a terra finché il tallone non si è alzato
+        d = caviglia_b - caviglie_a['Right']
+        alto = d.dot(su)
+        piano = d - su * alto
+        T = caviglie_a['Right'] + su * (alto * liscio(u, 0.0, 0.7)) + piano * liscio(u, 0.3, 1.0)
+        ik_gamba('Right', T)
+        dp = punta_b - punta_a
+        dp_alto = dp.dot(su)
+        P = punta_a + su * (dp_alto * liscio(u, 0.2, 0.8)) + (dp - su * dp_alto) * liscio(u, 0.3, 1.0)
+        punta_verso('Right', P)
+        chiave(f, con_posizione=('Hips',))
+    log(f'parte: {n} frame ({n / FPS:.2f} s), dal fermo al fotogramma {CORSA_PRIMO_PASSO} della corsa')
+
+
 def extra_cammina(t):
     return {
         'Spine02': [(X, 5)], 'Spine01': [(X, 5)], 'Spine': [(X, 4)],
@@ -275,11 +452,16 @@ def extra_corsa(t):
 
 fermo()
 inclina_testa()
+if A.vivo:
+    fermo(vivo=True)
+    inclina_testa(vivo=True)
 si_gira()
 cam_src.animation_data.action = cam_act
 da_mocap('cammina', cam_src, cam_act, lentezza=1.8, braccia=0.5, extra=extra_cammina)
 cor_src.animation_data.action = cor_act
 da_mocap('corsa', cor_src, cor_act, lentezza=1.15, braccia=0.8, extra=extra_corsa)
+if A.vivo:
+    parte()
 for o in (cam_src, cor_src):
     bpy.data.objects.remove(o, do_unlink=True)
 for act in (cam_act, cor_act):
