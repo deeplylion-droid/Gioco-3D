@@ -63,10 +63,17 @@ X0_GIOCO = 40.4
 BOCCA_TORRE = [(37.6, 17.4, -18.15), (38.8, 17.4, -18.38), (41.0, 17.4, -18.6)]   # come in torre_a.py (GIOCO), nel verso della discesa
 MOBILI = []                              # i pezzi che si muovono (pannelli delle paratie, sbarre della grata)
 GIOCO_DATI = dict(paratie=[], grata=None, tubi={}, scale=[])
-# Nel gioco il pelo delle vasche dei bivi e del bacino è 10 cm più giù (correzione della 0.3.17): l'acqua era alta
-# 98 cm e l'occhio di chi ci sta accovacciato (anche solo atterrando dal tubo) a 92, sotto il pelo, e da sotto l'acqua
-# sembrava aria. Ora è alta 88 cm (il bacino 85).
+# Nel gioco il pelo delle vasche dei bivi e del bacino è più giù (correzioni della 0.3.17 e della 0.3.19): l'acqua era
+# alta 98 cm e l'occhio di chi ci sta accovacciato a 92, sotto il pelo, e da sotto l'acqua sembrava aria. Nella 0.3.17
+# 10 cm (88 cm d'acqua): ancora poco, l'occhio accovacciato scende di 8 cm atterrando e di 3,5 col passo (Player,
+# land_dip_max e head_bob_vertical), più i 5 cm del piano vicino della camera (riscontro dell'utente sulla 0.3.19). Ora
+# 26 cm: l'acqua è alta 72 cm, l'occhio accovacciato nel punto più basso resta 8 cm sopra il pelo.
 PELO_GIU = 0.0
+# Le vasche di scolo, per lo stesso motivo: da 78 a 72 cm d'acqua (sono di torre_proposte.vasca, il pelo si abbassa qui).
+SCOLO_GIU = 0.0
+# Il bacino meno: il pelo resta 2 cm sopra il bordo del pozzo di SB1 e del pozzetto della grata (T + 0,12), dove galleggiano
+# i tentacoli di lei quando sale (sotto il bordo ci entravano, test_morbidezza_inseguimento): 74 cm d'acqua.
+BACINO_GIU = 0.0
 
 
 # --- pezzi comuni -----------------------------------------------------------------------------------
@@ -617,7 +624,9 @@ def versione_A(mats):
     # le vasche di scolo senza uscita (dove portano le paratie sbagliate), con la scaletta per risalire
     D = [(57.0, 10.2, 61.0, 13.4, -26.0), (56.0, 26.0, 60.0, 30.5, -29.0), (73.5, 12.0, 77.0, 16.0, -31.0)]
     for k, v in enumerate(D):
-        acque.append(vasca_sospesa(c, v[0], v[1], v[2], v[3], v[4], z0, f'acqua_scolo_{k}', alto=0.9))
+        acqua_scolo = vasca_sospesa(c, v[0], v[1], v[2], v[3], v[4], z0, f'acqua_scolo_{k}', alto=0.9)
+        acqua_scolo.location.z -= SCOLO_GIU
+        acque.append(acqua_scolo)
 
     da_appendere = []
 
@@ -699,7 +708,7 @@ def versione_A(mats):
         muri_bacino.append(((BX[2] - 0.3, BX[1]), (BX[2], BX[3])))
     for (a, b) in muri_bacino:
         c.scatola((a[0], a[1], z0), (b[0], b[1], T + 0.55), 'vasca_bimbi', smusso=0.03)
-    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35 - PELO_GIU))
+    acque.append(P.acqua_piano('acqua_bacino', BX[0] + 0.3, BX[1] + 0.3, BX[2] - 0.3, BX[3] - 0.3, T + 0.35 - BACINO_GIU))
     # la grata di sicurezza sulla bocca del tubo finale (chiusa: è calata davanti a lei)
     grata(c, (BX[2] - 0.1, 6.5, z0 + 2.0), (1, 0), not GIOCO, largo=3.0, alto=4.0)   # nel gioco alzata: cala dopo
     # la strada per uscire: scaletta sul bordo ovest del bacino, passerella, porta di servizio
@@ -824,10 +833,10 @@ def versione_A(mats):
     # lampade industriali appese al soffitto sopra le macchine (cavo dal soffitto)
     luci['appese'] += [[51.5, 7.5, -16.5, True], [61.5, 17.5, -17.5, False], [70.5, 24.0, -18.5, True], [45.0, 22.5, -19.0, True],
                        [43.8, 28.5, -17.0, False], [61.0, 9.9, -23.5, True]]
-    # prop nell'acqua e sulle passerelle
+    # prop nell'acqua e sulle passerelle (la paperella galleggia nel bacino, 5 cm sotto il pelo: scende con lui)
     props = []
     for (nome, x, y, z, rot) in (('salvagente_nave', 47.0, 18.0, T - 0.05, 30), ('ciambella_gonfiabile', 68.0, 22.5, T - 0.1, 120),
-                                 ('paperella_gigante', 48.5, 4.0, T + 0.2, 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1] - (0.0101 if GIOCO else 0.0), 15),
+                                 ('paperella_gigante', 48.5, 4.0, T + 0.2 - max(BACINO_GIU - 0.1, 0.0), 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1] - (0.0101 if GIOCO else 0.0), 15),
                                  ('pallone_spiaggia', 72.0, 30.0, T - 0.15, 0)):
         props.append(P.prop(nome, (x, y, z), rot))
 
@@ -892,8 +901,8 @@ def versione_A(mats):
             pa['vasca'] = v
         GIOCO_DATI.update(
             vasche=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 1.1 - 0.12 - PELO_GIU) for v in (C1, C2, C3)],
-            scolo=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 0.9 - 0.12) for v in D],
-            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35 - PELO_GIU),
+            scolo=[dict(rett=list(v[:4]), fondo=v[4], acqua=v[4] + 0.9 - 0.12 - SCOLO_GIU) for v in D],
+            bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35 - BACINO_GIU),
             allagato=dict(acqua=T, fondo=z0),
             pozzo=dict(rett=[43.6, 7.9, 45.8, 10.1], fondo=z0 - 4.5, bordo=T + 0.12),
             pozzetto_grata=dict(rett=list(POZZETTO_GRATA[:4]), fondo=z0 - POZZETTO_GRATA[4], bordo=POZZETTO_GRATA[5]),
@@ -1369,9 +1378,9 @@ def main():
     if gioco:
         assert nome == 'A', "nel gioco c'è solo la A (scelta dell'utente del 19 ottobre)"
         global GIOCO, X0, SOTTO_PEDANA
-        global PELO_GIU
+        global PELO_GIU, SCOLO_GIU, BACINO_GIU
         GIOCO, X0, SOTTO_PEDANA = True, X0_GIOCO, 0.26
-        PELO_GIU = 0.1
+        PELO_GIU, SCOLO_GIU, BACINO_GIU = 0.26, 0.06, 0.21
         uscita, prefisso = GIOCO_USCITA, 'inseguimento'
     gruppi, percorso, luci, info = VERSIONI[nome](mats)
     os.makedirs(uscita, exist_ok=True)
