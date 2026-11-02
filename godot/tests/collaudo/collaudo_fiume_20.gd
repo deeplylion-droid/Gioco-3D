@@ -449,7 +449,7 @@ func _guarda(occhio: Vector3, punto: Vector3) -> void:
 
 
 func _salva(nome: String) -> Image:
-	await _frames(24)
+	await _frames(int(OS.get_environment("FOTOGRAMMI")) if OS.has_environment("FOTOGRAMMI") else 24)
 	await RenderingServer.frame_post_draw
 	var im := get_viewport().get_texture().get_image()
 	im.save_jpg(_cartella.path_join("%03d_%s.jpg" % [_k, nome]), 0.88)
@@ -520,7 +520,8 @@ func _vicino() -> void:
 	cam.fov = 55.0
 	cam.near = 0.02
 	get_tree().current_scene.add_child(cam)
-	for gruppo in [["aperta", aperte.slice(0, 14)], ["caduto", cadute.slice(0, 14)]]:
+	var quanti := int(OS.get_environment("VICINO")) if OS.has_environment("VICINO") else 14
+	for gruppo in [["aperta", aperte.slice(0, quanti)], ["caduto", cadute.slice(0, quanti)]]:
 		for e in gruppo[1]:
 			var s: Array = e[1]
 			var c: Vector3 = s[2]
@@ -534,7 +535,7 @@ func _vicino() -> void:
 				if Vector2(p.x - c.x, p.z - c.z).length() < Vector2(q.x - c.x, q.z - c.z).length():
 					q = p
 			var verso := Vector3(q.x - c.x, 0, q.z - c.z).normalized()
-			for lato in [0.0, 40.0]:
+			for lato in ([0.0] if OS.has_environment("VICINO") else [0.0, 40.0]):
 				var da := Vector3(c.x, cima, c.z) + verso.rotated(Vector3.UP, deg_to_rad(lato)) * 1.4 + Vector3.UP * 0.45
 				cam.global_position = L(da)
 				cam.look_at(L(Vector3(c.x, cima - 0.1, c.z)), Vector3.UP)
