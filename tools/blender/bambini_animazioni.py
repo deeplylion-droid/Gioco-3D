@@ -5,10 +5,12 @@ come Mixamo: Hips, Spine02, Spine01, Spine, neck, Head, LeftArm, ...), salvato i
 assets_src/bambini/rig/<nome>.glb, e dalle sue animazioni di base con il solo scheletro
 (<nome>_walking_armature.glb, <nome>_running_armature.glb). Crea queste azioni:
 
-  fermo          curvo, respiro lento e piccolo ondeggiare (ciclo di 8 s); con --vivo il peso passa da un piede
-                 all'altro (le anche di lato, il bacino che si inclina, il busto che compensa: i piedi restano a
-                 terra, con un IK a due ossa fatto a mano), il respiro più ampio e piccoli movimenti della testa
-  inclina_testa  la testa si piega piano da una parte, resta lì e torna (ciclo di 6 s; con --vivo anche il peso)
+  fermo          curvo, respiro lento e piccolo ondeggiare (ciclo di 8 s)
+  inclina_testa  la testa si piega piano da una parte, resta lì e torna (ciclo di 6 s)
+  fermo_vivo, inclina_testa_viva   (con --vivo, in più) le stesse, ma il peso passa da un piede all'altro (le anche
+                 di lato, il bacino che si inclina, il busto che compensa: i piedi restano a terra, con un IK a due
+                 ossa fatto a mano), il respiro più ampio e piccoli movimenti della testa. Solo il bambino col cubo
+                 del corridoio del fiume le usa (Bambino.fermo_vivo); nella torre restano quelle di prima
   cammina        la camminata di Meshy rallentata, curva e un po' storta (testa piegata,
                  una spalla più bassa, braccia molli)
   corsa          la corsa di Meshy, curva e con la testa bassa, per scappare
@@ -37,7 +39,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('nome'); ap.add_argument('uscita')
 ap.add_argument('--occhio', default='', help="GLB da cui prendere il guscio dell'occhio")
 ap.add_argument('--vivo', action='store_true',
-                help="fermo e inclina_testa vivi (il bambino col cubo, scelta A dell'utente del 1 novembre: "
+                help="anche fermo_vivo e inclina_testa_viva (il bambino col cubo, scelta A dell'utente del 1 novembre: "
                      "\"A ma animalo meglio\")")
 A = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 
@@ -269,12 +271,12 @@ def piedi_a_terra():
 
 
 # ---------------------------------------------------------------- azioni fatte a mano
-def fermo():
-    nuova_azione('fermo')
+def fermo(vivo=False):
+    nuova_azione('fermo_vivo' if vivo else 'fermo')
     n = 8 * FPS
     for f in range(n + 1):
         t = f / FPS
-        if A.vivo:
+        if vivo:
             rot, spost = posa_viva(t, 8.0, 4.0)
             applica(unisci(posa_curva(t), rot))
             metti_anche(spost)
@@ -285,8 +287,8 @@ def fermo():
             chiave(f)
 
 
-def inclina_testa():
-    nuova_azione('inclina_testa')
+def inclina_testa(vivo=False):
+    nuova_azione('inclina_testa_viva' if vivo else 'inclina_testa')
     n = 6 * FPS
     for f in range(n + 1):
         t = f / FPS
@@ -294,7 +296,7 @@ def inclina_testa():
         extra = 0.12 * liscio(t, 2.4, 3.9) * (1 - liscio(t, 3.9, 5.7))
         p = posa_curva(t, respiro=3.0, ondeggio=6.0)
         testa = {'Head': [(Y, 18 * k + 18 * extra), (Z, 6 * k)], 'neck': [(Y, 6 * k)]}
-        if A.vivo:
+        if vivo:
             # (il peso va verso la parte dove si piega la testa, e torna)
             rot, spost = posa_viva(t, 6.0, 3.0)
             applica(unisci(p, rot, testa))
@@ -372,6 +374,9 @@ def extra_corsa(t):
 
 fermo()
 inclina_testa()
+if A.vivo:
+    fermo(vivo=True)
+    inclina_testa(vivo=True)
 si_gira()
 cam_src.animation_data.action = cam_act
 da_mocap('cammina', cam_src, cam_act, lentezza=1.8, braccia=0.5, extra=extra_cammina)

@@ -55,6 +55,8 @@ enum Stato { ATTESA, GUARDA, SCAPPA, FINITO }
 ## [member Bambino.inclinazione_testa]).
 @export var ritardo_testa := 4.0
 @export var inclinazione_testa := 0.0
+## Vedi [member Bambino.fermo_vivo].
+@export var fermo_vivo := false
 
 var stato := Stato.ATTESA
 var bambino: Bambino
@@ -78,6 +80,7 @@ func _ready() -> void:
 	bambino.velocita_corsa = velocita_corsa
 	bambino.inclina_ogni = 3.5
 	bambino.partenza_continua = partenza_continua
+	bambino.fermo_vivo = fermo_vivo
 	bambino.ritardo_testa = ritardo_testa
 	bambino.inclinazione_testa = inclinazione_testa
 	bambino.gira_il_corpo = false        # sta girato com'è, ti segue con la testa

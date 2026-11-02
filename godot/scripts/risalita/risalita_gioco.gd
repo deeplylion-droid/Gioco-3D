@@ -555,10 +555,12 @@ func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, p
 	b.via = PackedVector3Array([Vector3(xc + 0.7, Y, pm), Vector3(xc - 0.9, Y, pm), Vector3(xc - 2.0, Y, porta0 - 0.7),
 			Vector3(xc - 2.2, Y, porta0 - 3.3)])
 	b.da_dove = Vector3(xc + 1.0, Y + 1.6, z1 + 2.0)
-	# animato meglio (scelta A dell'utente del 1° novembre, "A ma animalo meglio"): la testa ti segue con un po' di
+	# animato meglio (scelta A dell'utente del 1° novembre, "A ma animalo meglio"): da fermo è vivo (il peso da un piede
+	# all'altro, il respiro: solo lui, nella torre restano immobili), la testa ti segue con un po' di
 	# ritardo e si inclina di lato girandosi, prima di scappare guarda un attimo verso la porta, e la corsa parte senza
 	# scatti
 	b.partenza_continua = true
+	b.fermo_vivo = true
 	b.ritardo_testa = 2.2
 	b.inclinazione_testa = 0.25
 	b.preparazione = 0.35

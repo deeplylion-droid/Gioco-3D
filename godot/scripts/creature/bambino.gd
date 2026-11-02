@@ -27,7 +27,10 @@ enum Modalita { STATUA, OSSERVA, CAMMINA, SCAPPA, SPARITO }
 enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
 
 const ANIMAZIONI: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"si_gira"]
-const CICLICHE: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa"]
+const CICLICHE: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"fermo_vivo", &"inclina_testa_viva"]
+## Le pose da fermo vive (il peso da un piede all'altro, il respiro più ampio: bambini_animazioni.py --vivo), al posto di
+## quelle di prima, con [member fermo_vivo].
+const VIVE := {&"fermo": &"fermo_vivo", &"inclina_testa": &"inclina_testa_viva"}
 ## Accelerazione della camminata (m/s²): parte e si ferma con il passo, non di colpo.
 const ACCEL_CAMMINATA := 1.2
 ## Quanto gira al massimo camminando (gradi al secondo): curve, non giri sul posto.
@@ -72,6 +75,9 @@ const PIEDE_A_TERRA := 0.11
 @export var ritardo_testa := 4.0
 ## Quanto la testa si inclina di lato mentre si gira verso il giocatore (per grado di giro; 0: niente).
 @export var inclinazione_testa := 0.0
+## Da fermo usa le pose vive (fermo_vivo, inclina_testa_viva), se il modello le ha: solo il bambino col cubo del
+## corridoio del fiume (scelta A dell'utente del 1° novembre); gli altri, come quelli della torre, restano immobili.
+@export var fermo_vivo := false
 
 @export_group("Cammina")
 @export var percorso: Array[Node3D] = []
@@ -410,7 +416,7 @@ func _reagisci() -> void:
 
 
 func _fine_animazione(nome: StringName) -> void:
-	if nome == &"si_gira" or nome == &"inclina_testa":
+	if nome == &"si_gira" or nome == &"inclina_testa" or nome == &"inclina_testa_viva":
 		_reazione_in_corso = false
 		if modalita == Modalita.OSSERVA:
 			_anima(&"fermo", 0.5)
@@ -710,7 +716,10 @@ func _mostra(aperto: bool) -> void:
 
 func _anima(nome: StringName, fusione := 0.4) -> void:
 	for ap in _player_anim:
-		if not ap.has_animation(nome):
+		var n := nome
+		if fermo_vivo and VIVE.has(nome) and ap.has_animation(VIVE[nome]):
+			n = VIVE[nome]
+		if not ap.has_animation(n):
 			continue
 		ap.speed_scale = 1.0
-		ap.play(nome, fusione)
+		ap.play(n, fusione)
