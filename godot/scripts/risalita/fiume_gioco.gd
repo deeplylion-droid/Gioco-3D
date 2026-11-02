@@ -1863,6 +1863,14 @@ func _pile() -> void:
 	rng.seed = 1023
 	# gli ingombri già a terra: le forme di collisione (transenne, rocce, pali, cabina, tettoia) in pianta
 	var ingombri := _ingombri()
+	# e la strada di fuga del bambino col cubo, libera come quella del giocatore
+	for k in FUGA_BAMBINO.size() - 1:
+		var p0: Vector2 = FUGA_BAMBINO[k]
+		var p1: Vector2 = FUGA_BAMBINO[k + 1]
+		var dd := (p1 - p0).normalized()
+		if k == FUGA_BAMBINO.size() - 2:
+			p1 += dd * 0.3
+		ingombri.append(_rettangolo((p0 + p1) * 0.5, dd, dd.orthogonal(), p0.distance_to(p1), 2.0 * FUGA_LARGO, 0.0))
 	# le lampade sui muri (e quello che sta in alto): le pile ci passano sotto
 	var lampade: Array[Vector3] = []
 	for c in get_children():
@@ -2098,6 +2106,14 @@ func _pile() -> void:
 			aperte.size(), scatole.size(), colorate.size(), casse_sciolte.size()])
 
 
+## La strada di fuga del bambino col cubo (BambinoCorridoioFiume in risalita_gioco.gd, i punti "via", qui nelle
+## coordinate del fiume): dalla porta del capannone gira a sinistra e sparisce nella rientranza fra la porta e il muro
+## dell'approdo. Le pile ne stanno fuori (test_bambini_sfuggita), a FUGA_LARGO dall'asse: il raggio del bambino (22 cm) e
+## 20 cm di margine. Se cambiano i punti lì, vanno cambiati anche qui.
+const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -27.1), Vector2(-30.0, -26.9)]
+const FUGA_LARGO := 0.42
+
+
 ## Le tre lampade calde spostate dai muri dietro le pile: [muro, posizione lungo il muro, energia]. Appese alla faccia
 ## della pila verso la strada, sul blocco di scatoloni della terza unità (a 3,3 m: sopra i 2 m della strada, sul cartone
 ## e non sul bancale), ogni 8 m lungo la fila: a sinistra a 6 e 22 m, a destra a 14 m (i muri 3 e 1 cominciano a -7 e
@@ -2206,6 +2222,13 @@ func _colonna_ci_sta(poli: PackedVector2Array, c: Vector2, nell_approdo: bool, i
 	if (c.x < MURO_APPRODO) != nell_approdo:
 		return false
 	return _pila_ci_sta(_allarga_poli(poli, PILA_MARGINE), ingombri, messe)
+
+
+## Il rettangolo in pianta col centro [param c], i versi [param d] e [param n], le misure, allargato di [param m].
+static func _rettangolo(c: Vector2, d: Vector2, n: Vector2, largo: float, prof: float, m: float) -> PackedVector2Array:
+	var e := d * (largo * 0.5 + m)
+	var f := n * (prof * 0.5 + m)
+	return PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f])
 
 
 ## Il poligono convesso [param poli] allargato di [param m] da ogni parte.
