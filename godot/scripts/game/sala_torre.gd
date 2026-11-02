@@ -329,7 +329,9 @@ func _prepara_dati() -> void:
 	dati = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
 	var acqua: Material = load(ACQUA)
 	for m in find_children("acqua*", "MeshInstance3D", true, false):
-		(m as MeshInstance3D).material_override = acqua
+		# (non le pareti d'acqua nelle bocche dei tubi dell'inseguimento, che hanno la loro: SalaInseguimento._veli_bocche)
+		if not String(m.name).begins_with(SalaInseguimento.NOME_VELO):
+			(m as MeshInstance3D).material_override = acqua
 
 
 ## I corpi statici dei canali della discesa vanno nel gruppo "scivolo". Tutte le forme trimesh della sala

@@ -16,6 +16,12 @@ uniform float wave_scale = 1.4;
 uniform float wave_speed = 0.3;
 uniform float wave_strength : hint_range(0.0, 1.0) = 0.1;
 uniform sampler2D depth_tex : hint_depth_texture, filter_nearest;
+// La parete d'acqua nelle bocche dei tubi (SalaInseguimento._veli_bocche, 0.3.19): una superficie verticale. Senza
+// riflessi (lucido 0: le increspature, fatte per un piano, su una parete diventavano strisce di luce verticali) e piena
+// quanto l'acqua che ha dietro (pieno_fisso: lo spessore misurato dalla profondità, dove la parete tocca il fondo, era
+// quasi zero e faceva una riga chiara). Per l'acqua delle vasche restano 1 e -1: com'era.
+uniform float lucido : hint_range(0.0, 1.0) = 1.0;
+uniform float pieno_fisso = -1.0;
 
 varying vec3 world_pos;
 
@@ -42,7 +48,7 @@ void fragment() {
 	vec4 dietro = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, d, 1.0);
 	dietro.xyz /= dietro.w;
 	float spessore = max(length(dietro.xyz) - length(VERTEX), 0.0);
-	float pieno = 1.0 - exp(-spessore * absorption);
+	float pieno = pieno_fisso >= 0.0 ? pieno_fisso : 1.0 - exp(-spessore * absorption);
 	ALBEDO = mix(water_color.rgb, deep_color.rgb, pieno);
 	ALPHA = clamp(max(pieno, min_alpha), 0.0, 1.0);
 	// da sotto (dai tubi che arrivano sotto il pelo, correzione della 0.3.17): non lo spessore d'aria che c'è dietro,
@@ -55,7 +61,7 @@ void fragment() {
 		ALBEDO = mix(deep_color.rgb, water_color.rgb, 0.35 + 0.4 * finestra);
 		ALPHA = mix(0.97, under_alpha, finestra);
 	}
-	ROUGHNESS = 0.03;
-	SPECULAR = 0.6;
+	ROUGHNESS = mix(1.0, 0.03, lucido);
+	SPECULAR = 0.6 * lucido;
 	METALLIC = 0.0;
 }

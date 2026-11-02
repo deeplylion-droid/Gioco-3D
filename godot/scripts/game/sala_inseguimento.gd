@@ -163,7 +163,7 @@ func _passi() -> Array:
 	for i in 4:
 		out.append(func(): _modello(i))
 	out.append(_tubi)
-	out.append_array([_acque, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
+	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
 	if crea_luci:
 		out.append_array(_passi_luci())
 	return out
@@ -340,6 +340,69 @@ func _acque() -> void:
 		add_child(w)
 		w.global_position = b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, v[1] + alto / 2.0])
 		i += 1
+
+
+## La parete d'acqua nella bocca di ogni tubo che parte da una vasca sotto il pelo (le paratie dei bersagli verdi, giusti
+## e sbagliati): dal fondo del tubo al pelo, dove finisce la superficie, col materiale dell'acqua. Il pelo della vasca è un
+## piano: entrando nel tubo l'occhio (accovacciato, il tubo scende) va sotto il pelo, e guardando la vasca vedeva la
+## superficie di taglio e da sotto, e la vasca sembrava asciutta (riscontri dell'utente sulla 0.3.16 e sulla 0.3.19,
+## "si vede ancora sotto l'acqua nella zona delle vasche con gli scivoli"). Con la parete, da sotto il pelo fra l'occhio
+## e la superficie c'è sempre l'acqua; da sopra si vede la bocca piena d'acqua fino al pelo. Lo prova
+## test_occhio_sopra_acque.
+## (comincia con "acqua": per il controllo di posizionamento è acqua, come le superfici, e non un ingombro)
+const NOME_VELO := "acqua_velo_bocca_"
+
+
+func _veli_bocche() -> void:
+	var acque := []
+	for v in dati["vasche"]:
+		acque.append(v)
+	for v in dati["scolo"]:
+		acque.append(v)
+	acque.append(dati["bacino"])
+	# (l'acqua delle vasche, senza riflessi e piena com'è l'acqua che ha dietro: vedi water_inseguimento.gdshader)
+	var mat := (load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
+	mat.set_shader_parameter(&"lucido", 0.0)
+	mat.set_shader_parameter(&"pieno_fisso", 0.97)
+	for nome: String in dati["tubi"]:
+		var linea: Array = dati["tubi"][nome]
+		var p0: Array = linea[0]
+		var p3: Array = linea[mini(3, linea.size() - 1)]
+		for v in acque:
+			var r: Array = v["rett"]
+			var pelo := float(v["acqua"])
+			# (la bocca sta nel muro della vasca, il centro del tubo sotto il pelo)
+			if p0[0] < r[0] - 0.4 or p0[0] > r[2] + 0.4 or p0[1] < r[1] - 0.4 or p0[1] > r[3] + 0.4 or p0[2] - R_TUBO >= pelo:
+				continue
+			# verso il tubo, in pianta (coordinate di Blender)
+			# (la parete sta nel muro: dritta lungo l'asse del muro che il tubo attraversa)
+			var dx := float(p3[0]) - float(p0[0])
+			var dy := float(p3[1]) - float(p0[1])
+			if absf(dx) < 0.01 and absf(dy) < 0.01:
+				continue
+			if absf(dx) >= absf(dy):
+				dx = signf(dx)
+				dy = 0.0
+			else:
+				dy = signf(dy)
+				dx = 0.0
+			# dove finisce la superficie (il bordo interno della vasca, 18 cm dentro il muro), sull'asse del tubo
+			var bx := float(r[2]) - 0.18 if dx > 0.5 else (float(r[0]) + 0.18 if dx < -0.5 else float(p0[0]))
+			var by := float(r[3]) - 0.18 if dy > 0.5 else (float(r[1]) + 0.18 if dy < -0.5 else float(p0[1]))
+			var giu := float(p0[2]) - R_TUBO - 0.1
+			var velo := MeshInstance3D.new()
+			velo.name = NOME_VELO + nome
+			var q := QuadMesh.new()
+			q.size = Vector2(1.8, pelo - giu)
+			velo.mesh = q
+			velo.material_override = mat
+			velo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(velo)
+			# il quad guarda verso il tubo (+Z del quad lungo il tubo)
+			var avanti := Vector3(dx, 0.0, -dy)
+			velo.global_transform = Transform3D(Basis.looking_at(-avanti, Vector3.UP), b([bx, by, (giu + pelo) / 2.0]))
+			velo.set_meta(&"pelo", pelo)
+			break
 
 
 # --- paratie ----------------------------------------------------------------------------------------
