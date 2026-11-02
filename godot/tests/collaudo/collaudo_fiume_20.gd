@@ -329,8 +329,9 @@ func _numeri() -> void:
 		qp.shape = cil
 		qp.transform = Transform3D(Basis(), L(q) + Vector3.UP * 1.05)
 		for h in fiume.get_world_3d().direct_space_state.intersect_shape(qp, 8):
-			var n = h.collider
-			ingombri["collisione " + (str(fiume.get_path_to(n)) if n is Node and fiume.is_ancestor_of(n) else str(n))] = q.snapped(Vector3.ONE * 0.01)
+			var k := "collisione " + _forma(h)
+			if not ingombri.has(k):
+				ingombri[k] = q.snapped(Vector3.ONE * 0.01)
 	print("NUMERI: sulla strada a piedi, fra 0,1 e 2 m: %d cose" % ingombri.size())
 	for x in ingombri:
 		print("NUMERI:   %s (la prima volta coi piedi in %s)" % [x, ingombri[x]])
@@ -349,6 +350,22 @@ func _numeri() -> void:
 		var k := "%.2f" % (m.emission_energy_multiplier if m and m.emission_enabled else 0.0)
 		globi[k] = globi.get(k, 0) + 1
 	print("NUMERI: globi delle lampade a gabbia (emissione: quanti): %s" % str(globi))
+
+
+## La forma di collisione colpita: il nome del nodo, la forma, la misura e dove sta (in coordinate del fiume).
+func _forma(h: Dictionary) -> String:
+	var co := h.get("collider") as CollisionObject3D
+	if co == null:
+		return str(h.get("collider"))
+	var cs := co.shape_owner_get_owner(co.shape_find_owner(h["shape"])) as CollisionShape3D
+	if cs == null:
+		return String(co.name)
+	var forma := cs.shape.get_class()
+	if cs.shape is BoxShape3D:
+		forma += " %s" % str((cs.shape as BoxShape3D).size.snapped(Vector3.ONE * 0.01))
+	elif cs.shape is CylinderShape3D:
+		forma += " r %.2f h %.2f" % [(cs.shape as CylinderShape3D).radius, (cs.shape as CylinderShape3D).height]
+	return "%s/%s (%s, in %s)" % [co.name, cs.name, forma, fiume.to_local(cs.global_position).snapped(Vector3.ONE * 0.01)]
 
 
 ## Vero se la forma di collisione colpita è una colonna delle pile (le BoxShape3D messe da _pile: 1,2 x 1,0 o 0,6 x 0,5/1,0,
@@ -409,7 +426,7 @@ func _cerca_buchi() -> void:
 							buco = wq > 2.4 and w < F.PILA_STACCO + F.PILA_PROFONDO + F.PILA_FRA_FILE + F.PILA_RIENTRO - 0.05 and w > -1.5
 						if not buco:
 							continue
-						var cosa: String = str(fiume.get_path_to(hit["collider"])) if hit["collider"] is Node and fiume.is_ancestor_of(hit["collider"]) else str(hit["collider"])
+						var cosa := _forma(hit)
 						var chiave := "%d:%d:%.1f" % [im, roundi(u / 0.3), h]
 						if not visti.has(chiave):
 							visti[chiave] = [q, hl, im, u, h, cosa, 0]
