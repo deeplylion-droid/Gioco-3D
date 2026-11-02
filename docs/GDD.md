@@ -632,3 +632,10 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
 - **Lampade del corridoio delle pile: al 20%.** "ERANO AL 20 QUELLE": per l'utente sono le stesse lampade tonde a muro che il 30 ottobre aveva fatto mettere "al 20% di ora. tutte". Noi le avevamo abbassate solo nel tunnel, e il corridoio era rimasto al 60%. Scendono al 20% di come erano nella 0.3.16, luce e globo (grafica-2). Le altre lampade uguali del fiume (16 sull'anello, una all'approdo e una sulla piazza) scendono anche loro al 20%, risposta dell'utente: "A 20 anche quelle". Restano com'erano le 5 rotte, che sono spente, e la lampada della valvola degli acquari nella sala, che segnala l'enigma.
 - **Bambino col cubo: A, "ma animalo meglio".** La regola resta: compare a chi si ferma nel corridoio o torna indietro, solo dopo lei all'oblò, mai sotto gli occhi. Si migliora l'animazione di tutta la sequenza: quando è fermo, la testa che segue, la partenza e la corsa (mascotte).
 - **Faretto del cartello delle pozze: A**, resta così, con l'alone sul muro.
+
+**Versione 0.3.20 (2 novembre)**: contiene le correzioni qui sopra.
+- Il giro finale del collaudo ha notato una cosa da sapere: col bacino più basso, la scaletta di SB1 parte sopra il bordo di piastrelle, che ora sta 26 cm sopra l'acqua.
+- **Ancora da decidere con l'utente**: l'angolo vuoto di circa 2 m a sinistra dell'ingresso degli scatoloni, dove sparisce il bambino col cubo. Si vede dalla soglia girandosi a sinistra; da 4 m lo coprono le pile e l'anta.
+  - A: resta vuoto.
+  - B: una pila nell'angolo, e il bambino sparisce dietro di lei (ambienti-1 e mascotte).
+  Nella 0.3.20 è come nella 0.3.19.
