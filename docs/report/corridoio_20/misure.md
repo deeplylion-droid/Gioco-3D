@@ -36,3 +36,16 @@ LAMPADE_TONDE = 0,2 in _lampada_calda (16 sull'anello, approdo, piazza), globo c
 | porta_approdo | 27.3 / 17.4 / 7.3 | 16.4 / 7.8 / 3.2 |
 
 Foglio: foglio_anello_20.jpg.
+
+## Con le pile sfalsate (unione di 79a367e5)
+
+| punto | 0.3.19 (60%) | 20%, pile vecchie | 20%, pile sfalsate |
+|---|---|---|---|
+| porta d ingresso | 29,5 / 19,8 / 8,6 | 20,5 / 11,1 / 4,6 | 20,3 / 10,9 / 4,5 |
+| corridoio 1 | 28,9 / 24,2 / 13,7 | 12,6 / 9,2 / 2,4 | 12,1 / 8,9 / 2,2 |
+| corridoio 2 | 19,8 / 16,3 / 4,8 | 8,2 / 4,6 / 0,1 | 8,3 / 4,1 / 0,1 |
+| corridoio 3 | 16,3 / 11,6 / 1,5 | 8,7 / 3,6 / 0,1 | 7,8 / 4,5 / 0,1 |
+| corridoio 4 | 21,6 / 18,5 / 7,0 | 20,6 / 17,6 / 5,8 | 19,5 / 17,2 / 5,8 |
+| imbarco | 14,3 / 13,8 / 3,3 | 13,9 / 12,9 / 3,3 | 11,6 / 10,3 / 2,7 |
+
+Sonda: 21 lampade a 0,60 e 2 a 0,50, globo 0,60; 5 rotte; valvola 6,0 / 8,0. Foglio: foglio_pile_sfalsate_20.jpg.
