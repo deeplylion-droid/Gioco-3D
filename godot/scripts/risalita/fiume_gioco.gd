@@ -2005,24 +2005,32 @@ func _pile() -> void:
 	for tappo in TAPPI_PILE:
 		var punto: Vector2 = tappo[0]
 		var vista: Vector2 = (punto - (tappo[1] as Vector2)).normalized()
-		var t := 0.3
-		while t < 2.6:
-			var cc: Vector2 = punto + vista * t
-			var prova := _posa_sciolta(rng2, cc, vista, vista.orthogonal(), PILA_PROFONDO)
-			if _colonna_ci_sta(prova["poli"], cc, false, con_fuga, messe):
-				prova["muro"] = -1
-				prova["fila"] = 1
-				prova["davanti"] = false
-				prova["ferma"] = false
-				prova["u"] = 0.0
-				prova["d"] = vista
-				prova["n"] = vista.orthogonal()
-				prova["nuova"] = true
-				messe.append(prova["poli"])
-				colonne_messe.append(prova)
+		var messo := false
+		# il più vicino possibile dietro la fessura: largo 1 m di traverso, poi 0,5; un po' di lato se non ci sta
+		for prof in [PILA_PROFONDO, 0.5]:
+			var t := 0.3
+			while t < 3.0 and not messo:
+				for lato in [0.0, 0.15, -0.15, 0.3, -0.3]:
+					var cc: Vector2 = punto + vista * t + vista.orthogonal() * lato
+					var prova := _posa_sciolta(rng2, cc, vista, vista.orthogonal(), prof)
+					if _colonna_ci_sta(prova["poli"], cc, false, con_fuga, messe):
+						prova["muro"] = -1
+						prova["fila"] = 1
+						prova["davanti"] = false
+						prova["ferma"] = false
+						prova["u"] = 0.0
+						prova["d"] = vista
+						prova["n"] = vista.orthogonal()
+						prova["nuova"] = true
+						messe.append(prova["poli"])
+						colonne_messe.append(prova)
+						print("pile: tappo in %s, %.2f m dietro la fessura, %.1f m di traverso" % [str(cc), t, prof])
+						messo = true
+						break
+				t += 0.1
+			if messo:
 				break
-			t += 0.15
-		if t >= 2.6:
+		if not messo:
 			push_warning("pile: niente posto per il tappo in %s" % str(punto))
 	# 2. le lampade calde sulla fila davanti dei muri 3 e 1: sulle colonne ferme (o le più vicine fra quelle intere)
 	for l in LAMPADE_PILE:
