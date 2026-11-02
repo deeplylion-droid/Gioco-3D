@@ -1,6 +1,6 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-11-01 23:57:54. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-11-02 02:52:17. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
 Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 64. Eccezioni non più trovate: 0.
 
@@ -28,9 +28,9 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 64. Eccezi
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| enigmi | compenetra | `Risalita/Fiume/paratia/Mesh_0` | -38.16, -5.40, 117.17 | dentro ci passa Risalita/Fiume/@MeshInstance3D@28995, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
-| enigmi | compenetra | `Risalita/Fiume/paratia4/Mesh_0` | -55.75, -5.40, 93.60 | dentro ci passa Risalita/Fiume/@MeshInstance3D@28995, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
-| enigmi | compenetra | `Risalita/Fiume/paratia5/Mesh_0` | -33.40, -5.40, 64.75 | dentro ci passa Risalita/Fiume/@MeshInstance3D@28995, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
+| enigmi | compenetra | `Risalita/Fiume/paratia/Mesh_0` | -38.16, -5.40, 117.17 | dentro ci passa Risalita/Fiume/@MeshInstance3D@28998, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
+| enigmi | compenetra | `Risalita/Fiume/paratia4/Mesh_0` | -55.75, -5.40, 93.60 | dentro ci passa Risalita/Fiume/@MeshInstance3D@28998, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
+| enigmi | compenetra | `Risalita/Fiume/paratia5/Mesh_0` | -33.40, -5.40, 64.75 | dentro ci passa Risalita/Fiume/@MeshInstance3D@28998, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
 | enigmi | ingombro | `Risalita/ArredoCorridoioFiume/quadro_elettrico` | -5.50, -5.40, 52.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.15 e 1.83 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) | voluto: a muro (regola del coordinatore del 23 ottobre): il quadro elettrico del corridoio del fiume è avvitato al muro ovest, sporge 22 cm, fra 1,15 e 1,83 m; non pende nel passaggio; passaggio libero 1,78 m all'altezza della testa (corridoio largo 2 m, di fronte solo l'oblò a filo e le lampade sopra i 2,1 m) (ambienti-1, arredo A+C del 30 ottobre) |
 
 ### sala
@@ -49,21 +49,21 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 64. Eccezi
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| da assegnare | compenetra | `Ostacolo_vetrina_484/corallo/Mesh_0` | -62.02, -29.16, 88.12 | il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@135854 (stato: sottomarino_t0) | voluto: il corallo del diorama sta dentro la teca di vetro della vetrina caduta, appoggiato sulla sabbia del fondo: il vetro è una scatola chiusa e lo contiene tutto (tunnel sottomarino, 24 ottobre) |
-| da assegnare | ingombro | `Approdo/@MeshInstance3D@135141` | -62.00, -27.20, 23.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.18 e 1.22 m sopra il pavimento (15 celle da 25 cm) (pavimento a y -27.20), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: il corrimano della scala dell'approdo, a fianco di chi sale, all'altezza della mano |
-| da assegnare | ingombro | `Approdo/PortelloPerno/@MeshInstance3D@135160` | -57.50, -27.00, 21.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.03 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -27.00), senza collisione (si attraversa) (stato: sottomarino_t0) | voluto: il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A) |
-| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135758` | -0.50, -30.00, 65.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
-| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135760` | 1.75, -30.00, 55.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
-| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135761` | 1.75, -30.00, 55.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
-| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135764` | 0.00, -30.00, 60.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
-| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135766` | 0.50, -30.00, 58.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
+| da assegnare | compenetra | `Ostacolo_vetrina_484/corallo/Mesh_0` | -62.02, -29.16, 88.12 | il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@135805 (stato: sottomarino_t0) | voluto: il corallo del diorama sta dentro la teca di vetro della vetrina caduta, appoggiato sulla sabbia del fondo: il vetro è una scatola chiusa e lo contiene tutto (tunnel sottomarino, 24 ottobre) |
+| da assegnare | ingombro | `Approdo/@MeshInstance3D@135092` | -62.00, -27.20, 23.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.18 e 1.22 m sopra il pavimento (15 celle da 25 cm) (pavimento a y -27.20), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: il corrimano della scala dell'approdo, a fianco di chi sale, all'altezza della mano |
+| da assegnare | ingombro | `Approdo/PortelloPerno/@MeshInstance3D@135111` | -57.50, -27.00, 21.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.03 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -27.00), senza collisione (si attraversa) (stato: sottomarino_t0) | voluto: il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A) |
+| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135709` | -0.50, -30.00, 65.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
+| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135711` | 1.75, -30.00, 55.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
+| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135712` | 1.75, -30.00, 55.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
+| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135715` | 0.00, -30.00, 60.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
+| da assegnare | ingombro | `Galleria_205/@MeshInstance3D@135717` | 0.50, -30.00, 58.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
 | da assegnare | ingombro | `Galleria_205/Fascia` | -0.50, -30.00, 65.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
 | da assegnare | ingombro | `Galleria_205/struttura_mosaico` | 1.75, -30.00, 55.25 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 1.25 m sopra il pavimento (173 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
-| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135829` | -22.75, -30.00, 117.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
-| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135831` | -37.00, -30.00, 128.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
-| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135832` | -37.00, -30.00, 128.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
-| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135835` | -26.00, -30.00, 123.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
-| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135837` | -30.75, -30.00, 127.25 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
+| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135780` | -22.75, -30.00, 117.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
+| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135782` | -37.00, -30.00, 128.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
+| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135783` | -37.00, -30.00, 128.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
+| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135786` | -26.00, -30.00, 123.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
+| da assegnare | ingombro | `Galleria_425/@MeshInstance3D@135788` | -30.75, -30.00, 127.25 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
 | da assegnare | ingombro | `Galleria_425/Fascia` | -22.75, -30.00, 117.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati |
 | da assegnare | ingombro | `Galleria_425/struttura_mosaico` | -37.00, -30.00, 128.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 1.25 m sopra il pavimento (367 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
 | da assegnare | ingombro | `Tunnel_192/struttura_mosaico` | -1.00, -30.00, 64.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0) | voluto: la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro |
@@ -174,7 +174,7 @@ Per ogni giro, quanti oggetti di scena si sono controllati in ogni parte. Una pa
 | sala_principale · risalita_arrivo | `Risalita` | 427 |
 | sala_principale · risalita_arrivo | `Risalita/ArredoCorridoioFiume` | 9 |
 | sala_principale · risalita_arrivo | `Risalita/Corrimano` | 7 |
-| sala_principale · risalita_arrivo | `Risalita/Fiume` | 3934 |
+| sala_principale · risalita_arrivo | `Risalita/Fiume` | 3924 |
 | sala_principale · risalita_arrivo | `Risalita/Infermeria` | 175 |
 | sala_principale · risalita_arrivo | `Risalita/ObloFiume` | 3 |
 | sala_principale · risalita_arrivo | `Risalita/ObloPersonale` | 3 |
@@ -186,7 +186,7 @@ Per ogni giro, quanti oggetti di scena si sono controllati in ogni parte. Una pa
 | sala_principale · risalita_dopo | `Risalita` | 427 |
 | sala_principale · risalita_dopo | `Risalita/ArredoCorridoioFiume` | 9 |
 | sala_principale · risalita_dopo | `Risalita/Corrimano` | 7 |
-| sala_principale · risalita_dopo | `Risalita/Fiume` | 3934 |
+| sala_principale · risalita_dopo | `Risalita/Fiume` | 3924 |
 | sala_principale · risalita_dopo | `Risalita/Infermeria` | 231 |
 | sala_principale · risalita_dopo | `Risalita/ObloFiume` | 3 |
 | sala_principale · risalita_dopo | `Risalita/ObloPersonale` | 3 |
@@ -322,12 +322,12 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 
 | Scena | Parte nascosta | Mesh | Controllata |
 |---|---|---|---|
-| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@2306` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@2307` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@2308` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@2309` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@2310` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@2311` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@2312` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface` | 1 | sì, in uno stato |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie` | 1 | sì, in uno stato |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume` | 1 | sì, in uno stato |
@@ -350,26 +350,26 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 | sala_principale | `Interni/Ambienti/Spogliatoi/acqua_lavapiedi` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Interni/Ambienti/Stanzino/acqua_pozza_stanzino` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `LuciSala/@Node3D@2366/@MeshInstance3D@2367` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2366/@MeshInstance3D@2368` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2366/@MeshInstance3D@2369` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2366/@MeshInstance3D@2370` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2372/@MeshInstance3D@2373` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2372/@MeshInstance3D@2374` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2372/@MeshInstance3D@2375` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2372/@MeshInstance3D@2376` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2378/@MeshInstance3D@2379` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2378/@MeshInstance3D@2380` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2378/@MeshInstance3D@2381` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2378/@MeshInstance3D@2382` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2384/@MeshInstance3D@2385` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2384/@MeshInstance3D@2386` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2384/@MeshInstance3D@2387` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@2384/@MeshInstance3D@2388` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2367/@MeshInstance3D@2368` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2367/@MeshInstance3D@2369` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2367/@MeshInstance3D@2370` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2367/@MeshInstance3D@2371` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2373/@MeshInstance3D@2374` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2373/@MeshInstance3D@2375` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2373/@MeshInstance3D@2376` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2373/@MeshInstance3D@2377` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2379/@MeshInstance3D@2380` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2379/@MeshInstance3D@2381` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2379/@MeshInstance3D@2382` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2379/@MeshInstance3D@2383` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2385/@MeshInstance3D@2386` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2385/@MeshInstance3D@2387` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2385/@MeshInstance3D@2388` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@2385/@MeshInstance3D@2389` | 1 | **mai controllata** |
 | sala_principale | `Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad` | 1 | **mai controllata** |
 | sala_principale | `Player/Head/Camera3D/ViewModel` | 13 | **mai controllata** |
 | sala_principale | `Player/WaterPack/Aspirazione` | 2 | **mai controllata** |
-| sala_principale | `Player/WaterPack/GettoPotente/@MeshInstance3D@2663` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Player/WaterPack/GettoPotente/@MeshInstance3D@2664` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Risalita/BambinoCorridoioFiume/BambinoCubo` | 2 | no: creatura, si muove (la guarda il collaudo) |
 | sala_principale | `Risalita/Fiume` | 569 | sì, in uno stato |
 | sala_principale | `Risalita/Infermeria` | 243 | sì, in uno stato |
@@ -480,15 +480,15 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 Senza le trasformazioni nel meta "trasformazioni" del nodo o della risorsa MultiMesh (vedi `_espandi_multimesh`):
 
 - `sala_principale · SalaSottomarino/Approdo/Telaio/Rivetti`
-- `sala_principale · SalaSottomarino/Approdo/Telaio/@MultiMeshInstance3D@124407`
+- `sala_principale · SalaSottomarino/Approdo/Telaio/@MultiMeshInstance3D@124358`
 - `sala_principale · SalaSottomarino/Approdo/PortelloPerno/Rivetti`
 - `sala_sottomarino · Approdo/Telaio/Rivetti`
-- `sala_sottomarino · Approdo/Telaio/@MultiMeshInstance3D@135155`
+- `sala_sottomarino · Approdo/Telaio/@MultiMeshInstance3D@135106`
 - `sala_sottomarino · Approdo/PortelloPerno/Rivetti`
 - `sala_sottomarino · Approdo/Telaio/Rivetti`
-- `sala_sottomarino · Approdo/Telaio/@MultiMeshInstance3D@138848`
+- `sala_sottomarino · Approdo/Telaio/@MultiMeshInstance3D@138799`
 - `sala_sottomarino · Approdo/PortelloPerno/Rivetti`
 - `sala_sottomarino · Approdo/Telaio/Rivetti`
-- `sala_sottomarino · Approdo/Telaio/@MultiMeshInstance3D@142541`
+- `sala_sottomarino · Approdo/Telaio/@MultiMeshInstance3D@142492`
 - `sala_sottomarino · Approdo/PortelloPerno/Rivetti`
 
