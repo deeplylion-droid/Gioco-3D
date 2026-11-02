@@ -28,6 +28,11 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	# (SEME: una prova diversa, l'inclinazione della testa che parte a un altro momento)
+	if OS.has_environment("SEME"):
+		seed(int(OS.get_environment("SEME")))
+	else:
+		randomize()
 	Game.pause_on_focus_loss = false
 	GameState.save_to_disk = false
 	get_tree().change_scene_to_file("res://tests/scene/risalita_prova.tscn")
@@ -55,10 +60,18 @@ func _run() -> void:
 	var occhio := Vector3(-4.9, -3.8, 54.5) if caso == "fermati" else Vector3(-4.6, -3.8, 62.6)
 	var scala := Vector3(-3.0, -4.6, 48.6)
 	var guarda_lui := false
+	# (quando ti giri a guardarlo, a caso: così la fuga parte da un momento diverso del fermo e dell'inclinazione della testa)
+	var caso_rng := RandomNumberGenerator.new()
+	caso_rng.seed = int(OS.get_environment("SEME")) if OS.has_environment("SEME") else int(Time.get_ticks_usec())
+	var ritardo := caso_rng.randf() * 2.5
+	print("ti giri a guardarlo %.2f s dopo che è comparso" % (0.8 + ritardo))
 	var dati := {"pelle": 0, "pelle_max": 0.0, "peggiori": [], "fermo_testa": [], "fermo_anche": []}
 	var scivoli := {}           # fase -> [somma, n, massimo]
 	var prima_piedi := {}
 	var prima_nodo := Vector3.INF
+	var v_prima := -1.0
+	var salto_v := [0.0, 0.0]          # [il più grande, quando]
+	var pavimento := [0.0, 0.0, ""]    # [la punta più sotto il pavimento (m), quando, fase]
 	var righe: Array[String] = []
 	var t := 0.0
 	var visto_da := -1.0
@@ -66,10 +79,10 @@ func _run() -> void:
 	var anche0 := Vector3.INF
 	var testa_mm := [Vector3.INF, -Vector3.INF]
 	var anche_mm := [Vector3.INF, -Vector3.INF]
-	while t < 16.0:
+	while t < 20.0:
 		if _b.stato == BambinoSfuggita.Stato.GUARDA and visto_da < 0.0:
 			visto_da = t
-		guarda_lui = visto_da >= 0.0 and t > visto_da + 0.8
+		guarda_lui = visto_da >= 0.0 and t > visto_da + 0.8 + ritardo
 		_guarda(occhio, _b.bambino.punto_testa() if guarda_lui else scala)
 		await get_tree().physics_frame
 		t += 1.0 / 60.0
@@ -86,11 +99,21 @@ func _run() -> void:
 		var nodo := _b.bambino.global_position
 		var v_nodo := 0.0 if prima_nodo == Vector3.INF else Vector2(nodo.x - prima_nodo.x, nodo.z - prima_nodo.z).length() * 60.0
 		prima_nodo = nodo
+		if fase != "fermo" and v_prima >= 0.0 and absf(v_nodo - v_prima) > salto_v[0]:
+			salto_v = [absf(v_nodo - v_prima), t]
+		v_prima = v_nodo if fase != "fermo" else -1.0
+		var sotto := _sotto_pavimento(ps, nodo.y)
+		if sotto > pavimento[0]:
+			pavimento = [sotto, t, fase]
 		if fase != "fermo":
-			var r := "%.2f %s v %.2f anim %s x%.2f" % [t, fase, v_nodo, _b.bambino.get_node(^"Calmo/AnimationPlayer").current_animation if _b.bambino.has_node(^"Calmo/AnimationPlayer") else "?", float(_b.bambino.get_node(^"Calmo/AnimationPlayer").speed_scale) if _b.bambino.has_node(^"Calmo/AnimationPlayer") else 0.0]
+			var ap := _b.bambino.get_node_or_null(^"Calmo/AnimationPlayer") as AnimationPlayer
+			var perno: int = _b.bambino.get(&"_perno_osso")
+			var r := "%.2f v%.2f x%.2f %s t%.2f perno %s" % [t, v_nodo, ap.speed_scale if ap else 0.0, ap.current_animation if ap else "", ap.current_animation_position if ap else 0.0, _sk.get_bone_name(perno).substr(0, 5) if perno >= 0 else "-"]
 			for o in _piedi:
+				if not _sk.get_bone_name(o).ends_with("ToeBase"):
+					continue
 				var w: Vector3 = (ps[o] as Transform3D).origin
-				r += "  %s y%+.3f" % [_sk.get_bone_name(o).substr(0, 6), w.y - nodo.y]
+				r += "  %s %.3f" % [_sk.get_bone_name(o).substr(0, 1), w.y - nodo.y]
 				if prima_piedi.has(o):
 					r += " s%.2f" % (Vector2(w.x - prima_piedi[o].x, w.z - prima_piedi[o].z).length() * 60.0)
 			righe.append(r)
@@ -102,6 +125,9 @@ func _run() -> void:
 				var s: Array = scivoli.get(fase, [0.0, 0, 0.0, 0.0])
 				scivoli[fase] = [s[0] + v, s[1] + 1, maxf(s[2], v), t if v > s[2] else s[3]]
 			prima_piedi[o] = w
+		if fase == "fermo" and OS.has_environment("RIGHE"):
+			var apf := _b.bambino.get_node_or_null(^"Calmo/AnimationPlayer") as AnimationPlayer
+			righe.append("%.2f fermo %s t%.2f" % [t, apf.current_animation, apf.current_animation_position])
 		if fase == "fermo":
 			var th: Vector3 = (ps[_sk.find_bone("Head")] as Transform3D).origin
 			var ah: Vector3 = (ps[_sk.find_bone("Hips")] as Transform3D).origin
@@ -116,6 +142,8 @@ func _run() -> void:
 	for f in scivoli:
 		var s: Array = scivoli[f]
 		print("piedi a terra, %s: scivolano in media %.2f m/s, al più %.2f a %.2f s (%d campioni)" % [f, s[0] / maxf(s[1], 1), s[2], s[3], s[1]])
+	print("salto di velocità più grande fra due fotogrammi: %.2f m/s a %.2f s" % salto_v)
+	print("la punta più sotto il pavimento: %.1f cm a %.2f s (%s)" % [pavimento[0] * 100.0, pavimento[1], pavimento[2]])
 	if testa_mm[0] != Vector3.INF:
 		print("da fermo: la testa si muove di %s cm, le anche di %s cm" % [((testa_mm[1] - testa_mm[0]) * 100.0).snapped(Vector3.ONE * 0.1), ((anche_mm[1] - anche_mm[0]) * 100.0).snapped(Vector3.ONE * 0.1)])
 	if OS.has_environment("RIGHE"):
@@ -178,6 +206,23 @@ func _pelle_di(m: Node3D) -> void:
 						_bv.append(Vector3.ZERO)
 				_nv += 1
 	print("pelle: %d vertici" % _nv)
+
+
+## Quanto il vertice più basso dei piedi (la pelle vera) è sotto il pavimento ([param terra], dove poggia il bambino).
+func _sotto_pavimento(ps: Array, terra: float) -> float:
+	var peggio := 0.0
+	for v in _nv:
+		var pos_y := 0.0
+		var dei_piedi := false
+		for j in 4:
+			var w := _pesi[v * 4 + j]
+			if w > 0.0:
+				pos_y += ((ps[_ossa[v * 4 + j]] as Transform3D) * _bv[v * 4 + j]).y * w
+				if _piedi.has(_ossa[v * 4 + j]) and w > 0.5:
+					dei_piedi = true
+		if dei_piedi:
+			peggio = maxf(peggio, terra - pos_y)
+	return peggio
 
 
 func _controlla_pelle(ps: Array, t: float, fase: String, dati: Dictionary) -> void:
