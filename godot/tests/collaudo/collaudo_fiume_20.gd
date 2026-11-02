@@ -520,6 +520,13 @@ func _vicino() -> void:
 	cam.fov = 55.0
 	cam.near = 0.02
 	get_tree().current_scene.add_child(cam)
+	if OS.has_environment("TORCIA"):
+		# (solo per il collaudo: in cima alle pile non arriva luce, una torcia sulla camera fa vedere gli appoggi)
+		var t := OmniLight3D.new()
+		t.light_energy = 1.2
+		t.omni_range = 5.0
+		t.shadow_enabled = true
+		cam.add_child(t)
 	var quanti := int(OS.get_environment("VICINO")) if OS.has_environment("VICINO") else 14
 	for gruppo in [["aperta", aperte.slice(0, quanti)], ["caduto", cadute.slice(0, quanti)]]:
 		for e in gruppo[1]:
