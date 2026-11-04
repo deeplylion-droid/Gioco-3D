@@ -40,10 +40,10 @@ Ho tenuto conto delle decisioni del GDD: niente spaventi nuovi con lei, lei non 
 
 ## ambienti2-4 I tubi giusti e gli scoli si somigliano anche da fuori
 - Zona: inseguimento, ai tre bivi.
-- Cosa non va oggi, visto dal giocatore: al bivio si sceglie dalla paratia: la giusta ha la luce verde e l'anello di led verdi, la sbagliata una lampada rossa guasta. Una volta aperta la paratia, però, i due tubi sono identici, e gli scoli finiscono in una vasca senza uscita dove lei prende (scelta approvata, che resta). Chi ha colpito il bersaglio sbagliato lo scopre solo quando è troppo tardi.
+- Cosa non va oggi, visto dal giocatore: al bivio si sceglie dalla paratia: la giusta ha la luce verde e l'anello di led verdi, la sbagliata una lampada rossa guasta. Una volta aperta la paratia, però, le due bocche si distinguono solo per il colore del tubo, che non dice niente (rosso, rosa, arancio: i colori del parco), e gli scoli finiscono in una vasca senza uscita dove lei prende (scelta approvata, che resta). Chi ha colpito il bersaglio sbagliato lo scopre solo quando è troppo tardi.
 - Proposta:
   - A) **(consigliata)** Un dettaglio sulla bocca degli scoli, coerente con le vie sbagliate della torre: la fascia della bocca a strisce gialle e nere (nella torre vuol dire "chiuso") e un cartello a disegni di "uscita chiusa". Non cambia la regola, la rende leggibile prima di entrare.
-  - B) Un rumore diverso dagli scoli quando la paratia si apre: acqua ferma e un gocciolio, invece della corrente dei tubi giusti.
+  - B) Un rumore diverso dalla bocca degli scoli quando la paratia si apre: acqua ferma e un gocciolio, che fa capire che lì l'acqua non scorre.
   - C) Lasciare com'è.
 - Costo: piccolo (A e B). Rischio: basso. A va controllato col controllo di posizionamento (il cartello appoggiato al muro, non davanti alla bocca).
 - Immagini già fatte:
