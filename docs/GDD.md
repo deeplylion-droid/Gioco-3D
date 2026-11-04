@@ -639,3 +639,31 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
   - A: resta vuoto.
   - B: una pila nell'angolo, e il bambino sparisce dietro di lei (ambienti-1 e mascotte).
   Nella 0.3.20 è come nella 0.3.19.
+  **Deciso il 4 novembre: B** (vedi sotto).
+
+**Dopo la 0.3.20: correzioni e ritocchi del capitolo 1 (4 novembre)**. L'utente: "ti faccio le correzioni ma tu aspetta a ripartire, mettiamo insieme tutte le correzioni e ti dico io quando andare". **Si parte solo quando l'utente scrive «vai».**
+- **Cartello delle pozze**: "spostiamolo più lontano, così è troppo facile". **Scelta B**: va nel corridoio del personale prima dell'infermeria (dopo l'approdo, con l'oblò di lei), lontano dalla porta dell'infermeria, col suo faretto bianco. L'infermeria torna senza cartello e senza faretto (enigmi).
+- **Giro di raffinamento**: "Come quantità di gameplay secondo me ci siamo col capitolo 1. Mi fai un giro di raffinamento con proposte per migliorare il gioco?". Le sette squadre hanno proposto ritocchi a quello che c'è (proposte in `docs/proposte/raffinamento/` sui branch `lavoro/proposte-raffinamento-*`); l'utente ha risposto sulla pagina "Ritocchi del capitolo 1" (https://claude.ai/artifact/7xSt3QTin66sQ79XNyxFDk). Non ha chiesto di vedere o sentire niente prima.
+  - **Sì**:
+    - scaletta del bacino allungata di due pioli fino sotto il pelo (A);
+    - lampade rosse della scala di servizio alzate di 5 cm, fondo a 2,03 m (A);
+    - entrando nei tubi dalle vasche gli occhi restano almeno 3 cm sopra l'acqua, con un test che lo controlla (A);
+    - cima della scala di servizio: strisce gialle e nere sul pavimento e fascia catarifrangente sul muro, nessuna luce nuova (A);
+    - Polaroid: album nel menu di pausa con 16 cornici, contatore sempre "n su 16" (A);
+    - cassaforte: clic a ogni cifra, chiavistello e cigolio col codice giusto, niente col codice sbagliato (A);
+    - dischi del fiume: colpo di lamiera sul disco, poi motore e catene della chiusa (A);
+    - "fatto giusto": il jingle della botola accorciato a 2-3 note a ogni enigma risolto (A);
+    - bambini: passi di corsa leggeri, diversi per il cubo e per l'agnellino (A);
+    - agnellini animati come il bambino col cubo, tutti e due (A);
+    - lei nelle condotte: una salita diversa per vasca, tempi uguali (A);
+    - cuore nelle condotte solo quando lei è su; i colpi bassi restano nel tunnel (A);
+    - luminosità del primo avvio: seconda prova su uno scatto vero del corridoio delle pile (A);
+    - angolo all'ingresso degli scatoloni: una pila, e il bambino sparisce dietro (B);
+    - ripartenze: togliere il lavoro ripetuto (obiettivo 2-4 s) e, dalla seconda morte nello stesso punto, scena della presa di 1 s (C = A+B);
+    - pile del fiume costruite una volta e salvate già pronte (A);
+    - peso: texture degli oggetti piccoli e della torre da 2048 a 1024 (circa -290 MB), con scatti prima e dopo da approvare (A);
+    - effetti al primo uso preparati nel riscaldamento (A);
+    - qualità scelta in automatico al primo avvio con una prova di pochi secondi (A);
+    - "Avvio sicuro" proposto dopo una chiusura di colpo (qualità bassa e l'altro driver) (A).
+  - **No, restano così**: reazione di lei al getto, occhio che si abitua al buio, usura della stanza delle pozze, segni sugli scoli, segni fosforescenti nel fiume, spie delle pozze, strisce nei tubi dell'inseguimento, volantini e stile dei poster.
+  - **Giocattoli**: i cerchi restano coi loro colori, ma "puoi però spostare il disegno guida sulla torre con lo scivolo e il secchio gigante, in un punto facilmente raggiungibile e ben visibile" (la struttura dell'area bimbi della sala).
