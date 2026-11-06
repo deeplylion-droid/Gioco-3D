@@ -12,13 +12,13 @@ Una riga per punto, campi separati da `|`:
 `tratto|x|y|z|yaw`
 
 - **tratto**: il nome del tratto di test_strada (`_vai`), per esempio "nella sala pompe fino alla porta del ponte inferiore".
-- **x, y, z**: i **piedi** del giocatore, in coordinate del mondo della sala principale. Gli occhi sono 1,6 m più su; in barca circa 1,15 m.
+- **x, y, z**: i **piedi** del giocatore, in coordinate del mondo della sala principale. Gli occhi sono 1,6 m più su, anche in barca: FiumeLento mette i piedi sulla ciambella e il giocatore resta in piedi (stand_eye_height). (Nella prima versione delle liste avevo messo +1,15 in barca a occhio: era sbagliato.)
 - **yaw**: dove guarda, in gradi (0 verso -z). In barca resta fisso: meglio la direzione fra il punto prima e quello dopo.
 
 Sono 237 punti. Gli ultimi 3 ("attraverso il portone") sono già nella torre.
 
 ## Le liste per `giro.gd` (`lista_<zona>.txt`)
-Fatte da `liste.py`. Per ogni punto, quattro scatti dagli occhi: avanti lungo la strada, a sinistra, a destra e dietro, inclinati di 12 gradi in basso. Il formato è quello di `tests/collaudo/giro.gd`: `nome x y z yaw pitch`, con gli occhi già messi.
+Fatte da `liste.py`. Per ogni punto, quattro scatti dagli occhi: avanti lungo la strada, a sinistra, a destra e dietro, inclinati di 12 gradi in basso. Il formato è quello di `tests/collaudo/giro.gd`: `nome x y z yaw pitch`, con gli occhi già messi (+1,6 m).
 
 | zona | tratti | stato per giro.gd | nodi da togliere (la sala per parti) |
 |---|---|---|---|

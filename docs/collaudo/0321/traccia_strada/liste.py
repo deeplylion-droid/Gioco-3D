@@ -24,7 +24,7 @@ for i,(t,x,y,z) in enumerate(pts):
     if abs(dx)+abs(dz)<0.1: dx,dz=0,-1
     h=math.degrees(math.atan2(-dx,-dz))
     barca = t.startswith('nel capannone') and y < -5.55
-    occhi = 1.15 if barca else 1.6
+    occhi = 1.6   # anche in barca: FiumeLento mette i piedi sulla ciambella e il giocatore resta in piedi (stand_eye_height)
     n+=1
     for nome,d in (('avanti',0),('sinistra',90),('destra',-90),('dietro',180)):
         liste[zona].append(f"{zona}_{n:03d}_{nome} {x:.2f} {y+occhi:.2f} {z:.2f} {((h+d+180)%360)-180:.1f} -12")
