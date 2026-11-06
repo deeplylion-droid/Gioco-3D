@@ -7,6 +7,7 @@ extends Node
 ## Con CUBO=1 (e MAGENTA=1) le pose sono 6 direzioni a 90° (un cubo) dagli occhi di ogni checkpoint della torre e da
 ## un punto ogni tre della discesa (torre_percorso.json, 1 m sopra lo scivolo): i pixel magenta si contano dopo.
 ## Con VISTE="x,y,z,tx,ty,tz;..." (stampate da bordi_torre.gd) gli scatti ravvicinati dei buchi che si vedono.
+## PARTI="Vasca,Piscina,Vasche" tiene anche quei figli di SalaPrincipale (senza, sotto la sala c'è il vuoto).
 ## TUNNEL=1 aggiunge il tunnel del viaggio sottomarino costruito (come nel gioco, dopo la torre).
 ## FILTRO=<testo> scatta solo le pose col testo nel nome; RAGGIO=<m> accende le mesh fino a quella distanza (60).
 ## Uso (sotto il render.lock):
@@ -73,6 +74,15 @@ func _run() -> void:
 	n.get_parent().remove_child(n)
 	n.transform = tr
 	_radice.add_child(n)
+	# PARTI="Vasca,Piscina,..." tiene anche questi figli della sala (per il cubo della strada principale)
+	if OS.has_environment("PARTI"):
+		for nome in OS.get_environment("PARTI").split(","):
+			var altro := tutta.get_node_or_null(NodePath(nome)) as Node3D
+			if altro:
+				var t2 := altro.transform
+				altro.get_parent().remove_child(altro)
+				altro.transform = t2
+				_radice.add_child(altro)
 	tutta.free()
 	var guscio := _radice.find_child("sala_torre_guscio", true, false)
 	if guscio:
