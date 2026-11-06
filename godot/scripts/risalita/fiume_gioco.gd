@@ -2065,15 +2065,17 @@ func _pile() -> void:
 		var p1: Vector2 = FUGA_BAMBINO[k + 1]
 		var dd := (p1 - p0).normalized()
 		fuga_stretta.append(_rettangolo((p0 + p1) * 0.5, dd, dd.orthogonal(), p0.distance_to(p1) + 0.44, 2.0 * ANGOLO_STACCO, 0.0))
-	var angolo := _posa_colonna(rng2, ANGOLO_PILA, Vector2(1, 0), Vector2(0, 1), Vector2(0, 1), 0.2, false)
-	if _colonna_ci_sta(angolo["poli"], ANGOLO_PILA, false, ingombri + fuga_stretta, messe):
+	# (di traverso: 1,2 m lungo il muro dell'approdo, contro il muro nord, dritta; il controllo della banchina no, perché
+	# sta a 2 mm dal muro: solo che non tocchi gli ingombri, la strada di fuga e le altre pile)
+	var angolo := _posa_colonna(rng2, ANGOLO_PILA, Vector2(0, 1), Vector2(-1, 0), Vector2(1, 0), 0.0, false)
+	if _non_tocca(angolo["poli"], ingombri + fuga_stretta + messe):
 		angolo["muro"] = -2
 		angolo["fila"] = 1
 		angolo["davanti"] = false
 		angolo["ferma"] = false
 		angolo["u"] = 0.0
-		angolo["d"] = Vector2(1, 0)
-		angolo["n"] = Vector2(0, 1)
+		angolo["d"] = Vector2(0, 1)
+		angolo["n"] = Vector2(-1, 0)
 		angolo["nuova"] = true
 		messe.append(angolo["poli"])
 		colonne_messe.append(angolo)
@@ -2246,12 +2248,14 @@ func _pile() -> void:
 ## coordinate del fiume): dalla porta del capannone gira a sinistra e sparisce nella rientranza fra la porta e il muro
 ## dell'approdo. Le pile ne stanno fuori (test_bambini_sfuggita), a FUGA_LARGO dall'asse: il raggio del bambino (22 cm) e
 ## 20 cm di margine. Se cambiano i punti lì, vanno cambiati anche qui.
-const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -26.9), Vector2(-30.0, -26.9), Vector2(-30.0, -27.9)]
+const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -26.9), Vector2(-30.0, -26.9), Vector2(-30.0, -28.3)]
 const FUGA_LARGO := 0.42
 ## La pila dell'angolo (vedi sopra): il centro della base, contro il muro nord come il muro di pile 0, e lo stacco minimo
-## dall'asse della fuga (il raggio del bambino e 2 cm). La pila va da x -29,5 a -28,3 e da z -28,24 a -27,24; la nicchia
-## fra la pila e il muro dell'approdo (faccia a x -30,35) è larga 85 cm.
-const ANGOLO_PILA := Vector2(-28.9, -27.74)
+## dall'asse della fuga (il raggio del bambino e 2 cm). La pila, di traverso, va da x -29,5 a -28,5 e da z -28,598 (2 mm dal
+## muro nord, ricontrollo di grafica-2 del 6 novembre: prima c'erano 35 cm e si vedeva la nicchia lungo il muro) a -27,39;
+## la nicchia fra la pila e il muro dell'approdo (faccia a x -30,35) è larga 85 cm e profonda 1,2 m, e il bambino sparisce
+## in fondo, a 30 cm dal muro nord: dalla strada la copre la pila.
+const ANGOLO_PILA := Vector2(-29.0, Z0 + PILA_LUNGO * 0.5 + 0.006)
 const ANGOLO_STACCO := 0.24
 ## I tappi delle fessure fra le pile: [la fessura, da dove la si vede dalla strada]. All'angolo fra i muri 3 e 4, vista
 ## dalla fine della fila vicino alla tettoia della cabina (ricontrollo di enigmi, 2 novembre: si vedeva il buio fino
@@ -2410,6 +2414,15 @@ static func _rettangolo(c: Vector2, d: Vector2, n: Vector2, largo: float, prof: 
 	var e := d * (largo * 0.5 + m)
 	var f := n * (prof * 0.5 + m)
 	return PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f])
+
+
+## Vero se il poligono [param poli] non tocca nessuno di [param altri] (senza margine: vedi la pila dell'angolo).
+static func _non_tocca(poli: PackedVector2Array, altri: Array) -> bool:
+	for g in altri:
+		var gg: PackedVector2Array = g
+		if not gg.is_empty() and not Geometry2D.intersect_polygons(poli, gg).is_empty():
+			return false
+	return true
 
 
 ## Il poligono convesso [param poli] allargato di [param m] da ogni parte.
