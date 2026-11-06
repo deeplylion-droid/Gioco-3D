@@ -1,0 +1,153 @@
+CIELO: risalita: l'infermeria, dalla porta sud a quella nord (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: posti controllati 217, con il cielo 0; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): 18
+
+CIELO: BUCO di prova, tolta la lastra (0.0, -9.201, 25.505)
+    tecnici: la camera delle onde, dal pozzo alla sala pompe (i due portali e il vano est): dagli occhi in (0.0, -7.45, 25.5) si vede il cielo con 4 raggi su 240, verso (-0.23, -0.97, 0.01), uscendo da Tecnici/Ambienti/CameraOnde/CAMERA_struttura (a 1.9 m, in (-0.4, -9.400001, 25.4)) (da correggere)
+    tecnici: la camera delle onde, dal pozzo alla sala pompe (i due portali e il vano est): dagli occhi in (0.0, -7.45, 26.5) si vede il cielo con 2 raggi su 240, verso (-0.09, -0.87, -0.49), uscendo da Tecnici/Ambienti/CameraOnde/CAMERA_struttura (a 2.3 m, in (-0.7, -9.3, 25.5)) (da correggere)
+RISULTATO: FALLITO, 2 posti da correggere
+
+CIELO: partenza fiume, Risalita true, checkpoint Risalita/Fiume/Checkpoint/CheckpointIngresso
+CIELO: checkpoint raggiunto Risalita/StanzaPozze/Checkpoint/CheckpointRisolto, salvataggio su disco true
+CIELO: gioco, a 12.4 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 12.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 11.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 11.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 10.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 10.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 9.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 9.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 8.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 8.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: gioco, a 7.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 7.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 6.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 6.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 5.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 5.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 4.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 4.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: gioco, a 3.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 27, RACCORDO_dettagli 6, mucchio_gonfiabili_4 3
+CIELO: gioco, a 3.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 30, RACCORDO_dettagli 6
+CIELO: gioco, a 2.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 31, RACCORDO_dettagli 5
+CIELO: gioco, a 2.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 34, mucchio_gonfiabili_4 1, G_c3n_m_2 1
+CIELO: gioco, a 1.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 34, mucchio_gonfiabili_4 1, G_c3n_m_2 1
+CIELO: gioco, a 1.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 35, G_c3n_m_2 1
+CIELO: gioco, a 0.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 31, G_tubi_c3_2 4, mucchio_gonfiabili_4 1
+CIELO: gioco, totale raggi nel cielo 0
+CIELO: Continua: true
+CIELO: da Continua, checkpoint Risalita/StanzaPozze/Checkpoint/CheckpointRisolto, giocatore in (-40.5, -5.4, 34.2)
+CIELO: continua, a 12.4 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 12.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 11.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 11.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 10.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 10.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 9.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 9.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 8.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 8.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 24, RACCORDO_dettagli 12
+CIELO: continua, a 7.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 7.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 6.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 6.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 5.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 5.0 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 164; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 4.5 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 4.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 23, RACCORDO_dettagli 12, mucchio_gonfiabili_4 1
+CIELO: continua, a 3.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 27, RACCORDO_dettagli 6, mucchio_gonfiabili_4 3
+CIELO: continua, a 3.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 30, RACCORDO_dettagli 6
+CIELO: continua, a 2.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 31, RACCORDO_dettagli 5
+CIELO: continua, a 2.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 34, mucchio_gonfiabili_4 1, G_c3n_m_2 1
+CIELO: continua, a 1.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 34, mucchio_gonfiabili_4 1, G_c3n_m_2 1
+CIELO: continua, a 1.1 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 155; colpiti RACCORDO_struttura 35, G_c3n_m_2 1
+CIELO: continua, a 0.6 m dalla porta: 0 raggi su 36 nel cielo; mesh visibili oltre la porta 153; colpiti RACCORDO_struttura 31, G_tubi_c3_2 4, mucchio_gonfiabili_4 1
+CIELO: continua, totale raggi nel cielo 0
+CIELO: finito
+
+CIELO: torre: 110 posti
+CIELO: torre, torre Checkpoint_portone: occhi in (21.4, 1.59, -15.0), 2 raggi su 240 nel cielo (in su 0, in giù 1), verso (-0.21, -0.72, 0.66), escono da { "SalaTorre/TorreStruttura/torre_A": 1, "Sala/Architettura/sala_piastrelle_mancanti": 1 }
+CIELO: torre, torre Checkpoint_NEm3: occhi in (37.47, -1.41, -18.97), 2 raggi su 240 nel cielo (in su 2, in giù 0), verso (0.42, 0.84, 0.35), escono da { "SalaTorre/TorreStruttura/torre_A": 2 }
+CIELO: torre, torre Checkpoint_NOm12: occhi in (27.05, -10.41, -21.41), 2 raggi su 240 nel cielo (in su 1, in giù 0), verso (0.53, 0.84, -0.14), escono da { "SalaTorre/TorreStruttura/torre_A_sostegni": 1, "SalaTorre/TorreStruttura/torre_A": 1 }
+CIELO: torre, ins_A_tubo_2: il giocatore è morto lì ((69.97, -28.26, -7.95)), salto il posto
+CIELO: torre, bacino: il giocatore è morto lì ((44.5, -33.95, -3.5)), salto il posto
+CIELO: torre: posti 110, con il cielo 3 (raggi in su 3, in giù 1), ricariche dopo una morte 2; posti che vedono il cielo solo dalla cupola di vetro (voluto) 0
+CIELO: finito
+CIELO: inseguimento: 110 posti
+CIELO: inseguimento, torre Checkpoint_portone: occhi in (21.4, 1.59, -15.0), 2 raggi su 240 nel cielo (in su 0, in giù 1), verso (-0.21, -0.72, 0.66), escono da { "SalaTorre/TorreStruttura/torre_A": 1, "Sala/Architettura/sala_piastrelle_mancanti": 1 }
+CIELO: inseguimento, torre Checkpoint_NEm3: occhi in (37.47, -1.41, -18.97), 2 raggi su 240 nel cielo (in su 2, in giù 0), verso (0.42, 0.84, 0.35), escono da { "SalaTorre/TorreStruttura/torre_A": 2 }
+CIELO: inseguimento, torre Checkpoint_NOm12: occhi in (27.05, -10.41, -21.41), 2 raggi su 240 nel cielo (in su 1, in giù 0), verso (0.53, 0.84, -0.14), escono da { "SalaTorre/TorreStruttura/torre_A_sostegni": 1, "SalaTorre/TorreStruttura/torre_A": 1 }
+CIELO: inseguimento, ins_A_tubo_2: il giocatore è morto lì ((69.97, -28.26, -7.95)), salto il posto
+CIELO: inseguimento, bacino: il giocatore è morto lì ((44.5, -33.95, -3.5)), salto il posto
+CIELO: inseguimento: posti 110, con il cielo 3 (raggi in su 3, in giù 1), ricariche dopo una morte 2; posti che vedono il cielo solo dalla cupola di vetro (voluto) 0
+CIELO: finito
+CIELO: tunnel lungo 552 m, banchina a -5.00 m dall'asse e 0.42 m sopra l'acqua
+CIELO: tunnel: 185 posti
+CIELO: tunnel: posti 185, con il cielo 0 (raggi in su 0, in giù 0), ricariche dopo una morte 1; posti che vedono il cielo solo dalla cupola di vetro (voluto) 0
+CIELO: finito
+
+FESSURA: Checkpoint_portone, occhi (21.4, 1.59, -15.0) verso (0.426, 0.337, 0.84): nel ventaglio di ±3 gradi 217 raggi su 1681 nel cielo, larga 5.10 x 4.20 gradi (a 6.6 m: 59 x 49 cm); attorno colpisce SalaTorre/TorreStruttura/…/torre_A a 6.6 m in (24.23, 3.82, -9.45), SalaTorre/TorreStruttura/…/torre_A a 6.6 m in (24.23, 3.8, -9.45), SalaTorre/TorreStruttura/…/torre_A a 6.6 m in (24.23, 3.84, -9.45), SalaTorre/TorreStruttura/…/torre_A a 6.6 m in (24.25, 3.82, -9.46)
+FESSURA: Checkpoint_portone, occhi (21.4, 1.59, -15.0) verso (-0.52, -0.654, -0.549): nel ventaglio di ±3 gradi 1034 raggi su 1681 nel cielo, larga 5.55 x 6.15 gradi (a 2.4 m: 23 x 26 cm); attorno colpisce SalaTorre/TorreStruttura/…/torre_A_grigliati a 2.4 m in (20.2, -0.01, -16.32), SalaTorre/TorreStruttura/…/torre_A_grigliati a 2.4 m in (20.2, -0.01, -16.31), SalaTorre/TorreStruttura/…/torre_A_grigliati a 2.4 m in (20.2, -0.01, -16.29), SalaTorre/TorreStruttura/…/torre_A_grigliati a 2.4 m in (20.2, -0.01, -16.3)
+FESSURA: Checkpoint_NEm3, occhi (37.47, -1.41, -18.97) verso (0.45, 0.887, -0.099): nel ventaglio di ±3 gradi 1197 raggi su 1681 nel cielo, larga 6.15 x 6.15 gradi (a 5.4 m: 58 x 58 cm); attorno colpisce SalaTorre/TorreStruttura/…/torre_A a 5.4 m in (40.0, 3.35, -19.48), SalaTorre/TorreStruttura/…/torre_A a 5.4 m in (40.0, 3.36, -19.45), SalaTorre/TorreStruttura/…/torre_A a 5.4 m in (40.0, 3.39, -19.44), SalaTorre/TorreStruttura/…/torre_A a 5.4 m in (40.0, 3.34, -19.47)
+FESSURA: Checkpoint_NOm12, occhi (27.05, -10.41, -21.41) verso (0.128, 0.904, 0.408): nel ventaglio di ±3 gradi 1037 raggi su 1681 nel cielo, larga 4.95 x 6.15 gradi (a 26.9 m: 232 x 288 cm); attorno colpisce SalaTorre/TorreStruttura/…/torre_A_sostegni a 27.0 m in (30.92, 13.97, -10.57), SalaTorre/TorreStruttura/…/torre_A_sostegni a 26.9 m in (30.91, 13.97, -10.65), SalaTorre/TorreStruttura/…/torre_A_sostegni a 26.7 m in (30.95, 13.72, -10.61), SalaTorre/TorreStruttura/…/torre_A_sostegni a 26.8 m in (30.96, 13.83, -10.64)
+FESSURA: Checkpoint_NOm12, occhi (27.05, -10.41, -21.41) verso (0.686, 0.387, -0.616): nel ventaglio di ±3 gradi 257 raggi su 1681 nel cielo, larga 1.05 x 6.00 gradi (a 7.4 m: 14 x 77 cm); attorno colpisce SalaTorre/TorreStruttura/…/torre_A a 7.4 m in (32.07, -7.55, -26.0), SalaTorre/TorreStruttura/…/torre_A a 7.4 m in (32.07, -7.57, -26.0), SalaTorre/TorreStruttura/…/torre_A a 7.4 m in (32.07, -7.53, -26.0), SalaTorre/TorreStruttura/…/torre_A a 7.4 m in (32.07, -7.51, -26.0)
+FESSURA: finito
+
+ANGOLI: lastra true, corpi dalle mesh 1707
+ANGOLI: dagli occhi (-1.5, -8.75, 26.0) verso (-0.907, -0.292, -0.302): passa x -2.3 a quota -9.01, z 25.73; a x -3.5 quota -9.39, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.75, 26.0) verso (-0.928, -0.206, -0.309): passa x -2.3 a quota -8.93, z 25.73; a x -3.5 quota -9.19, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.75, 26.0) verso (-0.947, -0.053, -0.316): passa x -2.3 a quota -8.79, z 25.73; a x -3.5 quota -8.86, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.75, 26.0) verso (-0.937, 0.156, -0.312): passa x -2.3 a quota -8.62, z 25.73; a x -3.5 quota -8.42, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.75, 26.0) verso (-0.889, -0.254, -0.381): passa x -2.3 a quota -8.98, z 25.66; a x -3.5 quota -9.32, z 25.14
+ANGOLI: dagli occhi (-1.5, -8.75, 26.0) verso (-0.917, -0.066, -0.393): passa x -2.3 a quota -8.81, z 25.66; a x -3.5 quota -8.89, z 25.14
+ANGOLI: dagli occhi (-1.5, -8.75, 26.0) verso (-0.902, 0.193, -0.386): passa x -2.3 a quota -8.58, z 25.66; a x -3.5 quota -8.32, z 25.14
+ANGOLI: dagli occhi (-1.5, -8.25, 26.0) verso (-0.729, -0.64, -0.243): passa x -2.3 a quota -8.95, z 25.73; a x -3.5 quota -10.01, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.25, 26.0) verso (-0.763, -0.594, -0.254): passa x -2.3 a quota -8.87, z 25.73; a x -3.5 quota -9.81, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.25, 26.0) verso (-0.821, -0.502, -0.274): passa x -2.3 a quota -8.74, z 25.73; a x -3.5 quota -9.47, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.25, 26.0) verso (-0.89, -0.346, -0.297): passa x -2.3 a quota -8.56, z 25.73; a x -3.5 quota -9.03, z 25.33
+ANGOLI: dagli occhi (-1.5, -8.25, 26.0) verso (-0.677, -0.677, -0.29): passa x -2.3 a quota -9.05, z 25.66; a x -3.5 quota -10.25, z 25.14
+ANGOLI: dagli occhi (-1.5, -8.25, 26.0) verso (-0.745, -0.585, -0.319): passa x -2.3 a quota -8.88, z 25.66; a x -3.5 quota -9.82, z 25.14
+ANGOLI: dagli occhi (-1.5, -8.25, 26.0) verso (-0.835, -0.418, -0.358): passa x -2.3 a quota -8.65, z 25.66; a x -3.5 quota -9.25, z 25.14
+ANGOLI: dagli occhi (-1.5, -7.45, 26.0) verso (-0.486, -0.859, -0.162): passa x -2.3 a quota -8.86, z 25.73; a x -3.5 quota -10.98, z 25.33
+ANGOLI: dagli occhi (-1.5, -7.45, 26.0) verso (-0.507, -0.845, -0.169): passa x -2.3 a quota -8.78, z 25.73; a x -3.5 quota -10.78, z 25.33
+ANGOLI: dagli occhi (-1.5, -7.45, 26.0) verso (-0.545, -0.818, -0.182): passa x -2.3 a quota -8.65, z 25.73; a x -3.5 quota -10.45, z 25.33
+ANGOLI: dagli occhi (-1.5, -7.45, 26.0) verso (-0.604, -0.771, -0.201): passa x -2.3 a quota -8.47, z 25.73; a x -3.5 quota -10.01, z 25.33
+ANGOLI: dagli occhi (-1.5, -7.45, 26.0) verso (-0.452, -0.871, -0.194): passa x -2.3 a quota -8.99, z 25.66; a x -3.5 quota -11.31, z 25.14
+ANGOLI: dagli occhi (-1.5, -7.45, 26.0) verso (-0.507, -0.834, -0.217): passa x -2.3 a quota -8.76, z 25.66; a x -3.5 quota -10.74, z 25.14
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.654, -0.211, -0.727): passa x -2.3 a quota -9.01, z 25.61; a x -3.5 quota -9.39, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.727, -0.234, -0.646): passa x -2.3 a quota -9.01, z 25.79; a x -3.5 quota -9.39, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.662, -0.147, -0.735): passa x -2.3 a quota -8.93, z 25.61; a x -3.5 quota -9.19, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.737, -0.164, -0.655): passa x -2.3 a quota -8.93, z 25.79; a x -3.5 quota -9.19, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.669, -0.037, -0.743): passa x -2.3 a quota -8.79, z 25.61; a x -3.5 quota -8.86, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.747, -0.041, -0.664): passa x -2.3 a quota -8.79, z 25.79; a x -3.5 quota -8.86, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.665, 0.111, -0.739): passa x -2.3 a quota -8.62, z 25.61; a x -3.5 quota -8.42, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.75, 26.5) verso (-0.742, 0.124, -0.659): passa x -2.3 a quota -8.62, z 25.79; a x -3.5 quota -8.42, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.577, -0.506, -0.641): passa x -2.3 a quota -8.95, z 25.61; a x -3.5 quota -10.01, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.625, -0.549, -0.555): passa x -2.3 a quota -8.95, z 25.79; a x -3.5 quota -10.01, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.593, -0.462, -0.659): passa x -2.3 a quota -8.87, z 25.61; a x -3.5 quota -9.81, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.646, -0.503, -0.574): passa x -2.3 a quota -8.87, z 25.79; a x -3.5 quota -9.81, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.619, -0.378, -0.688): passa x -2.3 a quota -8.74, z 25.61; a x -3.5 quota -9.47, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.68, -0.415, -0.604): passa x -2.3 a quota -8.74, z 25.79; a x -3.5 quota -9.47, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.647, -0.252, -0.719): passa x -2.3 a quota -8.56, z 25.61; a x -3.5 quota -9.03, z 24.28
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.718, -0.279, -0.638): passa x -2.3 a quota -8.56, z 25.79; a x -3.5 quota -9.03, z 24.72
+ANGOLI: dagli occhi (-1.5, -8.25, 26.5) verso (-0.55, -0.55, -0.629): passa x -2.3 a quota -9.05, z 25.59; a x -3.5 quota -10.25, z 24.21
+ANGOLI: dagli occhi (-1.5, -7.45, 26.5) verso (-0.432, -0.763, -0.48): passa x -2.3 a quota -8.86, z 25.61; a x -3.5 quota -10.98, z 24.28
+ANGOLI: dagli occhi (-1.5, -7.45, 26.5) verso (-0.451, -0.797, -0.401): passa x -2.3 a quota -8.86, z 25.79; a x -3.5 quota -10.98, z 24.72
+ANGOLI: dagli occhi (-1.5, -7.45, 26.5) verso (-0.447, -0.744, -0.496): passa x -2.3 a quota -8.78, z 25.61; a x -3.5 quota -10.78, z 24.28
+ANGOLI: raggi 6048, nel cielo 100
+ANGOLI:   angolo x -2.4, quota -9.04, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x -2.4, quota -8.95, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x -2.4, quota -8.80, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x -2.4, quota -8.60, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x +2.4, quota -8.60, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x +2.4, quota -8.80, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x +2.4, quota -8.95, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x +2.4, quota -9.04, z 25.7: 6 raggi nel cielo
+ANGOLI:   angolo x -2.2, quota -8.80, z 25.7: 4 raggi nel cielo
+ANGOLI:   angolo x -2.2, quota -8.60, z 25.7: 4 raggi nel cielo
+ANGOLI:   angolo x +2.2, quota -8.60, z 25.7: 4 raggi nel cielo
+ANGOLI:   angolo x +2.2, quota -8.80, z 25.7: 4 raggi nel cielo
+ANGOLI:   angolo x +2.4, quota -8.60, z 25.5: 3 raggi nel cielo
+ANGOLI:   angolo x +2.4, quota -8.80, z 25.5: 3 raggi nel cielo
+ANGOLI:   angolo x +2.4, quota -8.95, z 25.5: 3 raggi nel cielo
+ANGOLI: finito

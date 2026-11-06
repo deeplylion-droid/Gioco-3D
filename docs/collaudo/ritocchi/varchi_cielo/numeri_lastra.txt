@@ -1,0 +1,80 @@
+VICINO: lastra true, scatola (-2.3, -9.351001, 25.32) .. (2.3, -9.051001, 25.69)
+VICINO: pavimento (collisioni) a z 25.050, x da -2,2 a 2,2: -9.050, -9.037, -9.050, -9.050, nulla
+VICINO: pavimento (collisioni) a z 25.400, x da -2,2 a 2,2: -9.051, -9.051, -9.051, -9.051, -9.051
+VICINO: pavimento (collisioni) a z 25.505, x da -2,2 a 2,2: -9.051, -9.051, -9.051, -9.051, -9.051
+VICINO: pavimento (collisioni) a z 25.610, x da -2,2 a 2,2: -9.051, -9.051, -9.051, -9.051, -9.051
+VICINO: pavimento (collisioni) a z 25.960, x da -2,2 a 2,2: nulla, -9.050, -9.050, -9.050, nulla
+PASSI: cammino x -1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.050 e -9.036, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 2.83 m/s
+PASSI: cammino x -1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.029, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x -0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.050, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x -0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.0 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.050, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.0 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.050, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 2.83 m/s
+PASSI: cammino x +1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: corsa x -1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.050 e -9.036, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 4.79 m/s
+PASSI: corsa x -1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.016, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x -0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x -0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.0 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.0 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 4.79 m/s
+PASSI: corsa x +1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.051 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: salto x -1.0 verso nord: arrivato true, piedi sulla giunzione fra -8.823 e -8.017
+PASSI: salto x -1.0 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x -0.5 verso nord: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x -0.5 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.0 verso nord: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.0 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.5 verso nord: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.5 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+--- senza lastra
+VICINO: lastra true, scatola (-2.3, -9.351001, 25.32) .. (2.3, -9.051001, 25.69)
+VICINO: pavimento (collisioni) a z 25.050, x da -2,2 a 2,2: -9.050, -9.037, -9.050, -9.050, nulla
+VICINO: pavimento (collisioni) a z 25.400, x da -2,2 a 2,2: -9.051, -9.051, -9.051, -9.051, -9.051
+VICINO: pavimento (collisioni) a z 25.505, x da -2,2 a 2,2: -9.051, -9.051, -9.051, -9.051, -9.051
+VICINO: pavimento (collisioni) a z 25.610, x da -2,2 a 2,2: -9.051, -9.051, -9.051, -9.051, -9.051
+VICINO: pavimento (collisioni) a z 25.960, x da -2,2 a 2,2: nulla, -9.050, -9.050, -9.050, nulla
+VICINO: lastra tolta per il confronto
+PASSI: cammino x -1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.067 e -9.036, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 2.83 m/s
+PASSI: cammino x -1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.062 e -9.034, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x -0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.070 e -9.035, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x -0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.077 e -9.043, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.0 verso nord: arrivato true, piedi sulla giunzione fra -9.070 e -9.035, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.0 verso sud: arrivato true, piedi sulla giunzione fra -9.077 e -9.043, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.070 e -9.035, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.077 e -9.043, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: cammino x +1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.072 e -9.046, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 2.83 m/s
+PASSI: cammino x +1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.077 e -9.043, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 3.40 e minima sulla giunzione 3.40 m/s
+PASSI: corsa x -1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.050 e -9.036, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 4.79 m/s
+PASSI: corsa x -1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.069 e -9.023, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x -0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.061 e -9.037, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x -0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.069 e -9.035, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.0 verso nord: arrivato true, piedi sulla giunzione fra -9.061 e -9.037, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.0 verso sud: arrivato true, piedi sulla giunzione fra -9.069 e -9.035, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.5 verso nord: arrivato true, piedi sulla giunzione fra -9.061 e -9.037, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +0.5 verso sud: arrivato true, piedi sulla giunzione fra -9.069 e -9.035, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: corsa x +1.0 verso nord: arrivato true, piedi sulla giunzione fra -9.052 e -9.049, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 4.79 m/s
+PASSI: corsa x +1.0 verso sud: arrivato true, piedi sulla giunzione fra -9.069 e -9.035, velocità verticale max 0.000 m/s, fotogrammi senza pavimento 0, velocità prima 5.71 e minima sulla giunzione 5.75 m/s
+PASSI: salto x -1.0 verso nord: arrivato true, piedi sulla giunzione fra -8.823 e -8.017
+PASSI: salto x -1.0 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x -0.5 verso nord: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x -0.5 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.0 verso nord: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.0 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.5 verso nord: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +0.5 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+PASSI: salto x +1.0 verso nord: arrivato true, piedi sulla giunzione fra -8.836 e -8.030
+PASSI: salto x +1.0 verso sud: arrivato true, piedi sulla giunzione fra -8.836 e -8.113
+VICINO: finito
+--- sfarfallio
+VICINO: sfarfallio da 2 m (sud), riga 85: cambio medio della striscia fra scatti successivi [0.14, 0.16, 0.15, 0.15, 0.16, 0.16, 0.16] (su 255)
+VICINO: sfarfallio da 2 m (nord), riga 85: cambio medio della striscia fra scatti successivi [1.38, 1.3, 3.96, 2.94, 5.77, 5.76, 7.01] (su 255)
+VICINO: sfarfallio da 5 m (sud), riga 85: cambio medio della striscia fra scatti successivi [0.29, 0.32, 0.45, 0.44, 0.37, 0.33, 0.38] (su 255)
+VICINO: sfarfallio da 5 m (nord), riga 85: cambio medio della striscia fra scatti successivi [0.11, 0.09, 0.06, 0.05, 0.01, 0.01, 0.01] (su 255)
+VICINO: sfarfallio da 9 m (sud), riga 85: cambio medio della striscia fra scatti successivi [37.14, 1.29, 1.0, 1.02, 1.05, 1.04, 1.03] (su 255)
+VICINO: sfarfallio da 9 m (nord), riga 85: cambio medio della striscia fra scatti successivi [0.68, 0.62, 0.63, 0.68, 0.71, 0.61, 0.67] (su 255)
