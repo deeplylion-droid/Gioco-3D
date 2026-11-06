@@ -1,0 +1,8 @@
+stendardo_1_di_sbieco.png
+stendardo_1_intero.png
+stendardo_2_di_sbieco.png
+stendardo_2_intero.png
+stendardo_3_di_sbieco.png
+stendardo_3_intero.png
+stendardo_4_di_sbieco.png
+stendardo_4_intero.png
