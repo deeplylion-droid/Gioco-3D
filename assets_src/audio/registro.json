@@ -962,62 +962,62 @@
  "giocatore/atterraggio_bagnato_01": {
   "file": "res://audio/giocatore/atterraggio_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.204,
+  "durata": 0.5,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -19.3
+  "lufs_max": -18.1
  },
  "giocatore/atterraggio_bagnato_02": {
   "file": "res://audio/giocatore/atterraggio_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.2,
+  "durata": 0.5,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -17.8
+  "lufs_max": -18.8
  },
  "giocatore/atterraggio_metallo_01": {
   "file": "res://audio/giocatore/atterraggio_metallo_01.ogg",
   "canali": 1,
-  "durata": 0.612,
+  "durata": 0.55,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
-  "lufs": -24.7,
-  "lufs_max": -18.7
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": -22.4,
+  "lufs_max": -16.5
  },
  "giocatore/atterraggio_metallo_02": {
   "file": "res://audio/giocatore/atterraggio_metallo_02.ogg",
   "canali": 1,
-  "durata": 0.578,
+  "durata": 0.55,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
-  "lufs": -26.2,
-  "lufs_max": -20.2
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": -23.2,
+  "lufs_max": -17.3
  },
  "giocatore/atterraggio_piastrelle_01": {
   "file": "res://audio/giocatore/atterraggio_piastrelle_01.ogg",
   "canali": 1,
-  "durata": 0.201,
+  "durata": 0.45,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -16.7
+  "lufs_max": -17.8
  },
  "giocatore/atterraggio_piastrelle_02": {
   "file": "res://audio/giocatore/atterraggio_piastrelle_02.ogg",
   "canali": 1,
-  "durata": 0.2,
+  "durata": 0.45,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -16.6
+  "lufs_max": -17.1
  },
  "giocatore/cuore_battito_01": {
   "file": "res://audio/giocatore/cuore_battito_01.ogg",
@@ -1132,222 +1132,222 @@
  "giocatore/passo_bagnato_01": {
   "file": "res://audio/giocatore/passo_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.171,
+  "durata": 0.32,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -23.5
  },
  "giocatore/passo_bagnato_02": {
   "file": "res://audio/giocatore/passo_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.184,
+  "durata": 0.32,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -20.8
  },
  "giocatore/passo_bagnato_03": {
   "file": "res://audio/giocatore/passo_bagnato_03.ogg",
   "canali": 1,
-  "durata": 0.18,
+  "durata": 0.32,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.3
+  "lufs_max": -21.7
  },
  "giocatore/passo_bagnato_04": {
   "file": "res://audio/giocatore/passo_bagnato_04.ogg",
   "canali": 1,
-  "durata": 0.203,
+  "durata": 0.32,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -21.6
  },
  "giocatore/passo_bagnato_05": {
   "file": "res://audio/giocatore/passo_bagnato_05.ogg",
   "canali": 1,
-  "durata": 0.184,
+  "durata": 0.32,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.3
+  "lufs_max": -21.2
  },
  "giocatore/passo_bagnato_06": {
   "file": "res://audio/giocatore/passo_bagnato_06.ogg",
   "canali": 1,
-  "durata": 0.186,
+  "durata": 0.32,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -21.3
  },
  "giocatore/passo_metallo_01": {
   "file": "res://audio/giocatore/passo_metallo_01.ogg",
   "canali": 1,
-  "durata": 0.591,
+  "durata": 0.4,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -25.8,
-  "lufs_max": -19.8
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": null,
+  "lufs_max": -23.7
  },
  "giocatore/passo_metallo_02": {
   "file": "res://audio/giocatore/passo_metallo_02.ogg",
   "canali": 1,
-  "durata": 0.6,
+  "durata": 0.4,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -28.2,
-  "lufs_max": -22.2
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": null,
+  "lufs_max": -22.9
  },
  "giocatore/passo_metallo_03": {
   "file": "res://audio/giocatore/passo_metallo_03.ogg",
   "canali": 1,
-  "durata": 0.515,
+  "durata": 0.4,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -27.6,
-  "lufs_max": -21.6
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": null,
+  "lufs_max": -23.6
  },
  "giocatore/passo_metallo_04": {
   "file": "res://audio/giocatore/passo_metallo_04.ogg",
   "canali": 1,
-  "durata": 0.566,
+  "durata": 0.4,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -27.9,
-  "lufs_max": -21.9
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": null,
+  "lufs_max": -23.5
  },
  "giocatore/passo_metallo_05": {
   "file": "res://audio/giocatore/passo_metallo_05.ogg",
   "canali": 1,
-  "durata": 0.6,
+  "durata": 0.4,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -28.6,
-  "lufs_max": -22.6
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": null,
+  "lufs_max": -23.1
  },
  "giocatore/passo_metallo_06": {
   "file": "res://audio/giocatore/passo_metallo_06.ogg",
   "canali": 1,
-  "durata": 0.591,
+  "durata": 0.4,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -25.8,
-  "lufs_max": -19.8
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": null,
+  "lufs_max": -23.3
  },
  "giocatore/passo_piastrelle_01": {
   "file": "res://audio/giocatore/passo_piastrelle_01.ogg",
   "canali": 1,
-  "durata": 0.175,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + risonanza della ceramica",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -22.1
+  "lufs_max": -22.0
  },
  "giocatore/passo_piastrelle_02": {
   "file": "res://audio/giocatore/passo_piastrelle_02.ogg",
   "canali": 1,
-  "durata": 0.177,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + risonanza della ceramica",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -24.0
+  "lufs_max": -23.6
  },
  "giocatore/passo_piastrelle_03": {
   "file": "res://audio/giocatore/passo_piastrelle_03.ogg",
   "canali": 1,
-  "durata": 0.173,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + risonanza della ceramica",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -23.4
+  "lufs_max": -23.0
  },
  "giocatore/passo_piastrelle_04": {
   "file": "res://audio/giocatore/passo_piastrelle_04.ogg",
   "canali": 1,
-  "durata": 0.169,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + risonanza della ceramica",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -23.0
+  "lufs_max": -23.1
  },
  "giocatore/passo_piastrelle_05": {
   "file": "res://audio/giocatore/passo_piastrelle_05.ogg",
   "canali": 1,
-  "durata": 0.132,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + risonanza della ceramica",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -22.0
+  "lufs_max": -22.1
  },
  "giocatore/passo_piastrelle_06": {
   "file": "res://audio/giocatore/passo_piastrelle_06.ogg",
   "canali": 1,
-  "durata": 0.124,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "footstep_concrete + risonanza della ceramica",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -22.0
+  "lufs_max": -22.7
  },
  "giocatore/passo_scala_01": {
   "file": "res://audio/giocatore/passo_scala_01.ogg",
   "canali": 1,
-  "durata": 0.474,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "impactMetal_light",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -23.4
  },
  "giocatore/passo_scala_02": {
   "file": "res://audio/giocatore/passo_scala_02.ogg",
   "canali": 1,
-  "durata": 0.327,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "impactMetal_light",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -24.3
  },
  "giocatore/passo_scala_03": {
   "file": "res://audio/giocatore/passo_scala_03.ogg",
   "canali": 1,
-  "durata": 0.313,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "impactMetal_light",
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -23.4
  },
  "giocatore/passo_scala_04": {
   "file": "res://audio/giocatore/passo_scala_04.ogg",
   "canali": 1,
-  "durata": 0.597,
+  "durata": 0.3,
   "loop": false,
-  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
-  "nota": "impactMetal_light",
-  "lufs": -25.8,
-  "lufs_max": -20.0
+  "fonte": "sintesi",
+  "nota": "scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py)",
+  "lufs": null,
+  "lufs_max": -23.7
  },
  "giocatore/riemersione": {
   "file": "res://audio/giocatore/riemersione.ogg",
