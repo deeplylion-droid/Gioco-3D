@@ -127,7 +127,10 @@ func _posti(v: int) -> Array:
 
 
 func _giro() -> void:
-	for v in 3:
+	var vasche := range(3)
+	if OS.has_environment("SOLO_VASCA"):
+		vasche = [int(OS.get_environment("SOLO_VASCA")) - 1]
+	for v in vasche:
 		for p in _posti(v):
 			for s in DALLA_VASCA[v]:
 				var c := _centro("stendardo_%d" % s)
@@ -176,6 +179,9 @@ func _lei() -> void:
 		stati.append(["vasca_%d" % v, _ins.call(&"_posto_vasca", v) as Vector3, _occhi(v), DALLA_VASCA[v]])
 	for k in 3:
 		stati.append(["scolo_%d" % k, _ins.call(&"_posto_scolo", k) as Vector3, _occhi_scolo(k), [1, 2, 3, 4]])
+	if OS.has_environment("SOLO_STATI"):
+		var solo := OS.get_environment("SOLO_STATI").split(",")
+		stati = stati.filter(func(x): return solo.has(String(x[0])))
 	for s in stati:
 		_ins.call(&"_lei_sale", s[0], s[1], 1.2 if String(s[0]).begins_with("scolo") else 1.6)
 		for i in 150:
