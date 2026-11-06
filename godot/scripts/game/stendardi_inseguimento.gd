@@ -10,8 +10,9 @@ extends Node3D
 const DIR := "res://assets/ambiente/inseguimento/stendardi/"
 const GLB := DIR + "stendardi.glb"
 ## Un filo di luce propria dei segni a pastello (i «pastelli fosforescenti» già approvati per il disegno guida dei
-## giocattoli, che sta a 0,12): solo i disegni, la stoffa no. 0 = nessuna. (Si cambia prima che la sala si costruisca:
-## i materiali sono condivisi.)
+## giocattoli, che sta a 0,12): solo i disegni, la stoffa no. 0 = nessuna: con le lampade appese della sala accanto
+## si vedono già (scatti del 6 novembre; a 0,12 la differenza quasi non si vede). Si cambia prima che la sala si
+## costruisca: i materiali sono condivisi.
 static var luce := 0.0
 
 static var _materiali := {}
@@ -22,7 +23,8 @@ static func risorse() -> Array:
 	var out: Array = [GLB]
 	for k in range(1, 5):
 		out.append(DIR + "stendardo_%d.png" % k)
-		out.append(DIR + "stendardo_%d_luce.png" % k)
+		if luce > 0.0:
+			out.append(DIR + "stendardo_%d_luce.png" % k)
 	return out
 
 
