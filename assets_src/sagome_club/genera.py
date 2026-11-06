@@ -75,6 +75,17 @@ def taglio(p, Wt, Ht, rng):
         a = np.asarray(im.resize((Wt, Ht), Image.BILINEAR))
         tratti = np.maximum(tratti, (a > 40).astype(np.uint8) * 255)
     maschera = np.maximum(maschera, tratti)
+    # la base piatta: i bambini tagliano dritto sotto, così la sagoma sta in piedi su tutta la base e non su un punto
+    # (fra le zampe e sotto la pancia resta il cartone, fino alla riga della base)
+    ys, xs = np.nonzero(maschera)
+    fondo = ys.max()
+    banda = ys.min() + (fondo - ys.min()) * 0.72
+    xb = xs[ys >= banda]
+    x0, x1 = np.percentile(xb, 4), np.percentile(xb, 96)
+    for x in range(int(x0), int(x1) + 1):
+        col = np.nonzero(maschera[:, x])[0]
+        alto = col[col >= banda].min() if (col >= banda).any() else fondo
+        maschera[int(alto):fondo + 1, x] = 255
     r = int(MARGINE * PPM)
     k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
     maschera = cv2.dilate(maschera, k)
@@ -98,6 +109,10 @@ def taglio(p, Wt, Ht, rng):
         pts.append(q + n * rng.uniform(0.0, 0.004) * PPM)
         s += rng.uniform(0.02, 0.04) * PPM
     pts = np.array(pts)
+    # il taglio della base è dritto: nessun punto sotto la riga della base
+    giu = c[:, 1].max()
+    pts[:, 1] = np.minimum(pts[:, 1], giu)
+    pts[pts[:, 1] > giu - 0.003 * PPM, 1] = giu
     # (il contorno di OpenCV gira in senso orario nell'immagine: in metri, con y in su, diventa antiorario)
     return pts, maschera
 
