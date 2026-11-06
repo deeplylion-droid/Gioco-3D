@@ -181,6 +181,9 @@ func _run() -> void:
 	Game.pause_on_focus_loss = false
 	GameState.save_to_disk = false
 	Grafica.salva_su_disco = false
+	# (PRESET=basso: col preset grafico dato, per esempio il basso; grafica-2, strisce fosforescenti)
+	if OS.has_environment("PRESET"):
+		Grafica.applica_preset(OS.get_environment("PRESET"))
 	get_tree().change_scene_to_file("res://tests/scene/risalita_prova.tscn")
 	var t0 := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t0 < 120000:

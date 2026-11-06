@@ -115,6 +115,9 @@ var _mat_cemento: StandardMaterial3D
 var _mat_lamiere: StandardMaterial3D
 var _mat_pericolo: StandardMaterial3D
 var _mat_giallo: StandardMaterial3D
+## Il nastro e la fascia in cima alla scala di servizio, appena fosforescenti ([method _strisce_cima_scala]).
+var _mat_nastro: StandardMaterial3D
+var _mat_fascia: StandardMaterial3D
 var _mat_pav: Material
 var _zone: Array[AABB] = []
 
@@ -128,15 +131,21 @@ func _ready() -> void:
 	_mat_giallo = _materiale("PaintedMetal006", 1.0)
 	_mat_giallo.albedo_texture = load("res://assets/ambienti_tecnici/texture/vernice_giallo_Color.jpg")
 	_mat_pav = load("res://assets/fiume_lento/mat_cemento.tres")
+	_materiali_strisce()
 	_corpo = StaticBody3D.new()
 	_corpo.name = "Corridoi"
 	add_child(_corpo)
 	for c in COLLEZIONABILI:
 		GameState.register_collectible(c[0], c[1])
 	if a_richiesta and not Engine.has_meta(&"risalita_subito") and ResourceLoader.exists(CAMPIONI):
-		_campioni = load(CAMPIONI).get_meta(&"materiali", [])
+		_campioni = (load(CAMPIONI).get_meta(&"materiali", []) as Array).duplicate()
 		for m in _campioni:
 			(m as Material).get_rid()   # lo shader si crea adesso, non al primo uso
+	# (anche quelli del nastro e della fascia fosforescenti: nella sala all'avvio non c'è un materiale come loro)
+	_campioni.append(_mat_nastro)
+	_campioni.append(_mat_fascia)
+	_mat_nastro.get_rid()
+	_mat_fascia.get_rid()
 	_zona_personale()
 	_scala_di_servizio()
 	_scala_fiume()
@@ -643,6 +652,33 @@ const FASCIA_ALTA := 0.05
 const FASCIA_Y := 1.0
 
 
+## Il verde chiaro della ciambella fosforescente del fiume (FiumeLento._ciambella_fosforescente), molto più debole: il
+## nastro e la fascia brillano pochissimo di luce propria e non illuminano niente intorno (scelta B dell'utente per la
+## 0.3.21, «strisce»: «così la strada si vede nel buio»). Solo qui: nel fiume e nei tubi niente segni fosforescenti.
+const FOSFORO := Color(0.5, 1.0, 0.58)
+const FOSFORO_NASTRO := 0.16
+const FOSFORO_FASCIA := 0.07
+
+
+## I materiali del nastro e della fascia: il nastro è quello dei bordi dei gradini (_mat_pericolo), duplicato, che si
+## illumina solo dove è giallo (l'emissione moltiplica la sua texture, come la ciambella); la fascia, bianca e lucida,
+## prende lo stesso filo di luce verde chiaro.
+func _materiali_strisce() -> void:
+	_mat_nastro = _mat_pericolo.duplicate() as StandardMaterial3D
+	_mat_nastro.emission_enabled = true
+	_mat_nastro.emission = FOSFORO
+	_mat_nastro.emission_texture = _mat_pericolo.albedo_texture
+	_mat_nastro.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+	_mat_nastro.emission_energy_multiplier = FOSFORO_NASTRO
+	_mat_fascia = StandardMaterial3D.new()
+	_mat_fascia.albedo_color = Color(0.92, 0.92, 0.88)
+	_mat_fascia.roughness = 0.12
+	_mat_fascia.metallic_specular = 1.0
+	_mat_fascia.emission_enabled = true
+	_mat_fascia.emission = FOSFORO
+	_mat_fascia.emission_energy_multiplier = FOSFORO_FASCIA
+
+
 func _strisce_cima_scala(x: float, xe: float, z0: float, z1: float, c0: float, c1: float) -> void:
 	var nastro := Node3D.new()
 	nastro.name = "NastroCimaScala"
@@ -650,19 +686,16 @@ func _strisce_cima_scala(x: float, xe: float, z0: float, z1: float, c0: float, c
 	# nel tratto verso sud (da x a xe), di traverso, dall'arrivo della rampa fin dentro l'angolo col corridoio
 	var z := z0 + 0.4
 	while z <= c1 - 0.3:
-		_striscia(nastro, Vector3(xe - x - 0.4, 0.004, STRISCE_LARGHE), Vector3((x + xe) * 0.5, 0.002, z), _mat_pericolo)
+		_striscia(nastro, Vector3(xe - x - 0.4, 0.004, STRISCE_LARGHE), Vector3((x + xe) * 0.5, 0.002, z), _mat_nastro)
 		z += STRISCE_PASSO
 	# nel corridoio verso la porta di C3 (da xe in poi), di traverso, fino a 60 cm dalla porta
 	var xx := xe + 0.4
 	while xx <= PORTA_C3.x - 0.6:
-		_striscia(nastro, Vector3(STRISCE_LARGHE, 0.004, c1 - c0 - 0.4), Vector3(xx, 0.002, (c0 + c1) * 0.5), _mat_pericolo)
+		_striscia(nastro, Vector3(STRISCE_LARGHE, 0.004, c1 - c0 - 0.4), Vector3(xx, 0.002, (c0 + c1) * 0.5), _mat_nastro)
 		xx += STRISCE_PASSO
 	# la fascia catarifrangente: bianca e lucida, sul muro ovest del tratto (dalla rampa all'angolo) e sul muro sud del
 	# corridoio (dall'angolo a 30 cm dalla porta)
-	var cat := StandardMaterial3D.new()
-	cat.albedo_color = Color(0.92, 0.92, 0.88)
-	cat.roughness = 0.12
-	cat.metallic_specular = 1.0
+	var cat := _mat_fascia
 	_striscia(nastro, Vector3(0.005, FASCIA_ALTA, c1 - z1), Vector3(x + 0.0025, FASCIA_Y, (z1 + c1) * 0.5), cat)
 	_striscia(nastro, Vector3(PORTA_C3.x - 0.3 - x, FASCIA_ALTA, 0.005), Vector3((x + PORTA_C3.x - 0.3) * 0.5, FASCIA_Y, c1 - 0.0025), cat)
 
@@ -675,6 +708,8 @@ func _striscia(padre: Node3D, size: Vector3, pos: Vector3, m: Material) -> void:
 	mi.material_override = m
 	mi.position = pos
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# (fuori dalla GI: la loro luce propria non deve illuminare il pavimento e il muro intorno)
+	mi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
 	padre.add_child(mi)
 
 
