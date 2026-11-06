@@ -119,10 +119,38 @@ func _run() -> void:
 		# Come il giocatore: Conferma ha il focus e si preme con Invio.
 		var conferma := _pulsante(cal, "Conferma")
 		check(conferma != null and _focus() == conferma, "Conferma ha il focus")
-		await _premi(&"ui_accept")
+		# La seconda prova (scelta A dell'utente, 4 novembre): lo scatto vero del corridoio delle pile, con la stessa
+		# gamma del cursore, e la frase in italiano e in inglese. Col joypad la croce e la levetta muovono il cursore.
+		var prova := cal.find_child("Prova", true, false) as TextureRect
+		check(prova != null and prova.texture != null and prova.texture.get_width() >= 1280,
+			"sotto i simboli c'è la seconda prova, lo scatto del corridoio delle pile")
+		var dice := cal.find_child("DiceProva", true, false) as Label
+		check(dice != null and dice.text == "Regola finché vedi appena la scatola in fondo.", "la frase della seconda prova")
+		check(TranslationServer.get_translation_object("en").get_message(dice.text if dice else "") == "Adjust until you can barely see the box at the end.",
+			"la frase della seconda prova in inglese")
+		var cursore := cal.find_children("*", "HSlider", true, false)[0] as HSlider
+		var g0 := cursore.value
+		for i in 5:
+			await _premi_joypad(JOY_BUTTON_DPAD_RIGHT)
+		check(cursore.value > g0 + 0.05, "croce a destra del joypad: più chiaro (%.2f -> %.2f)" % [g0, cursore.value])
+		var g_prova := float((prova.material as ShaderMaterial).get_shader_parameter(&"gamma")) if prova else -1.0
+		check(is_equal_approx(g_prova, cursore.value), "la seconda prova segue il cursore (%.2f)" % g_prova)
+		for i in 5:
+			await _premi_joypad(JOY_BUTTON_DPAD_LEFT)
+		check(is_equal_approx(cursore.value, g0), "croce a sinistra: si torna dove si era (%.2f)" % cursore.value)
+		await _levetta(-1.0)
+		check(cursore.value < g0 - 0.01, "levetta a sinistra: più scuro (%.2f)" % cursore.value)
+		await _premi(&"ui_right")
+		check(cursore.value > g0 - 0.01, "freccia a destra della tastiera: più chiaro (%.2f)" % cursore.value)
+		check(_focus() == conferma, "dopo la croce e la levetta il focus resta su Conferma")
+		await _premi_joypad(JOY_BUTTON_DPAD_DOWN)
+		check(_focus() == _pulsante(cal, "Predefinito"), "croce in giù: Predefinito")
+		await _premi_joypad(JOY_BUTTON_DPAD_UP)
+		check(_focus() == conferma, "croce in su: di nuovo Conferma")
+		await _premi_joypad(JOY_BUTTON_A)
 		await _frames(3)
 		if get_tree().paused:
-			check(false, "Invio conferma la calibrazione")
+			check(false, "A del joypad conferma la calibrazione")
 			cal.conferma()
 	await _frames(5)
 	check(not get_tree().paused, "confermata la calibrazione, il titolo riparte")
@@ -333,6 +361,24 @@ func _pulsante(radice: Node, testo: String) -> Button:
 
 
 ## Preme e rilascia un'azione come farebbe un tasto (passa dalla GUI e da _unhandled_input).
+func _premi_joypad(tasto: JoyButton) -> void:
+	for giu in [true, false]:
+		var e := InputEventJoypadButton.new()
+		e.button_index = tasto
+		e.pressed = giu
+		Input.parse_input_event(e)
+		await _frames(2)
+
+
+func _levetta(verso: float) -> void:
+	for v in [verso, 0.0]:
+		var e := InputEventJoypadMotion.new()
+		e.axis = JOY_AXIS_LEFT_X
+		e.axis_value = v
+		Input.parse_input_event(e)
+		await _frames(2)
+
+
 func _premi(azione: StringName) -> void:
 	var ev := InputEventAction.new()
 	ev.action = azione

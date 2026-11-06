@@ -62,36 +62,69 @@ static func _semplice(colore: Color, ruvido: float) -> StandardMaterial3D:
 	return m
 
 
+var _glb: Node3D
+var _corda: StandardMaterial3D
+var _bastone: StandardMaterial3D
+var _molletta: StandardMaterial3D
+var _ferro: StandardMaterial3D
+
+
+## La costruzione a pezzi (SalaInseguimento._passi): un passo prepara (la GLB, già caricata dal thread, istanziata con
+## tutto nascosto, e i materiali semplici), poi un passo per stendardo, che mette i materiali e lo mostra. In un passo
+## solo poteva fare un fotogramma lungo (CI del 6 novembre, test_attesa_zone: 150 ms).
+static func passi(sala: Node3D) -> Array:
+	var s := StendardiInseguimento.new()
+	var out: Array = [func(): sala.add_child(s); s._prepara()]
+	for k in range(1, 5):
+		out.append(func(): s._stendardo(k))
+	return out
+
+
 func _ready() -> void:
 	name = "Stendardi"
+
+
+func _prepara() -> void:
 	var scena := load(GLB) as PackedScene
 	if scena == null:
 		return
-	var glb := scena.instantiate() as Node3D
-	add_child(glb)
-	var corda := _semplice(Color(0.5, 0.45, 0.36), 1.0)
-	var bastone := _semplice(Color(0.78, 0.38, 0.12), 0.6)
-	var molletta := _semplice(Color(0.28, 0.5, 0.78), 0.55)
+	_glb = scena.instantiate() as Node3D
+	for n in _glb.find_children("*", "MeshInstance3D", true, false):
+		(n as MeshInstance3D).visible = false
+	add_child(_glb)
+	_corda = _semplice(Color(0.5, 0.45, 0.36), 1.0)
+	_bastone = _semplice(Color(0.78, 0.38, 0.12), 0.6)
+	_molletta = _semplice(Color(0.28, 0.5, 0.78), 0.55)
 	# (il ferro del golfare e della molla: stesse superfici nella mesh della corda e della molletta)
-	var ferro := _semplice(Color(0.45, 0.45, 0.47), 0.4)
-	ferro.metallic = 0.8
-	for n in glb.find_children("*", "MeshInstance3D", true, false):
+	_ferro = _semplice(Color(0.45, 0.45, 0.47), 0.4)
+	_ferro.metallic = 0.8
+
+
+## Lo stendardo [k] (1-4): il lenzuolo, la piega, il bastone, le corde e le mollette.
+func _stendardo(k: int) -> void:
+	if _glb == null:
+		return
+	var st := "stendardo_%d" % k
+	for n in _glb.find_children(st + "*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		var nome := String(mi.name)
-		if nome.begins_with("stendardo_") and nome.length() == len("stendardo_1"):
+		if nome != st and not nome.begins_with(st + "_"):
+			continue
+		if nome == st:
 			mi.material_override = materiale(nome)
 			mi.add_to_group(&"stendardo")
 		elif nome.ends_with("_risvolto"):
 			# la stoffa ripiegata sopra il bastone: lo stesso lenzuolo
-			mi.material_override = materiale(nome.substr(0, len("stendardo_1")))
+			mi.material_override = materiale(st)
 		elif "_corda_" in nome or "_nodo_" in nome:
-			_per_superficie(mi, corda, ferro, "M_golfare")
+			_per_superficie(mi, _corda, _ferro, "M_golfare")
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		elif "_bastone" in nome:
-			mi.material_override = bastone
+			mi.material_override = _bastone
 		elif "_molletta" in nome:
-			_per_superficie(mi, molletta, ferro, "M_molla")
+			_per_superficie(mi, _molletta, _ferro, "M_molla")
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.visible = true
 
 
 ## Una mesh fatta di più pezzi: il materiale [base] dappertutto, tranne la superficie col materiale [nome_ferro] della GLB.

@@ -164,8 +164,10 @@ func _passi() -> Array:
 		out.append(func(): _modello(i))
 	out.append(_tubi)
 	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
+	# le sagome del club dei bambini attorno alle vasche (SagomeClub, scelta A dell'utente del 6 novembre)
+	out.append_array(SagomeClub.passi(self))
 	# gli stendardi dei bambini appesi nel vuoto dietro le vasche (nota dell'utente del 6 novembre; StendardiInseguimento)
-	out.append(func(): add_child(StendardiInseguimento.new()))
+	out.append_array(StendardiInseguimento.passi(self))
 	if crea_luci:
 		out.append_array(_passi_luci())
 	return out
@@ -375,8 +377,10 @@ func _veli_bocche() -> void:
 	for v in dati["scolo"]:
 		acque.append(v)
 	acque.append(dati["bacino"])
-	# (l'acqua delle vasche, senza riflessi e piena com'è l'acqua che ha dietro: vedi water_inseguimento.gdshader)
+	# (l'acqua delle vasche, senza riflessi e piena com'è l'acqua che ha dietro: vedi water_inseguimento.gdshader; da
+	# dentro il tubo il fondo si intravede sfocato e mosso, come sott'acqua: water_inseguimento_velo.gdshader, solo qui)
 	var mat := (load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
+	mat.shader = load("res://shaders/water_inseguimento_velo.gdshader") as Shader
 	mat.set_shader_parameter(&"lucido", 0.0)
 	mat.set_shader_parameter(&"pieno_fisso", 0.97)
 	# (e il colore dell'acqua anche dove la lampada vicina è la rossa guasta: vedi luce_propria nello shader)
@@ -1257,7 +1261,11 @@ func _luci() -> void:
 		_omni(radice, b(q), CALDO, 6.5, 10.0, 0.09, 8.0, true)
 	for i in luci_dati["paratie"].size():
 		var pa: Array = luci_dati["paratie"][i]
-		_lampada_paratia(radice, b(pa[0]), pa[1] == "verde", b(luci_dati["bersagli"][i]), b(pa[2]), _pannello(i))
+		# (l'ombra solo sulla lampada verde della paratia giusta della vasca 3: senza, la sua luce passava nel tubo 3 che
+		# parte sotto la paratia e faceva una riga verde nel buio; le altre due non la fanno e l'ombra costava dal 2 al
+		# 15% del fotogramma, ricontrollo del collaudo della candidata 0.3.21)
+		var ombra: bool = pa[1] == "verde" and i < (dati["paratie"] as Array).size() and int(dati["paratie"][i].get("vasca", -1)) == 2
+		_lampada_paratia(radice, b(pa[0]), pa[1] == "verde", b(luci_dati["bersagli"][i]), b(pa[2]), _pannello(i), ombra)
 	for u in luci_dati["uscita"]:
 		_omni(radice, b(u), VERDE, 3.0, 7.0, 0.12, 8.0, false)
 	var soffitto: float = luci_dati["info"]["limiti"][5]
@@ -1335,11 +1343,12 @@ func _pannello(k: int) -> Node3D:
 	return mobili.find_child(String(dati["paratie"][k]["nodo"]), true, false) as Node3D
 
 
-func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3, pannello: Node3D = null) -> void:
+func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3, pannello: Node3D = null,
+		ombra := false) -> void:
 	var col := VERDE if giusta else ROSSO
-	# (la verde fa ombra: senza, passava attraverso il tubo che parte sotto la paratia e faceva una riga verde nel buio
-	# del tubo 3, ricontrollo del collaudo dei ritocchi; la rossa sfarfalla ed è debole, resta senza)
-	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, giusta)
+	# ([param ombra]: la verde della vasca 3 fa ombra; senza, passava attraverso il tubo che parte sotto la paratia e
+	# faceva una riga verde nel buio del tubo 3, ricontrollo del collaudo dei ritocchi; la rossa sfarfalla ed è debole)
+	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, ombra)
 	o.set_meta(&"lampada_paratia_verde", giusta)
 	var s := SpotLight3D.new()
 	s.light_color = col
@@ -1476,9 +1485,17 @@ static func _percorso_fonte(fonte: String) -> String:
 			else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
 
 
-## I file che la costruzione carica (lei e le fonti degli arredi): la sala li chiede al thread insieme alla torre.
+## Le acque della costruzione (_glb_a_pezzi) e il velo delle bocche (_veli_bocche): la torre le aspetta prima dei suoi
+## passi (SalaTorre._chiedi_precarica).
+const RISORSE_ACQUE := ["res://assets/materials/inseguimento/acqua_inseguimento.tres",
+	"res://assets/materials/sala/acqua_torbida.tres", "res://shaders/water_inseguimento_velo.gdshader"]
+
+
+## I file che la costruzione carica (lei, le fonti degli arredi, le acque e il velo delle bocche): la sala li chiede al
+## thread insieme alla torre.
 static func risorse() -> Array:
 	var out: Array = RISORSE_LEI.duplicate()
+	out.append_array(RISORSE_ACQUE)
 	out.append_array(StendardiInseguimento.risorse())
 	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
 	if dati_luci is Dictionary:
