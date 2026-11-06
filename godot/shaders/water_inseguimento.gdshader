@@ -27,6 +27,15 @@ uniform float pieno_fisso = -1.0;
 // quelle con la rossa guasta grigia, quasi nera, e si vedevano le piastrelle dietro). luce_propria è la luce del colore
 // dell'acqua che fa da sola; 0 per l'acqua delle vasche.
 uniform float luce_propria = 0.0;
+// Con l'occhio a pochi cm sopra il pelo (meno di [radente_alto_pieno] m, sfumando fino a [radente_alto_niente]: solo
+// entrando nelle bocche dei tubi che partono sotto il pelo, dove la camera resta qualche cm sopra l'acqua) il pelo prende
+// il colore chiaro dell'acqua al posto del nero dell'ambiente (riscontro del collaudo della 0.3.21: l'acqua è trasparente,
+// quindi senza riflessi SSR, e vista quasi di taglio rifletteva il buio e faceva una fascia nera fra la sala e l'acqua).
+// Conta l'altezza dell'occhio e non l'angolo: dalla bocca il pelo vicino si vede fino a 16 gradi, come dalla vasca
+// quello lontano; ma dalla vasca l'occhio sta ben più in alto (in piedi 0,9 m, accucciati 0,2), e lì niente cambia.
+uniform float radente_alto_pieno = 0.12;
+uniform float radente_alto_niente = 0.18;
+uniform float radente_luce = 0.12;
 
 varying vec3 world_pos;
 
@@ -74,4 +83,14 @@ void fragment() {
 	ROUGHNESS = mix(1.0, 0.03, lucido);
 	SPECULAR = 0.6 * lucido;
 	METALLIC = 0.0;
+	if (FRONT_FACING && luce_propria <= 0.0) {
+		// quanto l'occhio sta sopra questo punto del pelo
+		float h = CAMERA_POSITION_WORLD.y - world_pos.y;
+		float r = 1.0 - smoothstep(radente_alto_pieno, radente_alto_niente, h);
+		if (r > 0.0) {
+			ALBEDO = mix(ALBEDO, water_color.rgb, r);
+			SPECULAR *= 1.0 - r;
+			EMISSION = water_color.rgb * radente_luce * r;
+		}
+	}
 }

@@ -72,6 +72,18 @@ func _run() -> void:
 	var vasche := [0, 1, 2]
 	if OS.get_cmdline_user_args().size() > 2:
 		vasche = Array(OS.get_cmdline_user_args()[2].split(",")).map(func(x): return int(x))
+	# (ACCUCCIATO=1: solo gli scatti dal checkpoint, accucciati nell'acqua, per la fascia del pelo radente)
+	if OS.has_environment("ACCUCCIATO"):
+		Input.action_press(&"crouch")
+		for v in vasche:
+			var da2 := SalaInseguimento.b(cps[v]["pos"])
+			var gu := SalaInseguimento.b(cps[v]["guarda"])
+			await _guarda(da2, gu, "vasca%d_accucciati" % (v + 1), 60)
+			print("ACCUCCIATI vasca %d: occhi a %.3f m sopra il pelo" % [v + 1, p.camera.global_position.y - float(ins.dati["vasche"][v]["acqua"])])
+			await _guarda(da2, gu + Vector3.DOWN * 0.6, "vasca%d_accucciati_pelo" % (v + 1), 20)
+		print("BERSAGLI FINE")
+		get_tree().quit()
+		return
 	for v in vasche:
 		var cp: Dictionary = cps[v]
 		var da := SalaInseguimento.b(cp["pos"])
