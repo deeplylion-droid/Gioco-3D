@@ -79,13 +79,15 @@ func _run() -> void:
 		hud.visible = false
 	if a[2] == "scaletta":
 		await _scaletta()
+	elif a[2] == "gomito":
+		await _scaletta(false, true)
 	else:
-		await _bocche()
+		await _bocche(a[3] if a.size() > 3 else "")
 	print("VISTA: finito")
 	get_tree().quit()
 
 
-func _scaletta(solo_salita := false) -> void:
+func _scaletta(solo_salita := false, solo_vicino := false) -> void:
 	var sc: Dictionary = ins.dati["scale"][ins.dati["scale"].size() - 1]
 	var piede := SalaInseguimento.b([sc["x"], sc["y"], sc["z0"]])
 	var cima := SalaInseguimento.b([sc["x"], sc["y"], sc["z1"]])
@@ -101,7 +103,7 @@ func _scaletta(solo_salita := false) -> void:
 	print("VISTA: scaletta piede %s cima %s, verso chi sale %s; faro %s energia %.1f" % [piede.snapped(Vector3.ONE * 0.01),
 			cima.snapped(Vector3.ONE * 0.01), n.snapped(Vector3.ONE * 0.01), faro != null, faro.light_energy if faro else -1.0])
 	var lato := n.cross(Vector3.UP)
-	for d in ([] if solo_salita else [2.0, 1.0]):
+	for d in ([] if solo_salita or solo_vicino else [2.0, 1.0]):
 		for acc in [false, true]:
 			p.teleport(piede + n * d + Vector3.UP * 0.1)
 			if acc:
@@ -113,6 +115,17 @@ func _scaletta(solo_salita := false) -> void:
 			Input.action_release(&"crouch")
 	# i ravvicinati: il bordo è a circa 1,2 m sopra il piede, i pioli nuovi a -33,1 e -33,4 (il pelo a -33,26)
 	var bordo := piede + Vector3.UP * 1.0
+	if solo_vicino:
+		# (il giocatore lontano, che il suo spruzzatore non entri negli scatti)
+		p.teleport(piede + n * 3.5 + Vector3.UP * 0.1)
+		await _frames(20)
+		for lt in [1.0, -1.0]:
+			var gom: Vector3 = bordo + lato * float(lt) * 0.25 + Vector3.UP * 0.2
+			var sl: String = "lato_a" if float(lt) > 0.0 else "lato_b"
+			await _libera(gom + n * 0.45 + lato * lt * 0.3 + Vector3.UP * 0.15, gom, "gomito_%s_davanti" % sl, 50.0, true)
+			await _libera(gom + lato * lt * 0.45 + n * 0.05 + Vector3.UP * 0.05, gom, "gomito_%s_di_lato" % sl, 50.0, true)
+			await _libera(gom + Vector3.UP * 0.5 + n * 0.2, gom, "gomito_%s_dall_alto" % sl, 50.0, true)
+			await _libera(gom + n * 0.35 - lato * lt * 0.2 + Vector3.DOWN * 0.2, gom, "gomito_%s_da_sotto" % sl, 50.0, true)
 	for luce in ([] if solo_salita else [false, true]):
 		var s := "_luce" if luce else ""
 		await _libera(bordo + n * 0.55 + lato * 0.45 + Vector3.UP * 0.35, bordo, "vicino_curva_bordo" + s, 55.0, luce)
@@ -121,6 +134,8 @@ func _scaletta(solo_salita := false) -> void:
 		await _libera(pioli + n * 0.6 + lato * 0.35 + Vector3.UP * 0.12, pioli, "vicino_pioli_pelo" + s, 55.0, luce)
 		await _libera(pioli + lato * 0.6 + n * 0.12 + Vector3.UP * 0.05, pioli - lato * 0.1, "vicino_pioli_di_lato" + s, 55.0, luce)
 		await _libera(cima + n * 0.3 + Vector3.UP * 0.8, piede + Vector3.UP * 1.2, "dall_alto" + s, 60.0, luce)
+	if solo_vicino:
+		return
 	# la salita col giocatore vero, dall'acqua alla porta
 	var porta := SalaInseguimento.b(ins.dati["porta"]["pos"])
 	p.teleport(piede + n * 1.0 + Vector3.UP * 0.1)
@@ -155,18 +170,25 @@ func _scaletta(solo_salita := false) -> void:
 			presa, t_presa, piede.y, alto, cima.y, in_cima, p.global_position.snapped(Vector3.ONE * 0.01), porta.snapped(Vector3.ONE * 0.01)])
 
 
-func _bocche() -> void:
+func _bocche(quali: String) -> void:
 	var veli := ins.find_children(SalaInseguimento.NOME_VELO + "*", "MeshInstance3D", true, false)
-	for nome: String in ["ins_A_tubo_1", "ins_A_scolo_0", "ins_A_tubo_2", "ins_A_scolo_1", "ins_A_tubo_3", "ins_A_scolo_2"]:
+	var tutte := ["ins_A_tubo_1", "ins_A_scolo_0", "ins_A_tubo_2", "ins_A_scolo_1", "ins_A_tubo_3", "ins_A_scolo_2"]
+	for nome: String in (tutte if quali == "" else Array(quali.split(","))):
 		if ins.lei:
 			ins.lei.visible = false
 		var linea := PackedVector3Array()
 		for q in ins.dati["tubi"][nome]:
 			linea.append(SalaInseguimento.b(q))
+		# la parete d'acqua di questa bocca: quella con l'inizio della linea davanti (|x| < 1,2, z vicino a 0)
 		var velo: MeshInstance3D = null
+		var meglio := INF
 		for v in veli:
-			if velo == null or (v as Node3D).global_position.distance_to(linea[0]) < velo.global_position.distance_to(linea[0]):
+			var l := (v as Node3D).global_transform.affine_inverse() * linea[0]
+			var l3 := (v as Node3D).global_transform.affine_inverse() * linea[3]
+			if absf(l.x) < 1.2 and l3.z > l.z and absf(l.z) < meglio:
+				meglio = absf(l.z)
 				velo = v
+		var pelo := float(velo.get_meta(&"pelo"))
 		var dir := linea[3] - linea[0]
 		dir.y = 0.0
 		dir = dir.normalized()
@@ -178,7 +200,10 @@ func _bocche() -> void:
 		Input.action_press(&"move_forward")
 		var ultimo := 0
 		var k := 0
-		var girato := false
+		var girati := [1.2, 1.8, 2.4]
+		var dopo_passaggio := 0
+		var prima := INF
+		var giu_girato := false
 		for f in 60 * 12:
 			var piedi := p.global_position
 			var iv := ultimo
@@ -192,16 +217,30 @@ func _bocche() -> void:
 			if g.length() > 0.2:
 				p.set_look(atan2(-g.x, -g.z), -0.15)
 			await get_tree().physics_frame
+			var cy := p.camera.global_position.y - pelo
 			var lz := (velo.global_transform.affine_inverse() * p.camera.global_position).z
-			if f % 6 == 0:
-				await _scatto("%s_%03d_%.2fm" % [nome, k, lz])
+			if prima != INF and prima * cy < 0.0:
+				dopo_passaggio = 8
+			prima = cy
+			if f % 6 == 0 or absf(cy) < 0.12 or dopo_passaggio > 0:
+				await _scatto("%s_%03d_%.2fm_%+.3f%s" % [nome, k, lz, cy, "_PASSA" if dopo_passaggio == 8 else ""])
 				k += 1
-			if lz > 1.2 and not girato:
-				girato = true
+			dopo_passaggio = maxi(dopo_passaggio - 1, 0)
+			var gira := false
+			if not girati.is_empty() and lz > girati[0]:
+				girati.pop_front()
+				gira = true
+			if cy < 0.0 and not giu_girato:
+				giu_girato = true
+				gira = true
+			if gira:
 				var y0 := p.yaw
-				p.set_look(atan2(dir.x, dir.z), -0.2)
-				await _frames(2)
-				await _scatto("%s_girato_verso_la_vasca" % nome)
+				for pitch in [-0.2, 0.15]:
+					p.set_look(atan2(dir.x, dir.z), pitch)
+					await _frames(2)
+					var cy2 := p.camera.global_position.y - pelo
+					var lz2 := (velo.global_transform.affine_inverse() * p.camera.global_position).z
+					await _scatto("%s_girato_%.2fm_%+.3f_%s" % [nome, lz2, cy2, "giu" if pitch < 0.0 else "su"])
 				p.set_look(y0, -0.15)
 			if lz > 3.0:
 				break

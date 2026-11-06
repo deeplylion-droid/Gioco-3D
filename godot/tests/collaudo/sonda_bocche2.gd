@@ -23,7 +23,7 @@ func _run() -> void:
 	GameState.luci = GameState.Luci.BLACKOUT
 	var out := FileAccess.open(OS.get_cmdline_user_args()[1], FileAccess.READ_WRITE if FileAccess.file_exists(OS.get_cmdline_user_args()[1]) else FileAccess.WRITE)
 	out.seek_end()
-	out.store_line("bocca\tmodo\tf\tlz\tpiedi\tocchio_nat\tlimite\tcamera\tsoffitto")
+	out.store_line("bocca\tmodo\tf\tlz\tpiedi\tocchio_nat\tlimite\tcamera\tsoffitto\talzata")
 	var torre := (load("res://scenes/sala/torre/sala_torre.tscn") as PackedScene).instantiate() as SalaTorre
 	add_child(torre)
 	await _frames(20)
@@ -80,6 +80,13 @@ func _run() -> void:
 			var dove_salto := 0.0
 			var min_sotto_soff := INF
 			var dove_soff := 0.0
+			var min_filo := INF
+			var dove_filo := 0.0
+			var max_alzata := 0.0
+			var sotto_davanti := 0
+			var min_lz_sotto := INF
+			var altro_pelo := 0
+			var passaggi := []
 			var min_sopra := INF
 			var dove_sopra := 0.0
 			var lz_min_torna := INF
@@ -102,10 +109,27 @@ func _run() -> void:
 				var lz := (velo.global_transform.affine_inverse() * p.camera.global_position).z
 				var nat := p.global_position.y + float(p.get(&"_eye_height"))
 				var soff := linea[iv].y + SalaInseguimento.R_TUBO
-				var lim := p.occhi_minimo
+				# (dopo il ritocco 0fc590e9: sopra il pelo almeno occhi_sopra, sotto almeno occhi_sotto sotto)
+				var lim := -INF
+				if p.occhi_pelo > -1e9:
+					lim = p.occhi_pelo + p.occhi_sopra if nat >= p.occhi_pelo else p.occhi_pelo - p.occhi_sotto
+				if p.occhi_pelo > -1e9 and absf(p.occhi_pelo - pelo) > 0.001:
+					altro_pelo += 1
+				var dal_pelo := cy - pelo
+				if lz > -0.6 and lz < 3.0:
+					if absf(dal_pelo) < min_filo:
+						min_filo = absf(dal_pelo)
+						dove_filo = lz
+					max_alzata = maxf(max_alzata, absf(p.occhi_alzati))
+					if dal_pelo < 0.0 and lz < 0.05:
+						sotto_davanti += 1
+					if dal_pelo < 0.0 and lz < min_lz_sotto:
+						min_lz_sotto = lz
+					if cy_prec.size() >= 1 and (cy_prec[-1] - pelo) * dal_pelo < 0.0:
+						passaggi.append("%.2f m (%s)" % [lz, "giù" if dal_pelo < 0.0 else "su"])
 				if lz > -0.7 and lz < 3.3:
-					out.store_line("%s\t%s\t%d\t%.3f\t%.3f\t%.3f\t%s\t%.3f\t%.3f" % [nome, modo, f, lz, piedi.y - pelo, nat - pelo,
-							("%.3f" % (lim - pelo)) if lim > -1e9 else "-", cy - pelo, soff - pelo])
+					out.store_line("%s\t%s\t%d\t%.3f\t%.3f\t%.3f\t%s\t%.3f\t%.3f\t%.3f" % [nome, modo, f, lz, piedi.y - pelo, nat - pelo,
+							("%.3f" % (lim - pelo)) if lim > -1e9 else "-", cy - pelo, soff - pelo, p.occhi_alzati])
 					if lz < 2.0 and cy - pelo < min_sopra:
 						min_sopra = cy - pelo
 						dove_sopra = lz
@@ -133,6 +157,8 @@ func _run() -> void:
 			Input.action_release(&"move_forward")
 			Input.action_release(&"move_back")
 			Input.action_release(&"crouch")
+			print("BOCCA2: %s, %s: camera dal pelo al minimo %.3f m (a %.2f m); spostata dall'occhio naturale al massimo %.1f cm; passa il pelo a %s; sotto il pelo al più presto a %.2f m dentro, %d fotogrammi sotto il pelo dal lato della vasca (l.z < 0,05); %d fotogrammi con un altro pelo" % [
+					nome, modo, min_filo, dove_filo, max_alzata * 100.0, ", ".join(passaggi), min_lz_sotto, sotto_davanti, altro_pelo])
 			print("BOCCA2: %s, %s: morto %s, piedi a %s" % [nome, modo, GameState.is_dying, p.global_position.snapped(Vector3.ONE * 0.01)])
 			print("BOCCA2: %s, %s: nei primi 2 m camera sopra il pelo al minimo %.3f (a %.2f m); passo più grande della camera in un fotogramma %.0f mm (a %.2f m); camera sotto il soffitto del tubo al minimo %.3f m (a %.2f m)%s" % [
 					nome, modo, min_sopra, dove_sopra, max_salto * 1000.0, dove_salto, min_sotto_soff, dove_soff,
