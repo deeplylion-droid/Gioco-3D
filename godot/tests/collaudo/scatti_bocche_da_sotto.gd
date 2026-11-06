@@ -68,7 +68,37 @@ func _run() -> void:
 	if OS.has_environment("LUCE_VELO"):
 		for v: MeshInstance3D in veli:
 			(v.material_override as ShaderMaterial).set_shader_parameter(&"luce_propria", float(OS.get_environment("LUCE_VELO")))
-	if fase == "veli":
+	if fase == "fascia":
+		# (grafica-2: la fascia scura fra la sala e l'acqua nei primi 0,3-0,5 m dentro il tubo, ricontrollo di grafica
+		# delle bocche: da cosa viene. Ogni posa normale, senza la parete della bocca, senza le acque delle vasche, senza
+		# tutte e due; e dove sta la camera rispetto al pelo)
+		var acque_vasche: Array[MeshInstance3D] = []
+		for n in ins.find_children("*", "MeshInstance3D", true, false):
+			var mi := n as MeshInstance3D
+			if mi in veli or not mi.material_override is ShaderMaterial:
+				continue
+			var sh := (mi.material_override as ShaderMaterial).shader
+			if sh and sh.resource_path.ends_with("water_inseguimento.gdshader"):
+				acque_vasche.append(mi)
+		print("FASCIA: acque delle vasche %d, pareti %d" % [acque_vasche.size(), veli.size()])
+		for v: MeshInstance3D in veli:
+			var nome := String(v.name).trim_prefix(SalaInseguimento.NOME_VELO)
+			if not (nome.ends_with("tubo_1") or nome.ends_with("scolo_0")):
+				continue
+			for lz in [0.3, 0.5]:
+				await _da_dentro(v, lz)
+				var cam := p.camera.global_position
+				print("FASCIA %s %.1f: camera a %.3f m dal pelo, occhi_pelo %.3f" % [nome, lz, cam.y - float(v.get_meta(&"pelo")), p.get(&"occhi_pelo")])
+				for k in 4:
+					v.visible = k % 2 == 0
+					for a in acque_vasche:
+						a.visible = k < 2
+					await _fotogrammi(3)
+					await _scatto("fascia_%s_%.1f_%s" % [nome.trim_prefix("ins_A_"), lz, ["normale", "senza_parete", "senza_acque", "senza_tutte"][k]])
+				v.visible = true
+				for a in acque_vasche:
+					a.visible = true
+	elif fase == "veli":
 		for v: MeshInstance3D in veli:
 			var nome := String(v.name).trim_prefix(SalaInseguimento.NOME_VELO)
 			await _da_dentro(v, 1.3)
