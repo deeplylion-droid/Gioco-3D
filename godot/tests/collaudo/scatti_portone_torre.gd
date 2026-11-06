@@ -67,6 +67,12 @@ func _run() -> void:
 	we.environment.sdfgi_enabled = false
 	we.environment.volumetric_fog_enabled = false
 	we.environment.ssil_enabled = false
+	if OS.has_environment("MAGENTA"):
+		# per la diagnosi: lo sfondo magenta pieno (un buco verso lo sfondo è magenta), luce e riflessi ancora dal cielo
+		we.environment.background_mode = Environment.BG_COLOR
+		we.environment.background_color = Color(1.0, 0.0, 1.0)
+		we.environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+		we.environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	_radice.add_child(we)
 	var cam := Camera3D.new()
 	cam.near = 0.02
