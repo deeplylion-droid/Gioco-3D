@@ -451,13 +451,15 @@ def anteprima(versione, x):
 
 def nel_gioco():
     """I suoni del getto B nel gioco (scelta dell'utente del 16 ottobre, c1ba111c): li scrive in
-    godot/audio/giocatore/ come in proposte_getto/b/ (stessi byte). Lo chiama genera_tutto.py dopo
-    genera_giocatore.py, che scrive ancora i suoni dello zaino di prima con gli stessi nomi."""
-    from comune import AUDIO
+    godot/audio/giocatore/ come in proposte_getto/b/ (stessi byte) e li segna nel registro. Lo chiama
+    genera_tutto.py dopo genera_giocatore.py, che scrive ancora i suoni dello zaino di prima con gli stessi nomi."""
+    from comune import AUDIO, registra
     print('Zaino: getto B')
     for nome, y in suoni('b').items():
         write_ogg(os.path.join(AUDIO, 'giocatore', nome + '.ogg'), y, 5)
-    print('  scritti in giocatore/')
+        # (nel registro, per catalogo e LICENZE.md, al posto delle voci dei suoni di prima)
+        registra('giocatore', nome, y, nota="getto B «potenziato» (scelta dell'utente, 16 ottobre; "
+                                            "genera_proposte_getto.py)")
 
 
 def main():

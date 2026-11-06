@@ -70,14 +70,30 @@ def boato(rng, v):
     return fade(hp(out, 25, 2), 0.0, 0.4)
 
 
+def suono(v):
+    """La versione [v] ('a' o 'b'), pronta da scrivere."""
+    rng = np.random.default_rng(41 if v == 'a' else 42)
+    x = normalize_lufs(f32(boato(rng, v)), -11.0, -1.0, short=True)
+    return limiter(x, -1.0)
+
+
 def main():
-    for v, seme in [('a', 41), ('b', 42)]:
-        rng = np.random.default_rng(seme)
-        x = normalize_lufs(f32(boato(rng, v)), -11.0, -1.0, short=True)
-        x = limiter(x, -1.0)
+    for v in ('a', 'b'):
+        x = suono(v)
         path = os.path.join(QUI, v, 'lei_esplosione.ogg')
         write_ogg(path, x, 5)
         print(path, f'{len(x) / SR:.2f}s')
+
+
+def nel_gioco():
+    """Nel gioco c'è A (scelta dell'utente del 17 ottobre): la scrive in godot/audio/lei/ (stessi byte di a/) e la
+    segna nel registro. La chiama genera_tutto.py."""
+    from comune import AUDIO, registra
+    x = suono('a')
+    write_ogg(os.path.join(AUDIO, 'lei', 'lei_esplosione.ogg'), x, 5)
+    registra('lei', 'lei_esplosione', x,
+             nota="il boato del geyser che la copre, versione A (scelta dell'utente, 17 ottobre; "
+                  "proposte_esplosione/genera_boato.py)")
 
 
 if __name__ == '__main__':

@@ -3,7 +3,8 @@ coordinatore e le proposte per l'utente, in godot/audio/anteprima/) restano com'
 ascoltate: si rifanno solo a mano (genera_anteprima.py, genera_proposte.py), e con i suoni di adesso
 non verrebbero uguali.
 Un giro completo deve lasciare godot/audio com'è nel repository: i passi li fa genera_passi.py, il getto B
-dello zaino genera_proposte_getto.py, e i suoni fermi di genera_squalo.py (FERMI) non si rifanno.
+dello zaino genera_proposte_getto.py, l'urlo e il boato di lei proposte_jumpscare/genera_urlo.py e
+proposte_esplosione/genera_boato.py, e i suoni fermi di genera_squalo.py (FERMI) non si rifanno.
 
 Uso (dalla radice del repository):
     /home/user/tools/blender-venv/bin/python assets_src/audio/genera_tutto.py
@@ -35,6 +36,11 @@ from comune import AUDIO, REGISTRO
 # i passi del giocatore (scarpe di gomma, scelta A del 30 ottobre) li fa assets_src/passi/genera_passi.py
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'passi'))
 import genera_passi  # noqa: E402
+# l'urlo del jumpscare e il boato del geyser di lei (A, scelte del 17 ottobre)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'proposte_jumpscare'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'proposte_esplosione'))
+import genera_boato  # noqa: E402
+import genera_urlo  # noqa: E402
 
 if __name__ == '__main__':
     t0 = time.time()
@@ -48,6 +54,9 @@ if __name__ == '__main__':
         if m is genera_giocatore:
             genera_passi.nel_gioco()
             genera_proposte_getto.nel_gioco()
+        if m is genera_lei:
+            genera_urlo.nel_gioco()
+            genera_boato.nel_gioco()
     # le voci dei file che non ci sono più
     with open(REGISTRO, encoding='utf-8') as f:
         reg = json.load(f)

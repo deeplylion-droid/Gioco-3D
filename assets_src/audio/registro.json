@@ -1412,62 +1412,82 @@
  "giocatore/zaino_aspira_fine": {
   "file": "res://audio/giocatore/zaino_aspira_fine.ogg",
   "canali": 1,
-  "durata": 0.7,
+  "durata": 0.9,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -26.9,
-  "lufs_max": -21.0
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -24.6,
+  "lufs_max": -17.0
  },
  "giocatore/zaino_aspira_inizio": {
   "file": "res://audio/giocatore/zaino_aspira_inizio.ogg",
   "canali": 1,
-  "durata": 0.55,
+  "durata": 0.9,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -22.6,
-  "lufs_max": -20.0
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -18.3,
+  "lufs_max": -15.0
  },
  "giocatore/zaino_aspira_loop": {
   "file": "res://audio/giocatore/zaino_aspira_loop.ogg",
   "canali": 1,
-  "durata": 3.0,
+  "durata": 2.4,
   "loop": true,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -21.0,
-  "lufs_max": -19.4
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -22.5,
+  "lufs_max": -20.6
+ },
+ "giocatore/zaino_carica": {
+  "file": "res://audio/giocatore/zaino_carica.ogg",
+  "canali": 1,
+  "durata": 0.35,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": null,
+  "lufs_max": -15.0
  },
  "giocatore/zaino_getto_fine": {
   "file": "res://audio/giocatore/zaino_getto_fine.ogg",
   "canali": 1,
-  "durata": 0.7,
+  "durata": 1.1,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -30.8,
-  "lufs_max": -21.0
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -25.6,
+  "lufs_max": -15.3
  },
  "giocatore/zaino_getto_inizio": {
   "file": "res://audio/giocatore/zaino_getto_inizio.ogg",
   "canali": 1,
-  "durata": 0.45,
+  "durata": 0.8,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": null,
-  "lufs_max": -18.0
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -21.1,
+  "lufs_max": -12.4
  },
  "giocatore/zaino_getto_loop": {
   "file": "res://audio/giocatore/zaino_getto_loop.ogg",
   "canali": 1,
-  "durata": 2.0,
+  "durata": 2.5,
   "loop": true,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -21.0,
-  "lufs_max": -20.4
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -16.0,
+  "lufs_max": -15.0
+ },
+ "giocatore/zaino_gocce": {
+  "file": "res://audio/giocatore/zaino_gocce.ogg",
+  "canali": 1,
+  "durata": 1.2,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -28.0,
+  "lufs_max": -22.0
  },
  "giocatore/zaino_impatto_acqua_loop": {
   "file": "res://audio/giocatore/zaino_impatto_acqua_loop.ogg",
@@ -1482,22 +1502,22 @@
  "giocatore/zaino_impatto_loop": {
   "file": "res://audio/giocatore/zaino_impatto_loop.ogg",
   "canali": 1,
-  "durata": 2.0,
+  "durata": 2.5,
   "loop": true,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -22.0,
-  "lufs_max": -19.5
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -17.0,
+  "lufs_max": -16.0
  },
  "giocatore/zaino_pieno": {
   "file": "res://audio/giocatore/zaino_pieno.ogg",
   "canali": 1,
-  "durata": 1.1,
+  "durata": 0.8,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -23.0,
-  "lufs_max": -19.0
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -20.7,
+  "lufs_max": -17.3
  },
  "giocatore/zaino_pompata": {
   "file": "res://audio/giocatore/zaino_pompata.ogg",
@@ -1529,6 +1549,16 @@
   "lufs": -23.0,
   "lufs_max": -18.0
  },
+ "giocatore/zaino_risucchio_loop": {
+  "file": "res://audio/giocatore/zaino_risucchio_loop.ogg",
+  "canali": 1,
+  "durata": 2.4,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -23.5,
+  "lufs_max": -20.3
+ },
  "giocatore/zaino_sciabordio_01": {
   "file": "res://audio/giocatore/zaino_sciabordio_01.ogg",
   "canali": 1,
@@ -1558,6 +1588,46 @@
   "nota": "",
   "lufs": -26.3,
   "lufs_max": -22.0
+ },
+ "giocatore/zaino_serbatoio_loop": {
+  "file": "res://audio/giocatore/zaino_serbatoio_loop.ogg",
+  "canali": 1,
+  "durata": 2.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -24.5,
+  "lufs_max": -17.5
+ },
+ "giocatore/zaino_strattone_01": {
+  "file": "res://audio/giocatore/zaino_strattone_01.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -24.3,
+  "lufs_max": -16.0
+ },
+ "giocatore/zaino_strattone_02": {
+  "file": "res://audio/giocatore/zaino_strattone_02.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -23.9,
+  "lufs_max": -16.0
+ },
+ "giocatore/zaino_strattone_03": {
+  "file": "res://audio/giocatore/zaino_strattone_03.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py)",
+  "lufs": -24.1,
+  "lufs_max": -16.0
  },
  "giocatore/zaino_vuoto": {
   "file": "res://audio/giocatore/zaino_vuoto.ogg",
@@ -1638,6 +1708,16 @@
   "nota": "gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse",
   "lufs": -19.0,
   "lufs_max": -14.8
+ },
+ "lei/lei_esplosione": {
+  "file": "res://audio/lei/lei_esplosione.ogg",
+  "canali": 2,
+  "durata": 3.5,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "il boato del geyser che la copre, versione A (scelta dell'utente, 17 ottobre; proposte_esplosione/genera_boato.py)",
+  "lufs": -16.5,
+  "lufs_max": -11.0
  },
  "lei/lei_insegue_grata_01": {
   "file": "res://audio/lei/lei_insegue_grata_01.ogg",
@@ -1928,6 +2008,16 @@
   "nota": "tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s",
   "lufs": -21.7,
   "lufs_max": -19.0
+ },
+ "lei/lei_urlo": {
+  "file": "res://audio/lei/lei_urlo.ogg",
+  "canali": 2,
+  "durata": 2.0,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "il jumpscare: urlo stridulo che si inceppa, versione A «glitch» (scelta dell'utente, 17 ottobre; proposte_jumpscare/genera_urlo.py)",
+  "lufs": -10.4,
+  "lufs_max": -8.0
  },
  "lei/morso": {
   "file": "res://audio/lei/morso.ogg",
