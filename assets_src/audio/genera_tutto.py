@@ -1,7 +1,9 @@
-"""Rigenera tutti i suoni del gioco, il catalogo per Godot, le licenze e le anteprime della
-scena. Le anteprime delle proposte per l'utente (proposta_*.ogg) restano com'erano quando le ha
-ascoltate: si rifanno solo a mano (genera_anteprima.py proposte, genera_proposte.py), e con i
-fondi di adesso non verrebbero uguali.
+"""Rigenera tutti i suoni del gioco, il catalogo per Godot e le licenze. Le anteprime (le scene per il
+coordinatore e le proposte per l'utente, in godot/audio/anteprima/) restano com'erano quando sono state
+ascoltate: si rifanno solo a mano (genera_anteprima.py, genera_proposte.py), e con i suoni di adesso
+non verrebbero uguali.
+Un giro completo deve lasciare godot/audio com'è nel repository: i passi li fa genera_passi.py, il getto B
+dello zaino genera_proposte_getto.py, e i suoni fermi di genera_squalo.py (FERMI) non si rifanno.
 
 Uso (dalla radice del repository):
     /home/user/tools/blender-venv/bin/python assets_src/audio/genera_tutto.py
@@ -16,10 +18,10 @@ import time
 import catalogo
 import genera_ambiente
 import genera_bambini
-import genera_anteprima
 import genera_effetti
 import genera_enigmi
 import genera_giocatore
+import genera_proposte_getto
 import genera_interfaccia
 import genera_lei
 import genera_musica
@@ -45,6 +47,7 @@ if __name__ == '__main__':
         m.main()
         if m is genera_giocatore:
             genera_passi.nel_gioco()
+            genera_proposte_getto.nel_gioco()
     # le voci dei file che non ci sono più
     with open(REGISTRO, encoding='utf-8') as f:
         reg = json.load(f)
@@ -55,5 +58,6 @@ if __name__ == '__main__':
             json.dump({k: v for k, v in reg.items() if k not in via}, f, indent=1, ensure_ascii=False)
     catalogo.main()
     licenze.main()
-    genera_anteprima.main(('sala', 'tecnici', 'lei', 'pioggia', 'passi', 'cancello'))
+    # (le anteprime per il coordinatore, in godot/audio/anteprima/, non le rifà più: sono mix dei suoni del gioco di
+    # quando sono state fatte, e a ogni suono cambiato cambiavano anche loro; si rifanno a mano con genera_anteprima.py)
     print(f'Fatto in {time.time() - t0:.0f} s')
