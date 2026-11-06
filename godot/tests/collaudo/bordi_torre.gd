@@ -179,8 +179,13 @@ func _analizza(nome: String, mesh_list: Array, xf: Transform3D, spazio: PhysicsD
 			centro += p0
 			lunghezza += p0.distance_to(p1)
 		centro /= giro.size()
+		var nn := somma.normalized()
+		var scarto := 0.0
+		for g in giro:
+			scarto = maxf(scarto, absf((pos[orientati[g][0]] - centro).dot(nn)))
 		anelli.append({"area": somma.length() * 0.5, "centro": centro, "lati": giro.size(), "giro": lunghezza,
-				"normale": somma.normalized()})
+				"normale": nn, "scarto": scarto})
+	var viste_buchi: PackedStringArray = []
 	var grandi := anelli.filter(func(a: Dictionary) -> bool: return a["area"] > 0.01)
 	grandi.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["area"] > b["area"])
 	print("BORDI: %s: spigoli di bordo %d, giunzioni a T %d, restano %d; anelli chiusi %d (sopra 0,01 m2: %d), catene non chiuse %d" % [
@@ -199,10 +204,16 @@ func _analizza(nome: String, mesh_list: Array, xf: Transform3D, spazio: PhysicsD
 			var h := spazio.intersect_ray(q)
 			if h.is_empty() or (h.position as Vector3).distance_to(occhio) > occhio.distance_to(c) + 0.03:
 				da_dove = "%s (%.1f m)" % [v[0], occhio.distance_to(c)]
+				var cam := c + (occhio - c).normalized() * minf(2.5, occhio.distance_to(c))
+				viste_buchi.append("%.3f,%.3f,%.3f,%.3f,%.3f,%.3f" % [cam.x, cam.y, cam.z, c.x, c.y, c.z])
 				break
 		if da_dove != "":
 			visti += 1
-		print("BORDI:   %s anello %s area %.3f m2, %d lati, giro %.2f m, normale %s, %s" % [nome, c.snapped(Vector3.ONE * 0.01),
-				a["area"], a["lati"], a["giro"], (a["normale"] as Vector3).snapped(Vector3.ONE * 0.01),
+		print("BORDI:   %s anello %s area %.3f m2, %d lati, giro %.2f m, fuori piano %.3f m, normale %s, %s" % [nome,
+				c.snapped(Vector3.ONE * 0.01), a["area"], a["lati"], a["giro"], a["scarto"], (a["normale"] as Vector3).snapped(Vector3.ONE * 0.01),
 				"SI VEDE da " + da_dove if da_dove != "" else "non si vede"])
+		if da_dove != "":
+			var loc := xf.affine_inverse() * c
+			print("BORDI:     centro nella mesh %.4f, %.4f, %.4f" % [loc.x, loc.y, loc.z])
 	print("BORDI: %s: anelli sopra 0,01 m2 che si vedono dalla strada %d" % [nome, visti])
+	print("BORDI: VISTE=%s" % ";".join(viste_buchi))

@@ -6,6 +6,8 @@ extends Node
 ## (cielo_fessure.gd), e la soglia come la vede chi entra e chi esce.
 ## Con CUBO=1 (e MAGENTA=1) le pose sono 6 direzioni a 90° (un cubo) dagli occhi di ogni checkpoint della torre e da
 ## un punto ogni tre della discesa (torre_percorso.json, 1 m sopra lo scivolo): i pixel magenta si contano dopo.
+## Con VISTE="x,y,z,tx,ty,tz;..." (stampate da bordi_torre.gd) gli scatti ravvicinati dei buchi che si vedono.
+## FILTRO=<testo> scatta solo le pose col testo nel nome; RAGGIO=<m> accende le mesh fino a quella distanza (60).
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##     --script res://tests/run.gd -- res://tests/collaudo/scatti_portone_torre.gd <cartella> [prima]
@@ -87,15 +89,30 @@ func _run() -> void:
 		await get_tree().process_frame
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	cam.make_current()
+	if OS.has_environment("RAGGIO"):
+		raggio = float(OS.get_environment("RAGGIO"))
 	var pose: Array = POSE
 	if OS.has_environment("CUBO"):
 		pose = _pose_cubo(torre)
+	if OS.has_environment("VISTE"):
+		# VISTE="x,y,z,tx,ty,tz;..." (da bordi_torre.gd): scatti da quei punti verso quei punti, con una lampadina sulla camera
+		pose = []
+		for vv in OS.get_environment("VISTE").split(";"):
+			var f := vv.split_floats(",")
+			pose.append(["buco_%02d" % pose.size(), Vector3(f[0], f[1], f[2]), Vector3(f[3], f[4], f[5]), 50.0])
+		var o := OmniLight3D.new()
+		o.omni_range = 6.0
+		o.light_energy = 1.5
+		cam.add_child(o)
 	for v in pose:
 		if OS.has_environment("SOLO_RAGGI") and not String(v[0]).begins_with("raggio_"):
 			continue
+		if OS.has_environment("FILTRO") and not String(v[0]).contains(OS.get_environment("FILTRO")):
+			continue
 		cam.fov = float(v[3])
 		cam.global_position = v[1]
-		cam.look_at(v[2], Vector3.UP)
+		var su := Vector3.UP if absf(((v[2] as Vector3) - (v[1] as Vector3)).normalized().y) < 0.95 else Vector3.RIGHT
+		cam.look_at(v[2], su)
 		_accendi(cam.global_position)
 		for i in 12:
 			await get_tree().process_frame
