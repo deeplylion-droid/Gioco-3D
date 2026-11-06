@@ -309,7 +309,8 @@ func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "", buchi := {}) 
 
 
 ## [param pos]: 5 cm davanti al muro, all'altezza della lampada; la lampada si appoggia al muro con la staffa.
-func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
+## [param esclusi]: gli strati che la sua luce non prende (il cartello delle pozze accanto: i suoi colori restano veri).
+func _lampada_rossa(pos: Vector3, verso: Vector3, esclusi := 0) -> void:
 	var n := Vector3(verso.x, 0.0, verso.z).normalized()
 	var l := LampadaMuro.monta(self, pos - n * 0.05, verso)
 	var o := OmniLight3D.new()
@@ -319,6 +320,8 @@ func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
 	o.omni_range = 7.0
 	o.omni_attenuation = 1.3
 	o.set_meta(&"risveglio_ignora", true)
+	if esclusi != 0:
+		Strati.maschera_luce(o, 0xFFFFF & ~esclusi)
 	add_child(o)
 
 
@@ -345,10 +348,30 @@ func _zona_personale() -> void:
 			{"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vasca_gradino": Vector2(1.6, -1.8),
 			"vicino": 0.9, "lato_sbircia": 1.0})
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
-	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0))
+	# (la sua luce non prende il cartello delle pozze, a 70 cm: i quadratini restano dei colori delle pozze)
+	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0), CartelloPozze.STRATO)
 	# la Polaroid 15 (i bambini che si fanno le maschere, proposta del 25 ottobre notte): per terra nell'angolo nord-est,
 	# accanto alla porta del capannone (alle spalle di chi entra), nella zona del personale dove stavano gli attrezzi
 	PolaroidPhoto.metti(self, 15, Vector3(x + 0.84, Y + 0.03, CENTRO_FIUME.z + F.X0 - 0.48), 65.0)
+	_cartello_pozze(x + 1.0, soglia)
+
+
+## Il cartello delle pozze colorate (CartelloPozze), l'indizio della stanza delle pozze. Scelta B dell'utente del 4
+## novembre ("spostiamolo più lontano, così è troppo facile"): qui nel corridoio del personale, sul muro est, all'altezza
+## degli occhi e dalla parte del capannone, cioè il più lontano possibile dalla porta dell'infermeria (a 2 m), di fronte
+## all'oblò di lei: chi arriva dall'approdo lo ha subito a destra. Fra la lampada rossa e l'angolo, a 18 cm
+## dall'angolo; sotto, per terra, la Polaroid 15. Il faretto bianco a soffitto, 1,2 m davanti al muro, ha l'ombra:
+## senza, la sua luce passerebbe il muro e accenderebbe quello che c'è dietro, e il corridoio deve restare com'era.
+## [param muro_est]: la faccia del muro est (x); [param angolo]: la faccia del muro del capannone (z).
+func _cartello_pozze(muro_est: float, angolo: float) -> void:
+	var c := CartelloPozze.new()
+	c.name = "CartelloPozzeColorate"
+	c.soffitto = 2.6 - 1.5
+	c.angolo = 11.0
+	c.ombra = true
+	c.position = Vector3(muro_est, Y + 1.5, angolo - 0.18 - CartelloPozze.MISURA.x * 0.5)
+	c.rotation_degrees.y = -90.0
+	add_child(c)
 
 
 ## La scala di servizio: dalla porta stagna della stanza delle pozze (nel suo muro nord) un pianerottolo, poi verso est

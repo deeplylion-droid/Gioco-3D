@@ -116,7 +116,6 @@ func _costruisci() -> void:
 	_luci()
 	await _pausa()
 	_bambini()
-	_cartello_pozze()
 	await _pausa()
 	_metti_listelli()
 	_checkpoint()
@@ -288,6 +287,9 @@ func _luce(pos: Vector3, colore: Color, energia: float, raggio: float, ombre := 
 	o.omni_attenuation = 1.2
 	o.shadow_enabled = ombre
 	o.set_meta(&"risveglio_ignora", true)
+	# (la lampada rossa sopra la porta sud arrivava dalla porta al cartello delle pozze nel corridoio del personale: i
+	# quadratini devono restare dei colori delle pozze)
+	Strati.maschera_luce(o, 0xFFFFF & ~CartelloPozze.STRATO)
 	add_child(o)
 	return o
 
@@ -847,76 +849,11 @@ func _cassaforte() -> void:
 	_faretto_soffitto("FarettoCassaforte", Vector3(2.3, H, -0.55), c, Vector3(L, H, -0.55), Color(1.0, 0.85, 0.65), 1.1, 15.0)
 
 
-## Un faretto piccolo a soffitto: la piastra avvitata al soffitto in [param attacco], il gambo, il barattolo puntato su
-## [param bersaglio] col vetro appena acceso e la SpotLight debole. Il cavo corre dritto contro il soffitto fino a
-## una scatola di derivazione in [param scatola] (sul soffitto, contro il muro). Tutto in coordinate della stanza.
+## Un faretto piccolo a soffitto (FarettoSoffitto): in [param attacco] sul soffitto, puntato su [param bersaglio], col cavo
+## fino alla scatola in [param scatola]. Tutto in coordinate della stanza.
 func _faretto_soffitto(nome: String, attacco: Vector3, bersaglio: Vector3, scatola: Vector3, colore: Color,
 		energia: float, angolo: float) -> void:
-	var n := Node3D.new()
-	n.name = nome
-	add_child(n)
-	var ferro := _colore(Color(0.16, 0.16, 0.17), 0.6, 0.45)
-	_box(Vector3(0.1, 0.012, 0.1), attacco + Vector3(0, -0.006, 0), ferro, n)
-	var testa := attacco + Vector3(0, -0.16, 0)
-	_cilindro(n, attacco + Vector3(0, -0.012, 0), testa, 0.012, ferro)
-	var dir := (bersaglio - testa).normalized()
-	# il barattolo col fondo sulla testa del gambo, aperto verso il bersaglio
-	var lato := dir.cross(Vector3.UP).normalized() if absf(dir.y) < 0.99 else Vector3.RIGHT
-	var b := Basis(lato, dir, lato.cross(dir).normalized())
-	var can := MeshInstance3D.new()
-	can.name = "Barattolo"
-	var cm := CylinderMesh.new()
-	cm.top_radius = 0.05
-	cm.bottom_radius = 0.042
-	cm.height = 0.13
-	can.mesh = cm
-	can.material_override = ferro
-	n.add_child(can)
-	can.transform = Transform3D(b, testa + dir * 0.055)
-	var vetro := MeshInstance3D.new()
-	vetro.name = "Vetro"
-	var vc := CylinderMesh.new()
-	vc.top_radius = 0.047
-	vc.bottom_radius = 0.047
-	vc.height = 0.004
-	vetro.mesh = vc
-	var mv := StandardMaterial3D.new()
-	mv.albedo_color = Color(0.9, 0.9, 0.85)
-	mv.emission_enabled = true
-	mv.emission = colore
-	mv.emission_energy_multiplier = 1.2
-	vetro.material_override = mv
-	n.add_child(vetro)
-	vetro.transform = Transform3D(b, testa + dir * 0.122)
-	var sp := SpotLight3D.new()
-	sp.name = "Luce"
-	sp.light_color = colore
-	sp.light_energy = energia
-	sp.spot_range = testa.distance_to(bersaglio) + 1.5
-	sp.spot_angle = angolo
-	sp.spot_attenuation = 0.6
-	sp.shadow_enabled = false
-	sp.set_meta(&"risveglio_ignora", true)
-	n.add_child(sp)
-	sp.transform = Transform3D(Basis.looking_at(dir, Vector3.UP if absf(dir.y) < 0.99 else Vector3.BACK), testa + dir * 0.125)
-	# il cavo: dentro la piastra, poi a contatto col soffitto fino dentro la scatola (12 cm, contro il muro e il soffitto)
-	var verso := (Vector3(scatola.x, attacco.y, scatola.z) - attacco).normalized()
-	_cilindro(n, attacco + Vector3(0, -0.005, 0), scatola - verso * 0.06 + Vector3(0, -0.005, 0), 0.005, _colore(Color(0.04, 0.04, 0.04), 0.0, 0.6))
-	_box(Vector3(0.12, 0.06, 0.12), scatola - verso * 0.06 + Vector3(0, -0.03, 0), ferro, n)
-
-
-func _cilindro(padre: Node3D, a: Vector3, b: Vector3, r: float, m: Material) -> void:
-	var mi := MeshInstance3D.new()
-	var cm := CylinderMesh.new()
-	cm.top_radius = r
-	cm.bottom_radius = r
-	cm.height = a.distance_to(b)
-	mi.mesh = cm
-	mi.material_override = m
-	padre.add_child(mi)
-	var y := (b - a).normalized()
-	var x := y.cross(Vector3.FORWARD).normalized() if absf(y.z) < 0.99 else Vector3.RIGHT
-	mi.transform = Transform3D(Basis(x, y, x.cross(y).normalized()), (a + b) * 0.5)
+	FarettoSoffitto.monta(self, nome, attacco, bersaglio, scatola, colore, energia, angolo)
 
 
 ## La keycard 1: 85,6 x 54 mm, spessa 0,8, stesa con la faccia in su.
@@ -952,28 +889,8 @@ func _luci() -> void:
 	_luce(Vector3(PORTA_NORD, 2.2, -L + 0.4), Color(0.2, 1.0, 0.4), 0.35, 3.0, false)
 
 
-## L'indizio della stanza delle pozze colorate (GDD, "La stanza delle pozze colorate", scelte dell'utente del 31 ottobre):
-## il cartello di divieto d'accesso del parco con sopra i tre quadratini a pastello dei bambini, i colori da togliere
-## (EnigmaPozze.GIUSTI; texture di assets_src/pozze_colorate/cartello.py). Accanto alla porta nord, da cui si esce verso
-## le pozze, all'altezza degli occhi: a ovest della porta, fra lo stipite e l'angolo (8 cm per parte), perché a est si
-## appoggia l'anta aperta. Lamiera smaltata a contatto col muro (il listello si interrompe da solo). Sopra, un faretto
-## a soffitto con una lampadina bianca: la luce verde dell'uscita falserebbe i pastelli; il resto resta buio.
-## I quadratini si devono leggere coi colori delle pozze (collaudo del 1 novembre: col faretto debole e radente
-## l'arancione sembrava marrone, il viola blu e lo smalto prendeva il verde dell'uscita). Per questo il faretto è
-## bianco neutro, forte quanto basta a vincere il verde, a 1,2 m dal muro perché la luce arrivi di fronte e non
-## di taglio (come quello del negatoscopio), stretto sul cartello; lo smalto è opaco, così non riflette la stanza.
-## Misura: tests/collaudo/colori_cartello_pozze.gd.
-func _cartello_pozze() -> void:
-	var c := Vector3(-2.95, 1.5, -L)
-	var misura := Vector2(0.34, 0.46)
-	var lastra := _box(Vector3(misura.x, misura.y, 0.008), c + Vector3(0, 0, 0.004), _colore(Color(0.62, 0.62, 0.6), 0.7, 0.4))
-	lastra.name = "CartelloPozze"
-	var m := StandardMaterial3D.new()
-	m.albedo_texture = load("res://assets/pozze_colorate/cartello_divieto.png")
-	m.roughness = 0.7
-	_quad(misura, c + Vector3(0, 0, 0.0085), Vector3.ZERO, m, lastra.get_parent() as Node3D).name = "CartelloPozzeFaccia"
-	_faretto_soffitto("FarettoCartelloPozze", Vector3(c.x, H, -L + 1.2), c + Vector3(0, 0.02, 0), Vector3(c.x, H, -L),
-			Color(1.0, 1.0, 1.0), 5.0, 15.0)
+## (Il cartello delle pozze colorate stava qui, accanto alla porta nord: dal 4 novembre, scelta B dell'utente, è nel
+## corridoio del personale prima dell'infermeria, lontano dalla sua porta, col suo faretto: CartelloPozze, RisalitaGioco.)
 
 
 func _bambini() -> void:

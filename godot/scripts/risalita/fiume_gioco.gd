@@ -858,6 +858,9 @@ func _luce(pos: Vector3, colore: Color, energia: float, raggio: float, ombre := 
 	o.shadow_enabled = ombre
 	o.light_volumetric_fog_energy = 1.5
 	o.set_meta(&"risveglio_ignora", true)
+	# (senza ombre passerebbero il muro del capannone fino al cartello delle pozze nel corridoio del personale, a 2-3 m:
+	# la lampada rossa e quella calda della porta del personale facevano il viola del cartello quasi rosa)
+	Strati.maschera_luce(o, 0xFFFFF & ~CartelloPozze.STRATO)
 	add_child(o)
 	return o
 
