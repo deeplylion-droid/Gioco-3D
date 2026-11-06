@@ -557,8 +557,8 @@ func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, p
 	# sparisce; dalla soglia e dalla strada del capannone la nicchia è coperta dalla pila
 	b.via = PackedVector3Array([Vector3(xc + 0.7, Y, pm), Vector3(xc - 0.9, Y, pm), Vector3(xc - 2.2, Y, porta0 - 0.7),
 			Vector3(xc - 2.2, Y, porta0 - 3.3), Vector3(xc - 1.2, Y, porta0 - 3.3)])
-	# (sparisce solo dopo la porta: se lo segui con lo sguardo arriva fino alla nicchia)
-	b.sparisce_dopo = 3
+	# (sparisce solo girando dietro la pila, dopo il punto davanti alla pila, anche quando è già fuori vista prima)
+	b.sparisce_dopo = 4
 	b.da_dove = Vector3(xc + 1.0, Y + 1.6, z1 + 2.0)
 	# animato meglio (scelta A dell'utente del 1° novembre, "A ma animalo meglio"): da fermo è vivo (il peso da un piede
 	# all'altro, il respiro: solo lui, nella torre restano immobili), la testa ti segue con un po' di
