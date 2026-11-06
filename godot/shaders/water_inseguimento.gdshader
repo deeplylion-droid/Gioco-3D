@@ -27,6 +27,13 @@ uniform float pieno_fisso = -1.0;
 // quelle con la rossa guasta grigia, quasi nera, e si vedevano le piastrelle dietro). luce_propria è la luce del colore
 // dell'acqua che fa da sola; 0 per l'acqua delle vasche.
 uniform float luce_propria = 0.0;
+// A sguardo radente, da sopra (meno di [radente_gradi] sul pelo: solo con l'occhio a pochi cm dall'acqua, entrando nelle
+// bocche dei tubi che partono sotto il pelo), il pelo prende il colore chiaro dell'acqua al posto del nero dell'ambiente
+// (riscontro del collaudo della 0.3.21: l'acqua è trasparente, quindi senza riflessi SSR, e a raso rifletteva il buio
+// e faceva una fascia nera fra la sala e l'acqua). Dalla vasca, con l'occhio a 1,6 m, lo sguardo sul pelo resta sopra
+// i 15 gradi: lì niente cambia.
+uniform float radente_gradi = 5.0;
+uniform float radente_luce = 0.12;
 
 varying vec3 world_pos;
 
@@ -74,4 +81,16 @@ void fragment() {
 	ROUGHNESS = mix(1.0, 0.03, lucido);
 	SPECULAR = 0.6 * lucido;
 	METALLIC = 0.0;
+	if (FRONT_FACING && luce_propria <= 0.0) {
+		// il seno dell'angolo fra lo sguardo e il piano dell'acqua (la normale vera del pelo, non quella delle onde)
+		vec3 su_vista = normalize((VIEW_MATRIX * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
+		float s = abs(dot(su_vista, VIEW));
+		float lim = sin(radians(radente_gradi));
+		float r = 1.0 - smoothstep(lim * 0.4, lim, s);
+		if (r > 0.0) {
+			ALBEDO = mix(ALBEDO, water_color.rgb, r);
+			SPECULAR *= 1.0 - r;
+			EMISSION = water_color.rgb * radente_luce * r;
+		}
+	}
 }
