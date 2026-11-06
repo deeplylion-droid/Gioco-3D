@@ -141,6 +141,7 @@ func _run() -> void:
 				scatole = _scatole(level)
 				posti += 1
 				print("CIELO: torre %s: %s" % [c.name, "ok" if _posto("torre: " + String(c.name), occhio, spazio, scatole, p) else "CIELO"])
+			await _porta_bacino(level, torre, spazio, p)
 	print("")
 	for f in _sottili:
 		print("CIELO: fessura sottile (non conta): " + f)
@@ -149,6 +150,49 @@ func _run() -> void:
 		printerr("    " + c)
 	print("RISULTATO: %s" % ("ok, il cielo non si vede da nessuna parte" if _casi.is_empty() else "FALLITO, %d posti da correggere" % _casi.size()))
 	Game.esci(1 if not _casi.is_empty() else 0)
+
+
+## La porta di servizio in cima alla scaletta del bacino delle condotte (6 novembre, cubo magenta di varchi-cielo): dagli
+## occhi di Checkpoint_bacino si vede il vano della porta, e dietro c'è il tunnel del viaggio sottomarino, che la sala
+## mette nel livello mentre si è nella torre (SalaPrincipale._precarica_sottomarino). Si aspetta che sia costruito e
+## un ventaglio di raggi verso il vano (±8 gradi) non deve uscire: senza il tunnel si vedrebbe il cielo.
+func _porta_bacino(level: Node3D, torre: Node3D, spazio: PhysicsDirectSpaceState3D, p: Node) -> void:
+	var c := torre.find_child("Checkpoint_bacino", true, false) as Checkpoint
+	if c == null:
+		_casi.append("condotte: Checkpoint_bacino non c'è (da correggere)")
+		return
+	var tunnel: Node3D = null
+	for i in 9000:
+		tunnel = level.get(&"sala_sottomarino") as Node3D
+		if tunnel and bool(tunnel.get(&"costruita")):
+			break
+		await get_tree().process_frame
+	if tunnel == null or not bool(tunnel.get(&"costruita")):
+		_casi.append("condotte: il tunnel del viaggio sottomarino non è nel livello dopo la torre (da correggere)")
+		return
+	var occhio: Vector3 = c.get_spawn_transform().origin + Vector3.UP * OCCHI
+	(p as Player).teleport(occhio + Vector3.DOWN * 1.5)
+	for i in 30:
+		await get_tree().physics_frame
+	CorpiMesh.crea(level, AABB(occhio, Vector3.ZERO).grow(60.0), p)
+	for i in 3:
+		await get_tree().physics_frame
+	var verso := Vector3(-1.0, 0.35, 0.15).normalized()
+	var a := verso.cross(Vector3.UP).normalized()
+	var b := a.cross(verso).normalized()
+	var fuori := 0
+	var n := 0
+	for i in range(-4, 5):
+		for j in range(-4, 5):
+			var d := (verso + a * tan(deg_to_rad(2.0 * i)) + b * tan(deg_to_rad(2.0 * j))).normalized()
+			n += 1
+			if _esce(spazio, occhio, d, p):
+				fuori += 1
+	print("CIELO: condotte, dal bacino verso la porta di servizio (tunnel costruito): raggi %d, escono %d" % [n, fuori])
+	if fuori > 0:
+		_casi.append("condotte: dagli occhi di Checkpoint_bacino in %s si vede il cielo dal vano della porta di servizio con %d raggi su %d (da correggere)" % [
+				occhio.snapped(Vector3.ONE * 0.01), fuori, n])
+
 
 
 ## I raggi da [param occhio]: falso se vede il cielo da un buco (il caso va in _casi). Il cielo dalla cupola di vetro
