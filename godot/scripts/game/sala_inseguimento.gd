@@ -1483,9 +1483,12 @@ static func _percorso_fonte(fonte: String) -> String:
 			else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
 
 
-## I file che la costruzione carica (lei e le fonti degli arredi): la sala li chiede al thread insieme alla torre.
+## I file che la costruzione carica (lei, le fonti degli arredi, le acque e il velo delle bocche): la sala li chiede al
+## thread insieme alla torre.
 static func risorse() -> Array:
 	var out: Array = RISORSE_LEI.duplicate()
+	out.append_array(["res://assets/materials/inseguimento/acqua_inseguimento.tres",
+			"res://assets/materials/sala/acqua_torbida.tres", "res://shaders/water_inseguimento_velo.gdshader"])
 	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
 	if dati_luci is Dictionary:
 		for a in dati_luci.get("arredi", []):
