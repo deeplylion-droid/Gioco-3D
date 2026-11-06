@@ -1,0 +1,65 @@
+# grafica-2 (6 novembre): lo scatto vero del corridoio delle pile al 20% per la seconda prova della schermata
+# «Luminosità» (preset di serie, gioco renderizzato con Vulkan software e swap da 24 GB). Solo per fare lo scatto:
+# il branch lavoro/scatto-calibrazione-g2 non va unito.
+name: Scatto calibrazione (grafica-2)
+
+on:
+  push:
+    branches: ["lavoro/scatto-calibrazione-g2"]
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+
+jobs:
+  scatto:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache di Godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_BIN_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+      - name: Scarica Godot
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+      - name: Importa (come la build)
+        run: |
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+      - name: Swap da 24 GB, Vulkan software e Xvfb
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup || true
+          sudo swapoff -a || true
+          (sudo fallocate -l 24G /swapfile_prova || sudo fallocate -l 16G /swapfile_prova) && sudo chmod 600 /swapfile_prova
+          sudo mkswap /swapfile_prova > /dev/null && sudo swapon /swapfile_prova
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
+          free -m
+      - name: Scatti del corridoio delle pile
+        run: |
+          set +e
+          timeout 260m xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot \
+            --rendering-driver vulkan --resolution 1280x720 --script res://tests/run.gd -- \
+            res://tests/collaudo/scatto_calibrazione_g2.gd "$GITHUB_WORKSPACE/scatti" > "$GITHUB_WORKSPACE/scatto.log" 2>&1
+          echo "codice $?"
+          grep -aE 'SCATTO|SCRIPT ERROR|ERROR: BUG' "$GITHUB_WORKSPACE/scatto.log" | head -60
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scatto-calibrazione
+          path: |
+            scatti
+            scatto.log
+          retention-days: 7
