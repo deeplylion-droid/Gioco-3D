@@ -9,6 +9,7 @@ Serve ffmpeg con libvorbis. I file vanno in godot/audio/; poi Godot li importa d
 (o con: godot --headless --path godot --import). Tutto è deterministico (semi fissi).
 """
 import os
+import sys
 import time
 
 import catalogo
@@ -28,6 +29,10 @@ import genera_torre
 import licenze
 from comune import REGISTRO
 
+# i passi del giocatore (scarpe di gomma, scelta A del 30 ottobre) li fa assets_src/passi/genera_passi.py
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'passi'))
+import genera_passi  # noqa: E402
+
 if __name__ == '__main__':
     t0 = time.time()
     if os.path.exists(REGISTRO):
@@ -36,6 +41,8 @@ if __name__ == '__main__':
               genera_tecnici, genera_lei, genera_piscina, genera_torre, genera_squalo, genera_bambini,
               genera_enigmi):
         m.main()
+        if m is genera_giocatore:
+            genera_passi.nel_gioco()
     catalogo.main()
     licenze.main()
     genera_anteprima.main(('sala', 'tecnici', 'lei', 'pioggia', 'passi', 'cancello'))
