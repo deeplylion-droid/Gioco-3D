@@ -231,15 +231,16 @@ func _varco_scalette(glb: Node3D) -> void:
 				(cs as CollisionShape3D).shape = forma
 
 
-## Vero se [param q] (coordinate della sala) sta sul modello di una scaletta: fino a 30 cm dietro il suo piede,
-## largo 0,8 m, dal piede a 1,5 m sopra la cima.
+## Vero se [param q] (coordinate della sala) sta sul modello di una scaletta: da 30 cm dietro il suo piede a 8 cm
+## davanti (nel bacino il tratto basso scende davanti alla faccia del muro, fino sotto il pelo), largo 0,8 m, dal piede
+## a 1,5 m sopra la cima.
 func _nella_scaletta(q: Vector3) -> bool:
 	for s in dati["scale"]:
 		var piede := b([s["x"], s["y"], s["z0"]])
 		var verso := b(s["verso"])
 		var d := q - piede
 		var lungo := d.dot(verso)
-		if lungo > -0.3 and lungo < 0.02 and absf(d.dot(verso.cross(Vector3.UP))) < 0.4 \
+		if lungo > -0.3 and lungo < 0.08 and absf(d.dot(verso.cross(Vector3.UP))) < 0.4 \
 				and q.y > piede.y - 0.5 and q.y < float(s["z1"]) + 1.5:
 			return true
 	return false
@@ -351,6 +352,18 @@ func _acque() -> void:
 ## test_occhio_sopra_acque.
 ## (comincia con "acqua": per il controllo di posizionamento è acqua, come le superfici, e non un ingombro)
 const NOME_VELO := "acqua_velo_bocca_"
+## Nelle bocche dei tubi sotto il pelo, quanto l'occhio resta almeno sopra il pelo finché non ci va sotto, e poi
+## almeno sotto (m): vedi [method occhi_bocca].
+const OCCHI_SOPRA := 0.035
+const OCCHI_SOTTO := 0.02
+
+## La luce propria della parete d'acqua delle bocche (water_inseguimento.gdshader, luce_propria): l'acqua vista da
+## dentro il tubo ha lo stesso colore in tutte e sei le bocche, verde piena (ricontrollo del collaudo dei ritocchi: nelle
+## bocche con la lampada rossa era grigia, quasi nera, e si vedevano le piastrelle dietro).
+const LUCE_VELI := 0.1
+
+## Le pareti d'acqua nelle bocche ([method _veli_bocche]).
+var _veli: Array[MeshInstance3D] = []
 
 
 func _veli_bocche() -> void:
@@ -364,6 +377,8 @@ func _veli_bocche() -> void:
 	var mat := (load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
 	mat.set_shader_parameter(&"lucido", 0.0)
 	mat.set_shader_parameter(&"pieno_fisso", 0.97)
+	# (e il colore dell'acqua anche dove la lampada vicina è la rossa guasta: vedi luce_propria nello shader)
+	mat.set_shader_parameter(&"luce_propria", LUCE_VELI)
 	for nome: String in dati["tubi"]:
 		var linea: Array = dati["tubi"][nome]
 		var p0: Array = linea[0]
@@ -402,6 +417,7 @@ func _veli_bocche() -> void:
 			var avanti := Vector3(dx, 0.0, -dy)
 			velo.global_transform = Transform3D(Basis.looking_at(-avanti, Vector3.UP), b([bx, by, (giu + pelo) / 2.0]))
 			velo.set_meta(&"pelo", pelo)
+			_veli.append(velo)
 			break
 
 
@@ -1127,9 +1143,14 @@ func _physics_process(delta: float) -> void:
 		return
 	if lei_stato != Lei.VIA:
 		_lei_aggiorna(delta, p)
+	p.occhi_pelo = -INF
 	if GameState.is_dying or _sb1:
 		return
 	p.accovacciato_forzato = in_tubo(p.global_position)
+	var ob := occhi_bocca(p.global_position + Vector3.UP * p.crouch_eye_height, p.camera.near)
+	p.occhi_pelo = ob.x
+	p.occhi_sopra = ob.y
+	p.occhi_sotto = OCCHI_SOTTO
 	# in quale vasca sei: lei compare dopo un po', e torna dopo un getto in faccia
 	var v := _vasca_di(p.global_position)
 	if v != _vasca:
@@ -1147,6 +1168,37 @@ func _physics_process(delta: float) -> void:
 		elif _ritorno < 0.0 and _in_vasca_t >= comparsa[_vasca] and not get_meta(&"comparsa_%d" % _vasca, false):
 			set_meta(&"comparsa_%d" % _vasca, true)
 			_lei_sale("vasca_%d" % _vasca, _posto_vasca(_vasca))
+
+
+## Il pelo e quanto la camera deve stare sopra (Player.occhi_pelo e occhi_sopra) per l'occhio in [param occhio]
+## (ritocco del capitolo 1, scelta A dell'utente). Entrando nei tubi e negli scoli che partono sotto il pelo delle
+## vasche l'occhio passava a 1 mm dall'acqua (test_occhio_sopra_acque): un passo più basso e la si rivedeva da sotto.
+## Ora, finché l'occhio è sopra il pelo, la camera ci resta almeno [constant OCCHI_SOPRA] sopra, e a meno di 30 cm
+## dall'acqua anche sopra il piano vicino della camera ([param near]); quando l'occhio scende sotto il pelo (i tubi ci
+## vanno dopo 0,8-1,4 m) la camera lo segue, almeno [constant OCCHI_SOTTO] sotto: lì la superficie la copre la parete
+## d'acqua della bocca, e a filo dell'acqua la camera non ci sta mai (passa in un fotogramma). Nella vasca il
+## margine cala piano verso il centro. La forma delle bocche non cambia. x = -INF lontano dalle bocche.
+func occhi_bocca(occhio: Vector3, near: float) -> Vector2:
+	var out := Vector2(-INF, 0.0)
+	for v in _veli:
+		if not is_instance_valid(v):
+			continue
+		var pelo := float(v.get_meta(&"pelo"))
+		if occhio.y > pelo + 0.6:
+			continue
+		var l := v.global_transform.affine_inverse() * occhio
+		# (+Z del quad lungo il tubo: dentro il tubo l.z > 0, nella vasca < 0)
+		if absf(l.x) > 1.2 or l.z < -0.6 or l.z > 3.0:
+			continue
+		var sopra := near + 0.02 + OCCHI_SOPRA
+		if l.z > 0.3:
+			sopra = lerpf(sopra, OCCHI_SOPRA, minf((l.z - 0.3) / 0.3, 1.0))
+		elif l.z < 0.0:
+			# (nella vasca l'occhio accovacciato sta già più in alto: il margine cala piano, senza salti)
+			sopra += l.z * 0.3
+		if pelo + sopra > out.x + out.y:
+			out = Vector2(pelo, sopra)
+	return out
 
 
 func _vasca_di(pos: Vector3) -> int:
@@ -1261,7 +1313,10 @@ func _pannello(k: int) -> Node3D:
 
 func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3, pannello: Node3D = null) -> void:
 	var col := VERDE if giusta else ROSSO
-	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, false)
+	# (la verde fa ombra: senza, passava attraverso il tubo che parte sotto la paratia e faceva una riga verde nel buio
+	# del tubo 3, ricontrollo del collaudo dei ritocchi; la rossa sfarfalla ed è debole, resta senza)
+	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, giusta)
+	o.set_meta(&"lampada_paratia_verde", giusta)
 	var s := SpotLight3D.new()
 	s.light_color = col
 	s.light_energy = 14.0 if giusta else 2.5
@@ -1497,6 +1552,9 @@ static func _rispetto_a(src: Node3D, n: Node3D) -> Transform3D:
 
 
 func _exit_tree() -> void:
+	var p := GameState.player
+	if p != null and is_instance_valid(p):
+		p.occhi_pelo = -INF
 	for f in _fonti.values():
 		if is_instance_valid(f):
 			(f as Node).free()

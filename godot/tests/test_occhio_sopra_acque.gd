@@ -6,12 +6,20 @@ extends Node
 ##    dell'atterraggio e del passo) resta sopra il pelo più il piano vicino della camera;
 ## 2. in ogni acqua, accovacciati, atterrando da 1 m e camminando: l'occhio sempre sopra il pelo;
 ## 3. ogni tubo e ogni scolo, partendo nell'acqua della vasca da cui escono (le paratie aperte) e scivolando fino in
-##    fondo: in nessun fotogramma l'occhio sta sotto il pelo di un'acqua che vede (da lì l'acqua si vedrebbe da sotto).
+##    fondo: in nessun fotogramma l'occhio sta sotto il pelo di un'acqua che vede (da lì l'acqua si vedrebbe da sotto),
+##    né a meno di [constant TUBI_SOPRA] sopra (ritocco del capitolo 1, scelta A dell'utente: prima passava a 1 mm;
+##    lo tiene su SalaInseguimento.occhi_minimo).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_occhio_sopra_acque.gd
 
 const PLAYER := "res://scenes/player/player.tscn"
 ## Quanto l'occhio deve stare sopra il pelo, oltre al piano vicino della camera (m).
 const MARGINE := 0.02
+## Nei tubi e negli scoli, quanto l'occhio resta almeno sopra il pelo delle acque che vede, oltre a quanto sopra (m).
+const TUBI_SOPRA := 0.03
+## Di quanto può cambiare in un fotogramma lo spostamento della camera nelle bocche (m): quando l'occhio scende sotto il
+## pelo la camera passa da 3,5 cm sopra a 2 cm sotto, in un fotogramma, mentre si scivola giù (ricontrollo del collaudo:
+## il limite di prima teneva la camera sopra il soffitto e la lasciava cadere di 65-96 cm).
+const SALTO_MAX := 0.1
 
 var _ok := 0
 var _ko := 0
@@ -85,9 +93,16 @@ func _run() -> void:
 
 	print("3. Ogni tubo e scolo, dalla vasca di partenza fino in fondo")
 	for nome: String in ins.dati["tubi"]:
-		var peggio := await _tubo(ins, nome)
-		check(peggio[0] >= 0.0 or peggio[1] == "", "%s: l'occhio sempre sopra il pelo delle acque che vede (margine più piccolo %.3f m, %s)" % [
-			nome, peggio[0], peggio[1] if peggio[1] != "" else "nessuna"])
+		for indietro in [false, true]:
+			var r: Dictionary = await _tubo(ins, nome, indietro)
+			var tag := nome + (", tornando verso la vasca" if indietro else "")
+			var peggio: Array = r["peggio"]
+			check(peggio[0] >= TUBI_SOPRA or peggio[1] == "", "%s: l'occhio sempre almeno %.2f m sopra il pelo delle acque che vede (margine più piccolo %.3f m, %s)" % [
+				tag, TUBI_SOPRA, peggio[0], peggio[1] if peggio[1] != "" else "nessuna"])
+			check(r["soffitto"][0] >= near + 0.02, "%s: la camera sempre sotto il soffitto del tubo, piano vicino compreso (al più vicino %.3f m, %s)" % [
+				tag, r["soffitto"][0], r["soffitto"][1]])
+			check(r["salto"][0] <= SALTO_MAX, "%s: la camera spostata per l'acqua (Player.occhi_alzati) al più %.3f m, cambia al più di %.3f m in un fotogramma (al più %.2f, %s)" % [
+				tag, r["alzata"], r["salto"][0], SALTO_MAX, r["salto"][1]])
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)
 
@@ -161,38 +176,76 @@ func _vivo(dove: String) -> void:
 
 
 ## Il giocatore che parte nell'acqua 2 m prima della bocca del tubo [param nome] e scivola fino in fondo, guardando
-## avanti lungo il tubo: l'occhio più basso rispetto al pelo di un'acqua che vede ([method _vede]). [altezza, acqua]
-func _tubo(ins: SalaInseguimento, nome: String) -> Array:
+## avanti lungo il tubo; con [param indietro] messo lungo la linea, 4 cm alla volta, da 3 m dentro il tubo fino a
+## 2 m nella vasca, guardando verso la vasca (su per il tubo non si sale). Ritorna "peggio": l'occhio
+## più basso rispetto al pelo di un'acqua che vede ([method _vede]) [altezza, dove]; "soffitto": quanto la camera sta
+## al più vicino sotto il soffitto del tubo [distanza, dove]; "salto": il cambio più grande dell'alzata della camera
+## (Player.occhi_alzati) da un fotogramma all'altro [m, dove]; "alzata": l'alzata più grande.
+func _tubo(ins: SalaInseguimento, nome: String, indietro := false) -> Dictionary:
 	var linea := PackedVector3Array()
 	for q in ins.dati["tubi"][nome]:
 		linea.append(SalaInseguimento.b(q))
 	var dir := linea[3] - linea[0]
 	dir.y = 0.0
 	dir = dir.normalized()
-	p.teleport(linea[0] - dir * 2.0 + Vector3.DOWN * (SalaInseguimento.R_TUBO - 0.1) + Vector3.UP * 0.5)
+	var ultimo := 0
+	if indietro:
+		# 3 m dentro il tubo (in pianta), coi piedi sul fondo, voltati verso la bocca
+		var k := 0
+		while k < linea.size() - 1 and Vector2(linea[k].x - linea[0].x, linea[k].z - linea[0].z).length() < 3.0:
+			k += 1
+		ultimo = k
+		p.teleport(linea[k] + Vector3.DOWN * (SalaInseguimento.R_TUBO - 0.2))
+	else:
+		p.teleport(linea[0] - dir * 2.0 + Vector3.DOWN * (SalaInseguimento.R_TUBO - 0.1) + Vector3.UP * 0.5)
 	for i in 20:
 		await get_tree().physics_frame
 	p.velocity = Vector3.ZERO
-	print("  %s: parte da %s (bocca %s), muore %s" % [nome, p.global_position, linea[0], GameState.is_dying])
-	Input.action_press(&"move_forward")
+	print("  %s%s: parte da %s (bocca %s), muore %s" % [nome, " (indietro)" if indietro else "", p.global_position, linea[0], GameState.is_dying])
+	if not indietro:
+		Input.action_press(&"move_forward")
+	# (indietro su per il tubo non si sale: il giocatore va messo lungo la linea, 4 cm alla volta, dai 3 m alla bocca)
+	var passi := PackedVector3Array()
+	if indietro:
+		for i in range(ultimo, 0, -1):
+			var n := ceili(linea[i].distance_to(linea[i - 1]) / 0.04)
+			for j in n:
+				passi.append(linea[i].lerp(linea[i - 1], float(j) / n) + Vector3.DOWN * (SalaInseguimento.R_TUBO - 0.02))
+		for j in 50:
+			passi.append(linea[0] - dir * 0.04 * j + Vector3.DOWN * (SalaInseguimento.R_TUBO - 0.15))
 	var peggio := [INF, ""]
-	var ultimo := 0
+	var soffitto := [INF, "-"]
+	var salto := [0.0, "-"]
+	var alzata := 0.0
+	var alzati_prima := p.occhi_alzati
 	var arrivato := 0
-	for f in 60 * 14:
+	for f in (passi.size() if indietro else 60 * 14):
+		if indietro:
+			p.global_position = passi[f]
+			p.velocity = Vector3.ZERO
 		await get_tree().physics_frame
 		var piedi := p.global_position
 		var iv := ultimo
-		for i in range(ultimo, mini(ultimo + 12, linea.size())):
-			if linea[i].distance_to(piedi) < linea[iv].distance_to(piedi):
-				iv = i
+		if indietro:
+			for i in range(maxi(ultimo - 12, 0), ultimo + 1):
+				if linea[i].distance_to(piedi) < linea[iv].distance_to(piedi):
+					iv = i
+		else:
+			for i in range(ultimo, mini(ultimo + 12, linea.size())):
+				if linea[i].distance_to(piedi) < linea[iv].distance_to(piedi):
+					iv = i
 		ultimo = iv
-		var g := linea[mini(iv + 4, linea.size() - 1)] - piedi
+		var verso := linea[mini(iv + 4, linea.size() - 1)]
+		if indietro:
+			verso = linea[iv - 4] if iv >= 4 else linea[0] - dir * 2.0
+		var g := verso - piedi
 		g.y = 0.0
 		if g.length() > 0.2:
 			p.set_look(atan2(-g.x, -g.z), -0.2)
 		var occhi := p.camera.global_position
+		var dove := "a %s, indice %d/%d" % [occhi, iv, linea.size()]
 		if OS.has_environment("TRACCIA") and f % 30 == 0:
-			print("    f%d piedi %s indice %d occhi %s" % [f, piedi, iv, occhi])
+			print("    f%d piedi %s indice %d occhi %s alzati %.3f" % [f, piedi, iv, occhi, p.occhi_alzati])
 		for a in acque:
 			# (sotto il pelo un'acqua che si vede è sempre un errore; sopra, a meno di 30 cm dalla superficie ci vuole anche
 			# il piano vicino della camera, che se no la taglia; più lontano basta stare sopra, la si vede di taglio)
@@ -202,7 +255,7 @@ func _tubo(ins: SalaInseguimento, nome: String) -> Array:
 			var serve := near + MARGINE if Vector2(dx, dz).length() < 0.3 else 0.0
 			var h: float = occhi.y - a["pelo"] - serve
 			if h < peggio[0] and h > -3.0 and _vede(occhi, a):
-				peggio = [h, "%s a %s, indice %d/%d" % [a["nome"], occhi, iv, linea.size()]]
+				peggio = [h, "%s %s" % [a["nome"], dove]]
 		# (passando la parete d'acqua della bocca l'occhio dev'essere sopra il pelo, piano vicino compreso)
 		for v in veli:
 			var l := v.global_transform.affine_inverse() * occhi
@@ -210,14 +263,45 @@ func _tubo(ins: SalaInseguimento, nome: String) -> Array:
 			if absf(l.z) < near + 0.05 and absf(l.x) <= mezzo.x and l.y <= mezzo.y + near:
 				var h := l.y - mezzo.y
 				if h < peggio[0]:
-					peggio = [h, "passando %s a %s, indice %d/%d" % [v.name, occhi, iv, linea.size()]]
-		if iv >= linea.size() - 2:
+					peggio = [h, "passando %s %s" % [v.name, dove]]
+		var sf := _sotto_soffitto(linea, occhi)
+		if sf < soffitto[0]:
+			soffitto = [sf, dove]
+		var ds := absf(p.occhi_alzati - alzati_prima)
+		if ds > salto[0]:
+			salto = [ds, "da %.3f a %.3f, %s" % [alzati_prima, p.occhi_alzati, dove]]
+		alzati_prima = p.occhi_alzati
+		alzata = maxf(alzata, absf(p.occhi_alzati))
+		if not indietro and iv >= linea.size() - 2:
 			arrivato += 1
 			if arrivato > 90:
 				break
 	Input.action_release(&"move_forward")
+	if indietro:
+		p.velocity = Vector3.ZERO
+		for i in 20:
+			await get_tree().physics_frame
 	_vivo(nome)
-	return peggio
+	return {"peggio": peggio, "soffitto": soffitto, "salto": salto, "alzata": alzata}
+
+
+## Quanto [param occhi] sta sotto il soffitto del tubo lungo [param linea] (il centro del tratto più vicino in pianta,
+## fra quelli a meno di 1,2 m in altezza, più il raggio; il primo mezzo metro dalla bocca no: lì sopra c'è il muro della
+## vasca). INF fuori dal tubo.
+func _sotto_soffitto(linea: PackedVector3Array, occhi: Vector3) -> float:
+	var out := INF
+	var lungo := 0.0
+	for i in linea.size() - 1:
+		var a := linea[i]
+		var b := linea[i + 1]
+		var ab := Vector2(b.x - a.x, b.z - a.z)
+		var t := clampf(Vector2(occhi.x - a.x, occhi.z - a.z).dot(ab) / maxf(ab.length_squared(), 1e-6), 0.0, 1.0)
+		var dist := Vector2(occhi.x - a.x - ab.x * t, occhi.z - a.z - ab.y * t).length()
+		var y := lerpf(a.y, b.y, t)
+		if lungo + ab.length() * t > 0.5 and dist < SalaInseguimento.R_TUBO * 0.5 and absf(occhi.y - y) < 1.2:
+			out = minf(out, y + SalaInseguimento.R_TUBO - occhi.y)
+		lungo += ab.length()
+	return out
 
 
 ## Vero se dagli [param occhi] si vede la superficie dell'acqua [param a]: sopra la sua pianta, o accanto (2 m) con
