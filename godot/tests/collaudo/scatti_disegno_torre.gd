@@ -84,6 +84,16 @@ func _run() -> void:
 	var cam := Camera3D.new()
 	cam.fov = 75.0
 	radice.add_child(cam)
+	# SCATTI_LUCE=1: una luce di servizio bianca sulla camera (raggio 1,2 m), per vedere la forma delle cose piccole da
+	# vicino anche dove la sala è buia (le fascette); i file prendono "_luce" nel nome
+	var luce_servizio := OS.get_environment("SCATTI_LUCE") == "1"
+	if luce_servizio:
+		var l := OmniLight3D.new()
+		l.omni_range = 1.2
+		l.light_energy = 0.5
+		l.shadow_enabled = true
+		cam.add_child(l)
+		l.position = Vector3(0.05, 0.08, 0)
 	get_tree().root.add_child(radice)
 	get_tree().current_scene = radice
 	cam.make_current()
@@ -104,7 +114,8 @@ func _run() -> void:
 		for i in 12:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_jpg(_cartella.path_join("%s_%s.jpg" % [luci, v[0]]), 0.9)
+		var nome := "%s_%s%s.jpg" % [luci, v[0], "_luce" if luce_servizio else ""]
+		get_viewport().get_texture().get_image().save_jpg(_cartella.path_join(nome), 0.9)
 		print("SCATTO ", v[0])
 	print("memoria massima del processo %d MB" % (OS.get_static_memory_peak_usage() / 1048576))
 	print("FINE")
