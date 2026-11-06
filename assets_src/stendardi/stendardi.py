@@ -205,7 +205,7 @@ def palla(nome, c, r, mat):
     return o
 
 
-def risvolto(nome, cima, verso, lato, largo, mat):
+def risvolto(nome, cima, verso, lato, largo, mat, buchi=()):
     """Il lenzuolo ripiegato sopra il bastone: dalla cima del telo (6 cm sotto il bastone) sale davanti, gira sopra il
     bastone e riscende dietro fino alla stessa quota. [cima]: il centro del bastone. Stessa stoffa del telo (la fascia
     più alta della texture)."""
@@ -215,19 +215,31 @@ def risvolto(nome, cima, verso, lato, largo, mat):
     giro = [(rb * math.cos(math.radians(g)), rb * math.sin(math.radians(g))) for g in range(-30, 211, 15)]
     sez = ([(0.0, -R_BASTONE - RISVOLTO), (rb * 0.4, -rb * 3.0), (rb * 0.85, -rb * 1.2)] + giro +
            [(-rb * 0.85, -rb * 1.2), (-rb * 0.4, -rb * 3.0), (-0.003, -R_BASTONE - RISVOLTO)])
+    # [buchi]: dove una corda gira attorno al bastone in mezzo al lenzuolo (distanza dal centro, lungo il bastone):
+    # lì, sotto il bastone, la piega ha un taglio largo 6 cm da cui passa la corda (sopra e ai lati la corda stringe la
+    # piega, sotto la stoffa non può girarle attorno senza un buco)
     nx = max(12, int(largo * 4))
+    xs = set((i / nx - 0.5) * largo for i in range(nx + 1))
+    for b in buchi:
+        xs |= {b - 0.03, b + 0.03}
+    xs = sorted(x for x in xs if -largo / 2 - 1e-6 <= x <= largo / 2 + 1e-6)
+    nx = len(xs) - 1
+    taglio = {1, 2, len(sez) - 4, len(sez) - 3}       # (le strisce sotto il bastone, fra 1,5 e 3,75 cm sotto l'asse)
     me = bpy.data.meshes.new(nome)
     bm = bmesh.new()
     uv_l = bm.loops.layers.uv.new('UVMap')
     up = Vector((0, 0, 1))
     righe = []
     for (dv, dz) in sez:
-        righe.append([bm.verts.new(cima + lato * ((i / nx) - 0.5) * largo + verso * dv + up * dz) for i in range(nx + 1)])
+        righe.append([bm.verts.new(cima + lato * x + verso * dv + up * dz) for x in xs])
     for j in range(len(sez) - 1):
         for i in range(nx):
+            xm = (xs[i] + xs[i + 1]) / 2
+            if j in taglio and any(abs(xm - b) < 0.03 for b in buchi):
+                continue
             f = bm.faces.new((righe[j][i], righe[j + 1][i], righe[j + 1][i + 1], righe[j][i + 1]))
             for l, (a, b) in zip(f.loops, ((i, j), (i, j + 1), (i + 1, j + 1), (i + 1, j))):
-                l[uv_l].uv = (a / nx, 1.0 - 0.012 * b / (len(sez) - 1))
+                l[uv_l].uv = (xs[a] / largo + 0.5, 1.0 - 0.012 * b / (len(sez) - 1))
     bm.normal_update()
     bm.to_mesh(me)
     bm.free()
@@ -263,11 +275,14 @@ def molletta(nome, p, verso, lato, mat):
     return unisci(nome, pezzi)
 
 
-def corda_al_bastone(nome, capo, lato, mat):
+def corda_al_bastone(nome, capo, lato, mat, sotto=R_BASTONE):
     """I due giri della corda attorno al bastone in [capo] (sul suo asse), larghi 3 cm lungo il bastone, e il nodo sopra.
     Torna i pezzi e il punto sopra il bastone da cui la corda sale."""
     pezzi = []
-    rr = R_BASTONE + R_CORDA * 0.9
+    # [sotto]: il raggio di quello che la corda stringe: il bastone nudo ai capi, la piega della stoffa dove il lenzuolo
+    # c'è (allora i giri vanno attorno alla piega, non dentro)
+    nudo = sotto <= R_BASTONE
+    rr = sotto + R_CORDA * (0.9 if nudo else 1.05)       # (sul legno stringe, sulla stoffa la sfiora)
     up = Vector((0, 0, 1))
     giro_v = lato.cross(up).normalized()
     pts = []
@@ -279,9 +294,15 @@ def corda_al_bastone(nome, capo, lato, mat):
     for k in range(n):
         pezzi.append(cilindro('%s_giro%d' % (nome, k), pts[k] - (pts[k + 1] - pts[k]) * 0.15, pts[k + 1] + (pts[k + 1] - pts[k]) * 0.15, R_CORDA, mat, seg=6))
     # il nodo sopra il bastone, accanto ai giri, e il capo corto che pende
-    nodo = capo + up * (R_BASTONE + R_CORDA * 1.6) + lato * 0.022
+    nodo = capo + up * (sotto + R_CORDA * (1.6 if nudo else 2.4)) + lato * 0.022
     pezzi.append(palla(nome + '_nodo', nodo, R_CORDA * 2.2, mat))
-    pezzi.append(cilindro(nome + '_capo', nodo, nodo + lato * 0.02 - up * 0.05, R_CORDA * 0.9, mat, seg=6))
+    # il codino: dal nodo scende di fianco, davanti al bastone (fuori dalla stoffa), e pende per 4 cm
+    fuori = sotto + R_CORDA * 1.3
+    spalla = capo + lato * 0.027 + (giro_v + up).normalized() * fuori
+    fianco = capo + lato * 0.03 + giro_v * fuori
+    pezzi.append(cilindro(nome + '_capo', nodo, spalla, R_CORDA * 0.9, mat, seg=6))
+    pezzi.append(cilindro(nome + '_capo1', spalla, fianco, R_CORDA * 0.9, mat, seg=6))
+    pezzi.append(cilindro(nome + '_capo2', fianco, fianco - up * 0.04, R_CORDA * 0.9, mat, seg=6))
     return pezzi, pts[0]
 
 
@@ -339,7 +360,6 @@ def costruisci():
         telo, punti = lenzuolo(nome, centro - Vector((0, 0, R_BASTONE + RISVOLTO)), verso, lato, largo, alto - RISVOLTO,
                                mollette, 7 + k)
         oggetti.append(telo)
-        oggetti.append(risvolto(nome + '_risvolto', centro, verso, lato, largo, telo.data.materials[0]))
         # il bastone, 20 cm più largo del lenzuolo
         ba = centro - lato * (largo / 2 + 0.1)
         bb = centro + lato * (largo / 2 + 0.1)
@@ -357,7 +377,9 @@ def costruisci():
             if len(sopra) >= 2:
                 capi = [('abcdefgh'[i], centro + lato * ((t - centro.x) / lato.x)) for i, t in enumerate(sopra)]
         for s, capo in capi:
-            pezzi, da = corda_al_bastone('%s_corda_%s_bastone' % (nome, s), capo, lato, m_corda)
+            # (dentro la larghezza del lenzuolo il bastone è avvolto dalla piega: i giri le vanno attorno)
+            sotto = R_BASTONE + 0.0015 + 0.0005 if abs((capo - centro).dot(lato)) < largo / 2 + 0.03 else R_BASTONE
+            pezzi, da = corda_al_bastone('%s_corda_%s_bastone' % (nome, s), capo, lato, m_corda, sotto)
             tx = xt if abs(lato.x) < 0.5 else trave_vicina(capo.x)
             dir_corda = Vector((tx, capo.y, SOTTO_TRAVE)) - da
             dir_corda.z = 0.0
@@ -366,6 +388,8 @@ def costruisci():
             pezzi += corda('%s_corda_%s_su' % (nome, s), da, a_, m_corda)
             # (tutto un pezzo: dal bastone, a cui gira attorno, al golfare avvitato nella trave)
             oggetti.append(unisci('%s_corda_%s' % (nome, s), pezzi))
+        buchi = [(c - centro).dot(lato) for _s, c in capi if abs((c - centro).dot(lato)) < largo / 2 + 0.03]
+        oggetti.append(risvolto(nome + '_risvolto', centro, verso, lato, largo, telo.data.materials[0], buchi))
         # le mollette sul bastone: la prima e l'ultima 8 cm dentro gli orli, le altre in mezzo, e nessuna a meno di
         # 12 cm da una corda (i giri, il nodo e il codino stanno entro 5 cm)
         corde = [(c - centro).dot(lato) for _s, c in capi]
@@ -447,11 +471,13 @@ def controlla(oggetti):
         t.free()
         return a
     for o in oggetti:
-        if '_molletta' not in o.name:
+        if '_molletta' not in o.name and '_corda_' not in o.name:
             continue
-        st = o.name.split('_molletta')[0]
+        st = o.name.split('_molletta')[0].split('_corda_')[0]
         am = albero(o)
         for q in oggetti:
+            if q is o or ('_corda_' in o.name and '_corda_' in q.name):
+                continue
             if q.name.startswith(st + '_risvolto') or q.name.startswith(st + '_corda_') or q.name == st:
                 if am.overlap(albero(q)):
                     problemi.append('%s entra in %s' % (o.name, q.name))
