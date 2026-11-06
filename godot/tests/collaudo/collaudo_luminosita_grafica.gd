@@ -203,11 +203,19 @@ func _run() -> void:
 	get_window().size = Vector2i(1280, 720)
 	await _frames(5)
 
+	var solo_misure := a.has("misure")
+	var misure: Array = [Vector2i(1920, 1080), Vector2i(900, 720), Vector2i(800, 600), Vector2i(1280, 1024)]
+	if solo_misure:
+		misure = [Vector2i(800, 600), Vector2i(1280, 1024)]
 	# 1) mouse
-	print("1. Dal titolo, clic del mouse su «Calibra la luminosità…»")
-	var titolo := await _titolo()
-	var cal_b := await _opzioni_luminosita(titolo)
-	check(cal_b != null, "nella scheda Luminosità c'è «Calibra la luminosità…»")
+	var titolo: Node = null
+	var cal_b: Button = null
+	if not solo_misure:
+		print("1. Dal titolo, clic del mouse su «Calibra la luminosità…»")
+		titolo = await _titolo()
+		cal_b = await _opzioni_luminosita(titolo)
+	if not solo_misure:
+		check(cal_b != null, "nella scheda Luminosità c'è «Calibra la luminosità…»")
 	if cal_b:
 		await _scatto("1_opzioni_scheda_luminosita")
 		await _clic(cal_b)
@@ -249,13 +257,12 @@ func _run() -> void:
 			await _frames(10)
 
 	# 2) inglese
-	print("2. In inglese")
-	TranslationServer.set_locale("en")
-	titolo = await _titolo()
-	cal_b = await _opzioni_luminosita(titolo)
-	if cal_b == null:
-		cal_b = _bottone(get_tree().root, "Calibra la luminosità…")
-	if cal_b:
+	if not solo_misure:
+		print("2. In inglese")
+		TranslationServer.set_locale("en")
+		titolo = await _titolo()
+		cal_b = await _opzioni_luminosita(titolo)
+	if not solo_misure and cal_b:
 		await _scatto("2_opzioni_scheda_luminosita_en")
 		await _clic(cal_b)
 		await _frames(15)
@@ -277,7 +284,7 @@ func _run() -> void:
 	TranslationServer.set_locale("it")
 
 	# 3) misure della finestra
-	for misura in [Vector2i(1920, 1080), Vector2i(900, 720), Vector2i(800, 600), Vector2i(1280, 1024)]:
+	for misura in misure:
 		print("3. Finestra %dx%d" % [misura.x, misura.y])
 		get_window().size = misura
 		await _frames(10)
