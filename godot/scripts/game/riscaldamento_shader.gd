@@ -205,10 +205,31 @@ static func effetti_campione() -> Array[Node3D]:
 	g.material_override = gm
 	g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	g.rotation_degrees.x = 60.0
+	g.name = "Gorgo"
 	out.append(g)
+	# (il vapore in due passi: le particelle, poi il volume di nebbia da solo; tutto insieme erano 13 pipeline in un
+	# fotogramma, sopra le 10 di test_riscaldamento_pipeline)
 	var v := Vapore.new()
+	v.name = "Vapore"
+	v.volume_nebbia = false
 	v.position = Vector3(0, -0.8, 0)
 	out.append(v)
+	# (il volume come in Vapore: ellissoide con un FogMaterial e la densità da un rumore 3D)
+	var vn := FogVolume.new()
+	vn.name = "VaporeNebbia"
+	vn.shape = RenderingServer.FOG_VOLUME_SHAPE_ELLIPSOID
+	vn.size = Vector3(2.0, 2.5, 2.0)
+	var fm := FogMaterial.new()
+	fm.density = 0.35
+	fm.edge_fade = 0.6
+	var n3 := NoiseTexture3D.new()
+	n3.noise = FastNoiseLite.new()
+	n3.width = 32
+	n3.height = 32
+	n3.depth = 32
+	fm.density_texture = n3
+	vn.material = fm
+	out.append(vn)
 	for parte in [[Medusine.mesh_medusina(), "res://shaders/medusine.gdshader", 2],
 			[QuadMesh.new(), "res://shaders/medusine_alone.gdshader", 1]]:
 		var mm := MultiMesh.new()
@@ -221,6 +242,7 @@ static func effetti_campione() -> Array[Node3D]:
 		mm.set_instance_color(0, Color(1, 0.5, 0.8, 1))
 		mm.set_instance_custom_data(0, Color(0.5, 0.5, 0.5, 0.5))
 		var mi := MultiMeshInstance3D.new()
+		mi.name = "Medusine_" + String(parte[1]).get_file().get_basename()
 		mi.multimesh = mm
 		var mat := ShaderMaterial.new()
 		mat.shader = load(parte[1])
@@ -234,6 +256,7 @@ static func effetti_campione() -> Array[Node3D]:
 
 func _disegna_effetti(sv: SubViewport) -> void:
 	for n in effetti_campione():
+		pezzo = "effetto " + String(n.name)
 		sv.add_child(n)
 		if n is GPUParticles3D:
 			(n as GPUParticles3D).emitting = true
