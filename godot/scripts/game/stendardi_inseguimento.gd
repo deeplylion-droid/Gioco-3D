@@ -72,11 +72,21 @@ var _ferro: StandardMaterial3D
 ## La costruzione a pezzi (SalaInseguimento._passi): un passo prepara (la GLB, già caricata dal thread, istanziata con
 ## tutto nascosto, e i materiali semplici), poi un passo per stendardo, che mette i materiali e lo mostra. In un passo
 ## solo poteva fare un fotogramma lungo (CI del 6 novembre, test_attesa_zone: 150 ms).
+## Il nodo nasce nel primo passo: se la costruzione si ferma prima (la torre esce dall'albero a metà, una morte che
+## ricarica la sala) non resta un nodo orfano fuori dall'albero.
 static func passi(sala: Node3D) -> Array:
-	var s := StendardiInseguimento.new()
-	var out: Array = [func(): sala.add_child(s); s._prepara()]
+	var s: Array = [null]
+	var out: Array = []
+	out.append(func():
+		s[0] = StendardiInseguimento.new()
+		sala.add_child(s[0])
+		s[0]._prepara()
+	)
 	for k in range(1, 5):
-		out.append(func(): s._stendardo(k))
+		out.append(func():
+			if s[0] != null and is_instance_valid(s[0]):
+				s[0]._stendardo(k)
+		)
 	return out
 
 
