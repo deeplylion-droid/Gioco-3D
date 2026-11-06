@@ -6,6 +6,12 @@ extends Node
 ## [constant DISTANZA] m (né le collisioni né le mesh vere, CorpiMesh) vede il cielo dell'ambiente, cioè un buco nel
 ## mondo. Ogni posto da dove si vede il cielo è un caso "da correggere", con dove e verso dove. Non conta il cielo della
 ## tempesta visto dalla cupola di vetro della sala (i raggi che escono da Sala/Cupola), che è voluto.
+## Le fessure sottili (un raggio che esce, ma dei suoi otto vicini a mezzo grado ne escono meno di [constant VICINI],
+## cioè una crepa fra due pezzi di un modello che sullo schermo non si vede) si contano a parte, senza fallire.
+## Dopo la strada, con la torre caricata come nel gioco (SalaPrincipale._aggiungi_torre, il guscio dietro il portone
+## tolto) e costruita del tutto, gli occhi di ogni checkpoint della torre. Lì il cielo verso l'alto (raggi che salgono
+## più di 0,3) si stampa a parte senza fallire: la torre è aperta in cima e dai checkpoint NEm3 e NOm12 si vede il
+## cielo sopra le bandierine (scatti_portone_torre.gd, 6 novembre); se va chiusa lo decide l'utente.
 ## Senza rendering (headless): solo fisica.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/controllo_cielo.gd [solo=<parola>]
 ##   (solo=: solo i tratti col nome che contiene la parola)
@@ -17,6 +23,8 @@ const PASSO := 1.0
 const RAGGI := 240
 const DISTANZA := 150.0
 const OCCHI := 1.6
+## Per una fessura vera, quanti degli otto raggi vicini (a mezzo grado) devono uscire anche loro.
+const VICINI := 3
 ## Tratti della strada che non passano da un varco: [nome, punti sul pavimento].
 const STRADE_IN_PIU := [
 	["risalita: il capannone del fiume, dalla porta all'approdo", [Vector3(-7.6, -5.4, 66.0), Vector3(-20.0, -5.4, 62.0),
@@ -27,6 +35,8 @@ const STRADE_IN_PIU := [
 var _casi: Array = []
 var _direzioni: Array[Vector3] = []
 var _cupola := 0
+var _sottili: Array = []
+var _alto: Array = []
 
 
 func _ready() -> void:
@@ -77,11 +87,7 @@ func _run() -> void:
 	strade.append_array(STRADE_IN_PIU)
 	var spazio := level.get_world_3d().direct_space_state
 	var posti := 0
-	var scatole := []
-	for mi in level.find_children("*", "MeshInstance3D", true, false):
-		var m := mi as MeshInstance3D
-		if m.mesh and m.is_visible_in_tree():
-			scatole.append([m.global_transform * m.get_aabb(), _nome(level, m)])
+	var scatole := _scatole(level)
 	for s in strade:
 		if solo != "" and not String(s[0]).contains(solo):
 			continue
@@ -103,39 +109,116 @@ func _run() -> void:
 			for j in n + (1 if k == punti.size() - 2 else 0):
 				var occhio := _a_terra(spazio, a.lerp(b, float(j) / n), p) + Vector3.UP * OCCHI
 				posti += 1
-				var fuori: Array[Vector3] = []
-				for d in _direzioni:
-					var q := PhysicsRayQueryParameters3D.create(occhio, occhio + d * DISTANZA, 0xFFFFFFFF, [(p as CollisionObject3D).get_rid()])
-					q.hit_back_faces = true
-					if spazio.intersect_ray(q).is_empty():
-						fuori.append(d)
-				# dalla cupola di vetro della sala il cielo della tempesta si vede apposta
-				var uscite := fuori.map(func(d): return _uscita(scatole, occhio, d))
-				var dalla_cupola := uscite.filter(func(u): return String(u).begins_with("Sala/Cupola/"))
-				if not dalla_cupola.is_empty():
-					_cupola += 1
-				fuori = fuori.filter(func(d): return not _uscita(scatole, occhio, d).begins_with("Sala/Cupola/"))
-				if not fuori.is_empty():
+				if not _posto(s[0], occhio, spazio, scatole, p):
 					cielo_qui += 1
-					var media := Vector3.ZERO
-					for d in fuori:
-						media += d
-					media = media.normalized()
-					var d0: Vector3 = fuori[0]
-					for d in fuori:
-						if d.dot(media) > d0.dot(media):
-							d0 = d
-					_casi.append("%s: dagli occhi in %s si vede il cielo con %d raggi su %d, verso %s, uscendo da %s (da correggere)" % [s[0],
-							occhio.snapped(Vector3.ONE * 0.01), fuori.size(), RAGGI, media.snapped(Vector3.ONE * 0.01),
-							_uscita(scatole, occhio, d0)])
 		print("CIELO:   posti da dove si vede il cielo: %d" % cielo_qui)
 		await get_tree().process_frame
+	# la torre, caricata come nel gioco, e gli occhi dei suoi checkpoint
+	if solo == "" or "torre".contains(solo):
+		var torre: Node3D = null
+		if level.has_method(&"_aggiungi_torre"):
+			level.call(&"_aggiungi_torre", load(String(level.get(&"sala_torre_scena"))))
+			torre = level.get(&"sala_torre") as Node3D
+		if torre == null:
+			_casi.append("torre: non si carica (da correggere)")
+		else:
+			# la torre si costruisce a pezzi, un po' per fotogramma: si aspetta che sia finita
+			for i in 6000:
+				await get_tree().process_frame
+				if bool(torre.get(&"costruita")):
+					break
+			for i in 60:
+				await get_tree().physics_frame
+			var cps := torre.find_children("*", "Checkpoint", true, false)
+			print("CIELO: torre caricata, costruita %s, checkpoint %d, guscio %s" % [torre.get(&"costruita"), cps.size(),
+					level.find_child("sala_torre_guscio", true, false) != null])
+			for c in cps:
+				var occhio: Vector3 = (c as Checkpoint).get_spawn_transform().origin + Vector3.UP * OCCHI
+				(p as Player).teleport(occhio + Vector3.DOWN * 1.5)
+				for i in 30:
+					await get_tree().physics_frame
+				CorpiMesh.crea(level, AABB(occhio, Vector3.ZERO).grow(40.0), p)
+				for i in 3:
+					await get_tree().physics_frame
+				scatole = _scatole(level)
+				posti += 1
+				print("CIELO: torre %s: %s" % [c.name, "ok" if _posto("torre: " + String(c.name), occhio, spazio, scatole, p, true) else "CIELO"])
 	print("")
-	print("CIELO: posti controllati %d, con il cielo %d; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): %d" % [posti, _casi.size(), _cupola])
+	for f in _sottili:
+		print("CIELO: fessura sottile (non conta): " + f)
+	for f in _alto:
+		print("CIELO: torre, cielo verso l'alto (la torre è aperta in cima; da decidere, non conta): " + f)
+	print("CIELO: posti controllati %d, con il cielo %d; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): %d; fessure sottili %d" % [posti, _casi.size(), _cupola, _sottili.size()])
 	for c in _casi:
 		printerr("    " + c)
 	print("RISULTATO: %s" % ("ok, il cielo non si vede da nessuna parte" if _casi.is_empty() else "FALLITO, %d posti da correggere" % _casi.size()))
 	Game.esci(1 if not _casi.is_empty() else 0)
+
+
+## I raggi da [param occhio]: falso se vede il cielo da un buco (il caso va in _casi). Il cielo dalla cupola di vetro
+## e le fessure sottili non contano.
+func _posto(nome: String, occhio: Vector3, spazio: PhysicsDirectSpaceState3D, scatole: Array, p: Node, alto_a_parte := false) -> bool:
+	var fuori: Array[Vector3] = []
+	for d in _direzioni:
+		if _esce(spazio, occhio, d, p):
+			fuori.append(d)
+	if fuori.is_empty():
+		return true
+	# dalla cupola di vetro della sala il cielo della tempesta si vede apposta
+	if fuori.any(func(d): return _uscita(scatole, occhio, d).begins_with("Sala/Cupola/")):
+		_cupola += 1
+	var resto: Array = fuori.filter(func(d): return not _uscita(scatole, occhio, d).begins_with("Sala/Cupola/"))
+	# le fessure sottili: pochi vicini escono anche loro
+	var veri: Array[Vector3] = []
+	for d: Vector3 in resto:
+		var a := d.cross(Vector3.UP if absf(d.y) < 0.9 else Vector3.RIGHT).normalized()
+		var b := d.cross(a).normalized()
+		var vicini := 0
+		for k in 8:
+			var ang := TAU * k / 8.0
+			var dd := (d + (a * cos(ang) + b * sin(ang)) * tan(deg_to_rad(0.5))).normalized()
+			if _esce(spazio, occhio, dd, p):
+				vicini += 1
+		if vicini >= VICINI:
+			veri.append(d)
+		else:
+			_sottili.append("%s: da %s verso %s (%d vicini su 8), uscendo da %s" % [nome, occhio.snapped(Vector3.ONE * 0.01),
+					d.snapped(Vector3.ONE * 0.01), vicini, _uscita(scatole, occhio, d)])
+	# nella torre il cielo verso l'alto (la torre è aperta in cima: decide l'utente) si conta a parte
+	if alto_a_parte:
+		for d in veri.duplicate():
+			if d.y >= 0.3:
+				_alto.append("%s: da %s verso %s, uscendo da %s" % [nome, occhio.snapped(Vector3.ONE * 0.01), d.snapped(Vector3.ONE * 0.01),
+						_uscita(scatole, occhio, d)])
+				veri.erase(d)
+	if veri.is_empty():
+		return true
+	var media := Vector3.ZERO
+	for d in veri:
+		media += d
+	media = media.normalized()
+	var d0: Vector3 = veri[0]
+	for d in veri:
+		if d.dot(media) > d0.dot(media):
+			d0 = d
+	_casi.append("%s: dagli occhi in %s si vede il cielo con %d raggi su %d, verso %s, uscendo da %s (da correggere)" % [nome,
+			occhio.snapped(Vector3.ONE * 0.01), veri.size(), RAGGI, media.snapped(Vector3.ONE * 0.01), _uscita(scatole, occhio, d0)])
+	return false
+
+
+func _esce(spazio: PhysicsDirectSpaceState3D, occhio: Vector3, d: Vector3, p: Node) -> bool:
+	var q := PhysicsRayQueryParameters3D.create(occhio, occhio + d * DISTANZA, 0xFFFFFFFF, [(p as CollisionObject3D).get_rid()])
+	q.hit_back_faces = true
+	return spazio.intersect_ray(q).is_empty()
+
+
+func _scatole(level: Node) -> Array:
+	var out := []
+	for mi in level.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		if m.mesh and m.is_visible_in_tree():
+			out.append([m.global_transform * m.get_aabb(), _nome(level, m)])
+	return out
 
 
 ## L'ultima scatola di mesh che il raggio attraversa prima di uscire (la più lontana da dove esce), e dove esce.

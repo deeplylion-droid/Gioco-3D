@@ -676,12 +676,37 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 	_completa_torre()
 
 
+## Sulla soglia del portone, senza il guscio, fra il bordo del pavimento della sala (x 20,01) e il grigliato della
+## passerella della torre (x 20,19) resta una fessura per tutto il vano (z da -16,5 a -13,5): guardando in basso si
+## vedeva il cielo (ricontrollo del collaudo su varchi-cielo, 6 novembre). La chiude una lastra sotto, coperta ai due
+## bordi dal pavimento e dal grigliato, del materiale del pavimento della sala; figlia di [param torre], va via con lei.
+static func chiudi_soglia_torre(torre: Node3D, pavimento: MeshInstance3D) -> MeshInstance3D:
+	var lastra := MeshInstance3D.new()
+	lastra.name = "soglia_torre_sotto"
+	var box := BoxMesh.new()
+	box.size = Vector3(0.26, 0.3, 3.04)
+	lastra.mesh = box
+	if pavimento and pavimento.mesh:
+		lastra.material_override = pavimento.get_active_material(0)
+	torre.add_child(lastra)
+	lastra.global_transform = Transform3D(Basis.IDENTITY, Vector3(20.09, -0.015 - 0.15, -15.0))
+	var corpo := StaticBody3D.new()
+	var forma := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = box.size
+	forma.shape = bs
+	corpo.add_child(forma)
+	lastra.add_child(corpo)
+	return lastra
+
+
 func _completa_torre() -> void:
 	AttesaZone.pronta(&"torre")
 	# il guscio provvisorio dietro il portone (sala_architettura.glb) lascia il posto alla sala vera
 	var guscio := find_child("sala_torre_guscio", true, false)
 	if guscio:
 		guscio.queue_free()
+	chiudi_soglia_torre(sala_torre, find_child("sala_pavimento", true, false) as MeshInstance3D)
 	if sala_torre.has_signal(&"discesa_finita"):
 		sala_torre.connect(&"discesa_finita", _on_fine_torre)
 	# il tunnel del viaggio sottomarino: si carica nel thread da adesso; le condotte lo chiamano dopo SB1
