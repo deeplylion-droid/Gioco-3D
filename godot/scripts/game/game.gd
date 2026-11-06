@@ -47,6 +47,9 @@ var _resume_button: Button
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# (il segno della sessione aperta: rimasto dalla volta prima vuol dire una chiusura di colpo, e il titolo propone
+	# l'avvio sicuro; si cancella all'uscita normale)
+	AvvioSicuro.all_avvio()
 	# La X della finestra passa da esci() (NOTIFICATION_WM_CLOSE_REQUEST in _notification).
 	get_tree().auto_accept_quit = false
 	_build_overlay()
@@ -54,6 +57,8 @@ func _ready() -> void:
 	var first_run := not FileAccess.file_exists("user://settings.cfg")
 	if first_run and not is_automated():
 		Grafica.applica_preset(first_run_preset)
+		# (al primo avvio la qualità la sceglie la prova automatica, entrando nella sala: QualitaAutomatica)
+		Grafica.valori["qualita_provata"] = false
 	# Contatore delle prestazioni (F3), spento all'avvio.
 	add_child(load("res://scripts/ui/fps_counter.gd").new())
 	if not is_automated() and not bool(Grafica.valore("calibrato")):
@@ -246,6 +251,7 @@ func esci(codice := 0) -> void:
 		get_tree().quit(codice)
 		return
 	uscendo = true
+	AvvioSicuro.all_uscita()
 	if not _caricamenti.is_empty():
 		# Fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get() (in prova
 		# bloccare non bastava: Godot si fermava lo stesso all'uscita). Si riguardano tutti i caricamenti a ogni
@@ -428,6 +434,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			capture_mouse()
 			get_viewport().set_input_as_handled()
+
+
+func _exit_tree() -> void:
+	# (anche le uscite che non passano da esci(), per esempio get_tree().quit() nelle prove)
+	AvvioSicuro.all_uscita()
 
 
 func _notification(what: int) -> void:

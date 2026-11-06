@@ -126,6 +126,14 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
 
+      - name: Test dell'avvio sicuro (dopo una chiusura di colpo il titolo propone qualità bassa e l'altro driver; senza, niente)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_avvio_sicuro.gd
+
+      - name: Test della qualità automatica (al primo avvio sceglie il preset più alto che resta fluido; una scelta a mano resta del giocatore)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_qualita_automatica.gd
+
       - name: Test dell'opzione nascosta della riga di comando del titolo (senza i suoi argomenti non fa niente; la usa la Prova su Vulkan)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_partenza_da_riga.gd
@@ -378,6 +386,7 @@ jobs:
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_effetti_primo_uso.gd
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_oblo_leggeri.gd
 
       - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)

@@ -18,7 +18,10 @@ const AL_PIU := 10
 ## Caso noto, da togliere appena corretto (si stampa con la misura): il corpo di lei (la mesh "Medusa", più superfici
 ## con formati di vertici diversi) col materiale neutro, nel primo passo del suo modello: 12 pipeline in un fotogramma.
 ## (25 ottobre, sera: l'avvio dell'oblò da 32 e gli 8 "draw" di lei all'oblò sono corretti.)
-const NOTI := {"lei: Medusa": 12}
+## (il primo effetto a metà partita, il gorgo dello scarico, probabilmente come primo trasparente disegnato qui: 13 pipeline in un
+## fotogramma della schermata di caricamento qualunque effetto venga primo, anche dopo fotogrammi vuoti e senza luci;
+## prima le compilava in gioco quando compariva. 6 novembre)
+const NOTI := {"lei: Medusa": 12, "effetto Gorgo": 13}
 
 var _ok := 0
 var _ko := 0

@@ -186,8 +186,11 @@ func _collisione_struttura_gioco() -> void:
 	corpo.collision_layer = Layers.WORLD
 	corpo.collision_mask = 0
 	var forma := CollisionShape3D.new()
-	var trimesh := mi.mesh.create_trimesh_shape()
-	trimesh.backface_collision = true   # bordi e testate sottili: niente da attraversare da dietro
+	# (tenuta fra una ripartenza e l'altra: FormeTenute)
+	var trimesh := FormeTenute.trimesh(mi.mesh)
+	# bordi e testate sottili: niente da attraversare da dietro (solo la prima volta: rimesso, Jolt rifà la forma)
+	if not trimesh.backface_collision:
+		trimesh.backface_collision = true
 	forma.shape = trimesh
 	corpo.add_child(forma)
 	mi.add_child(corpo)
@@ -736,6 +739,8 @@ func _libera_ambienti_subito() -> void:
 	var via: Array = [tecnici, get_node_or_null(^"Interni")]
 	tecnici = null
 	risveglio = null
+	# (le griglie dell'acqua tenute per le ripartenze: non quelle di interni e tecnici)
+	WaterBody.svuota_griglie()
 	# (cancellati subito: le chiamate già in coda su di loro si saltano; quelle di Grafica sulle luci vanno per id)
 	for n in via:
 		if n and is_instance_valid(n):
@@ -750,6 +755,8 @@ func _scarica_ambienti() -> void:
 	var via: Array = [tecnici, get_node_or_null(^"Interni")]
 	tecnici = null
 	risveglio = null
+	# (le griglie dell'acqua tenute per le ripartenze: non quelle di interni e tecnici)
+	WaterBody.svuota_griglie()
 	# a pezzi, dalle foglie (tutti insieme erano 3 s di gioco fermo entrando nella torre)
 	_liberando = true
 	for n in via:

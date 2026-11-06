@@ -72,6 +72,9 @@ func _ready() -> void:
 	_audio(&"musica_titolo")
 	_voci[0].grab_focus.call_deferred()
 	_partenza_da_riga.call_deferred()
+	# l'ultima volta il gioco si è chiuso di colpo: prima di tutto la domanda dell'avvio sicuro (AvvioSicuro)
+	if AvvioSicuro.da_chiedere():
+		_chiedi_avvio_sicuro.call_deferred()
 
 
 ## Per le prove (il controllo "Prova su Vulkan" della CI, .github/workflows/prova_vulkan.yml, e il collaudo), dopo il --
@@ -275,6 +278,29 @@ func _chiedi_nuova_partita() -> void:
 		_testata.visible = true
 		_logo.visible = true
 		_voce_nuova.grab_focus.call_deferred())
+
+
+## La domanda dell'avvio sicuro (ritocco dell'utente del 4 novembre, scelta A), come quella della Nuova partita: il
+## focus parte su "Avvio sicuro"; Esc o B valgono "Avvio normale". Con l'avvio sicuro e un altro driver il gioco si
+## riavvia da solo; senza (fuori da Windows) resta qui con la qualità bassa.
+func _chiedi_avvio_sicuro() -> void:
+	if is_instance_valid(_sottomenu) or _avviato:
+		return
+	var d: CanvasLayer = DOMANDA.new("Avvio sicuro?", AvvioSicuro.nota(), "Avvio sicuro", "Avvio normale", true)
+	d.name = "DomandaAvvioSicuro"
+	_sottomenu = d
+	add_child(d)
+	_menu.visible = false
+	_testata.visible = false
+	_logo.visible = false
+	d.connect(&"risposta", func(si: bool):
+		_sottomenu = null
+		if AvvioSicuro.rispondi(si, get_tree()):
+			return
+		_menu.visible = true
+		_testata.visible = true
+		_logo.visible = true
+		_voci[0].grab_focus.call_deferred())
 
 
 func _avvia_nuova_partita() -> void:
