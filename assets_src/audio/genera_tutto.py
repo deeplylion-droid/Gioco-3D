@@ -15,6 +15,7 @@ import catalogo
 import genera_ambiente
 import genera_anteprima
 import genera_effetti
+import genera_enigmi
 import genera_giocatore
 import genera_interfaccia
 import genera_lei
@@ -31,7 +32,7 @@ if __name__ == '__main__':
     if os.path.exists(REGISTRO):
         os.remove(REGISTRO)
     for m in (genera_ambiente, genera_giocatore, genera_effetti, genera_musica, genera_interfaccia,
-              genera_tecnici, genera_lei, genera_piscina, genera_torre, genera_squalo):
+              genera_tecnici, genera_lei, genera_piscina, genera_torre, genera_squalo, genera_enigmi):
         m.main()
     catalogo.main()
     licenze.main()

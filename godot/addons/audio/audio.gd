@@ -57,6 +57,7 @@ const PER_CARTELLA := {
 	"piscina": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 	"torre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
 	"squalo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
+	"enigmi": [BUS_EFFETTI, 0.0, 4.0, 45.0, 0.0],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -131,6 +132,15 @@ const TARATURA := {
 	&"medusine_sparate": [BUS_EFFETTI, 3.0, 2.0, 25.0, 0.0],
 	# il portone della sala della torre
 	&"portone_torre_apre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
+	# i ritocchi degli enigmi (0.3.21, scelte del 4 novembre): i clic delle rotelle della cassaforte si sentono da
+	# vicino; il colpo sul disco del fiume arriva alla ciambella (il disco è a 3-8 m dal canale); il "fatto giusto" dal
+	# punto dell'enigma, pieno fino a circa 6 m
+	&"cassaforte_clic_a": [BUS_EFFETTI, -2.0, 1.5, 15.0, 0.25],
+	&"cassaforte_clic_b": [BUS_EFFETTI, -2.0, 1.5, 15.0, 0.25],
+	&"cassaforte_clic_c": [BUS_EFFETTI, -2.0, 1.5, 15.0, 0.25],
+	&"cassaforte_apre": [BUS_EFFETTI, 0.0, 3.0, 35.0, 0.0],
+	&"disco_lamiera_colpo": [BUS_EFFETTI, 0.0, 6.0, 70.0, 0.4],
+	&"giusto": [BUS_EFFETTI, 0.0, 6.0, 60.0, 0.0],
 }
 ## Loop sulle sorgenti: [volume dB, unit_size, max_distance].
 const LOOP_3D := {
@@ -171,6 +181,11 @@ const PORTONE_ARRIVA := 6.4
 ## cancelli deve seguire questi tempi (rallenta appena nell'ultimo quarto di secondo).
 const CANCELLO_STAGNO_PARTE := 0.55
 const CANCELLO_STAGNO_ARRIVA := 2.55
+## La cassaforte dell'infermeria che si apre (cassaforte_apre, col codice giusto): il chiavistello a 0 s, poi lo
+## sportello che gira sui cardini cigolando da CASSAFORTE_CIGOLIO_DA a CASSAFORTE_CIGOLIO_A (s), dove arriva aperto col
+## colpetto del fermo. CassaforteRotelle muove lo sportello con questi tempi (uguali in assets_src/audio/genera_enigmi.py).
+const CASSAFORTE_CIGOLIO_DA := 0.38
+const CASSAFORTE_CIGOLIO_A := 1.75
 ## Volume (dB) dei fondi.
 const FONDI := {
 	&"pioggia_cupola_loop": 0.0,

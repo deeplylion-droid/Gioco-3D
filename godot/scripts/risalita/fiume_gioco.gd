@@ -1320,6 +1320,12 @@ func _checkpoint() -> void:
 # --- i bivi: chiuse, pilastri, travi e cartelli d'uscita --------------------------------------------------
 
 var _chiuse := []   # [paratia, nodo della chiusa a sinistra, a destra, luce a sinistra, a destra]
+## Il suono delle chiuse (scelta A dell'utente del 4 novembre, proposta enigmi-3): mentre una chiusa sale o scende, il
+## motore e le catene delle paratie della camera delle onde (paratia_scende_loop), e quando arriva il loro colpo sordo.
+## Per chiusa: il loop e se si stava muovendo.
+var _suoni_chiuse := {}
+## Sotto questa distanza (m) dalla quota voluta la chiusa è arrivata.
+const CHIUSA_ARRIVATA := 0.03
 
 
 func _bivi() -> void:
@@ -1449,7 +1455,8 @@ func _palo_trave(p: Vector3, m: Material) -> void:
 	_collisioni.add_child(f)
 
 
-## Le chiuse seguono le paratie: quella del lato dove va la corrente è alzata (2,3 m) e illuminata.
+## Le chiuse seguono le paratie: quella del lato dove va la corrente è alzata (2,3 m) e illuminata. Mentre si muovono
+## suonano motore e catene; arrivate, il colpo sordo (più piano quella che sale: in fondo c'è solo quella che scende).
 func _aggiorna_chiuse(k: float) -> void:
 	for c in _chiuse:
 		var par := c[0] as ParatiaFiume
@@ -1460,6 +1467,22 @@ func _aggiorna_chiuse(k: float) -> void:
 			var y := float(ch.get_meta(&"y_chiusa")) + (2.3 if aperta else 0.0)
 			ch.position.y = lerpf(ch.position.y, y, k)
 			luce.light_energy = lerpf(luce.light_energy, 2.5 if aperta else 0.0, k)
+			_suono_chiusa(ch, absf(ch.position.y - y) > CHIUSA_ARRIVATA, aperta)
+
+
+func _suono_chiusa(ch: Node3D, in_moto: bool, sale: bool) -> void:
+	var s: Array = _suoni_chiuse.get(ch, [])
+	if s.is_empty():
+		if not in_moto:
+			return
+		s = [Audio.crea_loop(&"paratia_scende_loop", ch), false]
+		_suoni_chiuse[ch] = s
+	var l := s[0] as AudioLoop
+	if l:
+		l.volume = 1.0 if in_moto else 0.0
+	if bool(s[1]) and not in_moto and ch.is_inside_tree():
+		Audio.suona(&"porta_chiusa", ch.global_position, 0.0 if sale else 6.0, 0.7)
+	s[1] = in_moto
 
 
 func _process(delta: float) -> void:

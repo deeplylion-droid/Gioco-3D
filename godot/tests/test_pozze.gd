@@ -123,12 +123,15 @@ func _run() -> void:
 		"ripreso: quello che si svuotava riparte già vuoto (%s)" % [e.tolti])
 	check(_vuote(WaterMix.TURCHESE) and _vuote(WaterMix.VIOLA) and _piene(WaterMix.ARANCIONE) and _piene(WaterMix.ROSA),
 		"le pozze vuote e piene sono quelle giuste")
+	var giusto0 := int(Audio.conteggio.get(&"giusto", 0))
 	await _togli(WaterMix.ARANCIONE)
 	check(e.stato == EnigmaPozze.Stato.RISOLTO and _porta().aperta, "e col terzo colore si risolve")
+	check(int(Audio.conteggio.get(&"giusto", 0)) == giusto0 + 1, "col \"fatto giusto\" degli enigmi, una volta")
 	salvato = _salva()
 	await _nuova_stanza()
 	_carica(salvato)
 	await _frames(3)
+	check(int(Audio.conteggio.get(&"giusto", 0)) == giusto0 + 1, "ripreso risolto, il \"fatto giusto\" non suona di nuovo")
 	check(e.stato == EnigmaPozze.Stato.RISOLTO and _porta().aperta and _porta().aperta_subito, "ripreso risolto: la porta è già aperta, senza animazione")
 	check(_vuote(WaterMix.TURCHESE) and _vuote(WaterMix.VIOLA) and _vuote(WaterMix.ARANCIONE) and _piene(WaterMix.ROSA) and _piene(WaterMix.BIANCO_LATTE),
 		"e le pozze dei tre giusti sono vuote")

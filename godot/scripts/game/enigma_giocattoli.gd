@@ -1065,9 +1065,26 @@ func _fine(col_suono := true) -> void:
 	if risolto_ok:
 		return
 	risolto_ok = true
+	if col_suono:
+		# il "fatto giusto" degli enigmi (scelta A dell'utente del 4 novembre, proposta enigmi-4), dalla botola
+		Audio.suona(&"giusto", _punto_giusto())
 	if col_suono and piscina:
 		Audio.suona(&"piscina_vuota", piscina.call(&"_centro_scarico") if piscina.has_method(&"_centro_scarico") else global_position, 2.0, 0.6)
 	risolto.emit()
+
+
+## Il punto dell'enigma, da dove suona il "fatto giusto": la botola (la lastra dello scarico della piscina), in mezzo ai
+## tre cerchi; senza piscina il centro dei cerchi.
+func _punto_giusto() -> Variant:
+	if not is_inside_tree():
+		return null
+	var lastra := piscina.get(&"scarico") as MeshInstance3D if piscina else null
+	if lastra and lastra.is_inside_tree():
+		return (lastra.global_transform * lastra.get_aabb()).get_center()
+	var c := Vector3.ZERO
+	for k in _cerchi:
+		c += (k as Node3D).global_position
+	return c / maxf(_cerchi.size(), 1.0) if not _cerchi.is_empty() else global_position
 
 
 ## Vero quando la serratura della botola è aperta (PiscinaOnde lo chiede per il pulsante).

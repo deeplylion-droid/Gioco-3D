@@ -6,6 +6,8 @@ extends Node3D
 ## tratto che arriva al bivio ([member attiva], lo decide FiumeLento): dopo il bivio non più.
 ## Ogni colpo la inverte. Lo stato resta (anche nei checkpoint): al giro dopo la ritrovi com'era.
 ## Grafica provvisoria: un pannello che si gira e un disco a strisce.
+## Quando il getto la gira, il disco suona come un gong di lamiera (scelta A dell'utente del 4 novembre, proposta
+## enigmi-3): dice "preso", non se era giusto. Le chiuse che si muovono suonano nella scena del fiume.
 
 signal girata(a_destra: bool)
 
@@ -181,6 +183,7 @@ func _on_colpo(litri: float, _punto: Vector3, _dir: Vector3) -> void:
 	if _presa >= litri_per_girare:
 		_presa = 0.0
 		_pausa_t = pausa
+		Audio.suona(&"disco_lamiera_colpo", posizione_bersaglio)
 		gira()
 
 

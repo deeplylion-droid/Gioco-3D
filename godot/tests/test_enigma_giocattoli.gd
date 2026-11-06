@@ -85,6 +85,7 @@ func _run() -> void:
 			accesi += 1
 	check(accesi == 3 and _scesi.is_empty(), "galleggiando sopra il suo cerchio lo accende appena, i piatti non scendono (%d accesi)" % accesi)
 	var stato: Dictionary = enigma.save_state()
+	var giusto0 := int(Audio.conteggio.get(&"giusto", 0))
 	await _svuota()
 	check(vasca.fill <= 0.001, "la piscina si svuota con lo zaino")
 	for k in 600:
@@ -95,6 +96,7 @@ func _run() -> void:
 	for i in 3:
 		check(enigma.piatto_giu(i) and _sul_piatto(i), "il giocattolo %d è appoggiato sul suo piatto sceso (%s)" % [i, str(_dove(i))])
 	check(enigma.risolto_ok and _risolto == 1 and pulsante.enabled, "scesi tutti e tre, il pulsante della botola funziona")
+	check(int(Audio.conteggio.get(&"giusto", 0)) == giusto0 + 1, "e suona il \"fatto giusto\" degli enigmi, una volta")
 	await _frames(100)
 	var luce := piscina.get_node_or_null(^"SegnalePulsante") as OmniLight3D
 	check(luce != null and luce.visible and luce.light_color.g > 0.9 and luce.light_color.r < 0.5, "e il lampeggiante è verde")
