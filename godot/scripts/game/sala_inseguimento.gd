@@ -352,10 +352,10 @@ func _acque() -> void:
 ## test_occhio_sopra_acque.
 ## (comincia con "acqua": per il controllo di posizionamento è acqua, come le superfici, e non un ingombro)
 const NOME_VELO := "acqua_velo_bocca_"
-## Nelle bocche dei tubi sotto il pelo, quanto l'occhio resta almeno sopra il pelo (m) e per quanto dentro il tubo,
-## dalla parete d'acqua (m): vedi [method occhi_minimo].
+## Nelle bocche dei tubi sotto il pelo, quanto l'occhio resta almeno sopra il pelo finché non ci va sotto, e poi
+## almeno sotto (m): vedi [method occhi_bocca].
 const OCCHI_SOPRA := 0.035
-const OCCHI_TRATTO := 2.0
+const OCCHI_SOTTO := 0.02
 
 ## Le pareti d'acqua nelle bocche ([method _veli_bocche]).
 var _veli: Array[MeshInstance3D] = []
@@ -1136,11 +1136,14 @@ func _physics_process(delta: float) -> void:
 		return
 	if lei_stato != Lei.VIA:
 		_lei_aggiorna(delta, p)
-	p.occhi_minimo = -INF
+	p.occhi_pelo = -INF
 	if GameState.is_dying or _sb1:
 		return
 	p.accovacciato_forzato = in_tubo(p.global_position)
-	p.occhi_minimo = occhi_minimo(p.global_position + Vector3.UP * p.crouch_eye_height, p.camera.near)
+	var ob := occhi_bocca(p.global_position + Vector3.UP * p.crouch_eye_height, p.camera.near)
+	p.occhi_pelo = ob.x
+	p.occhi_sopra = ob.y
+	p.occhi_sotto = OCCHI_SOTTO
 	# in quale vasca sei: lei compare dopo un po', e torna dopo un getto in faccia
 	var v := _vasca_di(p.global_position)
 	if v != _vasca:
@@ -1160,33 +1163,34 @@ func _physics_process(delta: float) -> void:
 			_lei_sale("vasca_%d" % _vasca, _posto_vasca(_vasca))
 
 
-## La quota sotto cui l'occhio non deve scendere vicino a [param occhio] (ritocco del capitolo 1, scelta A
-## dell'utente): entrando nei tubi e negli scoli che partono sotto il pelo delle vasche, nei primi metri l'occhio resta
-## almeno [constant OCCHI_SOPRA] sopra il pelo, e a meno di 30 cm dall'acqua anche sopra il piano vicino della camera
-## ([param near]). Prima passava a 1 mm (test_occhio_sopra_acque): un passo più basso e si rivedeva l'acqua da sotto.
-## Oltre [constant OCCHI_TRATTO] la superficie si vede solo di taglio, e sotto il pelo la copre la parete d'acqua della
-## bocca: il limite scende piano e smette. La forma delle bocche non cambia. -INF lontano dalle bocche.
-func occhi_minimo(occhio: Vector3, near: float) -> float:
-	var out := -INF
+## Il pelo e quanto la camera deve stare sopra (Player.occhi_pelo e occhi_sopra) per l'occhio in [param occhio]
+## (ritocco del capitolo 1, scelta A dell'utente). Entrando nei tubi e negli scoli che partono sotto il pelo delle
+## vasche l'occhio passava a 1 mm dall'acqua (test_occhio_sopra_acque): un passo più basso e la si rivedeva da sotto.
+## Ora, finché l'occhio è sopra il pelo, la camera ci resta almeno [constant OCCHI_SOPRA] sopra, e a meno di 30 cm
+## dall'acqua anche sopra il piano vicino della camera ([param near]); quando l'occhio scende sotto il pelo (i tubi ci
+## vanno dopo 0,8-1,4 m) la camera lo segue, almeno [constant OCCHI_SOTTO] sotto: lì la superficie la copre la parete
+## d'acqua della bocca, e a filo dell'acqua la camera non ci sta mai (passa in un fotogramma). Nella vasca il
+## margine cala piano verso il centro. La forma delle bocche non cambia. x = -INF lontano dalle bocche.
+func occhi_bocca(occhio: Vector3, near: float) -> Vector2:
+	var out := Vector2(-INF, 0.0)
 	for v in _veli:
 		if not is_instance_valid(v):
 			continue
 		var pelo := float(v.get_meta(&"pelo"))
-		if occhio.y < pelo - 1.0 or occhio.y > pelo + 0.6:
+		if occhio.y > pelo + 0.6:
 			continue
 		var l := v.global_transform.affine_inverse() * occhio
 		# (+Z del quad lungo il tubo: dentro il tubo l.z > 0, nella vasca < 0)
-		if absf(l.x) > 1.2 or l.z < -0.6 or l.z > OCCHI_TRATTO + 0.6:
+		if absf(l.x) > 1.2 or l.z < -0.6 or l.z > 3.0:
 			continue
 		var sopra := near + 0.02 + OCCHI_SOPRA
 		if l.z > 0.3:
-			sopra = lerpf(sopra, OCCHI_SOPRA + 0.005, minf((l.z - 0.3) / 0.3, 1.0))
-		if l.z > OCCHI_TRATTO:
-			sopra -= (l.z - OCCHI_TRATTO) * 0.3
+			sopra = lerpf(sopra, OCCHI_SOPRA, minf((l.z - 0.3) / 0.3, 1.0))
 		elif l.z < 0.0:
-			# (nella vasca l'occhio accovacciato sta già più in alto: il limite scende piano, senza salti)
+			# (nella vasca l'occhio accovacciato sta già più in alto: il margine cala piano, senza salti)
 			sopra += l.z * 0.3
-		out = maxf(out, pelo + sopra)
+		if pelo + sopra > out.x + out.y:
+			out = Vector2(pelo, sopra)
 	return out
 
 
@@ -1540,7 +1544,7 @@ static func _rispetto_a(src: Node3D, n: Node3D) -> Transform3D:
 func _exit_tree() -> void:
 	var p := GameState.player
 	if p != null and is_instance_valid(p):
-		p.occhi_minimo = -INF
+		p.occhi_pelo = -INF
 	for f in _fonti.values():
 		if is_instance_valid(f):
 			(f as Node).free()

@@ -152,10 +152,18 @@ var is_sliding := false
 ## Se vero si sta accovacciati anche senza il tasto (nei tubi chiusi dell'inseguimento, alti 1,6 m: lo
 ## mette SalaInseguimento).
 var accovacciato_forzato := false
-## La quota (globale) sotto cui l'occhio non scende, nemmeno col passo, atterrando o su un gradino: nelle bocche dei
-## tubi dell'inseguimento che partono sotto il pelo delle vasche l'occhio resta sopra l'acqua (lo mette
-## SalaInseguimento ogni passo). -INF: nessun limite.
-var occhi_minimo := -INF
+## Nelle bocche dei tubi dell'inseguimento che partono sotto il pelo delle vasche (li mette SalaInseguimento ogni
+## passo): finché l'occhio, senza il passo, l'atterraggio e il gradino, sta sopra [member occhi_pelo], la camera resta
+## almeno [member occhi_sopra] sopra il pelo; quando ci va sotto, la camera lo segue, almeno [member occhi_sotto] sotto
+## il pelo (lì la superficie la copre la parete d'acqua della bocca): la camera non sta mai a filo dell'acqua, e passa
+## da sopra a sotto in un fotogramma. Si sposta al più di occhi_sopra (o occhi_sotto) più quei movimenti: mai verso il
+## soffitto. -INF: nessun limite.
+var occhi_pelo := -INF
+var occhi_sopra := 0.0
+var occhi_sotto := 0.0
+## Di quanto la camera è stata alzata (o abbassata, se negativo) per [member occhi_pelo] nell'ultimo aggiornamento (m;
+## per i test).
+var occhi_alzati := 0.0
 ## Il fondo dello scivolo sotto di te (normale), finché scivoli.
 var slide_normal := Vector3.UP
 ## Vero dopo un salto dallo scivolo, fino a quando si tocca terra: la velocità resta quella.
@@ -333,7 +341,13 @@ func _update_head(fraction: float) -> void:
 	var bob_h := head_bob_horizontal * w * sin(PI * phase)
 	var side := Basis(Vector3.UP, yaw) * Vector3.RIGHT
 	var pos := origin + Vector3.UP * (eye + land + bob_v) + side * bob_h
-	pos.y = maxf(pos.y, occhi_minimo)
+	occhi_alzati = 0.0
+	if origin.y + eye >= occhi_pelo:
+		if pos.y < occhi_pelo + occhi_sopra:
+			occhi_alzati = occhi_pelo + occhi_sopra - pos.y
+	elif pos.y > occhi_pelo - occhi_sotto:
+		occhi_alzati = occhi_pelo - occhi_sotto - pos.y
+	pos.y += occhi_alzati
 	var roll := lerpf(_roll_prev, _roll, fraction)
 	head.global_transform = Transform3D(get_aim_basis() * Basis(Vector3.BACK, roll), pos)
 

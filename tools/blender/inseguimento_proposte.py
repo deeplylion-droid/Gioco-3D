@@ -548,11 +548,21 @@ def scala_bacino(c, x, x_muro, y, t, z_bordo, z1):
     nel muro e la scaletta cominciava sul bordo, 26 cm sopra l'acqua: da dentro sembrava appesa)."""
     r = 0.03
     xb = x_muro + r                 # i montanti del tratto basso toccano la faccia del muro
+    zc = z_bordo + r                # il tratto sopra il bordo, appoggiato
+    r1 = 0.05                       # la curva in alto, dal montante al tratto sul bordo
     for sg in (-0.25, 0.25):
-        c.cilindro((x, y + sg, z_bordo), (x, y + sg, z1 + 1.0), r, 'giallo_sicurezza', seg=8)
-        # sopra il bordo, dal montante alto alla faccia del muro (appoggiato sul bordo)
-        c.cilindro((x - r, y + sg, z_bordo + r), (xb + r, y + sg, z_bordo + r), r, 'giallo_sicurezza', seg=8)
-        c.cilindro((xb, y + sg, z_bordo + 2 * r), (xb, y + sg, t - 0.12), r, 'giallo_sicurezza', seg=8)
+        # ogni montante è un tubo solo, piegato (prima tre cilindri: il tappo piatto del pezzo sul bordo sporgeva dal
+        # gomito, ricontrollo del collaudo): giù, sul bordo, attorno allo spigolo del bordo, giù contro il muro
+        pts = [(x, y + sg, z1 + 1.0), (x, y + sg, zc + r1)]
+        for k in range(1, 6):
+            a = math.radians(180 + 90 * k / 6)
+            pts.append((x + r1 + r1 * math.cos(a), y + sg, zc + r1 + r1 * math.sin(a)))
+        pts += [(x + r1, y + sg, zc), (x_muro, y + sg, zc)]
+        for k in range(1, 6):
+            a = math.radians(90 - 90 * k / 6)
+            pts.append((x_muro + r * math.cos(a), y + sg, z_bordo + r * math.sin(a)))
+        pts += [(xb, y + sg, z_bordo), (xb, y + sg, t - 0.12)]
+        c.tubo(pts, r, 'giallo_sicurezza', seg=8, tappi=True)
     zz = t
     while zz < z1 + 0.2:
         xp = xb if zz < z_bordo else x
