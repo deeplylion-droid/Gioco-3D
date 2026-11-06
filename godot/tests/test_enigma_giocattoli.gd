@@ -744,7 +744,20 @@ func _disegno() -> void:
 	var m := (d.get_node(^"Pastelli") as MeshInstance3D).material_override as StandardMaterial3D
 	check(m != null and m.albedo_texture != null and m.albedo_texture.resource_path.ends_with("disegno_piscina.png"),
 		"col disegno vero a pastello")
-	check(d.find_children("Fascetta*", "MeshInstance3D", true, false).size() == 4, "legato con quattro fascette")
+	var fascette := d.find_children("Fascetta*", "MeshInstance3D", true, false)
+	check(fascette.size() == 4, "legato con quattro fascette")
+	# (ricontrollo di ambienti-1 del 6 novembre) ognuna gira attorno al suo corrimano: davanti al cartoncino, dietro, sopra
+	# e sotto il tubo
+	var attorno := 0
+	for i in mini(fascette.size(), EnigmaGiocattoli.FASCETTE.size()):
+		var f := fascette[i] as MeshInstance3D
+		var b := (d.global_transform.affine_inverse() * f.global_transform) * f.get_aabb()
+		var voce: Array = EnigmaGiocattoli.FASCETTE[i]
+		var tubo := d.to_local(Vector3(voce[0], (voce[1] as Vector2).x, (voce[1] as Vector2).y))
+		var raggio: float = (voce[2] as Array).min()
+		if b.end.z > 0.006 and b.position.z < tubo.z - raggio and b.position.y < tubo.y - raggio and b.end.y > tubo.y + raggio:
+			attorno += 1
+	check(attorno == 4, "ogni fascetta gira attorno al suo corrimano, da davanti al cartoncino a dietro il tubo (%d su 4)" % attorno)
 	# dal percorso a sud-est e da vicino niente lo copre: i raggi dagli occhi (a 1,65 m da terra) al disegno non toccano
 	# niente (da sud-ovest c'è il fungo davanti alla pedana)
 	var spazio := d.get_world_3d().direct_space_state

@@ -7,10 +7,12 @@ extends Node
 ## le sue luci, la piscina con l'enigma e le Polaroid) con gli stessi nomi, con l'ambiente e gli attributi della camera
 ## della sala (LookSala); ogni mesh della sala parte spenta e si accendono solo quelle entro [member raggio] m dalla
 ## camera.
-## Le viste: VISTE qui sotto ("giro": attorno alla struttura; "disegno": quelle del punto scelto e del muro della piscina).
+## Le viste: VISTE qui sotto ("giro": attorno alla struttura; "disegno": quelle del punto scelto e del muro della piscina;
+## "fascette": ognuna delle quattro da vicino, da davanti e da dietro (dalla pedana verde), più due di lato e due dagli
+## occhi del giocatore, per il collaudo degli anelli attorno ai corrimani).
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##     --script res://tests/run.gd -- res://tests/collaudo/scatti_disegno_torre.gd <cartella> [giro|disegno] [luci]
+##     --script res://tests/run.gd -- res://tests/collaudo/scatti_disegno_torre.gd <cartella> [giro|disegno|fascette] [luci]
 ## luci: "prima" (di serie: prima del risveglio, com'è la sala quando si fa l'enigma, tappa 5) o "blackout".
 
 const SALA := "res://scenes/sala_principale.tscn"
@@ -32,6 +34,7 @@ const VISTE := {
 		["g10_torre_arancio_da_sud", Vector3(-14.0, 1.65, -9.0), Vector3(-14.2, 2.0, -17.45)],
 	],
 	"disegno": [],
+	"fascette": [],
 }
 
 var raggio := float(OS.get_environment("SCATTI_RAGGIO")) if OS.has_environment("SCATTI_RAGGIO") else 22.0
@@ -92,6 +95,8 @@ func _run() -> void:
 	var viste: Array = VISTE.get(_gruppo, [])
 	if _gruppo == "disegno":
 		viste = _viste_disegno()
+	elif _gruppo == "fascette":
+		viste = _viste_fascette()
 	for v in viste:
 		cam.global_position = v[1]
 		cam.look_at(v[2], Vector3.UP)
@@ -126,6 +131,33 @@ func _viste_disegno() -> Array:
 	if e:
 		# il muro ovest della parte profonda, dove stava (a -6,97, -0,8, -0,2 nel sistema dell'enigma)
 		out.append(["d7_muro_piscina", e.to_global(Vector3(-3.5, 0.9, -0.2)), e.to_global(Vector3(-6.97, -0.8, -0.2))])
+	return out
+
+
+## Le fascette da vicino: da davanti (a 26 cm, un po' di lato) e da dietro, dalla pedana verde (a 27 cm, fra le sbarre),
+## poi di lato dall'alto e dagli occhi del giocatore (a terra davanti, e in piedi sulla pedana).
+func _viste_fascette() -> Array:
+	var out := []
+	var d := _radice.find_child("Disegno", true, false) as Node3D
+	if d == null:
+		return out
+	var lati := ["ovest_basso", "ovest_alto", "est_basso", "est_alto"]
+	var centri: Array[Vector3] = []
+	for k in 4:
+		var f := d.get_node_or_null(NodePath("Fascetta%d" % (k + 1))) as MeshInstance3D
+		if f == null:
+			continue
+		var b := f.global_transform * f.get_aabb()
+		var c := b.get_center()
+		centri.append(c)
+		var verso := 1.0 if k < 2 else -1.0   # di lato verso il centro del cartoncino
+		out.append(["f%d_davanti_%s" % [k + 1, lati[k]], c + Vector3(0.09 * verso, 0.05, 0.26), c + Vector3(0, 0, 0.02)])
+		out.append(["f%d_dietro_%s" % [k + 1, lati[k]], c + Vector3(0.04 * verso, 0.06, -0.27), c])
+	if centri.size() == 4:
+		out.append(["f9_di_lato_dall_alto_ovest", centri[1] + Vector3(0.16, 0.15, 0.0), centri[1]])
+		out.append(["f10_di_lato_dall_alto_est_basso", centri[2] + Vector3(-0.12, 0.14, 0.0), centri[2]])
+		out.append(["f11_occhi_davanti", Vector3(-17.15, 1.65, -14.05), (centri[1] + centri[0]) * 0.5])
+		out.append(["f12_occhi_sulla_pedana", Vector3(-17.15, 1.24 + 1.65, -15.15), centri[1]])
 	return out
 
 

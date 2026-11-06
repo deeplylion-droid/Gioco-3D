@@ -42,7 +42,13 @@ capitolo 1"). Branch `lavoro/ritocchi-enigmi-0321`, da `lavoro/godot` 67719e8c.
 6. **Disegno guida dei giocattoli.** Non è più sul muro della piscina a onde: è su un cartoncino di 1,0 x 0,86 m legato
    con quattro fascette alla ringhiera sud della pedana verde della struttura di gioco dell'area bimbi (la torre col tetto
    blu, accanto alla scala della P4).
-   - È appoggiato ai due corrimani e sta all'altezza degli occhi.
+   - È appoggiato ai due corrimani e sta all'altezza degli occhi: il piano tocca la faccia davanti dei tubi e ne resta
+     staccato al massimo 2,3 mm dove i tubi rientrano.
+   - Le fascette (ricontrollo di ambienti-1 del 6 novembre) sono anelli veri: ognuna esce da un foro del cartoncino
+     (6 mm sotto il corrimano alto, o sopra il basso), passa davanti fino al bordo, lo scavalca e gira attorno al tubo,
+     stretta a 0,3 mm, con la testa della chiusura dietro. Larghe 4,5 mm, spesse 1,3. Stanno fra le sbarre, a 44 cm dal
+     centro. La forma dei tubi è misurata sui triangoli della mesh: niente entra nel tubo né nel cartoncino fuori dai
+     fori. Scatti da davanti e da dietro: `fascette_davanti_dietro.jpg`.
    - Da sud e da sud-est si vede intero; da sud-ovest lo copre il fungo.
    - Il coordinatore ha approvato il punto il 6 novembre: `disegno_giocattoli_struttura.jpg`.
 
@@ -63,7 +69,7 @@ capitolo 1"). Branch `lavoro/ritocchi-enigmi-0321`, da `lavoro/godot` 67719e8c.
 - **"Fatto giusto"**: risolvere acquari, giocattoli, pozze e cassaforte; riprendere ognuno da risolto (non deve suonare).
 - **Album**: dal menu di pausa, in italiano e in inglese, con mouse, tastiera e joypad; con 0, alcune e 16 Polaroid.
 - **Area bimbi della sala** (la struttura: x da -18,3 a -9,7, z da -20,7 a -14,3). Da guardare:
-  - il cartoncino dal percorso a sud, da sud-est e da vicino, con le fascette;
+  - il cartoncino dal percorso a sud, da sud-est e da vicino, con le fascette, anche da dietro, dalla pedana verde;
   - la P4 sul pianerottolo in cima alla scala, che non dev'essere coperta;
   - il muro ovest della parte profonda della piscina a onde, senza il disegno;
   - stati: piscina piena e vuota (tappa 5).
@@ -74,5 +80,5 @@ capitolo 1"). Branch `lavoro/ritocchi-enigmi-0321`, da `lavoro/godot` 67719e8c.
   cartello).
 - `godot/tests/collaudo/colori_cartello_pozze.gd <cartella> [varianti]`: i colori del cartello contro quelli delle pozze;
   stampa anche le luci colorate che arrivano al cartello. La variante "senza_colorate" serve da riferimento.
-- `godot/tests/collaudo/scatti_disegno_torre.gd <cartella> [giro|disegno] [prima|blackout]`: la sala per parti, il giro
-  attorno alla struttura e le viste del disegno.
+- `godot/tests/collaudo/scatti_disegno_torre.gd <cartella> [giro|disegno|fascette] [prima|blackout]`: la sala per parti, il
+  giro attorno alla struttura, le viste del disegno e le fascette da vicino.
