@@ -18,6 +18,8 @@ import sys
 TEXTURE_3D = {
     os.path.join("assets", "ambiente", "dettagli"): 1024,
     os.path.join("assets", "models", "medusa"): 0,
+    # gli stendardi dei bambini dell'inseguimento (1024 x 1536): appesi lontano, bastano 683 x 1024
+    os.path.join("assets", "ambiente", "inseguimento", "stendardi"): 1024,
 }
 
 
