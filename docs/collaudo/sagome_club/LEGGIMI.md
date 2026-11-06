@@ -38,18 +38,25 @@ Nessuna sagoma ha la forma di lei. Il polpo è arancio e ha le zampe allargate, 
 **Come stanno su.**
 - Vasca 1 e 3: in piedi sul bordo di piastrelle, girate verso l'acqua, con la faccia a 2,5 cm dallo spigolo interno.
   Il bordo è largo 18 cm e non ci passa nessuno. Dietro c'è un puntello di cartone incollato alla schiena, col piede
-  piegato sul bordo, e sul piede un mattone, accanto al puntello. Il punto più basso del taglio poggia sul bordo.
+  piegato sul bordo, e sul piede un mattone, accanto al puntello. La base è tagliata dritta e poggia sul bordo per
+  tutta la sua larghezza.
 - Vasca 2: non ha bordi liberi, ma ha la passerella nord con la ringhiera. Le sagome stanno in piedi sul grigliato,
-  dietro la ringhiera, contro il corrimano basso (le più alte lo toccano). Ognuna è legata con lo spago a due montanti:
-  lo spago passa da due fori del cartone, uno per parte del montante, gli gira attorno stretto e si annoda dietro.
+  dietro la ringhiera, contro il corrimano basso (le più alte lo toccano). Ognuna è legata con lo spago al corrimano
+  basso in due punti fra i montanti: lo spago passa da un foro del cartone (o da due), gira stretto attorno al
+  corrimano e si annoda dietro. Il delfino e lo squalo, più bassi del corrimano, ci restano appesi con lo spago che
+  sale dal foro. Il corrimano è a 2,08 m sopra il fondo della vasca: verso la vasca lo spago sporge solo lì sopra, e
+  sotto i 2 m sta contro il cartone.
 
 **Dove non stanno.**
 - Le bocche dei tubi.
 - Le paratie e i bersagli: almeno 1,4 m in pianta.
 - I pali delle lampade da lavoro.
 - I lati da cui sale lei: nella vasca 1 nord-ovest (la bava rosa sul bordo), nella vasca 2 est, nella vasca 3 sud.
-- Le salite nuove di mascotte (la mano sul bordo della vasca 3, la salita veloce della vasca 2): **da ricontrollare
-  quando entrano**.
+- Le salite nuove di mascotte (la mano sul bordo della vasca 3, la salita veloce della vasca 2). Mascotte le ha
+  controllate con la sua sonda (lavoro/salite-lei 4af88de1, proposte/mascotte/sonda_presa_sagome.gd): lei che sale,
+  incombe e prende, col giocatore in 9 punti per vasca, contro i 44 pezzi delle sagome. Nessuna compenetrazione; le
+  distanze minime sono 2,62 m (vasca 1), 0,99 m (vasca 2, un tentacolo vicino allo squalo) e 2,31 m (vasca 3).
+- La tacca del muro nord della vasca 3, dove entra il tubo (da x 69,0 a 71,5): lì il bordo non c'è.
 
 Le sagome non hanno collisioni.
 
@@ -74,7 +81,21 @@ fosforescenti" già approvati), così si leggono anche lontano dalle lampade da 
   - lontane da bocche, paratie e salite di lei;
   - nessuna collisione.
 - `godot/tests/collaudo/scatti_sagome_club.gd <cartella> [giro|vicino]`: gli scatti dagli occhi in tutti gli stati e
-  quelli ravvicinati. `SCATTI_LUCE=1` accende una luce di servizio sulla camera.
+  quelli ravvicinati. `SCATTI_LUCE=1` accende una luce di servizio sulla camera. `SOLO_VASCA=2` fa solo una vasca,
+  `SOLO=polpo,delfino` solo quelle sagome.
+
+## I fogli degli scatti (dal gioco)
+
+- `1_occhi_vasca1.jpg`, `2_occhi_vasca2.jpg`, `3_occhi_vasca3.jpg`: dagli occhi, in piedi nell'acqua, verso ogni
+  sagoma e tutto intorno, con la luce del gioco.
+- `4_stati.jpg`: lei su in ogni vasca, le paratie aperte, la grata calata.
+- `5_vicino_vasca1.jpg`, `6_vicino_vasca3.jpg`: per ogni sagoma sul bordo, l'appoggio di lato (puntello, piede,
+  mattone) e la base sul bordo.
+- `7_vicino_vasca2.jpg`: per ogni sagoma della passerella, le legature da davanti e da dietro e il piede sul grigliato.
+- `8_puntelli_da_dietro.jpg`: le sagome sul bordo viste da dietro, da fuori della vasca.
+
+Negli scatti da vicino c'è la luce di servizio (`SCATTI_LUCE=1`): con le sole lampade da lavoro da vicino si vedeva
+poco.
 
 ## Cosa ricontrollare e da dove
 
