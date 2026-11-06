@@ -9,8 +9,8 @@ Le vasche non hanno ringhiere tranne la 2 (la passerella nord), quindi:
   l'acqua, la faccia a 2,5 cm dallo spigolo interno; dietro un puntello di cartone (una striscia incollata alla schiena,
   col piede piegato sul bordo) e sul piede un mattone, di fianco al puntello;
 - vasca 2: in piedi sulla passerella nord, dietro la ringhiera, contro il corrimano basso (le più alte lo toccano) e
-  legate con lo spago a due montanti: ogni legatura passa da due fori del cartone, uno per parte del montante, gli
-  gira attorno stretta e si annoda dietro.
+  legate con lo spago al corrimano in due punti fra i montanti: lo spago passa dal cartone e gira attorno al corrimano,
+  stretto (le più basse ci restano appese); verso la vasca sporge solo sopra i 2 m dal fondo.
 Lontano dalle bocche dei tubi, dalle paratie, dai pali delle lampade e da dove sale lei (la bava rosa della vasca 1 a
 nord-ovest, il lato est della vasca 2, il lato sud della vasca 3). Le coordinate sono quelle dei GLB della sala (struttura, tubi), che entrano
 nella sala senza spostamenti.
@@ -46,8 +46,9 @@ PASSERELLA = {'piano': -24.01, 'corrimano': (-23.50, -30.20, 0.022), 'montanti':
 SUL_BORDO = [
     ['balena', 1, 'S', 51.65, 1], ['granchio', 1, 'S', 53.75, -1], ['stella', 1, 'N', 54.15, -1],
     ['tartaruga', 1, 'O', -13.30, 1],
-    # (nella vasca 3 lei sale da sud, 2,3 m fuori dal bordo: lì niente; la bocca del tubo è a nord, da x 68,7 a 70,3)
-    ['foca', 3, 'N', 67.60, 1], ['pesce', 3, 'O', -6.30, -1], ['razza', 3, 'E', -4.40, 1], ['cavalluccio', 3, 'N', 71.20, -1],
+    # (nella vasca 3 lei sale da sud, 2,3 m fuori dal bordo: lì niente; a nord il muro ha la tacca del tubo da x 69,0
+    # a 71,5: il bordo c'è da 66,55 a 69,0 e da 71,5 a 72,45)
+    ['foca', 3, 'N', 67.60, 1], ['pesce', 3, 'O', -6.30, -1], ['razza', 3, 'E', -4.40, 1], ['cavalluccio', 3, 'N', 71.86, -1],
 ]
 # [nome, x del centro] sulla passerella della vasca 2
 SULLA_RINGHIERA = [['pesce_palla', 63.85], ['polpo', 65.05], ['delfino', 66.35], ['squalo', 67.65]]
@@ -146,56 +147,69 @@ def anello_spago(punti_2d, a_mondo):
 
 
 class Piano:
-    """Il piano di una legatura attorno a un montante: y della sagoma fissa, (u, v) = (x, z) locali della sagoma; lo
-    spago è largo lungo la y locale."""
-    def __init__(self, R, O, y):
-        self.R, self.O, self.yl = R, O, y
-        self.x = R[:, 1]
-    def __call__(self, uv, dy=0.0):
-        return self.O + self.R @ np.array([uv[0], self.yl + dy, uv[1]])
+    """Il piano di una legatura attorno al corrimano basso: x della sagoma fissa, (u, v) = (y, z) locali della sagoma;
+    lo spago è largo lungo la x locale."""
+    def __init__(self, R, O, x):
+        self.R, self.O, self.xl = R, O, x
+        self.x = R[:, 0]
+    def __call__(self, uv, dx=0.0):
+        return self.O + self.R @ np.array([self.xl + dx, uv[0], uv[1]])
     def dir(self, nuv):
-        return self.R @ np.array([nuv[0], 0.0, nuv[1]])
+        return self.R @ np.array([0.0, nuv[0], nuv[1]])
 
 
 def legature(nome, contorno, R, O):
-    """Due legature attorno ai montanti della ringhiera che la sagoma ha dietro (i più lontani fra loro): lo spago
-    passa da due fori del cartone, uno per parte del montante, e gli gira attorno, stretto; il nodo è dietro. Torna i
-    fori (rettangoli nel sistema della sagoma) e le mesh dello spago."""
-    r = PASSERELLA['r_montante']
-    zm = PASSERELLA['corrimano'][1] - O[2]           # il montante: davanti alla schiena del cartone
+    """Due legature attorno al corrimano basso della ringhiera (a 2,08 m sopra il fondo della vasca), fra i montanti.
+    Lo spago passa da un foro del cartone (o da due, se il cartone va oltre il corrimano) e gira attorno al corrimano;
+    dove il cartone finisce sotto il corrimano sale dal foro, passa sopra il bordo e lo tiene appeso. Il nodo è dietro.
+    Così verso la vasca sporge solo il giro attorno al corrimano, sopra i 2 m: sotto, lo spago sta contro il cartone.
+    Torna i fori (rettangoli nel sistema della sagoma) e le mesh dello spago."""
+    yr = PASSERELLA['corrimano'][0] - O[1]
+    zr = PASSERELLA['corrimano'][1] - O[2]
+    r = PASSERELLA['corrimano'][2]
     xs = [p[0] for p in contorno]
-    adatti = []
-    for xm_mondo in PASSERELLA['montanti']:
-        xp = xm_mondo - O[0]
-        if not (min(xs) + 0.07 < xp < max(xs) - 0.07):
-            continue
-        comune = None
-        for dx in (-0.055, 0.0, 0.055):
-            iv = [(a, b) for a, b in intervalli_x(contorno, xp + dx) if b - a > 0.06]
-            if not iv:
-                comune = None
-                break
-            a, b = max(iv, key=lambda t: t[1] - t[0])
-            comune = (a, b) if comune is None else (max(comune[0], a), min(comune[1], b))
-        if comune and comune[1] - comune[0] > 0.1:
-            adatti.append((xp, comune))
-    if len(adatti) < 2:
-        raise SystemExit('%s: solo %d montanti per le legature' % (nome, len(adatti)))
-    scelti = [adatti[0], adatti[-1]]
-    fori, mesh = [], []
+    larg = max(xs) - min(xs)
     alto_foro = AGIO + SPAGO[1] + 0.001
-    for xp, (a, b) in scelti:
-        yt = min(max((a + b) * 0.5, a + 0.05), min(b - 0.05, 0.42))
-        x_sx = xp - r - 0.012                       # il bordo destro del foro di sinistra
-        x_dx = xp + r + 0.012                       # il bordo sinistro del foro di destra
-        meta = SPAGO[0] * 0.5 + 0.0006
-        fori.append([x_sx - alto_foro, yt - meta, x_sx, yt + meta])
-        fori.append([x_dx, yt - meta, x_dx + alto_foro, yt + meta])
-        punti = [(x_sx, 0.0), (x_sx, SPESSORE), (x_dx, 0.0), (x_dx, SPESSORE)]
-        punti += [(xp + r / math.cos(math.pi / 24) * math.cos(t), zm + r / math.cos(math.pi / 24) * math.sin(t))
+    meta = SPAGO[0] * 0.5 + 0.0006
+    fori, mesh = [], []
+    for frazione in (0.27, 0.73):
+        scelto = None
+        for spost in [0.0, 0.02, -0.02, 0.04, -0.04, 0.06, -0.06, 0.08, -0.08, 0.1, -0.1, 0.12, -0.12, 0.15, -0.15]:
+            x = min(xs) + larg * frazione + spost
+            xm = (O + R @ np.array([x, 0, 0]))[0]
+            if min(abs(xm - m) for m in PASSERELLA['montanti']) < PASSERELLA['r_montante'] + 0.03:
+                continue
+            # il cartone ai due lati dello spago: il pezzo più alto, che arrivi almeno a 25 cm
+            iv = None
+            for dx in (-meta, 0.0, meta):
+                pezzi = [(a, b) for a, b in intervalli_x(contorno, x + dx) if b > 0.25]
+                if not pezzi:
+                    iv = None
+                    break
+                a, b = max(pezzi, key=lambda t: t[1])
+                iv = (a, b) if iv is None else (max(iv[0], a), min(iv[1], b))
+            if iv and iv[1] - iv[0] > 0.1:
+                scelto = (x, iv)
+                break
+        if not scelto:
+            raise SystemExit('%s: nessun punto per la legatura al %d%%' % (nome, frazione * 100))
+        x, (y0, y1) = scelto
+        y_alto = None
+        if y1 >= yr - r - 0.03:
+            y_basso = min(yr - r - 0.012, y1 - 0.03)     # il foro sotto il corrimano
+            if y1 >= yr + r + 0.04:
+                y_alto = yr + r + 0.012                  # e uno sopra
+        else:
+            y_basso = y1 - 0.03                          # appesa: il foro 3 cm sotto il bordo, lo spago sale al corrimano
+        fori.append([x - meta, y_basso - alto_foro, x + meta, y_basso])
+        if y_alto is not None:
+            fori.append([x - meta, y_alto, x + meta, y_alto + alto_foro])
+        cima = y_alto if y_alto is not None else min(y1, yr)
+        punti = [(y_basso, 0.0), (y_basso, SPESSORE), (cima, 0.0), (cima, SPESSORE)]
+        punti += [(yr + r / math.cos(math.pi / 24) * math.cos(t), zr + r / math.cos(math.pi / 24) * math.sin(t))
                   for t in [i * 2 * math.pi / 24 for i in range(24)]]
-        v, n = anello_spago(punti, Piano(R, O, yt))
-        nodo = O + R @ np.array([xp, yt, -(AGIO + SPAGO[1] + 0.004)])
+        v, n = anello_spago(punti, Piano(R, O, x))
+        nodo = O + R @ np.array([x, y_basso + 0.02, -(AGIO + SPAGO[1] + 0.004)])
         mesh.append({'v': np.round(np.array(v).ravel(), 5).tolist(), 'n': np.round(np.array(n).ravel(), 4).tolist(),
                      'nodo': np.round(nodo, 5).tolist()})
     return fori, mesh
