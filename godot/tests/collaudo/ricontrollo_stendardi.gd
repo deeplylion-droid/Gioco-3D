@@ -79,6 +79,8 @@ func _run() -> void:
 				await _distanze()
 			"tubo":
 				await _tubo()
+			"lato":
+				await _lato()
 			_:
 				await _vicino()
 	print("FINE")
@@ -295,9 +297,12 @@ func _tubo() -> void:
 	var occhi := _occhi_scolo(0)
 	await _scatto("scolo0_in_piedi_in_su", occhi, occhi + Vector3(0.6, 3.0, 0.2))
 	await _scatto("scolo0_in_piedi_verso_tubo", occhi, _ins.b(linea[n - 1]) + Vector3.UP * 0.5)
-	# di lato, da fuori: il fondo del lenzuolo sopra lo sbocco del tubo e lo scolo
-	var fondo := Vector3(c3.x, -22.7, c3.z)
-	await _scatto("scolo0_di_lato", fondo + Vector3(-1.5, -1.0, -5.5), fondo + Vector3(-0.5, -1.2, 0))
+	await _lato()
+
+
+## Di lato, da fuori (da sud-ovest dello scolo 0): il fondo del lenzuolo 3 sopra lo sbocco del tubo e lo scolo.
+func _lato() -> void:
+	await _scatto("scolo0_di_lato", Vector3(56.0, -23.0, -9.0), Vector3(59.5, -24.2, -12.0))
 
 
 func _vicino() -> void:
