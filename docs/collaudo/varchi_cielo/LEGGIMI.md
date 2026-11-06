@@ -20,3 +20,37 @@ Il primo giro ha trovato un solo buco vero:
 Dopo la correzione: 217 posti controllati, 0 col cielo; 18 vedono il cielo dalla cupola di vetro (voluto).
 
 Torre, condotte e tunnel sono scene a parte, caricate dopo: il controllo non le copre ancora.
+
+## Dopo il ricontrollo del collaudo (lavoro/collaudo-ritocchi 3286a7c1)
+
+### Gli angoli della giunzione camera delle onde - sala pompe
+
+- Fra la camera e la sala pompe c'è un corridoio largo 2,6 m (x ±1,3): pavimento a -9,05, soffitto a -6,25, da z 25,66 a 29,5.
+- La "fossa" a x ±1,5 non è parte della sala. È il vuoto fuori dai muri del corridoio, e il giocatore non ci arriva.
+- I raggi del collaudo partivano da lì e uscivano dalla stessa fessura della lastra, sui due lati (x da ±1,3 a ±2,5, dal pavimento al soffitto del corridoio).
+- **Chiusa** con due lastre di cemento dentro la fessura, `muro_giunzione_onde_ovest` ed `_est` in `_chiudi_fessura_onde` di `scripts/tecnici/tecnici.gd`:
+  - stanno 2 cm dietro le facce dei muri (niente facce sovrapposte);
+  - dalla strada non si vedono.
+- Con lo strumento del collaudo (`cielo_angoli_onde.gd`, gioco vero) ora vanno nel cielo **0 raggi su 6048**; prima erano 100.
+
+### Il portone della torre
+
+Gli scatti sono del gioco a parti (la sala e la torre, col guscio tolto come nel gioco): `tests/collaudo/scatti_portone_torre.gd`.
+
+- **In basso: fessura vera, chiusa.**
+  - Quando la torre si carica, la sala toglie il guscio provvisorio. Sulla soglia, fra il bordo del pavimento della sala (x 20,01) e il grigliato della torre (x 20,19), resta una fessura per tutto il vano (z da -16,5 a -13,5).
+  - Nello scatto si vede la striscia di cielo azzurro con le nuvole lungo il grigliato.
+  - La chiude una lastra 1,5 cm sotto il pavimento, coperta ai due bordi, con la collisione: `SalaPrincipale.chiudi_soglia_torre`, chiamata in `_completa_torre`.
+  - Foglio: `soglia_portone_prima_dopo.jpg`.
+- **In alto: la torre è aperta in cima. Da decidere, non toccata.**
+  - Dai checkpoint NEm3 e NOm12, e con un raggio dal portone, guardando in su si vede il cielo scuro sopra le bandierine.
+  - Lungo quei raggi non c'è nessun triangolo di nessuna mesh, né della torre né della sala.
+  - Fogli: `torre_aperta_in_cima.jpg` e `torre_aperta_in_cima_schiarito.jpg` (schiarito 6 volte: si vedono le nuvole e le bandierine in controluce).
+  - Il modello è di ambienti-2; se va chiusa in cima lo decide l'utente.
+
+### Il controllo del cielo
+
+- Ora guarda anche la torre: caricata come nel gioco (guscio tolto), aspetta che sia costruita del tutto, poi tira i raggi dagli occhi di ognuno degli 11 checkpoint.
+- Lì il cielo verso l'alto (raggi che salgono più di 0,3) si stampa a parte e non fa fallire, finché l'utente non decide.
+- Le fessure sottili non contano: una crepa fra due pezzi di un modello, dove dei raggi vicini a mezzo grado ne escono meno di 3 su 8.
+- Esito: 228 posti, 0 col cielo; 18 vedono la cupola di vetro (voluto); 0 fessure sottili; 5 raggi verso l'alto nella torre.
