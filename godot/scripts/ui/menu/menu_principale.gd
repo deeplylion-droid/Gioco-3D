@@ -70,7 +70,7 @@ func _ready() -> void:
 	velo.schiarisci(2.4, 2)
 	_audio(&"ferma_tutto")
 	_audio(&"musica_titolo")
-	_voci[0].grab_focus.call_deferred()
+	_fuoco_iniziale.call_deferred()
 	_partenza_da_riga.call_deferred()
 	# l'ultima volta il gioco si è chiuso di colpo: prima di tutto la domanda dell'avvio sicuro (AvvioSicuro)
 	if AvvioSicuro.da_chiedere():
@@ -286,6 +286,17 @@ func _chiedi_nuova_partita() -> void:
 func _chiedi_avvio_sicuro() -> void:
 	if is_instance_valid(_sottomenu) or _avviato:
 		return
+	# con la calibrazione della luminosità aperta sopra il titolo (il primo avvio chiuso di colpo prima di confermarla)
+	# la domanda aspetta che si chiuda: sotto, nascosta, avrebbe preso il focus, e l'Invio per confermare la luminosità
+	# avrebbe scelto l'avvio sicuro senza vederlo (collaudo finale di grafica-2, 6 novembre). Il segno della sessione
+	# resta finché non si risponde.
+	var cal := _calibrazione_aperta()
+	if cal:
+		cal.tree_exited.connect(func():
+			if is_inside_tree():
+				_chiedi_avvio_sicuro.call_deferred()
+		, CONNECT_ONE_SHOT)
+		return
 	var d: CanvasLayer = DOMANDA.new("Avvio sicuro?", AvvioSicuro.nota(), "Avvio sicuro", "Avvio normale", true)
 	d.name = "DomandaAvvioSicuro"
 	_sottomenu = d
@@ -301,6 +312,21 @@ func _chiedi_avvio_sicuro() -> void:
 		_testata.visible = true
 		_logo.visible = true
 		_voci[0].grab_focus.call_deferred())
+
+
+## Il focus sulla prima voce, ma non se sopra c'è la calibrazione della luminosità: il focus resta sul suo Conferma
+## (col titolo in pausa sotto, un Invio non farebbe niente). Chiusa la calibrazione lo prende _process.
+func _fuoco_iniziale() -> void:
+	if _calibrazione_aperta() == null:
+		_voci[0].grab_focus()
+
+
+## La calibrazione della luminosità del primo avvio, se è aperta (Game._show_calibration la mette sopra il titolo).
+func _calibrazione_aperta() -> Node:
+	for c in Game.get_children():
+		if c is CanvasLayer and String(c.scene_file_path).ends_with("calibrazione_luminosita.tscn") and not c.is_queued_for_deletion():
+			return c
+	return null
 
 
 func _avvia_nuova_partita() -> void:
