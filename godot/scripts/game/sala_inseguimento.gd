@@ -961,6 +961,22 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 				lei.visible = false
 
 
+## Il battito del cuore nelle condotte (scelta A dell'utente, 4 novembre: "cuore nelle condotte solo quando lei è
+## su"): lo segnala su di lei la meta "cuore_condotte", che l'audio legge (addons/audio/audio.gd, Statua): 1 mentre sale o
+## è su in una vasca o in uno scolo, 2 mentre torna sotto (ricacciata col getto o da sola: il battito rallenta), 0 quando
+## non c'è, ti prende, o alla grata e in SB1 (dove non ti prende). I colpi bassi restano solo nel tunnel.
+func _segnale_cuore() -> void:
+	var m := 0
+	var vasca := _lei_dove.begins_with("vasca") or _lei_dove.begins_with("scolo")
+	if vasca and lei.visible:
+		match lei_stato:
+			Lei.SALE, Lei.SU:
+				m = 1
+			Lei.SCENDE:
+				m = 2
+	lei.set_meta(&"cuore_condotte", m)
+
+
 ## La grata è calata: lei sale di colpo (1 s) dal pozzetto dietro la grata, a nord della bocca della spirale,
 ## ci sbatte contro tre volte, poi se ne va (lei C).
 func _lei_alla_grata() -> void:
@@ -1127,6 +1143,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if lei_stato != Lei.VIA:
 		_lei_aggiorna(delta, p)
+	if lei and is_instance_valid(lei):
+		_segnale_cuore()
 	if GameState.is_dying or _sb1:
 		return
 	p.accovacciato_forzato = in_tubo(p.global_position)
