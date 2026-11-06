@@ -4,6 +4,8 @@ extends Node
 ## provvisorio tolto), le mesh accese solo vicino alla camera, l'ambiente della sala senza GI e nebbia volumetrica e le
 ## luci del blackout. Le pose: dagli occhi del checkpoint del portone verso le due aperture trovate dal collaudo
 ## (cielo_fessure.gd), e la soglia come la vede chi entra e chi esce.
+## Con CUBO=1 (e MAGENTA=1) le pose sono 6 direzioni a 90° (un cubo) dagli occhi di ogni checkpoint della torre e da
+## un punto ogni tre della discesa (torre_percorso.json, 1 m sopra lo scivolo): i pixel magenta si contano dopo.
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##     --script res://tests/run.gd -- res://tests/collaudo/scatti_portone_torre.gd <cartella> [prima]
@@ -85,7 +87,10 @@ func _run() -> void:
 		await get_tree().process_frame
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	cam.make_current()
-	for v in POSE:
+	var pose: Array = POSE
+	if OS.has_environment("CUBO"):
+		pose = _pose_cubo(torre)
+	for v in pose:
 		if OS.has_environment("SOLO_RAGGI") and not String(v[0]).begins_with("raggio_"):
 			continue
 		cam.fov = float(v[3])
@@ -100,6 +105,27 @@ func _run() -> void:
 	print("memoria massima del processo %d MB" % (OS.get_static_memory_peak_usage() / 1048576))
 	print("FINE")
 	get_tree().quit()
+
+
+func _pose_cubo(torre: Node) -> Array:
+	var punti: Array = []
+	for c in torre.find_children("*", "Checkpoint", true, false):
+		punti.append([String(c.name), (c as Checkpoint).get_spawn_transform().origin + Vector3.UP * 1.6])
+	var percorso: Array = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ambiente/torre/torre_percorso.json"))
+	var k := 0
+	for q: Dictionary in percorso:
+		if q["cosa"] != "scivolo" and q["cosa"] != "pedana":
+			continue
+		if k % 3 == 0:
+			punti.append(["discesa%02d" % k, SalaTorre.b([q["x"], q["y"], q["z"]]) + Vector3.UP * 1.0])
+		k += 1
+	var dirs := {"est": Vector3(1, 0, 0.001), "ovest": Vector3(-1, 0, 0.001), "nord": Vector3(0.001, 0, -1),
+			"sud": Vector3(0.001, 0, 1), "su": Vector3(0.001, 1, 0.002), "giu": Vector3(0.001, -1, 0.002)}
+	var out: Array = []
+	for p: Array in punti:
+		for d: String in dirs:
+			out.append(["cubo_%s_%s" % [p[0], d], p[1], (p[1] as Vector3) + dirs[d], 90.0])
+	return out
 
 
 func _accendi(da: Vector3) -> void:
