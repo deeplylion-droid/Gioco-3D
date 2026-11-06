@@ -393,9 +393,11 @@ func _scala_di_servizio() -> void:
 	# le lampade rosse d'emergenza: in cima alla seconda rampa, sul muro nord del tratto verso sud (dove prima stava in
 	# cima alla rampa: senza, salendo c'erano 5 m di buio, collaudo del 1 novembre), in fondo a quel tratto e sul
 	# pianerottolo in basso
-	_lampada_rossa(Vector3(x + 1.0, 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
-	_lampada_rossa(Vector3(x + 1.0, 2.2, c1 - 0.05), Vector3(0, -0.5, -1))
+	# (le due in cima 5 cm più in alto, col fondo a 2,03 m: scelta A dell'utente del 4 novembre, "lampade")
+	_lampada_rossa(Vector3(x + 1.0, 2.25, z0 + 0.05), Vector3(0, -0.5, 1))
+	_lampada_rossa(Vector3(x + 1.0, 2.25, c1 - 0.05), Vector3(0, -0.5, -1))
 	_lampada_rossa(Vector3(xs + 0.6, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
+	_strisce_cima_scala(x, xe, z0, z1, c0, c1)
 	var m := Node3D.new()
 	m.name = "Marker"
 	add_child(m)
@@ -603,6 +605,52 @@ func _prepara_materiali_oblo(o: ObloLei) -> void:
 		await get_tree().process_frame
 	if is_instance_valid(o) and o.is_inside_tree():
 		await o.prepara_materiali_lei(get_viewport())
+
+
+## La cima della scala di servizio, dopo l'ultima rampa (scelta A dell'utente del 4 novembre, "scala buia": nessuna luce
+## nuova): sul pavimento del tratto verso sud e del corridoio fino alla porta di C3 continuano le strisce gialle e nere
+## dei gradini, come nastro antiscivolo di traverso ogni STRISCE_PASSO m; sul muro alla destra di chi sale (quello
+## ovest del tratto e quello sud del corridoio), all'altezza della mano, una fascia catarifrangente. Tutto incollato:
+## il nastro sul pavimento (4 mm), la fascia sul muro (5 mm).
+const STRISCE_PASSO := 0.8
+const STRISCE_LARGHE := 0.1
+const FASCIA_ALTA := 0.05
+const FASCIA_Y := 1.0
+
+
+func _strisce_cima_scala(x: float, xe: float, z0: float, z1: float, c0: float, c1: float) -> void:
+	var nastro := Node3D.new()
+	nastro.name = "NastroCimaScala"
+	add_child(nastro)
+	# nel tratto verso sud (da x a xe), di traverso, dall'arrivo della rampa fin dentro l'angolo col corridoio
+	var z := z0 + 0.4
+	while z <= c1 - 0.3:
+		_striscia(nastro, Vector3(xe - x - 0.4, 0.004, STRISCE_LARGHE), Vector3((x + xe) * 0.5, 0.002, z), _mat_pericolo)
+		z += STRISCE_PASSO
+	# nel corridoio verso la porta di C3 (da xe in poi), di traverso, fino a 60 cm dalla porta
+	var xx := xe + 0.4
+	while xx <= PORTA_C3.x - 0.6:
+		_striscia(nastro, Vector3(STRISCE_LARGHE, 0.004, c1 - c0 - 0.4), Vector3(xx, 0.002, (c0 + c1) * 0.5), _mat_pericolo)
+		xx += STRISCE_PASSO
+	# la fascia catarifrangente: bianca e lucida, sul muro ovest del tratto (dalla rampa all'angolo) e sul muro sud del
+	# corridoio (dall'angolo a 30 cm dalla porta)
+	var cat := StandardMaterial3D.new()
+	cat.albedo_color = Color(0.92, 0.92, 0.88)
+	cat.roughness = 0.12
+	cat.metallic_specular = 1.0
+	_striscia(nastro, Vector3(0.005, FASCIA_ALTA, c1 - z1), Vector3(x + 0.0025, FASCIA_Y, (z1 + c1) * 0.5), cat)
+	_striscia(nastro, Vector3(PORTA_C3.x - 0.3 - x, FASCIA_ALTA, 0.005), Vector3((x + PORTA_C3.x - 0.3) * 0.5, FASCIA_Y, c1 - 0.0025), cat)
+
+
+func _striscia(padre: Node3D, size: Vector3, pos: Vector3, m: Material) -> void:
+	var mi := MeshInstance3D.new()
+	var b := BoxMesh.new()
+	b.size = size
+	mi.mesh = b
+	mi.material_override = m
+	mi.position = pos
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	padre.add_child(mi)
 
 
 ## Una rampa di [param n] gradini che sale verso est da [param lo] (angolo basso a ovest-nord):
