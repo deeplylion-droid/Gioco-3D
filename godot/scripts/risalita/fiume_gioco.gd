@@ -2248,14 +2248,14 @@ func _pile() -> void:
 ## coordinate del fiume): dalla porta del capannone gira a sinistra e sparisce nella rientranza fra la porta e il muro
 ## dell'approdo. Le pile ne stanno fuori (test_bambini_sfuggita), a FUGA_LARGO dall'asse: il raggio del bambino (22 cm) e
 ## 20 cm di margine. Se cambiano i punti lì, vanno cambiati anche qui.
-const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -26.9), Vector2(-30.0, -26.9), Vector2(-30.0, -28.3)]
+const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -26.9), Vector2(-30.0, -26.9), Vector2(-29.97, -28.32)]
 const FUGA_LARGO := 0.42
 ## La pila dell'angolo (vedi sopra): il centro della base, contro il muro nord come il muro di pile 0, e lo stacco minimo
-## dall'asse della fuga (il raggio del bambino e 2 cm). La pila, di traverso, va da x -29,5 a -28,5 e da z -28,598 (2 mm dal
+## dall'asse della fuga (il raggio del bambino e 2 cm). La pila, di traverso, va da x -29,7 a -28,7 e da z -28,598 (2 mm dal
 ## muro nord, ricontrollo di grafica-2 del 6 novembre: prima c'erano 35 cm e si vedeva la nicchia lungo il muro) a -27,39;
-## la nicchia fra la pila e il muro dell'approdo (faccia a x -30,35) è larga 85 cm e profonda 1,2 m, e il bambino sparisce
-## in fondo, a 30 cm dal muro nord: dalla strada la copre la pila.
-const ANGOLO_PILA := Vector2(-29.0, Z0 + PILA_LUNGO * 0.5 + 0.006)
+## la nicchia fra la pila e il muro dell'approdo (faccia a x -30,35) è larga 65 cm e profonda 1,2 m, e il bambino sparisce
+## in fondo, a 28 cm dal muro nord: dalla strada la copre la pila, anche di sbieco da 3,6 m (mascotte, 6 novembre).
+const ANGOLO_PILA := Vector2(-29.2, Z0 + PILA_LUNGO * 0.5 + 0.006)
 const ANGOLO_STACCO := 0.24
 ## I tappi delle fessure fra le pile: [la fessura, da dove la si vede dalla strada]. All'angolo fra i muri 3 e 4, vista
 ## dalla fine della fila vicino alla tettoia della cabina (ricontrollo di enigmi, 2 novembre: si vedeva il buio fino

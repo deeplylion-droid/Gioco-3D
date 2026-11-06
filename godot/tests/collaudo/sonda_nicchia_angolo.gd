@@ -52,6 +52,11 @@ func _run() -> void:
 			["strada_3m", Vector3(ix, 1.6, z0 + 3.0)], ["strada_4m", Vector3(ix, 1.6, z0 + 4.0)],
 			["strada_6m", Vector3(ix + 1.0, 1.6, z0 + 6.0)], ["strada_2m_ovest", Vector3(ix - 0.8, 1.6, z0 + 2.0)],
 			["accovacciato_1m", Vector3(ix, 0.9, z0 + 1.0)]]
+	# altri occhi, coordinate del fiume: OCCHI="x,y,z;x,y,z"
+	if OS.has_environment("OCCHI"):
+		for t in OS.get_environment("OCCHI").split(";"):
+			var v := t.split(",")
+			occhi.append(["occhio_%s" % t, Vector3(float(v[0]), float(v[1]), float(v[2]))])
 	var totale := 0
 	for o in occhi:
 		var visti := []
