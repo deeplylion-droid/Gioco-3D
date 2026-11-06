@@ -4,12 +4,14 @@ extends Node
 ## Da rilanciare solo quando si vogliono cambiare le pile di proposito (codice di _pile, muri, rocce, transenne).
 ## Con "dump=<file>" scrive anche tutte le trasformazioni, le tinte, le collisioni e le lampade delle pile, una per riga a
 ## precisione piena; con "dal_file" non le costruisce ma le prende dal file (per il confronto: i due dump devono essere
-## uguali riga per riga).
+## uguali riga per riga); con "scena" (e dump=) scrive le istanze dei MultiMesh delle pile come sono nella scena.
 ## Uso (sotto il render.lock):
 ##   godot --headless --path godot --script res://tests/run.gd -- res://tools/salva_pile_fiume.gd [dal_file] [dump=<file>]
 
 const SCENA := "res://tests/scene/fiume_gioco_prova.tscn"
 const FIUME := preload("res://scripts/risalita/fiume_gioco.gd")
+## FiumeLento.PILE_FILE (scritto qui per confrontare anche con versioni del fiume che non ce l'hanno).
+const FILE := "res://assets/fiume_lento/pile_fiume.res"
 
 
 func _ready() -> void:
@@ -41,14 +43,34 @@ func _run() -> void:
 		print("PILE: il fiume non si è costruito")
 		get_tree().quit(1)
 		return
+	if "scena" in argomenti:
+		# i MultiMesh delle pile come sono nella scena (per confrontare anche con versioni del fiume senza dati_pile)
+		var righe := PackedStringArray()
+		for nome in ["PileCasse", "PileCartone", "PileCartoneAperte", "PileScatole", "PileScatoleColorate", "PileCasseSciolte"]:
+			var mmi := fiume.get_node_or_null(NodePath(nome)) as MultiMeshInstance3D
+			if mmi == null:
+				righe.append("%s assente" % nome)
+				continue
+			var mm := mmi.multimesh
+			righe.append("%s %d" % [nome, mm.instance_count])
+			for i in mm.instance_count:
+				righe.append(var_to_str(mm.get_instance_transform(i)).replace("\n", " ") + ((" " + var_to_str(mm.get_instance_color(i))) if mm.use_colors else ""))
+		var f := FileAccess.open(dump, FileAccess.WRITE)
+		for r in righe:
+			f.store_line(r)
+		f.close()
+		print("PILE: scena in %s (%d righe)" % [dump, righe.size()])
+		Engine.remove_meta(&"costruisci_pile")
+		get_tree().quit()
+		return
 	var dati: Dictionary = fiume.get(&"dati_pile")
 	if not dal_file:
 		var r := Resource.new()
 		r.set_meta(&"dati", dati)
-		var err := ResourceSaver.save(r, FIUME.PILE_FILE, ResourceSaver.FLAG_COMPRESS)
-		print("PILE: salvate in %s (errore %d)" % [FIUME.PILE_FILE, err])
+		var err := ResourceSaver.save(r, FILE, ResourceSaver.FLAG_COMPRESS)
+		print("PILE: salvate in %s (errore %d)" % [FILE, err])
 		# rilette dal file, devono essere identiche a quelle costruite
-		var riletto: Dictionary = (ResourceLoader.load(FIUME.PILE_FILE, "", ResourceLoader.CACHE_MODE_IGNORE) as Resource).get_meta(&"dati")
+		var riletto: Dictionary = (ResourceLoader.load(FILE, "", ResourceLoader.CACHE_MODE_IGNORE) as Resource).get_meta(&"dati")
 		print("PILE: rilette uguali: %s" % (_righe(riletto) == _righe(dati)))
 	if not dump.is_empty():
 		var f := FileAccess.open(dump, FileAccess.WRITE)
