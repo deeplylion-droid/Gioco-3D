@@ -175,11 +175,25 @@ def nodo_alla_trave(nome, x, y, mat):
     """La corda che gira due volte attorno alla trave (larga 40 cm, alta 60) e scende: un anello schiacciato."""
     pezzi = []
     for k, dy in enumerate((-0.03, 0.03)):
-        pts = [Vector((x - 0.215, y + dy, SOTTO_TRAVE - 0.015)), Vector((x + 0.215, y + dy, SOTTO_TRAVE - 0.015)),
-               Vector((x + 0.215, y + dy, SOTTO_TRAVE + 0.5)), Vector((x - 0.215, y + dy, SOTTO_TRAVE + 0.5))]
+        # (stretto alla trave: la corda, raggio 1,2 cm, ne tocca il fondo e i fianchi)
+        pts = [Vector((x - 0.212, y + dy, SOTTO_TRAVE - 0.012)), Vector((x + 0.212, y + dy, SOTTO_TRAVE - 0.012)),
+               Vector((x + 0.212, y + dy, SOTTO_TRAVE + 0.5)), Vector((x - 0.212, y + dy, SOTTO_TRAVE + 0.5))]
         for i in range(4):
             pezzi.append(cilindro('%s_giro%d_%d' % (nome, k, i), pts[i], pts[(i + 1) % 4], 0.012, mat, seg=6))
     return pezzi
+
+
+def unisci(nome, pezzi):
+    """Un oggetto solo dai [pezzi]."""
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in pezzi:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = pezzi[0]
+    bpy.ops.object.join()
+    o = bpy.context.view_layer.objects.active
+    o.name = nome
+    o.data.name = nome
+    return o
 
 
 def costruisci():
@@ -195,27 +209,32 @@ def costruisci():
         lato = Vector((-verso.y, verso.x, 0)) * -1.0
         centro = Vector((xt, yc, zc))
         # il lenzuolo pende 4 cm sotto il bastone (le mollette lo stringono sul davanti)
-        telo, punti = lenzuolo(nome, centro - Vector((0, 0, 0.04)), verso, lato, largo, alto, mollette, 7 + k)
+        # (la cima del lenzuolo passa sotto il bastone e lo tocca: il tubo ha raggio 2,2 cm)
+        telo, punti = lenzuolo(nome, centro - Vector((0, 0, 0.021)), verso, lato, largo, alto, mollette, 7 + k)
         oggetti.append(telo)
         # il bastone (tubo di plastica Ø 4 cm), 20 cm più largo del lenzuolo
         ba = centro - lato * (largo / 2 + 0.1)
         bb = centro + lato * (largo / 2 + 0.1)
         oggetti.append(cilindro(nome + '_bastone', ba, bb, 0.022, m_bastone, seg=10))
         # le mollette: due ganasce sul davanti e sul dietro della cima, che stringono stoffa e bastone
+        # (una molletta per punto: le due ganasce chiuse attorno al bastone e alla stoffa, dal centro del bastone a 6 cm
+        # sotto la cima del lenzuolo; tocca tutti e due)
         for i, p in enumerate(punti):
-            for s in (-1, 1):
-                oggetti.append(scatola('%s_molletta%d_%d' % (nome, i, s), p + verso * s * 0.03 - Vector((0, 0, 0.02)),
-                                       [lato, verso, Vector((0, 0, 1))], (0.008, 0.006, 0.035), m_molletta))
+            oggetti.append(scatola('%s_molletta%d' % (nome, i), p - Vector((0, 0, 0.035)),
+                                   [lato, verso, Vector((0, 0, 1))], (0.009, 0.03, 0.04), m_molletta))
         # le due corde: dagli estremi del bastone su fino alla trave (la trave è a x = xt, lungo y): se il lenzuolo è
         # girato lungo y le corde salgono dritte; se è girato lungo x salgono alla trave dalla stessa x, al punto di y
         # sopra ogni capo
         for s, capo in (('a', ba), ('b', bb)):
-            sopra = Vector((xt, capo.y, SOTTO_TRAVE - 0.015))
+            sopra = Vector((xt, capo.y, SOTTO_TRAVE - 0.012))
             if abs(lato.x) > 0.5:
                 # (il lenzuolo è di traverso alla trave: le corde vanno a due travi vicine, ai capi del bastone)
-                sopra = Vector((round((capo.x - 44.0) / 4.0) * 4.0 + 44.0, capo.y, SOTTO_TRAVE - 0.015))
-            oggetti += corda('%s_corda_%s' % (nome, s), capo + Vector((0, 0, 0.02)), sopra, m_corda)
-            oggetti += nodo_alla_trave('%s_nodo_%s' % (nome, s), sopra.x, sopra.y, m_corda)
+                sopra = Vector((round((capo.x - 44.0) / 4.0) * 4.0 + 44.0, capo.y, SOTTO_TRAVE - 0.012))
+            # (la corda e il suo nodo sulla trave sono un pezzo solo: dal bastone, che tocca, alla trave, a cui gira
+            # attorno)
+            pezzi = corda('%s_corda_%s' % (nome, s), capo + Vector((0, 0, 0.02)), sopra, m_corda)
+            pezzi += nodo_alla_trave('%s_nodo_%s' % (nome, s), sopra.x, sopra.y, m_corda)
+            oggetti.append(unisci('%s_corda_%s' % (nome, s), pezzi))
         dati.append({'nome': nome, 'centro_cima': list(centro), 'verso': list(verso), 'lato': list(lato), 'largo': largo,
                      'alto': alto, 'trave_x': xt})
     return oggetti, dati
