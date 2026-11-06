@@ -32,8 +32,12 @@ const FORO := 0.75      # il raggio del foro nel pavimento dove lei sale (m)
 ## - grata: il palo tondo (8 facce, 7 cm) accanto al pozzetto, da -33 fin sopra -12,5 (la pelle di un tentacolo ci
 ##   entrava di 5 cm: test_morbidezza_inseguimento a 60 fps);
 ## - scolo_1: i due piedi tondi sotto il piano a -32,81, a 1,5 m da lei: la base larga 72 cm, il corpo 32 cm, l'attacco
-##   al piano.
+##   al piano;
+## - scolo_2: la trave sotto il piano a -31,35 (x 73,8-74,0) scende fino a -31,70, 5 cm più della lastra di 30 cm presa
+##   dall'alto (raggi del 6 novembre, proposte/mascotte/sonda_scolo2_sotto.gd): la pelle di un tentacolo ci entrava di
+##   1-1,2 cm (ricontrollo di ambienti-1, test_morbidezza_inseguimento).
 const A_MANO := {
+	"scolo_2": [[73.8, -31.70, -16.10, 74.0, -31.35, -11.90]],
 	"grata": [[51.489, -33.0, -7.461, 51.561, -12.0, -7.389]],
 	"scolo_1": [[55.94, -34.0, -22.56, 56.66, -33.93, -21.84], [56.14, -34.0, -22.36, 56.46, -33.03, -22.04],
 			[56.40, -33.06, -22.12, 56.50, -32.81, -22.0],

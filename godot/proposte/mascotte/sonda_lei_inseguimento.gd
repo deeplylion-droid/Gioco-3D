@@ -10,7 +10,7 @@ extends Node
 ##        res://proposte/mascotte/sonda_lei_inseguimento.gd [cerca <posto> | prova <posto> <dx> <dy>]
 
 const SCENA := "res://scenes/sala/inseguimento/sala_inseguimento.tscn"
-const SALE := ["sale_dall_acqua", "sale_dall_acqua_veloce", "affacciata_sb1"]
+const SALE := ["sale_dall_acqua", "sale_dall_acqua_veloce", "affacciata_sb1", "sale_puntata", "sale_mano"]
 const GIU := ["respinta", "scende"]
 
 var sala: SalaInseguimento
@@ -71,7 +71,7 @@ func _posti() -> Array:
 	for v in 3:
 		var r: Array = d["vasche"][v]["rett"]
 		var centro := SalaInseguimento.b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, float(d["vasche"][v]["fondo"]) + 1.0])
-		out.append(["vasca_%d" % v, sala._posto_vasca(v), centro, ["sale_dall_acqua", "incombe", "presa", "respinta", "scende"],
+		out.append(["vasca_%d" % v, sala._posto_vasca(v), centro, [SalaInseguimento.SALITA.get("vasca_%d" % v, "sale_dall_acqua"), "incombe", "presa", "respinta", "scende"],
 			float(d["vasche"][v]["fondo"])])
 	for k in d["scolo"].size():
 		var r: Array = d["scolo"][k]["rett"]

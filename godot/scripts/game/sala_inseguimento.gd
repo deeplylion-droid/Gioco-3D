@@ -805,7 +805,9 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 		var t0 := _quando_radice(StringName("inseguimento/" + nome), sotto, true)
 		_salta_a(t0)
 		set_meta(&"durata_salita", dur - t0)
-	if dove != "sb1":
+	if _con_la_mano():
+		lei.look_at(_muro_della_vasca(), Vector3.UP, true)
+	elif dove != "sb1":
 		_girala_verso_giocatore()
 	# l'acqua che si apre quando sbuca (verso metà della salita)
 	get_tree().create_timer(float(get_meta(&"durata_salita")) * 0.45, false).timeout.connect(func():
@@ -814,13 +816,19 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	lei_compare.emit(dove)
 
 
+## La salita di lei per posto, se non è quella di sempre (sale_dall_acqua; la grata e gli scoli sale_dall_acqua_veloce):
+## una salita diversa per vasca (0.3.21, scelta A dell'utente), con gli stessi tempi per il gioco; quale vasca ha quale
+## salita, scelta C dell'utente: la vasca 2 la salita veloce con l'occhio già puntato, la vasca 3 la mano che si aggrappa
+## al bordo e lei che si tira su.
+const SALITA := {"vasca_1": "sale_puntata", "vasca_2": "sale_mano"}
+## Con la mano sul bordo (sale_mano) lei sale girata dritta verso il muro della vasca (la mano si posa sul bordo vero,
+## a 2,30 m davanti: tools/blender/medusa_inseguimento.py, BORDO_V3) e si gira verso il giocatore solo dopo aver lasciato
+## il bordo (a MANO_LASCIA secondi della clip), al più a GIRA_DOPO_BORDO gradi al secondo.
+const MANO_LASCIA := 1.05
+const GIRA_DOPO_BORDO := 90.0
 ## Quanto può scendere sotto il suo posto "su" senza toccare niente (le animazioni scendono di 5 m): SB1 nel
 ## pozzo pieno d'acqua, la vasca 3 accanto alla vasca, sopra il pavimento della sala (sonda:
 ## proposte/mascotte/sonda_lei_inseguimento.gd).
-## La salita di lei per posto, se non è quella di sempre (sale_dall_acqua; la grata e gli scoli sale_dall_acqua_veloce):
-## una salita diversa per vasca (0.3.21, scelta A dell'utente), con gli stessi tempi per il gioco. Quale vasca ha quale
-## salita lo decide l'utente (in attesa della risposta: per ora nessuna).
-const SALITA := {}
 const PROFONDITA := {"sb1": 1.25, "vasca_2": 2.9, "scolo_1": 2.7}
 
 
@@ -921,6 +929,38 @@ func _salto_discesa(anim: StringName) -> float:
 	return 0.0
 
 
+## Lei sale con la mano sul bordo (sale_mano) qui.
+func _con_la_mano() -> bool:
+	return SALITA.get(_lei_dove, "") == "sale_mano"
+
+
+## Con la mano sul bordo: girata dritta verso il muro della vasca finché la mano lo tiene, poi verso il giocatore senza
+## scatti (al più GIRA_DOPO_BORDO gradi al secondo; quando è girata tutta, come _girala_verso_giocatore).
+func _girala_dopo_il_bordo(delta: float) -> void:
+	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var tenendo := lei_stato == Lei.SALE and ap != null and ap.current_animation == &"inseguimento/sale_mano" \
+			and ap.current_animation_position < MANO_LASCIA
+	if tenendo:
+		lei.look_at(_muro_della_vasca(), Vector3.UP, true)
+		return
+	var p := GameState.player
+	if p == null or not is_instance_valid(p):
+		return
+	var verso := p.global_position - lei.global_position
+	verso.y = 0.0
+	if verso.length() < 0.1:
+		return
+	lei.rotation.y = rotate_toward(lei.rotation.y, atan2(verso.x, verso.z), deg_to_rad(GIRA_DOPO_BORDO) * delta)
+
+
+## Il punto del muro della vasca dritto davanti a lei (alla sua altezza), per la vasca dove sale con la mano.
+func _muro_della_vasca() -> Vector3:
+	var v := int(_lei_dove.trim_prefix("vasca_"))
+	var r: Array = dati["vasche"][v]["rett"]
+	var m := b([(r[0] + r[2]) / 2.0, r[1], 0.0])
+	return Vector3(m.x, lei.global_position.y, m.z)
+
+
 func _girala_verso_giocatore() -> void:
 	var p := GameState.player
 	if p == null or not is_instance_valid(p):
@@ -952,7 +992,9 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 	match lei_stato:
 		Lei.SALE:
 			var dur := float(get_meta(&"durata_salita", 1.6))
-			if _lei_dove != "sb1" and _lei_dove != "grata":
+			if _con_la_mano():
+				_girala_dopo_il_bordo(delta)
+			elif _lei_dove != "sb1" and _lei_dove != "grata":
 				_girala_verso_giocatore()
 			if _lei_t >= dur:
 				lei_stato = Lei.SU
@@ -968,7 +1010,10 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 		Lei.SU:
 			if _lei_dove == "sb1" or _lei_dove == "grata":
 				return      # la sua scena: non ti prende
-			_girala_verso_giocatore()
+			if _con_la_mano():
+				_girala_dopo_il_bordo(delta)
+			else:
+				_girala_verso_giocatore()
 			var limite := 2.5 if _dove_scolo() else tempo_presa
 			var scappato := p != null and in_tubo(p.global_position) and _vasca_di(p.global_position) < 0
 			if _lei_t >= limite and p and not scappato:
