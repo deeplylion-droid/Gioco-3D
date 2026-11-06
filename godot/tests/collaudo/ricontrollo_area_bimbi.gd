@@ -128,7 +128,17 @@ func _viste_ricontrollo() -> Array:
 			if f == null:
 				print("manca Fascetta%d" % k)
 				continue
+			# (il centro della mesh dell'anello: nella versione ad anello l'origine del nodo è al centro del cartoncino)
 			var c := f.global_position
+			var box := AABB()
+			var primo := true
+			for m in [f] + f.find_children("*", "MeshInstance3D", true, false):
+				if m is MeshInstance3D:
+					var b := (m as MeshInstance3D).global_transform * (m as MeshInstance3D).get_aabb()
+					box = b if primo else box.merge(b)
+					primo = false
+			if not primo:
+				c = box.get_center()
 			var fuori := signf((c - d.global_position).dot(lato))   # verso il bordo del cartoncino
 			print("FASCETTA %d in %s" % [k, str(c.snapped(Vector3.ONE * 0.001))])
 			out.append(["f%d_di_fronte" % k, c + n * 0.22 + Vector3.UP * 0.02, c, null, 40.0])
