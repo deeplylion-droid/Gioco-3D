@@ -7,7 +7,7 @@ extends Node
 ## - nella vasca 1 lei su (tempo_presa altissimo: non prende).
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##        --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/scatti_bersagli_g2.gd <cartella>
+##        --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/scatti_bersagli_g2.gd <cartella> [vasche: 0,1,2]
 
 const PLAYER := "res://scenes/player/player.tscn"
 var cartella := "user://scatti_bersagli"
@@ -69,7 +69,10 @@ func _run() -> void:
 		hud.visible = false
 	p.water_pack.call(&"set_equipped", true, false)
 	var cps: Array = ins.dati["checkpoint"]
-	for v in 3:
+	var vasche := [0, 1, 2]
+	if OS.get_cmdline_user_args().size() > 2:
+		vasche = Array(OS.get_cmdline_user_args()[2].split(",")).map(func(x): return int(x))
+	for v in vasche:
 		var cp: Dictionary = cps[v]
 		var da := SalaInseguimento.b(cp["pos"])
 		var giusta := -1
@@ -82,7 +85,12 @@ func _run() -> void:
 					sbagliata = k
 		var bg := SalaInseguimento.b(ins.paratie[giusta]["bersaglio"])
 		var bs := SalaInseguimento.b(ins.paratie[sbagliata]["bersaglio"])
-		await _guarda(da, (bg + bs) * 0.5, "vasca%d_dal_checkpoint" % (v + 1), 60)
+		if bg.distance_to(bs) < 4.5:
+			await _guarda(da, (bg + bs) * 0.5, "vasca%d_dal_checkpoint" % (v + 1), 60)
+		else:
+			# (nella vasca 3 la giusta e la sbagliata stanno su muri opposti: una per volta)
+			await _guarda(da, bg, "vasca%d_dal_checkpoint_giusta" % (v + 1), 60)
+			await _guarda(da, bs, "vasca%d_dal_checkpoint_sbagliata" % (v + 1), 60)
 		for k in [giusta, sbagliata]:
 			var bk := SalaInseguimento.b(ins.paratie[k]["bersaglio"])
 			var n := SalaInseguimento.b(ins.paratie[k]["verso"])
