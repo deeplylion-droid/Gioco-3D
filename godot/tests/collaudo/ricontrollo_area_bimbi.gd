@@ -114,12 +114,13 @@ const P4_SCENA := Transform3D(Basis(Vector3(0.980033, -0.006981, -0.198714), Vec
 		Vector3(0.198599, -0.014401, 0.979975)), Vector3(-16.03, 1.2416, -15.3499))
 
 
-## Le viste del ricontrollo: [nome, camera, verso, (riempimento della piscina), (fov)]. Con SOLO=p4 solo la Polaroid.
+## Le viste del ricontrollo: [nome, camera, verso, (riempimento della piscina), (fov)]. Con SOLO=p4 solo la Polaroid, con
+## SOLO=fascette solo le fascette.
 func _viste_ricontrollo() -> Array:
 	var out := []
 	var solo := OS.get_environment("SOLO")
 	var d := _radice.find_child("Disegno", true, false) as Node3D
-	if d and solo.is_empty():
+	if d and solo in ["", "fascette"]:
 		var n := d.global_basis.z.normalized()
 		var lato := n.cross(Vector3.UP).normalized()
 		for k in range(1, 5):
@@ -135,7 +136,7 @@ func _viste_ricontrollo() -> Array:
 			out.append(["f%d_da_dietro" % k, c - n * 0.25 + lato * fuori * 0.08 + Vector3.UP * 0.03, c - n * 0.03, null, 50.0])
 	# la Polaroid 4 sulla pedana verde (1,24 m), come la vede chi sale la scala (da est verso ovest) e da sopra
 	var p4 := _radice.find_child("Polaroid04", true, false) as Node3D
-	if p4:
+	if p4 and solo in ["", "p4"]:
 		# (nella sala a pezzi Posa la appoggia su quello che trova sotto: qui la struttura non ha la collisione e la
 		# Polaroid cadeva 63 cm più giù; si rimette dov'è nella scena, sulla pedana a 1,24 m, come nel gioco)
 		print("P4 dopo Posa in %s" % str(p4.global_position.snapped(Vector3.ONE * 0.01)))
