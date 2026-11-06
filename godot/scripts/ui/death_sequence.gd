@@ -20,6 +20,11 @@ signal finished(skipped: bool)
 
 ## Causa della morte (per scegliere in futuro la scena giusta).
 var cause: StringName = &"generico"
+## Dalla seconda morte di fila allo stesso checkpoint (GameState.morti_al_checkpoint) la scena dura [constant DURATA_BREVE]
+## s: la presa com'è fino al morso (1 s, a tempo con il suono "morso" e la fauce, Audio.MORSO_COLPO), poi subito nero
+## (ripartenze, parte B). La prima resta intera.
+var breve := false
+const DURATA_BREVE := 1.1
 var elapsed := 0.0
 var hold := 0.0
 
@@ -42,6 +47,8 @@ func _ready() -> void:
 	_black = _rect(Color(0, 0, 0, 0))
 	_title = _label("[scena di morte provvisoria]", 0.45, 30)
 	_title.modulate.a = 0.0
+	if breve:
+		duration = DURATA_BREVE
 	if cause == &"medusa":
 		_lei = get_tree().get_first_node_in_group(&"medusa_che_prende") as Node3D
 		# Il jumpscare: glitch, scosse e il suo urlo (addons/grafica/jumpscare_glitch.gd).
@@ -51,6 +58,7 @@ func _ready() -> void:
 		if p and is_instance_valid(p):
 			_camera_da = p.camera.global_transform
 	_hint = _label("Tieni premuto Spazio per saltare", 0.88, 18)
+	_hint.visible = not breve
 	_bar = ProgressBar.new()
 	_bar.show_percentage = false
 	_bar.max_value = 1.0
@@ -59,6 +67,7 @@ func _ready() -> void:
 	_bar.anchor_top = 0.92
 	_bar.anchor_bottom = 0.92
 	_bar.offset_bottom = 6
+	_bar.visible = not breve
 	add_child(_bar)
 
 
@@ -74,12 +83,12 @@ func _process(delta: float) -> void:
 	if _lei and is_instance_valid(_lei):
 		# Il morso dopo un attimo: lampo, poi nero.
 		_flash.color.a = clampf(1.0 - absf(elapsed - 1.0) / 0.35, 0.0, 1.0) * 0.6
-		_black.color.a = smoothstep(1.1, 2.0, elapsed)
+		_black.color.a = smoothstep(1.0, 1.08, elapsed) if breve else smoothstep(1.1, 2.0, elapsed)
 		_camera_medusa()
 	else:
 		_flash.color.a = clampf(1.0 - elapsed / 0.8, 0.0, 1.0) * 0.55
-		_black.color.a = smoothstep(0.7, 2.0, elapsed)
-		_title.modulate.a = smoothstep(1.6, 2.4, elapsed)
+		_black.color.a = smoothstep(0.5, 1.05, elapsed) if breve else smoothstep(0.7, 2.0, elapsed)
+		_title.modulate.a = 0.0 if breve else smoothstep(1.6, 2.4, elapsed)
 		_animate_camera()
 	if Input.is_action_pressed(&"skip"):
 		hold += delta
