@@ -69,15 +69,18 @@ func _run() -> void:
 		l.shadow_enabled = true
 		_cam.add_child(l)
 		l.position = Vector3(0.05, 0.08, 0)
-	match gruppo:
-		"giro":
-			await _giro()
-		"lei":
-			await _lei()
-		"tubo":
-			await _tubo()
-		_:
-			await _vicino()
+	for g in gruppo.split(","):
+		match g:
+			"giro":
+				await _giro()
+			"lei":
+				await _lei()
+			"distanze":
+				await _distanze()
+			"tubo":
+				await _tubo()
+			_:
+				await _vicino()
 	print("FINE")
 	get_tree().quit()
 
@@ -166,10 +169,7 @@ func _lei() -> void:
 	for v in 3:
 		stati.append(["vasca_%d" % v, _ins.call(&"_posto_vasca", v) as Vector3, _occhi(v), DALLA_VASCA[v]])
 	for k in 3:
-		var d: Dictionary = _ins.dati["scolo"][k]
-		var r: Array = d["rett"]
-		var occhi := Vector3((r[0] + r[2]) * 0.5, float(d["fondo"]) + 1.65, -(r[1] + r[3]) * 0.5)
-		stati.append(["scolo_%d" % k, _ins.call(&"_posto_scolo", k) as Vector3, occhi, [1, 2, 3, 4]])
+		stati.append(["scolo_%d" % k, _ins.call(&"_posto_scolo", k) as Vector3, _occhi_scolo(k), [1, 2, 3, 4]])
 	for s in stati:
 		_ins.call(&"_lei_sale", s[0], s[1], 1.2 if String(s[0]).begins_with("scolo") else 1.6)
 		for i in 150:
@@ -191,6 +191,95 @@ func _lei() -> void:
 			await get_tree().physics_frame
 
 
+## I vertici di lei nella posa del momento (lo skinning del controllo di posizionamento, con i modificatori dello
+## scheletro: si prende subito dopo un aggiornamento), nel mondo.
+func _lei_in_posa() -> PackedVector3Array:
+	var C: GDScript = load("res://tests/controllo_posizionamento.gd")
+	var out := PackedVector3Array()
+	for n in _ins.lei.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or mi.skin == null or mi.skeleton.is_empty() or not mi.is_visible_in_tree():
+			continue
+		var sk := mi.get_node_or_null(mi.skeleton) as Skeleton3D
+		if sk == null:
+			continue
+		var cotta := [null]
+		var cuoci := func():
+			if cotta[0] == null:
+				cotta[0] = C._in_posa(mi, sk)
+		sk.skeleton_updated.connect(cuoci)
+		for i in 10:
+			await get_tree().process_frame
+			if cotta[0] != null:
+				break
+		sk.skeleton_updated.disconnect(cuoci)
+		if cotta[0] == null:
+			cuoci.call()
+		var m: ArrayMesh = cotta[0]
+		for si in m.get_surface_count():
+			for p in (m.surface_get_arrays(si)[Mesh.ARRAY_VERTEX] as PackedVector3Array):
+				out.append(mi.global_transform * p)
+	return out
+
+
+## Lei su in ogni vasca e in ogni scolo: la distanza minima fra la sua pelle (la mesh in posa) e ogni pezzo degli
+## stendardi, a metà salita e a salita finita.
+func _distanze() -> void:
+	var stati := []
+	for v in 3:
+		stati.append(["vasca_%d" % v, _ins.call(&"_posto_vasca", v) as Vector3, 1.6])
+	for k in 3:
+		stati.append(["scolo_%d" % k, _ins.call(&"_posto_scolo", k) as Vector3, 1.2])
+	var pezzi := {}
+	for m in _st.find_children("stendardo_*", "MeshInstance3D", true, false):
+		pezzi[String(m.name)] = _vertici(String(m.name))
+	for s in stati:
+		_ins.call(&"_lei_sale", s[0], s[1], s[2])
+		for quando in [40, 150]:
+			for i in (quando if quando == 40 else 110):
+				await get_tree().physics_frame
+			var pelle := await _lei_in_posa()
+			var alto := -1e9
+			for p in pelle:
+				alto = maxf(alto, p.y)
+			var riga := "PELLE %s dopo %d fotogrammi: %d vertici, il più alto a %.2f;" % [s[0], quando, pelle.size(), alto]
+			var vicini := 0
+			for nome in pezzi:
+				var vv: PackedVector3Array = pezzi[nome]
+				var box := AABB(vv[0], Vector3.ZERO)
+				for p in vv:
+					box = box.expand(p)
+				box = box.grow(1.0)
+				var dmin := 1e9
+				for p in pelle:
+					if not box.has_point(p):
+						continue
+					for q in vv:
+						dmin = minf(dmin, p.distance_squared_to(q))
+				if dmin < 1e8:
+					riga += " %s a %.2f m" % [nome, sqrt(dmin)]
+					vicini += 1
+			if vicini == 0:
+				riga += " niente degli stendardi entro 1 m"
+			print(riga)
+		_ins.lei.visible = false
+		_ins.lei_stato = SalaInseguimento.Lei.VIA
+		for i in 20:
+			await get_tree().physics_frame
+
+
+## Dove si sta in piedi nello scolo [param k] appena usciti dal tubo: 1,2 m oltre la bocca, nella direzione del tubo,
+## con gli occhi a 1,65 m dal fondo.
+func _occhi_scolo(k: int) -> Vector3:
+	var linea: Array = _ins.dati["tubi"]["ins_A_scolo_%d" % k]
+	var fine := _ins.b(linea[linea.size() - 1])
+	var prima := _ins.b(linea[linea.size() - 3])
+	var dir := Vector3(fine.x - prima.x, 0, fine.z - prima.z).normalized()
+	var p := fine + dir * 1.2
+	p.y = float(_ins.dati["scolo"][k]["fondo"]) + 1.65
+	return p
+
+
 func _tubo() -> void:
 	var linea: Array = _ins.dati["tubi"]["ins_A_scolo_0"]
 	var n := linea.size()
@@ -202,10 +291,8 @@ func _tubo() -> void:
 		var occhi := p + Vector3.UP * 0.9
 		await _scatto("tubo_%02d_avanti" % i, occhi, occhi + avanti * 3.0 + Vector3.UP * 0.6)
 		await _scatto("tubo_%02d_verso_stendardo_3" % i, occhi, c3)
-	# in piedi nello scolo 0, sotto lo stendardo
-	var d: Dictionary = _ins.dati["scolo"][0]
-	var r: Array = d["rett"]
-	var occhi := Vector3((r[0] + r[2]) * 0.5, float(d["fondo"]) + 1.65, -(r[1] + r[3]) * 0.5)
+	# in piedi nello scolo 0, appena usciti dal tubo, sotto lo stendardo
+	var occhi := _occhi_scolo(0)
 	await _scatto("scolo0_in_piedi_in_su", occhi, occhi + Vector3(0.6, 3.0, 0.2))
 	await _scatto("scolo0_in_piedi_verso_tubo", occhi, _ins.b(linea[n - 1]) + Vector3.UP * 0.5)
 	# di lato, da fuori: il fondo del lenzuolo sopra lo sbocco del tubo e lo scolo
