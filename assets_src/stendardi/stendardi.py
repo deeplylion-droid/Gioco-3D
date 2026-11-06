@@ -73,20 +73,23 @@ def lenzuolo(nome, centro, verso, lato, largo, alto, mollette, seme):
         for i in range(nx + 1):
             u = i / nx
             # la cima è dritta, attaccata al bordo della piega (il lenzuolo continua dalla piega, che le mollette
-            # stringono sul bastone); fra le mollette (n-1 campate) nascono le pieghe, che crescono scendendo
+            # stringono sul bastone); fra le mollette (n-1 campate) nascono le pieghe
             campata = u * (mollette - 1)
             abbassa = 0.0
-            # le pieghe: in profondità (verso), le creste a metà campata; crescono scendendo e poi si smorzano un po'
-            amp = 0.11 * (1 - math.exp(-v * 5.0)) * (1.0 - 0.35 * v)
+            # le pieghe: in profondità (verso), le creste a metà campata. Profonde solo in alto, fra una molletta e
+            # l'altra; scendendo si smorzano (entro un terzo dell'altezza sono onde di 1-2 cm) e in basso il lenzuolo è
+            # quasi piatto, tirato dal suo peso: un lenzuolo appeso, non una tenda plissettata
+            d = v * alto                                   # (metri dalla cima)
+            amp = (0.11 * (1 - math.exp(-d / 0.25)) * math.exp(-d / (alto * 0.1))
+                   + 0.015 * (1 - math.exp(-d / 0.5)) * (1 - v) ** 2)
             piega = amp * math.cos(math.pi * 2 * campata) * -1.0
-            # e una piega larga, lenta, che fa ondeggiare tutto il telo (il lenzuolo non è una tavola)
-            larga = 0.07 * v * math.sin(u * math.pi * 1.6 + fasi[0]) + 0.03 * (math.sin(v * 5.0 + fasi[1]) - math.sin(fasi[1]))
-            # il fondo ondulato e l'angolo destro più basso (il peso dell'orlo bagnato)
+            # e una piega larga e lenta che fa ondeggiare appena il telo a metà (in cima e in fondo è dritto)
+            larga = (0.025 * math.sin(u * math.pi * 1.6 + fasi[0]) * math.sin(math.pi * v)
+                     + 0.015 * (math.sin(v * 5.0 + fasi[1]) - math.sin(fasi[1])) * (1 - v))
+            # l'orlo in basso dritto (il peso lo tira giù)
             fondo = 0.0
-            if v > 0.85:
-                fondo = (v - 0.85) / 0.15 * (0.06 * math.sin(u * 9.0 + fasi[2]) + 0.12 * u)
             # le pieghe stringono un po' il telo in larghezza (il tessuto va in profondità)
-            x = (u - 0.5) * largo * (1.0 - 0.025 * (1 - math.exp(-v * 4.0)))
+            x = (u - 0.5) * largo * (1.0 - 0.025 * min(1.0, amp / 0.05))
             p = centro + lato * x + verso * (piega + larga) - up * (v * alto + abbassa + fondo)
             riga.append(bm.verts.new(p))
         vert.append(riga)
