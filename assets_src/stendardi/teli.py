@@ -28,10 +28,14 @@ sys.path.insert(0, os.path.join(RADICE, 'assets_src', 'scarabocchi'))
 from pastello import Pastello, rumore, COLORI  # noqa: E402
 import disegni  # noqa: E402
 from motivi import sole, omino, onde, nave  # noqa: E402
+sys.path.insert(0, QUI)
+import misure  # noqa: E402
 
 USCITA = os.path.join(RADICE, 'godot', 'assets', 'ambiente', 'inseguimento', 'stendardi')
-# la texture: 1024 x 1536 per un lenzuolo di 3 x 4,5 m (2,9 mm per pixel)
+# la texture di ogni stendardo: dalla sua grandezza (misure.pixel; 1024 x 1536 per 3 x 4,5 m, 2,9 mm per pixel). I
+# disegni sono in proporzione al lenzuolo (W, H cambiano a ogni stendardo, in fai)
 W, H = 1024, 1536
+_nome = ""
 # il pastello finge pixel più piccoli: i tratti dei motivi (12-18 mm) diventano larghi 4-6 cm sul lenzuolo
 MM_PASTELLO = 0.75
 
@@ -134,12 +138,15 @@ def strappi(seme, quanti=3):
     return np.asarray(m, np.float32) / 255.0
 
 
-def firme(colori, x0, y0, seme, passo=46):
+def firme(colori, x0, y0, seme, passo=None):
     """Le manine dei bambini che l'hanno colorato, in fila storta nell'angolo in basso: il contorno della mano, 8-10 cm
     (raggio 15-18 pixel), col tratto fine, un colore per bambino. Su un foglio suo."""
-    f = Pastello(W, H, seme + 50, mm=6.5)   # (il tratto di manina, 13 mm, esce di 2 pixel: 6 mm sul lenzuolo)
+    # (le manine sono vere, 8-10 cm, qualunque sia la grandezza del lenzuolo: i pixel per metro di questa texture)
+    k = (W / misure.misura(_nome)['largo']) / misure.PPM
+    passo = passo or 46 * k
+    f = Pastello(W, H, seme + 50, mm=6.5 / max(k, 0.3))   # (il tratto di manina, 13 mm, esce di 2 pixel: 6 mm)
     for i, c in enumerate(colori):
-        disegni.manina(f, x0 + i * passo + f.rng.normal(0, 5), y0 + f.rng.normal(0, 7), f.rng.uniform(15, 18), c,
+        disegni.manina(f, x0 + i * passo + f.rng.normal(0, 5), y0 + f.rng.normal(0, 7), f.rng.uniform(15, 18) * k, c,
                        ang=f.rng.normal(0, 0.35))
     return f
 
@@ -204,7 +211,41 @@ TELI = [
 ]
 
 
+def cuciture(rgb, colonne, righe, seme):
+    """Più lenzuoli cuciti insieme (misure.pezzi): ognuno della sua tinta, un po' diversa (lenzuoli diversi, sbiaditi in
+    modo diverso), e lungo le cuciture la piega del tessuto ribattuto e i punti della macchina da cucire."""
+    if colonne * righe <= 1:
+        return rgb
+    rng = np.random.default_rng(seme + 60)
+    y = np.arange(H)[:, None]
+    x = np.arange(W)[None, :]
+    for c in range(colonne):
+        for r in range(righe):
+            m = ((x >= W * c // colonne) & (x < W * (c + 1) // colonne) & (y >= H * r // righe) & (y < H * (r + 1) // righe))
+            tinta = 1.0 + rng.uniform(-0.06, 0.06, 3).astype(np.float32)
+            rgb = np.where(m[..., None], rgb * tinta, rgb)
+    linee = [('v', W * c // colonne) for c in range(1, colonne)] + [('o', H * r // righe) for r in range(1, righe)]
+    for verso, q in linee:
+        for d, k in ((-3, 0.8), (-2, 0.72), (-1, 0.8), (0, 0.9), (1, 0.8), (2, 0.86)):
+            if verso == 'v':
+                rgb[:, q + d] *= k
+            else:
+                rgb[q + d, :] *= k
+        # i punti, a 4-5 pixel dalla piega, da tutti e due i lati
+        for t in range(0, (H if verso == 'v' else W), 5):
+            for lato in (-5, 4):
+                if verso == 'v':
+                    rgb[t:t + 3, q + lato] *= 0.82
+                else:
+                    rgb[q + lato, t:t + 3] *= 0.82
+    return rgb
+
+
 def fai(nome, tinta, disegno, manine, sbiad, sale, n_strappi, seme):
+    global W, H, _nome
+    _nome = nome
+    st = misure.misura(nome)
+    W, H = misure.pixel(st)
     p = Pastello(W, H, seme, mm=MM_PASTELLO)
     disegno(p)
     cera = np.asarray(p.finisci(bagnato=0.25, sbiadito=sbiad), np.float32) / 255.0
@@ -213,6 +254,7 @@ def fai(nome, tinta, disegno, manine, sbiad, sale, n_strappi, seme):
     af = f[..., 3:4]
     cera = np.dstack([cera[..., :3] * (1 - af) + f[..., :3] * af, cera[..., 3] + f[..., 3] * (1 - cera[..., 3])])
     rgb = stoffa(tinta, seme)
+    rgb = cuciture(rgb, *misure.pezzi(st), seme)
     a = cera[..., 3]
     rgb, a = umidita(rgb, a, seme, sale)
     # la cera sulla stoffa: copre, ma la trama passa un po' (il cotone assorbe)
