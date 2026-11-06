@@ -81,6 +81,8 @@ func _run() -> void:
 				await _tubo()
 			"lato":
 				await _lato()
+			"fessura":
+				await _fessura()
 			_:
 				await _vicino()
 	print("FINE")
@@ -350,6 +352,23 @@ func _vicino() -> void:
 			await _scatto("st%d_nodo_%s_da_sotto" % [s, e], nodo + Vector3(0.25, -0.55, 0.2), nodo)
 			await _scatto("st%d_nodo_%s_di_traverso" % [s, e], nodo + Vector3(0.75, 0.0, 0.12), nodo + Vector3(0.2, 0.25, 0))
 			await _scatto("st%d_nodo_%s_lungo_la_trave" % [s, e], nodo + Vector3(0.08, -0.06, 0.32), nodo + Vector3(0, -0.01, 0))
+
+
+## La cima della corda che sale alla trave, quasi in piano col fondo della trave: si vede se tocca la trave e i due
+## giri del nodo (tutti gli otto nodi sono fatti allo stesso modo; qui uno per lenzuolo).
+func _fessura() -> void:
+	for e in [[1, "a"], [2, "b"], [3, "b"], [4, "a"]]:
+		var cv := _vertici("stendardo_%d_corda_%s" % e)
+		var somma := Vector3.ZERO
+		var k := 0
+		for p in cv:
+			if p.y > -6.2:
+				somma += p
+				k += 1
+		var nodo := somma / maxf(k, 1)
+		nodo.y = -6.6
+		await _scatto("st%d_nodo_%s_fessura_di_traverso" % e, nodo + Vector3(0.16, -0.012, 0.0), nodo + Vector3(0, -0.01, 0))
+		await _scatto("st%d_nodo_%s_fessura_dal_basso" % e, nodo + Vector3(0.12, -0.05, 0.07), nodo + Vector3(0, -0.008, 0))
 
 
 func _scatto(nome: String, da: Vector3, verso: Vector3) -> void:
