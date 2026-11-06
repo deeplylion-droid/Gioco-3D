@@ -1,0 +1,53 @@
+RIPARTENZE: partenza fiume arrivata dopo 14.8 s (Risalita/Fiume/Checkpoint/CheckpointIngresso)
+RIPARTENZE: fiume, morte 1 (guardata): scena 5.05 s di gioco (303 fotogrammi, 1.9 s veri), ricarica 2.7 s veri (4 fotogrammi), totale vero 4.6 s; checkpoint Risalita/Fiume/Checkpoint/CheckpointIngresso (prima Risalita/Fiume/Checkpoint/CheckpointIngresso), a 0.00 m da dove si era
+RIPARTENZE: fiume, morte 2 (guardata): scena 5.05 s di gioco (303 fotogrammi, 1.6 s veri), ricarica 2.7 s veri (4 fotogrammi), totale vero 4.3 s; checkpoint Risalita/Fiume/Checkpoint/CheckpointIngresso (prima Risalita/Fiume/Checkpoint/CheckpointIngresso), a 0.00 m da dove si era
+RIPARTENZE: fiume, morte 3 (saltata): scena 1.03 s di gioco (62 fotogrammi, 0.4 s veri), ricarica 2.9 s veri (4 fotogrammi), totale vero 3.3 s; checkpoint Risalita/Fiume/Checkpoint/CheckpointIngresso (prima Risalita/Fiume/Checkpoint/CheckpointIngresso), a 0.00 m da dove si era
+RIPARTENZE: finito
+RIPARTENZE: partenza inseguimento arrivata dopo 18.4 s (SalaTorre/Checkpoint_fondo)
+RIPARTENZE: inseguimento, morte 1 (guardata): scena 5.05 s di gioco (303 fotogrammi, 2.8 s veri), ricarica 1.8 s veri (4 fotogrammi), totale vero 4.6 s; checkpoint SalaTorre/Checkpoint_fondo (prima SalaTorre/Checkpoint_fondo), a 0.00 m da dove si era
+RIPARTENZE: inseguimento, morte 2 (guardata): scena 5.05 s di gioco (303 fotogrammi, 2.4 s veri), ricarica 1.9 s veri (4 fotogrammi), totale vero 4.4 s; checkpoint SalaTorre/Checkpoint_fondo (prima SalaTorre/Checkpoint_fondo), a 0.00 m da dove si era
+RIPARTENZE: inseguimento, morte 3 (saltata): scena 1.03 s di gioco (62 fotogrammi, 0.5 s veri), ricarica 1.8 s veri (4 fotogrammi), totale vero 2.3 s; checkpoint SalaTorre/Checkpoint_fondo (prima SalaTorre/Checkpoint_fondo), a 0.00 m da dove si era
+RIPARTENZE: finito
+RIPARTENZE: partenza risalita arrivata dopo 16.9 s (Tecnici/Logica/Checkpoint/CheckpointT7Inizio)
+RIPARTENZE: risalita, morte 1 (guardata): scena 5.05 s di gioco (303 fotogrammi, 2.0 s veri), ricarica 3.0 s veri (4 fotogrammi), totale vero 5.1 s; checkpoint Tecnici/Logica/Checkpoint/CheckpointT7Inizio (prima Tecnici/Logica/Checkpoint/CheckpointT7Inizio), a 0.00 m da dove si era
+RIPARTENZE: risalita, morte 2 (guardata): scena 5.05 s di gioco (303 fotogrammi, 1.9 s veri), ricarica 2.8 s veri (4 fotogrammi), totale vero 4.7 s; checkpoint Tecnici/Logica/Checkpoint/CheckpointT7Inizio (prima Tecnici/Logica/Checkpoint/CheckpointT7Inizio), a 0.00 m da dove si era
+RIPARTENZE: risalita, morte 3 (saltata): scena 1.03 s di gioco (62 fotogrammi, 0.4 s veri), ricarica 3.0 s veri (4 fotogrammi), totale vero 3.3 s; checkpoint Tecnici/Logica/Checkpoint/CheckpointT7Inizio (prima Tecnici/Logica/Checkpoint/CheckpointT7Inizio), a 0.00 m da dove si era
+RIPARTENZE: finito
+RIPARTENZE: partenza torre arrivata dopo 16.5 s (SalaTorre/Checkpoint_portone)
+RIPARTENZE: torre, morte 1 (guardata): scena 5.05 s di gioco (303 fotogrammi, 2.3 s veri), ricarica 1.8 s veri (4 fotogrammi), totale vero 4.1 s; checkpoint SalaTorre/Checkpoint_portone (prima SalaTorre/Checkpoint_portone), a 0.01 m da dove si era
+RIPARTENZE: torre, morte 2 (guardata): scena 5.05 s di gioco (303 fotogrammi, 2.1 s veri), ricarica 1.9 s veri (4 fotogrammi), totale vero 4.0 s; checkpoint SalaTorre/Checkpoint_portone (prima SalaTorre/Checkpoint_portone), a 0.01 m da dove si era
+RIPARTENZE: torre, morte 3 (saltata): scena 1.03 s di gioco (62 fotogrammi, 0.4 s veri), ricarica 1.9 s veri (4 fotogrammi), totale vero 2.3 s; checkpoint SalaTorre/Checkpoint_portone (prima SalaTorre/Checkpoint_portone), a 0.01 m da dove si era
+RIPARTENZE: finito
+RIPARTENZE: partenza tunnel arrivata dopo 22.1 s (SalaSottomarino/Checkpoint_6)
+RIPARTENZE: tunnel, morte 1 (guardata): scena 4.80 s di gioco (288 fotogrammi, 2.0 s veri), ricarica 2.6 s veri (4 fotogrammi), totale vero 4.6 s; checkpoint SalaSottomarino/Checkpoint_6 (prima SalaSottomarino/Checkpoint_6), a 0.00 m da dove si era
+RIPARTENZE: tunnel, morte 2 (guardata): scena 4.37 s di gioco (262 fotogrammi, 1.8 s veri), ricarica 2.8 s veri (4 fotogrammi), totale vero 4.7 s; checkpoint SalaSottomarino/Checkpoint_6 (prima SalaSottomarino/Checkpoint_6), a 0.00 m da dove si era
+RIPARTENZE: tunnel, morte 3 (saltata): scena 1.03 s di gioco (62 fotogrammi, 0.4 s veri), ricarica 2.6 s veri (4 fotogrammi), totale vero 3.0 s; checkpoint SalaSottomarino/Checkpoint_6 (prima SalaSottomarino/Checkpoint_6), a 0.00 m da dove si era
+RIPARTENZE: finito
+COLLISIONI: partenza fiume, corpi ["struttura", "StatuaSqualo", "StatuaPolpoA", "StatuaPolpoB"]
+COLLISIONI: prima della morte, struttura: 66 raggi su 217 colpiscono, impronta 9c9ed4c428d28fa4a7323c31fc5e91ae, forme [[-9223370661206931729, 739236, true]], il giocatore arriva a - m dall'asse
+COLLISIONI: prima della morte, StatuaSqualo: 119 raggi su 121 colpiscono, impronta 19b75576658b2d7e03e473be9806db97, forme [[-9223370681322814297, 150000, false]], il giocatore arriva a 1.07 m dall'asse
+COLLISIONI: prima della morte, StatuaPolpoA: 103 raggi su 121 colpiscono, impronta 354d7a437d6e480a2ba6aa14410ec0f3, forme [[-9223370680366512968, 150000, false]], il giocatore arriva a 1.25 m dall'asse
+COLLISIONI: prima della morte, StatuaPolpoB: 103 raggi su 121 colpiscono, impronta 4e29eaf9bb04883e00239247b9dca40d, forme [[-9223370679410211639, 164997, false]], il giocatore arriva a 1.08 m dall'asse
+COLLISIONI: dopo la morte 1, struttura: 66 raggi su 217 colpiscono, impronta 9c9ed4c428d28fa4a7323c31fc5e91ae, forme [[-9223370661206931729, 739236, true]], il giocatore arriva a - m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 1, StatuaSqualo: 119 raggi su 121 colpiscono, impronta 19b75576658b2d7e03e473be9806db97, forme [[-9223370681322814297, 150000, false]], il giocatore arriva a 1.07 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 1, StatuaPolpoA: 103 raggi su 121 colpiscono, impronta 354d7a437d6e480a2ba6aa14410ec0f3, forme [[-9223370680366512968, 150000, false]], il giocatore arriva a 1.25 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 1, StatuaPolpoB: 103 raggi su 121 colpiscono, impronta 4e29eaf9bb04883e00239247b9dca40d, forme [[-9223370679410211639, 164997, false]], il giocatore arriva a 1.08 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, struttura: 66 raggi su 217 colpiscono, impronta 9c9ed4c428d28fa4a7323c31fc5e91ae, forme [[-9223370661206931729, 739236, true]], il giocatore arriva a - m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, StatuaSqualo: 119 raggi su 121 colpiscono, impronta 19b75576658b2d7e03e473be9806db97, forme [[-9223370681322814297, 150000, false]], il giocatore arriva a 1.07 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, StatuaPolpoA: 103 raggi su 121 colpiscono, impronta 354d7a437d6e480a2ba6aa14410ec0f3, forme [[-9223370680366512968, 150000, false]], il giocatore arriva a 1.25 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, StatuaPolpoB: 103 raggi su 121 colpiscono, impronta 4e29eaf9bb04883e00239247b9dca40d, forme [[-9223370679410211639, 164997, false]], il giocatore arriva a 1.08 m dall'asse  UGUALE a prima
+COLLISIONI: finito
+COLLISIONI: partenza risalita, corpi ["struttura", "StatuaSqualo", "StatuaPolpoA", "StatuaPolpoB"]
+COLLISIONI: prima della morte, struttura: 66 raggi su 217 colpiscono, impronta 9c9ed4c428d28fa4a7323c31fc5e91ae, forme [[-9223370662465222929, 739236, true]], il giocatore arriva a - m dall'asse
+COLLISIONI: prima della morte, StatuaSqualo: 119 raggi su 121 colpiscono, impronta 19b75576658b2d7e03e473be9806db97, forme [[-9223370682581105497, 150000, false]], il giocatore arriva a 1.07 m dall'asse
+COLLISIONI: prima della morte, StatuaPolpoA: 103 raggi su 121 colpiscono, impronta 354d7a437d6e480a2ba6aa14410ec0f3, forme [[-9223370681624804168, 150000, false]], il giocatore arriva a 1.25 m dall'asse
+COLLISIONI: prima della morte, StatuaPolpoB: 103 raggi su 121 colpiscono, impronta 4e29eaf9bb04883e00239247b9dca40d, forme [[-9223370680668502839, 164997, false]], il giocatore arriva a 1.08 m dall'asse
+COLLISIONI: dopo la morte 1, struttura: 66 raggi su 217 colpiscono, impronta 9c9ed4c428d28fa4a7323c31fc5e91ae, forme [[-9223370662465222929, 739236, true]], il giocatore arriva a - m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 1, StatuaSqualo: 119 raggi su 121 colpiscono, impronta 19b75576658b2d7e03e473be9806db97, forme [[-9223370682581105497, 150000, false]], il giocatore arriva a 1.07 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 1, StatuaPolpoA: 103 raggi su 121 colpiscono, impronta 354d7a437d6e480a2ba6aa14410ec0f3, forme [[-9223370681624804168, 150000, false]], il giocatore arriva a 1.25 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 1, StatuaPolpoB: 103 raggi su 121 colpiscono, impronta 4e29eaf9bb04883e00239247b9dca40d, forme [[-9223370680668502839, 164997, false]], il giocatore arriva a 1.08 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, struttura: 66 raggi su 217 colpiscono, impronta 9c9ed4c428d28fa4a7323c31fc5e91ae, forme [[-9223370662465222929, 739236, true]], il giocatore arriva a - m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, StatuaSqualo: 119 raggi su 121 colpiscono, impronta 19b75576658b2d7e03e473be9806db97, forme [[-9223370682581105497, 150000, false]], il giocatore arriva a 1.07 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, StatuaPolpoA: 103 raggi su 121 colpiscono, impronta 354d7a437d6e480a2ba6aa14410ec0f3, forme [[-9223370681624804168, 150000, false]], il giocatore arriva a 1.25 m dall'asse  UGUALE a prima
+COLLISIONI: dopo la morte 2, StatuaPolpoB: 103 raggi su 121 colpiscono, impronta 4e29eaf9bb04883e00239247b9dca40d, forme [[-9223370680668502839, 164997, false]], il giocatore arriva a 1.08 m dall'asse  UGUALE a prima
+COLLISIONI: finito
