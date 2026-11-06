@@ -561,6 +561,8 @@ func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, p
 			Vector3(xc - 2.2, Y, porta0 - 3.3), Vector3(xc - 1.2, Y, porta0 - 3.3)])
 	# (sparisce solo girando dietro la pila, dopo il punto davanti alla pila, anche quando è già fuori vista prima)
 	b.sparisce_dopo = 4
+	# (e solo dopo 0,2 s di seguito fuori vista: un margine di 12 fotogrammi, ricontrollo di grafica-2)
+	b.fuori_vista_minimo = 0.2
 	b.da_dove = Vector3(xc + 1.0, Y + 1.6, z1 + 2.0)
 	# animato meglio (scelta A dell'utente del 1° novembre, "A ma animalo meglio"): da fermo è vivo (il peso da un piede
 	# all'altro, il respiro: solo lui, nella torre restano immobili), la testa ti segue con un po' di

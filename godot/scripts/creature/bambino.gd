@@ -136,6 +136,11 @@ const CORSA_PRIMO_PASSO := 6.4 / 24.0
 ## sono dove si vedrebbe che non c'è più, come una galleria dritta e illuminata: riscontro dell'utente sulla 0.3.16,
 ## "si vede che sparisce perché gli corri dietro"). 0: in qualsiasi punto.
 @export var sparisce_dopo := 0
+## Con [member sparisce_fuori_vista]: sparisce solo dopo essere rimasto fuori vista di seguito per tanti secondi (un
+## margine: sparendo al primo fotogramma non visto, un pezzo di piede sullo spigolo si vedeva ancora un fotogramma prima;
+## ricontrollo di grafica-2 sulla 0.3.21). 0: subito.
+@export var fuori_vista_minimo := 0.0
+var _fuori_vista_t := 0.0
 ## Quando sparisce si toglie dalla scena (altrimenti resta nascosto e si può riusare).
 @export var libera_quando_sparisce := true
 
@@ -434,7 +439,7 @@ func _process(delta: float) -> void:
 				if arrivato:
 					_sparisci()
 			elif (arrivato or _in_fuga >= fuga_minima) and _n_punti_fuga - _punti.size() >= sparisce_dopo \
-					and not visibile_da(p):
+					and _fuori_vista_da(p, delta) >= fuori_vista_minimo:
 				_sparisci()
 			elif arrivato and not _fermo_a_fine_fuga:
 				_fermo_a_fine_fuga = true
@@ -482,6 +487,15 @@ func _guardato_da(p: Player) -> bool:
 
 ## Il giocatore lo può vedere: qualche punto del corpo (dai piedi alla testa) è nell'inquadratura e senza
 ## muri in mezzo.
+## Da quanti secondi di seguito non è visto (con [member fuori_vista_minimo]; si azzera appena è visto).
+func _fuori_vista_da(p: Player, delta: float) -> float:
+	if visibile_da(p):
+		_fuori_vista_t = 0.0
+		return -1.0
+	_fuori_vista_t += delta
+	return _fuori_vista_t if fuori_vista_minimo > 0.0 else 0.0
+
+
 func visibile_da(p: Player) -> bool:
 	var cam := get_viewport().get_camera_3d()
 	var occhio := p.get_eye_position()

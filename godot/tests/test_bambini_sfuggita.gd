@@ -73,6 +73,8 @@ func _run() -> void:
 				break
 		await _frames(10)
 		await _prova(b)
+		if b.name == "BambinoCorridoioFiume":
+			await _insegui_fiume(b)
 	print("Il tunnel sottomarino (costruito da solo)")
 	var sala := SalaSottomarino.new()
 	get_tree().root.add_child(sala)
@@ -235,6 +237,84 @@ func _prova(b: BambinoSfuggita) -> void:
 	check(b.stato == BambinoSfuggita.Stato.FINITO and not b.bambino.visible, "finito, non ricompare")
 	var s := b.save_state()
 	check(bool(s.get("finito", false)), "lo stato si salva (finito)")
+
+
+## Il bambino col cubo del corridoio del fiume inseguito fino al capannone, dove sparisce dietro la pila dell'angolo
+## (0.3.21, ricontrollo di grafica-2): il giocatore, appena lui scappa, gli corre dietro allo sprint guardandolo, fino
+## alla soglia della porta, a 1 m o a 2 m dentro (e lì si ferma a guardare), oppure senza fermarsi fino in fondo alla
+## strada. Fra l'ultimo fotogramma in cui se ne vede un pezzo (le ossa e intorno a ognuna 10 cm, dove sta la pelle) e
+## quello in cui sparisce ci devono essere almeno [constant MARGINE_SPARIRE] fotogrammi.
+const MARGINE_SPARIRE := 10
+
+
+func _insegui_fiume(b: BambinoSfuggita) -> void:
+	var g := b.get_parent() as Node3D
+	var pm := b.via[0].z
+	var xc := b.via[0].x - 0.7
+	var y := b.via[0].y
+	var casi := [["fino alla soglia", [Vector3(xc - 0.1, y, pm)]], ["fino a 1 m dentro", [Vector3(xc - 1.1, y, pm)]],
+			["fino a 2 m dentro", [Vector3(xc - 2.1, y, pm)]],
+			["di corsa senza fermarsi", [Vector3(xc - 2.1, y, pm), Vector3(xc - 4.5, y, pm - 1.0)]]]
+	var partenza := _globale(b, b.da_dove) - Vector3.UP * 1.6
+	var t0 = _pavimento(partenza)
+	if t0 != null:
+		partenza = t0
+	for caso in casi:
+		b.load_state({"finito": false})
+		_metti(partenza, b.global_position, true)
+		var t := 0.0
+		while t < 4.0 and b.stato == BambinoSfuggita.Stato.ATTESA:
+			await _frames(1)
+			t += 1.0 / 60.0
+		_metti(partenza, b.global_position, false)
+		t = 0.0
+		while t < 8.0 and b.stato == BambinoSfuggita.Stato.GUARDA:
+			await _frames(1)
+			t += 1.0 / 60.0
+		var qui := partenza
+		var strada: Array = []
+		for q in caso[1]:
+			strada.append(g.to_global(q))
+		var k := 0
+		var f := 0
+		var visto_a := -1
+		while f < 900 and b.stato == BambinoSfuggita.Stato.SCAPPA:
+			if k < strada.size():
+				var verso: Vector3 = strada[k] - qui
+				verso.y = 0.0
+				if verso.length() <= SPRINT / 60.0:
+					qui = Vector3(strada[k].x, qui.y, strada[k].z)
+					k += 1
+				else:
+					qui += verso.normalized() * SPRINT / 60.0
+			_p.global_position = qui
+			_guarda(b.bambino.punto_testa())
+			await _frames(1)
+			f += 1
+			if b.stato == BambinoSfuggita.Stato.SCAPPA and b.bambino.visible and _pezzo_in_vista(b):
+				visto_a = f
+		var margine := f - visto_a
+		check(b.stato == BambinoSfuggita.Stato.FINITO and margine >= MARGINE_SPARIRE,
+				"inseguito %s: sparisce %d fotogrammi dopo l'ultima volta che se ne vede un pezzo (almeno %d; il giocatore a %.1f m)" % [
+				caso[0], margine, MARGINE_SPARIRE, qui.distance_to(b.bambino.global_position)])
+
+
+## Se dagli occhi del giocatore si vede un pezzo del bambino: un osso, o un punto a 10 cm da un osso (la pelle).
+func _pezzo_in_vista(b: BambinoSfuggita) -> bool:
+	var cam := _p.camera
+	var occhio := _p.get_eye_position()
+	for m in ["Calmo", "Rivelato"]:
+		var mod := b.bambino.get_node_or_null(m) as Node3D
+		if mod == null or not mod.visible:
+			continue
+		var sk := mod.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+		for o in sk.get_bone_count():
+			var w: Vector3 = sk.global_transform * sk.get_bone_global_pose(o).origin
+			for d in [Vector3.ZERO, Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK, Vector3.UP, Vector3.DOWN]:
+				var q: Vector3 = w + d * 0.1
+				if cam.is_position_in_frustum(q) and _vista_libera(occhio, q):
+					return true
+	return false
 
 
 ## Distanza in pianta di [param p] dal tratto da [param a] a [param b].
