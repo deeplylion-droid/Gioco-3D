@@ -109,6 +109,8 @@ var _coda: Array = []
 ## pronte, tenute qui fino alla fine della costruzione: i load() dei passi le trovano già in memoria.
 var _precarica := {}
 var _precaricate: Array[Resource] = []
+## Quanto si aspetta al più il thread prima del primo passo che usa quei file (s).
+const ATTESA_PRECARICA := 15.0
 signal pronta
 
 
@@ -180,12 +182,17 @@ static func risorse() -> Array:
 	return out
 
 
-## Le risorse di [method risorse] che non sono già in memoria: si aspettano quelle che la sala ha già chiesto al thread,
-## e si chiedono quelle che nessuno ha chiesto (la torre costruita da sola, nei test).
+## Le risorse di [method risorse] e le acque e il velo dell'inseguimento (SalaInseguimento.RISORSE_ACQUE: si costruisce
+## nella stessa costruzione a pezzi) che non sono già in memoria: si aspettano quelle che la sala ha già chiesto al
+## thread, e si chiedono quelle che nessuno ha chiesto (la torre costruita da sola, nei test). (Non lei e le fonti degli
+## arredi, le altre SalaInseguimento.risorse(): le fonti, GLTF grandi, costruita la torre da sola nel test restavano in
+## caricamento più di 15 s)
 func _chiedi_precarica() -> void:
 	_precarica.clear()
 	_precaricate.clear()
-	for percorso: String in risorse():
+	for percorso: String in risorse() + SalaInseguimento.RISORSE_ACQUE:
+		if _precarica.has(percorso):
+			continue
 		if ResourceLoader.has_cached(percorso):
 			_precaricate.append(load(percorso))
 		elif Game.stato_thread(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS or Game.carica_in_thread(percorso) == OK:
@@ -194,9 +201,15 @@ func _chiedi_precarica() -> void:
 
 ## Aspetta, fotogramma per fotogramma, che il thread abbia finito le risorse chieste (senza load_threaded_get, che
 ## blocca), e le tiene fino alla fine della costruzione: finite, load() le trova in memoria. Quelle che il thread non
-## carica le carica poi il passo stesso, come prima.
+## carica le carica poi il passo stesso, come prima; e dopo [constant ATTESA_PRECARICA] s (più il ritardo finto dei test,
+## Game.ritardo_thread_test) non si aspetta più: un file che resta in caricamento per sempre non ferma la torre.
 func _aspetta_precarica() -> void:
+	var fino := Time.get_ticks_msec() + (ATTESA_PRECARICA + Game.ritardo_thread_test) * 1000.0
 	while not _precarica.is_empty():
+		if Time.get_ticks_msec() > fino:
+			push_warning("Sala della torre: %d file ancora in caricamento dopo %.0f s, li caricano i passi: %s" % [_precarica.size(), ATTESA_PRECARICA, ", ".join(PackedStringArray(_precarica.keys()))])
+			_precarica.clear()
+			return
 		for percorso: String in _precarica.keys():
 			var stato := Game.stato_thread(percorso)
 			if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
