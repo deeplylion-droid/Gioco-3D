@@ -3,9 +3,9 @@ extends Node
 ## ottobre), sulla strada della Risalita, col giocatore vero (si cammina col tasto avanti, si guarda la pozza e si tiene il
 ## tasto destro):
 ## 1. dalla partenza F9 "Fiume lento" (MenuProva.parti, come dal menu): il fiume e l'infermeria con le scorciatoie (le
-##    provano test_risalita e test_infermeria_gioco), poi dalla porta nord dell'infermeria si entra nella stanza: c'è il
-##    cartello col faretto accanto alla porta, le 25 pozze sono piene, la porta stagna è chiusa e il checkpoint
-##    d'ingresso si scrive su disco;
+##    provano test_risalita e test_infermeria_gioco), poi dalla porta nord dell'infermeria si entra nella stanza: il
+##    cartello col faretto è nel corridoio del personale prima dell'infermeria, lontano dalla sua porta (scelta B del 4
+##    novembre), le 25 pozze sono piene, la porta stagna è chiusa e il checkpoint d'ingresso si scrive su disco;
 ## 2. Continua a metà: tolto un colore, una chiusura (i progressi in memoria azzerati) e Continua dal titolo ripartono
 ##    dall'ingresso con le pozze tutte piene e la porta chiusa; da lì si risolve (turchese, viola, arancione) e la porta
 ##    si apre, col checkpoint a enigma risolto scritto su disco;
@@ -52,8 +52,7 @@ func _run() -> void:
 		return
 	await _fino_alle_pozze()
 	var inf := ris.get_node(^"Infermeria") as Node3D
-	check(inf.get_node_or_null(^"CartelloPozze") != null and (inf.get_node_or_null(^"FarettoCartelloPozze/Luce") as Light3D).visible,
-		"accanto alla porta nord dell'infermeria c'è il cartello col faretto acceso")
+	_cartello_pozze(inf)
 	check(_tutte_piene() and e.stato == EnigmaPozze.Stato.APERTO and not _porta_aperta(), "le pozze sono piene e la porta stagna è chiusa")
 	var ingresso := String(GameState.salvataggio().get("checkpoint", ""))
 	check(ingresso.begins_with("Risalita/") and ingresso.ends_with("CheckpointIngresso"),
@@ -122,6 +121,54 @@ func _fino_alle_pozze() -> void:
 		inf.to_global(Vector3(1.6, 0, 3.6)), inf.to_global(Vector3(1.8, 0, 1.6)), inf.to_global(Vector3(0.0, 0, 0.0)),
 		inf.to_global(Vector3(-2.2, 0, -2.4)), inf.to_global(Vector3(-2.2, 0, -3.8)), _davanti_alle_pozze(0.0)])
 	await _frames(20)
+
+
+## Il cartello di divieto coi tre quadratini a pastello, l'indizio della stanza delle pozze (GDD, "La stanza delle pozze
+## colorate"; scelta B del 4 novembre, "spostiamolo più lontano, così è troppo facile"): nel corridoio del personale prima
+## dell'infermeria, sul muro est, lontano dalla porta dell'infermeria, a contatto col muro, all'altezza degli occhi, con la
+## texture giusta e la lampadina bianca sopra, accesa, puntata su di lui, di fronte e con l'ombra (la luce non passa il
+## muro). Nell'infermeria non c'è più.
+func _cartello_pozze(inf: Node3D) -> void:
+	check(inf.find_child("CartelloPozze*", true, false) == null and inf.find_child("FarettoCartelloPozze", true, false) == null,
+		"nell'infermeria non c'è più il cartello delle pozze")
+	var cp := ris.get_node_or_null(^"CartelloPozzeColorate") as CartelloPozze
+	var c := cp.get_node_or_null(^"CartelloPozze") as MeshInstance3D if cp else null
+	check(c != null, "c'è il cartello delle pozze nel corridoio del personale")
+	if c == null:
+		return
+	# il corridoio: x da -36 a -34 (muro est), z da 48,1 (la porta sud dell'infermeria, a x -35) a 50,7 (il capannone)
+	var b := c.global_transform * c.get_aabb()
+	check(absf(b.position.x - (-34.0 - CartelloPozze.SPESSORE)) < 0.001 and absf(b.end.x - (-34.0)) < 0.001,
+		"a contatto col muro est del corridoio (da x %.4f a %.4f)" % [b.position.x, b.end.x])
+	var porta := Vector3(-35.0, b.get_center().y, 48.1)
+	check(b.position.z > 48.1 + 1.8 and b.end.z < 50.7 - 0.1 and b.get_center().distance_to(porta) > 2.0,
+		"lontano dalla porta dell'infermeria (%.2f m) e dentro il corridoio (z da %.2f a %.2f)" % [
+			b.get_center().distance_to(porta), b.position.z, b.end.z])
+	var y := b.get_center().y - float(ris.get_script().get_script_constant_map().get("Y", -5.4))
+	check(y > 1.3 and y < 1.7, "all'altezza degli occhi (centro a %.2f m)" % y)
+	var f := cp.get_node_or_null(^"CartelloPozzeFaccia") as MeshInstance3D
+	var mf := f.material_override as StandardMaterial3D if f else null
+	check(mf != null and mf.albedo_texture != null and mf.albedo_texture.resource_path.ends_with("pozze_colorate/cartello_divieto.png"),
+		"col disegno del divieto e dei tre quadratini a pastello")
+	check(mf != null and mf.roughness >= 0.6 and mf.metallic == 0.0, "lo smalto del cartello è opaco, senza metallo")
+	# la lampada rossa del corridoio, a 70 cm, non lo illumina (il viola diventava quasi rosa): il cartello sta nel suo
+	# strato e la luce rossa non lo prende; le altre luci sì
+	var rossa: OmniLight3D = null
+	for o in ris.find_children("*", "OmniLight3D", true, false):
+		if (o as OmniLight3D).global_position.distance_to(c.global_position) < 1.5 and (o as OmniLight3D).light_color.r > 0.9 \
+				and (o as OmniLight3D).light_color.g < 0.3:
+			rossa = o
+	check(c.layers == CartelloPozze.STRATO and f != null and f.layers == CartelloPozze.STRATO and rossa != null
+			and (rossa.light_cull_mask & CartelloPozze.STRATO) == 0,
+		"la luce rossa del corridoio non prende il cartello, che sta nel suo strato")
+	var luce := cp.get_node_or_null(^"FarettoCartelloPozze/Luce") as SpotLight3D
+	check(luce != null and (luce.light_cull_mask & CartelloPozze.STRATO) != 0, "il faretto bianco sì")
+	var verso := (c.global_position - luce.global_position).normalized() if luce else Vector3.ZERO
+	var normale := Vector3(-1, 0, 0)
+	check(luce != null and luce.visible and luce.light_color.s < 0.02 and luce.light_energy >= 4.0
+			and -luce.global_basis.z.dot(verso) > 0.97 and -verso.dot(normale) > 0.5 and luce.shadow_enabled,
+		"con sopra la lampadina bianca accesa (saturazione %.2f, forza %.1f), puntata sul cartello di fronte (%.2f) e con l'ombra" % [
+			luce.light_color.s if luce else 1.0, luce.light_energy if luce else 0.0, -verso.dot(normale)])
 
 
 ## Sulla passerella sud (da cui si entra), davanti alla colonna [param x] della griglia (m dal centro, lungo X).

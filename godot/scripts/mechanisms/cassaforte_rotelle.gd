@@ -5,6 +5,9 @@ extends Node3D
 ## Interactable: con E avanza di una cifra. Con il [member codice] giusto lo sportello si apre
 ## ([signal aperta]) e il [member contenuto] (la keycard, la Polaroid della pecora) si può prendere.
 ## Grafica provvisoria (le cifre sono Label3D) o quella vera. Lo stato si salva.
+## I suoni (scelta A dell'utente del 4 novembre, proposta enigmi-2): a ogni cifra un clic metallico, un po' diverso per
+## ogni rotella; col codice giusto il "fatto giusto" degli enigmi, poi il chiavistello e lo sportello che si apre
+## cigolando, coi tempi del suono (Audio.CASSAFORTE_CIGOLIO_DA e _A). Col codice sbagliato nient'altro.
 
 signal aperta
 
@@ -42,11 +45,19 @@ signal aperta
 var cifre := PackedInt32Array([0, 0, 0])
 var aperta_ora := false
 
+## I clic delle tre rotelle (testa, corpo, coda).
+const CLIC := [&"cassaforte_clic_a", &"cassaforte_clic_b", &"cassaforte_clic_c"]
+## Quanto dopo l'ultimo clic parte il chiavistello (s): prima il "fatto giusto", poi il meccanismo che risponde.
+const RITARDO_CHIAVISTELLO := 0.3
+## L'angolo dello sportello aperto (radianti, sui cardini a sinistra).
+const APERTO := -1.9
+
 var _rotelle: Array[Interactable] = []
 var _scritte: Array[Label3D] = []
 var _sportello: Node3D
 var _cilindri: Array[MeshInstance3D] = []
 var _barriera: StaticBody3D
+var _apertura: Tween
 
 ## Il raggio del tamburo, lo spessore dei tappi, delle guance e della mascherina, e metà dell'altezza della finestrella
 ## (una cifra è un decimo di giro: 2 x 0,06 x sin 18° = 3,7 cm).
@@ -104,7 +115,7 @@ func _ready() -> void:
 ## La barriera sotto lo sportello aperto: dal pavimento al suo bordo di sopra, larga quanto lo sportello aperto.
 func _metti_barriera() -> void:
 	var giro := _sportello.rotation
-	_sportello.rotation = Vector3(0.0, -1.9, 0.0)
+	_sportello.rotation = Vector3(0.0, APERTO, 0.0)
 	var b := AABB()
 	var primo := true
 	for mi in _sportello.find_children("*", "MeshInstance3D", true, false):
@@ -221,26 +232,49 @@ func rotella(i: int) -> Interactable:
 	return _rotelle[i]
 
 
-## Avanza di una cifra la rotella [param i] (0..9 e poi di nuovo 0).
+## Avanza di una cifra la rotella [param i] (0..9 e poi di nuovo 0), col suo clic.
 func gira(i: int) -> void:
 	if aperta_ora:
 		return
 	cifre[i] = (cifre[i] + 1) % 10
+	Audio.suona(CLIC[i % CLIC.size()], _rotelle[i].global_position if _rotelle[i].is_inside_tree() else null)
 	_metti()
 	if cifre == codice:
 		aperta_ora = true
-		_metti()
+		_metti(true)
+		_apri_coi_suoni()
 		aperta.emit()
 
 
-func _metti() -> void:
+## Il codice giusto: il "fatto giusto", poi il chiavistello e lo sportello che gira cigolando coi tempi del suono.
+func _apri_coi_suoni() -> void:
+	var dove: Variant = global_position if is_inside_tree() else null
+	Audio.suona(&"giusto", dove)
+	var da := Audio.CASSAFORTE_CIGOLIO_DA
+	var a := Audio.CASSAFORTE_CIGOLIO_A
+	if not is_inside_tree():
+		_sportello.rotation = Vector3(0.0, APERTO, 0.0)
+		return
+	_apertura = create_tween()
+	_apertura.tween_interval(RITARDO_CHIAVISTELLO)
+	_apertura.tween_callback(func(): Audio.suona(&"cassaforte_apre", global_position))
+	_apertura.tween_interval(da)
+	_apertura.tween_property(_sportello, ^"rotation:y", APERTO, a - da) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+## [param anima]: lo sportello non scatta aperto, lo gira [method _apri_coi_suoni].
+func _metti(anima := false) -> void:
 	for i in _scritte.size():
 		_scritte[i].text = str(cifre[i])
 		_rotelle[i].enabled = not aperta_ora
 		if i < _cilindri.size():
 			_cilindri[i].transform = Transform3D(giro_rotella(cifre[i]), Vector3.ZERO)
 	# Aperta, lo sportello gira sui cardini a sinistra.
-	_sportello.rotation = Vector3(0.0, -1.9 if aperta_ora else 0.0, 0.0)
+	if not anima:
+		if _apertura and _apertura.is_valid():
+			_apertura.kill()
+		_sportello.rotation = Vector3(0.0, APERTO if aperta_ora else 0.0, 0.0)
 	for c in contenuto:
 		if is_instance_valid(c):
 			c.enabled = aperta_ora

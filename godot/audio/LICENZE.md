@@ -112,6 +112,12 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `effetti/turbina_bloccata.ogg` | 0.6 s | sintesi (originale) |  |
 | `effetti/turbina_loop.ogg` | 2.0 s | sintesi (originale) |  |
 | `effetti/vasca_svuotata.ogg` | 2.8 s | sintesi (originale) |  |
+| `enigmi/cassaforte_apre.ogg` | 2.2 s | Kenney Impact Sounds e RPG Audio (CC0), rielaborati + sintesi | chiavistello, poi il cigolio dello sportello (enigmi-2 A, 4 novembre) |
+| `enigmi/cassaforte_clic_a.ogg` | 0.2 s | Kenney RPG Audio (CC0), rielaborati + sintesi | il clic di una cifra della rotella testa (enigmi-2 A, 4 novembre) |
+| `enigmi/cassaforte_clic_b.ogg` | 0.2 s | Kenney RPG Audio (CC0), rielaborati + sintesi | il clic di una cifra della rotella corpo (enigmi-2 A, 4 novembre) |
+| `enigmi/cassaforte_clic_c.ogg` | 0.2 s | Kenney RPG Audio (CC0), rielaborati + sintesi | il clic di una cifra della rotella coda (enigmi-2 A, 4 novembre) |
+| `enigmi/disco_lamiera_colpo.ogg` | 2.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | il getto che prende il disco del fiume: colpo di lamiera come un gong (enigmi-3 A, 4 novembre) |
+| `enigmi/giusto.ogg` | 0.8 s | sintesi (originale) | il jingle della botola accorciato e stonato, a ogni enigma risolto (enigmi-4 A, 4 novembre) |
 | `giocatore/atterraggio_acqua_01.ogg` | 0.7 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_acqua_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_bagnato_01.ogg` | 0.5 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
@@ -259,4 +265,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 222 file, 7.5 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 228 file, 7.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

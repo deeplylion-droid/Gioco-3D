@@ -879,6 +879,66 @@
   "lufs": -24.0,
   "lufs_max": -17.0
  },
+ "enigmi/cassaforte_apre": {
+  "file": "res://audio/enigmi/cassaforte_apre.ogg",
+  "canali": 1,
+  "durata": 2.182,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds e RPG Audio (CC0), rielaborati + sintesi",
+  "nota": "chiavistello, poi il cigolio dello sportello (enigmi-2 A, 4 novembre)",
+  "lufs": -23.0,
+  "lufs_max": -15.0
+ },
+ "enigmi/cassaforte_clic_a": {
+  "file": "res://audio/enigmi/cassaforte_clic_a.ogg",
+  "canali": 1,
+  "durata": 0.22,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborati + sintesi",
+  "nota": "il clic di una cifra della rotella testa (enigmi-2 A, 4 novembre)",
+  "lufs": null,
+  "lufs_max": -21.1
+ },
+ "enigmi/cassaforte_clic_b": {
+  "file": "res://audio/enigmi/cassaforte_clic_b.ogg",
+  "canali": 1,
+  "durata": 0.22,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborati + sintesi",
+  "nota": "il clic di una cifra della rotella corpo (enigmi-2 A, 4 novembre)",
+  "lufs": null,
+  "lufs_max": -21.4
+ },
+ "enigmi/cassaforte_clic_c": {
+  "file": "res://audio/enigmi/cassaforte_clic_c.ogg",
+  "canali": 1,
+  "durata": 0.22,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborati + sintesi",
+  "nota": "il clic di una cifra della rotella coda (enigmi-2 A, 4 novembre)",
+  "lufs": null,
+  "lufs_max": -21.3
+ },
+ "enigmi/disco_lamiera_colpo": {
+  "file": "res://audio/enigmi/disco_lamiera_colpo.ogg",
+  "canali": 1,
+  "durata": 2.6,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "il getto che prende il disco del fiume: colpo di lamiera come un gong (enigmi-3 A, 4 novembre)",
+  "lufs": -27.3,
+  "lufs_max": -16.0
+ },
+ "enigmi/giusto": {
+  "file": "res://audio/enigmi/giusto.ogg",
+  "canali": 1,
+  "durata": 0.75,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "il jingle della botola accorciato e stonato, a ogni enigma risolto (enigmi-4 A, 4 novembre)",
+  "lufs": -16.9,
+  "lufs_max": -16.0
+ },
  "giocatore/atterraggio_acqua_01": {
   "file": "res://audio/giocatore/atterraggio_acqua_01.ogg",
   "canali": 1,

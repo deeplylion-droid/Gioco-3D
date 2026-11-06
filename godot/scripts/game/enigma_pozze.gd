@@ -258,6 +258,8 @@ func giusti_tolti() -> bool:
 func _valuta() -> void:
 	if giusti_tolti():
 		stato = Stato.RISOLTO
+		# il "fatto giusto" degli enigmi (scelta A dell'utente del 4 novembre, proposta enigmi-4), dalle pozze
+		Audio.suona(&"giusto", global_position if is_inside_tree() else null)
 		_apri_porta(false)
 		if checkpoint_risolto and checkpoint_risolto.is_inside_tree():
 			GameState.reach_checkpoint.call_deferred(checkpoint_risolto)

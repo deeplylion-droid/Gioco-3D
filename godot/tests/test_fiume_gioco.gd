@@ -118,8 +118,19 @@ func _run() -> void:
 
 	print("4. Il giro giusto")
 	t0 = _ora()
+	var gong0 := int(Audio.conteggio.get(&"disco_lamiera_colpo", 0))
+	var tonfi0 := int(Audio.conteggio.get(&"porta_chiusa", 0))
 	var preso1 := await _spara_al_bersaglio(p1, 40.0)
 	check(preso1 and not p1.a_destra, "colpito il bersaglio 1: la paratia si gira")
+	# i suoni (scelta A del 4 novembre): il colpo di lamiera sul disco, una volta per giro; poi motore e catene delle due
+	# chiuse che si muovono e i loro colpi sordi quando arrivano
+	check(int(Audio.conteggio.get(&"disco_lamiera_colpo", 0)) == gong0 + 1, "il disco suona come un gong di lamiera, una volta")
+	var motori := _motori_chiuse()
+	check(motori == 2, "le due chiuse del bivio 1 si muovono col motore e le catene (%d)" % motori)
+	await _secondi(2.5)
+	motori = _motori_chiuse()
+	check(motori == 0 and int(Audio.conteggio.get(&"porta_chiusa", 0)) == tonfi0 + 2,
+		"arrivate, i motori tacciono e si sentono i due colpi sordi (%d motori, %d colpi)" % [motori, int(Audio.conteggio.get(&"porta_chiusa", 0)) - tonfi0])
 	await _fino_al_tratto("Giusto1", 30.0)
 	check(fiume.tratto.name == &"Giusto1", "si va nel ramo giusto")
 	await _fino_al_tratto("Giusto2", 40.0)
@@ -211,6 +222,15 @@ func _spara_al_bersaglio(par: ParatiaFiume, secondi := 6.0) -> bool:
 	Input.action_release(&"spray")
 	await _secondi(0.2)
 	return par.colpi > colpi
+
+
+## Quante chiuse suonano adesso il motore e le catene (i loop sotto i nodi delle chiuse, "paratia...").
+func _motori_chiuse() -> int:
+	var n := 0
+	for l in level.find_children("*", "AudioLoop", true, false):
+		if (l as AudioLoop).volume > 0.0 and String(l.get_parent().name).begins_with("paratia"):
+			n += 1
+	return n
 
 
 func _cartello_acceso(t: TrattoFiume) -> bool:

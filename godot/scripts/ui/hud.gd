@@ -91,8 +91,13 @@ func _on_item_added(_id: StringName, item_name: String, total: int) -> void:
 	show_message(tr("Raccolto: %s") % (tr(item_name) + ("" if total <= 1 else " (%d)" % total)))
 
 
+## Le Polaroid si contano sempre su 16 (scelta A dell'utente del 4 novembre, proposta enigmi-1): prima il totale era
+## quello delle zone già caricate, e cresceva andando avanti.
 func _on_collectible(collection: StringName, _entry: StringName, count: int, total: int) -> void:
-	show_message("%s %d/%d" % [tr(String(collection).capitalize()), count, total])
+	if collection == &"polaroid":
+		show_message(tr("Polaroid: %d su %d") % [PolaroidPhoto.quante_trovate(), PolaroidPhoto.NOMI_RACCOLTA.size()])
+	else:
+		show_message("%s %d/%d" % [tr(String(collection).capitalize()), count, total])
 
 
 func _on_tank_changed(amount: float, capacity: float) -> void:

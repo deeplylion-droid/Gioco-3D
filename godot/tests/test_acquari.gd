@@ -193,11 +193,13 @@ func _run() -> void:
 	print("6. Il giro dopo: 2 giallo + 1 blu, partendo con l'acqua chiara nello zaino")
 	p.water_pack.set_tank_amount(0.0)
 	p.water_pack.set_tank_amount(12.0)
+	var giusto0 := int(Audio.conteggio.get(&"giusto", 0))
 	for t in [giallo, blu, giallo]:
 		await _aspira(t)
 		await _versa()
 	await _frames(10)
 	check(enigma.stato == EnigmaAcquari.Stato.RISOLTO, "verde: risolto (giallo %.2f)" % enigma.parte_di_giallo())
+	check(int(Audio.conteggio.get(&"giusto", 0)) == giusto0 + 1, "suona il \"fatto giusto\" degli enigmi, una volta")
 	check(WaterMix.frazione(misto.mix, WaterMix.VERDE) > 0.99, "l'acqua è verde")
 	check(portone.in_movimento or portone.is_aperto(), "il portone si apre")
 	await _frames(int((portone.partenza + portone.durata + 0.5) * 60.0))

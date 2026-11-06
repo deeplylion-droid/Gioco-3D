@@ -79,16 +79,6 @@ func _run() -> void:
 	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "col suono della porta del ponte")
 	await _secondi(3.0)
 	check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "fino ad aprirsi contro il muro (anta a %.1f gradi)" % anta.rotation_degrees.y)
-	var cartello := inf.get_node_or_null(^"CartelloPozze") as MeshInstance3D
-	if cartello:
-		var ab := _aabb_locale(inf, cartello)
-		var aa := AABB()
-		var prima_a := true
-		for m in anta.find_children("*", "MeshInstance3D", true, false):
-			var b := _aabb_locale(inf, m as MeshInstance3D)
-			aa = b if prima_a else aa.merge(b)
-			prima_a = false
-		check(not prima_a and not ab.grow(0.02).intersects(aa), "l'anta aperta non copre il cartello delle pozze (anta da x %.2f a %.2f)" % [aa.position.x, aa.end.x])
 	p.teleport(inf.to_global(Vector3(-2.2, 0.0, -2.2)), 0.0, 0.0)
 	await _secondi(0.2)
 	await _cammina_verso(fuori, 3.0)
@@ -160,14 +150,31 @@ func _run() -> void:
 	check(a_vista == PackedInt32Array([4, 1, 7]), "con le rotelle su 4-1-7 nelle finestrelle si legge 4-1-7 (%s)" % str(a_vista))
 	cassa.load_state({"cifre": [0, 0, 0], "aperta": false})
 	check(await _usa(cassa.rotella(1)), "guardando una rotella la si gira con E")
+	# i suoni (scelta A del 4 novembre): un clic a ogni cifra, diverso per rotella; col codice sbagliato nient'altro
+	var clic0 := _clic_cassaforte()
+	var giusto0 := int(Audio.conteggio.get(&"giusto", 0))
+	var apre0 := int(Audio.conteggio.get(&"cassaforte_apre", 0))
 	_imposta(cassa, [4, 1, 6])
 	check(not cassa.aperta_ora, "4-1-6 non la apre")
+	var clic := _clic_cassaforte()
+	check(clic[0] - clic0[0] == 4 and clic[1] - clic0[1] == 0 and clic[2] - clic0[2] == 6,
+		"un clic a ogni cifra, col suono della sua rotella (%s)" % str([clic[0] - clic0[0], clic[1] - clic0[1], clic[2] - clic0[2]]))
+	await _secondi(0.5)
+	check(int(Audio.conteggio.get(&"giusto", 0)) == giusto0 and int(Audio.conteggio.get(&"cassaforte_apre", 0)) == apre0,
+		"col codice sbagliato nessun altro suono")
 	_imposta(cassa, [4, 1, 7])
 	check(cassa.aperta_ora, "4-1-7 la apre")
+	check(int(Audio.conteggio.get(&"giusto", 0)) == giusto0 + 1, "col codice giusto il \"fatto giusto\" degli enigmi")
+	var sportello := cassa.get(&"_sportello") as Node3D
+	check(absf(sportello.rotation.y) < 0.01, "lo sportello non scatta aperto: si apre col suono")
 	var polaroid := inf.get_node(^"PolaroidPecora") as PolaroidPhoto
 	check(keycard.can_interact(p) and polaroid.can_interact(p), "dentro ci sono la keycard e la Polaroid")
 	check(not cassa.rotella(0).can_interact(p), "aperta, le rotelle non girano più")
 	await _secondi(0.5)
+	check(int(Audio.conteggio.get(&"cassaforte_apre", 0)) == apre0 + 1, "poi il chiavistello e il cigolio dello sportello")
+	await _secondi(1.8)
+	check(absf(sportello.rotation.y - CassaforteRotelle.APERTO) < 0.01,
+		"lo sportello arriva aperto con la fine del cigolio (%.2f rad)" % sportello.rotation.y)
 	check(await _usa(keycard), "guardando la keycard la si prende con E")
 	check(polaroid.photo == 11 and polaroid.get_texture() != null, "è la Polaroid vera della pecora (P11)")
 	var h: float = preload("res://tests/polaroid_libere.gd").appoggio(get_tree().current_scene, polaroid)
@@ -232,41 +239,11 @@ func _run() -> void:
 	_fine()
 
 
-## Il cartello di divieto con i tre quadratini a pastello, l'indizio della stanza delle pozze (GDD, "La stanza delle pozze
-## colorate"): accanto alla porta nord, a ovest, all'altezza degli occhi, a contatto col muro, con la texture giusta e la
-## lampadina bianca sopra, accesa e puntata su di lui.
+## Il cartello delle pozze colorate non è più qui (scelta B dell'utente del 4 novembre: è nel corridoio del personale prima
+## dell'infermeria, lontano dalla sua porta; lo controlla test_pozze_strada.gd): niente cartello né il suo faretto.
 func _cartello_pozze(inf: Node3D) -> void:
-	var c := inf.get_node_or_null(^"CartelloPozze") as MeshInstance3D
-	check(c != null, "c'è il cartello delle pozze accanto alla porta nord")
-	if c == null:
-		return
-	var L: float = inf.get_script().get_script_constant_map().get("L", 3.2)
-	var b := _aabb_locale(inf, c)
-	check(absf(b.position.z - (-L)) < 0.001, "a contatto col muro nord (retro a %.4f, muro a %.2f)" % [b.position.z, -L])
-	check(b.position.x > -L + 0.05 and b.end.x < -2.7 - 0.05, "fra l'angolo e lo stipite della porta, a ovest (x da %.2f a %.2f)" % [b.position.x, b.end.x])
-	check(b.get_center().y > 1.3 and b.get_center().y < 1.7, "all'altezza degli occhi (centro a %.2f m)" % b.get_center().y)
-	var f := inf.get_node_or_null(^"CartelloPozzeFaccia") as MeshInstance3D
-	var tex: Texture2D = (f.material_override as StandardMaterial3D).albedo_texture if f and f.material_override is StandardMaterial3D else null
-	check(tex != null and tex.resource_path.ends_with("pozze_colorate/cartello_divieto.png"), "col disegno del divieto e dei tre quadratini a pastello")
-	var luce := inf.get_node_or_null(^"FarettoCartelloPozze/Luce") as SpotLight3D
-	var verso := Vector3.ZERO
-	if luce:
-		verso = (c.global_position - luce.global_position).normalized()
-	check(luce != null and luce.visible and luce.light_color.s < 0.15 and -luce.global_basis.z.dot(verso) > 0.97,
-		"con sopra la lampadina bianca, accesa e puntata sul cartello")
-	# i colori dei quadratini come quelli delle pozze (collaudo del 1 novembre): luce bianca neutra e abbastanza forte da
-	# vincere il verde dell'uscita, che arriva sul cartello di fronte e non di taglio; smalto che non riflette la stanza
-	var normale := (inf.global_basis * Vector3(0, 0, 1)).normalized()
-	check(luce != null and luce.light_color.s < 0.02 and luce.light_energy >= 4.0 and -verso.dot(normale) > 0.5,
-		"il faretto è bianco neutro (saturazione %.2f), forte (%.1f) e illumina il cartello di fronte (%.2f)" % [
-			luce.light_color.s if luce else 1.0, luce.light_energy if luce else 0.0, -verso.dot(normale)])
-	var mf := f.material_override as StandardMaterial3D if f else null
-	check(mf != null and mf.roughness >= 0.6 and mf.metallic == 0.0, "lo smalto del cartello è opaco, senza metallo")
-
-
-func _aabb_locale(inf: Node3D, m: MeshInstance3D) -> AABB:
-	var x := inf.global_transform.affine_inverse() * m.global_transform
-	return x * m.get_aabb()
+	check(inf.find_child("CartelloPozze*", true, false) == null and inf.find_child("FarettoCartelloPozze", true, false) == null,
+		"nell'infermeria non c'è più il cartello delle pozze, né il suo faretto")
 
 
 ## 8. La porta nord che si apre senza il colpo (il pulsantone acceso da un'istantanea, da una stanza che si ricarica, dalle
@@ -427,6 +404,14 @@ func _tappi_lisci(cassa: CassaforteRotelle) -> bool:
 			if m == null or m.albedo_texture != null:
 				return false
 	return true
+
+
+## Quante volte è suonato il clic di ognuna delle tre rotelle della cassaforte.
+func _clic_cassaforte() -> Array[int]:
+	var n: Array[int] = []
+	for nome in CassaforteRotelle.CLIC:
+		n.append(int(Audio.conteggio.get(nome, 0)))
+	return n
 
 
 ## Gira le rotelle (col tasto E) fino alle cifre [param voluto].

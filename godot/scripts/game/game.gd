@@ -22,6 +22,8 @@ const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
 const SCENE_TITLE := "res://scenes/ui/menu_principale.tscn"
 const SCENE_CONTROLS := "res://scenes/ui/comandi.tscn"
+## L'album delle Polaroid (dal menu di pausa; scelta A dell'utente del 4 novembre, proposta enigmi-1).
+const SCENE_ALBUM := "res://scenes/ui/album_polaroid.tscn"
 
 ## Al primo avvio (nessun user://settings.cfg) parte con questo preset dell'addon grafica.
 @export var first_run_preset := "alto"
@@ -319,6 +321,20 @@ func open_options() -> void:
 			_resume_button.grab_focus.call_deferred())
 
 
+## L'album delle Polaroid (dal menu di pausa), come i comandi.
+func open_album() -> void:
+	if is_instance_valid(_menu_layer):
+		return
+	_overlay.visible = false
+	_menu_layer = load(SCENE_ALBUM).instantiate()
+	add_child(_menu_layer)
+	_menu_layer.get_node(^"Album").connect(&"chiuso", func():
+		_menu_layer = null
+		if get_tree().paused:
+			_overlay.visible = true
+			_resume_button.grab_focus.call_deferred())
+
+
 ## Schermata dei comandi (dal menu di pausa), come le opzioni.
 func open_controls() -> void:
 	if is_instance_valid(_menu_layer):
@@ -446,6 +462,7 @@ func _build_overlay() -> void:
 	label.add_theme_font_size_override("font_size", 34)
 	col.add_child(label)
 	_resume_button = _menu_button(col, "Riprendi", func(): set_paused(false))
+	_menu_button(col, "Polaroid", open_album)
 	_menu_button(col, "Opzioni", open_options)
 	_menu_button(col, "Comandi", open_controls)
 	_menu_button(col, "Torna al titolo", return_to_title)

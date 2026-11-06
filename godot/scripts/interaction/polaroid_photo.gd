@@ -15,6 +15,12 @@ const SCENA := "res://scenes/props/polaroid.tscn"
 const IMPRONTA: Array[Vector3] = [Vector3(0, 0, 0), Vector3(0.04, 0, 0.05), Vector3(-0.04, 0, 0.05), Vector3(0.04, 0, -0.05),
 	Vector3(-0.04, 0, -0.05), Vector3(0.04, 0, 0), Vector3(-0.04, 0, 0), Vector3(0, 0, 0.05), Vector3(0, 0, -0.05)]
 
+## Le 16 Polaroid del capitolo 1, in ordine (la foto n è NOMI_RACCOLTA[n - 1]): il nome di ognuna nella collezione "polaroid" del
+## salvataggio. Sono quelli di sempre (p01-p09 e p12-p16 dati apposta, la 10 e la pecora col nome del nodo): l'album e il
+## contatore li leggono, il salvataggio resta com'era.
+const NOMI_RACCOLTA: Array[StringName] = [&"p01", &"p02", &"p03", &"p04", &"p05", &"p06", &"p07", &"p08", &"p09", &"Polaroid10",
+	&"PolaroidPecora", &"p12", &"p13", &"p14", &"p15", &"p16"]
+
 ## Numero della foto (1-10, 11 la pecora che brilla dell'infermeria, 12-16 le nuove): texture Pxx.jpg.
 @export_range(1, 16) var photo := 1:
 	set(value):
@@ -84,7 +90,26 @@ func _appoggia() -> void:
 
 
 func get_texture() -> Texture2D:
-	return load(TEX_DIR + "P%02d.jpg" % photo) as Texture2D
+	return texture_di(photo)
+
+
+## La foto [param n] (1-16).
+static func texture_di(n: int) -> Texture2D:
+	return load(TEX_DIR + "P%02d.jpg" % n) as Texture2D
+
+
+## Vero se la foto [param n] (1-16) è già stata raccolta.
+static func trovata(n: int) -> bool:
+	return n >= 1 and n <= NOMI_RACCOLTA.size() and GameState.has_collectible(&"polaroid", NOMI_RACCOLTA[n - 1])
+
+
+## Quante delle 16 sono state raccolte.
+static func quante_trovate() -> int:
+	var k := 0
+	for n in range(1, NOMI_RACCOLTA.size() + 1):
+		if trovata(n):
+			k += 1
+	return k
 
 
 func _apply() -> void:
