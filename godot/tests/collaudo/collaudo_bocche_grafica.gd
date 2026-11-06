@@ -45,13 +45,30 @@ func _run() -> void:
 	if hud:
 		hud.visible = false
 	var veli: Array = ins.get(&"_veli")
+	# (CANDIDATA=1: com'era sulla candidata b44dfab7, la parete con water_inseguimento.gdshader e l'ombra su tutte e tre
+	# le lampade verdi; SOLO=tubo_1,scolo_0: solo quelle bocche; PROFONDITA=0.3,0.5: solo quelle profondità)
+	if OS.has_environment("CANDIDATA"):
+		prefisso = "candidata_"
+		for v: MeshInstance3D in veli:
+			(v.material_override as ShaderMaterial).shader = load("res://shaders/water_inseguimento.gdshader") as Shader
+		for l in ins.find_children("*", "OmniLight3D", true, false):
+			if l.get_meta(&"lampada_paratia_verde", false):
+				(l as OmniLight3D).shadow_enabled = true
+	var solo: PackedStringArray = OS.get_environment("SOLO").split(",", false)
+	var profondita := [2.5, 1.5, 0.8, 0.3]
+	if OS.has_environment("PROFONDITA"):
+		profondita = Array(OS.get_environment("PROFONDITA").split_floats(","))
 	print("COLLAUDO veli: %d, luci con ombra: %d" % [veli.size(), _luci_con_ombra()])
 	if fase in ["fermo", "tutto"]:
 		for v: MeshInstance3D in veli:
 			var nome := String(v.name).trim_prefix(SalaInseguimento.NOME_VELO).trim_prefix("ins_A_")
-			for lz in [2.5, 1.5, 0.8, 0.3]:
+			if not solo.is_empty() and not solo.has(nome):
+				continue
+			for lz in profondita:
 				await _da_dentro(v, lz)
 				await _scatto("fermo_%s_%02d" % [nome, int(lz * 10)])
+			if OS.has_environment("PROFONDITA"):
+				continue
 			await _da_dentro(v, 0.8, 0.6)
 			await _scatto("fermo_%s_08_su" % nome)
 	if fase in ["scivolo", "tutto"]:
