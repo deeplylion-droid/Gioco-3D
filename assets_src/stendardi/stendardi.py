@@ -342,6 +342,13 @@ def costruisci():
         capi = [('a', ba + lato * 0.065), ('b', bb - lato * 0.065)]
         if largo > 4.5:
             capi.append(('m', centro.copy()))
+        if abs(lato.x) > 0.5 and largo > 4.5:
+            # un bastone lungo che attraversa le travi: le corde scendono dritte dalle travi che ha sopra (ogni 4 m),
+            # e i capi sporgono oltre come su uno stendibiancheria
+            x0, x1 = sorted((ba.x, bb.x))
+            sopra = [t for t in range(44, 80, 4) if x0 + 0.3 <= t <= x1 - 0.3]
+            if len(sopra) >= 2:
+                capi = [('abcdefgh'[i], centro + lato * ((t - centro.x) / lato.x)) for i, t in enumerate(sopra)]
         for s, capo in capi:
             pezzi, da = corda_al_bastone('%s_corda_%s_bastone' % (nome, s), capo, lato, m_corda)
             tx = xt if abs(lato.x) < 0.5 else trave_vicina(capo.x)

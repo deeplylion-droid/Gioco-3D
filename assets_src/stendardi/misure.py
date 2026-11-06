@@ -12,8 +12,10 @@ PEZZA = (2.4, 2.8)
 # Ognuno accanto a una lampada appesa della sala (inseguimento_luci.json, "appese"), che lo illumina, e dove la vista
 # dalla vasca è libera (non dietro le paratie, che lo coprivano).
 STENDARDI = [
-    # vasca 1: a nord-ovest, oltre la lampada calda (45; 22,5; -19), rivolto a sud verso la vasca (travi 44 e 48)
-    dict(nome='stendardo_1', x=46.0, y=24.6, cima=-15.5, largo=3.0, alto=4.5, giro=90.0, cuciture=False),
+    # vasca 1: a nord-ovest, oltre la lampada calda (45; 22,5; -19), rivolto a sud verso la vasca (travi 44 e 48); 5 m
+    # più a nord della prima prova, che dalla vasca 1 copriva la lampada appesa fredda (43,8; 28,5): ora le sta dietro,
+    # a 0,55-0,78 m dal suo cavo (misure di enigmi, docs/collaudo/ricontrollo_stendardi/varianti_fattibilita.txt)
+    dict(nome='stendardo_1', x=46.0, y=29.6, cima=-15.5, largo=3.0, alto=4.5, giro=90.0, cuciture=False),
     # vasca 2: a est, accanto alla lampada calda (70,5; 24; -18,5), rivolto a ovest; più a sud del posto dove sale lei
     dict(nome='stendardo_2', x=72.0, y=21.8, cima=-16.0, largo=3.0, alto=4.5, giro=0.0, cuciture=False),
     # vasca 3: a nord-ovest, accanto alla lampada calda bassa (61; 9,9; -23,5), rivolto a est verso la vasca; il fondo
