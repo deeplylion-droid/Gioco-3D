@@ -1873,6 +1873,7 @@ func _pile() -> void:
 	if not costruisci_pile and not Engine.has_meta(&"costruisci_pile") and ResourceLoader.exists(PILE_FILE):
 		var salvate := load(PILE_FILE) as Resource
 		if salvate and salvate.has_meta(&"dati"):
+			pile_salvate = salvate
 			dati_pile = salvate.get_meta(&"dati")
 			await _pile_metti(dati_pile)
 			print("pile di scatoloni: dal file in %.0f ms (%d unità, %d scatole)" % [(Time.get_ticks_usec() - t0) / 1000.0,
@@ -2263,6 +2264,9 @@ const PILE_FILE := "res://assets/fiume_lento/pile_fiume.res"
 var costruisci_pile := false
 ## Le pile come sono state messe (dal file o costruite): MultiMesh, collisioni e lampade.
 var dati_pile := {}
+## Il file delle pile, tenuto qui anche perché aggiorna_risorse_risalita.gd lo metta fra quelli che il thread carica
+## prima di costruire le stanze.
+var pile_salvate: Resource
 
 
 ## Mette le pile dai loro dati: i sei MultiMesh, una collisione per colonna e le lampade calde sulle pile (l'energia
