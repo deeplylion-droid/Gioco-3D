@@ -91,13 +91,13 @@ func _run() -> void:
 				print("FASCIA %s %.1f: camera a %.3f m dal pelo, occhi_pelo %.3f" % [nome, lz, cam.y - float(v.get_meta(&"pelo")), p.get(&"occhi_pelo")])
 				for k in 4:
 					v.visible = k % 2 == 0
-					for a in acque_vasche:
-						a.visible = k < 2
+					for aq in acque_vasche:
+						aq.visible = k < 2
 					await _fotogrammi(3)
 					await _scatto("fascia_%s_%.1f_%s" % [nome.trim_prefix("ins_A_"), lz, ["normale", "senza_parete", "senza_acque", "senza_tutte"][k]])
 				v.visible = true
-				for a in acque_vasche:
-					a.visible = true
+				for aq in acque_vasche:
+					aq.visible = true
 	elif fase == "veli":
 		for v: MeshInstance3D in veli:
 			var nome := String(v.name).trim_prefix(SalaInseguimento.NOME_VELO)
