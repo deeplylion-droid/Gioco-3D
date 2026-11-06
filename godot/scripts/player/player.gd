@@ -152,6 +152,10 @@ var is_sliding := false
 ## Se vero si sta accovacciati anche senza il tasto (nei tubi chiusi dell'inseguimento, alti 1,6 m: lo
 ## mette SalaInseguimento).
 var accovacciato_forzato := false
+## La quota (globale) sotto cui l'occhio non scende, nemmeno col passo, atterrando o su un gradino: nelle bocche dei
+## tubi dell'inseguimento che partono sotto il pelo delle vasche l'occhio resta sopra l'acqua (lo mette
+## SalaInseguimento ogni passo). -INF: nessun limite.
+var occhi_minimo := -INF
 ## Il fondo dello scivolo sotto di te (normale), finché scivoli.
 var slide_normal := Vector3.UP
 ## Vero dopo un salto dallo scivolo, fino a quando si tocca terra: la velocità resta quella.
@@ -329,6 +333,7 @@ func _update_head(fraction: float) -> void:
 	var bob_h := head_bob_horizontal * w * sin(PI * phase)
 	var side := Basis(Vector3.UP, yaw) * Vector3.RIGHT
 	var pos := origin + Vector3.UP * (eye + land + bob_v) + side * bob_h
+	pos.y = maxf(pos.y, occhi_minimo)
 	var roll := lerpf(_roll_prev, _roll, fraction)
 	head.global_transform = Transform3D(get_aim_basis() * Basis(Vector3.BACK, roll), pos)
 

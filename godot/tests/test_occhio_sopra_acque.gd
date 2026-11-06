@@ -6,12 +6,16 @@ extends Node
 ##    dell'atterraggio e del passo) resta sopra il pelo più il piano vicino della camera;
 ## 2. in ogni acqua, accovacciati, atterrando da 1 m e camminando: l'occhio sempre sopra il pelo;
 ## 3. ogni tubo e ogni scolo, partendo nell'acqua della vasca da cui escono (le paratie aperte) e scivolando fino in
-##    fondo: in nessun fotogramma l'occhio sta sotto il pelo di un'acqua che vede (da lì l'acqua si vedrebbe da sotto).
+##    fondo: in nessun fotogramma l'occhio sta sotto il pelo di un'acqua che vede (da lì l'acqua si vedrebbe da sotto),
+##    né a meno di [constant TUBI_SOPRA] sopra (ritocco del capitolo 1, scelta A dell'utente: prima passava a 1 mm;
+##    lo tiene su SalaInseguimento.occhi_minimo).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_occhio_sopra_acque.gd
 
 const PLAYER := "res://scenes/player/player.tscn"
 ## Quanto l'occhio deve stare sopra il pelo, oltre al piano vicino della camera (m).
 const MARGINE := 0.02
+## Nei tubi e negli scoli, quanto l'occhio resta almeno sopra il pelo delle acque che vede, oltre a quanto sopra (m).
+const TUBI_SOPRA := 0.03
 
 var _ok := 0
 var _ko := 0
@@ -86,8 +90,8 @@ func _run() -> void:
 	print("3. Ogni tubo e scolo, dalla vasca di partenza fino in fondo")
 	for nome: String in ins.dati["tubi"]:
 		var peggio := await _tubo(ins, nome)
-		check(peggio[0] >= 0.0 or peggio[1] == "", "%s: l'occhio sempre sopra il pelo delle acque che vede (margine più piccolo %.3f m, %s)" % [
-			nome, peggio[0], peggio[1] if peggio[1] != "" else "nessuna"])
+		check(peggio[0] >= TUBI_SOPRA or peggio[1] == "", "%s: l'occhio sempre almeno %.2f m sopra il pelo delle acque che vede (margine più piccolo %.3f m, %s)" % [
+			nome, TUBI_SOPRA, peggio[0], peggio[1] if peggio[1] != "" else "nessuna"])
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)
 

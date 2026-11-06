@@ -541,6 +541,25 @@ def scala_pioli(c, x, y, z0, z1, verso_x=1):
         zz += 0.3
 
 
+def scala_bacino(c, x, x_muro, y, t, z_bordo, z1):
+    """La scaletta del bacino nel gioco (ritocco del capitolo 1, scelta A dell'utente): sopra il bordo come scala_pioli
+    (piede sul bordo del muro, i pioli ogni 30 cm da t), e i montanti che scavalcano il bordo e scendono contro la
+    faccia del muro verso l'acqua con due pioli in più, fino sotto il pelo (prima i due pioli più bassi erano chiusi
+    nel muro e la scaletta cominciava sul bordo, 26 cm sopra l'acqua: da dentro sembrava appesa)."""
+    r = 0.03
+    xb = x_muro + r                 # i montanti del tratto basso toccano la faccia del muro
+    for sg in (-0.25, 0.25):
+        c.cilindro((x, y + sg, z_bordo), (x, y + sg, z1 + 1.0), r, 'giallo_sicurezza', seg=8)
+        # sopra il bordo, dal montante alto alla faccia del muro (appoggiato sul bordo)
+        c.cilindro((x - r, y + sg, z_bordo + r), (xb + r, y + sg, z_bordo + r), r, 'giallo_sicurezza', seg=8)
+        c.cilindro((xb, y + sg, z_bordo + 2 * r), (xb, y + sg, t - 0.12), r, 'giallo_sicurezza', seg=8)
+    zz = t
+    while zz < z1 + 0.2:
+        xp = xb if zz < z_bordo else x
+        c.cilindro((xp, y - 0.25, zz), (xp, y + 0.25, zz), 0.022, 'giallo_sicurezza', seg=6)
+        zz += 0.3
+
+
 def porta_uscita(c, y, z, luci):
     """La porta di servizio nel muro ovest (verso la nave): telaio, battente socchiuso, cartello verde."""
     c.scatola((X0 + 0.02, y - 0.85, z), (X0 + 0.15, y - 0.7, z + 2.3), 'metallo_grigio')
@@ -712,7 +731,10 @@ def versione_A(mats):
     # la grata di sicurezza sulla bocca del tubo finale (chiusa: è calata davanti a lei)
     grata(c, (BX[2] - 0.1, 6.5, z0 + 2.0), (1, 0), not GIOCO, largo=3.0, alto=4.0)   # nel gioco alzata: cala dopo
     # la strada per uscire: scaletta sul bordo ovest del bacino, passerella, porta di servizio
-    scala_pioli(c, BX[0] + 0.15, 3.2, T - 0.3, porta[1])
+    if GIOCO:
+        scala_bacino(c, BX[0] + 0.15, BX[0] + 0.3, 3.2, T, T + 0.55, porta[1])
+    else:
+        scala_pioli(c, BX[0] + 0.15, 3.2, T - 0.3, porta[1])
     GIOCO_DATI['scale'].append(dict(x=BX[0] + 0.3, y=3.2, z0=z0, z1=porta[1], verso=[1.0, 0.0, 0.0]))
     P.piattaforma(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1], lati=('s', 'n'), pali=False)
     # nel gioco le gambe dal lato del bacino stanno fuori dal suo muro (prima ci passavano dentro, e la croce di quel
