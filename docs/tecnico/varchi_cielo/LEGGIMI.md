@@ -35,3 +35,12 @@ sullo scivolo sfarfallerebbe. Da sistemare nel modello quando si rifà.
 
 Lo scatto con lo sfondo magenta (`scatti_portone_torre.gd`, `MAGENTA=1 CUBO=1`) dagli 11 checkpoint e lungo la discesa,
 in 6 direzioni (240 scatti), non ha magenta nella torre.
+
+## La porta di servizio del bacino delle condotte
+
+Nel cubo magenta, da Checkpoint_bacino verso ovest, il vano della porta in cima alla scaletta era magenta (716 pixel,
+anche al far vero della camera): nello scatto a parti mancava il tunnel del viaggio sottomarino, che sta dietro la
+porta. Nel gioco la sala lo mette nel livello e lo costruisce mentre si è nella torre (`SalaPrincipale._completa_torre`,
+`_precarica_sottomarino`). Con il tunnel costruito (`TUNNEL=1`) il vano mostra il mosaico del tunnel: 0 pixel magenta
+(`bacino_porta_senza_e_con_tunnel.jpg`, a sinistra senza, a destra con). `controllo_cielo.gd` ora aspetta il tunnel
+costruito e tira 81 raggi dal bacino verso il vano: non ne esce nessuno.
