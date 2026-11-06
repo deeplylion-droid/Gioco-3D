@@ -72,16 +72,15 @@ def lenzuolo(nome, centro, verso, lato, largo, alto, mollette, seme):
         riga = []
         for i in range(nx + 1):
             u = i / nx
-            # fra le mollette (n-1 campate) la cima si affloscia (8 cm) e lì nascono le pieghe
+            # la cima è dritta, attaccata al bordo della piega (il lenzuolo continua dalla piega, che le mollette
+            # stringono sul bastone); fra le mollette (n-1 campate) nascono le pieghe, che crescono scendendo
             campata = u * (mollette - 1)
-            t = campata - math.floor(campata)
-            fra = math.sin(math.pi * t)            # 0 sulle mollette, 1 a metà campata
-            abbassa = 0.08 * fra * math.exp(-v * 6.0)
+            abbassa = 0.0
             # le pieghe: in profondità (verso), le creste a metà campata; crescono scendendo e poi si smorzano un po'
             amp = 0.11 * (1 - math.exp(-v * 5.0)) * (1.0 - 0.35 * v)
             piega = amp * math.cos(math.pi * 2 * campata) * -1.0
             # e una piega larga, lenta, che fa ondeggiare tutto il telo (il lenzuolo non è una tavola)
-            larga = 0.07 * v * math.sin(u * math.pi * 1.6 + fasi[0]) + 0.03 * math.sin(v * 5.0 + fasi[1])
+            larga = 0.07 * v * math.sin(u * math.pi * 1.6 + fasi[0]) + 0.03 * (math.sin(v * 5.0 + fasi[1]) - math.sin(fasi[1]))
             # il fondo ondulato e l'angolo destro più basso (il peso dell'orlo bagnato)
             fondo = 0.0
             if v > 0.85:
@@ -208,8 +207,11 @@ def risvolto(nome, cima, verso, lato, largo, mat):
     bastone e riscende dietro fino alla stessa quota. [cima]: il centro del bastone. Stessa stoffa del telo (la fascia
     più alta della texture)."""
     rb = R_BASTONE + 0.0015
-    sez = [(0.0, -R_BASTONE - RISVOLTO), (rb * 0.55, -rb * 1.6), (rb, -rb * 0.3), (rb * 0.7, rb * 0.72),
-           (0.0, rb), (-rb * 0.7, rb * 0.72), (-rb, -rb * 0.3), (-rb * 0.55, -rb * 1.6), (-0.003, -R_BASTONE - RISVOLTO)]
+    # (davanti: dalla cima del telo sale e si appoggia al bastone; poi lo avvolge, e dietro riscende fino alla stessa
+    # quota, 3 mm dietro il telo; le falde restano dentro la larghezza del bastone, dove le mollette non arrivano)
+    giro = [(rb * math.cos(math.radians(g)), rb * math.sin(math.radians(g))) for g in range(-30, 211, 15)]
+    sez = ([(0.0, -R_BASTONE - RISVOLTO), (rb * 0.4, -rb * 3.0), (rb * 0.85, -rb * 1.2)] + giro +
+           [(-rb * 0.85, -rb * 1.2), (-rb * 0.4, -rb * 3.0), (-0.003, -R_BASTONE - RISVOLTO)])
     nx = max(12, int(largo * 4))
     me = bpy.data.meshes.new(nome)
     bm = bmesh.new()
@@ -233,23 +235,27 @@ def risvolto(nome, cima, verso, lato, largo, mat):
 
 
 def molletta(nome, p, verso, lato, mat):
-    """Una molletta da bucato vera, sotto il bastone: due bracci di legno lunghi 7,5 cm e larghi 1,1 cm, ognuno con la
-    bocca sottile in cima (stringe le due falde del risvolto) e il manico più spesso in basso, che si allarga appena
-    verso fuori, e la molla di metallo a metà, che sporge di lato. [p]: dove il telo esce dal risvolto (6 cm sotto il
-    bastone), sul piano del telo."""
+    """Una molletta da bucato vera, a cavallo del bastone come su un filo: le due ganasce (la bocca) scendono ai due lati
+    del bastone e stringono le due falde della piega contro di lui (la faccia interna a 0,3 mm dalla stoffa, che lì gira
+    attorno al bastone); sopra il bastone le due metà si toccano al perno, con la molla di metallo che sporge di lato, e
+    sopra ancora i manici, un po' aperti. Alta 8 cm, larga 1,1. [p]: il punto sull'asse del bastone."""
     up = Vector((0, 0, 1))
+    rb = R_BASTONE + 0.0015                  # (il raggio della stoffa attorno al bastone, come nel risvolto)
     pezzi = []
-    centro_z = p.z + RISVOLTO - 0.045        # (le punte arrivano 1,5 cm sotto il bastone)
-    molla_z = centro_z + 0.004
+    giu, perno0, perno1, cima = -0.018, rb + 0.003, rb + 0.020, rb + 0.052
+    dentro = rb + 0.0003
     for s_ in (-1, 1):
-        # la bocca: 3,4 cm sopra la molla, spessa 5 mm, appoggiata alla stoffa (faccia interna a 2,5 mm dal telo)
-        c = Vector((p.x, p.y, molla_z + 0.017)) + verso * s_ * 0.005
-        pezzi.append(scatola('%s_bocca%d' % (nome, s_), c, [lato, verso, up], (0.0055, 0.0025, 0.017), mat))
-        # il manico: 4,1 cm sotto la molla, spesso 7 mm, un po' aperto in basso
-        asse_z = (up - verso * s_ * 0.08).normalized()
-        c = Vector((p.x, p.y, molla_z - 0.0185)) + verso * s_ * (0.0065 + 0.0015)
-        pezzi.append(scatola('%s_manico%d' % (nome, s_), c, [lato, asse_z.cross(lato).normalized(), asse_z], (0.0055, 0.0035, 0.0225), mat))
-    molla_c = Vector((p.x, p.y, molla_z))
+        # la ganascia: dalla punta, 1,8 cm sotto l'asse, fino al perno; la faccia interna tocca la stoffa al fianco
+        c = p + up * ((giu + perno0) / 2) + verso * s_ * (dentro + 0.0025)
+        pezzi.append(scatola('%s_bocca%d' % (nome, s_), c, [lato, verso, up], (0.0055, 0.0025, (perno0 - giu) / 2), mat))
+        # il perno: sopra la stoffa le due metà si toccano in mezzo
+        c = p + up * ((perno0 + perno1) / 2) + verso * s_ * (dentro + 0.005) / 2
+        pezzi.append(scatola('%s_perno%d' % (nome, s_), c, [lato, verso, up], (0.0055, (dentro + 0.005) / 2, (perno1 - perno0) / 2), mat))
+        # il manico, un po' aperto in cima
+        asse_z = (up + verso * s_ * 0.08).normalized()
+        c = p + up * ((perno1 + cima) / 2) + verso * s_ * 0.0045
+        pezzi.append(scatola('%s_manico%d' % (nome, s_), c, [lato, asse_z.cross(lato).normalized() * -1.0, asse_z], (0.0055, 0.0035, (cima - perno1) / 2 + 0.001), mat))
+    molla_c = p + up * ((perno0 + perno1) / 2)
     pezzi.append(cilindro(nome + '_molla', molla_c - lato * 0.008, molla_c + lato * 0.008, 0.0045, materiale('M_molla', (0.6, 0.6, 0.62, 1)), seg=8))
     return unisci(nome, pezzi)
 
@@ -335,8 +341,6 @@ def costruisci():
         ba = centro - lato * (largo / 2 + 0.1)
         bb = centro + lato * (largo / 2 + 0.1)
         oggetti.append(cilindro(nome + '_bastone', ba, bb, R_BASTONE, m_bastone, seg=10))
-        for i, p in enumerate(punti):
-            oggetti.append(molletta('%s_molletta%d' % (nome, i), p, verso, lato, m_molletta))
         # le corde: a 6,5 cm dai capi del bastone (e una in mezzo se è più largo di 4,5 m), su fino al golfare sotto la
         # trave: la stessa trave se il bastone le corre sotto (girato lungo y), se no la trave più vicina sopra ogni corda
         capi = [('a', ba + lato * 0.065), ('b', bb - lato * 0.065)]
@@ -359,6 +363,16 @@ def costruisci():
             pezzi += corda('%s_corda_%s_su' % (nome, s), da, a_, m_corda)
             # (tutto un pezzo: dal bastone, a cui gira attorno, al golfare avvitato nella trave)
             oggetti.append(unisci('%s_corda_%s' % (nome, s), pezzi))
+        # le mollette sul bastone: la prima e l'ultima 8 cm dentro gli orli, le altre in mezzo, e nessuna a meno di
+        # 12 cm da una corda (i giri, il nodo e il codino stanno entro 5 cm)
+        corde = [(c - centro).dot(lato) for _s, c in capi]
+        for i in range(mollette):
+            x = -largo / 2 + 0.08 + (largo - 0.16) * i / (mollette - 1)
+            for cx in corde:
+                if abs(x - cx) < 0.12:
+                    x = cx + (0.12 if x >= cx else -0.12)
+            oggetti.append(molletta('%s_molletta%d' % (nome, i), centro + lato * x, verso, lato, m_molletta))
+
         dati.append({'nome': nome, 'centro_bastone': list(centro), 'verso': list(verso), 'lato': list(lato), 'largo': largo,
                      'alto': alto, 'trave_x': xt, 'mollette': mollette})
     return oggetti, dati
@@ -421,6 +435,23 @@ def controlla(oggetti):
         print('CONTROLLO %s: fondo a %.2f, %.1f m oltre i 2 m liberi sopra tubi, vasche e scoli sotto' % (o.name, fondo, margine))
         if margine < 0.0:
             problemi.append('%s: %.2f m dentro i 2 m liberi sopra un tubo, una vasca o uno scolo' % (o.name, -margine))
+    # le mollette: niente dentro la piega o nelle corde (ogni molletta contro la piega e le corde del suo stendardo)
+    def albero(o):
+        t = bmesh.new()
+        t.from_mesh(o.data)
+        t.transform(o.matrix_world)
+        a = BVHTree.FromBMesh(t)
+        t.free()
+        return a
+    for o in oggetti:
+        if '_molletta' not in o.name:
+            continue
+        st = o.name.split('_molletta')[0]
+        am = albero(o)
+        for q in oggetti:
+            if q.name.startswith(st + '_risvolto') or q.name.startswith(st + '_corda_') or q.name == st:
+                if am.overlap(albero(q)):
+                    problemi.append('%s entra in %s' % (o.name, q.name))
     return problemi
 
 
