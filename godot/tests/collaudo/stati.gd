@@ -7,7 +7,11 @@ extends RefCounted
 ##  - "ritorno": il ritorno al buio (tappa 7): blackout, porte aperte, serranda del magazzino aperta (acquari
 ##    pieni e lampadine del portone accese), tappa 8 finita;
 ##  - "risolto": come "ritorno", con l'enigma degli acquari risolto e il portone della torre aperto;
-##  - "lei_fossa": lei affacciata alla fossa dell'area bimbi, come lo stato omonimo del controllo della CI.
+##  - "lei_fossa": lei affacciata alla fossa dell'area bimbi, come lo stato omonimo del controllo della CI;
+##  - "risalita_arrivo": la Risalita come ci arriva il giocatore (luci del blackout, infermeria al buio, cassetti e
+##    cassaforte chiusi, pozze piene, porta stagna chiusa);
+##  - "risalita_dopo": la Risalita finita, come lo stato omonimo del controllo della CI: luce dell'infermeria accesa,
+##    cassetti tirati, cassaforte aperta, negatoscopio con la radiografia, paratie girate, pozze risolte.
 ## Il tunnel sottomarino (SalaSottomarino) in ogni stato si costruisce tutto, coi gommoni fermi.
 ## Le chiavi di save_state() dei nodi "persist" che vogliono dire "fatto" o "aperto" diventano vere; i
 ## Pickup restano dove sono (sono oggetti da controllare anche loro).
@@ -34,8 +38,28 @@ static func applica(livello: Node, stato: String) -> void:
 		if lei and lei.has_method(&"_affaccia"):
 			lei.call(&"_affaccia")
 		return
-	if stato in ["ritorno", "risolto"]:
+	if stato in ["ritorno", "risolto", "risalita_arrivo", "risalita_dopo"]:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	if stato == "risalita_arrivo":
+		GameState.luci_cambiate.emit(GameState.luci)
+		return
+	if stato == "risalita_dopo":
+		for par in livello.find_children("*", "ParatiaFiume", true, false):
+			par.call(&"gira")
+		var inf := livello.find_child("Infermeria", true, false)
+		var interruttore := inf.get_node_or_null(^"Interruttore") if inf else null
+		if interruttore:
+			interruttore.set(&"powered", true)
+		for c in livello.find_children("*", "CassettoSchedario", true, false):
+			c.call(&"load_state", {"aperto": true})
+		for c in livello.find_children("*", "CassaforteRotelle", true, false):
+			c.call(&"load_state", {"cifre": [4, 1, 7], "aperta": true})
+		for n in livello.find_children("*", "Negatoscopio", true, false):
+			n.call(&"load_state", {"con_radiografia": true})
+		for e in livello.find_children("*", "EnigmaPozze", true, false):
+			e.call(&"load_state", {"stato": EnigmaPozze.Stato.RISOLTO, "tolti": EnigmaPozze.GIUSTI})
+		GameState.luci_cambiate.emit(GameState.luci)
+		return
 	for n in livello.get_tree().get_nodes_in_group(&"persist"):
 		if not livello.is_ancestor_of(n) or n is Pickup or n is PackPickup or n is WaterTank:
 			continue
