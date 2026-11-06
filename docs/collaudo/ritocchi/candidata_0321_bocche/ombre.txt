@@ -1,0 +1,9 @@
+OMBRE: lampade verdi delle paratie con ombra: 3 ((54.55, -18.35, -16.4), (67.0, -21.35, -25.45), (66.95, -24.35, -3.6)); luci con ombra in tutta la scena: 48 (omni 26)
+OMBRE: luci con ombra viste insieme, al massimo per zona: { "vasca_0": 17, "vasca_1": 17, "vasca_2": 17, "ins_A_tubo_0": 17, "ins_A_tubo_1": 17, "ins_A_scolo_0": 17, "ins_A_tubo_2": 17, "ins_A_scolo_1": 17, "ins_A_scolo_2": 17, "ins_A_tubo_3": 17 }
+OMBRE: punto peggiore vasca_0 a (51.0, -21.5, -13.2), direzione 0 gradi: 17 luci con ombra nel campo visivo (di cui 0 lampade verdi)
+OMBRE: paratia_verde_0: 30 luci con ombra nel campo visivo; con ombre 986 ms (max 1118, disegno 969); senza 854 ms (max 1003, disegno 839); con ombre 943 ms (max 1323, disegno 925); senza 850 ms (max 953, disegno 836)
+OMBRE: paratia_verde_2: 42 luci con ombra nel campo visivo; con ombre 1524 ms (max 1683, disegno 1504); senza 1487 ms (max 1777, disegno 1467); con ombre 1574 ms (max 1824, disegno 1553); senza 1483 ms (max 1670, disegno 1466)
+OMBRE: paratia_verde_4: 39 luci con ombra nel campo visivo; con ombre 2031 ms (max 2290, disegno 2004); senza 1997 ms (max 2497, disegno 1978); con ombre 2035 ms (max 2394, disegno 2016); senza 1982 ms (max 2196, disegno 1962)
+OMBRE: tubo_3_da_dentro: 11 luci con ombra nel campo visivo; con ombre 727 ms (max 899, disegno 709); senza 660 ms (max 731, disegno 648); con ombre 719 ms (max 786, disegno 706); senza 658 ms (max 792, disegno 645)
+OMBRE: punto_peggiore: 30 luci con ombra nel campo visivo; con ombre 960 ms (max 1067, disegno 944); senza 855 ms (max 1248, disegno 840); con ombre 962 ms (max 1155, disegno 946); senza 889 ms (max 1001, disegno 873)
+OMBRE: finito
