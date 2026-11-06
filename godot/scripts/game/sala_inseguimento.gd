@@ -164,6 +164,8 @@ func _passi() -> Array:
 		out.append(func(): _modello(i))
 	out.append(_tubi)
 	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
+	# le sagome del club dei bambini attorno alle vasche (SagomeClub, scelta A dell'utente del 6 novembre)
+	out.append_array(SagomeClub.passi(self))
 	if crea_luci:
 		out.append_array(_passi_luci())
 	return out
