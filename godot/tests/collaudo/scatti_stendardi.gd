@@ -46,6 +46,10 @@ func _run() -> void:
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
+	# (lei non c'è: gli scatti sono per gli stendardi; anche quella che sale accanto alla vasca 2)
+	for n in ins.find_children("*", "Node3D", true, false):
+		if String(n.name).to_lower().begins_with("lei") and n is VisualInstance3D or (n.get_script() and String(n.get_script().resource_path).contains("lei")):
+			(n as Node3D).visible = false
 	if ins.lei:
 		ins.lei.visible = false
 	var stendardi: Array = get_tree().get_nodes_in_group(&"stendardo")
