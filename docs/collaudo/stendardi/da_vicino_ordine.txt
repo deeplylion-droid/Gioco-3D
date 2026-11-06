@@ -1,0 +1,16 @@
+stendardo_1_capo_che_sporge.png
+stendardo_1_corda_a_bastone.png
+stendardo_1_corda_a_golfare.png
+stendardo_1_corda_b_bastone.png
+stendardo_1_corda_b_golfare.png
+stendardo_1_intero_cuciture.png
+stendardo_1_molletta0.png
+stendardo_2_capo_che_sporge.png
+stendardo_2_corda_a_bastone.png
+stendardo_2_corda_a_golfare.png
+stendardo_2_corda_b_bastone.png
+stendardo_2_corda_b_golfare.png
+stendardo_2_corda_m_bastone.png
+stendardo_2_corda_m_golfare.png
+stendardo_2_intero_cuciture.png
+stendardo_2_molletta0.png
