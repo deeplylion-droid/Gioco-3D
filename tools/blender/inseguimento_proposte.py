@@ -383,9 +383,12 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     lat = Vector((-n.y, n.x, 0))
     base = Vector(centro) - Vector((0, 0, alto / 2))
     top = base.z + alto * 2 + 0.3
+    # nel gioco i montanti sono ridipinti a strisce caramella, giallo e bianco sporco (bersagli da luna park, proposta A
+    # di grafica-2 scelta dall'utente per la 0.3.21)
     for sg in (-1, 1):
         q = base + lat * (sg * (largo / 2 + 0.12))
-        c.scatola_assi(Vector((q.x, q.y, (base.z + top) / 2)), [n, lat, Vector((0, 0, 1))], (0.1, 0.1, (top - base.z) / 2), 'giallo_sicurezza')
+        c.scatola_assi(Vector((q.x, q.y, (base.z + top) / 2)), [n, lat, Vector((0, 0, 1))], (0.1, 0.1, (top - base.z) / 2),
+                       'caramella' if GIOCO else 'giallo_sicurezza')
     # nel gioco la trave a strisce gialle e nere vuol dire "chiuso" (come nella torre, scelta dell'utente del 22
     # ottobre): sulla paratia giusta è liscia, gialla come i montanti
     trave = 'giallo_sicurezza' if (GIOCO and giusta) else 'strisce'
@@ -394,15 +397,38 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     pann = Vector((base.x, base.y, zp)) - n * 0.05
     cp = K.Costruttore(c.mats) if GIOCO else c          # nel gioco il pannello è un nodo a parte
     # nel gioco il pannello va da un montante all'altro e scorre nelle loro guide (alzato, a 2 cm, restava sospeso)
-    cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2 + (0.02 if GIOCO else 0.0), alto / 2), 'acciaio_portone')
-    for k in (-1, 1):       # nervature
-        cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) - n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
-    # bersaglio: tre anelli concentrici, verso la vasca
     t = pann - n * 0.1 + Vector((0, 0, alto * 0.22))      # in alto sul pannello: fuori dall'acqua
     t_centro = Vector(t)
-    for r_, m in ((0.42, 'giallo_sicurezza'), (0.3, 'nero_opaco'), (0.18, 'giallo_sicurezza'), (0.08, 'nero_opaco')):
-        cp.disco(t, -n, r_, m, seg=28)
-        t = t - n * 0.004
+    if GIOCO:
+        # il bersaglio da luna park (proposta A di grafica-2, 0.3.21): la faccia verso la vasca è dipinta come il tiro a
+        # segno delle giostre, coi cerchi e il disegno grande al centro (assets_src/inseguimento/bersagli/bersagli.py:
+        # il sole sulla giusta, il pesce con gli occhi a croce sulla sbagliata); niente più dischi gialli e neri, e le
+        # nervature passano sul retro. Il centro della sfera di colpo (t_centro) resta dov'era
+        mx, mz = largo / 2 + 0.02, alto / 2
+        destra = -lat                                      # a destra di chi guarda la faccia dipinta (da -n)
+        def P(a, b, c_):
+            return tuple(pann + n * (0.05 * a) + destra * (mx * b) + Vector((0, 0, mz * c_)))
+        cp.faccia_verso([P(-1, -1, -1), P(-1, 1, -1), P(-1, 1, 1), P(-1, -1, 1)],
+                        'bersaglio_giusto' if giusta else 'bersaglio_sbagliato', tuple(-n),
+                        uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
+        for f in ([P(1, -1, -1), P(1, 1, -1), P(1, 1, 1), P(1, -1, 1)],          # retro
+                  [P(-1, -1, -1), P(1, -1, -1), P(1, -1, 1), P(-1, -1, 1)],      # fianchi
+                  [P(-1, 1, -1), P(1, 1, -1), P(1, 1, 1), P(-1, 1, 1)],
+                  [P(-1, -1, -1), P(1, -1, -1), P(1, 1, -1), P(-1, 1, -1)],      # sotto e sopra
+                  [P(-1, -1, 1), P(1, -1, 1), P(1, 1, 1), P(-1, 1, 1)]):
+            q = sum((Vector(v) for v in f), Vector()) / 4.0
+            cp.faccia_verso(f, 'acciaio_portone', tuple(q - pann))
+        for k in (-1, 1):       # nervature, sul retro
+            cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) + n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
+        t = t - n * 0.016       # il punto dei bersagli nelle luci resta quello dei dischi di prima (mira della lampada)
+    else:
+        cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2, alto / 2), 'acciaio_portone')
+        for k in (-1, 1):       # nervature
+            cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) - n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
+        # bersaglio: tre anelli concentrici, verso la vasca
+        for r_, m in ((0.42, 'giallo_sicurezza'), (0.3, 'nero_opaco'), (0.18, 'giallo_sicurezza'), (0.08, 'nero_opaco')):
+            cp.disco(t, -n, r_, m, seg=28)
+            t = t - n * 0.004
     if GIOCO:
         k_ = len(GIOCO_DATI['paratie'])
         ob = S.con_perno(cp.crea(f'ins_paratia_{k_}'), tuple(pann))
@@ -1393,6 +1419,24 @@ def versione_B(mats):
 VERSIONI = {'A': versione_A, 'B': versione_B}
 
 
+def materiali_bersagli(mats):
+    """I materiali dei bersagli da luna park e dei montanti a caramella (proposta A di grafica-2, 0.3.21): le texture
+    di assets_src/inseguimento/bersagli/bersagli.py, smalto un po' lucido sull'acciaio."""
+    cartella = os.path.normpath(os.path.join(QUI, '..', '..', 'assets_src', 'inseguimento', 'bersagli'))
+    for nome, rough, metallo, lato in (('bersaglio_giusto', 0.62, 0.05, 1.0), ('bersaglio_sbagliato', 0.7, 0.15, 1.0),
+                                       ('caramella', 0.55, 0.05, 0.5)):
+        m, nt, b = mats._base(nome)
+        uv = nt.nodes.new('ShaderNodeUVMap'); uv.uv_map = 'UVMap'
+        t = nt.nodes.new('ShaderNodeTexImage')
+        t.image = bpy.data.images.load(os.path.join(cartella, f'{nome}_col.png'), check_existing=True)
+        nt.links.new(uv.outputs['UV'], t.inputs['Vector'])
+        nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
+        b.inputs['Roughness'].default_value = rough
+        b.inputs['Metallic'].default_value = metallo
+        mats.cache[nome] = m
+        mats.lati[nome] = lato
+
+
 def main():
     argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
     nome = argv[0] if argv else 'A'
@@ -1405,6 +1449,7 @@ def main():
     S.materiali_nuovi(mats)
     P.materiali_torre(mats)
     TA.materiali_scivoli(mats)
+    materiali_bersagli(mats)
     gioco = '--gioco' in argv
     uscita, prefisso = USCITA, f'inseguimento_{nome}'
     if gioco:
