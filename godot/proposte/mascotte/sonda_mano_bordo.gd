@@ -7,10 +7,11 @@ extends Node
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://proposte/mascotte/sonda_mano_bordo.gd
 
 const SCENA := "res://scenes/sala/inseguimento/sala_inseguimento.tscn"
-## Il bordo nello spazio di lei (sonda_bordo_mano.gd): la faccia dalla sua parte, la cima, la faccia dentro la vasca.
+## Il bordo nello spazio di lei (sonda_bordo_mano.gd): la faccia dalla sua parte e quella dentro la vasca. La cima si
+## misura sul muro vero (raggio dall'alto sulla collisione dove sta la mano; ambienti-1: -27,500 come la mesh).
 const FACCIA := 2.30
-const CIMA := 3.485
 const DENTRO := 2.485
+var CIMA := 0.0
 
 var _sk: Skeleton3D
 var _ossa := PackedInt32Array()
@@ -42,6 +43,12 @@ func _run() -> void:
 	print("vertici della mano destra: ", _nv)
 	ap.play(&"inseguimento/sale_mano")
 	var inv := lei.global_transform.affine_inverse()
+	var sp := lei.get_world_3d().direct_space_state
+	var da := lei.global_transform * Vector3(-0.42, 5.0, (FACCIA + DENTRO) / 2.0)
+	var rq := PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * 3.0)
+	var rh := sp.intersect_ray(rq)
+	CIMA = (inv * (rh["position"] as Vector3)).y
+	print("cima vera del muro: y %.4f (mondo), %.4f m sopra lei" % [(rh["position"] as Vector3).y, CIMA])
 	var peggior_dentro := 0
 	var distacco_max := -INF
 	var distacco_min := INF

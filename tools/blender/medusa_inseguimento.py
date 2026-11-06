@@ -471,9 +471,10 @@ def pose_sale_puntata(arm, C, Z, t, T=1.6):
 
 
 # il bordo della vasca 3 (vasca_2 in SalaInseguimento) davanti a lei, girata verso il muro (sonda
-# proposte/mascotte/sonda_bordo_mano.gd): la faccia dalla sua parte a 2,30 m, la cima a 3,485 m sopra la sua base, larga
+# proposte/mascotte/sonda_bordo_mano.gd): la faccia dalla sua parte a 2,30 m, la cima a 3,500 m sopra la sua base (-27,500 nel
+# mondo, collisione e mesh: ricontrollo di ambienti-1 del 6 novembre; prima 3,485 e la mano entrava 13 mm), larga
 # 18,5 cm. Nello spazio del modello: -y avanti, z su.
-BORDO_V3 = (2.30, 3.485, 0.185)
+BORDO_V3 = (2.30, 3.500, 0.185)
 MANO_V3_LATO = -0.42        # la mano destra (.R e' dalla parte -x), un po' fuori dalla spalla
 MANO_V3_SU = 0.229          # il polso sopra la cima perche' il palmo ci stia a filo (misurato in Godot sulla pelle vera:
                             # proposte/mascotte/sonda_mano_bordo.gd; con 0,24 il palmo restava 12,8 mm sopra)
