@@ -357,6 +357,11 @@ const NOME_VELO := "acqua_velo_bocca_"
 const OCCHI_SOPRA := 0.035
 const OCCHI_SOTTO := 0.02
 
+## La luce propria della parete d'acqua delle bocche (water_inseguimento.gdshader, luce_propria): l'acqua vista da
+## dentro il tubo ha lo stesso colore in tutte e sei le bocche, verde piena (ricontrollo del collaudo dei ritocchi: nelle
+## bocche con la lampada rossa era grigia, quasi nera, e si vedevano le piastrelle dietro).
+const LUCE_VELI := 0.1
+
 ## Le pareti d'acqua nelle bocche ([method _veli_bocche]).
 var _veli: Array[MeshInstance3D] = []
 
@@ -372,6 +377,8 @@ func _veli_bocche() -> void:
 	var mat := (load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
 	mat.set_shader_parameter(&"lucido", 0.0)
 	mat.set_shader_parameter(&"pieno_fisso", 0.97)
+	# (e il colore dell'acqua anche dove la lampada vicina è la rossa guasta: vedi luce_propria nello shader)
+	mat.set_shader_parameter(&"luce_propria", LUCE_VELI)
 	for nome: String in dati["tubi"]:
 		var linea: Array = dati["tubi"][nome]
 		var p0: Array = linea[0]
@@ -1306,7 +1313,10 @@ func _pannello(k: int) -> Node3D:
 
 func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3, pannello: Node3D = null) -> void:
 	var col := VERDE if giusta else ROSSO
-	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, false)
+	# (la verde fa ombra: senza, passava attraverso il tubo che parte sotto la paratia e faceva una riga verde nel buio
+	# del tubo 3, ricontrollo del collaudo dei ritocchi; la rossa sfarfalla ed è debole, resta senza)
+	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, giusta)
+	o.set_meta(&"lampada_paratia_verde", giusta)
 	var s := SpotLight3D.new()
 	s.light_color = col
 	s.light_energy = 14.0 if giusta else 2.5
