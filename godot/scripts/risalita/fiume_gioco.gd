@@ -2041,6 +2041,30 @@ func _pile() -> void:
 				break
 		if not messo:
 			push_warning("pile: niente posto per il tappo in %s" % str(punto))
+	# la pila dell'angolo a sinistra dell'ingresso (scelta B dell'utente del 4 novembre, "angolo"): una colonna come quelle
+	# di dietro, contro il muro nord, fra la porta e il muro dell'approdo; dietro, nella nicchia contro il muro
+	# dell'approdo, sparisce il bambino col cubo (l'ultimo punto di FUGA_BAMBINO). Dalla strada di fuga sta a
+	# ANGOLO_STACCO dall'asse: il bambino (22 cm) le passa accanto
+	var fuga_stretta: Array[PackedVector2Array] = []
+	for k in FUGA_BAMBINO.size() - 1:
+		var p0: Vector2 = FUGA_BAMBINO[k]
+		var p1: Vector2 = FUGA_BAMBINO[k + 1]
+		var dd := (p1 - p0).normalized()
+		fuga_stretta.append(_rettangolo((p0 + p1) * 0.5, dd, dd.orthogonal(), p0.distance_to(p1) + 0.44, 2.0 * ANGOLO_STACCO, 0.0))
+	var angolo := _posa_colonna(rng2, ANGOLO_PILA, Vector2(1, 0), Vector2(0, 1), Vector2(0, 1), 0.5, false)
+	if _colonna_ci_sta(angolo["poli"], ANGOLO_PILA, false, ingombri + fuga_stretta, messe):
+		angolo["muro"] = -2
+		angolo["fila"] = 1
+		angolo["davanti"] = false
+		angolo["ferma"] = false
+		angolo["u"] = 0.0
+		angolo["d"] = Vector2(1, 0)
+		angolo["n"] = Vector2(0, 1)
+		angolo["nuova"] = true
+		messe.append(angolo["poli"])
+		colonne_messe.append(angolo)
+	else:
+		push_warning("pile: la pila dell'angolo in %s non ci sta" % str(ANGOLO_PILA))
 	# 2. le lampade calde sulla fila davanti dei muri 3 e 1: sulle colonne ferme (o le più vicine fra quelle intere)
 	for l in LAMPADE_PILE:
 		var meglio := {}
@@ -2215,8 +2239,12 @@ func _pile() -> void:
 ## coordinate del fiume): dalla porta del capannone gira a sinistra e sparisce nella rientranza fra la porta e il muro
 ## dell'approdo. Le pile ne stanno fuori (test_bambini_sfuggita), a FUGA_LARGO dall'asse: il raggio del bambino (22 cm) e
 ## 20 cm di margine. Se cambiano i punti lì, vanno cambiati anche qui.
-const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -27.1), Vector2(-30.0, -26.9)]
+const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -27.1), Vector2(-30.0, -26.9), Vector2(-30.0, -27.9)]
 const FUGA_LARGO := 0.42
+## La pila dell'angolo (vedi sopra): il centro della base, contro il muro nord come il muro di pile 0, e lo stacco minimo
+## dall'asse della fuga (il raggio del bambino e 3 cm).
+const ANGOLO_PILA := Vector2(-28.85, Z0 + 0.34 + PILA_PROFONDO * 0.5)
+const ANGOLO_STACCO := 0.25
 ## I tappi delle fessure fra le pile: [la fessura, da dove la si vede dalla strada]. All'angolo fra i muri 3 e 4, vista
 ## dalla fine della fila vicino alla tettoia della cabina (ricontrollo di enigmi, 2 novembre: si vedeva il buio fino
 ## alla roccia).
