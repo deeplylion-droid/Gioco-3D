@@ -296,13 +296,15 @@ def corda_al_bastone(nome, capo, lato, mat, sotto=R_BASTONE):
     # il nodo sopra il bastone, accanto ai giri, e il capo corto che pende
     nodo = capo + up * (sotto + R_CORDA * (1.6 if nudo else 2.4)) + lato * 0.022
     pezzi.append(palla(nome + '_nodo', nodo, R_CORDA * 2.2, mat))
-    # il codino: dal nodo scende di fianco, davanti al bastone (fuori dalla stoffa), e pende per 4 cm
-    fuori = sotto + R_CORDA * 1.3
-    spalla = capo + lato * 0.027 + (giro_v + up).normalized() * fuori
-    fianco = capo + lato * 0.03 + giro_v * fuori
-    pezzi.append(cilindro(nome + '_capo', nodo, spalla, R_CORDA * 0.9, mat, seg=6))
-    pezzi.append(cilindro(nome + '_capo1', spalla, fianco, R_CORDA * 0.9, mat, seg=6))
-    pezzi.append(cilindro(nome + '_capo2', fianco, fianco - up * 0.04, R_CORDA * 0.9, mat, seg=6))
+    # il codino: dal nodo scende davanti, aderente al bastone (o alla piega), e finisce appoggiato sul davanti, un po'
+    # sotto l'asse: corto, senza capi nel vuoto
+    def giro_a(gradi, r, dl):
+        a = math.radians(gradi)
+        return capo + lato * dl + (giro_v * math.cos(a) + up * math.sin(a)) * r
+    tappe = [nodo, giro_a(45, sotto + R_CORDA * 1.3, 0.027), giro_a(0, sotto + R_CORDA * 1.15, 0.03),
+             giro_a(-35, sotto + R_CORDA * 1.1, 0.032)]
+    for k in range(len(tappe) - 1):
+        pezzi.append(cilindro('%s_capo%d' % (nome, k), tappe[k], tappe[k + 1], R_CORDA * 0.9, mat, seg=6))
     return pezzi, pts[0]
 
 
