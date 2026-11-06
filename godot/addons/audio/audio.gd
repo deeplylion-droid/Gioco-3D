@@ -1628,6 +1628,7 @@ class Statua:
 	const VOCE_INSEGUIMENTO := {
 		&"inseguimento/sale_dall_acqua": &"lei_insegue_sale",
 		&"inseguimento/sale_dall_acqua_veloce": &"lei_insegue_sale",
+		&"inseguimento/sale_puntata": &"lei_insegue_sale",
 		&"inseguimento/presa": &"lei_insegue_presa",
 		&"inseguimento/respinta": &"lei_insegue_respinta",
 		&"inseguimento/affacciata_sb1": &"lei_insegue_sb1",

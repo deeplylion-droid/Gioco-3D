@@ -782,7 +782,7 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 		_salta_a(t0)
 		set_meta(&"durata_salita", 1.3 - t0)
 	else:
-		var nome := "sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce"
+		var nome: String = SALITA.get(dove, "sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce")
 		var dur := _anima(nome)
 		var t0 := _quando_radice(StringName("inseguimento/" + nome), sotto, true)
 		_salta_a(t0)
@@ -799,6 +799,10 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 ## Quanto può scendere sotto il suo posto "su" senza toccare niente (le animazioni scendono di 5 m): SB1 nel
 ## pozzo pieno d'acqua, la vasca 3 accanto alla vasca, sopra il pavimento della sala (sonda:
 ## proposte/mascotte/sonda_lei_inseguimento.gd).
+## La salita di lei per posto, se non è quella di sempre (sale_dall_acqua; la grata e gli scoli sale_dall_acqua_veloce):
+## una salita diversa per vasca (0.3.21, scelta A dell'utente), con gli stessi tempi per il gioco. Quale vasca ha quale
+## salita lo decide l'utente (in attesa della risposta: per ora nessuna).
+const SALITA := {}
 const PROFONDITA := {"sb1": 1.25, "vasca_2": 2.9, "scolo_1": 2.7}
 
 
