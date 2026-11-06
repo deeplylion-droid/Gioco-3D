@@ -57,6 +57,8 @@ const PER_CARTELLA := {
 	"piscina": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 	"torre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
 	"squalo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
+	# i passi di corsa dei bambini (0.3.21): dal piede, piano come i passi del giocatore, e si sentono anche alle spalle
+	"bambini": [BUS_EFFETTI, -4.0, 2.5, 30.0, 0.6],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -930,6 +932,7 @@ func _esamina(n: Node) -> void:
 		"FlickerLight": _attivi.append(Lampada.new(self, n))
 		"MedusaStatue", "MedusaAffacciata": _attivi.append(Statua.new(self, n))
 		"KidSighting": _collega_bambini(n)
+		"Bambino": _collega_passi_bambino(n)
 		"PackPickup": _collega_zaino_raccolto(n)
 		"PolaroidPhoto", "Collectible": _collega_collezionabile(n)
 		"DeathSequence": _collega_sequenza_morte(n)
@@ -1181,6 +1184,14 @@ func _collega_bambini(n: Node) -> void:
 
 func _collega_zaino_raccolto(n: Node) -> void:
 	n.connect(&"interacted", func(_by): suona(&"zaino_preso"))
+
+
+## I passi di corsa dei bambini (0.3.21): a ogni piede che tocca terra, dal piede.
+func _collega_passi_bambino(n: Node) -> void:
+	n.connect(&"passo", func(dove: Vector3):
+		var nome: StringName = n.get(&"suono_passi")
+		if nome != &"":
+			suona(nome, dove, randf_range(-1.5, 0.0)))
 
 
 func _collega_collezionabile(n: Node) -> void:
@@ -1617,6 +1628,7 @@ class Statua:
 	const VOCE_INSEGUIMENTO := {
 		&"inseguimento/sale_dall_acqua": &"lei_insegue_sale",
 		&"inseguimento/sale_dall_acqua_veloce": &"lei_insegue_sale",
+		&"inseguimento/sale_puntata": &"lei_insegue_sale",
 		&"inseguimento/presa": &"lei_insegue_presa",
 		&"inseguimento/respinta": &"lei_insegue_respinta",
 		&"inseguimento/affacciata_sb1": &"lei_insegue_sb1",
@@ -1656,6 +1668,10 @@ class Statua:
 	const RITMO_DB := Vector2(-9.0, 0.0)
 	const LEI_LONTANA := 18.0
 	const LEI_VICINA := 8.0
+	## Nelle condotte lei sale a pochi metri: lì il battito va da piano a [constant CONDOTTE_LONTANA] m a forte a
+	## [constant CONDOTTE_VICINA] m.
+	const CONDOTTE_LONTANA := 12.0
+	const CONDOTTE_VICINA := 3.0
 	## colpo_grata: un verso per ogni colpo, quando il palmo tocca la grata (0,25 s di ogni ciclo di 0,5 s).
 	const GRATA := &"inseguimento/colpo_grata"
 	const GRATA_CICLO := 0.5
@@ -1773,6 +1789,10 @@ class Statua:
 		else:
 			verso_t = -2.0
 		_canto(a, corsa and (n as Node3D).is_visible_in_tree())
+		if n.has_meta(&"cuore_condotte"):
+			# (nelle condotte solo il battito, mentre lei è su: lo segnala SalaInseguimento)
+			_cuore_condotte(a, int(n.get_meta(&"cuore_condotte")))
+			return
 		var ritrae := ap.is_playing() and ap.current_animation == &"inseguimento/ritrae"
 		_insegue(a, (corsa or ritrae) and (n as Node3D).is_visible_in_tree(), ritrae)
 
@@ -1805,6 +1825,30 @@ class Statua:
 			return 0.0
 		var d := (n as Node3D).global_position.distance_to(p.global_position)
 		return clampf((LEI_LONTANA - d) / (LEI_LONTANA - LEI_VICINA), 0.0, 1.0)
+
+	## Il cuore nelle condotte (scelta A del 4 novembre): parte quando lei sale in una vasca o in uno scolo
+	## ([param m] 1), più veloce più è vicina (da [constant CONDOTTE_LONTANA] a [constant CONDOTTE_VICINA] m); quando la
+	## ricacci o torna sotto da sola ([param m] 2) rallenta; tace quando non c'è più o ti prende ([param m] 0). Senza i
+	## colpi bassi, che restano solo nel tunnel.
+	func _cuore_condotte(a, m: int) -> void:
+		if m == 0 or not cuore_attivo or not Catalogo.SUONI.has(CUORE):
+			cuore_t = -1.0
+			bpm = CUORE_BPM.x
+			return
+		var v := 0.0
+		var p := GameState.player
+		if p and is_instance_valid(p) and p.is_inside_tree():
+			var d := (n as Node3D).global_position.distance_to(p.global_position)
+			v = clampf((CONDOTTE_LONTANA - d) / (CONDOTTE_LONTANA - CONDOTTE_VICINA), 0.0, 1.0)
+		var dt := n.get_process_delta_time()
+		var voluto := lerpf(CUORE_BPM.x, CUORE_BPM.y, v) if m == 1 else CUORE_BPM.x * SOLLIEVO
+		bpm = move_toward(bpm, voluto, CUORE_SEGUE * dt)
+		if cuore_t < 0.0:
+			cuore_t = 0.35
+		cuore_t -= dt
+		if cuore_t <= 0.0:
+			a.suona(CUORE, null, lerpf(CUORE_DB.x, CUORE_DB.y, v) - (3.0 if m == 2 else 0.0) + randf_range(-0.8, 0.0))
+			cuore_t = 60.0 / bpm
 
 	## Il cuore e il ritmo, un battito e un colpo alla volta.
 	func _insegue(a, attivo: bool, ritrae: bool) -> void:

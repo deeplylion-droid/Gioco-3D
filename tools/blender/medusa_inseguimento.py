@@ -19,6 +19,8 @@ della posa insegue, quella su cui ambienti-2 ha messo i posti di lei; a -5 m e' 
 Animazioni (30 fps):
   sale_dall_acqua (1,6 s), sale_dall_acqua_veloce (1,0 s, la grata): da -5 m su fino a busto e braccia fuori,
       finisce nella posa iniziale di incombe;
+  sale_puntata (1,6 s, la vasca 3; 0.3.21): sale piu' in fretta, dritta, con l'occhio gia' puntato su di te; stessi tempi
+      di sale_dall_acqua per il gioco (passa 2,9 m sotto allo stesso istante) e stessa posa finale;
   incombe (ciclo 2,4 s): si sporge verso il giocatore con le braccia tese, ondeggia, le dita si aprono e si
       chiudono (la testa che segue il giocatore la fa il gioco: MedusaAffacciata.segui_con_la_testa);
   presa (1,2 s): si ritrae, scatta in avanti e afferra a GRAB (davanti, all'altezza della testa di chi e'
@@ -431,6 +433,36 @@ def pose_sale(arm, C, Z, t, T):
                 (0.12, -1.0, 0.05), (0.1, 0.1, 1.0))
         k = liscio(0.0, 1.0, 0.55, 1.0, u)
         p = [tuple(x + (y - x) * k for x, y in zip(a_, b_)) for a_, b_ in zip(lungo, teso)]
+        braccio(arm, suf, *p)
+    Z.segui()
+
+
+def pose_sale_puntata(arm, C, Z, t, T=1.6):
+    """La salita della vasca 3 (0.3.21, scelta A dell'utente "una salita diversa per vasca"): stessa durata e stesso
+    momento in cui passa 2,9 m sotto (0,49 s: da li' parte nella vasca 3, SalaInseguimento.PROFONDITA), ma resta giu' fino a
+    0,32 s e poi sale in fretta, dritta, con la testa gia' alta e l'occhio su di te (niente testa piegata indietro ne' busto
+    all'indietro); le braccia si aprono mentre sale. Dopo, ferma a fissarti, si sporge piano fino alla posa iniziale di
+    incombe (come sale_dall_acqua alla fine)."""
+    sal = chiavi(t, [(0.0, GIU), (0.32, GIU), (0.74, 0.16), (0.9, -0.03), (1.05, 0.0)])
+    apri = liscio(0.0, 1.0, 0.45, 0.95, t)
+    tent = campiona(C, 'fluttua', t)
+    dita = mix(campiona(C, 'statua', 0.0, False), dita_incombe(C), apri, DITA_OSSA)
+    applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, dita))
+    Z.leggi()
+    # alla fine coincide con incombe(0), come pose_sale
+    sposta(arm, (0.0, liscio(0.0, Y0, 0.65, T, t), sal + liscio(0.0, -0.12, 0.65, 1.05, t)))
+    busto(arm, avanti=chiavi(t, [(0.0, -4.0), (0.74, 2.0), (T, 6 + 4 * math.sin(0.6))]),
+          giro=liscio(0.0, 5 * math.sin(1.2), 0.65, T, t))
+    # la testa gia' dritta verso di te da sotto l'acqua (l'occhio puntato), solo un filo piu' bassa all'inizio
+    testa(arm, su=chiavi(t, [(0.0, -6.0), (0.74, -4.0), (T, 0 - 3 * math.sin(0.6))]),
+          giro=liscio(0.0, -4 * math.sin(1.2), 0.65, T, t))
+    for suf in ('.L', '.R'):
+        lungo = ((0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
+        sfasa = 0.0 if suf == '.L' else 0.5
+        a = math.sin(2 * math.pi * sfasa)
+        teso = ((0.30 - 0.04 * a, -0.95 - 0.10 * a, 0.10 + 0.08 * math.cos(2 * math.pi * sfasa)), (0.7, 0.0, -0.4),
+                (0.12, -1.0, 0.05), (0.1, 0.1, 1.0))
+        p = [tuple(x + (y - x) * apri for x, y in zip(a_, b_)) for a_, b_ in zip(lungo, teso)]
         braccio(arm, suf, *p)
     Z.segui()
 
@@ -1067,6 +1099,7 @@ ANIMAZIONI = {
     # nome: (durata, in ciclo, funzione)
     'sale_dall_acqua': (1.6, False, lambda a, C, Z, t: pose_sale(a, C, Z, t, 1.6)),
     'sale_dall_acqua_veloce': (1.0, False, lambda a, C, Z, t: pose_sale(a, C, Z, t, 1.0)),
+    'sale_puntata': (1.6, False, lambda a, C, Z, t: pose_sale_puntata(a, C, Z, t, 1.6)),
     'incombe': (2.4, True, lambda a, C, Z, t: pose_incombe(a, C, Z, t)),
     'presa': (1.2, False, pose_presa),
     'respinta': (1.2, False, pose_respinta),

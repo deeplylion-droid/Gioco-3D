@@ -15,6 +15,7 @@ const CORSA := [Vector3(44.55, 7.25, -7.8), Vector3(44.55, 7.25, -4.0), Vector3(
 const BUCO_MEZZA_LARGHEZZA := 0.425
 const BUCO_ALTO := 0.9
 const MURO := 0.3
+const SCIVOLA_CORSA := 0.3
 
 var p: Player
 var tec: Node3D
@@ -66,6 +67,20 @@ func _run() -> void:
 	var rot_prima := NAN
 	var girata := 0.0
 	var piega_n := 0
+	# correndo dritto (non piegato per il buco): il punto più basso, quando è a terra, non scivola (animato come il
+	# bambino col cubo, 0.3.21: al più SCIVOLA_CORSA m/s in media)
+	var corsa_scorre := 0.0
+	var corsa_n := 0
+	var continua := false
+	var corsa_max := 0.0
+	var piedi_prima := {}
+	# (SEME, per le 10 prove: quando compare il giocatore si ferma un momento a caso, fino a 3 s, così l'agnellino scappa
+	# da un punto diverso del suo fermo vivo e da un po' più lontano o più vicino)
+	var pausa := 0
+	if OS.has_environment("SEME"):
+		var rng := RandomNumberGenerator.new()
+		rng.seed = int(OS.get_environment("SEME"))
+		pausa = rng.randi_range(0, 180)
 	Input.action_press(&"move_forward")
 	Input.action_press(&"sprint")
 	var tappa := 0
@@ -73,6 +88,12 @@ func _run() -> void:
 		if b == null and ag.bambino and is_instance_valid(ag.bambino):
 			b = ag.bambino
 			_comparso = true
+			continua = b.partenza_continua
+			if pausa > 0:
+				Input.action_release(&"move_forward")
+				for k in pausa:
+					await get_tree().physics_frame
+				Input.action_press(&"move_forward")
 			b.sparito.connect(_su_sparito.bind(b))
 		if tappa < CORSA.size():
 			var t: Vector3 = tec.to_global(CORSA[tappa])
@@ -112,18 +133,33 @@ func _run() -> void:
 					piega_scorre += Vector2(giu.x - _giu_prima.x, giu.z - _giu_prima.z).length() * 60.0
 					piega_n += 1
 				_giu_prima = giu
+				# (piede per piede: il punto più basso passa da un piede all'altro e farebbe un salto)
+				var ora := _ossa_piedi(b)
+				for k in ora:
+					var w: Vector3 = ora[k]
+					if absf(b.rotation.x) < 0.01 and w.y - pav < 0.015 and piedi_prima.has(k) and (piedi_prima[k] as Vector3).y - pav < 0.015:
+						var v := Vector2(w.x - piedi_prima[k].x, w.z - piedi_prima[k].z).length() * 60.0
+						corsa_scorre += v
+						corsa_n += 1
+						corsa_max = maxf(corsa_max, v)
+						if OS.has_environment("RIGHE") and v > 0.3:
+							var ap0 := b.find_child("AnimationPlayer", true, false) as AnimationPlayer
+							print("  scivola %s %.2f m/s a %d (%s %.2f, giro %.0f, vel %.2f, perno %d)" % [k, v, i, ap0.current_animation, ap0.current_animation_position, rad_to_deg(b.rotation.y), b._vel, b._perno_osso])
+				piedi_prima = ora
 		await get_tree().physics_frame
 		_corso += 1
 	Input.action_release(&"move_forward")
 	Input.action_release(&"sprint")
 	check(_comparso, "salendo la rampa F2 l'agnellino compare in cima alla scala di C2")
-	check(is_equal_approx(ag.velocita_corsa, 3.0) and tempo_anim > 0.0 and absf(tempo_anim - tempo_atteso) < 0.01,
+	if continua:
+		check(corsa_n > 10 and corsa_scorre / corsa_n < SCIVOLA_CORSA, "correndo i piedi a terra non scivolano (in media %.2f m/s, al più %.2f; %d fotogrammi a terra)" % [corsa_scorre / maxf(corsa_n, 1), corsa_max, corsa_n])
+	check(is_equal_approx(ag.velocita_corsa, 3.0) and (continua or tempo_anim > 0.0 and absf(tempo_anim - tempo_atteso) < 0.01),
 			"corre piano (%.1f m/s), con l'animazione a tempo (velocità %.2f)" % [ag.velocita_corsa, tempo_anim])
 	check(scappa_da >= 0 and girato_a >= 0 and girato_a - scappa_da <= 24, "si volta per scappare in fretta, correndo (di %.0f gradi in %d fotogrammi; al più 24, 0,4 s)" % [rad_to_deg(girata), girato_a - scappa_da])
 	check(_sparito_a >= 0, "si infila nel buco e sparisce (dopo %d frame di corsa)" % _sparito_a)
 	check(_sparito_a >= 0 and not _fuori_dalla_cavita, "quando sparisce è tutto dentro la cavità, al buio")
 	check(piega_scorre / maxf(piega_n, 1) < 0.5, "piegato per il buco nessun piede striscia a terra (in media %.2f m/s, %d fotogrammi a terra)" % [piega_scorre / maxf(piega_n, 1), piega_n])
-	check(piedi_sotto > -0.02, "correndo e piegandosi i piedi non entrano nel pavimento (il punto più basso a %+.3f m)" % piedi_sotto)
+	check(piedi_sotto > -0.01, "correndo e piegandosi i piedi non entrano nel pavimento (il punto più basso a %+.3f m)" % piedi_sotto)
 	check(compenetra == "", "correndo e infilandosi non passa attraverso muri, pavimento e roba accatastata %s" % compenetra)
 	check(minima > 1.2, "correndo non lo si raggiunge (il più vicino: %.1f m)" % minima)
 	await _frames(10)
@@ -167,6 +203,21 @@ func _compenetra(b: Bambino) -> String:
 				if not dentro.is_empty():
 					return "(dentro %s: %s)" % [dentro[0].collider.name, q]
 	return ""
+
+
+## Le punte e i talloni del modello che si vede (nome dell'osso -> punto nel mondo).
+func _ossa_piedi(b: Bambino) -> Dictionary:
+	var out := {}
+	for nome in [^"Calmo", ^"Rivelato"]:
+		var m := b.get_node_or_null(nome) as Node3D
+		if m == null or not m.visible:
+			continue
+		var sk := m.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+		for o in ["LeftFoot", "RightFoot", "LeftToeBase", "RightToeBase"]:
+			var i := sk.find_bone(o)
+			if i >= 0:
+				out[o] = sk.global_transform * sk.get_bone_global_pose(i).origin
+	return out
 
 
 ## I piedi del modello (quando si piega i modelli si alzano un po' sopra il nodo).

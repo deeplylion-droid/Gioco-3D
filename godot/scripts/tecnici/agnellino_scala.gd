@@ -124,6 +124,10 @@ func compari() -> void:
 	bambino.accel_corsa = 12.0
 	bambino.giro_corsa = 540.0
 	bambino.girata_sul_posto = false
+	# animato come il bambino col cubo (0.3.21, scelta A dell'utente "agnellini"): da fermo è vivo, e la corsa parte
+	# con un primo passo vero e i piedi fermi a terra (la girata di scatto e il tuffo nel buco restano)
+	bambino.fermo_vivo = true
+	bambino.partenza_continua = true
 	bambino.sparisce_fuori_vista = false   # sparisce in fondo alla cavità, al buio
 	bambino.sparito.connect(_corre_nel_muro)
 	var da := genitore.to_global(posizione)

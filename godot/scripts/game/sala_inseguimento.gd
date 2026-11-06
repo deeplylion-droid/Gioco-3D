@@ -798,7 +798,7 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 		_salta_a(t0)
 		set_meta(&"durata_salita", 1.3 - t0)
 	else:
-		var nome := "sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce"
+		var nome: String = SALITA.get(dove, "sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce")
 		var dur := _anima(nome)
 		var t0 := _quando_radice(StringName("inseguimento/" + nome), sotto, true)
 		_salta_a(t0)
@@ -815,6 +815,10 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 ## Quanto può scendere sotto il suo posto "su" senza toccare niente (le animazioni scendono di 5 m): SB1 nel
 ## pozzo pieno d'acqua, la vasca 3 accanto alla vasca, sopra il pavimento della sala (sonda:
 ## proposte/mascotte/sonda_lei_inseguimento.gd).
+## La salita di lei per posto, se non è quella di sempre (sale_dall_acqua; la grata e gli scoli sale_dall_acqua_veloce):
+## una salita diversa per vasca (0.3.21, scelta A dell'utente), con gli stessi tempi per il gioco. Quale vasca ha quale
+## salita lo decide l'utente (in attesa della risposta: per ora nessuna).
+const SALITA := {}
 const PROFONDITA := {"sb1": 1.25, "vasca_2": 2.9, "scolo_1": 2.7}
 
 
@@ -975,6 +979,22 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 			if _lei_t >= float(get_meta(&"durata_discesa", 1.0)):
 				lei_stato = Lei.VIA
 				lei.visible = false
+
+
+## Il battito del cuore nelle condotte (scelta A dell'utente, 4 novembre: "cuore nelle condotte solo quando lei è
+## su"): lo segnala su di lei la meta "cuore_condotte", che l'audio legge (addons/audio/audio.gd, Statua): 1 mentre sale o
+## è su in una vasca o in uno scolo, 2 mentre torna sotto (ricacciata col getto o da sola: il battito rallenta), 0 quando
+## non c'è, ti prende, o alla grata e in SB1 (dove non ti prende). I colpi bassi restano solo nel tunnel.
+func _segnale_cuore() -> void:
+	var m := 0
+	var vasca := _lei_dove.begins_with("vasca") or _lei_dove.begins_with("scolo")
+	if vasca and lei.visible:
+		match lei_stato:
+			Lei.SALE, Lei.SU:
+				m = 1
+			Lei.SCENDE:
+				m = 2
+	lei.set_meta(&"cuore_condotte", m)
 
 
 ## La grata è calata: lei sale di colpo (1 s) dal pozzetto dietro la grata, a nord della bocca della spirale,
@@ -1143,6 +1163,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if lei_stato != Lei.VIA:
 		_lei_aggiorna(delta, p)
+	if lei and is_instance_valid(lei):
+		_segnale_cuore()
 	p.occhi_pelo = -INF
 	if GameState.is_dying or _sb1:
 		return

@@ -46,6 +46,8 @@ enum Stato { ATTESA, GUARDA, SCAPPA, FINITO }
 @export var angolo_visto := 14.0
 ## Fuori vista sparisce solo dopo aver passato tanti punti di [member via] (vedi [member Bambino.sparisce_dopo]).
 @export var sparisce_dopo := 0
+## Vedi [member Bambino.fuori_vista_minimo].
+@export var fuori_vista_minimo := 0.0
 ## Prima di scappare, per tanti secondi guarda verso dove andrà (il secondo punto di [member via]): un attimo di
 ## preparazione, non lo scatto da fermo alla corsa (0: parte subito).
 @export var preparazione := 0.0
@@ -75,6 +77,7 @@ func _ready() -> void:
 	bambino.libera_quando_sparisce = false
 	bambino.sparisce_fuori_vista = true
 	bambino.sparisce_dopo = sparisce_dopo
+	bambino.fuori_vista_minimo = fuori_vista_minimo
 	bambino.distanza_fuga = 0.0          # la fuga la decide questo nodo
 	bambino.reazione = Bambino.Reazione.NESSUNA
 	bambino.velocita_corsa = velocita_corsa
@@ -203,6 +206,7 @@ func load_state(s: Dictionary) -> void:
 		_fuga_tra = -1.0
 		if bambino:
 			bambino.guarda_qui = Vector3.INF
+			bambino.azzera()
 			bambino.modalita = Bambino.Modalita.SPARITO
 			bambino.visible = false
 			bambino.process_mode = Node.PROCESS_MODE_DISABLED

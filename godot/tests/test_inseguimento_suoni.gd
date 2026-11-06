@@ -114,6 +114,36 @@ func _run() -> void:
 	var senza_ritmo := await _conta(5.0)
 	check(senza_ritmo[0] > 0 and senza_ritmo[1] == 0, "solo il cuore (%d, %d)" % senza_ritmo)
 	classe_statua.ritmo_attivo = true
+
+	print("Le condotte: solo il battito (scelta A del 4 novembre)")
+	ap.play(&"inseguimento/insegue_aperta")
+	lei.set_meta(&"cuore_condotte", 0)
+	var giu := await _conta(3.0)
+	check(giu[0] == 0 and giu[1] == 0, "lei sotto l'acqua: niente cuore né ritmo (%d, %d)" % giu)
+	lei.set_meta(&"cuore_condotte", 1)
+	lei.global_position = Vector3(0, 0, -11)
+	var sale_lontana := await _conta(1.0)
+	check(sale_lontana[0] >= 1, "sale in una vasca: il cuore parte subito (%d battiti nel primo secondo)" % sale_lontana[0])
+	await _secondi(8.0)
+	var c_lontana := await _conta(10.0)
+	var dB_lontana: float = _vol_max[0]
+	lei.global_position = Vector3(0, 0, -3)
+	await _secondi(9.0)
+	var c_vicina := await _conta(10.0)
+	var dB_vicina: float = _vol_max[0]
+	print("  a 11 m: %d battiti e %d colpi in 10 s; a 3 m: %d e %d" % [c_lontana[0], c_lontana[1], c_vicina[0], c_vicina[1]])
+	check(c_lontana[1] == 0 and c_vicina[1] == 0 and sale_lontana[1] == 0, "niente colpi bassi nelle condotte")
+	check(c_vicina[0] >= c_lontana[0] + 6, "più vicina il cuore più veloce (%d contro %d in 10 s)" % [c_vicina[0], c_lontana[0]])
+	check(dB_vicina > dB_lontana + 6.0, "più vicina il cuore più forte (%.1f contro %.1f dB)" % [dB_vicina, dB_lontana])
+	lei.set_meta(&"cuore_condotte", 2)
+	var bpm_su: float = st.bpm
+	var ricacciata := await _conta(3.0)
+	check(st.bpm < bpm_su - 10.0 and ricacciata[1] == 0, "ricacciata: il cuore rallenta (%.0f -> %.0f al minuto), senza colpi" % [bpm_su, st.bpm])
+	lei.set_meta(&"cuore_condotte", 0)
+	await _frames(2)
+	var finita := await _conta(3.0)
+	check(finita[0] == 0 and finita[1] == 0, "tornata sotto: tace (%d, %d)" % finita)
+	lei.remove_meta(&"cuore_condotte")
 	_fine()
 
 

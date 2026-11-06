@@ -7,7 +7,8 @@ extends Node
 ## - i piedi a terra (punta o tallone a meno di 3 cm dal pavimento): quanto scivolano in orizzontale (m/s);
 ## - da fermo, quanto si muovono la testa e le anche (che non sembri una statua).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/sonda_bambino_cubo.gd
-## (CASO=vicino: il giocatore a 4 m, scappa subito)
+## (CASO=vicino: il giocatore a 4 m, scappa subito; CASO=soglia: come vicino, e quando scappa gli corri dietro fino
+## alla soglia del capannone)
 
 const OGNI_VERTICE := 3
 const TOLLERANZA := 0.01
@@ -79,16 +80,27 @@ func _run() -> void:
 	var anche0 := Vector3.INF
 	var testa_mm := [Vector3.INF, -Vector3.INF]
 	var anche_mm := [Vector3.INF, -Vector3.INF]
+	var sparito := false
 	while t < 20.0:
 		if _b.stato == BambinoSfuggita.Stato.GUARDA and visto_da < 0.0:
 			visto_da = t
 		guarda_lui = visto_da >= 0.0 and t > visto_da + 0.8 + ritardo
+		# (CASO=soglia: quando scappa gli corri dietro fino alla soglia della porta del capannone, guardandolo)
+		if caso == "soglia" and _b.stato == BambinoSfuggita.Stato.SCAPPA:
+			var soglia: Vector3 = (_b.get_parent() as Node3D).to_global(_b.via[0]) + Vector3(-1.0, 1.6, 0.0)
+			occhio = occhio.move_toward(soglia, 3.5 / 60.0)
+			guarda_lui = true
 		_guarda(occhio, _b.bambino.punto_testa() if guarda_lui else scala)
 		await get_tree().physics_frame
 		t += 1.0 / 60.0
-		if _b.stato == BambinoSfuggita.Stato.FINITO:
-			break
-		if not _b.bambino.visible:
+		if not _b.bambino.visible or _b.stato == BambinoSfuggita.Stato.FINITO:
+			if not sparito and _b.stato != BambinoSfuggita.Stato.ATTESA:
+				sparito = true
+				var q := _b.bambino.global_position
+				print("sparisce a %.2f s in (%.2f, %.2f, %.2f), dopo %d punti della fuga" % [t, q.x, q.y, q.z,
+						int(_b.bambino.get(&"_n_punti_fuga")) - (_b.bambino.get(&"_punti") as Array).size()])
+			if _b.stato == BambinoSfuggita.Stato.FINITO:
+				break
 			continue
 		var ps := []
 		for o in _sk.get_bone_count():

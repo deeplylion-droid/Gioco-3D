@@ -44,6 +44,9 @@ ap.add_argument('--occhio', default='', help="GLB da cui prendere il guscio dell
 ap.add_argument('--vivo', action='store_true',
                 help="anche fermo_vivo e inclina_testa_viva (il bambino col cubo, scelta A dell'utente del 1 novembre: "
                      "\"A ma animalo meglio\")")
+ap.add_argument('--primo-passo', type=float, default=6.4,
+                help="con --vivo: il fotogramma della corsa dove finisce \"parte\" (6,4 il bambino col cubo, 7,6 l'agnellino; "
+                     "nel gioco Bambino.corsa_primo_passo = questo / 24)")
 A = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 
 
@@ -387,7 +390,7 @@ def da_mocap(nome, src, act, lentezza, braccia, extra, ciclo_in=None):
 
 # il fotogramma della corsa da cui riparte il gioco dopo "parte" (Bambino.CORSA_PRIMO_PASSO = 6,4 / 24 s): la punta sinistra
 # a terra, proprio sotto le anche come nel fermo (il corpo non va indietro), e il piede destro alzato
-CORSA_PRIMO_PASSO = 6.4
+CORSA_PRIMO_PASSO = A.primo_passo
 
 
 def posa_di(azione, frame):
