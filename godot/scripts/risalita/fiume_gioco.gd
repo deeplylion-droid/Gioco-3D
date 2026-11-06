@@ -1866,6 +1866,13 @@ const SCATOLONE := Vector3(0.598, 0.398, 0.498)
 const PILA_ALTEZZE := [0.1, 0.24, 0.3, 0.36]
 
 
+## Le pile già calcolate in questa partita (le pose cercate fra gli ingombri sono circa 3 s di CPU, e vengono sempre
+## uguali: generatori a seme fisso), per chiave degli ingombri e delle lampade: a ogni ripartenza la sala si ricarica e
+## il capannone si ricostruisce, ma le pile si rimettono dalle stesse posizioni (ritocco "ripartenze" dell'utente del
+## 4 novembre: niente lavoro che serve solo la prima volta). Restano finché il gioco è aperto.
+static var _pile_fatte := {}
+
+
 func _pile() -> void:
 	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
 	var rng := RandomNumberGenerator.new()
@@ -1886,6 +1893,13 @@ func _pile() -> void:
 	for c in get_children():
 		if c is Node3D and (c as Node3D).position.y > 1.0 and not c is Light3D:
 			lampade.append((c as Node3D).position)
+	var chiave := hash([ingombri, lampade])
+	if _pile_fatte.has(chiave):
+		await _rimetti_pile(_pile_fatte[chiave])
+		return
+	# (quello che le pile mettono nel capannone, per rimetterle uguali: vedi _pile_fatte)
+	var forme_pile: Array = []
+	var lampade_pile: Array = []
 	# 1. dove vanno le colonne: per ogni muro le due file a mattoni. Per ogni posto qualche colonna disordinata, poi
 	# tranquilla e spostata lungo il muro, poi una pila sciolta (1 x 2 scatoloni per piano, poi 1 x 1)
 	var messe: Array[PackedVector2Array] = []
@@ -2181,7 +2195,9 @@ func _pile() -> void:
 			if col.has("lampada") and not col.get("togli", false):
 				# la lampada calda appesa alla faccia della colonna verso la strada, sul blocco della terza unità
 				var faccia := c - n * (PILA_PROFONDO * 0.5 + 0.005)
-				_lampada_calda(Vector3(faccia.x, 2.0 * (PILA_BANCALE + PILA_BLOCCO) + PILA_BANCALE + 0.45, faccia.y), rad_to_deg(atan2(-n.x, -n.y)), col["lampada"])
+				var lp := [Vector3(faccia.x, 2.0 * (PILA_BANCALE + PILA_BLOCCO) + PILA_BANCALE + 0.45, faccia.y), rad_to_deg(atan2(-n.x, -n.y)), col["lampada"]]
+				lampade_pile.append(lp)
+				_lampada_calda(lp[0], lp[1], lp[2])
 		if col.get("togli", false):
 			for arr in [[casse, 0], [cartone, 1], [aperte, 2], [scatole, 3], [tinte_scatole, 4], [colorate, 5], [tinte_colorate, 6], [casse_sciolte, 7]]:
 				(arr[0] as Array).resize(prima[arr[1]])
@@ -2194,21 +2210,45 @@ func _pile() -> void:
 		fc.shape = bc
 		fc.transform = Transform3D(base, Vector3(c.x, alto * 0.5, c.y))
 		_collisioni.add_child(fc)
-	await _pausa()
-	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
-	await _pausa()
-	_multimesh_pile("PileCartone", _unita_pila(false, false, false), cartone, [])
-	await _pausa()
-	_multimesh_pile("PileCartoneAperte", _unita_pila(false, false, false, false), aperte, [])
-	await _pausa()
-	_multimesh_pile("PileScatole", _scatola_pila(false), scatole, tinte_scatole)
-	await _pausa()
-	_multimesh_pile("PileScatoleColorate", _scatola_pila(true), colorate, tinte_colorate)
-	await _pausa()
-	_multimesh_pile("PileCasseSciolte", _scatola_pila(false, true), casse_sciolte, [])
+		forme_pile.append([bc.size, fc.transform])
 	print("pile di scatoloni: %d colonne (%d sciolte), %d unità (%d aperte), %d scatole di cartone, %d colorate e %d casse sciolte" % [
 			colonne, colonne_messe.filter(func(x): return x["sciolta"]).size(), casse.size() + cartone.size() + aperte.size(),
 			aperte.size(), scatole.size(), colorate.size(), casse_sciolte.size()])
+	var dati := {"forme": forme_pile, "lampade": lampade_pile, "casse": casse, "cartone": cartone, "aperte": aperte,
+			"scatole": scatole, "tinte_scatole": tinte_scatole, "colorate": colorate, "tinte_colorate": tinte_colorate,
+			"casse_sciolte": casse_sciolte}
+	_pile_fatte[chiave] = dati
+	await _multimesh_tutte(dati)
+
+
+## Le pile già calcolate (vedi [member _pile_fatte]): le collisioni delle colonne, le lampade calde e le MultiMesh,
+## nello stesso ordine della prima volta.
+func _rimetti_pile(dati: Dictionary) -> void:
+	for f in dati["forme"]:
+		var fc := CollisionShape3D.new()
+		var bc := BoxShape3D.new()
+		bc.size = f[0]
+		fc.shape = bc
+		fc.transform = f[1]
+		_collisioni.add_child(fc)
+	for lp in dati["lampade"]:
+		_lampada_calda(lp[0], lp[1], lp[2])
+	await _multimesh_tutte(dati)
+
+
+func _multimesh_tutte(dati: Dictionary) -> void:
+	await _pausa()
+	_multimesh_pile("PileCasse", _unita_pila(true), dati["casse"], [])
+	await _pausa()
+	_multimesh_pile("PileCartone", _unita_pila(false, false, false), dati["cartone"], [])
+	await _pausa()
+	_multimesh_pile("PileCartoneAperte", _unita_pila(false, false, false, false), dati["aperte"], [])
+	await _pausa()
+	_multimesh_pile("PileScatole", _scatola_pila(false), dati["scatole"], dati["tinte_scatole"])
+	await _pausa()
+	_multimesh_pile("PileScatoleColorate", _scatola_pila(true), dati["colorate"], dati["tinte_colorate"])
+	await _pausa()
+	_multimesh_pile("PileCasseSciolte", _scatola_pila(false, true), dati["casse_sciolte"], [])
 
 
 ## La strada di fuga del bambino col cubo (BambinoCorridoioFiume in risalita_gioco.gd, i punti "via", qui nelle
