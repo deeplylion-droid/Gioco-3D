@@ -50,6 +50,7 @@ const SENZA_COLLISIONE := ["QUADRO_elettrico", "QUADRO_strumenti", "SALA_arredo"
 func _ready() -> void:
 	_applica_materiali(ambienti)
 	_collisioni_mancanti()
+	_chiudi_fessura_onde()
 	_fogli()
 	_prepara_acqua()
 	_prepara_luci()
@@ -66,6 +67,33 @@ func _collisioni_mancanti() -> void:
 			push_warning("Tecnici: %s non c'è, niente collisione da aggiungere" % nome)
 			continue
 		mi.create_trimesh_collision()   # un StaticBody3D figlio, sullo strato 1 (Layers.WORLD)
+
+
+## La giunzione fra la camera delle onde e la sala pompe: i due modelli lasciavano nel pavimento una fessura di 31 cm
+## (z da 25,35 a 25,66) per tutta la larghezza, da cui guardando in basso si vedeva il cielo dell'ambiente (controllo
+## del cielo, tests/controllo_cielo.gd, 6 novembre). La chiude una lastra dello stesso cemento della camera, 1 mm sotto
+## il pavimento (che la copre ai due bordi), con la sua collisione.
+func _chiudi_fessura_onde() -> void:
+	var camera := ambienti.find_child("CAMERA_struttura", true, false) as MeshInstance3D
+	if camera == null:
+		push_warning("Tecnici: CAMERA_struttura non c'è, la fessura verso la sala pompe resta")
+		return
+	var lastra := MeshInstance3D.new()
+	lastra.name = "pavimento_giunzione_onde"
+	var box := BoxMesh.new()
+	box.size = Vector3(4.6, 0.3, 0.37)
+	lastra.mesh = box
+	lastra.material_override = camera.get_active_material(0)
+	camera.get_parent().add_child(lastra)
+	# (le misure sono del mondo: Tecnici è girato di 90 gradi)
+	lastra.global_transform = Transform3D(Basis.IDENTITY, Vector3(0.0, -9.051 - 0.15, 25.505))
+	var corpo := StaticBody3D.new()
+	var forma := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = box.size
+	forma.shape = bs
+	corpo.add_child(forma)
+	lastra.add_child(corpo)
 
 
 # --- Materiali --------------------------------------------------------------------------------
