@@ -15,14 +15,14 @@ STENDARDI = [
     # vasca 1: a nord-ovest, oltre la lampada calda (45; 22,5; -19), rivolto a sud verso la vasca (travi 44 e 48); 5 m
     # più a nord della prima prova, che dalla vasca 1 copriva la lampada appesa fredda (43,8; 28,5): ora le sta dietro,
     # a 0,55-0,78 m dal suo cavo (misure di enigmi, docs/collaudo/ricontrollo_stendardi/varianti_fattibilita.txt)
-    dict(nome='stendardo_1', x=46.0, y=29.6, cima=-15.5, largo=3.0, alto=4.5, giro=90.0, cuciture=False),
+    dict(nome='stendardo_1', x=46.0, y=29.6, cima=-13.3, largo=6.0, alto=9.0, giro=90.0, cuciture=True),
     # vasca 2: a est, accanto alla lampada calda (70,5; 24; -18,5), rivolto a ovest; più a sud del posto dove sale lei
-    dict(nome='stendardo_2', x=72.0, y=21.8, cima=-16.0, largo=3.0, alto=4.5, giro=0.0, cuciture=False),
+    dict(nome='stendardo_2', x=72.0, y=21.8, cima=-13.8, largo=6.0, alto=9.0, giro=0.0, cuciture=True),
     # vasca 3: a nord-ovest, accanto alla lampada calda bassa (61; 9,9; -23,5), rivolto a est verso la vasca; il fondo
     # resta più di 2 m sopra l'acqua dello scolo 0
-    dict(nome='stendardo_3', x=60.0, y=12.2, cima=-18.0, largo=3.0, alto=4.5, giro=180.0, cuciture=False),
+    dict(nome='stendardo_3', x=64.0, y=7.2, cima=-13.65, largo=6.0, alto=9.0, giro=180.0, cuciture=True),
     # vasca 3: a nord, rivolto a sud verso la vasca (travi 68 e 72), lontano dalla vasca 1
-    dict(nome='stendardo_4', x=70.0, y=12.0, cima=-17.5, largo=3.0, alto=4.5, giro=90.0, cuciture=False),
+    dict(nome='stendardo_4', x=70.0, y=12.0, cima=-13.15, largo=6.0, alto=9.0, giro=90.0, cuciture=True),
 ]
 
 # la texture: pixel per metro (1024 per 3 m), col lato lungo al più LATO_MAX
