@@ -1,8 +1,12 @@
 extends CanvasLayer
-## Guarda da vicino una Polaroid appena raccolta: la foto riempie lo schermo, un po' storta,
-## il gioco resta in pausa finché non premi E, Spazio, Esc o un tasto del mouse.
+## Guarda da vicino una Polaroid appena raccolta (o riaperta dall'album del menu di pausa): la foto riempie lo schermo,
+## un po' storta, il gioco resta in pausa finché non premi E, Spazio, Esc, B sul joypad o un tasto del mouse.
 
 var texture: Texture2D
+## Falso: chiudendo il gioco resta in pausa (dall'album, che sta nel menu di pausa).
+var riprendi := true
+## Il livello del CanvasLayer: dall'album sopra il menu di pausa (100).
+var livello := 90
 
 var _t := 0.0
 var _card: TextureRect
@@ -10,7 +14,7 @@ var _closing := false
 
 
 func _ready() -> void:
-	layer = 90
+	layer = livello
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var dim := ColorRect.new()
 	dim.color = Color(0.0, 0.0, 0.0, 0.78)
@@ -62,9 +66,17 @@ func _input(event: InputEvent) -> void:
 	if _t < 0.3 or _closing:
 		return
 	var close: bool = event.is_action_pressed("interact") or event.is_action_pressed("skip") \
-		or event.is_action_pressed("pause") or (event is InputEventMouseButton and event.pressed)
+		or event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_accept") \
+		or (event is InputEventMouseButton and event.pressed)
 	if close:
-		_closing = true
-		get_viewport().set_input_as_handled()
+		chiudi()
+
+
+func chiudi() -> void:
+	if _closing:
+		return
+	_closing = true
+	get_viewport().set_input_as_handled()
+	if riprendi:
 		get_tree().paused = false
-		queue_free()
+	queue_free()
