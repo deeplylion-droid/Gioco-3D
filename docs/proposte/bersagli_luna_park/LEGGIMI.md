@@ -7,7 +7,7 @@ Branch `lavoro/bersagli-luna-park`, partito da `lavoro/candidata-0321` a70f2e95.
   - **Giusta**: un sole sorridente giallo, cerchi rosa e verde chiaro. L'anello di led verdi, la lampada verde e la trave liscia restano come prima.
   - **Sbagliata**: lo stesso tiro a segno spento e graffiato, con un pesce con gli occhi a croce. I colori sono quasi grigi e la vernice è scrostata fino all'acciaio arrugginito. Lampada rossa guasta e trave a strisce come prima.
 - I montanti delle paratie sono ridipinti a strisce caramella, giallo e bianco sporco.
-- Al posto dei dischi gialli e neri c'è la pittura. Le nervature sono passate sul retro del pannello.
+- Al posto dei dischi gialli e neri c'è la pittura. Le nervature del pannello non ci sono più: sul davanti coprivano il disegno, sul retro entravano nella bocca del tubo dietro la paratia (lo ha trovato il controllo di posizionamento).
 - Collisioni, sfera di colpo, anello, lampade e vasche non cambiano.
 
 ## Come è fatto

@@ -402,8 +402,8 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     if GIOCO:
         # il bersaglio da luna park (proposta A di grafica-2, 0.3.21): la faccia verso la vasca è dipinta come il tiro a
         # segno delle giostre, coi cerchi e il disegno grande al centro (assets_src/inseguimento/bersagli/bersagli.py:
-        # il sole sulla giusta, il pesce con gli occhi a croce sulla sbagliata); niente più dischi gialli e neri, e le
-        # nervature passano sul retro. Il centro della sfera di colpo (t_centro) resta dov'era
+        # il sole sulla giusta, il pesce con gli occhi a croce sulla sbagliata); niente più dischi gialli e neri né
+        # nervature. Il centro della sfera di colpo (t_centro) resta dov'era
         mx, mz = largo / 2 + 0.02, alto / 2
         destra = -lat                                      # a destra di chi guarda la faccia dipinta (da -n)
         def P(a, b, c_):
@@ -418,8 +418,7 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
                   [P(-1, -1, 1), P(1, -1, 1), P(1, 1, 1), P(-1, 1, 1)]):
             q = sum((Vector(v) for v in f), Vector()) / 4.0
             cp.faccia_verso(f, 'acciaio_portone', tuple(q - pann))
-        for k in (-1, 1):       # nervature, sul retro
-            cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) + n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
+        # (niente nervature: sul davanti coprivano il disegno, sul retro entravano nella bocca del tubo dietro)
         t = t - n * 0.016       # il punto dei bersagli nelle luci resta quello dei dischi di prima (mira della lampada)
     else:
         cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2, alto / 2), 'acciaio_portone')
