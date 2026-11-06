@@ -554,13 +554,13 @@ func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, p
 	b.zona = AABB(Vector3(xc, Y - 0.2, z0), Vector3(x_fondo - xc, 3.0, porta0 - 2.5 - z0))
 	b.aspetta = oblo
 	var pm := (porta0 + porta1) * 0.5
-	# l'ultimo punto nella nicchia dietro la pila dell'angolo (scelta B dell'utente, 0.3.21, pila di ambienti-1 contro il
-	# muro nord del capannone, x da -7,76 a -6,76, z da 62,5 a 63,7): passa davanti alla pila a 25 cm, gira dietro e lì
-	# sparisce; dalla soglia e dalla strada del capannone la nicchia è coperta dalla pila
+	# l'ultimo punto in fondo alla nicchia dietro la pila dell'angolo (scelta B dell'utente, 0.3.21, pila di ambienti-1 di
+	# traverso contro il muro nord del capannone, x da -7,61 a -6,40, z da 62,5 a 63,5; nicchia z da 61,65 a 62,5, fino al
+	# muro nord a x -6,40): passa davanti alla pila, gira dietro e va in fondo, dove non si vede da nessun punto della strada
 	b.via = PackedVector3Array([Vector3(xc + 0.7, Y, pm), Vector3(xc - 0.9, Y, pm), Vector3(xc - 2.2, Y, porta0 - 0.7),
-			Vector3(xc - 2.2, Y, porta0 - 3.3), Vector3(xc - 1.2, Y, porta0 - 3.3)])
-	# (sparisce solo girando dietro la pila, dopo il punto davanti alla pila, anche quando è già fuori vista prima)
-	b.sparisce_dopo = 4
+			Vector3(xc - 2.2, Y, porta0 - 3.3), Vector3(xc - 0.8, Y, porta0 - 3.3)])
+	# (sparisce solo arrivato in fondo alla nicchia, anche quando è già fuori vista prima: ricontrollo di grafica-2)
+	b.sparisce_dopo = 5
 	# (e solo dopo 0,2 s di seguito fuori vista: un margine di 12 fotogrammi, ricontrollo di grafica-2)
 	b.fuori_vista_minimo = 0.2
 	b.da_dove = Vector3(xc + 1.0, Y + 1.6, z1 + 2.0)
