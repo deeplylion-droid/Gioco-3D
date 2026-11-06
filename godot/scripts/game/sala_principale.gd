@@ -677,15 +677,17 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 
 
 ## Sulla soglia del portone, senza il guscio, fra il bordo del pavimento della sala (x 20,01) e il grigliato della
-## passerella della torre (x 20,19) resta una fessura per tutto il vano, e lungo la base del muro oltre i due capi del
-## vano: guardando in basso si vedeva il cielo (ricontrolli del collaudo su varchi-cielo, 6 novembre). La chiudono delle
-## lastre sotto (SOGLIA_TORRE: x0, x1, z0, z1 e, se c'è, la y del piano; se no SOGLIA_TORRE_Y, 1,5 cm sotto il
-## pavimento), coperte ai bordi dal pavimento e dal grigliato, con la collisione. Sotto il grigliato (z -17,85 .. -16,64)
-## la lastra fa da fondo 27 cm più giù, sotto i ferri del grigliato (il telaio scende a -0,26): dai fori si vedeva il cielo. Hanno il materiale del pavimento della sala lì accanto (quello bagnato, della stessa superficie) e le
-## sue stesse coordinate di texture, prese dal triangolo del pavimento vicino: non si leggono come una toppa. Figlie di
-## [param torre], vanno via con lei.
-const SOGLIA_TORRE := [[19.96, 20.22, -16.66, -13.46], [19.96, 20.235, -13.48, -11.95],
-		[19.96, 20.235, -17.85, -16.64, -0.27]]
+## passerella della torre (x 20,19) resta una fessura per tutto il vano, e oltre i due capi del vano un'intercapedine
+## senza fondo fra il muro della sala e la parete della torre (x 20,03 .. 20,24, da z -19,4 ad almeno -6): guardando in
+## basso si vedeva il cielo (ricontrolli del collaudo su varchi-cielo, 6 novembre). Si chiude da z -18,25 a -7,15. La
+## chiudono delle lastre sotto (SOGLIA_TORRE: x0, x1, z0, z1 e, se c'è, la y del piano; se no SOGLIA_TORRE_Y, 1,5 cm
+## sotto il pavimento), coperte ai bordi dal pavimento e dal grigliato, con la collisione. Sotto il grigliato (z -17,85
+## .. -16,64) la lastra fa da fondo 27 cm più giù, sotto i ferri del grigliato (il telaio scende a -0,26): dai fori si
+## vedeva il cielo. Hanno il materiale del pavimento della sala lì accanto (quello bagnato, della stessa superficie) e
+## le sue stesse coordinate di texture, prese dal triangolo del pavimento vicino: non si leggono come una toppa. Figlie
+## di [param torre], vanno via con lei.
+const SOGLIA_TORRE := [[19.96, 20.235, -18.25, -17.83], [19.96, 20.235, -17.85, -16.64, -0.27],
+		[19.96, 20.22, -16.66, -13.46], [19.96, 20.235, -13.48, -7.15]]
 const SOGLIA_TORRE_Y := -0.015
 
 
@@ -721,8 +723,8 @@ static func chiudi_soglia_torre(torre: Node3D, pavimento: MeshInstance3D) -> Mes
 	return lastra
 
 
-## [uv di (x, z) = A x + B z + C, ..., materiale]: dal triangolo del pavimento (vicino a y 0) che contiene [param punto]
-## (x, z nel mondo), o dal più vicino. Vuoto se non c'è.
+## [uv di (x, z) = A x + B z + C, ..., materiale, colore dei vertici (o bianco)]: dal triangolo del pavimento (vicino
+## a y 0) che contiene [param punto] (x, z nel mondo), o dal più vicino. Vuoto se non c'è.
 static func _uv_pavimento(pavimento: MeshInstance3D, punto: Vector2) -> Array:
 	if pavimento == null or pavimento.mesh == null:
 		return []
@@ -764,7 +766,11 @@ static func _uv_pavimento(pavimento: MeshInstance3D, punto: Vector2) -> Array:
 			var m := Transform2D(b2 - a2, c2 - a2, Vector2.ZERO).affine_inverse()
 			var du := Transform2D(ub - ua, uc - ua, Vector2.ZERO)
 			var lin := du * m     # mappa lineare: (x, z) - a2 -> uv - ua
-			meglio = [lin, a2, ua, pavimento.get_active_material(s)]
+			var colore := Color.WHITE
+			var cols = arr[Mesh.ARRAY_COLOR]
+			if cols != null and not (cols as PackedColorArray).is_empty():
+				colore = ((cols[i0] as Color) + (cols[i1] as Color) + (cols[i2] as Color)) / 3.0
+			meglio = [lin, a2, ua, pavimento.get_active_material(s), colore]
 	return meglio
 
 
@@ -792,6 +798,8 @@ static func _scatola_uv(st: SurfaceTool, lo: Vector3, hi: Vector3, mappa: Array)
 				tri = [tri[0], tri[2], tri[1]]
 			for v: Vector3 in tri:
 				st.set_normal(n)
+				if mappa.size() > 4:
+					st.set_color(mappa[4])
 				st.set_uv(_uv_in(mappa, v))
 				st.add_vertex(v)
 

@@ -9,9 +9,8 @@ extends Node
 ## Le fessure sottili (un raggio che esce, ma dei suoi otto vicini a mezzo grado ne escono meno di [constant VICINI],
 ## cioè una crepa fra due pezzi di un modello che sullo schermo non si vede) si contano a parte, senza fallire.
 ## Dopo la strada, con la torre caricata come nel gioco (SalaPrincipale._aggiungi_torre, il guscio dietro il portone
-## tolto) e costruita del tutto, gli occhi di ogni checkpoint della torre. Lì il cielo che esce dal tetto (raggi che
-## lasciano la torre sopra i 13 m: nel tetto manca un triangolo) si stampa a parte senza fallire: la cima si chiude nella
-## 0.3.22 (scelta A dell'utente). Il cielo dai triangoli che mancano nelle pareti invece è un errore.
+## tolto) e costruita del tutto, gli occhi di ogni checkpoint della torre: lì il cielo è un errore dappertutto, tetto
+## compreso (i triangoli che mancavano in torre_A li rimette SalaTorre._toppe_torre_A).
 ## Senza rendering (headless): solo fisica.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/controllo_cielo.gd [solo=<parola>]
 ##   (solo=: solo i tratti col nome che contiene la parola)
@@ -36,7 +35,6 @@ var _casi: Array = []
 var _direzioni: Array[Vector3] = []
 var _cupola := 0
 var _sottili: Array = []
-var _alto: Array = []
 
 
 func _ready() -> void:
@@ -142,12 +140,10 @@ func _run() -> void:
 					await get_tree().physics_frame
 				scatole = _scatole(level)
 				posti += 1
-				print("CIELO: torre %s: %s" % [c.name, "ok" if _posto("torre: " + String(c.name), occhio, spazio, scatole, p, true) else "CIELO"])
+				print("CIELO: torre %s: %s" % [c.name, "ok" if _posto("torre: " + String(c.name), occhio, spazio, scatole, p) else "CIELO"])
 	print("")
 	for f in _sottili:
 		print("CIELO: fessura sottile (non conta): " + f)
-	for f in _alto:
-		print("CIELO: torre, cielo dal tetto (la cima aperta si chiude nella 0.3.22; non conta): " + f)
 	print("CIELO: posti controllati %d, con il cielo %d; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): %d; fessure sottili %d" % [posti, _casi.size(), _cupola, _sottili.size()])
 	for c in _casi:
 		printerr("    " + c)
@@ -157,7 +153,7 @@ func _run() -> void:
 
 ## I raggi da [param occhio]: falso se vede il cielo da un buco (il caso va in _casi). Il cielo dalla cupola di vetro
 ## e le fessure sottili non contano.
-func _posto(nome: String, occhio: Vector3, spazio: PhysicsDirectSpaceState3D, scatole: Array, p: Node, alto_a_parte := false) -> bool:
+func _posto(nome: String, occhio: Vector3, spazio: PhysicsDirectSpaceState3D, scatole: Array, p: Node) -> bool:
 	var fuori: Array[Vector3] = []
 	for d in _direzioni:
 		if _esce(spazio, occhio, d, p):
@@ -184,14 +180,6 @@ func _posto(nome: String, occhio: Vector3, spazio: PhysicsDirectSpaceState3D, sc
 		else:
 			_sottili.append("%s: da %s verso %s (%d vicini su 8), uscendo da %s" % [nome, occhio.snapped(Vector3.ONE * 0.01),
 					d.snapped(Vector3.ONE * 0.01), vicini, _uscita(scatole, occhio, d)])
-	# nella torre il cielo dal tetto (la torre è aperta in cima: si chiude nella 0.3.22, scelta dell'utente) si conta a
-	# parte: i raggi che lasciano la torre sopra i 13 m (il tetto è a 14); quelli che escono dalle pareti sono buchi veri
-	if alto_a_parte:
-		for d in veri.duplicate():
-			if _punto_uscita(scatole, occhio, d).y >= 13.0:
-				_alto.append("%s: da %s verso %s, uscendo da %s" % [nome, occhio.snapped(Vector3.ONE * 0.01), d.snapped(Vector3.ONE * 0.01),
-						_uscita(scatole, occhio, d)])
-				veri.erase(d)
 	if veri.is_empty():
 		return true
 	var media := Vector3.ZERO
@@ -220,20 +208,6 @@ func _scatole(level: Node) -> Array:
 		if m.mesh and m.is_visible_in_tree():
 			out.append([m.global_transform * m.get_aabb(), _nome(level, m)])
 	return out
-
-
-## Dove il raggio lascia l'ultima scatola di mesh che attraversa (quella che lascia più lontano).
-func _punto_uscita(scatole: Array, da: Vector3, d: Vector3) -> Vector3:
-	var fine := da + d * DISTANZA
-	var lontano := -1.0
-	for sc in scatole:
-		var b: AABB = sc[0]
-		if b.size.length() > 300.0 or not b.intersects_segment(da, fine):
-			continue
-		var u: Variant = b.intersects_segment(fine, da)
-		var t := da.distance_to(u as Vector3) if u != null else 0.0
-		lontano = maxf(lontano, t)
-	return da + d * maxf(lontano, 0.0)
 
 
 ## L'ultima scatola di mesh che il raggio attraversa prima di uscire (la più lontana da dove esce), e dove esce.
