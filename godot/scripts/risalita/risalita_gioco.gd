@@ -656,8 +656,8 @@ const FASCIA_Y := 1.0
 ## nastro e la fascia brillano pochissimo di luce propria e non illuminano niente intorno (scelta B dell'utente per la
 ## 0.3.21, «strisce»: «così la strada si vede nel buio»). Solo qui: nel fiume e nei tubi niente segni fosforescenti.
 const FOSFORO := Color(0.5, 1.0, 0.58)
-const FOSFORO_NASTRO := 0.16
-const FOSFORO_FASCIA := 0.07
+const FOSFORO_NASTRO := 0.4
+const FOSFORO_FASCIA := 0.05
 
 
 ## I materiali del nastro e della fascia: il nastro è quello dei bordi dei gradini (_mat_pericolo), duplicato, che si
