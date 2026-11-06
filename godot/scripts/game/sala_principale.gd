@@ -683,11 +683,12 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 ## chiudono delle lastre sotto (SOGLIA_TORRE: x0, x1, z0, z1 e, se c'è, la y del piano; se no SOGLIA_TORRE_Y, 1,5 cm
 ## sotto il pavimento), coperte ai bordi dal pavimento e dal grigliato, con la collisione. Sotto il grigliato (z -17,85
 ## .. -16,64) la lastra fa da fondo 27 cm più giù, sotto i ferri del grigliato (il telaio scende a -0,26): dai fori si
-## vedeva il cielo. Hanno il materiale del pavimento della sala lì accanto (quello bagnato, della stessa superficie) e
+## vedeva il cielo; lì una piastra in piedi sotto il bordo del pavimento (x 19,94 .. 19,99, la sesta voce è lo spessore)
+## chiude la vista sotto il pavimento della sala dalla fessura fra il suo bordo e il telaio del grigliato. Hanno il materiale del pavimento della sala lì accanto (quello bagnato, della stessa superficie) e
 ## le sue stesse coordinate di texture, prese dal triangolo del pavimento vicino: non si leggono come una toppa. Figlie
 ## di [param torre], vanno via con lei.
 const SOGLIA_TORRE := [[19.96, 20.235, -18.25, -17.83], [19.96, 20.235, -17.85, -16.64, -0.27],
-		[19.96, 20.22, -16.66, -13.46], [19.96, 20.235, -13.48, -7.15]]
+		[19.94, 19.99, -17.85, -16.64, -0.015, 0.555], [19.96, 20.22, -16.66, -13.46], [19.96, 20.235, -13.48, -7.15]]
 const SOGLIA_TORRE_Y := -0.015
 
 
@@ -702,7 +703,7 @@ static func chiudi_soglia_torre(torre: Node3D, pavimento: MeshInstance3D) -> Mes
 	var corpo := StaticBody3D.new()
 	for q: Array in SOGLIA_TORRE:
 		var y: float = q[4] if q.size() > 4 else SOGLIA_TORRE_Y
-		var lo := Vector3(q[0], y - 0.3, q[2])
+		var lo := Vector3(q[0], y - (q[5] if q.size() > 5 else 0.3), q[2])
 		var hi := Vector3(q[1], y, q[3])
 		_scatola_uv(st, lo, hi, mappa)
 		var forma := CollisionShape3D.new()
