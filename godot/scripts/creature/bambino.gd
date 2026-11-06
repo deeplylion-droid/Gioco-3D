@@ -22,6 +22,8 @@ signal si_gira    ## comincia a girarsi verso il giocatore
 signal rivelato   ## il travestimento si apre
 signal scappa     ## comincia a scappare (giocatore troppo vicino)
 signal sparito    ## è sparito, alla fine della fuga o del percorso
+## Correndo, un piede ha toccato terra in [param dove] (i passi dei bambini, 0.3.21: li suona Audio, nello spazio).
+signal passo(dove: Vector3)
 
 enum Modalita { STATUA, OSSERVA, CAMMINA, SCAPPA, SPARITO }
 enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
@@ -133,6 +135,15 @@ const CORSA_PRIMO_PASSO := 6.4 / 24.0
 @export var libera_quando_sparisce := true
 
 var e_rivelato := false
+## Il suono dei suoi passi di corsa (Audio, [signal passo]): &"passo_bambino_muta" il bambino col cubo, &"passo_agnellino"
+## l'agnellino; vuoto, nessun passo.
+@export var suono_passi: StringName = &""
+## Per ogni piede (sinistro, destro): se è alzato da terra (oltre [constant PASSO_SU]); quando torna sotto
+## [constant PASSO_GIU] è un passo.
+var _piede_alzato := [false, false]
+## (il bambino col cubo a terra tiene il punto più basso del piede a circa 3 cm dal pavimento, l'agnellino a 0)
+const PASSO_SU := 0.07
+const PASSO_GIU := 0.045
 
 var _modelli: Array[Node3D] = []
 ## Per ogni modello: lo scheletro e le ossa dei piedi e delle punte (il piede a terra e il punto più basso).
@@ -371,6 +382,7 @@ func _process(delta: float) -> void:
 	if not _corsa_a_tempo():
 		for ap in _player_anim:
 			ap.advance(delta)
+	_passi()
 	var p: Player = GameState.player
 	_aggiorna_sguardo(delta, p)
 	if p == null:
@@ -775,6 +787,31 @@ func _blocca_punta() -> int:
 		_perno_y = q.y
 		return 2
 	return 0
+
+
+## Correndo, quando un piede (il più basso fra tallone e punta) torna a terra dopo essersi alzato: [signal passo].
+func _passi() -> void:
+	if suono_passi == &"" or modalita != Modalita.SCAPPA or not is_visible_in_tree():
+		_piede_alzato = [false, false]
+		return
+	for x in _piedi:
+		if not (x[0] as Node3D).visible:
+			continue
+		var sk := x[1] as Skeleton3D
+		var ossa: Array = x[2]
+		for i in 2:
+			var q := sk.global_transform * sk.get_bone_global_pose(ossa[i]).origin
+			if ossa[2 + i] >= 0:
+				var punta := sk.global_transform * sk.get_bone_global_pose(ossa[2 + i]).origin
+				if punta.y < q.y:
+					q = punta
+			var h := q.y - global_position.y
+			if h > PASSO_SU:
+				_piede_alzato[i] = true
+			elif h < PASSO_GIU and _piede_alzato[i]:
+				_piede_alzato[i] = false
+				passo.emit(q)
+		return
 
 
 ## Quanto girare voltandosi sul posto, secondo quanto è sollevato il piede che non fa da perno: 1 da un paio di

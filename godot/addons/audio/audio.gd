@@ -57,6 +57,8 @@ const PER_CARTELLA := {
 	"piscina": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 	"torre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
 	"squalo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
+	# i passi di corsa dei bambini (0.3.21): dal piede, piano come i passi del giocatore, e si sentono anche alle spalle
+	"bambini": [BUS_EFFETTI, -4.0, 2.5, 30.0, 0.6],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -930,6 +932,7 @@ func _esamina(n: Node) -> void:
 		"FlickerLight": _attivi.append(Lampada.new(self, n))
 		"MedusaStatue", "MedusaAffacciata": _attivi.append(Statua.new(self, n))
 		"KidSighting": _collega_bambini(n)
+		"Bambino": _collega_passi_bambino(n)
 		"PackPickup": _collega_zaino_raccolto(n)
 		"PolaroidPhoto", "Collectible": _collega_collezionabile(n)
 		"DeathSequence": _collega_sequenza_morte(n)
@@ -1181,6 +1184,14 @@ func _collega_bambini(n: Node) -> void:
 
 func _collega_zaino_raccolto(n: Node) -> void:
 	n.connect(&"interacted", func(_by): suona(&"zaino_preso"))
+
+
+## I passi di corsa dei bambini (0.3.21): a ogni piede che tocca terra, dal piede.
+func _collega_passi_bambino(n: Node) -> void:
+	n.connect(&"passo", func(dove: Vector3):
+		var nome: StringName = n.get(&"suono_passi")
+		if nome != &"":
+			suona(nome, dove, randf_range(-1.5, 0.0)))
 
 
 func _collega_collezionabile(n: Node) -> void:

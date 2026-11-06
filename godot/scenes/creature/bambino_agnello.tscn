@@ -9,6 +9,7 @@
 
 [node name="BambinoAgnello" type="Node3D" groups=["bambini"]]
 script = ExtResource("1_bambino")
+suono_passi = &"passo_agnellino"
 vel_camminata_anim = 0.34
 vel_corsa_anim = 1.9
 

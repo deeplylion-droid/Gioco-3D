@@ -409,6 +409,126 @@
   "lufs": -27.0,
   "lufs_max": -23.7
  },
+ "bambini/passo_agnellino_01": {
+  "file": "res://audio/bambini/passo_agnellino_01.ogg",
+  "canali": 1,
+  "durata": 0.182,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21)",
+  "lufs": null,
+  "lufs_max": -22.0
+ },
+ "bambini/passo_agnellino_02": {
+  "file": "res://audio/bambini/passo_agnellino_02.ogg",
+  "canali": 1,
+  "durata": 0.14,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21)",
+  "lufs": null,
+  "lufs_max": -22.0
+ },
+ "bambini/passo_agnellino_03": {
+  "file": "res://audio/bambini/passo_agnellino_03.ogg",
+  "canali": 1,
+  "durata": 0.167,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21)",
+  "lufs": null,
+  "lufs_max": -22.0
+ },
+ "bambini/passo_agnellino_04": {
+  "file": "res://audio/bambini/passo_agnellino_04.ogg",
+  "canali": 1,
+  "durata": 0.165,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21)",
+  "lufs": null,
+  "lufs_max": -22.0
+ },
+ "bambini/passo_agnellino_05": {
+  "file": "res://audio/bambini/passo_agnellino_05.ogg",
+  "canali": 1,
+  "durata": 0.162,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21)",
+  "lufs": null,
+  "lufs_max": -22.0
+ },
+ "bambini/passo_agnellino_06": {
+  "file": "res://audio/bambini/passo_agnellino_06.ogg",
+  "canali": 1,
+  "durata": 0.139,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21)",
+  "lufs": null,
+  "lufs_max": -22.0
+ },
+ "bambini/passo_bambino_muta_01": {
+  "file": "res://audio/bambini/passo_bambino_muta_01.ogg",
+  "canali": 1,
+  "durata": 0.193,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "piede nudo sul bagnato e la gomma della muta (0.3.21)",
+  "lufs": null,
+  "lufs_max": -21.0
+ },
+ "bambini/passo_bambino_muta_02": {
+  "file": "res://audio/bambini/passo_bambino_muta_02.ogg",
+  "canali": 1,
+  "durata": 0.199,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "piede nudo sul bagnato e la gomma della muta (0.3.21)",
+  "lufs": null,
+  "lufs_max": -21.0
+ },
+ "bambini/passo_bambino_muta_03": {
+  "file": "res://audio/bambini/passo_bambino_muta_03.ogg",
+  "canali": 1,
+  "durata": 0.177,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "piede nudo sul bagnato e la gomma della muta (0.3.21)",
+  "lufs": null,
+  "lufs_max": -21.0
+ },
+ "bambini/passo_bambino_muta_04": {
+  "file": "res://audio/bambini/passo_bambino_muta_04.ogg",
+  "canali": 1,
+  "durata": 0.155,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "piede nudo sul bagnato e la gomma della muta (0.3.21)",
+  "lufs": null,
+  "lufs_max": -21.0
+ },
+ "bambini/passo_bambino_muta_05": {
+  "file": "res://audio/bambini/passo_bambino_muta_05.ogg",
+  "canali": 1,
+  "durata": 0.162,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "piede nudo sul bagnato e la gomma della muta (0.3.21)",
+  "lufs": null,
+  "lufs_max": -21.0
+ },
+ "bambini/passo_bambino_muta_06": {
+  "file": "res://audio/bambini/passo_bambino_muta_06.ogg",
+  "canali": 1,
+  "durata": 0.17,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "piede nudo sul bagnato e la gomma della muta (0.3.21)",
+  "lufs": null,
+  "lufs_max": -21.2
+ },
  "effetti/cancello_fine": {
   "file": "res://audio/effetti/cancello_fine.ogg",
   "canali": 1,

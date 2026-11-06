@@ -65,6 +65,18 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `ambiente/tuono_vicino_02.ogg` | 8.5 s | sintesi + Kenney Sci-Fi Sounds (CC0) | lowFrequency_explosion come sub |
 | `ambiente/tuono_vicino_03.ogg` | 7.5 s | sintesi + Kenney Sci-Fi Sounds (CC0) | lowFrequency_explosion come sub |
 | `ambiente/vento_loop.ogg` | 45.0 s | sintesi (originale) | vento e ululati fuori dalla cupola |
+| `bambini/passo_agnellino_01.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_02.ogg` | 0.1 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_03.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_04.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_05.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_06.ogg` | 0.1 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_bambino_muta_01.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_02.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_03.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_04.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_05.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_06.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
 | `effetti/cancello_fine.ogg` | 0.8 s | Kenney Impact Sounds + RPG Audio (CC0), rielaborati |  |
 | `effetti/cancello_ruota.ogg` | 5.0 s | Kenney RPG Audio (CC0), rielaborato |  |
 | `effetti/emergenza_ronzio_loop.ogg` | 4.0 s | sintesi (originale) |  |
