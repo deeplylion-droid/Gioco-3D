@@ -83,6 +83,8 @@ func _run() -> void:
 				await _lato()
 			"fessura":
 				await _fessura()
+			"pelle":
+				await _pelle()
 			_:
 				await _vicino()
 	print("FINE")
@@ -282,6 +284,31 @@ func _occhi_scolo(k: int) -> Vector3:
 	var p := fine + dir * 1.2
 	p.y = float(_ins.dati["scolo"][k]["fondo"]) + 1.65
 	return p
+
+
+## La pelle di lei (un vertice ogni 8) in ogni salita, a metà e a salita finita, scritta in <cartella>/pelle_<dove>.txt
+## (x y z per riga): per misurare offline altre forme o altri posti degli stendardi.
+func _pelle() -> void:
+	var stati := []
+	for v in 3:
+		stati.append(["vasca_%d" % v, _ins.call(&"_posto_vasca", v) as Vector3, 1.6])
+	for k in 3:
+		stati.append(["scolo_%d" % k, _ins.call(&"_posto_scolo", k) as Vector3, 1.2])
+	for s in stati:
+		_ins.call(&"_lei_sale", s[0], s[1], s[2])
+		var f := FileAccess.open(_cartella.path_join("pelle_%s.txt" % s[0]), FileAccess.WRITE)
+		for quando in [40, 110]:
+			for i in quando:
+				await get_tree().physics_frame
+			var pelle := await _lei_in_posa()
+			for i in range(0, pelle.size(), 8):
+				f.store_line("%.3f %.3f %.3f" % [pelle[i].x, pelle[i].y, pelle[i].z])
+		f.close()
+		print("PELLE scritta ", s[0])
+		_ins.lei.visible = false
+		_ins.lei_stato = SalaInseguimento.Lei.VIA
+		for i in 20:
+			await get_tree().physics_frame
 
 
 func _tubo() -> void:

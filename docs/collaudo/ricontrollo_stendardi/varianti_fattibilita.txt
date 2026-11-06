@@ -1,0 +1,115 @@
+12:05:06 | INFO: Data are loaded, start creating Blender stuff
+12:05:06 | INFO: Blender create Mesh node acqua_allagata
+12:05:06 | INFO: Blender create Mesh node acqua_bacino
+12:05:06 | INFO: Blender create Mesh node acqua_scolo_0
+12:05:06 | INFO: Blender create Mesh node acqua_scolo_1
+12:05:06 | INFO: Blender create Mesh node acqua_scolo_2
+12:05:06 | INFO: Blender create Mesh node acqua_vasca_c1
+12:05:06 | INFO: Blender create Mesh node acqua_vasca_c2
+12:05:06 | INFO: Blender create Mesh node acqua_vasca_c3
+12:05:06 | INFO: Blender create Mesh node ins_A_collare
+12:05:06 | INFO: Blender create Mesh node ins_A_grigliati-col
+12:05:06 | INFO: Blender create Mesh node ins_A_struttura-col
+12:05:06 | INFO: glTF import finished in 0.31s
+12:05:06 | INFO: Data are loaded, start creating Blender stuff
+12:05:06 | INFO: Blender create Mesh node ins_A_scolo_0
+12:05:06 | INFO: Blender create Mesh node ins_A_scolo_1
+12:05:06 | INFO: Blender create Mesh node ins_A_scolo_2
+12:05:06 | INFO: Blender create Mesh node ins_A_tubo_0
+12:05:06 | INFO: Blender create Mesh node ins_A_tubo_1
+12:05:06 | INFO: Blender create Mesh node ins_A_tubo_2
+12:05:06 | INFO: Blender create Mesh node ins_A_tubo_3
+12:05:06 | INFO: glTF import finished in 0.25s
+12:05:06 | INFO: Data are loaded, start creating Blender stuff
+12:05:06 | INFO: Blender create Mesh node prop_cartello_pavimento_bagnato
+12:05:07 | INFO: Blender create Mesh node prop_cartello_pavimento_bagnato_1
+12:05:07 | INFO: Blender create Mesh node prop_ciambella_gonfiabile
+12:05:07 | INFO: Blender create Mesh node prop_ciambella_gonfiabile_1
+12:05:07 | INFO: Blender create Mesh node prop_pallone_spiaggia
+12:05:07 | INFO: Blender create Mesh node prop_pallone_spiaggia_1
+12:05:07 | INFO: Blender create Mesh node prop_paperella_gigante
+12:05:07 | INFO: Blender create Mesh node prop_paperella_gigante_1
+12:05:07 | INFO: Blender create Mesh node prop_salvagente_nave
+12:05:07 | INFO: Blender create Mesh node prop_salvagente_nave_1
+12:05:07 | INFO: glTF import finished in 0.10s
+12:05:07 | INFO: Data are loaded, start creating Blender stuff
+12:05:07 | INFO: Blender create Mesh node ins_grata
+12:05:07 | INFO: Blender create Mesh node ins_grata_col
+12:05:07 | INFO: Blender create Mesh node ins_paratia_0
+12:05:07 | INFO: Blender create Mesh node ins_paratia_0_col
+12:05:07 | INFO: Blender create Mesh node ins_paratia_1
+12:05:07 | INFO: Blender create Mesh node ins_paratia_1_col
+12:05:07 | INFO: Blender create Mesh node ins_paratia_2
+12:05:07 | INFO: Blender create Mesh node ins_paratia_2_col
+12:05:07 | INFO: Blender create Mesh node ins_paratia_3
+12:05:07 | INFO: Blender create Mesh node ins_paratia_3_col
+12:05:07 | INFO: Blender create Mesh node ins_paratia_4
+12:05:07 | INFO: Blender create Mesh node ins_paratia_4_col
+12:05:07 | INFO: Blender create Mesh node ins_paratia_5
+12:05:07 | INFO: Blender create Mesh node ins_paratia_5_col
+12:05:07 | INFO: glTF import finished in 0.04s
+sala: 136479 facce, 11273 ripiani
+pelle di lei: {'scolo_0': 25104, 'scolo_1': 25104, 'scolo_2': 25104, 'vasca_0': 25104, 'vasca_1': 25104, 'vasca_2': 25104}
+===== VARIANTE OGGI: 3 x 5 m =====
+stendardo 1:
+  posto dx +0 dy +0 cima -15.50 fondo -20.15 | sala 9.00 m () | 2 m: +78.85 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 28% (12 m), vasca 1 davanti_al_bersaglio 28% (12 m)
+ -> PASSA in (0, 5, -15.5)
+  posto dx +0 dy +5 cima -15.50 fondo -20.15 | sala 0.78 m (lampada_appesa(43.8,28.5)) | 2 m: +78.85 () | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 1 mezzo 21% (16 m), vasca 1 davanti_al_bersaglio 21% (16 m)
+stendardo 2:
+  posto dx +0 dy +0 cima -16.00 fondo -20.65 | sala 9.00 m () | 2 m: +78.35 () | lei: vasca_1 2.77 | coperture: nessuna | schermo: vasca 2 mezzo 29% (10 m), vasca 2 davanti_al_bersaglio 31% (9 m)
+ -> PASSA in (0, 0, -16.0)
+stendardo 3:
+  posto dx +0 dy +0 cima -18.00 fondo -22.65 | sala 9.00 m () | 2 m: +1.35 (scolo_0) | lei: scolo_0 1.08 | coperture: nessuna | schermo: vasca 3 mezzo 23% (14 m), vasca 3 davanti_al_bersaglio 23% (13 m)
+ -> PASSA in (0, 0, -18.0)
+stendardo 4:
+  posto dx +0 dy +0 cima -17.50 fondo -22.15 | sala 9.00 m () | 2 m: +2.08 (ripiano ins_A_tubo_2) | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 3 mezzo 25% (10 m), vasca 3 davanti_al_bersaglio 25% (11 m)
+ -> PASSA in (0, 0, -17.5)
+===== VARIANTE A: 6 x 9 m =====
+stendardo 1:
+  posto dx +0 dy +0 cima -13.30 fondo -22.30 | sala 9.00 m () | 2 m: +76.70 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 53% (12 m), vasca 1 davanti_al_bersaglio 53% (12 m)
+  posto dx +0 dy +0 cima -11.15 fondo -20.15 | sala 9.00 m () | 2 m: +78.85 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 48% (13 m), vasca 1 davanti_al_bersaglio 48% (13 m)
+  posto dx +0 dy +0 cima -15.50 fondo -24.50 | sala 9.00 m () | 2 m: +74.50 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 56% (12 m), vasca 1 davanti_al_bersaglio 56% (12 m)
+  posto dx +0 dy +0 cima -14.50 fondo -23.50 | sala 9.00 m () | 2 m: +75.50 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 55% (12 m), vasca 1 davanti_al_bersaglio 55% (12 m)
+  posto dx +0 dy +0 cima -12.20 fondo -21.20 | sala 9.00 m () | 2 m: +77.80 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 51% (12 m), vasca 1 davanti_al_bersaglio 51% (12 m)
+ -> PASSA in (0, 5, -13.3)
+  posto dx +0 dy +5 cima -13.30 fondo -22.30 | sala 0.55 m (lampada_appesa(43.8,28.5)) | 2 m: +76.70 () | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 1 mezzo 41% (16 m), vasca 1 davanti_al_bersaglio 41% (16 m)
+stendardo 2:
+  posto dx +0 dy +0 cima -13.80 fondo -22.80 | sala 0.97 m (lampada_appesa(70.5,24.0)) | 2 m: +1.03 (ripiano ins_A_tubo_2) | lei: vasca_1 1.33 | coperture: nessuna | schermo: vasca 2 mezzo 55% (10 m), vasca 2 davanti_al_bersaglio 60% (9 m)
+ -> PASSA in (0, 0, -13.8)
+stendardo 3:
+  posto dx +0 dy +0 cima -15.80 fondo -24.80 | sala 0.04 m (ins_A_scolo_0) | 2 m: -0.80 (scolo_0) | lei: scolo_0 0.00 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4; vasca 3: lampada_lavoro_0 | schermo: vasca 3 mezzo 44% (14 m), vasca 3 davanti_al_bersaglio 45% (13 m)
+  posto dx +0 dy +0 cima -13.65 fondo -22.65 | sala 0.81 m (lampada_appesa(61.0,9.9)) | 2 m: +1.35 (scolo_0) | lei: scolo_0 0.43 | coperture: nessuna | schermo: vasca 3 mezzo 38% (15 m), vasca 3 davanti_al_bersaglio 38% (14 m)
+  posto dx +0 dy +0 cima -18.00 fondo -27.00 | sala 0.03 m (ins_A_scolo_0) | 2 m: -3.00 (scolo_0) | lei: scolo_0 0.00 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4; vasca 3: lampada_lavoro_0 | schermo: vasca 3 mezzo 50% (13 m), vasca 3 davanti_al_bersaglio 51% (12 m)
+  posto dx +0 dy +0 cima -17.00 fondo -26.00 | sala 0.04 m (ins_A_scolo_0) | 2 m: -2.00 (scolo_0) | lei: scolo_0 0.00 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4; vasca 3: lampada_lavoro_0 | schermo: vasca 3 mezzo 47% (13 m), vasca 3 davanti_al_bersaglio 49% (13 m)
+  posto dx +0 dy +0 cima -14.70 fondo -23.70 | sala 0.47 m (lampada_appesa(61.0,9.9)) | 2 m: +0.30 (scolo_0) | lei: scolo_0 0.00 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4; vasca 3: lampada_lavoro_0 | schermo: vasca 3 mezzo 41% (14 m), vasca 3 davanti_al_bersaglio 42% (14 m)
+ -> PASSA in (4, -5, -13.65)
+  posto dx +4 dy -5 cima -13.65 fondo -22.65 | sala 9.00 m () | 2 m: +5.89 (ripiano ins_A_tubo_3) | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 3 mezzo 40% (11 m), vasca 3 davanti_al_bersaglio 38% (10 m)
+stendardo 4:
+  posto dx +0 dy +0 cima -15.30 fondo -24.30 | sala 9.00 m () | 2 m: -0.07 (ripiano ins_A_tubo_2) | lei: tutte oltre 3 m | coperture: vasca 3: lampada_appesa_2 | schermo: vasca 3 mezzo 51% (10 m), vasca 3 davanti_al_bersaglio 50% (11 m)
+  posto dx +0 dy +0 cima -13.15 fondo -22.15 | sala 9.00 m () | 2 m: +2.08 (ripiano ins_A_tubo_2) | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 3 mezzo 38% (12 m), vasca 3 davanti_al_bersaglio 39% (12 m)
+ -> PASSA in (0, 0, -13.15)
+===== VARIANTE B: 3 x 11 m =====
+stendardo 1:
+  posto dx +0 dy +0 cima -15.50 fondo -26.50 | sala 9.00 m () | 2 m: +72.50 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 68% (12 m), vasca 1 davanti_al_bersaglio 67% (12 m)
+  posto dx +0 dy +0 cima -14.50 fondo -25.50 | sala 9.00 m () | 2 m: +73.50 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 67% (12 m), vasca 1 davanti_al_bersaglio 67% (12 m)
+  posto dx +0 dy +0 cima -13.50 fondo -24.50 | sala 9.00 m () | 2 m: +74.50 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 66% (12 m), vasca 1 davanti_al_bersaglio 66% (12 m)
+  posto dx +0 dy +0 cima -12.50 fondo -23.50 | sala 9.00 m () | 2 m: +75.50 () | lei: tutte oltre 3 m | coperture: vasca 1: lampada_appesa_4; vasca 3: lampada_appesa_4 | schermo: vasca 1 mezzo 65% (12 m), vasca 1 davanti_al_bersaglio 64% (12 m)
+ -> PASSA in (0, 5, -15.5)
+  posto dx +0 dy +5 cima -15.50 fondo -26.50 | sala 0.78 m (lampada_appesa(43.8,28.5)) | 2 m: +72.50 () | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 1 mezzo 51% (16 m), vasca 1 davanti_al_bersaglio 51% (16 m)
+stendardo 2:
+  posto dx +0 dy +0 cima -16.00 fondo -27.00 | sala 9.00 m () | 2 m: +72.00 () | lei: vasca_1 2.77 | coperture: nessuna | schermo: vasca 2 mezzo 82% (9 m), vasca 2 davanti_al_bersaglio 93% (8 m)
+ -> PASSA in (0, 0, -16.0)
+stendardo 3:
+  posto dx +0 dy +0 cima -18.00 fondo -29.00 | sala 0.03 m (ins_A_scolo_0) | 2 m: -5.00 (scolo_0) | lei: scolo_0 0.35 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4 | schermo: vasca 3 mezzo 62% (12 m), vasca 3 davanti_al_bersaglio 65% (12 m)
+  posto dx +0 dy +0 cima -17.00 fondo -28.00 | sala 0.04 m (ins_A_scolo_0) | 2 m: -4.00 (scolo_0) | lei: scolo_0 0.35 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4 | schermo: vasca 3 mezzo 60% (13 m), vasca 3 davanti_al_bersaglio 62% (12 m)
+  posto dx +0 dy +0 cima -16.00 fondo -27.00 | sala 0.03 m (ins_A_scolo_0) | 2 m: -3.00 (scolo_0) | lei: scolo_0 0.35 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4 | schermo: vasca 3 mezzo 57% (13 m), vasca 3 davanti_al_bersaglio 59% (13 m)
+  posto dx +0 dy +0 cima -15.00 fondo -26.00 | sala 0.04 m (ins_A_scolo_0) | 2 m: -2.00 (scolo_0) | lei: scolo_0 0.35 | coperture: vasca 1: lampada_appesa_5; vasca 1: lampada_lavoro_2; vasca 3: lampada_appesa_3; vasca 3: lampada_appesa_4 | schermo: vasca 3 mezzo 54% (14 m), vasca 3 davanti_al_bersaglio 56% (13 m)
+ -> PASSA in (-8, -4, -18.0)
+  posto dx -8 dy -4 cima -18.00 fondo -29.00 | sala 0.64 m (lampada_appesa(51.5,7.5)) | 2 m: +0.97 (ripiano ins_A_tubo_3) | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 3 mezzo 44% (18 m), vasca 3 davanti_al_bersaglio 47% (17 m)
+stendardo 4:
+  posto dx +0 dy +0 cima -17.50 fondo -28.50 | sala 0.00 m (ins_A_tubo_2) | 2 m: -4.05 (ins_A_tubo_2) | lei: scolo_2 1.04 | coperture: vasca 2: lampada_lavoro_2; vasca 3: lampada_appesa_2; vasca 3: lampada_lavoro_1 | schermo: vasca 3 mezzo 88% (8 m), vasca 3 davanti_al_bersaglio 81% (9 m)
+  posto dx +0 dy +0 cima -16.50 fondo -27.50 | sala 0.00 m (ins_A_tubo_2) | 2 m: -3.05 (ins_A_tubo_2) | lei: scolo_2 1.53 | coperture: vasca 2: lampada_lavoro_2; vasca 3: lampada_appesa_2; vasca 3: lampada_lavoro_1 | schermo: vasca 3 mezzo 81% (9 m), vasca 3 davanti_al_bersaglio 75% (9 m)
+  posto dx +0 dy +0 cima -15.50 fondo -26.50 | sala 0.04 m (ins_A_tubo_2) | 2 m: -2.05 (ins_A_tubo_2) | lei: scolo_2 2.26 | coperture: vasca 2: lampada_lavoro_2; vasca 3: lampada_appesa_2; vasca 3: lampada_lavoro_1 | schermo: vasca 3 mezzo 73% (9 m), vasca 3 davanti_al_bersaglio 69% (10 m)
+  posto dx +0 dy +0 cima -14.50 fondo -25.50 | sala 0.88 m (ins_A_tubo_2) | 2 m: -1.27 (ripiano ins_A_tubo_2) | lei: tutte oltre 3 m | coperture: vasca 3: lampada_appesa_2 | schermo: vasca 3 mezzo 65% (10 m), vasca 3 davanti_al_bersaglio 63% (11 m)
+ -> PASSA in (4, -3, -14.5)
+  posto dx +4 dy -3 cima -14.50 fondo -25.50 | sala 9.00 m () | 2 m: +0.77 (ripiano ins_A_scolo_2) | lei: tutte oltre 3 m | coperture: nessuna | schermo: vasca 3 mezzo 68% (9 m), vasca 3 davanti_al_bersaglio 64% (10 m)
