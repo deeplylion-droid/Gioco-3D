@@ -126,6 +126,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
 
+      - name: Test dell'avvio sicuro (dopo una chiusura di colpo il titolo propone qualità bassa e l'altro driver; senza, niente)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_avvio_sicuro.gd
+
       - name: Test dell'opzione nascosta della riga di comando del titolo (senza i suoi argomenti non fa niente; la usa la Prova su Vulkan)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_partenza_da_riga.gd

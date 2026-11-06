@@ -8,14 +8,21 @@ signal risposta(si: bool)
 
 var domanda := ""
 var nota := ""
+## Le due voci (le chiavi da tradurre) e quale ha il focus all'inizio.
+var testo_si := "Sì"
+var testo_no := "No"
+var focus_si := false
 var voce_si: Button
 var voce_no: Button
 var _risposto := false
 
 
-func _init(testo_domanda := "", testo_nota := "") -> void:
+func _init(testo_domanda := "", testo_nota := "", voce_si_testo := "Sì", voce_no_testo := "No", focus_sul_si := false) -> void:
 	domanda = testo_domanda
 	nota = testo_nota
+	testo_si = voce_si_testo
+	testo_no = voce_no_testo
+	focus_si = focus_sul_si
 
 
 func _ready() -> void:
@@ -59,12 +66,12 @@ func _ready() -> void:
 	var spazio := Control.new()
 	spazio.custom_minimum_size.y = 14
 	col.add_child(spazio)
-	voce_si = _voce("Si", "Sì", true)
+	voce_si = _voce("Si", testo_si, true)
 	col.add_child(voce_si)
-	voce_no = _voce("No", "No", false)
+	voce_no = _voce("No", testo_no, false)
 	col.add_child(voce_no)
 	StileMenu.collega_voci([voce_si, voce_no])
-	voce_no.grab_focus.call_deferred()
+	(voce_si if focus_si else voce_no).grab_focus.call_deferred()
 
 
 func _voce(nome: String, testo: String, si: bool) -> Button:
