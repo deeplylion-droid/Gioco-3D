@@ -55,6 +55,8 @@ func _ready() -> void:
 	var first_run := not FileAccess.file_exists("user://settings.cfg")
 	if first_run and not is_automated():
 		Grafica.applica_preset(first_run_preset)
+		# (al primo avvio la qualità la sceglie la prova automatica, entrando nella sala: QualitaAutomatica)
+		Grafica.valori["qualita_provata"] = false
 	# Contatore delle prestazioni (F3), spento all'avvio.
 	add_child(load("res://scripts/ui/fps_counter.gd").new())
 	if not is_automated() and not bool(Grafica.valore("calibrato")):

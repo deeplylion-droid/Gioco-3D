@@ -134,6 +134,10 @@ func _entra() -> void:
 	Game.pause_on_focus_loss = _pausa_fuoco
 	Game.capture_mouse()
 	get_tree().change_scene_to_packed(pacchetto)
+	if scena == SCENA_SALA and QualitaAutomatica.da_fare():
+		# (il primo avvio: la prova della qualità dietro lo schermo ancora nero, che poi si schiarisce da sé)
+		QualitaAutomatica.avvia(get_tree(), frame_di_assestamento)
+		return
 	velo.schiarisci(1.6, frame_di_assestamento)
 
 

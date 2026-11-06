@@ -82,8 +82,8 @@ static func rispondi(sicuro: bool, albero: SceneTree) -> bool:
 	chiusa_di_colpo = false
 	if not sicuro:
 		return false
+	# (una scelta del giocatore: niente prova automatica e niente «scelto in automatico»)
 	Grafica.applica_preset("basso")
-	Grafica.set(&"scelta_automatica", "")
 	var d := altro_driver()
 	if d == "":
 		return false

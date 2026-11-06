@@ -12,6 +12,8 @@ const ACCENTO := Color(0.55, 0.78, 0.86)
 
 var _controlli := {}          # chiave -> controllo
 var _preset: OptionButton
+## «scelto in automatico: …» sotto il preset, finché il giocatore non lo cambia (QualitaAutomatica).
+var _automatico: Label
 var _nota_aa: Label
 var _calibrazione: CalibrazioneLuminosita
 var _tabs: TabContainer
@@ -53,6 +55,13 @@ func _ready() -> void:
 	_preset.item_selected.connect(func(i): if i < 4: Grafica.applica_preset(Grafica.PRESET_NOMI[i]))
 	testa.add_child(_preset)
 	col.add_child(testa)
+	_automatico = Label.new()
+	_automatico.name = "SceltoInAutomatico"
+	_automatico.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_automatico.add_theme_font_size_override("font_size", 15)
+	_automatico.modulate = Color(1, 1, 1, 0.7)
+	col.add_child(_automatico)
+	Lingua.segui(_automatico, _aggiorna_automatico)
 
 	_tabs = TabContainer.new()
 	_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -267,6 +276,7 @@ func _aggiorna() -> void:
 	_preset.set_block_signals(true)
 	_preset.select(Grafica.PRESET_NOMI.find(nome) if nome in Grafica.PRESET_NOMI else 4)
 	_preset.set_block_signals(false)
+	_aggiorna_automatico()
 	for chiave in _controlli:
 		var c: Control = _controlli[chiave]
 		var v: Variant = Grafica.valore(chiave)
@@ -291,6 +301,14 @@ func _aggiorna() -> void:
 		nota = "FSR 1 ha effetto solo con la scala di rendering sotto il 100%."
 	_nota_aa.text = nota
 	_nota_aa.visible = nota != ""
+
+
+## «scelto in automatico: …» solo se il preset di adesso è quello scelto dalla prova (e il giocatore non l'ha cambiato).
+func _aggiorna_automatico() -> void:
+	var auto := String(Grafica.valore("scelta_automatica"))
+	_automatico.visible = auto != "" and auto == String(Grafica.valore("preset"))
+	if _automatico.visible:
+		_automatico.text = tr("scelto in automatico: %s") % tr(auto.capitalize())
 
 
 func _crea_tema() -> Theme:
