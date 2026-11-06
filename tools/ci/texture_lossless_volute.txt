@@ -43,3 +43,4 @@ res://addons/acqua/textures/foam.png | schiuma dello shader dell'acqua
 res://addons/acqua/textures/noise_rgba.png | rumore dello shader dell'acqua (variabile globale water_noise_tex), dati
 res://addons/acqua/textures/water_normal_a.png | normali delle increspature dello shader dell'acqua
 res://addons/acqua/textures/water_normal_b.png | normali delle increspature dello shader dell'acqua
+res://addons/grafica/prova_luminosita.png | interfaccia: lo scatto della seconda prova della luminosità, i livelli bui devono restare esatti (la compressione li sposta)
