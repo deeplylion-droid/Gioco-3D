@@ -260,7 +260,11 @@ func _disegna_effetti(sv: SubViewport) -> void:
 		sv.add_child(n)
 		if n is GPUParticles3D:
 			(n as GPUParticles3D).emitting = true
-		for i in 3:
+		# (come i materiali: prima senza ombre, poi l'ombra di ogni luce da sola; tutto insieme il gorgo erano 13 pipeline)
+		await _passi_ombre()
+		if not is_inside_tree():
+			return
+		for i in 2:
 			await RenderingServer.frame_post_draw
 		if not is_inside_tree():
 			return
