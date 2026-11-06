@@ -1,11 +1,11 @@
 # grafica-2 (6 novembre): lo scatto vero del corridoio delle pile al 20% per la seconda prova della schermata
 # «Luminosità» (preset di serie, gioco renderizzato con Vulkan software e swap da 24 GB). Solo per fare lo scatto:
 # il branch lavoro/scatto-calibrazione-g2 non va unito.
-name: Scatto calibrazione (grafica-2)
+name: Scatto calibrazione (confronto col gioco di oggi)
 
 on:
   push:
-    branches: ["lavoro/scatto-calibrazione-g2"]
+    branches: ["lavoro/scatto-calibrazione-confronto"]
 
 permissions:
   contents: read
