@@ -1,0 +1,20 @@
+PARATIE: 6 paratie, corpi dalle mesh 65, sagome true
+PARATIE: vasca 1 giusta, chiusa (pannello in (54.75, -21.85, -16.4)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE: vasca 1 sbagliata, chiusa (pannello in (54.75, -21.85, -13.6)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE: vasca 2 giusta, chiusa (pannello in (67.0, -24.85, -25.25)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE: vasca 2 sbagliata, chiusa (pannello in (64.0, -24.85, -25.25)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE: vasca 3 giusta, chiusa (pannello in (66.75, -27.85, -3.6)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE: vasca 3 sbagliata, chiusa (pannello in (72.25, -27.85, -6.6)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE: vasca 1 giusta, aperta (pannello in (54.75, -19.9, -16.4)): niente dentro
+PARATIE: vasca 1 sbagliata, aperta (pannello in (54.75, -19.9, -13.6)): niente dentro
+PARATIE: vasca 2 giusta, aperta (pannello in (67.0, -22.9, -25.25)): niente dentro
+PARATIE: vasca 2 sbagliata, aperta (pannello in (64.0, -22.9, -25.25)): niente dentro
+PARATIE: vasca 3 giusta, aperta (pannello in (66.75, -25.9, -3.6)): niente dentro
+PARATIE: vasca 3 sbagliata, aperta (pannello in (72.25, -25.9, -6.6)): niente dentro
+PARATIE: getto sulla vasca 1 giusta: comincia ad aprirsi dopo 1.52 s di getto, alzata del tutto a 2.00 s (corsa 1.95 m)
+PARATIE: getto sulla vasca 2 giusta: comincia ad aprirsi dopo 1.52 s di getto, alzata del tutto a 3.02 s (corsa 1.95 m)
+PARATIE: getto sulla vasca 3 giusta: comincia ad aprirsi dopo 1.52 s di getto, alzata del tutto a 2.00 s (corsa 1.95 m)
+PARATIE: difetti 6
+PARATIE: finito
+
+[exited with code 0]

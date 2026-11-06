@@ -1,0 +1,22 @@
+PARATIE: vasca 1 giusta, chiusa (pannello in (54.75, -21.85, -16.4)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE:   scatola (54.638, -22.8, -17.37) - (54.8, -20.9, -15.43); sotto il centro il primo colpo a y -22.370 (fondo del pannello -22.800: -430.0 mm) lato -1: primo colpo a -0.0 mm dal bordo del pannello (InseguimentoStruttura/ins_A_struttura/StaticBody3D) lato +1: primo colpo a -0.1 mm dal bordo del pannello (InseguimentoStrut
+PARATIE: vasca 1 sbagliata, chiusa (pannello in (54.75, -21.85, -13.6)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE:   scatola (54.638, -22.8, -14.57) - (54.8, -20.9, -12.63); sotto il centro il primo colpo a y -22.370 (fondo del pannello -22.800: -430.0 mm) lato -1: primo colpo a -0.0 mm dal bordo del pannello (InseguimentoStruttura/ins_A_struttura/StaticBody3D) lato +1: primo colpo a -0.3 mm dal bordo del pannello (InseguimentoStrut
+PARATIE: vasca 2 giusta, chiusa (pannello in (67.0, -24.85, -25.25)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE:   scatola (66.03001, -25.8, -25.362) - (67.97, -23.9, -25.2); sotto il centro il primo colpo a y -25.370 (fondo del pannello -25.800: -430.0 mm) lato -1: primo colpo a -0.0 mm dal bordo del pannello (InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71) lato +1: primo colpo a -0.3 mm dal bordo del pannello (Inseguimen
+PARATIE: vasca 2 sbagliata, chiusa (pannello in (64.0, -24.85, -25.25)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE:   scatola (63.03, -25.8, -25.362) - (64.97, -23.9, -25.2); sotto il centro il primo colpo a y -25.370 (fondo del pannello -25.800: -430.0 mm) lato -1: primo colpo a 0.0 mm dal bordo del pannello (InseguimentoStruttura/ins_A_struttura/StaticBody3D) lato +1: primo colpo a -0.2 mm dal bordo del pannello (InseguimentoStrutt
+PARATIE: vasca 3 giusta, chiusa (pannello in (66.75, -27.85, -3.6)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE:   scatola (66.7, -28.8, -4.57) - (66.862, -26.9, -2.63); sotto il centro il primo colpo a y -28.370 (fondo del pannello -28.800: -430.0 mm) lato -1: primo colpo a -0.0 mm dal bordo del pannello (InseguimentoStruttura/ins_A_struttura/StaticBody3D) lato +1: primo colpo a -0.3 mm dal bordo del pannello (InseguimentoStruttu
+PARATIE: vasca 3 sbagliata, chiusa (pannello in (72.25, -27.85, -6.6)): DENTRO ["InseguimentoStruttura/ins_A_struttura/StaticBody3D", "InseguimentoStruttura/ins_A_struttura/@StaticBody3D@71"]
+PARATIE:   scatola (72.138, -28.8, -7.57) - (72.3, -26.9, -5.63); sotto il centro il primo colpo a y -28.370 (fondo del pannello -28.800: -430.0 mm) lato -1: primo colpo a -0.0 mm dal bordo del pannello (InseguimentoStruttura/ins_A_struttura/StaticBody3D) lato +1: primo colpo a -0.0 mm dal bordo del pannello (InseguimentoStruttu
+PARATIE: vasca 1 giusta, aperta (pannello in (54.75, -19.9, -16.4)): niente dentro
+PARATIE: vasca 1 sbagliata, aperta (pannello in (54.75, -19.9, -13.6)): niente dentro
+PARATIE: vasca 2 giusta, aperta (pannello in (67.0, -22.9, -25.25)): niente dentro
+PARATIE: vasca 2 sbagliata, aperta (pannello in (64.0, -22.9, -25.25)): niente dentro
+PARATIE: vasca 3 giusta, aperta (pannello in (66.75, -25.9, -3.6)): niente dentro
+PARATIE: vasca 3 sbagliata, aperta (pannello in (72.25, -25.9, -6.6)): niente dentro
+PARATIE: difetti 6
+9a1f9a34 Merge commit '4e4679ec' into prova-bersagli
+
+[exited with code 0]
