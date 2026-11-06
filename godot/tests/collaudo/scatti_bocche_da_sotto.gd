@@ -85,6 +85,14 @@ func _run() -> void:
 	elif fase == "confronto":
 		# prima e dopo il ricontrollo del collaudo (PRIMA=1: com'era, la parete d'acqua senza luce propria e la lampada
 		# verde delle paratie senza ombre): le 6 bocche da dentro, la riga verde nel tubo 3, le 3 paratie verdi dalla vasca
+		# (CANDIDATA=1, grafica-2: com'era sulla candidata 0.3.21 b44dfab7, la parete con water_inseguimento.gdshader e
+		# l'ombra su tutte e tre le lampade verdi)
+		if OS.has_environment("CANDIDATA"):
+			for v: MeshInstance3D in veli:
+				(v.material_override as ShaderMaterial).shader = load("res://shaders/water_inseguimento.gdshader") as Shader
+			for l in ins.find_children("*", "OmniLight3D", true, false):
+				if l.get_meta(&"lampada_paratia_verde", false):
+					(l as OmniLight3D).shadow_enabled = true
 		if OS.has_environment("PRIMA"):
 			for v: MeshInstance3D in veli:
 				(v.material_override as ShaderMaterial).set_shader_parameter(&"luce_propria", 0.0)
