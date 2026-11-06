@@ -206,6 +206,7 @@ func load_state(s: Dictionary) -> void:
 		_fuga_tra = -1.0
 		if bambino:
 			bambino.guarda_qui = Vector3.INF
+			bambino.azzera()
 			bambino.modalita = Bambino.Modalita.SPARITO
 			bambino.visible = false
 			bambino.process_mode = Node.PROCESS_MODE_DISABLED

@@ -293,6 +293,9 @@ func _insegui_fiume(b: BambinoSfuggita) -> void:
 			f += 1
 			if b.stato == BambinoSfuggita.Stato.SCAPPA and b.bambino.visible and _pezzo_in_vista(b):
 				visto_a = f
+				if OS.has_environment("DEBUG_FUGA"):
+					print("    visto f%d: giocatore %s, bambino %s, gioco vede %s" % [f, g.to_local(qui).snapped(Vector3.ONE * 0.01),
+							g.to_local(b.bambino.global_position).snapped(Vector3.ONE * 0.01), b.bambino.visibile_da(_p)])
 		var margine := f - visto_a
 		check(b.stato == BambinoSfuggita.Stato.FINITO and margine >= MARGINE_SPARIRE,
 				"inseguito %s: sparisce %d fotogrammi dopo l'ultima volta che se ne vede un pezzo (almeno %d; il giocatore a %.1f m)" % [
@@ -428,6 +431,11 @@ func _insegui_su(b: BambinoSfuggita, sala: SalaSottomarino, strada: Array, al: C
 					scorre += v
 					scorre_n += 1
 					scorre_max = maxf(scorre_max, v)
+					if OS.has_environment("DEBUG_SCIVOLA") and v > 1.0:
+						var apd := b.bambino.find_child("AnimationPlayer", true, false) as AnimationPlayer
+						print("    scivola %s %.2f a %.2f s: %s %.2f x%.2f, vel %.2f, perno %d, modalità %d, partendo %s" % [kk, v, t,
+								apd.current_animation, apd.current_animation_position, apd.speed_scale, b.bambino._vel,
+								b.bambino._perno_osso, b.bambino.modalita, b.bambino._partendo])
 			piedi_prima = ora
 			var sk_b: Skeleton3D = null
 			for nome in [^"Calmo", ^"Rivelato"]:

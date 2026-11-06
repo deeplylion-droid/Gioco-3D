@@ -487,6 +487,26 @@ func _guardato_da(p: Player) -> bool:
 
 ## Il giocatore lo può vedere: qualche punto del corpo (dai piedi alla testa) è nell'inquadratura e senza
 ## muri in mezzo.
+## Torna come appena messo, prima di ogni fuga (BambinoSfuggita.load_state ripartendo da prima, con la sua stanza
+## scaricata e ricaricata): niente primo passo a metà, nessun piede tenuto fermo, ferma, fermo a riposo.
+func azzera() -> void:
+	_partendo = false
+	_svolta = false
+	_perno_osso = -1
+	_vel = 0.0
+	_punti.clear()
+	_n_punti_fuga = 0
+	_in_fuga = 0.0
+	_fermo_a_fine_fuga = false
+	_fuori_vista_t = 0.0
+	_piede_alzato = [false, false]
+	_reazione_in_corso = false
+	_visto_da = 0.0
+	for ap in _player_anim:
+		ap.speed_scale = 1.0
+	_anima(&"fermo", 0.0)
+
+
 ## Da quanti secondi di seguito non è visto (con [member fuori_vista_minimo]; si azzera appena è visto).
 func _fuori_vista_da(p: Player, delta: float) -> float:
 	if visibile_da(p):
