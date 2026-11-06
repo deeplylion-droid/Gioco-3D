@@ -2215,7 +2215,7 @@
   ]
  },
  "polpo": {
-  "eta": "vecchia",
+  "eta": "media",
   "contorno": [
    [
     -0.026,
@@ -2762,7 +2762,7 @@
   ]
  },
  "delfino": {
-  "eta": "media",
+  "eta": "vecchia",
   "contorno": [
    [
     0.0376,

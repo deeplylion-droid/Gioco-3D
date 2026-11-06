@@ -65,6 +65,13 @@ func _run() -> void:
 		return
 	var sagome := club.sagome()
 	print("sagome %d" % sagome.size())
+	# SOLO_VASCA=2: solo le viste di quella vasca (le sagome e gli stati); SOLO=nome1,nome2: solo quelle sagome da vicino
+	var solo_vasca := int(OS.get_environment("SOLO_VASCA")) if OS.has_environment("SOLO_VASCA") else 0
+	if solo_vasca > 0:
+		sagome = sagome.filter(func(s): return int(s.get_meta(&"vasca")) == solo_vasca)
+	if OS.has_environment("SOLO"):
+		var nomi := OS.get_environment("SOLO").split(",")
+		sagome = sagome.filter(func(s): return nomi.has(String(s.name).trim_prefix("Sagoma_")))
 	if gruppo == "giro":
 		await _giro(sagome)
 	else:
@@ -81,7 +88,8 @@ func _occhi(v: int) -> Vector3:
 
 
 func _giro(sagome: Array[MeshInstance3D]) -> void:
-	for v in 3:
+	var vasche := range(3) if not OS.has_environment("SOLO_VASCA") else [int(OS.get_environment("SOLO_VASCA")) - 1]
+	for v in vasche:
 		var occhi := _occhi(v)
 		for s in sagome:
 			if int(s.get_meta(&"vasca")) != v + 1:
@@ -94,7 +102,7 @@ func _giro(sagome: Array[MeshInstance3D]) -> void:
 			var ang := TAU * k / 4.0
 			await _scatto("v%d_intorno_%d" % [v + 1, k * 90], occhi, occhi + Vector3(sin(ang), -0.15, -cos(ang)))
 	# gli stati: lei su in ogni vasca (dagli occhi, verso di lei), poi le paratie aperte e la grata calata
-	for v in 3:
+	for v in vasche:
 		var su := _ins.call(&"_posto_vasca", v) as Vector3
 		_ins.call(&"_lei_sale", "vasca_%d" % v, su)
 		for i in 150:
@@ -109,7 +117,7 @@ func _giro(sagome: Array[MeshInstance3D]) -> void:
 		_ins.apri_paratia(k)
 	for i in 240:
 		await get_tree().physics_frame
-	for v in 3:
+	for v in vasche:
 		var occhi := _occhi(v)
 		var p: Dictionary = _ins.dati["paratie"][v * 2]
 		var bers := _ins.b(p["bersaglio"])
