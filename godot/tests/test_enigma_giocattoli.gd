@@ -70,7 +70,7 @@ func _run() -> void:
 		check(a_galla, "il giocattolo %d galleggia (%.3f, pelo %.3f)" % [i, g.global_position.y, vasca.get_surface_global_y()])
 		check(Vector2(g.position.x, g.position.z).distance_to(Vector2(c.position.x, c.position.z)) > 2.0,
 			"il giocattolo %d parte lontano dal suo cerchio" % i)
-	check(enigma.get_node_or_null(^"Disegno") is Decal, "c'è il disegno dei bambini sul muro")
+	_disegno()
 	check(not pulsante.enabled, "con l'acqua il pulsante della botola è spento")
 
 	print("2. Ordine A: prima i giocattoli sull'acqua, poi lo svuotamento")
@@ -726,6 +726,36 @@ func check(cond: bool, what: String) -> void:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().physics_frame
+
+
+## Il disegno guida (nota dell'utente del 4 novembre): non più sul muro della piscina, ma su un cartoncino legato con le
+## fascette alla ringhiera della struttura di gioco dell'area bimbi, verso il percorso, all'altezza degli occhi.
+func _disegno() -> void:
+	check(enigma.get_node_or_null(^"Disegno") == null and enigma.find_children("*", "Decal", true, false).is_empty(),
+		"sul muro della piscina il disegno non c'è più")
+	var d := enigma.disegno()
+	var struttura := level.find_child("sala_struttura_gioco", true, false) as Node3D
+	check(d != null and struttura != null and d.get_parent() == struttura, "il disegno è sulla struttura di gioco dell'area bimbi, fissato a lei")
+	if d == null:
+		return
+	var y := d.global_position.y
+	check(y > 1.5 and y < 1.95 and d.global_basis.z.dot(Vector3(0, 0, 1)) > 0.99,
+		"all'altezza degli occhi (centro a %.2f m) e girato verso il percorso, a sud" % y)
+	var m := (d.get_node(^"Pastelli") as MeshInstance3D).material_override as StandardMaterial3D
+	check(m != null and m.albedo_texture != null and m.albedo_texture.resource_path.ends_with("disegno_piscina.png"),
+		"col disegno vero a pastello")
+	check(d.find_children("Fascetta*", "MeshInstance3D", true, false).size() == 4, "legato con quattro fascette")
+	# dal percorso a sud-est e da vicino niente lo copre: i raggi dagli occhi (a 1,65 m da terra) al disegno non toccano
+	# niente (da sud-ovest c'è il fungo davanti alla pedana)
+	var spazio := d.get_world_3d().direct_space_state
+	var liberi := 0
+	var da := [Vector3(2.5, 0.0, 4.0), Vector3(4.0, 0.0, 3.0), Vector3(0.3, 0.0, 0.9)]
+	for v in da:
+		var occhi := Vector3(d.global_position.x + v.x, 1.65, d.global_position.z + v.z)
+		var q := PhysicsRayQueryParameters3D.create(occhi, d.global_position + Vector3(0, 0, 0.05), 0xFFFFFFFF)
+		if RaggioSicuro.interseca(spazio, q).is_empty():
+			liberi += 1
+	check(liberi == 3, "dal percorso a sud-est e da vicino si vede senza niente in mezzo (%d viste su 3)" % liberi)
 
 
 func _fine() -> void:

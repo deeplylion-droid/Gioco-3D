@@ -4,8 +4,10 @@ extends Node3D
 ## posto", docs/proposte/enigma_nuovo/ e docs/proposte/enigma_giocattoli/). Sul fondo della parte profonda, attorno
 ## alla botola, ci sono tre cerchi di mosaico (giallo, rosso, blu): sono piatti che scendono col peso, la serratura
 ## della botola. Nella pozza galleggiano tre giocattoli grandi, di gomma e mezzi pieni d'acqua: la paperella gialla,
-## il pallone rosso e la balena blu. Il disegno a pastello dei bambini sul muro della parte profonda mostra ognuno nel
-## suo cerchio.
+## il pallone rosso e la balena blu. Il disegno a pastello dei bambini mostra ognuno nel suo cerchio: dal 4 novembre
+## (nota dell'utente: "Puoi però spostare il disegno guida sulla torre con lo scivolo e il secchio gigante, in un punto
+## facilmente raggiungibile e ben visibile") non è più sul muro della parte profonda ma su un cartoncino legato alla
+## ringhiera della struttura di gioco dell'area bimbi ([method _disegno]).
 ## - Col getto li spingi: sull'acqua e, a piscina vuota, anche sul fondo, un po' più piano (nota dell'utente: "ma
 ##   facciamo che puoi spingere i giocattoli anche una volta che hai svuotato la piscina"). Più sei vicino più spinge.
 ##   Vicino al suo cerchio un giocattolo ci scivola dentro da solo.
@@ -16,7 +18,7 @@ extends Node3D
 ##   colpito col getto, la botola si apre come prima (PiscinaOnde, [member PiscinaOnde.serratura]).
 ## Lo stato (posti dei giocattoli e piatti scesi) si salva con i checkpoint.
 ## I nodi figli hanno nomi fissi: Cerchi/CerchioGiallo, Cerchi/CerchioRosso, Cerchi/CerchioBlu, Giocattoli/Paperella,
-## Giocattoli/Pallone, Giocattoli/Balena, Disegno. I modelli e i materiali veri (ambienti-1, lavoro/enigma-giocattoli-
+## Giocattoli/Pallone, Giocattoli/Balena; il disegno è "Disegno" sotto la struttura di gioco ([method disegno]). I modelli e i materiali veri (ambienti-1, lavoro/enigma-giocattoli-
 ## modelli) sono in [constant DIR]: finché non ci sono, segnaposto semplici con le stesse misure.
 
 signal piatto_sceso(indice: int)
@@ -68,12 +70,22 @@ const SCOSTAMENTI := [Vector2.ZERO, Vector2(0.003, 0.002), Vector2(-0.002, -0.00
 ## La Polaroid sul fondo (P5): finché c'è, i giocattoli non ci vanno sopra.
 @export var polaroid: Node3D
 
-## Il disegno dei bambini sul muro ovest della parte profonda (un decal di 1,2 x 0,9 m che guarda a est), visto da
-## est: a destra è nord, in alto è ovest (la piscina dall'alto come la vede chi guarda il muro).
-@export var disegno_posizione := Vector3(-6.97, -0.8, -0.2)
-@export var disegno_misura := Vector2(1.2, 0.9)
-## Un filo di luce propria del disegno (pastelli fosforescenti, come il bordo dei cerchi): al buio della piscina, senza,
-## da 4 m non si legge (prove del 29 ottobre: a 0,3 sembra uno schermo acceso). Da approvare con l'enigma.
+## Il disegno dei bambini (la piscina vista dall'alto coi tre giocattoli nei loro cerchi), su un cartoncino legato con
+## quattro fascette alla ringhiera della struttura di gioco dell'area bimbi ([member disegno_sostegno], la mesh della sala
+## col nome così): sul lato sud della pedana verde (quella della torre col tetto blu, in cima alla scala), verso il
+## percorso, all'altezza degli occhi di chi sta a terra, a est del fungo che sta davanti alla pedana (da sud-ovest il
+## fungo lo copre, da sud e da sud-est si vede). [member disegno_centro] è il centro del retro del cartoncino, nel mondo:
+## il cartoncino copre i due corrimani della ringhiera e si appoggia a tutti e due (misurati coi raggi sui triangoli della
+## mesh: il basso a 1,385 m sporge fino a z -14,6676, l'alto a 2,21 m fino a -14,6733), quindi è inclinato indietro di
+## 0,4 gradi ([member disegno_normale], dove guarda). Fra x -17,5 e -16,5: il montante d'angolo comincia a -16,445.
+## Prima (fino alla 0.3.20) era un decal di 1,2 x 0,9 m sul muro ovest della parte profonda.
+@export var disegno_sostegno := "sala_struttura_gioco"
+@export var disegno_centro := Vector3(-17.0, 1.79, -14.6700)
+@export var disegno_normale := Vector3(0, 0.006935, 1)
+## Il cartoncino (largo, alto): copre i corrimani, il disegno dentro è 4:3, largo quasi quanto lui.
+@export var disegno_misura := Vector2(1.0, 0.86)
+## Un filo di luce propria del disegno (pastelli fosforescenti, come il bordo dei cerchi): solo i segni a pastello, il
+## cartoncino no (prove del 29 ottobre: a 0,3 sembra uno schermo acceso).
 @export_range(0.0, 1.0) var luce_disegno := 0.12
 
 @export_group("Spinta")
@@ -179,27 +191,87 @@ func _costruisci() -> void:
 		g.rotation_degrees.y = partenze[i].y
 		_yaw[i] = g.rotation.y
 		_giocattoli.append(g)
-	if get_node_or_null(^"Disegno") == null:
-		add_child(_disegno())
+	_metti_disegno()
 
 
-## Il disegno: il decal col disegno vero di ambienti-1 se c'è (disegno_piscina.png), se no un segnaposto fatto qui con
-## la piscina dall'alto, la botola e i tre giocattoli nei loro cerchi (solo disegni, niente scritte).
-func _disegno() -> Decal:
-	var d := Decal.new()
-	d.name = "Disegno"
-	d.size = Vector3(disegno_misura.x, 0.3, disegno_misura.y)
-	# guarda a est: lo strato -Y del decal va dentro il muro (ovest), la x del disegno verso nord, la z verso il basso
-	d.basis = Basis(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, -1, 0))
-	d.position = disegno_posizione
+var _disegno_nodo: Node3D
+
+
+## Il disegno guida (il cartoncino sulla struttura di gioco), o null se nella scena non c'è la struttura.
+func disegno() -> Node3D:
+	return _disegno_nodo
+
+
+## Mette il disegno sulla struttura di gioco (figlio della sua mesh: si muove con lei). Senza la sala (le scene di prova
+## dell'enigma) resta qui, nello stesso punto del mondo.
+func _metti_disegno() -> void:
+	if is_instance_valid(_disegno_nodo):
+		return
+	var sostegno := sala.find_child(disegno_sostegno, true, false) as Node3D if sala else null
+	_disegno_nodo = _disegno()
+	var xf := Transform3D(Basis.looking_at(-disegno_normale.normalized(), Vector3.UP), disegno_centro)
+	if sostegno and sostegno.is_inside_tree():
+		sostegno.add_child(_disegno_nodo)
+	else:
+		add_child(_disegno_nodo)
+	_disegno_nodo.global_transform = xf
+
+
+## Il disegno: il cartoncino (grigio chiaro, opaco) col disegno vero di ambienti-1 (disegno_piscina.png; se manca, un
+## segnaposto fatto qui con la piscina dall'alto, la botola e i tre giocattoli nei loro cerchi: solo disegni, niente
+## scritte) e le quattro fascette nere che lo legano ai corrimani della ringhiera, due in alto e due in basso.
+## L'origine è il centro del retro del cartoncino, +Z verso chi guarda, +X a destra di chi guarda.
+func _disegno() -> Node3D:
+	var n := Node3D.new()
+	n.name = "Disegno"
+	var spessore := 0.006
+	var cartone := MeshInstance3D.new()
+	cartone.name = "Cartoncino"
+	var bm := BoxMesh.new()
+	bm.size = Vector3(disegno_misura.x, disegno_misura.y, spessore)
+	cartone.mesh = bm
+	var mc := StandardMaterial3D.new()
+	mc.albedo_color = Color(0.78, 0.77, 0.73)
+	mc.roughness = 0.95
+	cartone.material_override = mc
+	cartone.position = Vector3(0, 0, spessore * 0.5)
+	n.add_child(cartone)
+	var foglio := MeshInstance3D.new()
+	foglio.name = "Pastelli"
+	var q := QuadMesh.new()
+	q.size = Vector2(disegno_misura.x - 0.03, (disegno_misura.x - 0.03) * 0.75)
+	foglio.mesh = q
+	var m := StandardMaterial3D.new()
 	var vero := DIR + "disegno_piscina.png"
-	d.texture_albedo = load(vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
-	d.texture_emission = d.texture_albedo
-	d.emission_energy = luce_disegno
-	d.upper_fade = 0.0
-	d.lower_fade = 0.0
-	d.cull_mask = 1
-	return d
+	m.albedo_texture = load(vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	m.alpha_scissor_threshold = 0.2
+	m.roughness = 0.85
+	m.emission_enabled = true
+	m.emission_texture = m.albedo_texture
+	m.emission_energy_multiplier = luce_disegno
+	foglio.material_override = m
+	foglio.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	foglio.position = Vector3(0, 0, spessore + 0.0005)
+	n.add_child(foglio)
+	# le fascette: davanti al cartoncino, dove dietro passano i corrimani (a 1,385 e a 2,21 m: 40,5 cm sotto il centro e
+	# 42 sopra), a 6 cm dai lati
+	var nero := StandardMaterial3D.new()
+	nero.albedo_color = Color(0.03, 0.03, 0.03)
+	nero.roughness = 0.5
+	var fb := BoxMesh.new()
+	fb.size = Vector3(0.008, 0.035, 0.002)
+	var k := 0
+	for sx in [-1.0, 1.0]:
+		for y in [-0.405, 0.41]:
+			k += 1
+			var f := MeshInstance3D.new()
+			f.name = "Fascetta%d" % k
+			f.mesh = fb
+			f.material_override = nero
+			f.position = Vector3(sx * (disegno_misura.x * 0.5 - 0.06), y, spessore + 0.001)
+			n.add_child(f)
+	return n
 
 
 ## Il segnaposto del disegno: la piscina vista dall'alto (da est: a destra nord, in alto ovest), segni a pastello.
