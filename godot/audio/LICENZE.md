@@ -265,4 +265,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 228 file, 7.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 240 file, 7.7 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
