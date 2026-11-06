@@ -27,7 +27,7 @@ RADICE = os.path.normpath(os.path.join(QUI, '..', '..'))
 sys.path.insert(0, os.path.join(RADICE, 'assets_src', 'scarabocchi'))
 from pastello import Pastello, rumore, COLORI  # noqa: E402
 import disegni  # noqa: E402
-from motivi import sole, omino, onde, medusa, nave  # noqa: E402
+from motivi import sole, omino, onde, nave  # noqa: E402
 
 USCITA = os.path.join(RADICE, 'godot', 'assets', 'ambiente', 'inseguimento', 'stendardi')
 # la texture: 1024 x 1536 per un lenzuolo di 3 x 4,5 m (2,9 mm per pixel)
@@ -159,28 +159,48 @@ def per_mano(p):
     onde(p, W * 0.04, W * 0.96, H * 0.72, H * 0.012, colore='azzurro', righe=2)
 
 
-def jilly_coi_pesci(p):
-    disegni.jilly_sorridente(p, W * 0.5, H * 0.3, W * 0.24)
-    for i, (c, fx, fy) in enumerate([('verde', 0.2, 0.55), ('arancio', 0.78, 0.5), ('viola', 0.3, 0.68), ('giallo', 0.7, 0.66)]):
-        disegni.pesce(p, W * fx, H * fy, W * 0.15, c, verso=1 if i % 2 else -1)
-    onde(p, W * 0.04, W * 0.96, H * 0.76, H * 0.012, colore='azzurro', righe=2)
+def bambini_al_bersaglio(p):
+    """Il gioco del club disegnato da loro (d'accordo con enigmi: Jilly «com'è adesso» sta già sulle sue sagome): la vasca
+    vista di lato, i bambini nell'acqua con le braccia su che spruzzano verso il bersaglio appeso, e una Jilly piccola
+    che fa il tifo nell'angolo in alto. Il bersaglio ha due colori soli (niente tondi gialli, rossi e blu vicini: sono
+    i colori dell'enigma della piscina a onde)."""
+    # la vasca: il bordo e l'acqua
+    vasca = [(W * 0.06, H * 0.55), (W * 0.94, H * 0.55), (W * 0.94, H * 0.8), (W * 0.06, H * 0.8)]
+    p.riempi([(W * 0.07, H * 0.6), (W * 0.93, H * 0.6), (W * 0.93, H * 0.79), (W * 0.07, H * 0.79)], 'azzurro', passo_mm=14)
+    p.tratto(vasca + [vasca[0]], 'verde')
+    onde(p, W * 0.08, W * 0.92, H * 0.6, H * 0.008, colore='blu', righe=1)
+    # il bersaglio sul palo, a destra
+    p.linea((W * 0.8, H * 0.55), (W * 0.8, H * 0.3), 'marrone', curva=0.01)
+    for r, c in ((0.12, 'verde'), (0.08, 'arancio'), (0.04, 'verde')):
+        p.ovale(W * 0.8, H * 0.24, W * r, W * r, c)
+    # i bambini nell'acqua fino alla vita, e i getti verso il bersaglio
+    for i, (fx, c) in enumerate([(0.18, 'rosso'), (0.36, 'viola'), (0.54, 'arancio')]):
+        x = W * fx
+        omino(p, x, H * 0.7, H * 0.22, c, braccia_su=True)
+        p.linea((x + H * 0.06, H * 0.5), (W * 0.74, H * 0.26 + i * H * 0.012), 'azzurro', larg_mm=10, curva=-0.08)
+    # Jilly piccola che fa il tifo in alto a sinistra
+    disegni.jilly_sorridente(p, W * 0.17, H * 0.14, W * 0.09)
 
 
-def jilly_alta(p):
-    """Il lenzuolo recente (regola del GDD: nei disegni recenti Jilly è alta coi tentacoli sopra i bambini piccoli):
-    più scuro, Jilly grande in alto e i tentacoli che scendono, due bambini piccoli sotto. Nessuno prende nessuno."""
-    medusa(p, W * 0.5, H * 0.2, W * 0.3, colore='viola', tentacoli=8, occhio=True)
-    for fx in (0.36, 0.62):
-        omino(p, W * fx, H * 0.76, H * 0.14, 'nero')
-    onde(p, W * 0.04, W * 0.96, H * 0.8, H * 0.01, colore='blu', righe=1)
+def manine_che_salgono(p):
+    """Il lenzuolo recente, più scuro (d'accordo con enigmi): le tante manine nere e rosse che salgono verso l'alto,
+    come lo scarabocchio delle manine sui muri; lei non c'è."""
+    # (come disegni.manine_su, ma grandi come mani di bambino ingrandite sul lenzuolo e staccate fra loro: dal basso a
+    # sinistra verso l'alto a destra, a zig-zag)
+    n = 11
+    for i in range(n):
+        t = i / (n - 1)
+        x = W * (0.16 + 0.68 * t) + (W * 0.12 if i % 2 else -W * 0.04) + p.rng.normal(0, W * 0.015)
+        y = H * (0.7 - 0.6 * t) + p.rng.normal(0, H * 0.01)
+        disegni.manina(p, x, y, W * 0.075, 'nero' if i % 3 else 'rosso', ang=p.rng.normal(0, 0.25))
 
 
 TELI = [
     # nome, stoffa, disegno, colori delle manine, sbiadito della cera, quanto è salita l'umidità, strappi, seme
     ('stendardo_1', 'bianco', mare_nave_sole, ['rosso', 'verde', 'blu', 'giallo', 'viola'], 0.18, 0.2, 3, 101),
     ('stendardo_2', 'azzurro', per_mano, ['arancio', 'rosa', 'verde', 'rosso'], 0.22, 0.26, 2, 202),
-    ('stendardo_3', 'giallo', jilly_coi_pesci, ['blu', 'rosso', 'verde_chiaro', 'viola', 'arancio', 'azzurro'], 0.25, 0.18, 3, 303),
-    ('stendardo_4', 'rosa', jilly_alta, ['nero', 'marrone', 'rosso'], 0.12, 0.3, 4, 404),
+    ('stendardo_3', 'giallo', bambini_al_bersaglio, ['blu', 'rosso', 'verde_chiaro', 'viola', 'arancio', 'azzurro'], 0.25, 0.18, 3, 303),
+    ('stendardo_4', 'rosa', manine_che_salgono, ['nero', 'marrone', 'rosso'], 0.12, 0.3, 4, 404),
 ]
 
 

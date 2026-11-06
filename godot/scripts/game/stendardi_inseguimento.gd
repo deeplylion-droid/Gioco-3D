@@ -10,8 +10,9 @@ extends Node3D
 const DIR := "res://assets/ambiente/inseguimento/stendardi/"
 const GLB := DIR + "stendardi.glb"
 ## Un filo di luce propria dei segni a pastello (i «pastelli fosforescenti» già approvati per il disegno guida dei
-## giocattoli, che sta a 0,12): solo i disegni, la stoffa no. 0 = nessuna.
-const LUCE := 0.0
+## giocattoli, che sta a 0,12): solo i disegni, la stoffa no. 0 = nessuna. (Si cambia prima che la sala si costruisca:
+## i materiali sono condivisi.)
+static var luce := 0.0
 
 static var _materiali := {}
 
@@ -21,8 +22,7 @@ static func risorse() -> Array:
 	var out: Array = [GLB]
 	for k in range(1, 5):
 		out.append(DIR + "stendardo_%d.png" % k)
-		if LUCE > 0.0:
-			out.append(DIR + "stendardo_%d_luce.png" % k)
+		out.append(DIR + "stendardo_%d_luce.png" % k)
 	return out
 
 
@@ -40,10 +40,10 @@ static func materiale(nome: String) -> StandardMaterial3D:
 	m.roughness = 0.95
 	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	m.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
-	if LUCE > 0.0:
+	if luce > 0.0:
 		m.emission_enabled = true
 		m.emission_texture = load(DIR + nome + "_luce.png")
-		m.emission_energy_multiplier = LUCE
+		m.emission_energy_multiplier = luce
 	_materiali[nome] = m
 	return m
 

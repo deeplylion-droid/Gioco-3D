@@ -36,10 +36,14 @@ DISTANZA_MINIMA = 0.25
 # Gli stendardi: [nome (la texture), trave (x), y del centro, quota della cima del lenzuolo, largo, alto, girato (gradi
 # attorno alla verticale: 0 = il lenzuolo guarda verso -x, cioè verso ovest), mollette]
 STENDARDI = [
-    ['stendardo_1', 60.0, 21.0, -11.0, 3.0, 4.5, 0.0, 5],
-    ['stendardo_2', 72.0, 11.5, -12.5, 3.0, 4.5, 90.0, 5],
-    ['stendardo_3', 56.0, 7.0, -11.5, 3.0, 4.5, 0.0, 5],
-    ['stendardo_4', 64.0, 31.0, -12.0, 3.0, 4.5, 180.0, 4],
+    # dalla vasca 1 si guarda a est, verso le paratie: il lenzuolo bianco del mare dietro, nel vuoto, rivolto a ovest
+    ['stendardo_1', 60.0, 15.5, -13.0, 3.0, 4.5, 0.0, 5],
+    # dalla vasca 2 si guarda a sud, verso le paratie: l'azzurro dei bambini per mano, rivolto a nord (fra le travi 64 e 68)
+    ['stendardo_2', 66.0, 19.5, -15.0, 3.0, 4.5, 270.0, 5],
+    # dalla vasca 3 si guarda a ovest: il giallo del gioco col bersaglio, rivolto a est
+    ['stendardo_3', 60.0, 5.0, -15.5, 3.0, 4.5, 180.0, 5],
+    # a nord della vasca 3, rivolto a sud (lontano dalla vasca 1 e dalla bava rosa): il rosa delle manine
+    ['stendardo_4', 70.0, 14.0, -15.0, 3.0, 4.5, 90.0, 4],
 ]
 
 

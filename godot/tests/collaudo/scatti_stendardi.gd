@@ -19,6 +19,9 @@ func _run() -> void:
 	var a := OS.get_cmdline_user_args()
 	var cartella: String = a[1]
 	var modo: String = a[2] if a.size() > 2 else "giro"
+	# (terzo argomento: il filo di luce dei pastelli sugli stendardi, StendardiInseguimento.luce)
+	if a.size() > 3:
+		StendardiInseguimento.luce = float(a[3])
 	DirAccess.make_dir_recursive_absolute(cartella)
 	var env := WorldEnvironment.new()
 	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
@@ -45,7 +48,7 @@ func _run() -> void:
 		hud.visible = false
 	if ins.lei:
 		ins.lei.visible = false
-	var stendardi: Array = ins.find_children("Stendardo*", "Node3D", true, false)
+	var stendardi: Array = get_tree().get_nodes_in_group(&"stendardo")
 	print("SCATTI stendardi trovati: ", stendardi.size())
 	for cp in ins.dati["checkpoint"]:
 		var nome: String = cp["nome"]
@@ -63,11 +66,14 @@ func _run() -> void:
 				var d := Vector3.FORWARD.rotated(Vector3.UP, k * PI * 0.5)
 				mire.append(["%s_%s" % [nome, ["nord", "ovest", "sud", "est"][k]], occhi + d * 10.0 + Vector3.UP * 3.0])
 		else:
+			# (da ogni vasca lo stendardo che le sta dietro: il centro del lenzuolo)
+			var suoi := {"vasca_1": ["stendardo_1"], "vasca_2": ["stendardo_2"], "vasca_3": ["stendardo_3", "stendardo_4"]}
 			for s in stendardi:
-				var c := (s as Node3D).global_position + Vector3.DOWN * 2.5
-				mire.append(["%s_verso_%s" % [nome, s.name], c])
+				if String(s.name) in suoi.get(nome, []):
+					var c := (s as MeshInstance3D).global_transform * (s as MeshInstance3D).get_aabb().get_center()
+					mire.append(["%s_verso_%s" % [nome, s.name], c])
 		for m in mire:
-			for i in 40:
+			for i in 16:
 				p.look_at_point(m[1])
 				await get_tree().process_frame
 			await RenderingServer.frame_post_draw
