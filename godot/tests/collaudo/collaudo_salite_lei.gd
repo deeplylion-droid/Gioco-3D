@@ -115,7 +115,7 @@ func _vasca3(occhi: Vector3, nome: String, misure: bool) -> void:
 	_metti_occhi(occhi)
 	await _da_capo("vasca_2", 2)
 	var ap := _ap()
-	var muro := sala._muro_della_vasca()
+	var muro: Vector3 = sala.call(&"_muro_della_vasca")
 	var verso_muro := Vector3(muro.x - lei.global_position.x, 0, muro.z - lei.global_position.z).normalized()
 	var cima := _cima_muro(lei.global_position, verso_muro)
 	_spessore = cima.z
@@ -197,7 +197,7 @@ func _ravvicinati(cima_y: float) -> void:
 		if ap.current_animation_position >= 0.92:
 			break
 	var mano := _mano_media()
-	var muro := sala._muro_della_vasca()
+	var muro: Vector3 = sala.call(&"_muro_della_vasca")
 	var verso := Vector3(muro.x - lei.global_position.x, 0, muro.z - lei.global_position.z).normalized()
 	var lato := verso.cross(Vector3.UP)
 	var cam := Camera3D.new()
@@ -372,7 +372,7 @@ func _mano_piu_bassa(verso: Vector3) -> Vector3:
 	for o in _sk.get_bone_count():
 		ps.append(_sk.global_transform * _sk.get_bone_global_pose(o))
 	var meglio := Vector3(0, INF, 0)
-	var faccia := sala._muro_della_vasca()
+	var faccia: Vector3 = sala.call(&"_muro_della_vasca")
 	var base := lei.global_position
 	var f0 := (Vector3(faccia.x, base.y, faccia.z) - base).dot(verso)
 	for v in _nv:

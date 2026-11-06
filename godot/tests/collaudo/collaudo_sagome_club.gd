@@ -14,9 +14,11 @@ extends Node
 const SCENA := "res://scenes/sala/inseguimento/sala_inseguimento.tscn"
 const CorpiMesh := preload("res://tests/corpi_dalle_mesh.gd")
 const TOLLERANZA := 0.005
+## Lo spessore del cartone (SagomeClub.SPESSORE: qui scritto a mano, così lo script si carica anche senza le sagome).
+const SPESSORE := 0.005
 
 var sala: SalaInseguimento
-var club: SagomeClub
+var club: Node3D
 var spazio: PhysicsDirectSpaceState3D
 var difetti := 0
 
@@ -37,7 +39,7 @@ func _run() -> void:
 			break
 	for i in 10:
 		await get_tree().physics_frame
-	club = sala.get_node_or_null(^"SagomeClub") as SagomeClub
+	club = sala.get_node_or_null(^"SagomeClub") as Node3D
 	if club == null:
 		print("SAGOME: mancano")
 		get_tree().quit(1)
@@ -54,8 +56,8 @@ func _run() -> void:
 	for i in 4:
 		await get_tree().physics_frame
 	spazio = sala.get_world_3d().direct_space_state
-	print("SAGOME: %d sagome, corpi dalle mesh %d" % [club.sagome().size(), n])
-	var posa := club.posa
+	print("SAGOME: %d sagome, corpi dalle mesh %d" % [(club.call(&"sagome") as Array).size(), n])
+	var posa: Dictionary = club.get(&"posa")
 	var puntelli: Array = posa["puntelli"]
 	var mattoni: Array = posa["mattoni"]
 	var legature: Array = posa["legature"]
@@ -141,10 +143,10 @@ func _cartone_nel_mondo(d: Dictionary, xf: Transform3D) -> Array:
 		while y < hi.y:
 			var q := Vector2(x, y)
 			if Geometry2D.is_point_in_polygon(q, poligono):
-				var c: Vector3 = xf * Vector3(x, y, SagomeClub.SPESSORE / 2.0)
+				var c: Vector3 = xf * Vector3(x, y, SPESSORE / 2.0)
 				for dd: Vector3 in [Vector3(0.01, 0, 0), Vector3(-0.01, 0, 0), Vector3(0, 0.01, 0), Vector3(0, -0.01, 0)]:
 					var ok := true
-					var fine: Vector3 = xf * (Vector3(x, y, SagomeClub.SPESSORE / 2.0) + dd)
+					var fine: Vector3 = xf * (Vector3(x, y, SPESSORE / 2.0) + dd)
 					if not Geometry2D.is_point_in_polygon(Vector2(x, y) + Vector2(dd.x, dd.y), poligono):
 						continue
 					var r := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(c, fine, 0xFFFFFFFF))
@@ -177,7 +179,7 @@ func _appoggio(d: Dictionary, xf: Transform3D) -> float:
 		while y < lo.y + 0.05 and not Geometry2D.is_point_in_polygon(Vector2(x, y + 0.0005), poligono):
 			y += 0.0005
 		if y < lo.y + 0.05:
-			var v: Vector3 = xf * Vector3(x, y, SagomeClub.SPESSORE / 2.0)
+			var v: Vector3 = xf * Vector3(x, y, SPESSORE / 2.0)
 			var r := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(v + Vector3.UP * 0.05, v + Vector3.DOWN * 0.1, 0xFFFFFFFF))
 			if not r.is_empty() and absf(v.y - (r.position as Vector3).y) <= 0.002:
 				tot += 0.01
@@ -226,7 +228,7 @@ func _base(d: Dictionary, xf: Transform3D) -> Array:
 	var out := []
 	for p in punti:
 		if float(p[1]) < basso + 0.003:
-			for z in [0.0, SagomeClub.SPESSORE]:
+			for z in [0.0, SPESSORE]:
 				out.append(xf * Vector3(p[0], p[1], z))
 	# e i punti di mezzo sui lati della base
 	var piu := []
@@ -349,7 +351,7 @@ func _spago_nel_foro(legs: Array, f: Array, xf: Transform3D) -> int:
 		for j in range(0, v.size(), 3):
 			var p: Vector3 = inv * Vector3(v[j], v[j + 1], v[j + 2])
 			if p.x >= f[0] - 0.002 and p.x <= f[2] + 0.002 and p.y >= f[1] - 0.002 and p.y <= f[3] + 0.002 \
-					and p.z > -0.004 and p.z < SagomeClub.SPESSORE + 0.004:
+					and p.z > -0.004 and p.z < SPESSORE + 0.004:
 				n += 1
 	return n
 
