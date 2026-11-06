@@ -17,9 +17,12 @@ Cosa rende "ticchettosi" i passi di adesso (misure di misura.py, medie per grupp
 A è sintesi (rumore filtrato, risonanze smorzate): nessuna fonte esterna, licenza come il resto, CC0. B parte dai file
 di adesso (Kenney Impact Sounds, CC0, rielaborati il 16 ottobre).
 Scelta dell'utente del 30 ottobre: A, senza sentirli prima; i file di A sono anche in godot/audio/giocatore/.
-Uso: /home/user/tools/blender-venv/bin/python assets_src/passi/genera_passi.py [A|B]
+Nel gioco li mette genera_tutto.py (con nel_gioco(): A, copiati in godot/audio/giocatore/ e segnati nel registro).
+Uso: /home/user/tools/blender-venv/bin/python assets_src/passi/genera_passi.py [A|B|gioco]
 """
+import filecmp
 import os
+import shutil
 import subprocess
 import sys
 
@@ -40,10 +43,17 @@ def leggi(f):
 
 
 def scrivi(f, x):
+    """Scrive [x] in OGG Vorbis. Se il file c'è già e decodificato è uguale, resta com'è: questi file sono stati scritti
+    senza bitexact (il numero di serie dell'Ogg cambia a ogni scrittura), e rigenerando non devono cambiare."""
     os.makedirs(os.path.dirname(f), exist_ok=True)
     x = np.clip(x, -1.0, 1.0).astype(np.float32)
+    nuovo = f + '.nuovo.ogg'
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-',
-                    '-c:a', 'libvorbis', '-q:a', '6', f], input=x.tobytes(), check=True)
+                    '-c:a', 'libvorbis', '-q:a', '6', nuovo], input=x.tobytes(), check=True)
+    if os.path.exists(f) and np.array_equal(leggi(f), leggi(nuovo)):
+        os.remove(nuovo)
+    else:
+        os.replace(nuovo, f)
 
 
 def a_db(x, db):
@@ -126,8 +136,10 @@ def sordo_metallo(rng, durata=0.40, scala=False):
 
 
 def versione_A():
+    """Scrive i passi A in assets_src/passi/A/ e li restituisce: {nome del file senza .ogg: segnale}."""
     uscita = os.path.join(QUI, 'A')
     rng = np.random.default_rng(317)
+    fatti = {}
     for nome, quanti in GRUPPI.items():
         for k in range(1, quanti + 1):
             atterra = nome.startswith('atterraggio')
@@ -147,7 +159,32 @@ def versione_A():
             # (i passi a -9 dBFS di picco, 8 sotto quelli di adesso; gli atterraggi a -5)
             x = a_db(x, -5.0 if atterra else -9.0)
             scrivi(os.path.join(uscita, f'{nome}_{k:02d}.ogg'), x)
+            fatti[f'{nome}_{k:02d}'] = x
     print('A in', uscita)
+    return fatti
+
+
+NOTA_A = ("scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; "
+          "assets_src/passi/genera_passi.py)")
+
+
+def nel_gioco():
+    """I passi del gioco (scelta A): li rifà in A/, li copia in godot/audio/giocatore/ e li segna nel registro dei
+    suoni (assets_src/audio/registro.json, da cui vengono il catalogo e LICENZE.md). Lo chiama genera_tutto.py dopo
+    genera_giocatore.py, che i passi e gli atterraggi su piastrelle, bagnato e metallo non li scrive più (restano suoi
+    la camminata e l'atterraggio nell'acqua alta)."""
+    sys.path.insert(0, os.path.normpath(os.path.join(QUI, '..', 'audio')))
+    from comune import SR as SR_REGISTRO, registra
+    print('Passi del giocatore (scarpe di gomma, A)')
+    for nome, x in versione_A().items():
+        da = os.path.join(QUI, 'A', nome + '.ogg')
+        a = os.path.join(GIOCO, nome + '.ogg')
+        if not (os.path.exists(a) and filecmp.cmp(da, a, shallow=False)):
+            shutil.copyfile(da, a)
+        # (il registro misura durata e loudness alla frequenza degli altri suoni)
+        g = np.gcd(SR, SR_REGISTRO)
+        registra('giocatore', nome, signal.resample_poly(x, SR_REGISTRO // g, SR // g).astype(np.float32),
+                 fonte='sintesi', nota=NOTA_A)
 
 
 # --- B: gli stessi, ammorbiditi -----------------------------------------------------------------------------
@@ -175,7 +212,9 @@ def versione_B():
 
 if __name__ == '__main__':
     quali = sys.argv[1:] or ['A', 'B']
-    if 'A' in quali:
+    if 'gioco' in quali:
+        nel_gioco()
+    elif 'A' in quali:
         versione_A()
     if 'B' in quali:
         versione_B()

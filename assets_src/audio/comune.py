@@ -75,6 +75,13 @@ def salva(cartella: str, nome: str, x: np.ndarray, *, loudness: float | None = N
         x = limiter(x, picco)
     path = os.path.join(AUDIO, cartella, nome + '.ogg')
     write_ogg(path, x, qualita)
+    registra(cartella, nome, x, fonte=fonte, nota=nota)
+    return path
+
+
+def registra(cartella: str, nome: str, x: np.ndarray, *, fonte: str = 'sintesi', nota: str = '') -> None:
+    """Segna godot/audio/<cartella>/<nome>.ogg (il segnale [x], già scritto) nel registro, per catalogo e licenze. La
+    usa salva(); da sola, per i file scritti da un altro script (i passi: assets_src/passi/genera_passi.py)."""
     reg = _carica_registro()
     reg[f'{cartella}/{nome}'] = {
         'file': f'res://audio/{cartella}/{nome}.ogg',
@@ -90,4 +97,3 @@ def salva(cartella: str, nome: str, x: np.ndarray, *, loudness: float | None = N
         json.dump(dict(sorted(reg.items())), f, indent=1, ensure_ascii=False)
     print(f'  {cartella}/{nome}.ogg  {len(x) / SR:5.2f}s  {"stereo" if x.ndim == 2 else "mono  "}  '
           f'maxM {lufs_max(x):6.1f}')
-    return path

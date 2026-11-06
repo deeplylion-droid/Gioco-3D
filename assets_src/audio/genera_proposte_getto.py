@@ -18,6 +18,7 @@ gocce): godot/audio/anteprima/proposta_getto_a.ogg e proposta_getto_b.ogg.
 I suoni sciolti, mono e con i nomi del gioco (zaino_*, più quelli nuovi), per montarli dopo:
 assets_src/audio/proposte_getto/a/ e b/ (vedi FILE).
 Solo sintesi, niente campioni; deterministico. Uso: genera_proposte_getto.py
+Nel gioco c'è B: la mette genera_tutto.py (nel_gioco()).
 """
 import os
 
@@ -446,6 +447,19 @@ def anteprima(versione, x):
     for t0 in [7.45, 7.8]:
         s.metti(goccia_pavimento(rng) * 0.5, t0, -14.0, 0.25)
     return s.scrivi(f'proposta_getto_{versione}.ogg', wet=0.3, fin=0.05, fout=0.15, wet_vicino=0.1)
+
+
+def nel_gioco():
+    """I suoni del getto B nel gioco (scelta dell'utente del 16 ottobre, c1ba111c): li scrive in
+    godot/audio/giocatore/ come in proposte_getto/b/ (stessi byte) e li segna nel registro. Lo chiama
+    genera_tutto.py dopo genera_giocatore.py, che scrive ancora i suoni dello zaino di prima con gli stessi nomi."""
+    from comune import AUDIO, registra
+    print('Zaino: getto B')
+    for nome, y in suoni('b').items():
+        write_ogg(os.path.join(AUDIO, 'giocatore', nome + '.ogg'), y, 5)
+        # (nel registro, per catalogo e LICENZE.md, al posto delle voci dei suoni di prima)
+        registra('giocatore', nome, y, nota="getto B «potenziato» (scelta dell'utente, 16 ottobre; "
+                                            "genera_proposte_getto.py)")
 
 
 def main():
