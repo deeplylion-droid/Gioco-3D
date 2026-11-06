@@ -36,14 +36,17 @@ DISTANZA_MINIMA = 0.25
 # Gli stendardi: [nome (la texture), trave (x), y del centro, quota della cima del lenzuolo, largo, alto, girato (gradi
 # attorno alla verticale: 0 = il lenzuolo guarda verso -x, cioè verso ovest), mollette]
 STENDARDI = [
-    # dalla vasca 1 si guarda a est, verso le paratie: il lenzuolo bianco del mare dietro, nel vuoto, rivolto a ovest
-    ['stendardo_1', 60.0, 15.5, -13.0, 3.0, 4.5, 0.0, 5],
-    # dalla vasca 2 si guarda a sud, verso le paratie: l'azzurro dei bambini per mano, rivolto a nord (fra le travi 64 e 68)
-    ['stendardo_2', 66.0, 19.5, -15.0, 3.0, 4.5, 270.0, 5],
-    # dalla vasca 3 si guarda a ovest: il giallo del gioco col bersaglio, rivolto a est
-    ['stendardo_3', 60.0, 5.0, -15.5, 3.0, 4.5, 180.0, 5],
-    # a nord della vasca 3, rivolto a sud (lontano dalla vasca 1 e dalla bava rosa): il rosa delle manine
-    ['stendardo_4', 70.0, 14.0, -15.0, 3.0, 4.5, 90.0, 4],
+    # ognuno accanto a una lampada appesa della sala (inseguimento_luci.json, "appese"), che lo illumina, e dove la vista
+    # dalla vasca è libera (non dietro le paratie, che lo coprivano)
+    # vasca 1: a nord-ovest, oltre la lampada calda (45; 22,5; -19), rivolto a sud verso la vasca (travi 44 e 48)
+    ['stendardo_1', 46.0, 24.6, -15.5, 3.0, 4.5, 90.0, 5],
+    # vasca 2: a est, accanto alla lampada calda (70,5; 24; -18,5), rivolto a ovest; più a sud del posto dove sale lei
+    ['stendardo_2', 72.0, 21.8, -16.0, 3.0, 4.5, 0.0, 5],
+    # vasca 3: a nord-ovest, accanto alla lampada calda bassa (61; 9,9; -23,5), rivolto a est verso la vasca; il fondo
+    # resta più di 2 m sopra l'acqua dello scolo 0
+    ['stendardo_3', 60.0, 12.2, -18.0, 3.0, 4.5, 180.0, 5],
+    # vasca 3: a nord, rivolto a sud verso la vasca (travi 68 e 72), lontano dalla vasca 1
+    ['stendardo_4', 70.0, 12.0, -17.5, 3.0, 4.5, 90.0, 4],
 ]
 
 
@@ -235,6 +238,13 @@ def controlla(oggetti):
         t.to_mesh(tm)
         bm.from_mesh(tm)
         t.free()
+    # le lampade appese che fa il gioco (non sono nelle GLB): il cavo dal soffitto e il paralume
+    luci = json.load(open(os.path.join(DIR, 'inseguimento_luci.json')))
+    for (lx, ly, lz, _calda) in luci['appese']:
+        for k in range(24):
+            z = -6.0 + (lz + 0.3 + 6.0) * k / 23.0
+            bmesh.ops.create_icosphere(bm, subdivisions=1, radius=0.05, matrix=__import__('mathutils').Matrix.Translation((lx, ly, z)))
+        bmesh.ops.create_icosphere(bm, subdivisions=2, radius=0.4, matrix=__import__('mathutils').Matrix.Translation((lx, ly, lz)))
     sala = BVHTree.FromBMesh(bm)
     problemi = []
     for o in oggetti:
@@ -259,15 +269,15 @@ def controlla(oggetti):
         for nome, linea in gioco['tubi'].items():
             for q in linea:
                 if x0 <= q[0] <= x1 and y0 <= q[1] <= y1:
-                    sotto.append(q[2] + 0.8)
-        for vv in gioco['vasche']:
+                    sotto.append(q[2] + 0.8 + 2.0)     # (il cielo del tubo, più 2 m)
+        for vv in gioco['vasche'] + gioco['scolo']:
             r = vv['rett']
             if r[0] <= x1 and x0 <= r[2] and r[1] <= y1 and y0 <= r[3]:
-                sotto.append(vv['acqua'] + 1.8)
-        alto_sopra = fondo - max(sotto) if sotto else 99.0
-        print('CONTROLLO %s: fondo a %.2f, %.1f m sopra tubi e vasche sotto' % (o.name, fondo, alto_sopra))
-        if alto_sopra < 2.0:
-            problemi.append('%s: solo %.2f m sopra un tubo o una vasca' % (o.name, alto_sopra))
+                sotto.append(vv['fondo'] + 2.0)    # (dove si sta in piedi, più 2 m)
+        margine = fondo - max(sotto) if sotto else 99.0
+        print('CONTROLLO %s: fondo a %.2f, %.1f m oltre i 2 m liberi sopra tubi, vasche e scoli sotto' % (o.name, fondo, margine))
+        if margine < 0.0:
+            problemi.append('%s: %.2f m dentro i 2 m liberi sopra un tubo, una vasca o uno scolo' % (o.name, -margine))
     return problemi
 
 
