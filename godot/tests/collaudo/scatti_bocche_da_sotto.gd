@@ -85,7 +85,7 @@ func _run() -> void:
 			var nome := String(v.name).trim_prefix(SalaInseguimento.NOME_VELO)
 			if not (nome.ends_with("tubo_1") or nome.ends_with("scolo_0")):
 				continue
-			for lz in [0.3, 0.5]:
+			for lz in [0.3, 0.5, 0.8]:
 				await _da_dentro(v, lz)
 				var cam := p.camera.global_position
 				print("FASCIA %s %.1f: camera a %.3f m dal pelo, occhi_pelo %.3f" % [nome, lz, cam.y - float(v.get_meta(&"pelo")), p.get(&"occhi_pelo")])
