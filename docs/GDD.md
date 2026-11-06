@@ -667,3 +667,8 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
     - "Avvio sicuro" proposto dopo una chiusura di colpo (qualità bassa e l'altro driver) (A).
   - **No, restano così**: reazione di lei al getto, occhio che si abitua al buio, usura della stanza delle pozze, segni sugli scoli, segni fosforescenti nel fiume, spie delle pozze, strisce nei tubi dell'inseguimento, volantini e stile dei poster.
   - **Giocattoli**: i cerchi restano coi loro colori, ma "puoi però spostare il disegno guida sulla torre con lo scivolo e il secchio gigante, in un punto facilmente raggiungibile e ben visibile" (la struttura dell'area bimbi della sala).
+- **Scelte della 0.3.21 (6 novembre)**, risposte sulle pagine "Scelte della 0.3.21" (https://claude.ai/artifact/VoAahMHss4xuEdsmayrVon) e "Texture più leggere" (https://claude.ai/artifact/WPSBeWMYemURYegMdMKBzy). Non ha chiesto di vedere niente prima.
+  - **Disegno guida dei giocattoli: A**, va bene così. Resta il cartoncino sulla ringhiera della torretta col tetto blu, all'altezza degli occhi.
+  - **Salite di lei nelle vasche delle condotte: C**, lo scambio. La mano che si aggrappa al bordo va nella vasca 3, dove lei si arrampica davvero fuori da dietro il muro; la salita veloce con l'occhio puntato va nella vasca 2. Tempi uguali.
+  - **Texture più leggere: sì**. Oggetti piccoli e torre da 2048 a 1024, exe da 1,92 a 1,79 GB.
+  - **Strisce in cima alla scala di servizio**: nessuna scelta. L'utente ha chiesto della "texture grigia sulla parete" in fondo al corridoio, quella con l'oblò di lei: "sembra un glitch". È il rettangolo grigio-azzurro nel vano della porta verso C3, c'era già nella 0.3.19. Lo verifica ambienti-1; la domanda sulle strisce si rifà dopo.
