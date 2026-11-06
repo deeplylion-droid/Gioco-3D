@@ -7,6 +7,7 @@ extends Node
 ## Con CUBO=1 (e MAGENTA=1) le pose sono 6 direzioni a 90° (un cubo) dagli occhi di ogni checkpoint della torre e da
 ## un punto ogni tre della discesa (torre_percorso.json, 1 m sopra lo scivolo): i pixel magenta si contano dopo.
 ## Con VISTE="x,y,z,tx,ty,tz;..." (stampate da bordi_torre.gd) gli scatti ravvicinati dei buchi che si vedono.
+## TUNNEL=1 aggiunge il tunnel del viaggio sottomarino costruito (come nel gioco, dopo la torre).
 ## FILTRO=<testo> scatta solo le pose col testo nel nome; RAGGIO=<m> accende le mesh fino a quella distanza (60).
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
@@ -37,6 +38,8 @@ const POSE := [
 var raggio := 60.0
 var _radice: Node3D
 var _prima := {}
+var _cp_sala: Array = []
+var _tunnel: Node3D
 
 
 func _ready() -> void:
@@ -57,6 +60,16 @@ func _run() -> void:
 	var tutta := (load(SALA) as PackedScene).instantiate()
 	var n := tutta.get_node(^"Sala") as Node3D
 	var tr := n.transform
+	# i checkpoint della sala (la strada principale), fuori dall'albero: la posizione dalla catena dei nodi
+	for c in tutta.find_children("*", "Checkpoint", true, false):
+		var sp: Node3D = (c as Checkpoint).spawn_point if (c as Checkpoint).spawn_point else c as Node3D
+		var xf := Transform3D.IDENTITY
+		var nn: Node = sp
+		while nn != null and nn != tutta:
+			if nn is Node3D:
+				xf = (nn as Node3D).transform * xf
+			nn = nn.get_parent()
+		_cp_sala.append(["sala_" + String(c.name), xf.origin + Vector3.UP * 1.6])
 	n.get_parent().remove_child(n)
 	n.transform = tr
 	_radice.add_child(n)
@@ -66,6 +79,11 @@ func _run() -> void:
 		guscio.free()
 	var torre := (load(TORRE) as PackedScene).instantiate() as Node3D
 	_radice.add_child(torre)
+	if OS.has_environment("TUNNEL"):
+		# il tunnel del viaggio sottomarino, figlio della radice come SalaPrincipale._metti_sottomarino
+		_tunnel = (load("res://scenes/sala/sottomarino/sala_sottomarino.tscn") as PackedScene).instantiate() as Node3D
+		_tunnel.name = "SalaSottomarino"
+		_radice.add_child(_tunnel)
 	var we := WorldEnvironment.new()
 	we.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
 	we.environment.sdfgi_enabled = false
@@ -85,6 +103,8 @@ func _run() -> void:
 	get_tree().current_scene = _radice
 	if not senza:
 		SALA_GD.chiudi_soglia_torre(torre, _radice.find_child("sala_pavimento", true, false) as MeshInstance3D)
+	if _tunnel:
+		_tunnel.call(&"costruisci")
 	for i in 60:
 		await get_tree().process_frame
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
@@ -124,14 +144,23 @@ func _run() -> void:
 	get_tree().quit()
 
 
+## PUNTI="torre,discesa,sala,tunnel" (tutti se manca) sceglie i gruppi di punti.
 func _pose_cubo(torre: Node) -> Array:
+	var gruppi := OS.get_environment("PUNTI").split(",") if OS.has_environment("PUNTI") else \
+			PackedStringArray(["torre", "discesa", "sala", "tunnel"])
 	var punti: Array = []
-	for c in torre.find_children("*", "Checkpoint", true, false):
-		punti.append([String(c.name), (c as Checkpoint).get_spawn_transform().origin + Vector3.UP * 1.6])
+	if gruppi.has("torre"):
+		for c in torre.find_children("*", "Checkpoint", true, false):
+			punti.append([String(c.name), (c as Checkpoint).get_spawn_transform().origin + Vector3.UP * 1.6])
+	if gruppi.has("sala"):
+		punti.append_array(_cp_sala)
+	if gruppi.has("tunnel") and _tunnel:
+		for c in _tunnel.find_children("*", "Checkpoint", true, false):
+			punti.append(["tunnel_" + String(c.name), (c as Checkpoint).get_spawn_transform().origin + Vector3.UP * 1.6])
 	var percorso: Array = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ambiente/torre/torre_percorso.json"))
 	var k := 0
 	for q: Dictionary in percorso:
-		if q["cosa"] != "scivolo" and q["cosa"] != "pedana":
+		if not gruppi.has("discesa") or (q["cosa"] != "scivolo" and q["cosa"] != "pedana"):
 			continue
 		if k % 3 == 0:
 			punti.append(["discesa%02d" % k, SalaTorre.b([q["x"], q["y"], q["z"]]) + Vector3.UP * 1.0])
