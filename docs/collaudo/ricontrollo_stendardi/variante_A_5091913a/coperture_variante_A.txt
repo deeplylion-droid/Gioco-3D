@@ -1,0 +1,26 @@
+sala: 136479 facce, 11273 ripiani
+pelle di lei: {'scolo_0': 25104, 'scolo_1': 25104, 'scolo_2': 25104, 'vasca_0': 25104, 'vasca_1': 25104, 'vasca_2': 25104}
+stendardo 1: fondo -22.31, cima -6.59
+   sala: 0.70 m (lampada_appesa(43.8,28.5), in [ 43.88  29.6  -17.02])
+   2 m liberi: +76.69 ()
+   coperture: nessuna
+   lei: scolo_0 9.00, scolo_1 9.00, scolo_2 9.00, vasca_0 9.00, vasca_1 9.00, vasca_2 9.00
+   schermo: vasca 1 mezzo 40% a 16 m; vasca 1 davanti_al_bersaglio 41% a 16 m
+stendardo 2: fondo -22.81, cima -6.59
+   sala: 9.00 m (, in -)
+   2 m liberi: +76.19 ()
+   coperture: nessuna
+   lei: scolo_0 9.00, scolo_1 9.00, scolo_2 9.00, vasca_0 9.00, vasca_1 1.34, vasca_2 9.00
+   schermo: vasca 2 mezzo 55% a 10 m; vasca 2 davanti_al_bersaglio 60% a 9 m
+stendardo 3: fondo -22.66, cima -6.59
+   sala: 9.00 m (, in -)
+   2 m liberi: +5.88 (ripiano ins_A_tubo_3)
+   coperture: nessuna
+   lei: scolo_0 9.00, scolo_1 9.00, scolo_2 9.00, vasca_0 9.00, vasca_1 9.00, vasca_2 9.00
+   schermo: vasca 3 mezzo 40% a 11 m; vasca 3 davanti_al_bersaglio 38% a 10 m
+stendardo 4: fondo -22.16, cima -6.59
+   sala: 9.00 m (, in -)
+   2 m liberi: +2.07 (ripiano ins_A_tubo_2)
+   coperture: nessuna
+   lei: scolo_0 9.00, scolo_1 9.00, scolo_2 9.00, vasca_0 9.00, vasca_1 9.00, vasca_2 9.00
+   schermo: vasca 3 mezzo 38% a 12 m; vasca 3 davanti_al_bersaglio 38% a 12 m

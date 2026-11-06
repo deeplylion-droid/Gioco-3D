@@ -371,8 +371,29 @@ func _vicino() -> void:
 			fuori = fuori.normalized()
 			await _scatto("st%d_capo_%s_davanti" % [s, e[0]], capo + V * 0.3 + fuori * 0.1 + Vector3.UP * 0.05, capo + Vector3.UP * 0.02)
 			await _scatto("st%d_capo_%s_da_sotto_fuori" % [s, e[0]], capo + fuori * 0.25 - Vector3.UP * 0.12 + V * 0.08, capo + Vector3.UP * 0.02)
+		# i giri di ogni corda attorno al bastone (anche quelle in mezzo alla stoffa: la terza corda, e quelle dalle due
+		# travi sopra), davanti e di lato lungo il bastone
+		var corde := []
+		for e in ["a", "b", "m"]:
+			if _pezzo("stendardo_%d_corda_%s" % [s, e]) != null:
+				corde.append(e)
+		for e in corde:
+			var cv := _vertici("stendardo_%d_corda_%s" % [s, e])
+			var basso := 1e9
+			for p in cv:
+				basso = minf(basso, p.y)
+			var somma := Vector3.ZERO
+			var k := 0
+			for p in cv:
+				if p.y < basso + 0.05:
+					somma += p
+					k += 1
+			var giri := somma / maxf(k, 1)
+			await _scatto("st%d_giri_%s_davanti" % [s, e], giri + V * 0.22 + Vector3.UP * 0.06, giri)
+			await _scatto("st%d_giri_%s_lungo_il_bastone" % [s, e], giri + lato * 0.2 + V * 0.06 + Vector3.UP * 0.03, giri)
+			await _scatto("st%d_giri_%s_da_dietro" % [s, e], giri - V * 0.22 + Vector3.UP * 0.06, giri)
 		# i golfari sotto le travi (le travi vanno lungo z): da sotto, di traverso alla trave e lungo la trave
-		for e in ["a", "b"]:
+		for e in corde:
 			var nodo := _golfare(s, e)
 			await _scatto("st%d_nodo_%s_da_sotto" % [s, e], nodo + Vector3(0.12, -0.22, 0.09), nodo)
 			await _scatto("st%d_nodo_%s_di_traverso" % [s, e], nodo + Vector3(0.22, -0.03, 0.03), nodo)
