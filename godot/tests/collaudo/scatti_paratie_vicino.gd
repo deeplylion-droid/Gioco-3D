@@ -80,7 +80,7 @@ func _run() -> void:
 			var nome := "v%d_%s_%s" % [int(d["vasca"]) + 1, "giusta" if bool(d["giusta"]) else "sbagliata", stato]
 			await _scatta(nome + "_faccia", c + avanti * 1.6 + Vector3.UP * 0.1, c)
 			if stato == "chiusa":
-				for s in [-1.0, 1.0]:
+				for s: float in [-1.0, 1.0]:
 					var spigolo := c + lungo * s * mezzo
 					var basso := Vector3(spigolo.x, pav + 0.05, spigolo.z)
 					await _scatta(nome + "_spigolo_basso_%s" % ("sx" if s < 0 else "dx"), basso + avanti * 0.45 + Vector3.UP * 0.12 - lungo * s * 0.15, basso)
