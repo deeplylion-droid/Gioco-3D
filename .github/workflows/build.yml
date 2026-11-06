@@ -240,9 +240,9 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
-      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata, a scolo_2 e quando lei se ne va da SB1 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata, a scolo_2, quando lei se ne va da SB1 e nelle salite nuove delle vasche 2 e 3 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
         if: steps.progetto.outputs.presente == 'si'
-        run: SOLO=scolo_2,grata,sb1_scende godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+        run: SOLO=scolo_2,grata,sb1_scende,vasca_1,vasca_2 godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
       - name: Test di lei che torna sotto senza salire prima (SB1 e le respinte, a 30 e a 60 fps)
         if: steps.progetto.outputs.presente == 'si'
