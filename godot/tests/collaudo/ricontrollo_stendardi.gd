@@ -365,37 +365,40 @@ func _vicino() -> void:
 			fuori = fuori.normalized()
 			await _scatto("st%d_capo_%s_davanti" % [s, e[0]], capo + V * 0.3 + fuori * 0.1 + Vector3.UP * 0.05, capo + Vector3.UP * 0.02)
 			await _scatto("st%d_capo_%s_da_sotto_fuori" % [s, e[0]], capo + fuori * 0.25 - Vector3.UP * 0.12 + V * 0.08, capo + Vector3.UP * 0.02)
-		# i nodi alle travi (le travi vanno lungo z): da sotto, di traverso alla trave e lungo la trave
+		# i golfari sotto le travi (le travi vanno lungo z): da sotto, di traverso alla trave e lungo la trave
 		for e in ["a", "b"]:
-			var cv := _vertici("stendardo_%d_corda_%s" % [s, e])
-			var somma := Vector3.ZERO
-			var k := 0
-			for p in cv:
-				if p.y > -6.2:
-					somma += p
-					k += 1
-			var nodo := somma / maxf(k, 1)
-			nodo.y = -6.6
-			await _scatto("st%d_nodo_%s_da_sotto" % [s, e], nodo + Vector3(0.25, -0.55, 0.2), nodo)
-			await _scatto("st%d_nodo_%s_di_traverso" % [s, e], nodo + Vector3(0.75, 0.0, 0.12), nodo + Vector3(0.2, 0.25, 0))
-			await _scatto("st%d_nodo_%s_lungo_la_trave" % [s, e], nodo + Vector3(0.08, -0.06, 0.32), nodo + Vector3(0, -0.01, 0))
+			var nodo := _golfare(s, e)
+			await _scatto("st%d_nodo_%s_da_sotto" % [s, e], nodo + Vector3(0.12, -0.22, 0.09), nodo)
+			await _scatto("st%d_nodo_%s_di_traverso" % [s, e], nodo + Vector3(0.22, -0.03, 0.03), nodo)
+			await _scatto("st%d_nodo_%s_lungo_la_trave" % [s, e], nodo + Vector3(0.03, -0.03, 0.22), nodo)
 
 
 ## La cima della corda che sale alla trave, quasi in piano col fondo della trave: si vede se tocca la trave e i due
 ## giri del nodo (tutti gli otto nodi sono fatti allo stesso modo; qui uno per lenzuolo).
 func _fessura() -> void:
 	for e in [[1, "a"], [2, "b"], [3, "b"], [4, "a"]]:
-		var cv := _vertici("stendardo_%d_corda_%s" % e)
-		var somma := Vector3.ZERO
-		var k := 0
-		for p in cv:
-			if p.y > -6.2:
-				somma += p
-				k += 1
-		var nodo := somma / maxf(k, 1)
-		nodo.y = -6.6
-		await _scatto("st%d_nodo_%s_fessura_di_traverso" % e, nodo + Vector3(0.16, -0.012, 0.0), nodo + Vector3(0, -0.01, 0))
-		await _scatto("st%d_nodo_%s_fessura_dal_basso" % e, nodo + Vector3(0.12, -0.05, 0.07), nodo + Vector3(0, -0.008, 0))
+		var nodo := _golfare(e[0], e[1])
+		# il gambo che entra nella trave, quasi in piano col fondo della trave, e l'occhiello col nodo molto da vicino
+		var cima := nodo
+		cima.y = -6.6
+		await _scatto("st%d_nodo_%s_fessura_di_traverso" % e, cima + Vector3(0.1, -0.008, 0.0), cima + Vector3(0, -0.006, 0))
+		await _scatto("st%d_nodo_%s_fessura_dal_basso" % e, nodo + Vector3(0.07, -0.06, 0.05), nodo)
+
+
+## Il centro del golfare (l'occhiello, sotto la trave) della corda [param e] dello stendardo [param s]: la media dei
+## vertici più alti della corda (fino a 8 cm sotto la cima del gambo).
+func _golfare(s: int, e: String) -> Vector3:
+	var cv := _vertici("stendardo_%d_corda_%s" % [s, e])
+	var alto := -1e9
+	for p in cv:
+		alto = maxf(alto, p.y)
+	var somma := Vector3.ZERO
+	var k := 0
+	for p in cv:
+		if p.y > alto - 0.08:
+			somma += p
+			k += 1
+	return somma / maxf(k, 1)
 
 
 func _scatto(nome: String, da: Vector3, verso: Vector3) -> void:
