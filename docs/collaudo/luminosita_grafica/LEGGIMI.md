@@ -17,7 +17,14 @@ Strumento: `godot/tests/collaudo/collaudo_luminosita_grafica.gd` (Vulkan softwar
    schermata compare subito sopra il titolo, intera, e `settings.cfg` resta con `calibrato=false` finché non si
    conferma. Qui è uscita in inglese perché la macchina non ha una lingua impostata (Lingua: senza lingua salvata
    prende quella del sistema; "en" solo se il sistema è in inglese).
-5. **Lo scatto e il gioco di oggi**: vedi sotto (CI di `lavoro/scatto-calibrazione-confronto`).
+5. **Lo scatto e il gioco di oggi**: lo stesso strumento di grafica-2 (`scatto_calibrazione_g2.gd`, la stessa posa e le
+   stesse condizioni) rifatto in CI sul gioco di oggi (`lavoro/scatto-calibrazione-confronto`, cioè
+   `lavoro/ritocchi-grafica` db8cfdf4 con le pile di ambienti-1; run 42189435238) dà gli stessi valori dello scatto
+   della prova (run 42162291507), in tutti i 16 punti della fila. Nel punto della prova, `fila_08`: media 9,3, mediana
+   6,4, 10° percentile 0,1, 90° 18,2 tutte e due le volte. Le sole differenze sono di 0,1 sulla mediana di due scatti
+   lunghi (fila_62_lungo 2,0 contro 2,1; fila_90_lungo 6,5 contro 6,4). Lo scatto somiglia al gioco di oggi: niente da
+   rifare. (Le immagini sono negli artifact delle due run, «scatto-calibrazione»; qui i numeri, perché gli artifact non
+   si scaricano dalla sessione.)
 
 ## Fogli
 - `foglio_titolo_lingue_misure.jpg`: le opzioni del titolo, la schermata aperta col mouse e col joypad, in inglese,
