@@ -166,6 +166,8 @@ func _passi() -> Array:
 	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
 	# le sagome del club dei bambini attorno alle vasche (SagomeClub, scelta A dell'utente del 6 novembre)
 	out.append_array(SagomeClub.passi(self))
+	# gli stendardi dei bambini appesi nel vuoto dietro le vasche (nota dell'utente del 6 novembre; StendardiInseguimento)
+	out.append(func(): add_child(StendardiInseguimento.new()))
 	if crea_luci:
 		out.append_array(_passi_luci())
 	return out
@@ -1531,6 +1533,7 @@ static func _percorso_fonte(fonte: String) -> String:
 ## I file che la costruzione carica (lei e le fonti degli arredi): la sala li chiede al thread insieme alla torre.
 static func risorse() -> Array:
 	var out: Array = RISORSE_LEI.duplicate()
+	out.append_array(StendardiInseguimento.risorse())
 	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
 	if dati_luci is Dictionary:
 		for a in dati_luci.get("arredi", []):

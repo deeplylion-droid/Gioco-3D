@@ -1361,6 +1361,8 @@ static func materiali_campione(crea := true) -> Array[Material]:
 		out.append(m)
 	# (i cartelloni rovinati, CARTELLONI_ROVINATI)
 	out.append(PosterRovinati.campione_torre())
+	# (gli stendardi dei bambini nella sala delle condotte: stoffa a ritaglio, dai due lati)
+	out.append(StendardiInseguimento.campione())
 	if crea:
 		for m in out:
 			m.get_rid()   # lo shader si crea adesso, non al primo uso
