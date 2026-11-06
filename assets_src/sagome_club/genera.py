@@ -35,7 +35,7 @@ MARGINE = 0.025
 # l'età di ogni sagoma: una nuova per vasca (vedi posa.py per dove stanno)
 ETA = {
     'balena': 'vecchia', 'stella': 'vecchia', 'tartaruga': 'media', 'granchio': 'nuova',
-    'pesce_palla': 'media', 'polpo': 'vecchia', 'delfino': 'media', 'squalo': 'nuova',
+    'pesce_palla': 'media', 'polpo': 'media', 'delfino': 'vecchia', 'squalo': 'nuova',
     'pesce': 'nuova', 'cavalluccio': 'vecchia', 'razza': 'media', 'foca': 'vecchia',
 }
 SEMI = {n: 4100 + i * 37 for i, n in enumerate(animali.ANIMALI)}

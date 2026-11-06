@@ -23,9 +23,9 @@ Come sono fatte:
 - al posto della firma, la manina del bambino in un colore suo: niente nomi, date o lettere.
 
 **Le età.** Ce ne sono di tre:
-- vecchie (balena, stella, polpo, cavalluccio, foca): colori slavati, carta ingiallita, il fondo gonfio d'acqua fino a
+- vecchie (balena, stella, delfino, cavalluccio, foca): colori slavati, carta ingiallita, il fondo gonfio d'acqua fino a
   una riga di marea, puntini di muffa;
-- medie (tartaruga, pesce palla, delfino, razza): colori opachi, colpi, uno strappo riparato con lo scotch ingiallito;
+- medie (tartaruga, pesce palla, polpo, razza): colori opachi, colpi, uno strappo riparato con lo scotch ingiallito;
 - una nuova per vasca (granchio, squalo, pesce): colori vivi.
 
 **Jilly fra i disegni.**
