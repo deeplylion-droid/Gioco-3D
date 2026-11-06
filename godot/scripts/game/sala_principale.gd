@@ -677,27 +677,123 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 
 
 ## Sulla soglia del portone, senza il guscio, fra il bordo del pavimento della sala (x 20,01) e il grigliato della
-## passerella della torre (x 20,19) resta una fessura per tutto il vano (z da -16,5 a -13,5): guardando in basso si
-## vedeva il cielo (ricontrollo del collaudo su varchi-cielo, 6 novembre). La chiude una lastra sotto, coperta ai due
-## bordi dal pavimento e dal grigliato, del materiale del pavimento della sala; figlia di [param torre], va via con lei.
+## passerella della torre (x 20,19) resta una fessura per tutto il vano, e lungo la base del muro oltre i due capi del
+## vano: guardando in basso si vedeva il cielo (ricontrolli del collaudo su varchi-cielo, 6 novembre). La chiudono delle
+## lastre sotto (SOGLIA_TORRE: x0, x1, z0, z1 e, se c'è, la y del piano; se no SOGLIA_TORRE_Y, 1,5 cm sotto il
+## pavimento), coperte ai bordi dal pavimento e dal grigliato, con la collisione. Sotto il grigliato (z -17,85 .. -16,64)
+## la lastra fa da fondo 27 cm più giù, sotto i ferri del grigliato (il telaio scende a -0,26): dai fori si vedeva il cielo. Hanno il materiale del pavimento della sala lì accanto (quello bagnato, della stessa superficie) e le
+## sue stesse coordinate di texture, prese dal triangolo del pavimento vicino: non si leggono come una toppa. Figlie di
+## [param torre], vanno via con lei.
+const SOGLIA_TORRE := [[19.96, 20.22, -16.66, -13.46], [19.96, 20.235, -13.48, -11.95],
+		[19.96, 20.235, -17.85, -16.64, -0.27]]
+const SOGLIA_TORRE_Y := -0.015
+
+
 static func chiudi_soglia_torre(torre: Node3D, pavimento: MeshInstance3D) -> MeshInstance3D:
 	var lastra := MeshInstance3D.new()
 	lastra.name = "soglia_torre_sotto"
-	var box := BoxMesh.new()
-	box.size = Vector3(0.26, 0.3, 3.04)
-	lastra.mesh = box
-	if pavimento and pavimento.mesh:
+	# le coordinate di texture del pavimento: dal triangolo del pavimento vicino alla soglia, uv = A x + B z + C
+	var mappa := _uv_pavimento(pavimento, Vector2(19.9, -15.0))
+	var materiale: Material = mappa[3] if mappa.size() > 3 else null
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var corpo := StaticBody3D.new()
+	for q: Array in SOGLIA_TORRE:
+		var y: float = q[4] if q.size() > 4 else SOGLIA_TORRE_Y
+		var lo := Vector3(q[0], y - 0.3, q[2])
+		var hi := Vector3(q[1], y, q[3])
+		_scatola_uv(st, lo, hi, mappa)
+		var forma := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = hi - lo
+		forma.shape = bs
+		forma.position = (lo + hi) / 2.0
+		corpo.add_child(forma)
+	st.generate_tangents()
+	lastra.mesh = st.commit()
+	if materiale:
+		lastra.material_override = materiale
+	elif pavimento and pavimento.mesh:
 		lastra.material_override = pavimento.get_active_material(0)
 	torre.add_child(lastra)
-	lastra.global_transform = Transform3D(Basis.IDENTITY, Vector3(20.09, -0.015 - 0.15, -15.0))
-	var corpo := StaticBody3D.new()
-	var forma := CollisionShape3D.new()
-	var bs := BoxShape3D.new()
-	bs.size = box.size
-	forma.shape = bs
-	corpo.add_child(forma)
+	lastra.global_transform = Transform3D.IDENTITY
 	lastra.add_child(corpo)
 	return lastra
+
+
+## [uv di (x, z) = A x + B z + C, ..., materiale]: dal triangolo del pavimento (vicino a y 0) che contiene [param punto]
+## (x, z nel mondo), o dal più vicino. Vuoto se non c'è.
+static func _uv_pavimento(pavimento: MeshInstance3D, punto: Vector2) -> Array:
+	if pavimento == null or pavimento.mesh == null:
+		return []
+	var xf := pavimento.global_transform
+	var meglio: Array = []
+	var dist := INF
+	for s in pavimento.mesh.get_surface_count():
+		var arr := pavimento.mesh.surface_get_arrays(s)
+		var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var uvs = arr[Mesh.ARRAY_TEX_UV]
+		if uvs == null or (uvs as PackedVector2Array).is_empty():
+			continue
+		var idx = arr[Mesh.ARRAY_INDEX]
+		var n: int = (idx as PackedInt32Array).size() if idx != null else vs.size()
+		for k in range(0, n, 3):
+			var i0: int = idx[k] if idx != null else k
+			var i1: int = idx[k + 1] if idx != null else k + 1
+			var i2: int = idx[k + 2] if idx != null else k + 2
+			var a := xf * vs[i0]
+			var b := xf * vs[i1]
+			var c := xf * vs[i2]
+			if absf(a.y) > 0.05 or absf(b.y) > 0.05 or absf(c.y) > 0.05:
+				continue
+			var a2 := Vector2(a.x, a.z)
+			var b2 := Vector2(b.x, b.z)
+			var c2 := Vector2(c.x, c.z)
+			var den := (b2 - a2).cross(c2 - a2)
+			if absf(den) < 1e-8:
+				continue
+			var cen := (a2 + b2 + c2) / 3.0
+			var d := 0.0 if Geometry2D.point_is_inside_triangle(punto, a2, b2, c2) else cen.distance_to(punto)
+			if d >= dist:
+				continue
+			dist = d
+			# risolve uv = A x + B z + C coi tre vertici
+			var ua: Vector2 = uvs[i0]
+			var ub: Vector2 = uvs[i1]
+			var uc: Vector2 = uvs[i2]
+			var m := Transform2D(b2 - a2, c2 - a2, Vector2.ZERO).affine_inverse()
+			var du := Transform2D(ub - ua, uc - ua, Vector2.ZERO)
+			var lin := du * m     # mappa lineare: (x, z) - a2 -> uv - ua
+			meglio = [lin, a2, ua, pavimento.get_active_material(s)]
+	return meglio
+
+
+static func _uv_in(mappa: Array, p: Vector3) -> Vector2:
+	if mappa.size() < 3:
+		return Vector2(p.x, p.z) * 0.5
+	var lin: Transform2D = mappa[0]
+	return (mappa[2] as Vector2) + lin.basis_xform(Vector2(p.x, p.z) - (mappa[1] as Vector2))
+
+
+static func _scatola_uv(st: SurfaceTool, lo: Vector3, hi: Vector3, mappa: Array) -> void:
+	var c := [Vector3(lo.x, lo.y, lo.z), Vector3(hi.x, lo.y, lo.z), Vector3(hi.x, lo.y, hi.z), Vector3(lo.x, lo.y, hi.z),
+			Vector3(lo.x, hi.y, lo.z), Vector3(hi.x, hi.y, lo.z), Vector3(hi.x, hi.y, hi.z), Vector3(lo.x, hi.y, hi.z)]
+	# facce: [vertici in senso antiorario visti da fuori, normale]
+	var facce := [[[4, 7, 6, 5], Vector3.UP], [[0, 1, 2, 3], Vector3.DOWN], [[0, 4, 5, 1], Vector3.FORWARD],
+			[[2, 6, 7, 3], Vector3.BACK], [[0, 3, 7, 4], Vector3.LEFT], [[1, 5, 6, 2], Vector3.RIGHT]]
+	for f in facce:
+		var ids: Array = f[0]
+		var n: Vector3 = f[1]
+		var quad := ids.map(func(i): return c[i])
+		for t in [[0, 1, 2], [0, 2, 3]]:
+			var tri := [quad[t[0]], quad[t[1]], quad[t[2]]]
+			# in Godot la faccia davanti ha i vertici in senso orario visti da fuori
+			if ((tri[1] as Vector3) - (tri[0] as Vector3)).cross((tri[2] as Vector3) - (tri[0] as Vector3)).dot(n) > 0.0:
+				tri = [tri[0], tri[2], tri[1]]
+			for v: Vector3 in tri:
+				st.set_normal(n)
+				st.set_uv(_uv_in(mappa, v))
+				st.add_vertex(v)
 
 
 func _completa_torre() -> void:

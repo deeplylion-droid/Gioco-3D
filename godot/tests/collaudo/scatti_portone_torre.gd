@@ -22,6 +22,12 @@ const POSE := [
 	# i due checkpoint della torre dove i raggi verso l'alto non toccano niente (controllo_cielo.gd)
 	["NEm3_su", Vector3(37.47, -1.41, -18.97), Vector3(37.47, -1.41, -18.97) + Vector3(0.45, 0.887, -0.099), 70.0],
 	["NOm12_su", Vector3(27.05, -10.41, -21.41), Vector3(27.05, -10.41, -21.41) + Vector3(0.128, 0.904, 0.408), 70.0],
+	# i cinque raggi della torre che controllo_cielo mette a parte (verso l'alto), al centro dello scatto
+	["raggio_portone", Vector3(21.4, 1.6, -15.0), Vector3(21.4, 1.6, -15.0) + Vector3(0.425693, 0.3375, 0.839571), 40.0],
+	["raggio_NEm3_a", Vector3(37.468, -1.4, -18.970), Vector3(37.468, -1.4, -18.970) + Vector3(0.45006, 0.8875, -0.098944), 40.0],
+	["raggio_NEm3_b", Vector3(37.468, -1.4, -18.970), Vector3(37.468, -1.4, -18.970) + Vector3(0.29558, 0.620833, 0.726084), 40.0],
+	["raggio_NOm12_a", Vector3(27.049, -10.4, -21.412), Vector3(27.049, -10.4, -21.412) + Vector3(0.127848, 0.904167, 0.4076), 40.0],
+	["raggio_NOm12_b", Vector3(27.049, -10.4, -21.412), Vector3(27.049, -10.4, -21.412) + Vector3(0.685801, 0.3875, -0.616052), 40.0],
 ]
 
 var raggio := 60.0
@@ -74,6 +80,8 @@ func _run() -> void:
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	cam.make_current()
 	for v in POSE:
+		if OS.has_environment("SOLO_RAGGI") and not String(v[0]).begins_with("raggio_"):
+			continue
 		cam.fov = float(v[3])
 		cam.global_position = v[1]
 		cam.look_at(v[2], Vector3.UP)
