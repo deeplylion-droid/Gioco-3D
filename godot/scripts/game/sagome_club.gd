@@ -32,14 +32,27 @@ var _taglio: StandardMaterial3D
 
 ## I passi per costruirle dentro la sala [param sala] (uno per sagoma, poi i puntelli, i mattoni e lo spago), da
 ## mettere nella coda di costruzione della sala, come gli altri pezzi.
+## Il nodo nasce nel primo passo: se la costruzione si ferma prima (la torre esce dall'albero a metà, una morte che
+## ricarica la sala) non resta un nodo orfano fuori dall'albero (tests/test_passi_orfani.gd).
 static func passi(sala: Node3D) -> Array:
-	var s := SagomeClub.new()
-	s.name = "SagomeClub"
-	var out: Array = [func(): sala.add_child(s); s._prepara()]
+	var s: Array = [null]
+	var out: Array = []
+	out.append(func():
+		s[0] = SagomeClub.new()
+		s[0].name = "SagomeClub"
+		sala.add_child(s[0])
+		s[0]._prepara()
+	)
 	var quante := 12
 	for i in quante:
-		out.append(func(): s._sagoma(i))
-	out.append(func(): s._accessori())
+		out.append(func():
+			if s[0] != null and is_instance_valid(s[0]):
+				s[0]._sagoma(i)
+		)
+	out.append(func():
+		if s[0] != null and is_instance_valid(s[0]):
+			s[0]._accessori()
+	)
 	return out
 
 
