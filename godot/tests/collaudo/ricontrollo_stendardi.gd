@@ -344,11 +344,12 @@ func _vicino() -> void:
 	for s in range(1, 5):
 		var V: Vector3 = VERSO[s]
 		var lato := V.cross(Vector3.UP).normalized()
+		var solo_giri := OS.get_environment("SOLO_GIRI") == "1"
 		# le mollette: la prima, quella di mezzo e l'ultima, davanti, di lato e da sotto
 		var nm := 0
 		while _pezzo("stendardo_%d_molletta%d" % [s, nm]) != null:
 			nm += 1
-		for i in [0, nm / 2, nm - 1]:
+		for i in ([] if solo_giri else [0, nm / 2, nm - 1]):
 			var c := _centro("stendardo_%d_molletta%d" % [s, i])
 			await _scatto("st%d_molletta%d_davanti" % [s, i], c + V * 0.28 + Vector3.UP * 0.04 + lato * 0.06, c)
 			await _scatto("st%d_molletta%d_di_lato" % [s, i], c + lato * 0.22 + V * 0.05 + Vector3.UP * 0.02, c)
@@ -363,7 +364,7 @@ func _vicino() -> void:
 			if p.dot(lato) > b1.dot(lato):
 				b1 = p
 		var asse_y := _centro("stendardo_%d_bastone" % s).y
-		for e in [["a", b0], ["b", b1]]:
+		for e in ([] if solo_giri else [["a", b0], ["b", b1]]):
 			var capo: Vector3 = e[1]
 			capo.y = asse_y
 			var fuori := (capo - _centro("stendardo_%d_bastone" % s)).normalized()
@@ -392,8 +393,11 @@ func _vicino() -> void:
 			await _scatto("st%d_giri_%s_davanti" % [s, e], giri + V * 0.22 + Vector3.UP * 0.06, giri)
 			await _scatto("st%d_giri_%s_lungo_il_bastone" % [s, e], giri + lato * 0.2 + V * 0.06 + Vector3.UP * 0.03, giri)
 			await _scatto("st%d_giri_%s_da_dietro" % [s, e], giri - V * 0.22 + Vector3.UP * 0.06, giri)
+			# l'asola sotto il bastone, da davanti in basso e da dietro in basso
+			await _scatto("st%d_giri_%s_asola_davanti" % [s, e], giri + V * 0.14 - Vector3.UP * 0.07 + lato * 0.03, giri - Vector3.UP * 0.01)
+			await _scatto("st%d_giri_%s_asola_dietro" % [s, e], giri - V * 0.14 - Vector3.UP * 0.07 - lato * 0.03, giri - Vector3.UP * 0.01)
 		# i golfari sotto le travi (le travi vanno lungo z): da sotto, di traverso alla trave e lungo la trave
-		for e in corde:
+		for e in ([] if solo_giri else corde):
 			var nodo := _golfare(s, e)
 			await _scatto("st%d_nodo_%s_da_sotto" % [s, e], nodo + Vector3(0.12, -0.22, 0.09), nodo)
 			await _scatto("st%d_nodo_%s_di_traverso" % [s, e], nodo + Vector3(0.22, -0.03, 0.03), nodo)
