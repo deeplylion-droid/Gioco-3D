@@ -289,11 +289,24 @@ func _insegui_su(b: BambinoSfuggita, sala: SalaSottomarino, strada: Array, al: C
 	var fuori := false
 	var dt := 1.0 / 60.0
 	var r := sala.destra(s0) * lato
+	# animato come il bambino col cubo (0.3.21): correndo i piedi a terra non scivolano, le punte non entrano nel
+	# pavimento e nessun osso entra nei muri (SEME: chi gli corre dietro va un po' più piano o più svelto, per le 10 prove)
+	var piu_svelto := 1.0
+	if OS.has_environment("SEME"):
+		var rng := RandomNumberGenerator.new()
+		rng.seed = int(OS.get_environment("SEME"))
+		piu_svelto = rng.randf_range(0.85, 1.1)
+	var scorre := 0.0
+	var scorre_n := 0
+	var scorre_max := 0.0
+	var piedi_prima := {}
+	var sotto := 0.0
+	var dentro := ""
 	while t < 25.0 and b.stato != BambinoSfuggita.Stato.FINITO:
 		# accucciato nelle bocche e nella galleria (è alta 1,25 m): lì si va al più a crouch_speed (1,7 m/s; allo
 		# sprint il giocatore lo raggiungeva e gli passava attraverso, ricontrollo del 30 ottobre)
 		var giu: bool = (qui - al.call(s0, sala.muro)).dot(r) > -0.15 and k >= 3
-		var vel := _p.crouch_speed if giu else SPRINT
+		var vel := (_p.crouch_speed if giu else SPRINT) * piu_svelto
 		if k < strada.size():
 			var verso: Vector3 = strada[k] - qui
 			if verso.length() <= vel * dt:
@@ -314,6 +327,55 @@ func _insegui_su(b: BambinoSfuggita, sala: SalaSottomarino, strada: Array, al: C
 		var dov := b.bambino.global_position
 		await _frames(1)
 		t += dt
+		if b.stato == BambinoSfuggita.Stato.SCAPPA and b.bambino.visible:
+			var pav := b.bambino.global_position.y
+			var q := b.bambino.punto_piu_in_basso()
+			sotto = minf(sotto, q.y - pav)
+			# (piede per piede: il punto più basso passa da un piede all'altro e farebbe un salto)
+			var ora := {}
+			for nome in [^"Calmo", ^"Rivelato"]:
+				var m := b.bambino.get_node_or_null(nome) as Node3D
+				if m and m.visible:
+					var skp := m.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+					for ob in ["LeftFoot", "RightFoot", "LeftToeBase", "RightToeBase"]:
+						var bi := skp.find_bone(ob)
+						if bi >= 0:
+							ora[ob] = skp.global_transform * skp.get_bone_global_pose(bi).origin
+			for kk in ora:
+				var w: Vector3 = ora[kk]
+				if w.y - pav < 0.015 and piedi_prima.has(kk) and (piedi_prima[kk] as Vector3).y - pav < 0.015:
+					var v := Vector2(w.x - piedi_prima[kk].x, w.z - piedi_prima[kk].z).length() / dt
+					scorre += v
+					scorre_n += 1
+					scorre_max = maxf(scorre_max, v)
+			piedi_prima = ora
+			var sk_b: Skeleton3D = null
+			for nome in [^"Calmo", ^"Rivelato"]:
+				var m := b.bambino.get_node_or_null(nome) as Node3D
+				if m and m.visible:
+					sk_b = m.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+			if dentro == "" and sk_b:
+				# (un raggio da ogni osso al suo genitore, anche contro il retro delle facce: se attraversa una superficie,
+				# lì quel pezzo è dentro un muro o un oggetto; il tunnel è una mesh concava, dove "un punto dentro" non vale)
+				for o in sk_b.get_bone_count():
+					var g := sk_b.get_bone_parent(o)
+					if g < 0:
+						continue
+					var a := sk_b.global_transform * sk_b.get_bone_global_pose(g).origin
+					var z := sk_b.global_transform * sk_b.get_bone_global_pose(o).origin
+					var rq := PhysicsRayQueryParameters3D.create(a, z, 0xFFFFFFFF, [_p.get_rid()])
+					rq.hit_back_faces = true
+					rq.hit_from_inside = true
+					var hit := _p.get_world_3d().direct_space_state.intersect_ray(rq)
+					# (il pavimento con la punta sotto di meno di 1 cm non conta: quello lo misura il controllo delle punte)
+					if not hit.is_empty() and (hit["normal"] as Vector3).y > 0.7 and minf(a.y, z.y) > pav - 0.01:
+						continue
+					if not hit.is_empty():
+						var ap_b := b.bambino.find_child("AnimationPlayer", true, false) as AnimationPlayer
+						dentro = "(da %s a %s attraverso %s a %.2f s, in %s, s=%.1f, %s %.2f)" % [sk_b.get_bone_name(g), sk_b.get_bone_name(o),
+								hit["collider"].get_path(), t, hit["position"], _ascissa(sala, hit["position"], s0 - 5.0, s1 + 30.0),
+								ap_b.current_animation, ap_b.current_animation_position]
+						break
 		if b.stato == BambinoSfuggita.Stato.FINITO:
 			fine = t
 			# (com'era l'ultimo fotogramma in cui si vedeva: rimesso visibile solo per contare le ossa)
@@ -324,6 +386,9 @@ func _insegui_su(b: BambinoSfuggita, sala: SalaSottomarino, strada: Array, al: C
 			fuori = (dov - sala.punto(dove_sparito)).dot(sala.destra(dove_sparito) * lato) < sala.muro
 			print("    sparito a %.2f s, a s=%.1f (bocca d'uscita fino a %.1f), il giocatore a %.1f m" % [t, dove_sparito, s1, qui.distance_to(dov)])
 	check(visto, "correndogli dietro lo si vede e scappa")
+	check(scorre_n > 10 and scorre / scorre_n < 0.3, "correndo i piedi a terra scivolano in media di %.2f m/s (al più %.2f; %d fotogrammi a terra)" % [scorre / maxf(scorre_n, 1), scorre_max, scorre_n])
+	check(sotto > -0.01, "correndo le punte non entrano nel pavimento (la più bassa a %+.3f m)" % sotto)
+	check(dentro == "", "correndo nessun osso entra nei muri o negli oggetti %s" % dentro)
 	if fine < 0.0:
 		print("    (non è sparito in %.0f s: lo si guardava sempre)" % t)
 	check(in_vista.is_empty(), "quando sparisce, dalla camera di chi gli corre dietro nessun osso si vede%s" % ((" (%s)" % ", ".join(in_vista)) if not in_vista.is_empty() else ""))

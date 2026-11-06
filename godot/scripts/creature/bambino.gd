@@ -46,8 +46,13 @@ const PIEDE_A_TERRA := 0.11
 const PUNTA_A_TERRA := 0.06
 ## Da dove parte la corsa dopo il primo passo ("parte", che finisce in questa posa; secondi della clip): la punta sinistra
 ## a terra, sotto le anche come nel fermo, e il piede destro alzato (nella clip da 24 fotogrammi, il 6,4 di 17; a terra la
-## punta è fra 3 e 6 cm, in aria sopra i 7).
+## punta è fra 3 e 6 cm, in aria sopra i 7). Così per il bambino col cubo; l'agnellino ha la sua corsa (vedi
+## [member corsa_primo_passo]).
 const CORSA_PRIMO_PASSO := 6.4 / 24.0
+## Il tempo della corsa dove finisce "parte" per questo bambino: [constant CORSA_PRIMO_PASSO] il bambino col cubo, 7,6 / 24
+## l'agnellino (la sua clip: lì la punta sinistra è a terra sotto le anche e il piede destro alzato). Deve essere quello
+## usato per fare "parte" (tools/blender/bambini_animazioni.py --primo-passo).
+@export var corsa_primo_passo := CORSA_PRIMO_PASSO
 
 @export var modalita := Modalita.STATUA
 ## Comincia già rivelato (il cubo spaccato, l'agnellino con il muso aperto).
@@ -589,6 +594,11 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 		var ap0 := _player_anim[0]
 		gira = clampf((ap0.current_animation_position - ap0.current_animation_length * 0.35) / 0.15, 0.0, 1.0) \
 				if ap0.current_animation == &"parte" else 1.0
+		# (la girata di scatto, senza voltarsi sul posto: l'agnellino della scala, che deve girarsi in meno di 0,4 s;
+		# aspetta che il piede destro si sia staccato, se no striscerebbe nella girata, e poi gira un po' più svelto,
+		# intorno alla punta tenuta ferma)
+		if not girata_sul_posto and ap0.current_animation == &"parte":
+			gira = 0.0 if ap0.current_animation_position < ap0.current_animation_length * 0.35 else 1.6
 	_gira_verso(prossimo, deg_to_rad(giro) * delta * gira * (_piede_libero_alzato() if _svolta else 1.0))
 	# girandosi molto rallenta (non va di lato); se deve voltarsi (oltre 75 gradi, per esempio per scappare da chi
 	# guardava) prima si volta quasi sul posto, a passi lenti, e poi parte: non fa la curva larga dentro un muro.
@@ -643,17 +653,24 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 			# finito il primo passo: la corsa da lì, già in questo fotogramma (un fotogramma fermo era uno scatto)
 			_partendo = false
 			_anima(&"corsa", 0.0)
-			_seek_tutti(CORSA_PRIMO_PASSO)
+			_seek_tutti(corsa_primo_passo)
 		# la corsa al tempo giusto: con la punta a terra, il tempo dell'animazione per cui lei arretra proprio di quanto
 		# il corpo deve avanzare (nella clip di Meshy, senza lo spostamento delle anche, arretra fra 1 e 2,8 m/s nello
 		# stesso passo: il corpo che andava con lei faceva scatti); in aria, il tempo alla velocità voluta
 		var dir := global_basis.z
 		dir.y = 0.0
 		dir = dir.normalized()
+		# girandosi di scatto correndo (l'agnellino della scala) si va dritti verso il punto, come prima; piegato in
+		# avanti (l'agnellino che si tuffa nel buco) i piedi si staccano da terra: in tutti e due i casi niente punta ferma
+		var libero := girando or absf(rotation.x) > 0.2
+		if girando:
+			dir = Vector3(verso.x, 0.0, verso.z).normalized()
+		if libero:
+			_perno_osso = -1
 		if not _tempo_della_corsa(delta):
 			# (la punta appena posata va ancora avanti rispetto al corpo: non la tiene ancora, la prende al fotogramma dopo)
 			_perno_osso = -1
-		var punta := _blocca_punta()
+		var punta := 0 if libero else _blocca_punta()
 		if punta != 1:
 			# in aria, o nel fotogramma in cui la punta ferma passa all'altro piede: alla velocità voluta
 			if punta == 0:

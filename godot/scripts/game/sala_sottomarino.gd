@@ -2113,13 +2113,24 @@ func _bambino_galleria() -> void:
 	b.zona.size.y = 3.0
 	b.zona.position.y = piano - 0.2
 	var s1: float = float(g["s"]) + float(g["lungo"]) + GALLERIA_BOCCA    # dove finisce la bocca d'uscita
-	b.via = PackedVector3Array([al.call(s0 + 0.5, muro - 0.4), al.call(s0 + 0.7, dentro), al.call(s0 + 2.4, dentro),
-			al.call(s1 - 0.7, dentro), al.call(s1 - 0.5, muro - 0.4), al.call(s1 + 1.0, muro - 1.1),
+	# (nella galleria un punto ogni 2 m sul suo mezzo: segue la curva del tunnel, e su una corda lunga il braccio entrava
+	# nel muro; 0.3.21)
+	var nel_mezzo := PackedVector3Array()
+	var s_mezzo := s0 + 2.4
+	while s_mezzo < s1 - 0.7 - 1.0:
+		nel_mezzo.append(al.call(s_mezzo, dentro))
+		s_mezzo += 2.0
+	b.via = PackedVector3Array([al.call(s0 + 0.5, muro - 0.4), al.call(s0 + 0.7, dentro)]) + nel_mezzo + \
+			PackedVector3Array([al.call(s1 - 0.7, dentro), al.call(s1 - 0.5, muro - 0.4), al.call(s1 + 1.0, muro - 1.1),
 			al.call(s1 + 16.0, muro - 1.2)])
-	b.sparisce_dopo = 5       # (fuori dalla bocca d'uscita, dietro la sua testa)
+	b.sparisce_dopo = b.via.size() - 2       # (fuori dalla bocca d'uscita, dietro la sua testa)
 	b.da_dove = al.call(s0 - 18.0, muro - 1.2) + Vector3.UP * 1.6
 	b.distanza_fuga = 12.0
 	b.compare_lontano = 26.0     # (si corre guardando avanti: compare lontano, nel buio, a più di 26 m)
+	# animato come il bambino col cubo (0.3.21, scelta A dell'utente "agnellini"): da fermo è vivo, primo passo vero e
+	# piedi fermi a terra correndo
+	b.fermo_vivo = true
+	b.partenza_continua = true
 	add_child(b)
 
 
