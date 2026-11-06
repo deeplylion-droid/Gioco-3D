@@ -167,7 +167,7 @@ func _passi() -> Array:
 	# le sagome del club dei bambini attorno alle vasche (SagomeClub, scelta A dell'utente del 6 novembre)
 	out.append_array(SagomeClub.passi(self))
 	# gli stendardi dei bambini appesi nel vuoto dietro le vasche (nota dell'utente del 6 novembre; StendardiInseguimento)
-	out.append(func(): add_child(StendardiInseguimento.new()))
+	out.append_array(StendardiInseguimento.passi(self))
 	if crea_luci:
 		out.append_array(_passi_luci())
 	return out
@@ -1540,8 +1540,8 @@ const RISORSE_ACQUE := ["res://assets/materials/inseguimento/acqua_inseguimento.
 ## thread insieme alla torre.
 static func risorse() -> Array:
 	var out: Array = RISORSE_LEI.duplicate()
-	out.append_array(StendardiInseguimento.risorse())
 	out.append_array(RISORSE_ACQUE)
+	out.append_array(StendardiInseguimento.risorse())
 	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
 	if dati_luci is Dictionary:
 		for a in dati_luci.get("arredi", []):

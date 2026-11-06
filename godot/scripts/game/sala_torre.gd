@@ -183,14 +183,14 @@ static func risorse() -> Array:
 
 
 ## Le risorse di [method risorse] e le acque e il velo dell'inseguimento (SalaInseguimento.RISORSE_ACQUE: si costruisce
-## nella stessa costruzione a pezzi) che non sono già in memoria: si aspettano quelle che la sala ha già chiesto al
-## thread, e si chiedono quelle che nessuno ha chiesto (la torre costruita da sola, nei test). (Non lei e le fonti degli
-## arredi, le altre SalaInseguimento.risorse(): le fonti, GLTF grandi, costruita la torre da sola nel test restavano in
+## nella stessa costruzione a pezzi) e degli stendardi (StendardiInseguimento.risorse(): la GLB e le texture dei
+## lenzuoli) che non sono già in memoria: si aspettano quelle che la sala ha già chiesto al thread, e si chiedono
+## quelle che nessuno ha chiesto (la torre costruita da sola, nei test). (Non lei e le fonti degli arredi, le altre SalaInseguimento.risorse(): le fonti, GLTF grandi, costruita la torre da sola nel test restavano in
 ## caricamento più di 15 s)
 func _chiedi_precarica() -> void:
 	_precarica.clear()
 	_precaricate.clear()
-	for percorso: String in risorse() + SalaInseguimento.RISORSE_ACQUE:
+	for percorso: String in risorse() + SalaInseguimento.RISORSE_ACQUE + StendardiInseguimento.risorse():
 		if _precarica.has(percorso):
 			continue
 		if ResourceLoader.has_cached(percorso):
