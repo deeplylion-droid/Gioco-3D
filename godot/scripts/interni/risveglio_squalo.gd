@@ -40,8 +40,17 @@ const FOTOGRAMMI_GOCCIA := 10
 ## la nebbia).
 const STRATO_SQUALO := 1 << 16
 ## La camera non entra mai nello squalo: resta almeno a tanto dalla sua superficie (i vertici della mesh
-## deformati dallo scheletro, presi uno ogni CELLA di spazio nella posa di riposo).
+## deformati dallo scheletro, presi uno ogni CELLA di spazio nella posa di riposo). La spinta cerca 1 cm in più
+## ([constant MARGINE_PELLE]): il controllo in test_interni vuole almeno DISTANZA_PELLE in ogni fotogramma.
 const DISTANZA_PELLE := 0.24
+const MARGINE_PELLE := 0.01
+## La spinta è continua (collaudo di grafica-2 su 86ab11f9: saliva di mezzo metro in un fotogramma): la camera comincia
+## ad allontanarsi già a [constant PELLE_MORBIDA] m in più della distanza minima, a non più di [constant VEL_SPINTA] m/s;
+## la distanza minima resta comunque garantita.
+const PELLE_MORBIDA := 0.15
+## Dalla bocca che si apre il margine morbido è più stretto: la bocca spalancata deve arrivare addosso alla camera.
+const PELLE_MORBIDA_MINACCIA := 0.04
+const VEL_SPINTA := 2.0
 const CELLA := 0.08
 
 ## La porta tagliafuoco (il nodo del modello del corridoio) e il suo cardine, nello spazio degli interni.
@@ -80,6 +89,7 @@ var _spinta := Vector3.ZERO  # di quanto la camera è spostata fuori dalla pelle
 var _lampade: Array = []     # le LuceEmergenza del corridoio (si spengono nel buio)
 var _vetri: Array = []       # [vetro della lampada, il suo materiale acceso, la sua emissione]
 var _luce := 1.0             # quanto è accesa la luce del corridoio adesso (0 nel buio, 1 nei lampi e dopo)
+var _luce_lampo: OmniLight3D  # nei lampi: la lampada più vicina che illumina lui (solo lui)
 var _goccia_strato: CanvasLayer
 var _goccia: ColorRect
 
@@ -175,6 +185,19 @@ func _crea_squalo() -> void:
 	_luce_corsa.light_volumetric_fog_energy = 0.0
 	_luce_corsa.light_specular = 0.3
 	squalo.add_child(_luce_corsa)
+	# (0.3.23) nei lampi la lampada del corridoio più vicina illumina anche lui: senza, nel primo lampo (a 2,8 m) era
+	# una sagoma nera sul viola, luminosità media 2,5 su 255 (collaudo di grafica-2 su 86ab11f9)
+	_luce_lampo = OmniLight3D.new()
+	_luce_lampo.name = "LuceLampo"
+	Strati.maschera_luce(_luce_lampo, STRATO_SQUALO)
+	_luce_lampo.light_color = Color(1.0, 0.32, 0.22)
+	_luce_lampo.light_energy = 0.0
+	_luce_lampo.omni_range = 5.5
+	_luce_lampo.omni_attenuation = 1.0
+	_luce_lampo.shadow_enabled = false
+	_luce_lampo.light_volumetric_fog_energy = 0.0
+	_luce_lampo.light_specular = 0.6
+	squalo.add_child(_luce_lampo)
 	if _anim:
 		# l'animazione avanza qui, prima della camera: la camera la sposta fuori dalla posa di questo fotogramma
 		_anim.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
@@ -217,14 +240,14 @@ func _prepara_pelle() -> void:
 
 ## Quanto spostare la camera (nel mondo) perché stia almeno a DISTANZA_PELLE dalla pelle dello squalo: indietro,
 ## via da lui (in orizzontale, dal suo corpo verso la camera), del minimo che basta.
-func _fuori_dalla_pelle(occhio: Vector3) -> Vector3:
+func _fuori_dalla_pelle(occhio: Vector3, distanza := DISTANZA_PELLE + MARGINE_PELLE) -> Vector3:
 	var punti := _pelle_vicina(occhio)
 	if punti.is_empty():
 		return Vector3.ZERO
 	var via := occhio - _bone_mondo("spina")
 	via.y = 0.0
 	via = via.normalized() if via.length() > 0.01 else _p.global_basis.z
-	var d2 := DISTANZA_PELLE * DISTANZA_PELLE
+	var d2 := distanza * distanza
 	var t := 0.0
 	while t <= 1.2:
 		var q := occhio + via * t
@@ -474,8 +497,27 @@ func luce_scena() -> float:
 	return _luce if _attivo else 1.0
 
 
+## Quanto è forte la luce su di lui in ogni lampo (dall'alto, dalla parte del giocatore): più lontano, più forte.
+const LAMPO_SU_DI_LUI := [7.0, 3.0, 1.6]
+
+
 func _luci_del_buio() -> void:
 	_luce = luce_al(_t)
+	if _luce_lampo and is_instance_valid(_luce_lampo):
+		var e := 0.0
+		var lampi: Array = tempi.get("lampi", [])
+		if _t < float(tempi.get("luce", 0.0)) and _luce > 0.5:
+			for k in lampi.size():
+				if _t >= float(lampi[k][0]) and _t < float(lampi[k][0]) + float(lampi[k][1]):
+					e = float(LAMPO_SU_DI_LUI[mini(k, LAMPO_SU_DI_LUI.size() - 1)])
+		_luce_lampo.light_energy = e
+		if e > 0.0 and _p:
+			# dalla parte della camera, in alto (come la lampada sopra il giocatore): lo illumina davanti, la testa e il
+			# corpo; dalla lampada più vicina a lui gli illuminava la schiena
+			var testa := _bone_mondo("testa")
+			var verso := (_p.camera.global_position - testa) * Vector3(1, 0, 1)
+			verso = verso.normalized() if verso.length() > 0.01 else Vector3.ZERO
+			_luce_lampo.global_position = Vector3(testa.x, 0.0, testa.z) + verso * 1.3 + Vector3.UP * 2.3
 	for le in _lampade:
 		if is_instance_valid(le):
 			le.set(&"fattore", _luce)
@@ -600,7 +642,13 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	# dove guarda: nel buio lui che arriva (il corpo e la testa), dalla luce la bocca, poi lo squalo che si gira e
 	# scappa, poi davanti a sé
 	var lui := _bone_mondo("spina").lerp(_bone_mondo("testa"), 0.6)
-	var obiettivo := lui.lerp(bocca, _liscio(0.0, 1.0, luce - 0.3, luce + 0.4))
+	# annusando la testa segue poco il muso (15%), dritta davanti a sé: il muso e il fiuto passano davvero dalla
+	# sua sinistra alla sua destra (collaudo di grafica-2 su 86ab11f9: seguendo la bocca, in cuffia il fiuto restava al
+	# centro); quando la bocca si apre la guarda di nuovo in pieno
+	var davanti := occhio_base + _dir_yaw(_yaw0) * 0.9
+	davanti.y = bocca.y
+	var muso := davanti.lerp(bocca, lerpf(0.15, 1.0, _liscio(0.0, 1.0, apre - 0.6, apre)))
+	var obiettivo := lui.lerp(muso, _liscio(0.0, 1.0, luce - 0.3, luce + 0.4))
 	var corpo := _bone_mondo("spina").lerp(_bone_mondo("testa"), 0.5)
 	var segui := _liscio(0.0, 1.0, R + 0.15, R + 0.9) - _liscio(0.0, 1.0, porta_t + 0.6, porta_t + 2.2)
 	obiettivo = obiettivo.lerp(corpo, clampf(segui, 0.0, 1.0))
@@ -616,9 +664,12 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	# mentre si rialza la faccia non deve passare dentro il mento o il muso
 	for osso in ["mento_punta", "bocca"]:
 		indietro = maxf(indietro, clampf(0.42 - occhio.distance_to(_bone_mondo(osso)), 0.0, 0.3) * 1.2)
+	# (entra in 0,3 s: di colpo, al richiamo, la camera saltava indietro di 8 cm in un fotogramma; c'era già nella
+	# 0.3.22, coperto dal tremore)
 	if _t > R:
+		var dal_richiamo := _liscio(0.0, 1.0, R, R + 0.3)
 		for osso in ["testa", "collo", "petto", "mano.L", "mano.R", "coda2"]:
-			indietro = maxf(indietro, clampf(0.55 - occhio.distance_to(_bone_mondo(osso)), 0.0, 0.3))
+			indietro = maxf(indietro, clampf(0.55 - occhio.distance_to(_bone_mondo(osso)), 0.0, 0.3) * dal_richiamo)
 	# (dalla 0.3.22 niente tremore, né scosse ai passi, al richiamo o alla porta)
 	var d := _sguardo - occhio
 	var yaw := atan2(-d.x, -d.z)
@@ -634,12 +685,12 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	# un filo più indietro, in orizzontale via dallo squalo; mentre ci si alza torna a 0 (alla fine la camera è
 	# quella del giocatore, senza scatti)
 	var base := cam.global_position - _dir_yaw(_yaw0) * arretra(_t, alzati)
-	var serve := _fuori_dalla_pelle(base)
-	if serve.length() >= _spinta.length():
-		_spinta = serve
-	else:
-		_spinta = _spinta.lerp(serve, 1.0 - exp(-6.0 * delta)) if delta > 0.0 else serve
-		_spinta += _fuori_dalla_pelle(base + _spinta)
+	# la spinta va verso quella che tiene la camera a DISTANZA_PELLE + PELLE_MORBIDA, a non più di VEL_SPINTA m/s; se
+	# non basta per la distanza minima, quanto manca subito (i test vogliono che non succeda: niente salti)
+	var margine := lerpf(PELLE_MORBIDA, PELLE_MORBIDA_MINACCIA, _liscio(0.0, 1.0, apre - 0.3, apre))
+	var morbida := _fuori_dalla_pelle(base, DISTANZA_PELLE + MARGINE_PELLE + margine)
+	_spinta = _spinta.move_toward(morbida, VEL_SPINTA * delta) if delta > 0.0 else morbida
+	_spinta += _fuori_dalla_pelle(base + _spinta)
 	cam.global_position = base + _spinta
 
 

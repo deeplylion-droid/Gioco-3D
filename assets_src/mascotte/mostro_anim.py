@@ -270,8 +270,17 @@ def fermo_nella_pausa(t):
 
 
 def annusa(t):
-    """Quanto è chino a annusare (0..1): giù dalla luce, risale verso la faccia fino ad APRE."""
-    return chiavi(t, [(LUCE - 0.4, 0.0), (LUCE + 0.1, 1.0), (APRE - 1.0, 0.75), (APRE - 0.05, 0.0)])
+    """Quanto è chino a annusare (0..1): giù dalla luce, risale verso la faccia fino ad APRE. (Collaudo di grafica-2
+    su 86ab11f9: la testa scendeva già da LUCE - 0,4, nel buio, sopra la camera ancora sdraiata, e la camera saltava
+    indietro di mezzo metro per restare fuori dalla pelle; ora scende solo dalla luce, mentre la camera si tira su.)"""
+    return chiavi(t, [(LUCE + 0.25, 0.0), (LUCE + 0.85, 1.0), (APRE - 1.0, 0.75), (APRE - 0.05, 0.0)])
+
+
+def ritira(t):
+    """(0.3.23) Quanto si è ritratto col corpo per annusare (0..1): prima si ritrae (all'arrivo la testa è sopra la
+    camera sdraiata), poi la testa scende davanti al petto del giocatore (annusa); torna avanti con la bocca che si
+    apre. Così il muso non passa mai dove sta la camera."""
+    return chiavi(t, [(LUCE - 0.1, 0.0), (LUCE + 0.35, 1.0), (APRE - 1.0, 1.0), (APRE - 0.05, 0.0)])
 
 
 def fiuto(t):
@@ -287,7 +296,7 @@ def fiuto(t):
 def yaw_annusa(t):
     """(0.3.23) Annusando gira tutto il corpo (gradi): il muso parte dalla sinistra del giocatore e passa alla sua
     destra. Non è il giro: busto e testa non lo compensano (vedi posa, yaw_g)."""
-    return chiavi(t, [(LUCE - 0.3, 0.0), (LUCE + 0.2, -42.0), (APRE - 1.4, -18.0), (APRE - 0.6, 4.0), (APRE, 0.0)])
+    return chiavi(t, [(LUCE + 0.2, 0.0), (LUCE + 1.0, -42.0), (APRE - 1.4, -18.0), (APRE - 0.6, 4.0), (APRE, 0.0)])
 
 
 def radice(t):
@@ -318,8 +327,10 @@ def radice(t):
     x0 = X0 - 0.14 * annusa(t)
     x = chiavi(t, [(FASI['ARRETRA'], x0), (FASI['ARRETRA'] + 0.3, X0 + 0.04), (g_(0.12), X0 + 0.04), (g_(0.75), 0.0),
                    (FASI['CORSA'] + 0.8, X_PORTA)])
-    # (0.3.23) annusando si sporge verso di lui
-    avanti -= 0.22 * annusa(t)
+    # (0.3.23) annusando sta un poco più indietro: chino, il muso arriva davanti al petto del giocatore, a 0,4-0,5 m
+    # dalla camera (sporgendosi verso di lui il muso passava dove stava la camera, appena sotto, e la camera saltava
+    # via per restare fuori dalla pelle)
+    avanti += 0.25 * ritira(t)
     return x, avanti + passo + s + avvicinato(t), yaw
 
 
