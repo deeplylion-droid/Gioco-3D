@@ -2,9 +2,17 @@ extends Control
 ## Schermata di caricamento: carica la sala principale in un thread (ResourceLoader a thread),
 ## con la barra di avanzamento, i comandi e un consiglio. Quando la sala è pronta lo schermo
 ## si scurisce, la sala entra in scena e appare con una dissolvenza dal nero.
+## Dietro, Jilly che ti guarda dalla vasca, sbatte l'occhio e inclina la testa (richiesta dell'utente del 7 novembre):
+## un video in ciclo registrato dal motore con il modello vero ([constant VIDEO_JILLY], fatto da
+## scenes/ui/caricamento/registra_jilly.gd e tools/caricamento/jilly_video.sh). Un video e non il 3D: durante il
+## caricamento non si disegna e non si compila niente di più, e in memoria c'è un fotogramma solo.
 
 const SCENA_SALA := "res://scenes/sala_principale.tscn"
 const SCENA_TITOLO := "res://scenes/ui/menu_principale.tscn"
+## Il video di Jilly dietro la schermata (Theora, in ciclo).
+const VIDEO_JILLY := "res://assets/ui/caricamento/jilly_caricamento.ogv"
+## Quanto è scuro il velo a sinistra, dietro i comandi e il consiglio (0..1).
+const VELO_SINISTRA := 0.82
 
 ## La scena da caricare.
 @export_file("*.tscn") var scena := SCENA_SALA
@@ -45,6 +53,8 @@ var _pausa_fuoco := true
 var _riscaldamento: RiscaldamentoShader
 ## L'avanzamento del caricamento della sala (0..1), da solo.
 var _vero_sala := 0.0
+## Il video di Jilly (null se il file manca).
+var _video: VideoStreamPlayer
 
 
 func _ready() -> void:
@@ -164,7 +174,63 @@ func _costruisci() -> void:
 	fondo.color = StileMenu.FONDO
 	fondo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(fondo)
-	# Un riflesso d'acqua appena accennato in basso.
+	if _metti_video():
+		_metti_velo()
+	else:
+		_metti_riflesso()
+	_metti_testi()
+
+
+## Jilly dietro la schermata: il video a tutto schermo, tagliato ai lati se lo schermo non è 16:9.
+func _metti_video() -> bool:
+	if not ResourceLoader.exists(VIDEO_JILLY):
+		return false
+	var stream := load(VIDEO_JILLY) as VideoStream
+	if stream == null:
+		return false
+	var cornice := AspectRatioContainer.new()
+	cornice.name = "CorniceJilly"
+	cornice.ratio = 16.0 / 9.0
+	cornice.stretch_mode = AspectRatioContainer.STRETCH_COVER
+	cornice.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	cornice.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cornice.clip_contents = true
+	add_child(cornice)
+	_video = VideoStreamPlayer.new()
+	_video.name = "VideoJilly"
+	_video.stream = stream
+	_video.loop = true
+	_video.expand = true
+	_video.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cornice.add_child(_video)
+	_video.play()
+	return true
+
+
+## Il velo scuro a sinistra, dietro i comandi e il consiglio, che sfuma verso Jilly; e un filo di buio in basso,
+## dietro la barra.
+func _metti_velo() -> void:
+	for verso in [[Vector2(0, 0), Vector2(1, 0), VELO_SINISTRA, 0.0, 0.62], [Vector2(0, 1), Vector2(0, 0), 0.7, 0.0, 0.3]]:
+		var t := TextureRect.new()
+		var g := GradientTexture2D.new()
+		g.gradient = Gradient.new()
+		g.gradient.offsets = PackedFloat32Array([0.0, verso[4], 1.0])
+		g.gradient.colors = PackedColorArray([Color(StileMenu.FONDO, verso[2]), Color(StileMenu.FONDO, verso[3]),
+				Color(StileMenu.FONDO, 0.0)])
+		g.fill_from = verso[0]
+		g.fill_to = verso[1]
+		g.width = 128
+		g.height = 128
+		t.texture = g
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_SCALE
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		add_child(t)
+
+
+## Senza il video: un riflesso d'acqua appena accennato in basso.
+func _metti_riflesso() -> void:
 	var riflesso := TextureRect.new()
 	var g := GradientTexture2D.new()
 	g.gradient = Gradient.new()
@@ -182,6 +248,8 @@ func _costruisci() -> void:
 	riflesso.anchor_bottom = 1.0
 	add_child(riflesso)
 
+
+func _metti_testi() -> void:
 	var margini := MarginContainer.new()
 	margini.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	margini.add_theme_constant_override("margin_left", 84)
@@ -216,7 +284,20 @@ func _costruisci() -> void:
 	dx.add_theme_constant_override("separation", 14)
 	dx.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	dx.size_flags_stretch_ratio = 0.85
-	centro.add_child(dx)
+	if _video:
+		# con Jilly a destra il consiglio va sotto i comandi, e la destra resta a lei
+		var spazio_c := Control.new()
+		spazio_c.custom_minimum_size.y = 26
+		sx.add_child(spazio_c)
+		sx.add_child(dx)
+		var lei := Control.new()
+		lei.name = "PostoJilly"
+		lei.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		lei.size_flags_stretch_ratio = 1.15
+		lei.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		centro.add_child(lei)
+	else:
+		centro.add_child(dx)
 	dx.add_child(_intestazione("CONSIGLIO"))
 	var scelto: String = CONSIGLI.pick_random()
 	_consiglio = StileMenu.etichetta("", StileMenu.barlow(), 23, StileMenu.TESTO)

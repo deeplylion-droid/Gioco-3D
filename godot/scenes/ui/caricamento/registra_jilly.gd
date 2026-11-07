@@ -27,7 +27,7 @@ const PRIMA := 3.0
 ## Dove sta la camera (gli occhi di chi è davanti alla vasca) e dove guarda (a sinistra dell'occhio di Jilly, che
 ## così sta nella parte destra dello schermo, lasciando la sinistra ai comandi e al consiglio).
 @export var camera := Vector3(-0.42, 1.52, 13.55)
-@export var mira := Vector3(-0.62, 1.48, 11.9)
+@export var mira := Vector3(-0.98, 1.46, 11.9)
 @export var fov := 46.0
 ## L'inclinazione massima della testa (gradi), verso la sua sinistra.
 @export var inclinazione := 16.0
@@ -135,7 +135,10 @@ func _run() -> void:
 func _process(delta: float) -> void:
 	if _inclina == null:
 		return
+	var prima := _t
 	_t += delta
+	if prima < 0.0 and _t >= 0.0:
+		print("JILLY: inizio del ciclo al fotogramma %d" % Engine.get_process_frames())
 	var c := fposmod(_t, CICLO) if _t >= 0.0 else _t + CICLO
 	# la testa: si inclina, resta, torna dritta (curve morbide)
 	var k := 0.0
@@ -160,6 +163,7 @@ func _process(delta: float) -> void:
 		if _t > 5.6:
 			get_tree().quit()
 	elif _t >= CICLO + CODA:
+		print("JILLY: fine al fotogramma %d" % Engine.get_process_frames())
 		get_tree().quit()
 
 
