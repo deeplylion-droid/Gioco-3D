@@ -1,0 +1,181 @@
+# Numeri del collaudo finale 0.3.21 su c6187286 (collaudo, 7 novembre)
+
+## test
+CHECK: 0 errori
+test_avvio_sicuro.log: RISULTATO: 26 controlli ok, 0 falliti
+test_continua.log: RISULTATO: 127 controlli ok, 0 falliti
+test_fondo_porta_bacino.log: RISULTATO: 20 controlli ok, 0 falliti
+test_inseguimento.log: RISULTATO: 43 controlli ok, 0 falliti
+test_inseguimento_suoni.log: RISULTATO: 24 controlli ok, 0 falliti
+test_morbidezza_inseguimento.log: RISULTATO: 72 controlli ok, 0 falliti
+test_occhio_sopra_acque.log: RISULTATO: 106 controlli ok, 0 falliti
+test_partenze_prova.log: RISULTATO: 72 controlli ok, 0 falliti
+test_passi_orfani.log: RISULTATO: 10 controlli ok, 0 falliti
+test_portone_torre.log: RISULTATO: 20 controlli ok, 0 falliti
+test_ripartenza_oltre_portone.log: RISULTATO: 53 controlli ok, 0 falliti
+test_sagome_club.log: RISULTATO: 13 controlli ok, 0 falliti
+test_scaletta_bacino.log: RISULTATO: 13 controlli ok, 0 falliti
+test_scivoli.log: RISULTATO: 26 controlli ok, 0 falliti
+test_strada.log: RISULTATO: 36 controlli ok, 0 falliti
+test_tecnici.log: RISULTATO: 87 controlli ok, 0 falliti
+test_torre.log: RISULTATO: 95 controlli ok, 0 falliti
+test_torre_ingresso.log: non valido senza schermo (vuole il renderer vero); il coordinatore lo guarda nella CI (passo 83, Vulkan)
+controllo_cielo.log: RISULTATO: ok, il cielo non si vede da nessuna parte
+controllo_varchi.log: RISULTATO: 1 controlli ok, 0 falliti
+BUG in tutti i log: 0
+
+## posizionamento
+  ok    nessun caso nuovo di posizionamento (0 nuovi, 64 già noti, 0 eccezioni non più trovate)
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+
+## controllo_cielo
+CIELO: torre caricata, costruita true, checkpoint 11, guscio false
+CIELO: torre Checkpoint_bacino: ok
+CIELO: condotte, dal bacino verso la porta di servizio (tunnel costruito): raggi 81, escono 0
+CIELO: posti controllati 228, con il cielo 0; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): 18; fessure sottili 0
+
+## giunzione (cielo_angoli_onde.gd)
+ANGOLI: raggi 6048, nel cielo 0
+
+## soglia (soglia_giro.gd)
+SOGLIA: lastra in /root/SalaPrincipale/SalaTorre/soglia_torre_sotto, scatola (19.94, -0.57, -18.25) .. (20.235, -0.015, -7.150001), materiale M_amb_pavimento_bagnato ():<ShaderMaterial#-9223371312146148601>
+SOGLIA: sala_pavimento [P: (-20.0, 0.0, -24.0), S: (40.0, 0.00001, 44.0)]
+SOGLIA: collisioni (y del primo colpo dall'alto da y 1,0), colonne x da 19,60 a 20,60 ogni 5 cm
+SOGLIA:   -16.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.972  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970 -0.010 -0.010
+SOGLIA:   -16.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -16.20   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -16.00   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.80   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.20   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.00   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.80   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.20   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.00   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -13.80   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -13.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -13.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970
+SOGLIA: capi del vano, colonne x da 19,95 a 20,30 ogni 2,5 cm: 'S' origine dentro un solido, altrimenti y del colpo da 0,3
+SOGLIA:   -16.62   0.000  0.000  0.000 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.58   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.54   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.50   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.46   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.42   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.58   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.54   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.50   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.46   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.42   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.38   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015      S    -      -      -  
+SOGLIA: cammino z -16.1 verso la torre: arrivato true (x 20.80, z -16.10), piedi sulla soglia fra -0.010 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 3.17 e minima sulla soglia 3.33
+SOGLIA: cammino z -16.1 verso la sala: arrivato true (x 18.62, z -16.10), piedi sulla soglia fra -0.009 e 0.018, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 2.75
+SOGLIA: cammino z -15.6 verso la torre: arrivato true (x 20.80, z -15.60), piedi sulla soglia fra -0.010 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 3.17 e minima sulla soglia 3.33
+SOGLIA: cammino z -15.6 verso la sala: arrivato true (x 18.62, z -15.60), piedi sulla soglia fra -0.009 e 0.018, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 2.75
+SOGLIA: cammino z -15.0 verso la torre: arrivato true (x 20.80, z -15.00), piedi sulla soglia fra -0.010 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 3.17 e minima sulla soglia 3.33
+SOGLIA: cammino z -15.0 verso la sala: arrivato true (x 18.62, z -15.00), piedi sulla soglia fra -0.009 e 0.018, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 2.75
+SOGLIA: cammino z -14.4 verso la torre: arrivato true (x 20.80, z -14.40), piedi sulla soglia fra -0.010 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 3.17 e minima sulla soglia 3.33
+SOGLIA: cammino z -14.4 verso la sala: arrivato true (x 18.62, z -14.40), piedi sulla soglia fra -0.009 e 0.018, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 2.75
+SOGLIA: cammino z -13.9 verso la torre: arrivato true (x 20.80, z -13.90), piedi sulla soglia fra -0.010 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 3.17 e minima sulla soglia 3.33
+SOGLIA: cammino z -13.9 verso la sala: arrivato true (x 18.62, z -13.90), piedi sulla soglia fra -0.009 e 0.018, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 2.75
+SOGLIA: corsa z -16.1 verso la torre: arrivato true (x 20.81, z -16.10), piedi sulla soglia fra -0.009 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 4.84 e minima sulla soglia 5.41
+SOGLIA: corsa z -16.1 verso la sala: arrivato true (x 18.61, z -16.10), piedi sulla soglia fra -0.009 e 0.027, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 4.05
+SOGLIA: corsa z -15.6 verso la torre: arrivato true (x 20.81, z -15.60), piedi sulla soglia fra -0.009 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 4.84 e minima sulla soglia 5.41
+SOGLIA: corsa z -15.6 verso la sala: arrivato true (x 18.61, z -15.60), piedi sulla soglia fra -0.009 e 0.027, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 4.05
+SOGLIA: corsa z -15.0 verso la torre: arrivato true (x 20.81, z -15.00), piedi sulla soglia fra -0.009 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 4.84 e minima sulla soglia 5.41
+SOGLIA: corsa z -15.0 verso la sala: arrivato true (x 18.61, z -15.00), piedi sulla soglia fra -0.009 e 0.027, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 4.05
+SOGLIA: corsa z -14.4 verso la torre: arrivato true (x 20.81, z -14.40), piedi sulla soglia fra -0.009 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 4.84 e minima sulla soglia 5.41
+SOGLIA: corsa z -14.4 verso la sala: arrivato true (x 18.61, z -14.40), piedi sulla soglia fra -0.009 e 0.027, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 4.05
+SOGLIA: corsa z -13.9 verso la torre: arrivato true (x 20.81, z -13.90), piedi sulla soglia fra -0.009 e 0.001, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 4.84 e minima sulla soglia 5.41
+SOGLIA: corsa z -13.9 verso la sala: arrivato true (x 18.61, z -13.90), piedi sulla soglia fra -0.009 e 0.027, vel. verticale max 0.000, fotogrammi senza pavimento 0, velocità prima 0.00 e minima sulla soglia 4.05
+SOGLIA: salto z -16.1 verso la torre: arrivato true (x 20.78, z -16.10), piedi sulla soglia fra 0.343 e 0.913
+SOGLIA: salto z -16.1 verso la sala: arrivato true (x 18.62, z -16.10), piedi sulla soglia fra 0.776 e 1.028
+SOGLIA: salto z -15.6 verso la torre: arrivato true (x 20.78, z -15.60), piedi sulla soglia fra 0.343 e 0.913
+SOGLIA: salto z -15.6 verso la sala: arrivato true (x 18.62, z -15.60), piedi sulla soglia fra 0.776 e 1.028
+SOGLIA: salto z -15.0 verso la torre: arrivato true (x 20.78, z -15.00), piedi sulla soglia fra 0.343 e 0.913
+SOGLIA: salto z -15.0 verso la sala: arrivato true (x 18.62, z -15.00), piedi sulla soglia fra 0.776 e 1.028
+SOGLIA: salto z -14.4 verso la torre: arrivato true (x 20.78, z -14.40), piedi sulla soglia fra 0.343 e 0.913
+SOGLIA: salto z -14.4 verso la sala: arrivato true (x 18.62, z -14.40), piedi sulla soglia fra 0.776 e 1.028
+SOGLIA: salto z -13.9 verso la torre: arrivato true (x 20.78, z -13.90), piedi sulla soglia fra 0.343 e 0.913
+SOGLIA: salto z -13.9 verso la sala: arrivato true (x 18.62, z -13.90), piedi sulla soglia fra 0.776 e 1.028
+SOGLIA: entrata vera: dentro true a x 21.12, piedi minimi sulla soglia -0.009
+SOGLIA: portone quanto 0.00, giocatore (21.4, -0.01, -15.0), lastra ancora true
+SOGLIA: finito
+
+## soglia e intercapedine con le mesh vere (CAPI_MESH=1)
+SOGLIA: lastra in /root/SalaPrincipale/SalaTorre/soglia_torre_sotto, scatola (19.94, -0.57, -18.25) .. (20.235, -0.015, -7.150001), materiale M_amb_pavimento_bagnato ():<ShaderMaterial#-9223371312146148601>
+SOGLIA:   -16.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.972  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970 -0.010 -0.010
+SOGLIA:   -16.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -16.20   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -16.00   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.80   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.20   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -15.00   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.80   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.20   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -14.00   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -13.80   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -13.60   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010
+SOGLIA:   -13.40   0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000 -0.015 -0.015 -0.015  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970  0.970
+SOGLIA:   -16.62   0.000  0.000  0.000 -0.015 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.58   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.54   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.50   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.46   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -16.42   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.58   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.54   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.50   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.46   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.42   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.010      S -0.010 -0.010 -0.010
+SOGLIA:   -13.38   0.000  0.000  0.000 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015 -0.015      S    -      -      -  
+SOGLIA:   -16.62   0.000A  0.000A  0.000A -0.015B -0.010C -0.010C -0.010C -0.010C -0.010C -0.010C -0.010C -0.010C -0.010C -0.010C -0.010C
+SOGLIA:   -16.58   0.000A  0.000A  0.000A -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.010C -0.010C -0.010C -0.010C -0.010C
+SOGLIA:   -16.54   0.000A  0.000A  0.000A -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.010C -0.010C -0.010C -0.010C -0.010C
+SOGLIA:   -16.50   0.000A  0.000A  0.000A -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.010C -0.010C -0.010C -0.010C -0.010C
+SOGLIA:   -13.50   0.000A  0.000A  0.000A -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.010C -0.010C -0.010C -0.010C -0.010C
+SOGLIA:   -13.46   0.000A  0.000A  0.000A -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.010C -0.010C -0.010C -0.010C -0.010C
+SOGLIA:   -13.42   0.000A  0.000A  0.000A -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.010C -0.010C -0.010C -0.010C -0.010C
+SOGLIA:   -13.38   0.000A  0.000A  0.000A -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B -0.015B    -       -       -   
+SOGLIA: lungo il muro, z da -19 a -11 ogni 10 cm: per ogni z le x (19,95-20,30 ogni 2,5 cm) dove un raggio in giù da y 0,3 non incontra niente fino a -3
+SOGLIA:   z -19.0: 20.225(coperto a 1.88)
+SOGLIA:   z -18.9: 20.225(coperto a 1.87)
+SOGLIA:   z -18.8: 20.225(coperto a 1.82)
+SOGLIA:   z -18.7: 20.225(coperto a 1.73)
+SOGLIA:   z -18.6: 20.225
+SOGLIA:   z -18.5: 20.225
+SOGLIA:   z -18.4: 20.225
+SOGLIA:   z -18.3: 20.225
+SOGLIA:   z -17.9: 20.250 20.275 20.300
+SOGLIA:   z -13.3: 20.250 20.275 20.300
+SOGLIA:   z -13.2: 20.250 20.275 20.300
+SOGLIA:   z -13.1: 20.250 20.275 20.300
+SOGLIA:   z -13.0: 20.250 20.275 20.300
+SOGLIA:   z -12.9: 20.250 20.275 20.300
+SOGLIA:   z -12.8: 20.250 20.275 20.300
+SOGLIA:   z -12.7: 20.250 20.275 20.300
+SOGLIA:   z -12.6: 20.250 20.275 20.300
+SOGLIA:   z -12.5: 20.250 20.275 20.300
+SOGLIA:   z -12.4: 20.250 20.275 20.300
+SOGLIA:   z -12.3: 20.250 20.275 20.300
+SOGLIA:   z -12.2: 20.250 20.275 20.300
+SOGLIA:   z -12.1: 20.250 20.275 20.300
+SOGLIA:   z -12.0: 20.250 20.275 20.300
+SOGLIA:   z -11.9: 20.250 20.275 20.300
+SOGLIA:   z -11.8: 20.250 20.275 20.300
+SOGLIA:   z -11.7: 20.250 20.275 20.300
+SOGLIA:   z -11.6: 20.250 20.275 20.300
+SOGLIA:   z -11.5: 20.250 20.275 20.300
+SOGLIA:   z -11.4: 20.250 20.275 20.300
+SOGLIA:   z -11.3: 20.250 20.275 20.300
+SOGLIA:   z -11.2: 20.250 20.275 20.300
+SOGLIA:   z -11.1: 20.250 20.275 20.300
+SOGLIA:   z -11.0: 20.250 20.275 20.300

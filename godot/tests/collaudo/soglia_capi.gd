@@ -16,7 +16,7 @@ const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
 const SALA_GD := preload("res://scripts/game/sala_principale.gd")
 const PLAYER := "res://scenes/player/player.tscn"
 const XS := 20.1
-var raggio := 25.0
+var raggio := 20.0
 var _radice: Node3D
 var _prima := {}
 var cart := ""
@@ -105,7 +105,7 @@ func _run() -> void:
 	c.add_child(o)
 	c.current = true
 	# i due capi del vano: le strisce fra la fine della lastra (z -16,52 / -13,48) e lo stipite
-	for capo in [-16.56, -13.44]:
+	for capo in [-17.5, -16.56, -13.44, -12.5]:
 		var g := Vector3(XS, 0.0, capo)
 		var dentro := 1.0 if capo < -15.0 else -1.0
 		for v in [["dall_alto", Vector3(0.0, 0.45, 0.02 * dentro)], ["da_sala", Vector3(-0.5, 0.35, 0.25 * dentro)], \

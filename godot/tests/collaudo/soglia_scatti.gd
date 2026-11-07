@@ -15,7 +15,7 @@ const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
 const SALA_GD := preload("res://scripts/game/sala_principale.gd")
 const PLAYER := "res://scenes/player/player.tscn"
 const XS := 20.1
-var raggio := 25.0
+var raggio := 20.0
 var _radice: Node3D
 var _prima := {}
 var cart := ""
