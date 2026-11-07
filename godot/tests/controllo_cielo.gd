@@ -161,8 +161,10 @@ func _porta_bacino(level: Node3D, torre: Node3D, spazio: PhysicsDirectSpaceState
 	if c == null:
 		_casi.append("condotte: Checkpoint_bacino non c'è (da correggere)")
 		return
+	# a tempo, non a fotogrammi: senza schermo i fotogrammi corrono, il thread che carica il tunnel no
 	var tunnel: Node3D = null
-	for i in 9000:
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 300000:
 		tunnel = level.get(&"sala_sottomarino") as Node3D
 		if tunnel and bool(tunnel.get(&"costruita")):
 			break

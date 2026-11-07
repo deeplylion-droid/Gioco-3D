@@ -163,7 +163,7 @@ func _passi() -> Array:
 	for i in 4:
 		out.append(func(): _modello(i))
 	out.append(_tubi)
-	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
+	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _fondo_porta, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
 	# le sagome del club dei bambini attorno alle vasche (SagomeClub, scelta A dell'utente del 6 novembre)
 	out.append_array(SagomeClub.passi(self))
 	# gli stendardi dei bambini appesi nel vuoto dietro le vasche (nota dell'utente del 6 novembre; StendardiInseguimento)
@@ -500,6 +500,52 @@ func cala_grata() -> void:
 		var tw := create_tween()
 		tw.tween_property(grata, "global_position", grata.global_position + Vector3.DOWN * float(dati["grata"]["corsa"]), 0.6) \
 				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+
+## Dietro il vano della porta di servizio in cima alla scaletta (nel muro ovest, x 40,4) c'è il tunnel del viaggio
+## sottomarino, che la sala mette nel livello e costruisce nel thread mentre si è nella torre. Ripartendo nelle
+## condotte (dopo una morte, da Continua, F9 Inseguimento) il tunnel arriva circa 4 s dopo (tests/misura_attesa_sb1.gd)
+## e intanto dal vano si vedeva il vuoto (cubo magenta di varchi-cielo, 7 novembre). Finché il tunnel non è pronto
+## (AttesaZone "tunnel") dietro il vano c'è un fondo nero opaco, appoggiato al muro dal lato del tunnel, più grande del
+## vano: da lontano è un corridoio buio. Quando il tunnel è pronto va via; se lo è già, non si mette.
+const FONDO_PORTA_X := 40.396           # 4 mm dietro il muro (il piano del muro è a x 40,4): appoggiato, senza sfarfallio
+const FONDO_PORTA_Z := Vector2(-5.9, -4.1)  # il vano: z -5,75 .. -4,25
+const FONDO_PORTA_Y := Vector2(-30.1, -27.7)  # il vano: y -30 .. -27,85
+var _fondo_porta_nodo: MeshInstance3D
+
+
+func _fondo_porta() -> void:
+	if AttesaZone.e_pronta(&"tunnel") or is_instance_valid(_fondo_porta_nodo):
+		return
+	var q := QuadMesh.new()
+	q.size = Vector2(FONDO_PORTA_Z.y - FONDO_PORTA_Z.x, FONDO_PORTA_Y.y - FONDO_PORTA_Y.x)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color.BLACK
+	m.disable_fog = true
+	q.material = m
+	var f := MeshInstance3D.new()
+	f.name = "FondoPortaServizio"
+	f.mesh = q
+	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	f.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+	add_child(f)
+	# il quad guarda verso +Z: girato verso est (verso le condotte), contro il muro
+	var dove := Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(FONDO_PORTA_X,
+			(FONDO_PORTA_Y.x + FONDO_PORTA_Y.y) * 0.5, (FONDO_PORTA_Z.x + FONDO_PORTA_Z.y) * 0.5))
+	f.transform = (global_transform.affine_inverse() * dove) if is_inside_tree() else dove
+	_fondo_porta_nodo = f
+	var t := Timer.new()
+	t.name = "FondoPortaAttesa"
+	t.wait_time = 0.2
+	t.autostart = true
+	t.timeout.connect(func():
+		if AttesaZone.e_pronta(&"tunnel"):
+			if is_instance_valid(_fondo_porta_nodo):
+				_fondo_porta_nodo.queue_free()
+			_fondo_porta_nodo = null
+			t.queue_free())
+	add_child(t)
 
 
 func _scala() -> void:

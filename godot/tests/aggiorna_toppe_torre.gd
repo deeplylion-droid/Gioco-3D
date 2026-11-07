@@ -12,6 +12,10 @@ extends Node
 
 const GLB := "res://assets/ambiente/torre/torre_struttura.glb"
 const MESH := "torre_A"
+## Le superfici dove i giri di tre spigoli sono buchi verso il cielo: 0 pavimento, 1 soffitto, 2 vasca, 3 muro.
+const SUPERFICIE_MAX := 3
+## Un vicino dà normale, UV e tangente a un angolo solo se la sua normale è allineata alla faccia.
+const ALLINEATA := 0.9
 
 
 func _ready() -> void:
@@ -42,6 +46,49 @@ func _run() -> void:
 	get_tree().quit()
 
 
+## Il triangolo di [param arr] nel piano della faccia (normale allineata, a meno di 1 cm) più vicino a [param centro].
+static func _faccia_nel_piano(arr: Array, centro: Vector3, n_ref: Vector3) -> int:
+	var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var idx = arr[Mesh.ARRAY_INDEX]
+	var n_tri: int = ((idx as PackedInt32Array).size() if idx != null else v.size()) / 3
+	var meglio := -1
+	var d_meglio := INF
+	for t in n_tri:
+		var a: Vector3 = v[idx[t * 3]] if idx != null else v[t * 3]
+		var b: Vector3 = v[idx[t * 3 + 1]] if idx != null else v[t * 3 + 1]
+		var c: Vector3 = v[idx[t * 3 + 2]] if idx != null else v[t * 3 + 2]
+		var nf := -((b - a).cross(c - a))
+		if nf.length() < 1e-6 or nf.normalized().dot(n_ref) < ALLINEATA or absf((centro - a).dot(n_ref)) > 0.01:
+			continue
+		var dist := centro.distance_to((a + b + c) / 3.0)
+		if dist < d_meglio:
+			d_meglio = dist
+			meglio = t
+	return meglio
+
+
+## Le coordinate [param quale] (UV o UV2) in [param p] con la mappa affine del triangolo [param t] (nel suo piano).
+static func _uv_nel_piano(arr: Array, quale: int, t: int, p: Vector3) -> Vector2:
+	var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var uvs: PackedVector2Array = arr[quale]
+	var idx = arr[Mesh.ARRAY_INDEX]
+	var i0: int = idx[t * 3] if idx != null else t * 3
+	var i1: int = idx[t * 3 + 1] if idx != null else t * 3 + 1
+	var i2: int = idx[t * 3 + 2] if idx != null else t * 3 + 2
+	var e1 := v[i1] - v[i0]
+	var e2 := v[i2] - v[i0]
+	var q := p - v[i0]
+	var d11 := e1.dot(e1)
+	var d12 := e1.dot(e2)
+	var d22 := e2.dot(e2)
+	var den := d11 * d22 - d12 * d12
+	if absf(den) < 1e-12:
+		return uvs[i0]
+	var a := (q.dot(e1) * d22 - q.dot(e2) * d12) / den
+	var b := (q.dot(e2) * d11 - q.dot(e1) * d12) / den
+	return uvs[i0] + (uvs[i1] - uvs[i0]) * a + (uvs[i2] - uvs[i0]) * b
+
+
 static func _r(x: float) -> float:
 	return snappedf(x, 0.00001)
 
@@ -53,6 +100,11 @@ static func calcola(mesh: Mesh) -> Dictionary:
 	var orientati := {}     # spigolo orientato del buco (b -> a) -> [superficie, vertice di b, vertice di a]
 	var da := {}            # id -> ids raggiungibili lungo gli spigoli del buco
 	var tris := []
+	var pos_id := {}        # id -> posizione
+	var per_pos := {}       # id -> [[superficie, vertice], ...]
+	var scartati := []
+	var proiettati := 0
+	var degeneri := 0
 	for s in mesh.get_surface_count():
 		var arr := mesh.surface_get_arrays(s)
 		arrays.append(arr)
@@ -63,7 +115,11 @@ static func calcola(mesh: Mesh) -> Dictionary:
 			var k := Vector3i((v[i] * 2000.0).round())
 			if not ids.has(k):
 				ids[k] = ids.size()
+				pos_id[ids[k]] = v[i]
 			vid[i] = ids[k]
+			if not per_pos.has(ids[k]):
+				per_pos[ids[k]] = []
+			(per_pos[ids[k]] as Array).append([s, i])
 		var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array(range(v.size()))
 		for t in idx.size() / 3:
 			tris.append([s, idx[t * 3], idx[t * 3 + 1], idx[t * 3 + 2], vid[idx[t * 3]], vid[idx[t * 3 + 1]], vid[idx[t * 3 + 2]]])
@@ -111,39 +167,64 @@ static func calcola(mesh: Mesh) -> Dictionary:
 			for c: int in conta:
 				if conta[c] > conta[s]:
 					s = c
-			# ogni angolo dal vicino della stessa superficie che ce l'ha
+			# solo i buchi verso il cielo: pavimento, soffitto, vasca e muro (ambienti-2, 7 novembre). Sulle altre
+			# superfici (inox, metallo, giochi, scivoli) i giri di tre spigoli sono anelli fra pezzi che si toccano,
+			# col giro al contrario delle normali: come gli anelli di docs/tecnico/varchi_cielo/LEGGIMI.md, si lasciano
+			if s > SUPERFICIE_MAX:
+				scartati.append([s, u, v, w])
+				continue
+			var pu: Vector3 = pos_id[u]
+			var pv: Vector3 = pos_id[v]
+			var pw: Vector3 = pos_id[w]
+			# tre punti in fila (area sotto 1 cm², fra pezzi che si toccano lungo uno spigolo): non c'è niente da chiudere
+			if (pv - pu).cross(pw - pu).length() < 2e-4:   # sotto 1 cm²
+				degeneri += 1
+				continue
+			# la normale della faccia (davanti in senso orario, come il motore)
+			var n_ref := -((pv - pu).cross(pw - pu)).normalized()
+			# ogni angolo dal vertice della stessa superficie, in quel punto, con la normale allineata alla faccia
+			# (un angolo sullo spigolo fra due pareti non la prende dalla parete perpendicolare)
 			var angoli := []
-			for coppia: Array in [[e1, 1, e3, 2], [e2, 1, e1, 2], [e3, 1, e2, 2]]:
-				var p: Array = coppia[0]
-				var q: Array = coppia[2]
-				if int(p[0]) == s:
-					angoli.append([s, p[coppia[1]]])
-				elif int(q[0]) == s:
-					angoli.append([s, q[coppia[3]]])
-				else:
-					angoli.append([p[0], p[coppia[1]]])
+			for c: int in [u, v, w]:
+				var meglio := -1
+				var d_meglio := ALLINEATA
+				for cand: Array in per_pos.get(c, []):
+					if int(cand[0]) != s:
+						continue
+					var nn: Vector3 = (arrays[s][Mesh.ARRAY_NORMAL] as PackedVector3Array)[cand[1]]
+					if nn.dot(n_ref) > d_meglio:
+						d_meglio = nn.dot(n_ref)
+						meglio = cand[1]
+				angoli.append(meglio)
+			var arr: Array = arrays[s]
+			var vicina := -1
+			if angoli.has(-1):
+				vicina = _faccia_nel_piano(arr, (pu + pv + pw) / 3.0, n_ref)
+				proiettati += 1
+				if vicina < 0:
+					push_warning("toppa senza faccia vicina nel piano: superficie %d, centro %s" % [s, (pu + pv + pw) / 3.0])
+					continue
 			if not per_sup.has(s):
 				per_sup[s] = {"superficie": s, "v": [], "n": [], "t": [], "uv": [], "uv2": [], "c": []}
 			var d: Dictionary = per_sup[s]
-			var pos := []
-			for an: Array in angoli:
-				var arr: Array = arrays[an[0]]
-				var i: int = an[1]
-				var p3: Vector3 = (arr[Mesh.ARRAY_VERTEX] as PackedVector3Array)[i]
-				pos.append(p3)
+			var pos := [pu, pv, pw]
+			var idx_v = arr[Mesh.ARRAY_INDEX]
+			for j in 3:
+				var p3: Vector3 = pos[j]
+				var i: int = angoli[j]
+				if vicina >= 0:
+					i = int(idx_v[vicina * 3]) if idx_v != null else vicina * 3
 				(d["v"] as Array).append_array([_r(p3.x), _r(p3.y), _r(p3.z)])
-				if arr[Mesh.ARRAY_NORMAL] != null:
-					var n: Vector3 = (arr[Mesh.ARRAY_NORMAL] as PackedVector3Array)[i]
-					(d["n"] as Array).append_array([_r(n.x), _r(n.y), _r(n.z)])
+				var n: Vector3 = n_ref if vicina >= 0 else (arr[Mesh.ARRAY_NORMAL] as PackedVector3Array)[i]
+				(d["n"] as Array).append_array([_r(n.x), _r(n.y), _r(n.z)])
 				if arr[Mesh.ARRAY_TANGENT] != null:
 					var ta: PackedFloat32Array = arr[Mesh.ARRAY_TANGENT]
 					(d["t"] as Array).append_array([_r(ta[i * 4]), _r(ta[i * 4 + 1]), _r(ta[i * 4 + 2]), _r(ta[i * 4 + 3])])
-				if arr[Mesh.ARRAY_TEX_UV] != null:
-					var uv: Vector2 = (arr[Mesh.ARRAY_TEX_UV] as PackedVector2Array)[i]
-					(d["uv"] as Array).append_array([_r(uv.x), _r(uv.y)])
-				if arr[Mesh.ARRAY_TEX_UV2] != null:
-					var uv2: Vector2 = (arr[Mesh.ARRAY_TEX_UV2] as PackedVector2Array)[i]
-					(d["uv2"] as Array).append_array([_r(uv2.x), _r(uv2.y)])
+				for quale: int in [Mesh.ARRAY_TEX_UV, Mesh.ARRAY_TEX_UV2]:
+					if arr[quale] == null:
+						continue
+					var uv: Vector2 = _uv_nel_piano(arr, quale, vicina, p3) if vicina >= 0 else (arr[quale] as PackedVector2Array)[i]
+					(d["uv" if quale == Mesh.ARRAY_TEX_UV else "uv2"] as Array).append_array([_r(uv.x), _r(uv.y)])
 				if arr[Mesh.ARRAY_COLOR] != null:
 					var c: Color = (arr[Mesh.ARRAY_COLOR] as PackedColorArray)[i]
 					(d["c"] as Array).append_array([_r(c.r), _r(c.g), _r(c.b), _r(c.a)])
@@ -160,6 +241,8 @@ static func calcola(mesh: Mesh) -> Dictionary:
 	for bu: Dictionary in buchi:
 		area_tot += float(bu["area"])
 	print("TOPPE: triangoli mancanti %d (%.2f m2), spigoli di bordo rimasti (aperture, non toccati) %d" % [buchi.size(), area_tot, resto])
+	print("TOPPE: lasciati (anelli su superfici oltre la %d) %d; in fila (area zero) %d; con normali e UV proiettati dalla faccia vicina nel piano %d" % [
+			SUPERFICIE_MAX, scartati.size(), degeneri, proiettati])
 	for bu: Dictionary in buchi.slice(0, 40):
 		print("TOPPE:   superficie %d centro %s area %.3f m2" % [bu["superficie"], bu["centro"], bu["area"]])
 	var sup := []

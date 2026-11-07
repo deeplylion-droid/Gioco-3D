@@ -330,6 +330,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scaletta_bacino.gd
 
+      - name: Test del fondo nero dietro la porta del bacino finché il tunnel non è pronto (dal titolo, F9, due morti)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_fondo_porta_bacino.gd
+
       - name: Test delle scalette della piscina a onde (piena e vuota, su col giocatore vero in sette modi fin sul bordo; e dalla spiaggia)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scalette_piscina.gd
