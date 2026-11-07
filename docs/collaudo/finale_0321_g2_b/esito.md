@@ -60,3 +60,9 @@ Niente oggetti sospesi o staccati oltre 1 cm, niente compenetrazioni viste, nien
   - stati `risalita_arrivo` e `risalita_dopo` in `tests/collaudo/stati.gd`, uguali a quelli del controllo della CI;
   - `geometria_risalita_g2.gd`;
   - `giro_sala_parti_g2.gd`, con `SCATTI_PARTI` e `SCATTI_RAGGIO`.
+
+## Plafoniera dell'area bimbi (domanda del coordinatore)
+
+Il centimetro è fra il disco acceso (`disco`, raggio 27 cm, emissivo) e l'interno del paralume a cono (`paralume`, bocca di 30 cm), nel punto più vicino. I due pezzi sono fatti in `godot/addons/grafica/look_sala.gd` (PlafonieraBimbi), che non cambia dal 23 ottobre (e9dee0ba): il distacco c'era uguale nella 0.3.20.
+
+Dagli occhi non si vede: la plafoniera è a 9 m d'altezza. Da quattro punti a terra (sud, est, ovest, sotto), anche con lo zoom a 12 gradi, si vede il disco acceso dentro il paralume scuro, senza luce né buio fra i due e senza pezzi che sembrino staccati. L'asta arriva al paralume (`plafoniera_bimbi.jpg`).
