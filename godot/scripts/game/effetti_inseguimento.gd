@@ -33,6 +33,13 @@ const LUCE_DA := Vector3(0, 2.6, 0.9)
 var sala: SalaSottomarino
 var bordi: TextureRect
 var luce: SpotLight3D
+## La maschera della luce rosa in gioco: tutto, meno la lancia in mano (livello 2, viewmodel).
+const MASCHERA_GIOCO := 0xFFFFF & ~2
+## Lo strato delle mesh del tunnel nel riscaldamento (SalaSottomarino.strati_riscaldamento): mentre si riscalda, la luce
+## rosa illumina solo quello. Senza ombre passava i muri del tunnel: dalla prima vista (l'inizio, dietro la porta del
+## bacino) colorava di rosa per 0,1-0,15 s il muro, la scaletta e la ringhiera del bacino, che il giocatore vede
+## (collaudo finale della 0.3.21, #131). Le pipeline sono le stesse: la luce è la stessa, cambia solo su chi si posa.
+const STRATO_RISCALDA := 1 << 12
 ## Quanto sono scuri i bordi ora (0-1, prima di [member bordi_max]) e quanto è accesa la luce (0-1).
 var forza_bordi := 0.0
 var forza_luce := 0.0
@@ -80,7 +87,7 @@ func _ready() -> void:
 	luce.spot_angle = luce_angolo
 	luce.spot_angle_attenuation = 1.6
 	luce.spot_attenuation = 0.3   # (cala piano: arriva oltre il giocatore)
-	Strati.maschera_luce(luce, 0xFFFFF & ~2)   # (non la lancia in mano: livello 2, viewmodel)
+	Strati.maschera_luce(luce, MASCHERA_GIOCO)
 	luce.spot_range = 30.0
 	luce.light_volumetric_fog_energy = 0.5
 	luce.shadow_enabled = false      # (senza ombre: zero pipeline nuove, e costa poco; nasce davanti a lei)
@@ -93,8 +100,11 @@ func _ready() -> void:
 
 ## Il riscaldamento del tunnel: la luce accesa davanti alla camera nascosta [param cam] (le pipeline delle sue ombre e
 ## della sua luce sui materiali del tunnel si compilano lì), e i bordi appena visibili. [param acceso] falso: finito.
+## Mentre si riscalda la luce si posa solo sulle mesh del tunnel ([constant STRATO_RISCALDA]), non su quello che si vede
+## dalla sala intorno.
 func riscalda_da(cam: Camera3D, acceso: bool) -> void:
 	_riscalda = acceso
+	Strati.maschera_luce(luce, STRATO_RISCALDA if acceso else MASCHERA_GIOCO)
 	luce.visible = acceso
 	luce.light_energy = luce_energia if acceso else 0.0
 	# (il cono largo quanto la vista della camera nascosta: tutto quello che vede è illuminato, e fa ombra, da lei)
