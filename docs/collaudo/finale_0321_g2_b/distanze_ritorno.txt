@@ -1,0 +1,55 @@
+# 2632 oggetti misurati (stato ritorno); i piu staccati (oltre 3 mm) e quelli che non arrivano all architettura
+LuciSala/LuciAreaBimbi/PlafonieraBimbi/@MeshInstance3D@2519                        -1 [-11.97, 9.07, -14.85] 10.0 mm vicino LuciSala/LuciAreaBimbi/PlafonieraBimbi/@MeshInstance3D@2518 
+Gioco/RitornoAlBuio/Scia/BavaBordoFossa/Nastro                                     -1 [-13.47, 0.24, -6.63] 7.0 mm vicino Sala/AreaBimbi/sala_vasca_bimbi_1 
+Interni/Ambienti/Spogliatoi/tornello_rotore                                        -1 [-0.11, 1.14, 24.74] 6.5 mm vicino Interni/Ambienti/Spogliatoi/spogliatoi_statico 
+Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta                          -1 [0.61, 0.96, 33.65] 5.9 mm vicino Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_corpo 
+Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta                                 -1 [0.61, 0.96, 35.65] 5.9 mm vicino Interni/Ambienti/Spogliatoi/armadietti_est_04_rosso_corpo 
+Gioco/EnigmaAcquari/LampadePortone/Spente/PiastraMuro1                             -1 [19.99, 5.5, -18.2] 5.6 mm vicino Sala/Architettura/sala_pareti_alte 
+Gioco/EnigmaAcquari/LampadePortone/Spente/PiastraMuro2                             -1 [19.99, 5.5, -16.3] 5.6 mm vicino Sala/Architettura/sala_pareti_alte 
+Gioco/EnigmaAcquari/LampadePortone/Spente/PiastraMuro3                             -1 [19.99, 5.5, -13.7] 5.6 mm vicino Sala/Architettura/sala_pareti_alte 
+Gioco/EnigmaAcquari/LampadePortone/Spente/PiastraMuro4                             -1 [19.99, 5.5, -11.8] 5.6 mm vicino Sala/Architettura/sala_pareti_alte 
+Sala/Dettagli/det_piastrella_rotta_5                                               11 [11.43, 0.01, 18.58] 5.0 mm vicino Sala/Architettura/sala_pavimento 
+Sala/Dettagli/det_piastrella_rotta_5                                               25 [4.85, 0.01, 15.55] 5.0 mm vicino Sala/Architettura/sala_pavimento 
+Sala/Dettagli/det_piastrella_rotta_2                                               13 [-3.43, 0.01, 14.48] 5.0 mm vicino Sala/Architettura/sala_pavimento 
+Risalita/Infermeria/@Node3D@1607/@Node3D@1611/@MeshInstance3D@1613                 -1 [-39.14, -4.35, 41.7] 5.0 mm vicino Risalita/Infermeria/@Node3D@1607/@Node3D@1611/@MeshInstance3D@1612 
+Risalita/Infermeria/@Node3D@1625/@Node3D@1629/@MeshInstance3D@1631                 -1 [-36.28, -4.35, 47.95] 5.0 mm vicino Risalita/Infermeria/@Node3D@1625/@Node3D@1629/@MeshInstance3D@1630 
+Interni/Ambienti/Stanzino/salvagente_parete                                        -1 [3.9, 1.75, 30.38] 5.0 mm vicino Interni/Ambienti/Stanzino/stanzino_statico 
+Gioco/EnigmaAcquari/LampadePortone/Spente/StaffaMuro1                              -1 [19.81, 5.5, -18.2] 5.0 mm vicino Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSopra 
+Gioco/EnigmaAcquari/LampadePortone/Spente/StaffaMuro2                              -1 [19.81, 5.5, -16.3] 5.0 mm vicino Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSopra 
+Gioco/EnigmaAcquari/LampadePortone/Spente/StaffaMuro3                              -1 [19.81, 5.5, -13.7] 5.0 mm vicino Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSopra 
+Gioco/EnigmaAcquari/LampadePortone/Spente/StaffaMuro4                              -1 [19.81, 5.5, -11.8] 5.0 mm vicino Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSopra 
+Risalita/StanzaPozze/PortaStagna/Lampada/@MeshInstance3D@1958                      -1 [-40.5, -3.02, 33.56] 4.9 mm vicino Risalita/StanzaPozze/PortaStagna/Lampada/@MeshInstance3D@1957 
+Risalita/ObloServizio/BordoOttone                                                  -1 [-21.5, 1.5, 37.41] 4.6 mm vicino Risalita/ObloServizio/struttura_piastra_oblo 
+Risalita/ObloPersonale/BordoOttone                                                 -1 [-36.04, -3.9, 49.6] 4.4 mm vicino Risalita/ObloPersonale/struttura_piastra_oblo 
+Risalita/ObloFiume/BordoOttone                                                     -1 [-3.86, -3.9, 58.0] 4.4 mm vicino Risalita/ObloFiume/struttura_piastra_oblo 
+Risalita/StanzaPozze/PortaStagna/Cardine/Battente/@MeshInstance3D@1944             -1 [-40.5, -4.25, 33.25] 4.1 mm vicino Risalita/StanzaPozze/PortaStagna/Cardine/Battente/@MeshInstance3D@1943 
+Risalita/StanzaPozze/PortaStagna/Cardine/Battente/@MeshInstance3D@1952             -1 [-40.5, -4.25, 33.09] 4.1 mm vicino Risalita/StanzaPozze/PortaStagna/Cardine/Battente/@MeshInstance3D@1951 
+Polaroid/Polaroid05/Modello/Polaroid                                               -1 [1.2, -2.17, 2.9] 4.1 mm vicino Sala/Piscina/sala_piscina_onde 
+Polaroid/Polaroid08/Modello/Polaroid                                               -1 [-8.9, 0.02, 6.6] 4.1 mm vicino Sala/TorreScivoli/arrivo_bordi 
+Sala/Oggetti/ogg_pallone_spiaggia_43                                               -1 [5.25, -0.85, -6.59] 4.0 mm vicino Sala/Piscina/sala_piscina_onde 
+Sala/Dettagli/det_piastrella_rotta_4                                               12 [8.88, 0.01, 14.37] 4.0 mm vicino Sala/Architettura/sala_pavimento 
+Sala/Dettagli/det_macchia_alghe_secche_pavimento                                    4 [2.38, 0.0, 5.5] 4.0 mm vicino Sala/Architettura/sala_pavimento 
+Sala/Dettagli/det_macchia_calcare_pavimento                                         4 [-7.68, 0.0, 3.6] 4.0 mm vicino Sala/Architettura/sala_pavimento 
+Risalita/Infermeria/Negatoscopio/Lastra/@MeshInstance3D@1663                       -1 [-36.45, -3.61, 41.71] 4.0 mm vicino Risalita/Infermeria/Negatoscopio/@MeshInstance3D@1661 
+Interni/Ambienti/Spogliatoi/doccia_01_soffione                                     -1 [-6.0, 2.14, 26.68] 4.0 mm vicino Interni/Ambienti/Spogliatoi/spogliatoi_statico 
+Interni/Ambienti/Spogliatoi/doccia_02_soffione                                     -1 [-5.05, 2.14, 26.68] 4.0 mm vicino Interni/Ambienti/Spogliatoi/spogliatoi_statico 
+Interni/Ambienti/Spogliatoi/doccia_03_soffione                                     -1 [-4.1, 2.14, 26.68] 4.0 mm vicino Interni/Ambienti/Spogliatoi/spogliatoi_statico 
+Interni/Ambienti/Spogliatoi/doccia_04_soffione                                     -1 [-3.15, 2.14, 26.68] 4.0 mm vicino Interni/Ambienti/Spogliatoi/spogliatoi_statico 
+Interni/Ambienti/Spogliatoi/doccia_05_soffione                                     -1 [-2.2, 2.14, 26.68] 4.0 mm vicino Interni/Ambienti/Spogliatoi/spogliatoi_statico 
+Sala/Oggetti/ogg_pallone_spiaggia_2                                                -1 [-4.0, -1.05, -5.41] 3.6 mm vicino Sala/Piscina/sala_piscina_onde 
+Sala/Dettagli/det_pesce_gomma                                                      10 [2.06, -0.77, -8.18] 3.5 mm vicino Sala/Piscina/sala_piscina_onde 
+Polaroid/Polaroid07/Modello/Polaroid                                               -1 [-3.23, -8.27, 43.36] 3.5 mm vicino Tecnici/Ambienti/SalaPompe/SCRIVANIA NON RETTO
+Gioco/EnigmaAcquari/AcquarioMisto/Allacci/PompaCurva                               -1 [7.83, 0.56, -21.82] 3.4 mm vicino Gioco/EnigmaAcquari/AcquarioMisto/Allacci/PompaFuori 
+Sala/Oggetti/ogg_pallone_spiaggia_71                                               -1 [-5.65, -0.79, -7.24] 3.3 mm vicino Sala/Piscina/sala_piscina_onde 
+Sala/Dettagli/det_macchia_ruggine_colata_muro                                      17 [-20.0, 2.74, -20.77] 3.3 mm vicino Sala/Architettura/sala_pareti_basse 
+Gioco/EnigmaAcquari/Disegno/Modello                                                -1 [17.4, 2.9, -21.36] 3.2 mm vicino Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Vetri 
+Sala/Dettagli/det_macchia_alghe_verdi_pavimento                                     4 [3.78, 0.0, 5.7] 3.1 mm vicino Sala/Piscina/piscina_bordi 
+Sala/Dettagli/det_macchia_ruggine_colata_muro                                       4 [18.45, 2.84, -24.0] 3.1 mm vicino Sala/Architettura/sala_pareti_basse 
+Sala/Dettagli/det_macchia_ruggine_colata_muro                                      31 [-11.79, 2.61, -24.0] 3.1 mm vicino Sala/Architettura/sala_pareti_basse 
+Sala/Dettagli/det_macchia_ruggine_colata_muro                                      34 [-7.23, 2.61, -24.0] 3.1 mm vicino Sala/Architettura/sala_pareti_basse 
+Sala/Dettagli/det_macchia_ruggine_colata_muro                                      35 [-6.54, 2.61, -24.0] 3.1 mm vicino Sala/Architettura/sala_pareti_basse 
+Sala/Oggetti/ogg_ciambella_gonfiabile_76                                           -1 [-12.4, -0.16, 3.0] 0.0 mm vicino Vasche/AcquaVascaArrivo/Surface NON RETTO
+Sala/Oggetti/ogg_pallone_spiaggia_78                                               -1 [-10.2, -0.15, 5.4] 0.0 mm vicino Vasche/AcquaVascaArrivo/Surface NON RETTO
+Sala/Oggetti/ogg_tubi_galleggianti_77                                              -1 [-14.2, -0.07, 0.8] 0.0 mm vicino Vasche/AcquaVascaArrivo/Surface NON RETTO
+Sala/VascaCentrale/ogg_ciambella_gonfiabile_41                                     -1 [-1.4, 0.89, 9.3] 0.0 mm vicino Vasca/AcquaVascaCentrale/Surface NON RETTO
+Sala/VascaCentrale/ogg_paperella_gigante_40                                        -1 [1.2, 0.92, 9.1] 0.0 mm vicino Vasca/AcquaVascaCentrale/Surface NON RETTO
