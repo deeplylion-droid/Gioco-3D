@@ -8,8 +8,9 @@ extends Node3D
 ## resta chiusa. Poi il giocatore si rialza e riprende il controllo.
 ##
 ## La camera è guidata e si muove come la testa di chi è terrorizzato: si rialza da terra, si ritrae
-## dalla bocca quando la testa scatta in avanti, trema, segue lo squalo che si gira e scappa, sobbalza
-## alla porta. Il nodo sta dove parte lo squalo e guarda verso il giocatore (asse +Z locale): la porta è
+## dalla bocca quando la testa scatta in avanti, segue lo squalo che si gira e scappa. Dalla 0.3.22 non trema più
+## (né il tremore della paura, né le scosse dei passi e della porta: riscontro dell'utente sulla 0.3.21, "togliamo il
+## tremore della camera che non fa nessun effetto") e sta [constant ARRETRA] m più indietro. Il nodo sta dove parte lo squalo e guarda verso il giocatore (asse +Z locale): la porta è
 ## dietro di lui, verso -Z. Lo squalo e i tempi vengono da assets_src/mascotte/mostro_rig.py
 ## (mostro_squalo_A_rig.glb e .json): l'animazione "risveglio" contiene già la corsa.
 
@@ -33,6 +34,10 @@ const CELLA := 0.08
 @export var cardine := Vector3(21.965, 0.0, -0.72)
 ## Di quanto è aperta all'inizio (verso il corridoio).
 @export var apertura_porta := 120.0
+## Di quanto la camera sta più indietro, in orizzontale, via dallo squalo (dalla direzione in cui guarda all'inizio),
+## per tutta la scena; torna a 0 mentre ci si alza in piedi (riscontro dell'utente sulla 0.3.21: "arretriamo
+## leggermente la camera, pochissimo").
+const ARRETRA := 0.10
 ## Altezza degli occhi mentre si è in ginocchio, a terra, davanti allo squalo.
 @export var occhi_a_terra := 0.98
 
@@ -50,10 +55,6 @@ var _passi_fatti := 0
 var _suoni := {}
 var _yaw0 := 0.0
 var _sguardo := Vector3.ZERO
-var _scossa := 0.0          # sobbalzo della camera (si smorza)
-var _passo_t := -1.0        # quando ha toccato terra l'ultimo passo (per la scossa della camera)
-var _passo_forza := 0.0     # quanto forte la scossa di quel passo (0-1)
-var _passo_lato := 1.0      # da che parte rolla la camera (si alterna a ogni passo)
 var _tetti: Array = []      # [player 3D, il suo max_db di prima, quando rimetterlo]
 var _fine := 0.0
 var _luce_corsa: OmniLight3D
@@ -364,7 +365,6 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 	var passi: Array = tempi.get("passi", [])
 	while _passi_fatti < passi.size() and _t >= float(passi[_passi_fatti]):
 		_suona("passo%d" % _passi_fatti, &"squalo_passo", _bone_mondo("radice"))
-		_passo_della_camera()
 		_passi_fatti += 1
 	# la porta: lui ci passa, poi sbatte e resta chiusa; lui non si vede più
 	if _perno and not _porta_chiusa:
@@ -372,38 +372,11 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 		_perno.rotation.y = deg_to_rad(apertura_porta) * (1.0 - x * x)
 		if x >= 1.0:
 			_porta_chiusa = true
-			_scossa = 1.0
 			_suona("porta", &"porta_chiusa", _perno.global_position + Vector3.UP * 1.2, 0.72, 4.0)
 	if squalo and _t > porta_t + 0.62:
 		squalo.visible = false
 		if _anim:
 			_anim.pause()
-
-
-## Ogni passo dal giro alla porta scuote la camera, insieme al suono: forte vicino (e nel giro, addosso al
-## giocatore), sempre più debole mentre si allontana (richiesta dell'utente del 22 ottobre: "un bel tremolio della
-## camera in corrispondenza dei suoi passi").
-func _passo_della_camera() -> void:
-	if _p == null:
-		return
-	var d := _p.camera.global_position.distance_to(_bone_mondo("radice"))
-	_passo_forza = clampf(1.8 / maxf(d, 0.1), 0.0, 1.0)
-	_passo_forza *= _passo_forza * 0.5 + 0.5     # cala più in fretta lontano
-	_passo_t = _t
-	_passo_lato = -_passo_lato
-
-
-## La scossa del passo adesso: [scesa della camera (m), beccheggio (radianti), rollio (radianti)]. Breve e
-## marcata: giù di colpo in 35 ms, poi torna su smorzata in 0,2 s con un piccolo rimbalzo.
-func _scossa_passo() -> Vector3:
-	if _passo_t < 0.0:
-		return Vector3.ZERO
-	var x := _t - _passo_t
-	if x > 0.35:
-		return Vector3.ZERO
-	var botta := x / 0.035 if x < 0.035 else exp(-(x - 0.035) / 0.07) * cos((x - 0.035) * 28.0)
-	var f := _passo_forza * botta
-	return Vector3(0.045 * f, deg_to_rad(1.6) * f, deg_to_rad(1.1) * f * _passo_lato)
 
 
 ## La luce della corsa: dietro e sopra di lui, dalla parte del giocatore; si accende quando si gira verso la
@@ -465,28 +438,21 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	if _t > R:
 		for osso in ["testa", "collo", "petto", "mano.L", "mano.R", "coda2"]:
 			indietro = maxf(indietro, clampf(0.55 - occhio.distance_to(_bone_mondo(osso)), 0.0, 0.3))
-	# tremore: forte nella minaccia, poi meno; sobbalzo al richiamo e alla porta
-	if _t > R and _t < R + 0.1:
-		_scossa = maxf(_scossa, 0.7)
-	_scossa = maxf(0.0, _scossa - delta * 2.5)
-	var paura := 1.0 if _t < R else lerpf(1.0, 0.45, _liscio(0.0, 1.0, R, porta_t))
-	paura *= 1.0 - _liscio(0.0, 1.0, alzati, alzati + 1.4) * 0.8
-	var tr := Vector3(_rumore(_t, 7.0, 1.0), _rumore(_t, 6.0, 2.0), _rumore(_t, 5.0, 3.0)) * 0.012 * paura
-	tr += Vector3(_rumore(_t, 21.0, 4.0), _rumore(_t, 19.0, 5.0), 0.0) * 0.03 * _scossa
-	var sp := _scossa_passo()
+	# (dalla 0.3.22 niente tremore, né scosse ai passi, al richiamo o alla porta)
 	var d := _sguardo - occhio
-	var yaw := atan2(-d.x, -d.z) + tr.x
-	var pitch := atan2(d.y, Vector2(d.x, d.z).length()) + tr.y - sp.y
+	var yaw := atan2(-d.x, -d.z)
+	var pitch := atan2(d.y, Vector2(d.x, d.z).length())
 	_p.set_look(yaw, pitch)
 	# la testa sdraiata è girata su un fianco e si raddrizza mentre si rialza
-	cam.rotation.z = deg_to_rad(_liscio(70.0, 0.0, 1.1, 2.4)) + tr.z + sp.z
-	# (la scossa del passo prima della distanza dalla pelle: anche scossa resta fuori da lui)
-	cam.position = Vector3(0.0, h - _p.stand_eye_height - indietro * 0.3 - sp.x, indietro)
+	cam.rotation.z = deg_to_rad(_liscio(70.0, 0.0, 1.1, 2.4))
+	cam.position = Vector3(0.0, h - _p.stand_eye_height - indietro * 0.3, indietro)
 	# mai dentro lo squalo: fuori dalla sua pelle (la spinta sale subito e cala piano, senza scatti)
 	# la testa del giocatore subito con lo sguardo di adesso (lo rifà lui dopo, uguale): così la posizione
 	# della camera nel mondo è già quella che si vedrà
 	_p.call(&"_update_head", Engine.get_physics_interpolation_fraction())
-	var base := cam.global_position
+	# un filo più indietro, in orizzontale via dallo squalo; mentre ci si alza torna a 0 (alla fine la camera è
+	# quella del giocatore, senza scatti)
+	var base := cam.global_position - _dir_yaw(_yaw0) * arretra(_t, alzati)
 	var serve := _fuori_dalla_pelle(base)
 	if serve.length() >= _spinta.length():
 		_spinta = serve
@@ -522,6 +488,13 @@ func _termina() -> void:
 	finito.emit()
 
 
+## L'arretramento orizzontale della camera (m) all'istante [param t] della scena: [constant ARRETRA], che cala a 0
+## mentre ci si alza in piedi (da [param alzati] a [param alzati] + 1,4 s).
+func arretra(t: float, alzati: float) -> float:
+	var x := clampf((t - alzati) / 1.4, 0.0, 1.0)
+	return ARRETRA * (1.0 - x * x * (3.0 - 2.0 * x))
+
+
 func _dir_yaw(y: float) -> Vector3:
 	return Vector3(-sin(y), 0.0, -cos(y))
 
@@ -529,8 +502,3 @@ func _dir_yaw(y: float) -> Vector3:
 func _liscio(a: float, b: float, t0: float, t1: float) -> float:
 	var x := clampf((_t - t0) / (t1 - t0), 0.0, 1.0)
 	return lerpf(a, b, x * x * (3.0 - 2.0 * x))
-
-
-func _rumore(t: float, f: float, seme: float) -> float:
-	return sin(t * f * 6.283 + seme) * 0.5 + sin(t * f * 2.71 * 6.283 + seme * 1.7) * 0.3 \
-		+ sin(t * f * 5.13 * 6.283 + seme * 2.3) * 0.2
