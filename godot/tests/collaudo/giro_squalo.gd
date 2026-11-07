@@ -5,6 +5,7 @@ extends Node
 ## verso la porta e indietro; a ogni fotogramma una riga in dati.jsonl: camera, distanza della camera dalla pelle dello
 ## squalo (tutti i vertici, nella posa del momento) e se ci sta dentro, luce viola, controluce, nebbia, porta, suoni
 ## partiti, tremolio, pipeline compilate.
+## GIRO_PASSO=<s>: uno scatto ogni tanti secondi invece di PASSO (collaudo di grafica-2: 0,1 s).
 ## Modi: "alto" (preset di serie), "basso" (grafica al minimo: nebbia volumetrica spenta), "prima" (AtmosferaSqualo
 ## spenta: per confrontare porta, suoni, tremolio e camera con com'era). Senza "scatti" come terzo argomento niente
 ## scatti (si può lanciare senza schermo, per i confronti).
@@ -181,7 +182,7 @@ func _registra() -> void:
 		elif scatti and t >= t_scatto:
 			await _scatto("%03d_%s_%05.2fs" % [n, fase, t])
 			n += 1
-			t_scatto += PASSO
+			t_scatto += float(OS.get_environment("GIRO_PASSO")) if OS.has_environment("GIRO_PASSO") else PASSO
 		if t_controllo >= 0.0 and t >= t_controllo + DOPO:
 			break
 		if fino > 0.0 and t >= fino:
