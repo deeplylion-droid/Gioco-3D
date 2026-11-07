@@ -166,6 +166,8 @@ func _misure() -> void:
 			min_muro = dm
 			t_min_muro = t
 		var salto := c.distance_to(cam_prima)
+		if (t > 1.9 and t < 2.8) or (t > float(s.tempi.get("richiamo", 8.4)) - 0.3 and t < float(s.tempi.get("richiamo", 8.4)) + 0.9):
+			print("SALTO %.3f %.4f m" % [t, salto])
 		if f > 2 and salto > max_salto:
 			max_salto = salto
 			t_max_salto = t
@@ -194,6 +196,17 @@ func _misure() -> void:
 					sospeso[n][0] = minf(sospeso[n][0], h)
 					sospeso[n][1] = maxf(sospeso[n][1], h)
 				piede_prima[n] = [pos, h]
+		# la luce rossa dei lampi (solo su di lui)
+		var ll := s.get(&"_luce_lampo") as Light3D if &"_luce_lampo" in s else null
+		if ll and is_instance_valid(ll) and ll.light_energy > 0.0 and f % 2 == 0:
+			print("LUCE_LAMPO %.2f energia %.2f maschera %d" % [t, ll.light_energy, ll.light_cull_mask])
+		if f == 5 and ll and is_instance_valid(ll):
+			var altri := []
+			for g in get_tree().current_scene.find_children("*", "GeometryInstance3D", true, false):
+				var gi := g as GeometryInstance3D
+				if (gi.layers & ll.light_cull_mask) != 0 and not s.squalo.is_ancestor_of(gi):
+					altri.append(String(get_tree().current_scene.get_path_to(gi)))
+			print("SONDA: mesh fuori dallo squalo che la luce dei lampi può illuminare: %d %s" % [altri.size(), altri.slice(0, 8)])
 		# le lampade e la goccia, ogni 0,1 s circa
 		if f % 3 == 0:
 			var fattori := []
@@ -348,12 +361,16 @@ func _lampade(t: String) -> void:
 	if sc:
 		for le in sc.find_children("*", "LuceEmergenza", true, false):
 			fattori.append(snappedf(float(le.get(&"fattore")), 0.01))
+	var ll := 0
+	for l in get_tree().root.find_children("LuceLampo", "Light3D", true, false):
+		if (l as Light3D).light_energy > 0.0 and (l as Light3D).is_visible_in_tree():
+			ll += 1
 	var gocce := 0
 	for g in get_tree().root.find_children("Goccia", "ColorRect", true, false):
 		if (g as CanvasItem).is_visible_in_tree():
 			gocce += 1
-	print("PASSO %s: scena %s, lampade fattore %s, gocce visibili %d" % [t, sc.name if sc else "-",
-			("min %.2f max %.2f su %d" % [fattori.min(), fattori.max(), fattori.size()]) if not fattori.is_empty() else "nessuna", gocce])
+	print("PASSO %s: scena %s, lampade fattore %s, gocce visibili %d, luci dei lampi accese %d" % [t, sc.name if sc else "-",
+			("min %.2f max %.2f su %d" % [fattori.min(), fattori.max(), fattori.size()]) if not fattori.is_empty() else "nessuna", gocce, ll])
 
 
 func _fino_a(s: RisveglioSqualo, t: float) -> void:

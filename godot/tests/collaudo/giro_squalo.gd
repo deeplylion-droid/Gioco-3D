@@ -164,6 +164,13 @@ func _registra() -> void:
 		var ultimo: Array = (s.tempi.get("morsi", [[M + 2.2, 0.3]]) as Array).back()
 		istanti.append_array([float(ultimo[0]) + 0.3, R + 0.4, E, P - 0.5, P + 0.8])
 		istanti.sort()
+	# GIRO_ISTANTI=finestre (ricontrollo di grafica-2): uno scatto ogni 0,02 s da 2,0 a 2,6 s e attorno al richiamo
+	elif OS.get_environment("GIRO_ISTANTI") == "finestre":
+		var R := float(s.tempi.get("richiamo", 5.4))
+		for k in 31:
+			istanti.append(2.0 + 0.02 * k)
+		for k in 46:
+			istanti.append(R - 0.2 + 0.02 * k)
 	var n := 0
 	var t_controllo := -1.0
 	var t := 0.0
