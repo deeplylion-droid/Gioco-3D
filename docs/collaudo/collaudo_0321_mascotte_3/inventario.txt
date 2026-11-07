@@ -1,0 +1,12 @@
+  partenza stendardo_1: [1, 3528], visibile true, materiali ["stendardo_1:stendardo_1.png"]
+  partenza stendardo_2: [1, 3528], visibile true, materiali ["stendardo_2:stendardo_2.png"]
+  partenza stendardo_3: [1, 3528], visibile true, materiali ["stendardo_3:stendardo_3.png"]
+  partenza stendardo_4: [1, 3528], visibile true, materiali ["stendardo_4:stendardo_4.png"]
+  partenza sagome: { "Sagoma_": 12, "Puntello": 16, "Mattone": 8, "Legatura": 8 }, visibili true
+  dopo una morte stendardo_1: [1, 3528], visibile true, materiali ["stendardo_1:stendardo_1.png"]
+  dopo una morte stendardo_2: [1, 3528], visibile true, materiali ["stendardo_2:stendardo_2.png"]
+  dopo una morte stendardo_3: [1, 3528], visibile true, materiali ["stendardo_3:stendardo_3.png"]
+  dopo una morte stendardo_4: [1, 3528], visibile true, materiali ["stendardo_4:stendardo_4.png"]
+  dopo una morte sagome: { "Sagoma_": 12, "Puntello": 16, "Mattone": 8, "Legatura": 8 }, visibili true
+  ok  sagome: gli stessi pezzi, negli stessi posti, dopo la morte
+RISULTATO: 276 controlli ok, 0 falliti
