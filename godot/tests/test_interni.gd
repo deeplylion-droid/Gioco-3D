@@ -203,19 +203,51 @@ func _scena_squalo(start: Marker3D) -> void:
 	var pavimento := -INF
 	var mani_quando := ""
 	var pelle_min := 99.0
-	var scosse := 0
-	var scossa_prima := 0.0
-	var scossa_forte := 0.0
-	var scossa_ultima := 0.0
+	# (dalla 0.3.22) la camera non trema: niente rollio dopo che la testa si è raddrizzata, e nessuno scatto
+	var rollio := 0.0
+	var scatto := 0.0
+	var scatto_quando := ""
+	var avanti_prima := Vector3.ZERO
+	var vel_prima := -1.0
+	# (dalla 0.3.22) la camera un filo indietro, mai dentro i muri o le cose del corridoio
+	var cam_muro := INF
+	var cam_muro_dove := ""
+	var arretra_max := 0.0
+	var sfera := SphereShape3D.new()
+	sfera.radius = 0.12
+	# (dalla 0.3.22) nei morsi la bocca si chiude del tutto: la distanza fra il labbro e la punta del mento scende sotto
+	# quella della posa del modello (lo scheletro a riposo, il sorriso scolpito che davanti lascia una fessura)
+	var morso_min := INF
+	var sch := s.get(&"_scheletro") as Skeleton3D
+	var oss: Dictionary = s.get(&"_ossa")
+	var chiusa_rif := (sch.global_basis * sch.get_bone_global_rest(int(oss["bocca"])).origin).distance_to(
+		sch.global_basis * sch.get_bone_global_rest(int(oss["mento_punta"])).origin)
+	var minaccia_t: float = s.tempi.get("minaccia", 2.4)
 	while not fatto[0] and t < 16.0:
 		await get_tree().process_frame
 		t += 1.0 / 60.0
-		var sp: Vector3 = s.call(&"_scossa_passo")
-		if sp.x > 0.008 and scossa_prima <= 0.008:
-			scosse += 1
-			scossa_forte = maxf(scossa_forte, float(s.get(&"_passo_forza")))
-			scossa_ultima = float(s.get(&"_passo_forza"))
-		scossa_prima = sp.x
+		var cam := p.camera
+		if t > 2.5:
+			rollio = maxf(rollio, absf(cam.rotation.z))
+		# lo scatto: quanto cambia in un fotogramma la velocità con cui gira lo sguardo (un tremore la fa saltare)
+		var av := -cam.global_basis.z
+		if avanti_prima != Vector3.ZERO:
+			var vel := rad_to_deg(av.angle_to(avanti_prima)) * 60.0
+			if vel_prima >= 0.0 and t > 2.5 and absf(vel - vel_prima) > scatto:
+				scatto = absf(vel - vel_prima)
+				scatto_quando = "a %.2f s" % t
+			vel_prima = vel
+		avanti_prima = av
+		var qs := PhysicsShapeQueryParameters3D.new()
+		qs.shape = sfera
+		qs.transform = Transform3D(Basis(), cam.global_position)
+		qs.collision_mask = Layers.WORLD
+		var tocchi := spazio.intersect_shape(qs, 4)
+		if not tocchi.is_empty() and cam_muro_dove == "":
+			cam_muro_dove = "a %.2f s in %s" % [t, (tocchi[0]["collider"] as Node).name]
+		arretra_max = maxf(arretra_max, float(s.call(&"arretra", t, porta_t + 1.9)))
+		if t > minaccia_t + 0.5 and t < richiamo_t and s.squalo != null:
+			morso_min = minf(morso_min, (s.call(&"_bone_mondo", "bocca") as Vector3).distance_to(s.call(&"_bone_mondo", "mento_punta")))
 		if s.squalo == null or not s.squalo.visible:
 			continue
 		var occhio := p.camera.global_position
@@ -325,9 +357,13 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(mani_salto <= SALTO_MANI, "mani e gomiti si muovono lisci: la velocità rispetto al petto non cambia più che nella 0.3.16 in un fotogramma (%s)" % mani_salto_quando)
 	check(coda_porta > 22.02, "con la porta chiusa la coda è tutta oltre il battente (il punto più indietro a x %.2f, il battente fino a 22,00; %s)" % [coda_porta, coda_porta_quando])
 	check(pelle_muro < 0.01, "la pelle non entra nei muri, neanche oltre la porta (al più %.3f m%s)" % [pelle_muro, (", " + pelle_muro_dove) if pelle_muro > 0.0 else ""])
-	check(pelle_min > 0.18, "la camera non entra mai nello squalo, anche con le scosse (al più vicino %.2f m dalla sua pelle)" % pelle_min)
-	check(scosse >= 8 and scossa_forte > 0.8 and scossa_ultima < scossa_forte * 0.5,
-		"la camera trema a ogni passo, forte vicino e sempre meno lontano (%d scosse, da %.2f a %.2f)" % [scosse, scossa_forte, scossa_ultima])
+	check(pelle_min > 0.18, "la camera non entra mai nello squalo (al più vicino %.2f m dalla sua pelle)" % pelle_min)
+	check(rollio < 0.001 and not s.has_method(&"_scossa_passo"),
+		"la camera non trema: niente rollio dopo che la testa si è raddrizzata (%.4f rad), niente scosse ai passi" % rollio)
+	check(scatto < 120.0, "lo sguardo gira senza scatti (la sua velocità cambia al più di %.0f °/s in un fotogramma, %s)" % [scatto, scatto_quando])
+	check(cam_muro_dove == "", "la camera, un filo più indietro (%.2f m), non entra nei muri: 12 cm liberi tutto intorno%s" % [arretra_max, (" (tocca " + cam_muro_dove + ")") if cam_muro_dove != "" else ""])
+	check(morso_min < chiusa_rif - 0.02,
+		"nei morsi la bocca si chiude del tutto, più del sorriso scolpito che lascia una fessura (labbro-mento al minimo %.3f m, nella posa del modello %.3f)" % [morso_min, chiusa_rif])
 	check(corsa_x > 22.2, "corre fino oltre la porta tagliafuoco (x %.2f)" % corsa_x)
 	check(alla_porta_y > 0.0 and alla_porta_y < 1.35, "alla porta si abbassa per passare (schiena a %.2f m)" % alla_porta_y)
 	check(fatto[0] and t < porta_t + 4.5, "la scena finisce (%.1f s)" % t)

@@ -125,6 +125,16 @@ func _registra() -> void:
 	print("GIRO: sala pronta, scena dello squalo %s" % ("in corso" if s.in_corso() else "NON partita"))
 	var fotogramma := 0
 	var t_scatto := 0.0
+	# GIRO_ISTANTI=morsi: gli scatti negli istanti della scena (RisveglioSqualo._t) dei tre morsi a bocca chiusa (mostro_anim:
+	# scatto della testa + 0,10 s) e di mezzo fra un morso e l'altro, più quelli dell'inquadratura (sdraiato, la bocca
+	# spalancata, il giro, l'esitazione, la porta), invece di uno ogni PASSO s (collaudo dello squalo della 0.3.22)
+	var istanti: Array = []
+	if OS.get_environment("GIRO_ISTANTI") == "morsi":
+		var M := float(s.tempi.get("minaccia", 2.4))
+		var R := float(s.tempi.get("richiamo", 5.4))
+		var E := float(s.tempi.get("esita", 6.75))
+		var P := float(s.tempi.get("porta", 10.15))
+		istanti = [1.6, M, M + 0.80, M + 1.25, M + 1.70, M + 2.15, M + 2.60, R + 0.4, E, P - 0.5, P + 0.8]
 	var n := 0
 	var t_controllo := -1.0
 	var t := 0.0
@@ -138,7 +148,13 @@ func _registra() -> void:
 			print("GIRO: controllo di nuovo al giocatore a %.2f s" % t)
 		var fase := "scena" if t_controllo < 0.0 else "dopo"
 		_riga(fotogramma, t, fase, s, atm, p)
-		if scatti and t >= t_scatto:
+		if scatti and not istanti.is_empty():
+			var ts := float(s.get(&"_t"))
+			if s.in_corso() and ts >= float(istanti[0]):
+				await _scatto("%03d_scena_%05.2fs" % [n, ts])
+				n += 1
+				istanti.pop_front()
+		elif scatti and t >= t_scatto:
 			await _scatto("%03d_%s_%05.2fs" % [n, fase, t])
 			n += 1
 			t_scatto += PASSO

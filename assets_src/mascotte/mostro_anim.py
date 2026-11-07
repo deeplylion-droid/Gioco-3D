@@ -206,6 +206,13 @@ def fiato_mascella(t):
     return 0.0
 
 
+## L'apertura della mascella (gradi) quando un morso è chiuso. 0 è la posa del modello (il sorriso scolpito), che però
+## davanti lascia ancora una fessura scura fra i denti di sopra e quelli di sotto; a -6 le punte si incastrano e il
+## labbro di sotto arriva alle punte di sopra, senza fessura e senza denti che si compenetrano a vista (provato con
+## render di prova da davanti e dal basso a 0, -3, -6, -8, -10, -12: da -8 il labbro di sotto copre i denti di sopra).
+MORSO_CHIUSA = -6.0
+
+
 def morso(dt):
     """Quanto è chiusa la mascella in un morso (0..1), dt secondi dallo scatto della testa: si chiude in 0,12 s
     (chiusa da + 0,06 a + 0,14 s), si riapre in 0,4 s."""
@@ -424,9 +431,12 @@ def posa(t, piedi):
     # i tre morsi (riscontro dell'utente del 23 ottobre: "gli animerei anche la bocca"): a ogni scatto della
     # testa la mascella si chiude di colpo, chiusa quando suonano i denti (squalo_denti a scatto + 0,08 s,
     # lo schiocco del suono a + 0,12 s), poi si riapre più piano
+    # Dalla 0.3.22 la bocca si chiude del tutto (riscontro dell'utente sulla 0.3.21: "la bocca non la chiude
+    # completamente, dovrebbe"): prima toglieva 46 gradi da 52-59 e restavano 1-13 gradi di fessura; ora va verso
+    # MORSO_CHIUSA, la bocca chiusa davvero (le arcate di sopra e di sotto si toccano, i denti si incastrano).
     if M < t < R:
-        for tc in (M + 0.7, M + 1.6, M + 2.5):
-            apri -= 46.0 * morso(t - tc)
+        chiusa = max(morso(t - tc) for tc in (M + 0.7, M + 1.6, M + 2.5))
+        apri += (MORSO_CHIUSA - apri) * chiusa
     if corsa > 0:
         apri += corsa * 6.0 * (0.5 + 0.5 * math.sin(2 * fase + 1.0))
     p['mascella'] = [('_apri', apri)]
