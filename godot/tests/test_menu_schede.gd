@@ -4,7 +4,9 @@ extends Node
 ## 2. con la tastiera (tasti veri, freccia destra) e con la croce del joypad, dalla barra delle schede si arriva fino ad
 ##    Audio e si torna indietro: prima la freccia destra portava il focus su Preset e ad Audio si arrivava solo col mouse;
 ## 3. sulla scheda Audio i cursori si muovono con le frecce e cambiano il volume; chiuso e riaperto il menu più volte,
-##    un volume cambiato non chiama i pannelli chiusi (il pannello si stacca dall'autoload Audio).
+##    un volume cambiato non chiama i pannelli chiusi (il pannello si stacca dall'autoload Audio), anche tolto
+##    dall'albero senza essere liberato;
+## 4. l'autoload Audio esamina i nodi nuovi anche se fra loro ce n'è uno aggiunto e liberato nello stesso fotogramma.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_schede.gd
 
 const TITOLO := "res://scenes/ui/menu_principale.tscn"
@@ -125,6 +127,36 @@ func _run() -> void:
 	await _frames(3)
 	var collegati := audio_ad.get_signal_connection_list(&"volume_cambiato").size()
 	check(collegati == collegati_prima, "chiusi i menu, nessun pannello resta collegato all'Audio (%d prima, %d dopo)" % [collegati_prima, collegati])
+	# il pannello tolto dall'albero ma non liberato (Godot stacca da solo solo quelli liberati): non resta collegato
+	m = await _apri()
+	if m:
+		var pannelli := m.find_children("*", "PannelloAudio", true, false)
+		check(not pannelli.is_empty(), "nel menu c'è il pannello dell'audio")
+		if not pannelli.is_empty():
+			var p := pannelli[0] as Node
+			check(audio_ad.get_signal_connection_list(&"volume_cambiato").size() == collegati_prima + 1, "il pannello aperto è collegato all'Audio")
+			p.get_parent().remove_child(p)
+			check(audio_ad.get_signal_connection_list(&"volume_cambiato").size() == collegati_prima,
+				"il pannello tolto dall'albero (non liberato) non è più collegato all'Audio")
+			p.free()
+		m.chiudi_menu()
+		await _frames(5)
+
+	# 4. l'autoload Audio con un nodo aggiunto e liberato nello stesso fotogramma (un menu aperto e chiuso subito): gli
+	# altri nodi aggiunti in quel fotogramma si collegano lo stesso. (Una guardia: in locale passava anche col ciclo
+	# di prima su Array[Node], qui il «previously freed» non usciva.)
+	var prima_b := Button.new()
+	var via := Node.new()
+	var dopo_b := Button.new()
+	add_child(prima_b)
+	add_child(via)
+	add_child(dopo_b)
+	via.free()
+	await _frames(3)
+	check(prima_b.has_meta(&"_audio") and dopo_b.has_meta(&"_audio"),
+		"Audio collega i pulsanti aggiunti insieme a un nodo liberato subito (prima %s, dopo %s)" % [prima_b.has_meta(&"_audio"), dopo_b.has_meta(&"_audio")])
+	prima_b.queue_free()
+	dopo_b.queue_free()
 	_fine()
 
 

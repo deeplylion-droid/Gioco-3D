@@ -56,9 +56,10 @@ L'autoload accende e spegne gli effetti secondo le opzioni, ma non cambia i valo
 var menu := preload("res://addons/grafica/menu_opzioni.tscn").instantiate()
 add_child(menu)                       # si chiude da solo (Esc o "Chiudi")
 menu.get_node("Menu").chiuso.connect(func(): get_tree().paused = false)
-if not Grafica.valore("calibrato"):   # al primo avvio
-	add_child(preload("res://addons/grafica/calibrazione_luminosita.tscn").instantiate())
 ```
+La calibrazione della luminosità si apre dal menu (scheda Luminosità, «Calibra la luminosità…»:
+`MenuOpzioni.apri_calibrazione()`, che usa `CalibrazioneLuminosita`). Al primo avvio non si apre più da sola
+(richiesta dell'utente del 7 novembre); la scena che lo faceva è in `scartati/`.
 Il menu lavora anche con il gioco in pausa (`process_mode = ALWAYS`).
 
 ### 7. Effetti ambientali (nodi da aggiungere al livello)
