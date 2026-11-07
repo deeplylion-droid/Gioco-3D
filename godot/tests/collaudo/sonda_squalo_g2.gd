@@ -207,6 +207,16 @@ func _misure() -> void:
 					var pos := sk.global_transform * sk.get_bone_global_pose(ossa[n]).origin
 					riga += "  %s h %.3f (%.2f, %.2f)" % [n, _sopra(pos), pos.x, pos.z]
 				print(riga)
+		# i suoni che la scena fa partire (RisveglioSqualo._suoni), e la bocca rispetto alla camera mentre annusa
+		for k in (s.get(&"_suoni") as Dictionary):
+			if not visti.has("scena_" + String(k)):
+				visti["scena_" + String(k)] = true
+				suoni.append("%.2f s parte %s" % [t, k])
+		if t >= 2.4 and t <= 5.4 and f % 3 == 0:
+			var b: Vector3 = s.call(&"_punto_bocca")
+			var loc := cam.global_transform.affine_inverse() * b
+			var lp := p.global_transform.affine_inverse() * b
+			print("FIUTO %.2f bocca dalla camera: destra %.2f avanti %.2f su %.2f; dal giocatore (corpo): destra %.2f avanti %.2f" % [t, loc.x, -loc.z, loc.y, lp.x, -lp.z])
 		# i suoni che partono, dove stanno rispetto alla camera
 		if a:
 			for pl in get_tree().root.find_children("*", "AudioStreamPlayer3D", true, false) + get_tree().root.find_children("*", "AudioStreamPlayer", true, false):
