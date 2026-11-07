@@ -63,12 +63,15 @@ func _stati() -> void:
 	p.teleport(Vector3(0.0, 0.0, 2.0), 0.0, 0.0)
 	await _frames(30)
 	await _scatto("stato_fermo")
+	await _da_vicino("fermo")
 	Input.action_press("move_forward")
 	await _frames(25)
 	await _scatto("stato_camminando")
+	await _da_vicino("camminando")
 	Input.action_press("sprint")
 	await _frames(25)
 	await _scatto("stato_correndo")
+	await _da_vicino("correndo")
 	Input.action_release("sprint")
 	Input.action_release("move_forward")
 	p.teleport(Vector3(0.0, 0.0, 2.0), 0.0, 0.0)
@@ -76,17 +79,20 @@ func _stati() -> void:
 	Input.action_press("spray")
 	await _frames(40)
 	await _scatto("stato_sparando")
+	await _da_vicino("sparando")
 	Input.action_release("spray")
 	await _frames(20)
 	p.water_pack.set_tank_amount(2.0)
 	Input.action_press("suck")
 	await _frames(40)
 	await _scatto("stato_aspirando")
+	await _da_vicino("aspirando")
 	Input.action_release("suck")
 	await _frames(20)
 	Input.action_press("crouch")
 	await _frames(40)
 	await _scatto("stato_accovacciato")
+	await _da_vicino("accovacciato")
 	Input.action_release("crouch")
 	await _frames(30)
 	# la scala a pioli del livello di prova (x 4,5, z -4): davanti, poi su
@@ -95,12 +101,14 @@ func _stati() -> void:
 	Input.action_press("move_forward")
 	await _frames(70)
 	await _scatto("stato_scala")
+	await _da_vicino("scala")
 	Input.action_release("move_forward")
 	await _frames(10)
 	# in acqua: la vasca piccola (x 3,5, z -0,5)
 	p.teleport(Vector3(3.5, 0.3, -0.5), 0.0, 0.0)
 	await _frames(60)
 	await _scatto("stato_acqua")
+	await _da_vicino("acqua")
 
 
 ## Da vicino: una camera figlia della camera del giocatore, girata attorno alla mano destra.
@@ -132,5 +140,31 @@ func _vicino() -> void:
 		c.make_current()
 		await _frames(6)
 		await _scatto("vicino_" + String(v[0]))
+	cam.make_current()
+	c.queue_free()
+
+
+## Nella posa di adesso (coi tasti ancora premuti), due scatti ravvicinati del guanto sull'impugnatura, dal lato del
+## dorso e da sotto-sinistra (dita e pollice): il guanto è figlio della lancia, ma si guarda lo stesso in ogni posa.
+func _da_vicino(posa: String) -> void:
+	var rig := p.water_pack.lance_rig as Node3D
+	var cam := p.camera
+	var c := Camera3D.new()
+	c.fov = 40.0
+	c.near = 0.005
+	c.cull_mask = 0xFFFFF
+	get_tree().current_scene.add_child(c)
+	var luce := OmniLight3D.new()
+	luce.omni_range = 2.0
+	luce.light_energy = 1.2
+	luce.light_cull_mask = 0xFFFFF
+	c.add_child(luce)
+	for v in [["dorso", Vector3(0.35, 0.05, 0.0)], ["dita", Vector3(-0.3, -0.15, -0.12)]]:
+		var centro: Vector3 = rig.global_transform * Vector3(0.01, -0.24, 0.51)
+		c.global_position = centro + cam.global_basis * (v[1] as Vector3)
+		c.look_at(centro, cam.global_basis.y)
+		c.make_current()
+		await RenderingServer.frame_post_draw
+		await _scatto("posa_%s_%s" % [posa, v[0]])
 	cam.make_current()
 	c.queue_free()
