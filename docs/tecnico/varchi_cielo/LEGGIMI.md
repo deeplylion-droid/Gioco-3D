@@ -2,11 +2,18 @@
 
 ## Toppe di torre_A
 
-L'intaglio col booleano di `tools/blender/torre_a.py` toglie dei triangoli da `torre_A` (torre_struttura.glb): pareti, tetto
-(7,3 e 3,6 m²) e fondo del pozzo, 100 triangoli in tutto, 36 m². Il gioco li rimette costruendo la torre
-(`SalaTorre._toppe_torre_A`, con la collisione) da `godot/assets/ambiente/torre/torre_toppe.json`, che si rifà con
-`godot/tests/aggiorna_toppe_torre.gd` quando cambia il modello; la CI controlla che il file corrisponda alla mesh.
-Quando ambienti-2 corregge il generatore, le toppe vanno via.
+L'intaglio col booleano di `tools/blender/torre_a.py` toglie dei triangoli da `torre_A` (torre_struttura.glb): pareti,
+tetto (7,3 e 3,6 m²) e fondo del pozzo. Il gioco li rimette costruendo la torre (`SalaTorre._toppe_torre_A`, con la
+collisione) da `godot/assets/ambiente/torre/torre_toppe.json`, che si rifà con `godot/tests/aggiorna_toppe_torre.gd`
+quando cambia il modello; la CI controlla che il file corrisponda alla mesh. Quando ambienti-2 corregge il generatore,
+le toppe vanno via.
+
+Dopo il ricontrollo di ambienti-2 (7 novembre) le toppe sono 17 triangoli, 34,3 m², solo su pavimento, soffitto e muro
+(superfici 0-3, i buchi verso il cielo). Ogni angolo prende normale, UV e tangente dal vertice della stessa superficie
+con la normale allineata alla faccia (prima un angolo sullo spigolo fra due pareti le prendeva dalla parete
+perpendicolare: `parete_sud_toppe_prima_dopo.jpg`). Restano fuori 71 giri di tre spigoli su inox, metallo, giochi e
+scivoli (anelli fra pezzi che si toccano, col giro al contrario delle normali, come quelli sotto) e 12 triangoli in
+fila, di area sotto 1 cm².
 
 ## Anelli aperti lasciati come sono
 
