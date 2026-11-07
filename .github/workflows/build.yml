@@ -134,6 +134,16 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_avvio_sicuro.gd
 
+      - name: Test delle schede delle opzioni (tastiera e joypad fino ad Audio, cursori dei volumi, menu riaperto)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_schede.gd
+
+      - name: Test delle opzioni dalla pausa nel gioco (sala principale e torre; tutte le schede, appena arrivati e dopo una morte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_pausa_zone.gd --partenza=inizio
+          godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_pausa_zone.gd --partenza=torre
+
       - name: Test della qualità automatica (al primo avvio sceglie il preset più alto che resta fluido; una scelta a mano resta del giocatore)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_qualita_automatica.gd

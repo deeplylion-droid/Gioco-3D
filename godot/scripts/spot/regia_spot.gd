@@ -7,8 +7,7 @@ extends Node
 ## Uso (sotto il render.lock, con xvfb-run e vulkan):
 ##   godot --path godot --rendering-driver vulkan --resolution 1280x720 --fixed-fps 30 --write-movie <file.avi> \
 ##       --script res://tests/run.gd -- res://scripts/spot/regia_spot.gd <segmento> [preparazione_s]
-## (con --script il gioco sa di essere in una prova: senza, al primo avvio apre la calibrazione della luminosità, che
-## mette in pausa l'albero, e la regia restava ferma)
+## (con --script il gioco sa di essere in una prova)
 ## Per [member preparazione] secondi la camera sta ferma sul primo fotogramma (GI, sonde e acqua si assestano):
 ## quel pezzo il montaggio lo taglia.
 
