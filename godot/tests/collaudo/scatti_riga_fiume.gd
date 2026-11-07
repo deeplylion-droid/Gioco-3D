@@ -11,7 +11,7 @@ extends Node
 
 const PASSO := 12.0
 ## solo i punti dove mascotte ha visto la riga chiara (per il confronto 0.3.20 / 0.3.21)
-const CASI := {"Giusto1": [37.0], "Giusto2": [1.0]}
+const CASI := {"Giusto1": [37.0], "Giusto2": [1.0], "Sbagliato1": [25.0], "Sbagliato2": [25.0], "Sbagliato3": [25.0]}
 ## PROVA=senza_lastre | senza_nastri: nasconde le acque ferme delle conche o i nastri dei canali (per trovare la riga)
 const GIRO := 70.0
 const OCCHI := 0.05 + 1.6
@@ -59,7 +59,7 @@ func _run() -> void:
 		var lung := t.lunghezza()
 		print("tratto %s: %.0f m%s%s" % [t.name, lung, " (ramo sbagliato)" if t.ramo_sbagliato else "", " (uscita)" if t.uscita else ""])
 		for s: float in CASI.get(String(t.name), []):
-			var p := t.punto(s) + Vector3.UP * OCCHI
+			var p := t.punto(s) + Vector3.UP * (OCCHI if not OS.has_environment("OCCHI") else OS.get_environment("OCCHI").to_float())
 			var d := t.direzione(s)
 			d.y = 0.0
 			d = d.normalized()
@@ -72,6 +72,16 @@ func _run() -> void:
 				await RenderingServer.frame_post_draw
 				get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s_%03d_%s.jpg" % [t.name, int(s), v[0]]), 0.85)
 				n += 1
+	# viste lontane del fiume (che il resto non cambi): dall'alto sul centro e da sopra le banchine
+	for v in [[Vector3(0.0, 14.0, -8.0), Vector3(0.0, -0.2, 14.0), "lontano_nord"], [Vector3(-8.0, 9.0, 0.0), Vector3(-30.0, -0.2, 0.0), "lontano_ovest"],
+			[Vector3(10.0, 3.0, 12.0), Vector3(22.0, -0.2, 22.0), "banchina_est"]]:
+		cam.global_position = v[0]
+		cam.look_at(v[1], Vector3.UP)
+		for i in 10:
+			await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s.jpg" % v[2]), 0.85)
+		n += 1
 	print("SCATTI %d" % n)
 	print("FIUME FINITO")
 	get_tree().quit()

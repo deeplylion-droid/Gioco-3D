@@ -59,6 +59,21 @@ func _run() -> void:
 		await get_tree().process_frame
 	var base := await _contrasto()
 	_salva("bis_com_e")
+	print("SONDA camera %s" % cam.global_position.snapped(Vector3.ONE * 0.01))
+	if OS.get_environment("PROVA") == "muro_due_facce":
+		for g in f.find_children("*", "MeshInstance3D", true, false):
+			var mi := g as MeshInstance3D
+			var mt = mi.material_override if mi.material_override else (mi.mesh.surface_get_material(0) if mi.mesh else null)
+			if mt and String(mt.resource_path).ends_with("mat_mosaico_blu.tres"):
+				var nero := StandardMaterial3D.new()
+				nero.albedo_color = Color(0.3, 0.0, 0.0)
+				nero.cull_mode = BaseMaterial3D.CULL_DISABLED
+				mi.material_override = nero
+				print("SONDA muro a due facce: %s %s" % [mi.name, mi.global_transform * mi.get_aabb()])
+		print("SONDA con i muri a due facce il contrasto è %.3f" % await _contrasto())
+		_salva("bis_muro_due_facce")
+		get_tree().quit()
+		return
 	var tutti: Array = []
 	for n in get_tree().root.find_children("*", "GeometryInstance3D", true, false):
 		if (n as GeometryInstance3D).is_visible_in_tree():

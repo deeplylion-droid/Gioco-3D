@@ -480,8 +480,12 @@ static func _sulla_griglia(a: Vector2, b: Vector2, x0: float, x1: float, z0: flo
 ## Una parete del canale dal bordo a-b giù fino al fondo, con la faccia verso [param n] (l'acqua).
 func _parete(st: SurfaceTool, a: Vector2, b: Vector2, n: Vector3) -> void:
 	var q := [Vector3(a.x, 0, a.y), Vector3(b.x, 0, b.y), Vector3(b.x, FONDO, b.y), Vector3(a.x, FONDO, a.y)]
+	# i triangoli (0, 2, 1) e (0, 3, 2) hanno la faccia davanti (in Godot gira in senso orario) dalla parte di nq: deve
+	# guardare l'acqua. (Prima guardava dalla parte opposta: dall'acqua le pareti dei canali non si vedevano, e dietro
+	# si vedeva il fondo, dello stesso mosaico; in fondo alla conca del bivio di Giusto1, dove dietro non c'è il fondo,
+	# restava una riga di cielo a pelo d'acqua, #130)
 	var nq: Vector3 = (q[1] - q[0]).cross(q[3] - q[0])
-	if (-nq).dot(n) < 0.0:
+	if nq.dot(n) < 0.0:
 		q = [q[1], q[0], q[3], q[2]]
 	var d := (b - a).normalized()
 	for idx in [0, 2, 1, 0, 3, 2]:
