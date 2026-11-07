@@ -197,7 +197,8 @@ func _misure() -> void:
 					sospeso[n][1] = maxf(sospeso[n][1], h)
 				piede_prima[n] = [pos, h]
 		# la luce rossa dei lampi (solo su di lui)
-		var ll := s.get(&"_luce_lampo") as Light3D if &"_luce_lampo" in s else null
+		var llv: Variant = s.get(&"_luce_lampo") if &"_luce_lampo" in s else null
+		var ll: Light3D = llv if is_instance_valid(llv) else null
 		if ll and is_instance_valid(ll) and ll.light_energy > 0.0 and f % 2 == 0:
 			print("LUCE_LAMPO %.2f energia %.2f maschera %d" % [t, ll.light_energy, ll.light_cull_mask])
 		if f == 5 and ll and is_instance_valid(ll):
