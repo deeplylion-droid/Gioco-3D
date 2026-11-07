@@ -877,7 +877,7 @@ func _toppe_torre_A() -> void:
 	var toppe := MeshInstance3D.new()
 	toppe.name = "torre_A_toppe"
 	toppe.mesh = mesh
-	toppe.layers = mi.layers
+	toppe.layers = mi.layers  # strati: fuori scena
 	toppe.cast_shadow = mi.cast_shadow
 	toppe.gi_mode = mi.gi_mode
 	mi.add_child(toppe)
