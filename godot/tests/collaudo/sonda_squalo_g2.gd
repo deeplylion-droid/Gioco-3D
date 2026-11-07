@@ -201,9 +201,15 @@ func _misure() -> void:
 				fattori.append(snappedf(float(le.get(&"fattore")), 0.01))
 			lampade_ts.append([snappedf(t, 0.01), snappedf(float(s.get(&"_luce")), 0.01), fattori.slice(0, 2)])
 			goccia.append([snappedf(t, 0.01), s.goccia_visibile()])
+			if s.squalo and is_instance_valid(s.squalo) and s.squalo.visible:
+				var riga := "PIEDI %.2f" % t
+				for n in piedi:
+					var pos := sk.global_transform * sk.get_bone_global_pose(ossa[n]).origin
+					riga += "  %s h %.3f (%.2f, %.2f)" % [n, _sopra(pos), pos.x, pos.z]
+				print(riga)
 		# i suoni che partono, dove stanno rispetto alla camera
 		if a:
-			for pl in a.find_children("*", "AudioStreamPlayer3D", true, false) + a.find_children("*", "AudioStreamPlayer", true, false):
+			for pl in get_tree().root.find_children("*", "AudioStreamPlayer3D", true, false) + get_tree().root.find_children("*", "AudioStreamPlayer", true, false):
 				var ap := pl as Node
 				var suona: bool = ap.get(&"playing")
 				var chiave := ap.get_instance_id()
@@ -238,7 +244,7 @@ func _misure() -> void:
 	await _frames(60)
 	var accesi := []
 	if a:
-		for pl in a.find_children("*", "AudioStreamPlayer3D", true, false) + a.find_children("*", "AudioStreamPlayer", true, false):
+		for pl in get_tree().root.find_children("*", "AudioStreamPlayer3D", true, false) + get_tree().root.find_children("*", "AudioStreamPlayer", true, false):
 			if pl.get(&"playing") and pl.get(&"stream"):
 				accesi.append((pl.get(&"stream") as Resource).resource_path.get_file())
 	print("SONDA: 2 s dopo la fine suonano ancora ", accesi)
