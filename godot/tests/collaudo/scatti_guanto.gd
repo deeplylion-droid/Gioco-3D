@@ -127,7 +127,7 @@ func _vicino() -> void:
 	var luce := OmniLight3D.new()
 	luce.omni_range = 2.0
 	luce.light_energy = 1.2
-	luce.light_cull_mask = 0xFFFFF
+	luce.light_cull_mask = 0xFFFFF  # strati: fuori scena
 	c.add_child(luce)
 	var cam := p.camera
 	var vis_dir := [["destra", Vector3(0.35, 0.05, 0.0)], ["sinistra", Vector3(-0.35, 0.05, 0.0)],
@@ -157,7 +157,7 @@ func _da_vicino(posa: String) -> void:
 	var luce := OmniLight3D.new()
 	luce.omni_range = 2.0
 	luce.light_energy = 1.2
-	luce.light_cull_mask = 0xFFFFF
+	luce.light_cull_mask = 0xFFFFF  # strati: fuori scena
 	c.add_child(luce)
 	for v in [["dorso", Vector3(0.35, 0.05, 0.0)], ["dita", Vector3(-0.3, -0.15, -0.12)]]:
 		var centro: Vector3 = rig.global_transform * Vector3(0.01, -0.24, 0.51)
