@@ -22,7 +22,7 @@ PASSO_DITA = 0.0255      # da un dito all'altro lungo l'impugnatura (si toccano 
 Y_INDICE = -0.196        # altezza (glTF y) dell'indice, sotto il ponticello del grilletto
 AGGIO = 0.0006           # quanto il dito sta fuori dalla superficie prima dell'appoggio
 VOXEL = 0.0016
-FACCE_GUANTO = 9000      # dopo la riduzione (si vede da vicino, ma è una mano sola)
+FACCE_GUANTO = int(__import__("os").environ.get("FACCE_GUANTO", "9000"))      # dopo la riduzione (si vede da vicino, ma è una mano sola)
 
 
 def g2b(v):
@@ -284,7 +284,9 @@ for o in list(bpy.data.objects):
 bpy.ops.object.select_all(action='DESELECT')
 guanto.hide_set(False)
 guanto.select_set(True)
-bpy.ops.export_scene.gltf(filepath=OUT, use_selection=True, export_format='GLB', export_yup=True, export_apply=True)
+# senza UV (non ha texture): stesso formato dei vertici delle mani di prima, la pipeline è già riscaldata
+bpy.ops.export_scene.gltf(filepath=OUT, use_selection=True, export_format='GLB', export_yup=True, export_apply=True,
+                          export_texcoords=False)
 print("GUANTO: scritto", OUT)
 if BLEND:
     for o in bpy.data.objects:
