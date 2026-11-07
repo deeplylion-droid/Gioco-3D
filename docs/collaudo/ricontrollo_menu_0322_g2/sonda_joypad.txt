@@ -1,0 +1,17 @@
+PASSO titolo: scheda -, focus Button NUOVA PARTITA, master 1.00 musica 0.80 ambiente 1.00 effetti 1.00 
+PASSO titolo, giù: scheda -, focus Button OPZIONI, master 1.00 musica 0.80 ambiente 1.00 effetti 1.00 
+PASSO titolo: opzioni aperte: scheda Schermo, focus Button Chiudi, master 1.00 musica 0.80 ambiente 1.00 effetti 1.00 
+PASSO titolo: sulla barra: scheda Schermo, focus TabBar @TabBar@417, master 1.00 musica 0.80 ambiente 1.00 effetti 1.00 
+PASSO titolo: a destra 6 volte: scheda Audio, focus TabBar @TabBar@417, master 1.00 musica 0.80 ambiente 1.00 effetti 1.00 
+PASSO titolo: cursori mossi: scheda Audio, focus HSlider Cursore_musica, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO titolo: schede avanti e indietro: scheda Audio, focus TabBar @TabBar@417, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO titolo: chiuso col B: scheda -, focus Button OPZIONI, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO pausa: scheda -, focus Button Riprendi, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO pausa, giù 2: scheda -, focus Button Opzioni, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO pausa: opzioni aperte: scheda Schermo, focus Button Chiudi, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO pausa: sulla barra: scheda Schermo, focus TabBar @TabBar@1175, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO pausa: a destra 6 volte: scheda Audio, focus TabBar @TabBar@1175, master 1.00 musica 0.78 ambiente 1.00 effetti 1.00 
+PASSO pausa: cursori mossi: scheda Audio, focus HSlider Cursore_musica, master 1.00 musica 0.76 ambiente 1.00 effetti 1.00 
+PASSO pausa: schede avanti e indietro: scheda Audio, focus TabBar @TabBar@1175, master 1.00 musica 0.76 ambiente 1.00 effetti 1.00 
+PASSO pausa: chiuso col B: scheda -, focus Button Riprendi, master 1.00 musica 0.76 ambiente 1.00 effetti 1.00 
+PASSO fine: in pausa true
