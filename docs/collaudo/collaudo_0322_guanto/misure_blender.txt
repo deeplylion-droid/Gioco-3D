@@ -1,0 +1,32 @@
+dito 0, quota -2 mm: 68 punti, distacco medio 0.41 mm, massimo 1.16 mm (a 125 gradi), sopra 1 mm 1, sopra 2 mm 0, senza guanto sopra 0
+dito 0, quota +0 mm: 68 punti, distacco medio 0.40 mm, massimo 0.81 mm (a 125 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 0, quota +2 mm: 68 punti, distacco medio 0.40 mm, massimo 0.96 mm (a -19 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 1, quota -2 mm: 66 punti, distacco medio 0.39 mm, massimo 0.65 mm (a 53 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 1, quota +0 mm: 66 punti, distacco medio 0.38 mm, massimo 0.56 mm (a 53 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 1, quota +2 mm: 66 punti, distacco medio 0.39 mm, massimo 0.67 mm (a 53 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 2, quota -2 mm: 64 punti, distacco medio 0.40 mm, massimo 0.69 mm (a 131 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 2, quota +0 mm: 64 punti, distacco medio 0.40 mm, massimo 0.73 mm (a 131 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 2, quota +2 mm: 64 punti, distacco medio 0.39 mm, massimo 0.72 mm (a 131 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 3, quota -2 mm: 62 punti, distacco medio 0.42 mm, massimo 1.49 mm (a 137 gradi), sopra 1 mm 2, sopra 2 mm 0, senza guanto sopra 0
+dito 3, quota +0 mm: 62 punti, distacco medio 0.41 mm, massimo 1.18 mm (a 137 gradi), sopra 1 mm 1, sopra 2 mm 0, senza guanto sopra 0
+dito 3, quota +2 mm: 62 punti, distacco medio 0.41 mm, massimo 0.99 mm (a 137 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+DITA: 780 punti, massimo 1.49 mm, sopra 0,8 mm 9, sopra 1 mm 4, sopra 2 mm 0
+PALMO (lato destro, y -0,27..-0,19): 217 punti, distacco medio 3.77 mm, massimo 49.08 mm, sopra 2 mm 98, sopra 10 mm 13
+PALMO, i punti sopra 5 mm (y, angolo, mm):
+
+vertici del guanto 9755; a meno di 3 cm dalla lancia 6643
+dentro la lancia: 6 vertici, al più 0.47 mm
+scatola del guanto (glTF): da [-0.061 -0.341  0.4  ] a [ 0.095 -0.148  0.641]
+
+anelli di bordi aperti: 10
+  88 spigoli, lunghi 42.5 cm in tutto, centro glTF (0.040, -0.297, 0.616)
+  38 spigoli, lunghi 13.9 cm in tutto, centro glTF (0.081, -0.259, 0.527)
+  38 spigoli, lunghi 13.8 cm in tutto, centro glTF (0.083, -0.240, 0.527)
+  38 spigoli, lunghi 13.7 cm in tutto, centro glTF (0.082, -0.221, 0.527)
+  6 spigoli, lunghi 0.7 cm in tutto, centro glTF (0.079, -0.227, 0.497)
+  6 spigoli, lunghi 0.7 cm in tutto, centro glTF (0.078, -0.246, 0.497)
+  6 spigoli, lunghi 0.7 cm in tutto, centro glTF (0.074, -0.265, 0.497)
+  6 spigoli, lunghi 0.7 cm in tutto, centro glTF (0.080, -0.217, 0.557)
+  6 spigoli, lunghi 0.7 cm in tutto, centro glTF (0.084, -0.255, 0.557)
+  6 spigoli, lunghi 0.7 cm in tutto, centro glTF (0.084, -0.236, 0.557)
+isole (pezzi separati): 11
