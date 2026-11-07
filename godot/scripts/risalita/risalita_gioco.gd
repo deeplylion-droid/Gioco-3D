@@ -358,7 +358,7 @@ func _zona_personale() -> void:
 			"vicino": 0.9, "lato_sbircia": 1.0})
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
 	# (la sua luce non prende il cartello delle pozze, a 70 cm: i quadratini restano dei colori delle pozze)
-	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0), CartelloPozze.STRATO)
+	_lampada_rossa(Vector3(x + 0.95, Y + 2.25, 49.5), Vector3(-1, -0.5, 0), CartelloPozze.STRATO)
 	# la Polaroid 15 (i bambini che si fanno le maschere, proposta del 25 ottobre notte): per terra nell'angolo nord-est,
 	# accanto alla porta del capannone (alle spalle di chi entra), nella zona del personale dove stavano gli attrezzi
 	PolaroidPhoto.metti(self, 15, Vector3(x + 0.84, Y + 0.03, CENTRO_FIUME.z + F.X0 - 0.48), 65.0)
@@ -425,10 +425,11 @@ func _scala_di_servizio() -> void:
 	# le lampade rosse d'emergenza: in cima alla seconda rampa, sul muro nord del tratto verso sud (dove prima stava in
 	# cima alla rampa: senza, salendo c'erano 5 m di buio, collaudo del 1 novembre), in fondo a quel tratto e sul
 	# pianerottolo in basso
-	# (le due in cima 5 cm più in alto, col fondo a 2,03 m: scelta A dell'utente del 4 novembre, "lampade")
+	# (5 cm più in alto, col fondo a 2,03 m: scelta A dell'utente del 4 novembre, "lampade"; anche quella del
+	# pianerottolo, che era rimasta a 2,2: collaudo finale di enigmi)
 	_lampada_rossa(Vector3(x + 1.0, 2.25, z0 + 0.05), Vector3(0, -0.5, 1))
 	_lampada_rossa(Vector3(x + 1.0, 2.25, c1 - 0.05), Vector3(0, -0.5, -1))
-	_lampada_rossa(Vector3(xs + 0.6, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
+	_lampada_rossa(Vector3(xs + 0.6, Y + 2.25, z0 + 0.05), Vector3(0, -0.5, 1))
 	_strisce_cima_scala(x, xe, z0, z1, c0, c1)
 	var m := Node3D.new()
 	m.name = "Marker"
@@ -477,9 +478,9 @@ func _scala_fiume() -> void:
 	_box(Vector3(0.2, 0.3, porta1 - porta0), Vector3(xc - 0.1, Y + 2.45, (porta0 + porta1) * 0.5), _mat_lamiere)
 	# tra il nostro muro e quello del capannone (x -6,1): il pavimento sotto la porta
 	_box(Vector3(0.5, 0.2, porta1 - porta0), Vector3(xc - 0.25, Y - 0.1, (porta0 + porta1) * 0.5), _mat_pav)
-	_lampada_rossa(Vector3(x_cima + 1.95, y0 + 2.2, (z0 + z1) * 0.5), Vector3(-1, -0.5, 0))
-	_lampada_rossa(Vector3(xc + 1.95, Y + 2.2, z1 + 1.0), Vector3(-1, -0.5, 0))
-	_lampada_rossa(Vector3(xc + 1.95, Y + 2.2, porta0 - 3.0), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(x_cima + 1.95, y0 + 2.25, (z0 + z1) * 0.5), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(xc + 1.95, Y + 2.25, z1 + 1.0), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(xc + 1.95, Y + 2.25, porta0 - 3.0), Vector3(-1, -0.5, 0))
 	var m := get_node("Marker") as Node3D
 	for d in [["PortaC2", Vector3(PORTA_C2.x, y0, PORTA_C2.z - 0.8)], ["CimaScalaFiume", Vector3(x_cima + 1.0, y0, (z0 + z1) * 0.5)],
 			["FondoScalaFiume", Vector3(xc + 1.0, Y, (z0 + z1) * 0.5)], ["PortaFiume", Vector3(xc + 1.0, Y, (porta0 + porta1) * 0.5)]]:
