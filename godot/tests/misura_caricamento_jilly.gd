@@ -5,6 +5,7 @@ extends Node
 ## - i fotogrammi: quanti, la media, il 95° percentile, il peggiore e quanti oltre 50 ms;
 ## - la memoria del processo (RSS da /proc/self/status) all'inizio, al massimo e alla fine, e la memoria statica di
 ##   Godot, mentre la schermata è aperta.
+## Con SCATTI=<cartella> salva anche tre scatti della schermata (a 2; 4,6 e 6,4 s).
 ## Esce prima che la sala entri in scena (la sala intera sul renderer software non entra in memoria).
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
@@ -15,8 +16,14 @@ func _ready() -> void:
 	_run.call_deferred()
 
 
+var _scatti := []
+
+
 func _run() -> void:
 	Game.pause_on_focus_loss = false
+	if OS.get_environment("SCATTI") != "":
+		DirAccess.make_dir_recursive_absolute(OS.get_environment("SCATTI"))
+		_scatti = [2.0, 4.6, 6.4]
 	var rss0 := _rss()
 	get_tree().change_scene_to_file("res://scenes/ui/caricamento.tscn")
 	await get_tree().process_frame
@@ -38,6 +45,11 @@ func _run() -> void:
 		var ora := Time.get_ticks_usec()
 		tempi.append((ora - prima) / 1000.0)
 		prima = ora
+		var dt := (Time.get_ticks_msec() - t0) / 1000.0
+		for k in _scatti.size():
+			if _scatti[k] >= 0.0 and dt >= _scatti[k]:
+				_scatti[k] = -1.0
+				_salva(OS.get_environment("SCATTI").path_join("caricamento_%d.png" % k))
 		if tempi.size() % 10 == 0:
 			rss_max = maxi(rss_max, _rss())
 		if arrivata < 0.0 and ResourceLoader.load_threaded_get_status(scena) == ResourceLoader.THREAD_LOAD_LOADED:
@@ -62,6 +74,11 @@ func _run() -> void:
 			"SI" if video else "NO", rss0 / 1024.0, rss_max / 1024.0, rss1 / 1024.0,
 			Performance.get_monitor(Performance.MEMORY_STATIC) / 1e6])
 	Game.esci()
+
+
+func _salva(file: String) -> void:
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png(file)
 
 
 ## La memoria del processo (kB).
