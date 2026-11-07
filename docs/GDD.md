@@ -690,3 +690,8 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
   - **Domande della 0.3.22** (pagina https://claude.ai/artifact/Nwy412WqHU4CyCkFGDLsWz, risposte delle 10:49, senza chiedere di vedere niente):
     - **Soffitto della torre: B**, il tetto resta com'è nella 0.3.21, chiuso e buio, senza soffitto di travi e lamiere. Nella 0.3.21 mancavano due pezzi del tetto del modello (7,3 e 3,6 m²), rimessi. La scelta A del 6 novembre (soffitto di travi) non si fa più.
     - **Ombra sulla paratia sbagliata della vasca 3: C**, resta. La fa la lampada da lavoro della vasca 3 quando il pannello aperto sale dietro un pezzo della struttura.
+  - **Guanto sul fucile ad acqua** (pagina "Il guanto sul fucile", https://claude.ai/artifact/P59THLguFh87iEnfXhbboK, risposte delle 19:30, senza chiedere di vederlo):
+    - **Dove: A.** Il fucile resta dov'è. Il guanto va sulla mano destra, sull'impugnatura, che resta sotto il bordo dello schermo; il braccio sinistro grigio, l'unico che si vedeva, si toglie. Lo stick grigio sparisce, il guanto non si vede.
+    - **Colore: A**, bianco pulito da cartone animato.
+    - **Misura: A**, grosso da cartone animato: dita tonde di circa 2,5 cm e polsino largo.
+  - **Schermata di caricamento con Jilly** (pagina "Caricamento con Jilly", https://claude.ai/artifact/9UKeHQngk7WT2XrxQ3SS7L, risposte delle 19:30): **approvata così com'è nel video** (lavoro/caricamento-jilly bb377830). Inquadratura A, Jilly a mezzo busto con le mani sul bordo della vasca e la sala dietro; sfondo A, video a tutto schermo con un velo scuro a sinistra dietro i testi; scritta A, lucina rossa, «Caricamento della sala…», percentuale e barra sottile azzurra.
