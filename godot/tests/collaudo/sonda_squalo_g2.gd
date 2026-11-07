@@ -10,6 +10,9 @@ extends Node
 ## Modo "interruzioni" (il gioco vero, dalla schermata di caricamento come Nuova partita): pausa nel buio, pausa durante
 ## la goccia, torna al titolo a metà scena, Nuova partita fino alla fine, Continua. Dopo ogni passo: le lampade del
 ## corridoio (mai al 3%), la goccia, i suoni accesi.
+## Modo "ravvicinati" (col renderer): una camera sua, fuori da quella del giocatore, per la bocca e i denti nei morsi e
+## nella pausa (di lato e di fronte) e per i piedi mentre arriva nel buio e mentre se ne va, con una luce bianca sulla
+## camera; salva in <cartella> (secondo argomento).
 ## Uso (sotto il render.lock): godot --headless --path godot res://tests/collaudo/sonda_squalo_g2.tscn -- <misure|interruzioni>
 
 const CARICAMENTO := "res://scenes/ui/caricamento.tscn"
@@ -24,7 +27,13 @@ var modo := "misure"
 
 func _ready() -> void:
 	if registratore:
-		(_misure if modo == "misure" else _interruzioni).call_deferred()
+		match modo:
+			"misure":
+				_misure.call_deferred()
+			"ravvicinati":
+				_ravvicinati.call_deferred()
+			_:
+				_interruzioni.call_deferred()
 		return
 	var a := OS.get_cmdline_user_args()
 	var r := Node.new()
@@ -35,7 +44,7 @@ func _ready() -> void:
 	r.process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().root.add_child.call_deferred(r)
 	GameState.reset_progress()
-	if r.get(&"modo") == "misure":
+	if r.get(&"modo") != "interruzioni":
 		_monta_interni.call_deferred()
 
 
@@ -237,6 +246,82 @@ func _misure() -> void:
 	for le in get_tree().current_scene.find_children("*", "LuceEmergenza", true, false):
 		fattori.append(float(le.get(&"fattore")))
 	print("SONDA: dopo la fine le lampade hanno fattore min %.2f max %.2f (%d)" % [fattori.min(), fattori.max(), fattori.size()])
+	print("SONDA FINE")
+	get_tree().quit()
+
+
+func _ravvicinati() -> void:
+	var cartella: String = OS.get_cmdline_user_args()[1]
+	DirAccess.make_dir_recursive_absolute(cartella)
+	var s := await _aspetta_scena()
+	if s == null:
+		get_tree().quit(1)
+		return
+	var p := GameState.player
+	var sk := s.get(&"_scheletro") as Skeleton3D
+	var piedi := []
+	for i in sk.get_bone_count():
+		var l := sk.get_bone_name(i).to_lower()
+		if l.contains("piede") or l.contains("foot") or l.contains("dita") or l.contains("toe"):
+			piedi.append(i)
+	print("SONDA: piedi ", piedi.map(func(i): return sk.get_bone_name(i)))
+	var cam := Camera3D.new()
+	cam.fov = 40.0
+	cam.near = 0.01
+	get_tree().current_scene.add_child(cam)
+	var luce := OmniLight3D.new()
+	luce.omni_range = 6.0
+	luce.light_energy = 1.2
+	cam.add_child(luce)
+	luce.visible = false
+	var morsi: Array = s.tempi.get("morsi", [])
+	var pausa: Array = s.tempi.get("pausa", [6.65, 7.45])
+	var bocca := []
+	for m in morsi:
+		bocca.append(["morso_%.2f" % (float(m[0]) + 0.1), float(m[0]) + 0.1])
+	bocca.append(["pausa_%.2f" % lerpf(float(pausa[0]), float(pausa[1]), 0.5), lerpf(float(pausa[0]), float(pausa[1]), 0.5)])
+	bocca.append(["apre_5.20", 5.2])
+	var momenti_piedi := [0.3, 0.9, 1.6, 2.3, 3.5, 9.5, 10.3, 11.2, 12.2, 13.0]
+	var lista := []
+	for b in bocca:
+		lista.append(["bocca", b[0], b[1]])
+	for t in momenti_piedi:
+		lista.append(["piedi", "piedi_%05.2f" % t, t])
+	lista.sort_custom(func(a, b): return a[2] < b[2])
+	for x in lista:
+		await _fino_a(s, float(x[2]))
+		if not s.in_corso() or s.squalo == null or not is_instance_valid(s.squalo) or not s.squalo.visible:
+			continue
+		var punti := []
+		if x[0] == "bocca":
+			var c: Vector3 = s.call(&"_punto_bocca")
+			var avanti := (p.camera.global_position - c)
+			avanti.y = 0.0
+			avanti = avanti.normalized()
+			var lato := avanti.cross(Vector3.UP)
+			punti = [["fronte", c + avanti * 0.55 + Vector3.UP * 0.05, c], ["lato", c + lato * 0.6 + Vector3.UP * 0.05, c],
+					["altro_lato", c - lato * 0.6 + Vector3.UP * 0.05, c]]
+		else:
+			for k in piedi.size():
+				var pos := sk.global_transform * sk.get_bone_global_pose(piedi[k]).origin
+				var dir := (p.global_position - pos)
+				dir.y = 0.0
+				dir = dir.normalized()
+				punti.append(["%s_%d" % [sk.get_bone_name(piedi[k]), k], pos + dir.rotated(Vector3.UP, 0.8) * 0.7 + Vector3.UP * 0.12, pos + Vector3.UP * 0.03])
+		var prima_luce := luce.visible
+		get_tree().paused = true
+		s.process_mode = Node.PROCESS_MODE_PAUSABLE
+		for q in punti:
+			cam.global_position = q[1]
+			cam.look_at(q[2])
+			cam.make_current()
+			luce.visible = true
+			for i in 3:
+				await RenderingServer.frame_post_draw
+			get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s_%s.jpg" % [x[1], q[0]]), 0.9)
+		luce.visible = prima_luce
+		p.camera.make_current()
+		get_tree().paused = false
 	print("SONDA FINE")
 	get_tree().quit()
 
