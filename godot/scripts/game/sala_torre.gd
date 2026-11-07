@@ -304,6 +304,7 @@ func _passi() -> Array:
 	for i in 3:
 		out.append(func(): _modello(i))
 	out.append(_cartelloni_rovinati)
+	out.append(_toppe_torre_A)
 	out.append(_prepara_dati)
 	out.append_array(_passi_scivoli())
 	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _polaroid])
@@ -897,6 +898,82 @@ func _oblo_lei() -> void:
 			ins.connect(&"lei_compare", func(_dove): _oblo_via()))
 
 
+## I triangoli che mancano in torre_A (13 nelle pareti, uno nel tetto di 7,3 m², uno nel fondo del pozzo e altri piccoli:
+## dai buchi si vedeva il cielo, collaudo di varchi-cielo del 6 novembre), trovati da tests/aggiorna_toppe_torre.gd e
+## salvati qui. Li toglie l'intaglio col booleano del generatore (tools/blender/torre_a.py); quando ambienti-2 lo
+## corregge (0.3.22) la mesh torna intera e le toppe vanno via.
+const TOPPE := "res://assets/ambiente/torre/torre_toppe.json"
+
+
+## Rimette i triangoli di [constant TOPPE] in una mesh figlia di torre_A ("torre_A_toppe"), coi materiali delle sue
+## superfici e normali, UV e colori dei vertici dei triangoli vicini (non si leggono come toppe), e con la collisione
+## (la collisione di torre_A viene dalla stessa mesh e ha gli stessi buchi).
+func _toppe_torre_A() -> void:
+	var mi := find_child("torre_A", true, false) as MeshInstance3D
+	if mi == null or mi.mesh == null or not FileAccess.file_exists(TOPPE) or mi.has_node(^"torre_A_toppe"):
+		return
+	var dati_toppe: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TOPPE))
+	var mesh := ArrayMesh.new()
+	var facce := PackedVector3Array()
+	for d: Dictionary in dati_toppe["superfici"]:
+		var s := int(d["superficie"])
+		var mat: Material = mi.get_active_material(s) if s < mi.mesh.get_surface_count() else null
+		if mat == null or mat.resource_name != String(d["materiale"]):
+			push_warning("torre: le toppe non corrispondono più a torre_A (rifai tests/aggiorna_toppe_torre.gd)")
+			return
+		var arr := []
+		arr.resize(Mesh.ARRAY_MAX)
+		var f: Array = d["v"]
+		var v := PackedVector3Array()
+		for i in f.size() / 3:
+			v.append(Vector3(f[i * 3], f[i * 3 + 1], f[i * 3 + 2]))
+		arr[Mesh.ARRAY_VERTEX] = v
+		facce.append_array(v)
+		if d.has("n"):
+			var fn: Array = d["n"]
+			var n := PackedVector3Array()
+			for i in fn.size() / 3:
+				n.append(Vector3(fn[i * 3], fn[i * 3 + 1], fn[i * 3 + 2]))
+			arr[Mesh.ARRAY_NORMAL] = n
+		if d.has("t"):
+			arr[Mesh.ARRAY_TANGENT] = PackedFloat32Array(d["t"])
+		for coppia: Array in [["uv", Mesh.ARRAY_TEX_UV], ["uv2", Mesh.ARRAY_TEX_UV2]]:
+			if d.has(coppia[0]):
+				var fu: Array = d[coppia[0]]
+				var uv := PackedVector2Array()
+				for i in fu.size() / 2:
+					uv.append(Vector2(fu[i * 2], fu[i * 2 + 1]))
+				arr[coppia[1]] = uv
+		if d.has("c"):
+			var fc: Array = d["c"]
+			var c := PackedColorArray()
+			for i in fc.size() / 4:
+				c.append(Color(fc[i * 4], fc[i * 4 + 1], fc[i * 4 + 2], fc[i * 4 + 3]))
+			arr[Mesh.ARRAY_COLOR] = c
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		mesh.surface_set_material(mesh.get_surface_count() - 1, mat)
+	var toppe := MeshInstance3D.new()
+	toppe.name = "torre_A_toppe"
+	toppe.mesh = mesh
+	toppe.layers = mi.layers  # strati: fuori scena
+	toppe.cast_shadow = mi.cast_shadow
+	toppe.gi_mode = mi.gi_mode
+	mi.add_child(toppe)
+	var corpo := StaticBody3D.new()
+	corpo.name = "torre_A_toppe_corpo"
+	var di_a := mi.find_children("*", "StaticBody3D", true, false)
+	if not di_a.is_empty():
+		corpo.collision_layer = (di_a[0] as StaticBody3D).collision_layer
+		corpo.collision_mask = (di_a[0] as StaticBody3D).collision_mask
+	var forma := ConcavePolygonShape3D.new()
+	forma.backface_collision = true
+	forma.set_faces(facce)
+	var cs := CollisionShape3D.new()
+	cs.shape = forma
+	corpo.add_child(cs)
+	toppe.add_child(corpo)
+
+
 ## Il muro della torre attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, le
 ## piastrelle e l'intonaco arrivano fino alla cornice d'ottone): le fasce di ObloLei.muro, lette da [constant MURO_OBLO]
 ## (calcolate una volta da [method calcola_muro_oblo]: farlo qui costava più di 100 ms in un passo, collaudo della CI)
@@ -1270,6 +1347,7 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 		var ta := find_child("torre_A", true, false) as GeometryInstance3D
 		if ta:
 			Strati.metti(ta, STRATO_SENZA_OMBRA_EST)
+			Strati.metti(ta.get_node_or_null(^"torre_A_toppe") as VisualInstance3D, STRATO_SENZA_OMBRA_EST)
 		else:
 			push_warning("torre: niente torre_A per lo strato senza l'ombra del muro est")
 	radice.add_child(l)
