@@ -6,7 +6,8 @@ extends Node
 ##    hanno la foto, le altre sono vuote, senza la foto né niente che dica dove cercarle;
 ## 3. col joypad (o le frecce): il focus parte dalla prima cornice, a destra passa alla seconda, giù alla fila sotto e poi
 ##    a "Indietro"; A su una trovata la riapre grande, B la chiude e si resta nell'album, in pausa, sulla stessa cornice;
-##    su una vuota non succede niente;
+##    coi bottoni veri del joypad (#128) A riapre la foto, Start non la chiude (la pausa non ha il joypad), A e B la
+##    chiudono; su una vuota non succede niente;
 ## 4. B chiude l'album e si torna al menu di pausa; in inglese il contatore è "n of 16";
 ## 5. il salvataggio non cambia: le raccolte restano liste di nomi nella collezione "polaroid".
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_album_polaroid.gd
@@ -55,6 +56,17 @@ func _premi(azione: StringName) -> void:
 	r.pressed = false
 	Input.parse_input_event(r)
 	await _frames(2)
+
+
+## Preme e rilascia un bottone vero del joypad.
+func _joy(bottone: JoyButton) -> void:
+	for giu in [true, false]:
+		var e := InputEventJoypadButton.new()
+		e.button_index = bottone
+		e.pressed = giu
+		e.device = 0
+		Input.parse_input_event(e)
+		await _frames(2)
 
 
 func _focus() -> Control:
@@ -155,6 +167,24 @@ func _run() -> void:
 		check(_visore() == null and is_instance_valid(album) and album.is_inside_tree() and get_tree().paused,
 			"B la chiude: si resta nell'album, in pausa")
 		check(_focus() == cornici[0], "sulla stessa cornice")
+	# coi bottoni veri del joypad (#128): A apre, Start non chiude, A chiude; poi B chiude
+	await _joy(JOY_BUTTON_A)
+	await _frames(3)
+	check(_visore() != null, "il bottone A del joypad riapre la foto")
+	await _frames(30)
+	await _joy(JOY_BUTTON_START)
+	await _frames(3)
+	check(_visore() != null, "Start del joypad non chiude la foto (la pausa non ha il joypad)")
+	await _joy(JOY_BUTTON_A)
+	await _frames(3)
+	check(_visore() == null and is_instance_valid(album) and get_tree().paused, "il bottone A del joypad chiude la foto: si resta nell'album")
+	await _joy(JOY_BUTTON_A)
+	await _frames(33)
+	check(_visore() != null, "riaperta con A")
+	await _joy(JOY_BUTTON_B)
+	await _frames(3)
+	check(_visore() == null and is_instance_valid(album) and get_tree().paused, "il bottone B del joypad chiude la foto: si resta nell'album")
+	cornici[0].grab_focus()
 	# A su una vuota (la 2): niente
 	cornici[1].grab_focus()
 	await _premi(&"ui_accept")

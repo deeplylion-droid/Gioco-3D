@@ -380,7 +380,7 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid.gd
 
-      - name: Test dell'album delle Polaroid (menu di pausa, 16 cornici, n su 16, joypad, inglese, salvataggio com'era)
+      - name: Test dell'album delle Polaroid (menu di pausa, 16 cornici, n su 16, joypad, la foto si chiude coi bottoni A e B del joypad e non con Start, inglese, salvataggio com'era)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_album_polaroid.gd
 
