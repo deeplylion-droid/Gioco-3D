@@ -70,8 +70,20 @@ func _ready() -> void:
 	piede.add_child(rip)
 	add_child(piede)
 	if audio and audio.has_signal(&"volume_cambiato"):
-		audio.connect(&"volume_cambiato", func(_k, _v): aggiorna())
+		audio.connect(&"volume_cambiato", _su_volume_cambiato)
 	aggiorna()
+
+
+## Chiuso il menu, il pannello si stacca dall'autoload Audio (che resta): niente chiamate a un pannello che non c'è più.
+func _exit_tree() -> void:
+	var a := get_node_or_null(^"/root/Audio")
+	if a and a.is_connected(&"volume_cambiato", _su_volume_cambiato):
+		a.disconnect(&"volume_cambiato", _su_volume_cambiato)
+
+
+func _su_volume_cambiato(_k: String, _v: float) -> void:
+	if is_inside_tree():
+		aggiorna()
 
 
 ## Rilegge i volumi dall'autoload (senza far ripartire i suoni di prova).

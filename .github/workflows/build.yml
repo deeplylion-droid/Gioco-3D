@@ -130,6 +130,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_avvio_sicuro.gd
 
+      - name: Test delle schede delle opzioni (tastiera e joypad fino ad Audio, cursori dei volumi, menu riaperto)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_schede.gd
+
       - name: Test della qualità automatica (al primo avvio sceglie il preset più alto che resta fluido; una scelta a mano resta del giocatore)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_qualita_automatica.gd

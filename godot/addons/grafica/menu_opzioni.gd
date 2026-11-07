@@ -147,6 +147,24 @@ func _ready() -> void:
 	chiudi.grab_focus.call_deferred()
 
 
+## Sulla barra delle schede le frecce (e la croce del joypad) cambiano scheda: prima la freccia destra portava il
+## focus su Preset, e con tastiera e joypad alle schede dopo la prima (Audio compresa) non si arrivava.
+func _input(event: InputEvent) -> void:
+	if not visible or _tabs == null or _calibrazione != null:
+		return
+	var barra := _tabs.get_tab_bar()
+	if get_viewport().gui_get_focus_owner() != barra:
+		return
+	var passo := 0
+	if event.is_action_pressed("ui_right", true):
+		passo = 1
+	elif event.is_action_pressed("ui_left", true):
+		passo = -1
+	if passo != 0:
+		_tabs.current_tab = clampi(_tabs.current_tab + passo, 0, _tabs.get_tab_count() - 1)
+		get_viewport().set_input_as_handled()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if visible and event.is_action_pressed("ui_cancel") and _calibrazione == null:
 		chiudi_menu()
