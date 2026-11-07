@@ -8,6 +8,8 @@
   sua scena di prova per le pile, con le luci del blackout. Le sonde dei tempi girano senza schermo, con le partenze del
   menu di prova.
 - Gli strumenti usati sono in `godot/tests/collaudo/` (elenco in fondo).
+- Il collaudo del fondo nero dietro la porta di servizio del bacino, sulla candidata finale `c6187286`, è in
+  `fondo_porta/LEGGIMI.md`.
 
 ## Esito: passa, con D1 corretto da grafica e ricontrollato (sezione 5)
 
