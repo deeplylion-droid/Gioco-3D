@@ -502,7 +502,7 @@ func cala_grata() -> void:
 ## e intanto dal vano si vedeva il vuoto (cubo magenta di varchi-cielo, 7 novembre). Finché il tunnel non è pronto
 ## (AttesaZone "tunnel") dietro il vano c'è un fondo nero opaco, appoggiato al muro dal lato del tunnel, più grande del
 ## vano: da lontano è un corridoio buio. Quando il tunnel è pronto va via; se lo è già, non si mette.
-const FONDO_PORTA_X := 40.39            # 1 cm dietro il muro (il piano del muro è a x 40,4)
+const FONDO_PORTA_X := 40.396           # 4 mm dietro il muro (il piano del muro è a x 40,4): appoggiato, senza sfarfallio
 const FONDO_PORTA_Z := Vector2(-5.9, -4.1)  # il vano: z -5,75 .. -4,25
 const FONDO_PORTA_Y := Vector2(-30.1, -27.7)  # il vano: y -30 .. -27,85
 var _fondo_porta_nodo: MeshInstance3D

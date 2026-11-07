@@ -104,6 +104,7 @@ static func calcola(mesh: Mesh) -> Dictionary:
 	var per_pos := {}       # id -> [[superficie, vertice], ...]
 	var scartati := []
 	var proiettati := 0
+	var degeneri := 0
 	for s in mesh.get_surface_count():
 		var arr := mesh.surface_get_arrays(s)
 		arrays.append(arr)
@@ -175,6 +176,10 @@ static func calcola(mesh: Mesh) -> Dictionary:
 			var pu: Vector3 = pos_id[u]
 			var pv: Vector3 = pos_id[v]
 			var pw: Vector3 = pos_id[w]
+			# tre punti in fila (area sotto 1 cm², fra pezzi che si toccano lungo uno spigolo): non c'è niente da chiudere
+			if (pv - pu).cross(pw - pu).length() < 2e-4:   # sotto 1 cm²
+				degeneri += 1
+				continue
 			# la normale della faccia (davanti in senso orario, come il motore)
 			var n_ref := -((pv - pu).cross(pw - pu)).normalized()
 			# ogni angolo dal vertice della stessa superficie, in quel punto, con la normale allineata alla faccia
@@ -204,9 +209,9 @@ static func calcola(mesh: Mesh) -> Dictionary:
 			var d: Dictionary = per_sup[s]
 			var pos := [pu, pv, pw]
 			var idx_v = arr[Mesh.ARRAY_INDEX]
-			for k in 3:
-				var p3: Vector3 = pos[k]
-				var i: int = angoli[k]
+			for j in 3:
+				var p3: Vector3 = pos[j]
+				var i: int = angoli[j]
 				if vicina >= 0:
 					i = int(idx_v[vicina * 3]) if idx_v != null else vicina * 3
 				(d["v"] as Array).append_array([_r(p3.x), _r(p3.y), _r(p3.z)])
@@ -236,8 +241,8 @@ static func calcola(mesh: Mesh) -> Dictionary:
 	for bu: Dictionary in buchi:
 		area_tot += float(bu["area"])
 	print("TOPPE: triangoli mancanti %d (%.2f m2), spigoli di bordo rimasti (aperture, non toccati) %d" % [buchi.size(), area_tot, resto])
-	print("TOPPE: lasciati (anelli su superfici oltre la %d) %d; con normali e UV proiettati dalla faccia vicina nel piano %d" % [
-			SUPERFICIE_MAX, scartati.size(), proiettati])
+	print("TOPPE: lasciati (anelli su superfici oltre la %d) %d; in fila (area zero) %d; con normali e UV proiettati dalla faccia vicina nel piano %d" % [
+			SUPERFICIE_MAX, scartati.size(), degeneri, proiettati])
 	for bu: Dictionary in buchi.slice(0, 40):
 		print("TOPPE:   superficie %d centro %s area %.3f m2" % [bu["superficie"], bu["centro"], bu["area"]])
 	var sup := []
