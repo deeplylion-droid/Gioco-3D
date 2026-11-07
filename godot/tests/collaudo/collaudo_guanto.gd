@@ -51,9 +51,11 @@ func _scatto(nome: String) -> void:
 
 ## Il guanto nello schermo adesso: [vertici dentro, altezza massima sopra il bordo in basso in frazione dell'altezza].
 func _nello_schermo() -> Array:
-	if guanto == null or not is_instance_valid(guanto) or not guanto.is_visible_in_tree():
+	if guanto == null or not is_instance_valid(guanto) or not guanto.is_inside_tree() or not guanto.is_visible_in_tree():
 		return [0, 0.0]
 	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return [0, 0.0]
 	var r := get_viewport().get_visible_rect().size
 	var n := 0
 	var alto := 0.0
