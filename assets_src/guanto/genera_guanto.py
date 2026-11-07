@@ -249,7 +249,33 @@ bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 bpy.ops.object.join()
 guanto = bpy.context.view_layer.objects.active
 guanto.name = "GuantoDestro"
+print("GUANTO: appoggio finale", appoggia(guanto, soglia=0.0, fuori=0.0005))
 print("GUANTO: facce", len(guanto.data.polygons), "cuciture", len(cuc))
+
+# --- controllo dell'appoggio: lungo ogni dito, dalla superficie dell'impugnatura verso fuori, quanto c'è prima del
+# guanto (0 = appoggiato; deve stare sotto 1 mm) e se il guanto entra nell'impugnatura
+bvh_f = BVHTree.FromObject(guanto, bpy.context.evaluated_depsgraph_get())
+peggiore = 0.0
+for i, (gy, r, pts) in enumerate(dita_info):
+    angoli = list(range(-10, 170, 15))
+    dist = []
+    for c in contorno(gy, angoli):
+        if c is None:
+            continue
+        p, n = c
+        hit = bvh_f.ray_cast(p - n * 0.0002, n, 0.05)
+        dist.append(hit[3] - 0.0002 if hit[0] is not None else 99.0)
+    peggiore = max(peggiore, max(dist))
+    print("GUANTO: dito %d, distacco dall'impugnatura lungo il dito: max %.1f mm, medio %.1f mm" % (
+        i, max(dist) * 1000, sum(dist) / len(dist) * 1000))
+dentro = 0
+for v in guanto.data.vertices:
+    loc, n, _, d = bvh.find_nearest(guanto.matrix_world @ v.co)
+    if loc is not None and ((guanto.matrix_world @ v.co) - loc).dot(n) < -0.0002:
+        dentro += 1
+        if dentro <= 8:
+            print("GUANTO:   dentro a %s (glTF), di %.1f mm" % (b2g(guanto.matrix_world @ v.co), d * 1000))
+print("GUANTO: distacco massimo %.1f mm; vertici dentro l'impugnatura %d" % (peggiore * 1000, dentro))
 
 # --- solo il guanto nel glb (la lancia resta fuori)
 for o in list(bpy.data.objects):
