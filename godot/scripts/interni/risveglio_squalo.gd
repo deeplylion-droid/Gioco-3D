@@ -7,6 +7,14 @@ extends Node3D
 ## (si volta a guardarti), poi corre verso la porta, ci passa abbassandosi, e la porta gli sbatte dietro e
 ## resta chiusa. Poi il giocatore si rialza e riprende il controllo.
 ##
+## Dalla 0.3.23 (le tre proposte per far più paura, sì dell'utente: GDD 29f78c94; tempi in mostro_anim.py) prima c'è
+## il buio: il corridoio è spento, si sentono il fiato e le gocce di bava, e la luce sfarfalla tre volte (i lampi): a
+## ogni lampo lui è più vicino; poi la luce resta accesa e lui è chino sul giocatore, la bocca chiusa, e lo annusa (il
+## muso che passa dalla sua sinistra alla sua destra e sale verso la faccia, il fiuto); una goccia di bava gli cade
+## sulla faccia (sullo schermo, [constant SHADER_GOCCIA]); poi la bocca si spalanca, e i morsi non sono più a tempo:
+## due svelti, una pausa a bocca spalancata e ferma, e uno scatto fin quasi alla faccia con la bocca chiusa 0,3 s e un
+## colpo più secco e basso.
+##
 ## La camera è guidata e si muove come la testa di chi è terrorizzato: si rialza da terra, si ritrae
 ## dalla bocca quando la testa scatta in avanti, segue lo squalo che si gira e scappa. Dalla 0.3.22 non trema più
 ## (né il tremore della paura, né le scosse dei passi e della porta: riscontro dell'utente sulla 0.3.21, "togliamo il
@@ -21,6 +29,13 @@ const TEMPI := "res://assets/models/mascotte/mostro_squalo_A_rig.json"
 const SHADER_BOCCA := preload("res://shaders/creature/bocca_squalo.gdshader")
 ## I denti in più (file di squalo dietro quelli del modello): avorio sporco, le file dentro in ombra.
 const SHADER_DENTI := preload("res://shaders/creature/denti_squalo.gdshader")
+## La goccia di bava sullo schermo (dalla 0.3.23).
+const SHADER_GOCCIA := preload("res://shaders/creature/goccia_schermo.gdshader")
+## Dove stanno le luci del corridoio che si spengono nel buio (spazio di questo nodo: x di lato, z verso il giocatore;
+## la porta è verso -z): dalla porta a 6 m dietro il giocatore, dove la lampada 02 illumina ancora.
+const CORRIDOIO := AABB(Vector3(-1.8, -0.5, -7.2), Vector3(3.6, 4.0, 13.4))
+## Fotogrammi in cui la goccia si disegna (trasparente) col livello: shader e pipeline pronti prima della scena.
+const FOTOGRAMMI_GOCCIA := 10
 ## Livello di render solo dello squalo: la luce della corsa illumina lui e nient'altro (né il corridoio né
 ## la nebbia).
 const STRATO_SQUALO := 1 << 16
@@ -62,6 +77,11 @@ var _pelle: Array = []       # [posizione a riposo, PackedInt32Array ossa della 
 var _pelle_mi: MeshInstance3D
 var _pelle_bind: Array = []  # per ogni bind della skin: [osso dello scheletro, matrice di bind]
 var _spinta := Vector3.ZERO  # di quanto la camera è spostata fuori dalla pelle (nello spazio del mondo)
+var _lampade: Array = []     # le LuceEmergenza del corridoio (si spengono nel buio)
+var _vetri: Array = []       # [vetro della lampada, il suo materiale acceso, la sua emissione]
+var _luce := 1.0             # quanto è accesa la luce del corridoio adesso (0 nel buio, 1 nei lampi e dopo)
+var _goccia_strato: CanvasLayer
+var _goccia: ColorRect
 
 
 func _ready() -> void:
@@ -83,6 +103,7 @@ func _ready() -> void:
 	var atmosfera := AtmosferaSqualo.new()
 	atmosfera.name = "Atmosfera"
 	add_child(atmosfera)
+	_crea_goccia()
 
 
 ## La scena del risveglio: blocca il giocatore e parte.
@@ -92,6 +113,7 @@ func avvia(p: Player) -> void:
 	_yaw0 = p.yaw
 	_crea_squalo()
 	_apri_porta()
+	_prendi_luci()
 	_t = 0.0
 	_passi_fatti = 0
 	_attivo = true
@@ -311,6 +333,8 @@ func _process(delta: float) -> void:
 	var E: float = tempi.get("esita", 6.75)
 	var porta_t: float = tempi.get("porta", 10.15)
 	_suoni_e_porta(R, E, porta_t)
+	_luci_del_buio()
+	_muovi_goccia()
 	if _bava:
 		_bava.set(&"attivo", _t < G)
 	_rimetti_tetti(false)
@@ -341,20 +365,33 @@ func _suona(chiave: String, nome: StringName, dove: Variant, tono := 1.0, volume
 ## v0.3.8, "aggiungiamo anche i suoni": prima la scena stava circa 7 dB sotto l'urlo di lei).
 ## Dal 23 ottobre la minaccia e il ringhio sono quelli nuovi (B, "coccodrillo") e restano bassi, senza guadagno in
 ## più: l'utente, "ma tienila bassa".
-const PIU_FORTE := {&"squalo_minaccia": 0.0, &"jilly_richiamo": 3.0, &"squalo_sbuffo": 6.0, &"squalo_passo": 5.0,
+const PIU_FORTE := {&"squalo_annusa": 3.0, &"squalo_minaccia": 0.0, &"jilly_richiamo": 3.0, &"squalo_sbuffo": 6.0, &"squalo_passo": 5.0,
 	&"squalo_denti": 5.0, &"squalo_ringhio": 0.0}
 
 
 func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
-	var M: float = tempi.get("minaccia", 2.4)
 	var G: float = tempi.get("giro", 5.85)
-	if _t > 0.8:
+	# (0.3.23) nel buio e annusando: il fiato, le gocce, il fiuto (attaccati alla bocca: da lontano, poi addosso)
+	_suona("annusa", &"squalo_annusa", _nodo_bocca())
+	# la luce che sfarfalla: lo scatto del relè della lampada più vicina a lui, a ogni lampo e quando resta accesa
+	var lampi: Array = tempi.get("lampi", [])
+	for k in lampi.size():
+		if _t > float(lampi[k][0]):
+			_suona("lampo%d" % k, &"neon_clic", _lampada_vicina(), 1.0, -4.0)
+	if _t > float(tempi.get("luce", 0.0)):
+		_suona("luce", &"neon_clic", _lampada_vicina(), 0.9, -2.0)
+	# la goccia di bava che cade sulla faccia
+	if _t > float(tempi.get("goccia", INF)):
+		_suona("goccia", &"goccia_acqua", _p.camera, 0.8, 2.0)
+	if _t > float(tempi.get("suono_minaccia", 0.8)):
 		_suona("minaccia", &"squalo_minaccia", _nodo_bocca())
-	# i denti che scattano a ogni morso nell'aria (gli scatti della testa: mostro_anim.posa, MINACCIA + 0,7,
-	# 1,6 e 2,5 s; le fauci si chiudono appena dopo il picco)
-	for k in 3:
-		if _t > M + [0.7, 1.6, 2.5][k] + 0.08:
-			_suona("denti%d" % k, &"squalo_denti", _nodo_bocca())
+	# i denti che scattano a ogni morso (gli scatti della testa: mostro_anim.MORSI; le fauci si chiudono appena dopo
+	# il picco). L'ultimo, dopo la pausa: un colpo più secco e più basso
+	var morsi: Array = tempi.get("morsi", [])
+	for k in morsi.size():
+		if _t > float(morsi[k][0]) + 0.08:
+			var ultimo := k == morsi.size() - 1
+			_suona("denti%d" % k, &"squalo_denti", _nodo_bocca(), 0.72 if ultimo else 1.0, 4.0 if ultimo else 0.0)
 	if _t > R:
 		_suona("richiamo", &"jilly_richiamo", to_global(Vector3(0, 1.3, -8.5)))
 	# il ringhio quando comincia ad arretrare guardandoti (prima del 23 ottobre: quando si girava)
@@ -377,6 +414,148 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 		squalo.visible = false
 		if _anim:
 			_anim.pause()
+
+
+## Le luci del corridoio (dalla 0.3.23): le LuceEmergenza e i vetri delle loro lampade dentro [constant CORRIDOIO].
+## I vetri prendono un loro materiale (lo stesso shader: niente pipeline nuove) per spegnersi senza toccare quelli delle
+## altre stanze.
+func _prendi_luci() -> void:
+	_rimetti_luci()
+	var interni := get_parent().get_parent() if get_parent() else null
+	if interni == null:
+		return
+	for n in interni.find_children("*", "Node3D", true, false):
+		if n is LuceEmergenza and CORRIDOIO.has_point(to_local((n as Node3D).global_position)):
+			_lampade.append(n)
+	for n in interni.find_children("*_vetro", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if not CORRIDOIO.has_point(to_local(mi.global_position)):
+			continue
+		var mat := mi.get_active_material(0) as BaseMaterial3D
+		if mat == null or not mat.emission_enabled:
+			continue
+		var copia := mat.duplicate() as BaseMaterial3D
+		_vetri.append([mi, copia, mat.emission_energy_multiplier])
+		mi.material_override = copia
+
+
+func _rimetti_luci() -> void:
+	for le in _lampade:
+		if is_instance_valid(le):
+			le.set(&"fattore", 1.0)
+	for v in _vetri:
+		if is_instance_valid(v[0]):
+			(v[0] as MeshInstance3D).material_override = null
+	_lampade.clear()
+	_vetri.clear()
+	_luce = 1.0
+
+
+## Quanto è accesa la luce del corridoio all'istante [param t] (0-1): quasi spenta nel buio, accesa nei lampi (che
+## sfarfallano: accesa, un attimo spenta, di nuovo accesa) e da LUCE in poi (sfarfalla anche lì, poi resta accesa).
+func luce_al(t: float) -> float:
+	var luce: float = tempi.get("luce", 0.0)
+	if t >= luce:
+		var x := t - luce
+		return 0.0 if (x > 0.06 and x < 0.14) else 1.0
+	for l in tempi.get("lampi", []):
+		var x := t - float(l[0])
+		if x >= 0.0 and x < float(l[1]):
+			return BUIO if (x > 0.05 and x < 0.08) else 1.0
+	return BUIO
+
+
+## Quanto resta della luce nel buio: un filo (le sagome si intuiscono appena, la nebbia è nera).
+const BUIO := 0.03
+
+
+## La luce di adesso (per l'atmosfera viola: si spegne e si accende con il corridoio).
+func luce_scena() -> float:
+	return _luce if _attivo else 1.0
+
+
+func _luci_del_buio() -> void:
+	_luce = luce_al(_t)
+	for le in _lampade:
+		if is_instance_valid(le):
+			le.set(&"fattore", _luce)
+	for v in _vetri:
+		(v[1] as BaseMaterial3D).emission_energy_multiplier = float(v[2]) * _luce
+
+
+## La lampada del corridoio più vicina allo squalo (per lo scatto del relè quando la luce sfarfalla).
+func _lampada_vicina() -> Vector3:
+	var radice := _bone_mondo("radice")
+	var meglio: Node3D = null
+	for le in _lampade:
+		if not is_instance_valid(le):
+			continue
+		var n := le as Node3D
+		if meglio == null or n.global_position.distance_to(radice) < meglio.global_position.distance_to(radice):
+			meglio = n
+	return meglio.global_position if meglio else to_global(Vector3(0.0, 2.4, -1.5))
+
+
+## La goccia di bava sullo schermo (dalla 0.3.23): uno strato sopra la scena, col suo shader; nasce col livello e si
+## disegna trasparente per [constant FOTOGRAMMI_GOCCIA] fotogrammi (shader, copia dello schermo e pipeline pronti
+## prima della scena), poi si nasconde, e si vede solo dalla GOCCIA per [constant DURATA_GOCCIA] s, mentre la scena è
+## in corso: alla fine, se la scena si interrompe o il livello se ne va, non resta niente sullo schermo.
+func _crea_goccia() -> void:
+	_goccia_strato = CanvasLayer.new()
+	_goccia_strato.name = "GocciaSchermo"
+	_goccia_strato.layer = 2
+	add_child(_goccia_strato)
+	_goccia = ColorRect.new()
+	_goccia.name = "Goccia"
+	_goccia.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_goccia.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var mat := ShaderMaterial.new()
+	mat.shader = SHADER_GOCCIA
+	mat.set_shader_parameter(&"forza", 0.0)
+	_goccia.material = mat
+	_goccia_strato.add_child(_goccia)
+	_nascondi_goccia_dopo.call_deferred()
+
+
+func _nascondi_goccia_dopo() -> void:
+	for i in FOTOGRAMMI_GOCCIA:
+		if not is_inside_tree():
+			return
+		await get_tree().process_frame
+	if not _attivo and _goccia:
+		_goccia.visible = false
+
+
+## Per quanto si vede la goccia (s), dalla GOCCIA.
+const DURATA_GOCCIA := 2.7
+
+
+## Vero se la goccia è sullo schermo (per i test).
+func goccia_visibile() -> bool:
+	return _goccia != null and _goccia.is_visible_in_tree() and float((_goccia.material as ShaderMaterial).get_shader_parameter(&"forza")) > 0.0
+
+
+func _muovi_goccia() -> void:
+	if _goccia == null:
+		return
+	var x := _t - float(tempi.get("goccia", INF))
+	var dentro := _attivo and x >= 0.0 and x < DURATA_GOCCIA
+	_goccia.visible = dentro
+	var mat := _goccia.material as ShaderMaterial
+	if not dentro:
+		mat.set_shader_parameter(&"forza", 0.0)
+		return
+	var vp := get_viewport().get_visible_rect().size
+	mat.set_shader_parameter(&"aspetto", vp.x / maxf(vp.y, 1.0))
+	# cade e si schiaccia (0,06 s), resta ferma un attimo, poi scivola giù sempre più svelta lasciando la scia, e alla
+	# fine si assottiglia e sparisce
+	var arrivo := clampf(x / 0.06, 0.0, 1.0)
+	var scivola := maxf(x - 0.45, 0.0)
+	var giu := 0.12 * scivola * scivola + 0.03 * scivola
+	mat.set_shader_parameter(&"centro", Vector2(0.37 + 0.015 * sin(scivola * 2.3), 0.28 + giu))
+	mat.set_shader_parameter(&"raggio", lerpf(0.04, 0.095, arrivo) * (1.0 - 0.3 * clampf(scivola / 2.0, 0.0, 1.0)))
+	mat.set_shader_parameter(&"scia", clampf(giu / 0.05, 0.0, 9.0))
+	mat.set_shader_parameter(&"forza", arrivo * (1.0 - clampf((x - (DURATA_GOCCIA - 0.7)) / 0.7, 0.0, 1.0)))
 
 
 ## La luce della corsa: dietro e sopra di lui, dalla parte del giocatore; si accende quando si gira verso la
@@ -411,22 +590,24 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	var occhio_base := _p.global_position + Vector3.UP * _p.stand_eye_height
 	# altezza degli occhi: sdraiato (0,25 m), poi in ginocchio, poi in piedi alla fine
 	var alzati := porta_t + 1.9
-	var h := _liscio(0.25, occhi_a_terra, 1.2, 2.7)
+	# (0.3.23) sdraiato nel buio; quando la luce resta accesa si tira su a sedere di scatto, poi, mentre lui lo annusa,
+	# piano in ginocchio (gli occhi seguono il muso che sale verso la faccia)
+	var luce: float = tempi.get("luce", 0.0)
+	var apre: float = tempi.get("apre", M - 0.4)
+	var h := _liscio(0.25, 0.72, luce + 0.1, luce + 0.6)
+	h = lerpf(h, occhi_a_terra, _liscio(0.0, 1.0, luce + 1.4, apre - 0.1))
 	h = lerpf(h, _p.stand_eye_height, _liscio(0.0, 1.0, alzati, alzati + 1.4))
-	# dove guarda: il soffitto, poi la bocca, poi lo squalo che si gira e scappa, poi davanti a sé
-	var occhio0 := occhio_base + Vector3.UP * (h - _p.stand_eye_height)
-	var su := occhio_base + Vector3.UP * 3.0 + _p.global_basis.z * -0.3
-	# dal soffitto alla bocca girando la testa (direzioni, non punti: se no resta al soffitto fino all'ultimo)
-	var d_su := (su - occhio0).normalized()
-	var d_bocca := (bocca - occhio0).normalized()
-	var obiettivo := occhio0 + d_su.slerp(d_bocca, _liscio(0.0, 1.0, 0.95, 2.15)) * occhio0.distance_to(bocca)
+	# dove guarda: nel buio lui che arriva (il corpo e la testa), dalla luce la bocca, poi lo squalo che si gira e
+	# scappa, poi davanti a sé
+	var lui := _bone_mondo("spina").lerp(_bone_mondo("testa"), 0.6)
+	var obiettivo := lui.lerp(bocca, _liscio(0.0, 1.0, luce - 0.3, luce + 0.4))
 	var corpo := _bone_mondo("spina").lerp(_bone_mondo("testa"), 0.5)
 	var segui := _liscio(0.0, 1.0, R + 0.15, R + 0.9) - _liscio(0.0, 1.0, porta_t + 0.6, porta_t + 2.2)
 	obiettivo = obiettivo.lerp(corpo, clampf(segui, 0.0, 1.0))
 	var avanti := occhio_base + (_dir_yaw(_yaw0)) * 4.0
 	obiettivo = obiettivo.lerp(avanti, _liscio(0.0, 1.0, porta_t + 0.6, porta_t + 2.2))
 	# lo sguardo insegue il bersaglio con un po' di ritardo (più svelto quando si spaventa)
-	var rapido := 9.0 if _t < R + 0.6 else 5.0
+	var rapido := (3.0 if _t < luce else 9.0) if _t < R + 0.6 else 5.0
 	_sguardo = _sguardo.lerp(obiettivo, 1.0 - exp(-rapido * delta)) if delta > 0.0 else obiettivo
 	var occhio := occhio_base + Vector3.UP * (h - _p.stand_eye_height)
 	# si ritrae: dalla bocca sotto i 40 cm, e dal corpo che si gira e dalle mani sotto i 55 cm
@@ -443,8 +624,8 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	var yaw := atan2(-d.x, -d.z)
 	var pitch := atan2(d.y, Vector2(d.x, d.z).length())
 	_p.set_look(yaw, pitch)
-	# la testa sdraiata è girata su un fianco e si raddrizza mentre si rialza
-	cam.rotation.z = deg_to_rad(_liscio(70.0, 0.0, 1.1, 2.4))
+	# la testa sdraiata è girata su un fianco e si raddrizza mentre si tira su
+	cam.rotation.z = deg_to_rad(_liscio(25.0, 0.0, luce + 0.1, luce + 0.9))
 	cam.position = Vector3(0.0, h - _p.stand_eye_height - indietro * 0.3, indietro)
 	# mai dentro lo squalo: fuori dalla sua pelle (la spinta sale subito e cala piano, senza scatti)
 	# la testa del giocatore subito con lo sguardo di adesso (lo rifà lui dopo, uguale): così la posizione
@@ -462,6 +643,12 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	cam.global_position = base + _spinta
 
 
+func _exit_tree() -> void:
+	# (la scena interrotta, il livello che se ne va: le lampade e i vetri del corridoio tornano com'erano)
+	if _attivo:
+		_rimetti_luci()
+
+
 func _rimetti_tetti(tutti: bool) -> void:
 	for i in range(_tetti.size() - 1, -1, -1):
 		var tt: Array = _tetti[i]
@@ -473,6 +660,9 @@ func _rimetti_tetti(tutti: bool) -> void:
 
 func _termina() -> void:
 	_rimetti_tetti(true)
+	_rimetti_luci()
+	if _goccia:
+		_goccia.visible = false
 	_attivo = false
 	set_process(false)
 	var cam := _p.camera

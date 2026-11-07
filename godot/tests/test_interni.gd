@@ -223,17 +223,59 @@ func _scena_squalo(start: Marker3D) -> void:
 	var chiusa_rif := (sch.global_basis * sch.get_bone_global_rest(int(oss["bocca"])).origin).distance_to(
 		sch.global_basis * sch.get_bone_global_rest(int(oss["mento_punta"])).origin)
 	var minaccia_t: float = s.tempi.get("minaccia", 2.4)
-	while not fatto[0] and t < 16.0:
+	# (dalla 0.3.23) il buio coi tre lampi, ti annusa con la goccia sullo schermo, i morsi imprevedibili
+	var luce_t: float = s.tempi.get("luce", 0.0)
+	var apre_t: float = s.tempi.get("apre", minaccia_t - 0.4)
+	var goccia_t: float = s.tempi.get("goccia", 4.4)
+	var morsi: Array = s.tempi.get("morsi", [])
+	var pausa: Array = s.tempi.get("pausa", [0.0, 0.0])
+	var buio_max := 0.0
+	var lampi := 0
+	var lampo_prima := false
+	var lampo_ultimo := -1.0
+	var lampi_dist: Array[float] = []
+	var lampi_angolo := 0.0
+	var annusa_chiusa := 0.0
+	var annusa_lato: Array[float] = []
+	var goccia_vista := 0
+	var goccia_fuori := false
+	var pausa_ferma := 0.0
+	var testa_prima := Vector3.ZERO
+	var ultimo_chiusa := 0
+	var lampade := level.find_children("*", "LuceEmergenza", true, false)
+	while not fatto[0] and t < 24.0:
 		await get_tree().process_frame
 		t += 1.0 / 60.0
 		var cam := p.camera
-		if t > 2.5:
+		if t > luce_t + 1.0:
 			rollio = maxf(rollio, absf(cam.rotation.z))
+		# il buio: fino alla luce il corridoio è spento, tranne i lampi; a ogni lampo lui è più vicino e si vede
+		var lu := float(s.get(&"_luce"))
+		if t < luce_t - 0.02:
+			var acceso := lu > 0.5
+			# (un lampo sfarfalla: acceso, un attimo spento, acceso; conta una volta sola)
+			if acceso and not lampo_prima and t - lampo_ultimo > 0.15:
+				lampi += 1
+				var testa_l: Vector3 = s.call(&"_bone_mondo", "testa")
+				lampi_dist.append(cam.global_position.distance_to(testa_l))
+				var corpo_l: Vector3 = (s.call(&"_bone_mondo", "spina") as Vector3).lerp(testa_l, 0.5)
+				lampi_angolo = maxf(lampi_angolo, rad_to_deg((-cam.global_basis.z).angle_to(corpo_l - cam.global_position)))
+			lampo_prima = acceso
+			if acceso:
+				lampo_ultimo = t
+			if not acceso:
+				buio_max = maxf(buio_max, lu)
+		# la goccia: sullo schermo solo nella sua finestra
+		var gv: bool = s.call(&"goccia_visibile")
+		if gv:
+			goccia_vista += 1
+			if t < goccia_t - 0.02 or t > goccia_t + 2.8:
+				goccia_fuori = true
 		# lo scatto: quanto cambia in un fotogramma la velocità con cui gira lo sguardo (un tremore la fa saltare)
 		var av := -cam.global_basis.z
 		if avanti_prima != Vector3.ZERO:
 			var vel := rad_to_deg(av.angle_to(avanti_prima)) * 60.0
-			if vel_prima >= 0.0 and t > 2.5 and absf(vel - vel_prima) > scatto:
+			if vel_prima >= 0.0 and t > luce_t + 1.0 and absf(vel - vel_prima) > scatto:
 				scatto = absf(vel - vel_prima)
 				scatto_quando = "a %.2f s" % t
 			vel_prima = vel
@@ -246,7 +288,7 @@ func _scena_squalo(start: Marker3D) -> void:
 		if not tocchi.is_empty() and cam_muro_dove == "":
 			cam_muro_dove = "a %.2f s in %s" % [t, (tocchi[0]["collider"] as Node).name]
 		arretra_max = maxf(arretra_max, float(s.call(&"arretra", t, porta_t + 1.9)))
-		if t > minaccia_t + 0.5 and t < richiamo_t and s.squalo != null:
+		if t > minaccia_t + 0.3 and t < richiamo_t and s.squalo != null:
 			morso_min = minf(morso_min, (s.call(&"_bone_mondo", "bocca") as Vector3).distance_to(s.call(&"_bone_mondo", "mento_punta")))
 		if s.squalo == null or not s.squalo.visible:
 			continue
@@ -255,7 +297,20 @@ func _scena_squalo(start: Marker3D) -> void:
 			pelle_min = minf(pelle_min, q.distance_to(occhio))
 		var bocca: Vector3 = s.call(&"_punto_bocca")
 		var apertura: float = s.call(&"_bone_mondo", "bocca").distance_to(s.call(&"_bone_mondo", "mento_punta"))
-		if t > 2.6 and t < 5.3:
+		# ti annusa: la bocca chiusa, il muso dalla sua sinistra alla sua destra (rispetto a dove guarda all'inizio)
+		if t > luce_t + 0.3 and t < apre_t - 0.1:
+			annusa_chiusa = maxf(annusa_chiusa, apertura)
+		if absf(t - (luce_t + 0.4)) < 0.009 or absf(t - (apre_t - 0.45)) < 0.009:
+			var destra := s.global_basis.x.normalized()
+			annusa_lato.append((bocca - p.global_position).dot(destra))
+		# la pausa: la testa ferma (meno di 4 cm/s), la bocca spalancata
+		var testa_q: Vector3 = s.call(&"_bone_mondo", "testa")
+		if t > float(pausa[0]) + 0.2 and t < float(pausa[1]) - 0.2 and testa_prima != Vector3.ZERO:
+			pausa_ferma = maxf(pausa_ferma, testa_q.distance_to(testa_prima) * 60.0)
+		testa_prima = testa_q
+		if not morsi.is_empty() and t > float(morsi.back()[0]) and t < float(morsi.back()[0]) + 0.6 and apertura < chiusa_rif - 0.015:
+			ultimo_chiusa += 1
+		if t > minaccia_t + 0.2 and t < richiamo_t - 0.1:
 			min_dist = minf(min_dist, occhio.distance_to(bocca))
 			max_apertura = maxf(max_apertura, apertura)
 			var avanti := -p.camera.global_basis.z
@@ -362,6 +417,23 @@ func _scena_squalo(start: Marker3D) -> void:
 		"la camera non trema: niente rollio dopo che la testa si è raddrizzata (%.4f rad), niente scosse ai passi" % rollio)
 	check(scatto < 120.0, "lo sguardo gira senza scatti (la sua velocità cambia al più di %.0f °/s in un fotogramma, %s)" % [scatto, scatto_quando])
 	check(cam_muro_dove == "", "la camera, un filo più indietro (%.2f m), non entra nei muri: 12 cm liberi tutto intorno%s" % [arretra_max, (" (tocca " + cam_muro_dove + ")") if cam_muro_dove != "" else ""])
+	check(buio_max < 0.06 and lampi == 3, "all'inizio il corridoio è al buio (luce al più %.2f) e la luce sfarfalla tre volte (%d lampi)" % [buio_max, lampi])
+	check(lampi_dist.size() == 3 and lampi_dist[0] > lampi_dist[1] + 0.4 and lampi_dist[1] > lampi_dist[2] + 0.4,
+		"a ogni lampo lui è più vicino (la testa a %s m)" % str(lampi_dist.map(func(x): return snappedf(x, 0.01))))
+	check(lampi_angolo < 30.0, "e nei lampi la camera lo guarda (al più %.0f° di lato)" % lampi_angolo)
+	check(annusa_chiusa < chiusa_rif + 0.03, "annusando la bocca è chiusa (labbro-mento al più %.3f m)" % annusa_chiusa)
+	check(annusa_lato.size() == 2 and annusa_lato[0] < -0.05 and annusa_lato[1] > 0.0,
+		"il muso passa dalla sua sinistra alla sua destra (%s m)" % str(annusa_lato.map(func(x): return snappedf(x, 0.01))))
+	check(goccia_vista > 60 and not goccia_fuori and not bool(s.call(&"goccia_visibile")),
+		"la goccia di bava sullo schermo si vede solo nella sua finestra (%d fotogrammi) e alla fine non resta niente" % goccia_vista)
+	check(pausa_ferma < 0.04, "nella pausa la testa resta ferma (al più %.3f m/s)" % pausa_ferma)
+	check(ultimo_chiusa >= 15, "l'ultimo morso resta chiuso (%d fotogrammi a 60 fps)" % ultimo_chiusa)
+	var lampade_ok := true
+	for le in lampade:
+		lampade_ok = lampade_ok and float(le.get(&"fattore")) == 1.0
+	for v in level.find_children("*_vetro", "MeshInstance3D", true, false):
+		lampade_ok = lampade_ok and (v as MeshInstance3D).material_override == null
+	check(lampade_ok, "finita la scena le lampade del corridoio sono accese come prima")
 	check(morso_min < chiusa_rif - 0.02,
 		"nei morsi la bocca si chiude del tutto, più del sorriso scolpito che lascia una fessura (labbro-mento al minimo %.3f m, nella posa del modello %.3f)" % [morso_min, chiusa_rif])
 	check(corsa_x > 22.2, "corre fino oltre la porta tagliafuoco (x %.2f)" % corsa_x)

@@ -2229,6 +2229,16 @@
   "lufs": -20.0,
   "lufs_max": -15.2
  },
+ "squalo/squalo_annusa": {
+  "file": "res://audio/squalo/squalo_annusa.ogg",
+  "canali": 1,
+  "durata": 6.302,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "il fiato nel buio e le gocce di bava, poi il fiuto (0.3.23)",
+  "lufs": -18.0,
+  "lufs_max": -12.5
+ },
  "squalo/squalo_denti_01": {
   "file": "res://audio/squalo/squalo_denti_01.ogg",
   "canali": 1,
@@ -2262,12 +2272,12 @@
  "squalo/squalo_minaccia": {
   "file": "res://audio/squalo/squalo_minaccia.ogg",
   "canali": 1,
-  "durata": 6.002,
+  "durata": 4.802,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "fiato a 30 cm, gola che brontola sotto e tre ringhi corti con il risucchio della saliva (2,3 s, 3,2 s, 4,1 s dall'inizio del file); versione B del 23 ottobre",
-  "lufs": -15.8,
-  "lufs_max": -11.4
+  "nota": "fiato a 30 cm, gola che brontola sotto (zitta nella pausa) e i morsi: due svelti e uno dopo la pausa; versione B del 23 ottobre, tempi della 0.3.23",
+  "lufs": -15.5,
+  "lufs_max": -12.0
  },
  "squalo/squalo_passo_01": {
   "file": "res://audio/squalo/squalo_passo_01.ogg",

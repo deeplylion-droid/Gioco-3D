@@ -20,6 +20,9 @@ enum Modalita { FISSA, PULSANTE, ROTANTE, SPENTA }
 @export var giri_al_secondo := 0.55
 @export var pulsazioni_al_secondo := 0.7
 @export var energia_nebbia := 2.0
+## Quanto è accesa (0-1): moltiplica la luce e la cupola. La usa la scena dello squalo all'inizio (il buio e i lampi,
+## risveglio_squalo.gd); di serie 1.
+var fattore := 1.0
 
 var _omni: OmniLight3D
 var _perno: Node3D
@@ -116,12 +119,12 @@ func _process(delta: float) -> void:
 	_t += delta
 	match modalita:
 		Modalita.FISSA:
-			_omni.light_energy = energia
+			_omni.light_energy = energia * fattore
 		Modalita.PULSANTE:
 			var p := 0.5 + 0.5 * sin(_t * TAU * pulsazioni_al_secondo)
 			p = p * p
-			_omni.light_energy = energia * lerpf(0.08, 1.0, p)
-			_cupola_mat.emission_energy_multiplier = lerpf(0.3, 4.0, p)
+			_omni.light_energy = energia * lerpf(0.08, 1.0, p) * fattore
+			_cupola_mat.emission_energy_multiplier = lerpf(0.3, 4.0, p) * fattore
 		Modalita.ROTANTE:
 			_perno.rotation.y = _t * TAU * giri_al_secondo
 
