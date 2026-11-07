@@ -240,7 +240,9 @@ func _sagoma() -> void:
 	var radice := get_tree().current_scene if get_tree().current_scene else _r.get_parent()
 	for l in radice.find_children("*", "Light3D", true, false):
 		var luce3 := l as Light3D
-		if luce3 == luce or luce3 == bordo or luce3 == riflesso or luce3 == _r.get(&"_luce_corsa"):
+		# (le luci della scena che illuminano solo lui restano: la corsa e, dalla 0.3.23, quella dei lampi)
+		if luce3 == luce or luce3 == bordo or luce3 == riflesso or luce3 == _r.get(&"_luce_corsa") \
+				or luce3 == _r.get(&"_luce_lampo"):
 			continue
 		if luce3.light_cull_mask & RisveglioSqualo.STRATO_SQUALO:
 			_luci_tolte.append([luce3, luce3.light_cull_mask])

@@ -16,6 +16,10 @@ var _failed := 0
 ## Il salto più grande della velocità di una mano rispetto al petto in un fotogramma, nella scena dello squalo (m/s):
 ## quello della 0.3.16 (2,65, nella corsa).
 const SALTO_MANI := 2.7
+## (0.3.23) Di quanto può spostarsi al più la camera della scena dello squalo in un fotogramma, a 60 e a 30 fps (3 m/s:
+## tirarsi su a sedere arriva a 1,5 m/s; il salto del collaudo di grafica-2 su 86ab11f9 era di 0,52 m).
+const SALTO_CAMERA_60 := 0.05
+const SALTO_CAMERA_30 := 0.10
 ## Lo stesso per i gomiti: quello della 0.3.16 (3,01, nella corsa).
 const SALTO_GOMITI := 3.1
 
@@ -231,6 +235,7 @@ func _scena_squalo(start: Marker3D) -> void:
 	var pausa: Array = s.tempi.get("pausa", [0.0, 0.0])
 	var buio_max := 0.0
 	var lampi := 0
+	var lampo_luce := 0.0
 	var lampo_prima := false
 	var lampo_ultimo := -1.0
 	var lampi_dist: Array[float] = []
@@ -243,10 +248,19 @@ func _scena_squalo(start: Marker3D) -> void:
 	var testa_prima := Vector3.ZERO
 	var ultimo_chiusa := 0
 	var lampade := level.find_children("*", "LuceEmergenza", true, false)
+	# (collaudo di grafica-2 su 86ab11f9: la camera saltava di 0,52 m in un fotogramma) la camera non salta mai
+	var salto_cam := 0.0
+	var salto_cam_quando := ""
+	var cam_prima := Vector3.ZERO
 	while not fatto[0] and t < 24.0:
 		await get_tree().process_frame
 		t += 1.0 / 60.0
 		var cam := p.camera
+		if s.in_corso():
+			if cam_prima != Vector3.ZERO and cam.global_position.distance_to(cam_prima) > salto_cam:
+				salto_cam = cam.global_position.distance_to(cam_prima)
+				salto_cam_quando = "a %.2f s" % t
+			cam_prima = cam.global_position
 		if t > luce_t + 1.0:
 			rollio = maxf(rollio, absf(cam.rotation.z))
 		# il buio: fino alla luce il corridoio è spento, tranne i lampi; a ogni lampo lui è più vicino e si vede
@@ -260,6 +274,10 @@ func _scena_squalo(start: Marker3D) -> void:
 				lampi_dist.append(cam.global_position.distance_to(testa_l))
 				var corpo_l: Vector3 = (s.call(&"_bone_mondo", "spina") as Vector3).lerp(testa_l, 0.5)
 				lampi_angolo = maxf(lampi_angolo, rad_to_deg((-cam.global_basis.z).angle_to(corpo_l - cam.global_position)))
+			# nei lampi una luce illumina davvero lui (collaudo di grafica-2: nel primo era una sagoma nera)
+			var ll := s.get(&"_luce_lampo") as OmniLight3D
+			if acceso and ll and ll.light_energy > 0.0 and (ll.light_cull_mask & RisveglioSqualo.STRATO_SQUALO):
+				lampo_luce = maxf(lampo_luce, ll.light_energy)
 			lampo_prima = acceso
 			if acceso:
 				lampo_ultimo = t
@@ -300,9 +318,9 @@ func _scena_squalo(start: Marker3D) -> void:
 		# ti annusa: la bocca chiusa, il muso dalla sua sinistra alla sua destra (rispetto a dove guarda all'inizio)
 		if t > luce_t + 0.3 and t < apre_t - 0.1:
 			annusa_chiusa = maxf(annusa_chiusa, apertura)
-		if absf(t - (luce_t + 0.4)) < 0.009 or absf(t - (apre_t - 0.45)) < 0.009:
-			var destra := s.global_basis.x.normalized()
-			annusa_lato.append((bocca - p.global_position).dot(destra))
+		# (rispetto alla camera: è lì che si sente il fiuto, attaccato alla bocca)
+		if absf(t - (luce_t + 0.8)) < 0.009 or absf(t - (apre_t - 0.45)) < 0.009:
+			annusa_lato.append((bocca - occhio).dot(p.camera.global_basis.x.normalized()))
 		# la pausa: la testa ferma (meno di 4 cm/s), la bocca spalancata
 		var testa_q: Vector3 = s.call(&"_bone_mondo", "testa")
 		if t > float(pausa[0]) + 0.2 and t < float(pausa[1]) - 0.2 and testa_prima != Vector3.ZERO:
@@ -412,7 +430,8 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(mani_salto <= SALTO_MANI, "mani e gomiti si muovono lisci: la velocità rispetto al petto non cambia più che nella 0.3.16 in un fotogramma (%s)" % mani_salto_quando)
 	check(coda_porta > 22.02, "con la porta chiusa la coda è tutta oltre il battente (il punto più indietro a x %.2f, il battente fino a 22,00; %s)" % [coda_porta, coda_porta_quando])
 	check(pelle_muro < 0.01, "la pelle non entra nei muri, neanche oltre la porta (al più %.3f m%s)" % [pelle_muro, (", " + pelle_muro_dove) if pelle_muro > 0.0 else ""])
-	check(pelle_min > 0.18, "la camera non entra mai nello squalo (al più vicino %.2f m dalla sua pelle)" % pelle_min)
+	check(pelle_min >= RisveglioSqualo.DISTANZA_PELLE, "la camera non entra mai nello squalo (al più vicino %.3f m dalla sua pelle)" % pelle_min)
+	check(salto_cam < SALTO_CAMERA_60, "e non salta mai: al più %.3f m in un fotogramma a 60 fps (%s)" % [salto_cam, salto_cam_quando])
 	check(rollio < 0.001 and not s.has_method(&"_scossa_passo"),
 		"la camera non trema: niente rollio dopo che la testa si è raddrizzata (%.4f rad), niente scosse ai passi" % rollio)
 	check(scatto < 120.0, "lo sguardo gira senza scatti (la sua velocità cambia al più di %.0f °/s in un fotogramma, %s)" % [scatto, scatto_quando])
@@ -421,9 +440,10 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(lampi_dist.size() == 3 and lampi_dist[0] > lampi_dist[1] + 0.4 and lampi_dist[1] > lampi_dist[2] + 0.4,
 		"a ogni lampo lui è più vicino (la testa a %s m)" % str(lampi_dist.map(func(x): return snappedf(x, 0.01))))
 	check(lampi_angolo < 30.0, "e nei lampi la camera lo guarda (al più %.0f° di lato)" % lampi_angolo)
+	check(lampo_luce > 5.0, "e una luce lo illumina davanti (forza %.1f, nel primo lampo)" % lampo_luce)
 	check(annusa_chiusa < chiusa_rif + 0.03, "annusando la bocca è chiusa (labbro-mento al più %.3f m)" % annusa_chiusa)
-	check(annusa_lato.size() == 2 and annusa_lato[0] < -0.05 and annusa_lato[1] > 0.0,
-		"il muso passa dalla sua sinistra alla sua destra (%s m)" % str(annusa_lato.map(func(x): return snappedf(x, 0.01))))
+	check(annusa_lato.size() == 2 and annusa_lato[0] < -0.1 and annusa_lato[1] > 0.1,
+		"il muso (e il fiuto) passa dalla sinistra alla destra della camera (%s m)" % str(annusa_lato.map(func(x): return snappedf(x, 0.01))))
 	check(goccia_vista > 60 and not goccia_fuori and not bool(s.call(&"goccia_visibile")),
 		"la goccia di bava sullo schermo si vede solo nella sua finestra (%d fotogrammi) e alla fine non resta niente" % goccia_vista)
 	check(pausa_ferma < 0.04, "nella pausa la testa resta ferma (al più %.3f m/s)" % pausa_ferma)
@@ -458,6 +478,30 @@ func _scena_squalo(start: Marker3D) -> void:
 	q.exclude = [p.get_rid()]
 	var muro := space.intersect_ray(q)
 	check(not muro.is_empty() and absf(muro.position.x - 21.95) < 0.1, "e da lì non si passa")
+	# (0.3.23) la stessa scena a 30 fps (chi gioca a 30 fps): la scena avanza di 1/30 s per fotogramma; la camera non
+	# salta e non entra mai nella pelle
+	s.avvia(p)
+	s.set_process(false)
+	var salto30 := 0.0
+	var salto30_quando := ""
+	var pelle30 := 99.0
+	var prima30 := Vector3.ZERO
+	var t30 := 0.0
+	while s.in_corso() and t30 < 24.0:
+		s.call(&"_process", 1.0 / 30.0)
+		t30 += 1.0 / 30.0
+		await get_tree().process_frame
+		if not s.in_corso():
+			break
+		var c30 := p.camera.global_position
+		if prima30 != Vector3.ZERO and c30.distance_to(prima30) > salto30:
+			salto30 = c30.distance_to(prima30)
+			salto30_quando = "a %.2f s" % t30
+		prima30 = c30
+		for q30: Vector3 in s.call(&"_pelle_vicina", c30):
+			pelle30 = minf(pelle30, q30.distance_to(c30))
+	check(not s.in_corso() and salto30 < SALTO_CAMERA_30 and pelle30 >= RisveglioSqualo.DISTANZA_PELLE,
+		"a 30 fps la camera non salta (al più %.3f m in un fotogramma, %s) e non entra nello squalo (al più vicino %.3f m)" % [salto30, salto30_quando, pelle30])
 
 
 func check(cond: bool, what: String) -> void:

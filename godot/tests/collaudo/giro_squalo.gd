@@ -148,8 +148,12 @@ func _registra() -> void:
 		var G := float(s.tempi.get("goccia", 4.4))
 		istanti = [0.3]
 		for l in s.tempi.get("lampi", []):
-			istanti.append_array([float(l[0]) + 0.02, float(l[0]) + float(l[1]) - 0.03])
+			# (lo scatto esce un fotogramma dopo: all'inizio e a metà della parte accesa, non nello sfarfallio)
+			istanti.append_array([float(l[0]), float(l[0]) + 0.09])
 		istanti.append_array([L + 0.3, L + 0.9])
+		# (ricontrollo del collaudo di grafica-2: da 2,0 a 2,7 s ogni 0,1 s)
+		for k in 8:
+			istanti.append(2.0 + 0.1 * k + 0.01)
 		for f in s.tempi.get("fiuti", []):
 			istanti.append(float(f) + 0.15)
 		istanti.append_array([G + 0.08, G + 0.6, G + 1.4, G + 2.1, float(s.tempi.get("apre", M - 0.4)) + 0.15, M])
