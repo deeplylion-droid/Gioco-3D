@@ -7,7 +7,7 @@ extends Node
 ##    no, e tengono i loro;
 ## 2. nessuna mesh fuori dal tunnel (le condotte, il bacino, il giocatore) ha quello strato;
 ## 3. accesa per il riscaldamento, la luce rosa ha la maschera STRATO_RISCALDA e basta: nessuna mesh fuori dal tunnel
-##    combacia con lei; spenta, torna alla maschera del gioco.
+##    combacia con lei, e non colora la nebbia volumetrica; spenta, torna alla maschera e alla nebbia del gioco.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_riscalda_tunnel_strati.gd
 
 const LEVEL := "res://scenes/test/sottomarino_prova.tscn"
@@ -84,6 +84,8 @@ func _run() -> void:
 		eff.riscalda_da(cam, true)
 		check(eff.luce.visible and eff.luce.light_cull_mask == bit,
 			"3. accesa per il riscaldamento, la luce rosa ha solo lo strato del riscaldamento (%x)" % eff.luce.light_cull_mask)
+		check(eff.luce.light_volumetric_fog_energy == 0.0,
+			"3. accesa per il riscaldamento, la luce rosa non colora la nebbia (che non guarda gli strati)")
 		var toccate := 0
 		for n in level.find_children("*", "GeometryInstance3D", true, false):
 			if not sott.is_ancestor_of(n) and (n as GeometryInstance3D).layers & eff.luce.light_cull_mask:
@@ -92,6 +94,8 @@ func _run() -> void:
 		eff.riscalda_da(cam, false)
 		check(not eff.luce.visible and eff.luce.light_cull_mask == EffettiInseguimento.MASCHERA_GIOCO,
 			"3. spenta, la luce torna alla maschera del gioco (%x)" % eff.luce.light_cull_mask)
+		check(eff.luce.light_volumetric_fog_energy == EffettiInseguimento.NEBBIA_GIOCO,
+			"3. spenta, la luce torna a colorare la nebbia come in gioco")
 		cam.queue_free()
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)

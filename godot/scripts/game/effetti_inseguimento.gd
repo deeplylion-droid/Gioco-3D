@@ -40,6 +40,10 @@ const MASCHERA_GIOCO := 0xFFFFF & ~2
 ## bacino) colorava di rosa per 0,1-0,15 s il muro, la scaletta e la ringhiera del bacino, che il giocatore vede
 ## (collaudo finale della 0.3.21, #131). Le pipeline sono le stesse: la luce è la stessa, cambia solo su chi si posa.
 const STRATO_RISCALDA := 1 << 12
+## Quanto la luce rosa colora la nebbia volumetrica in gioco. Mentre si riscalda è zero: la nebbia non guarda gli strati,
+## e senza ombre il cono rosa nella nebbia si vedeva dal bacino anche con la maschera giusta (#131). La nebbia è un
+## compute shader unico per tutte le luci: niente pipeline in più quando la si riaccende.
+const NEBBIA_GIOCO := 0.5
 ## Quanto sono scuri i bordi ora (0-1, prima di [member bordi_max]) e quanto è accesa la luce (0-1).
 var forza_bordi := 0.0
 var forza_luce := 0.0
@@ -89,7 +93,7 @@ func _ready() -> void:
 	luce.spot_attenuation = 0.3   # (cala piano: arriva oltre il giocatore)
 	Strati.maschera_luce(luce, MASCHERA_GIOCO)
 	luce.spot_range = 30.0
-	luce.light_volumetric_fog_energy = 0.5
+	luce.light_volumetric_fog_energy = NEBBIA_GIOCO
 	luce.shadow_enabled = false      # (senza ombre: zero pipeline nuove, e costa poco; nasce davanti a lei)
 	luce.set_meta(&"risveglio_ignora", true)
 	luce.visible = false
@@ -110,6 +114,7 @@ func riscalda_da(cam: Camera3D, acceso: bool) -> void:
 	# (il cono largo quanto la vista della camera nascosta: tutto quello che vede è illuminato, e fa ombra, da lei)
 	luce.spot_angle = 70.0 if acceso else luce_angolo
 	luce.spot_range = 40.0
+	luce.light_volumetric_fog_energy = 0.0 if acceso else NEBBIA_GIOCO
 	if acceso:
 		var d := -cam.global_transform.basis.z
 		luce.global_position = cam.global_position - d * 1.0 + Vector3.UP * 0.5
