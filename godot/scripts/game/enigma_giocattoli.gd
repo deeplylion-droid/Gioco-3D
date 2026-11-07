@@ -4,8 +4,10 @@ extends Node3D
 ## posto", docs/proposte/enigma_nuovo/ e docs/proposte/enigma_giocattoli/). Sul fondo della parte profonda, attorno
 ## alla botola, ci sono tre cerchi di mosaico (giallo, rosso, blu): sono piatti che scendono col peso, la serratura
 ## della botola. Nella pozza galleggiano tre giocattoli grandi, di gomma e mezzi pieni d'acqua: la paperella gialla,
-## il pallone rosso e la balena blu. Il disegno a pastello dei bambini sul muro della parte profonda mostra ognuno nel
-## suo cerchio.
+## il pallone rosso e la balena blu. Il disegno a pastello dei bambini mostra ognuno nel suo cerchio: dal 4 novembre
+## (nota dell'utente: "Puoi però spostare il disegno guida sulla torre con lo scivolo e il secchio gigante, in un punto
+## facilmente raggiungibile e ben visibile") non è più sul muro della parte profonda ma su un cartoncino legato alla
+## ringhiera della struttura di gioco dell'area bimbi ([method _disegno]).
 ## - Col getto li spingi: sull'acqua e, a piscina vuota, anche sul fondo, un po' più piano (nota dell'utente: "ma
 ##   facciamo che puoi spingere i giocattoli anche una volta che hai svuotato la piscina"). Più sei vicino più spinge.
 ##   Vicino al suo cerchio un giocattolo ci scivola dentro da solo.
@@ -16,7 +18,7 @@ extends Node3D
 ##   colpito col getto, la botola si apre come prima (PiscinaOnde, [member PiscinaOnde.serratura]).
 ## Lo stato (posti dei giocattoli e piatti scesi) si salva con i checkpoint.
 ## I nodi figli hanno nomi fissi: Cerchi/CerchioGiallo, Cerchi/CerchioRosso, Cerchi/CerchioBlu, Giocattoli/Paperella,
-## Giocattoli/Pallone, Giocattoli/Balena, Disegno. I modelli e i materiali veri (ambienti-1, lavoro/enigma-giocattoli-
+## Giocattoli/Pallone, Giocattoli/Balena; il disegno è "Disegno" sotto la struttura di gioco ([method disegno]). I modelli e i materiali veri (ambienti-1, lavoro/enigma-giocattoli-
 ## modelli) sono in [constant DIR]: finché non ci sono, segnaposto semplici con le stesse misure.
 
 signal piatto_sceso(indice: int)
@@ -68,12 +70,54 @@ const SCOSTAMENTI := [Vector2.ZERO, Vector2(0.003, 0.002), Vector2(-0.002, -0.00
 ## La Polaroid sul fondo (P5): finché c'è, i giocattoli non ci vanno sopra.
 @export var polaroid: Node3D
 
-## Il disegno dei bambini sul muro ovest della parte profonda (un decal di 1,2 x 0,9 m che guarda a est), visto da
-## est: a destra è nord, in alto è ovest (la piscina dall'alto come la vede chi guarda il muro).
-@export var disegno_posizione := Vector3(-6.97, -0.8, -0.2)
-@export var disegno_misura := Vector2(1.2, 0.9)
-## Un filo di luce propria del disegno (pastelli fosforescenti, come il bordo dei cerchi): al buio della piscina, senza,
-## da 4 m non si legge (prove del 29 ottobre: a 0,3 sembra uno schermo acceso). Da approvare con l'enigma.
+## Le fascette che legano il cartoncino alla ringhiera (ricontrollo di ambienti-1 del 6 novembre: da dietro devono
+## girare attorno al corrimano). Ognuna passa da un foro del cartoncino, scende (o sale) davanti fino al bordo, lo
+## scavalca e gira attorno al tubo, stretta come una fascetta vera, con la testa dietro al tubo. Per ognuna, nel mondo:
+## la x, il centro del tubo (y, z) e la sua sagoma, misurata sui triangoli della mesh della struttura da x - 3,5 a
+## x + 3,5 mm: la distanza dal centro della tangente al tubo in 24 direzioni, ogni 15 gradi da +y verso +z. Il poligono
+## di quelle tangenti contiene il tubo: la fascetta lo stringe a [constant FASCETTA_AGIO]. Le x stanno fra le sbarre
+## (-17,48..-17,38 e -16,58..-16,47). In ordine: in basso e in alto a ovest, in basso e in alto a est.
+const FASCETTE := [
+	[-17.44, Vector2(1.3801, -14.7077), [
+		0.0328, 0.0327, 0.0332, 0.0337, 0.0331, 0.0324, 0.0330, 0.0316, 0.0322, 0.0315, 0.0329, 0.0320,
+		0.0328, 0.0321, 0.0327, 0.0335, 0.0330, 0.0333, 0.0330, 0.0327, 0.0329, 0.0327, 0.0319, 0.0328]],
+	[-17.44, Vector2(2.2100, -14.7142), [
+		0.0386, 0.0393, 0.0390, 0.0398, 0.0390, 0.0396, 0.0375, 0.0389, 0.0391, 0.0386, 0.0387, 0.0386,
+		0.0386, 0.0378, 0.0378, 0.0377, 0.0377, 0.0374, 0.0375, 0.0377, 0.0370, 0.0385, 0.0379, 0.0388]],
+	[-16.56, Vector2(1.3805, -14.6993), [
+		0.0324, 0.0318, 0.0329, 0.0329, 0.0329, 0.0318, 0.0316, 0.0313, 0.0317, 0.0316, 0.0319, 0.0313,
+		0.0324, 0.0325, 0.0327, 0.0326, 0.0329, 0.0322, 0.0316, 0.0323, 0.0321, 0.0322, 0.0317, 0.0328]],
+	[-16.56, Vector2(2.2106, -14.7109), [
+		0.0388, 0.0368, 0.0390, 0.0384, 0.0375, 0.0366, 0.0374, 0.0361, 0.0377, 0.0378, 0.0381, 0.0383,
+		0.0388, 0.0389, 0.0394, 0.0396, 0.0397, 0.0395, 0.0375, 0.0390, 0.0395, 0.0395, 0.0388, 0.0388]],
+]
+const FASCETTA_LARGA := 0.0045
+const FASCETTA_SPESSA := 0.0013
+## Lo spazio fra la fascetta e quello che stringe (il tubo, il cartoncino, il bordo del foro).
+const FASCETTA_AGIO := 0.0003
+## Il foro della fascetta nel cartoncino, a quanto dal tubo (lungo il cartoncino): sotto il corrimano alto, sopra il basso.
+const FORO_DAL_TUBO := 0.006
+## La testa della fascetta, il blocchetto della chiusura (lungo la fascetta, largo, alto).
+const FASCETTA_TESTA := Vector3(0.007, 0.0065, 0.004)
+
+## Il disegno dei bambini (la piscina vista dall'alto coi tre giocattoli nei loro cerchi), su un cartoncino legato con
+## quattro fascette alla ringhiera della struttura di gioco dell'area bimbi ([member disegno_sostegno], la mesh della sala
+## col nome così): sul lato sud della pedana verde (quella della torre col tetto blu, in cima alla scala), verso il
+## percorso, all'altezza degli occhi di chi sta a terra, a est del fungo che sta davanti alla pedana (da sud-ovest il
+## fungo lo copre, da sud e da sud-est si vede). [member disegno_centro] è il centro del retro del cartoncino, nel mondo:
+## il cartoncino copre i due corrimani della ringhiera e si appoggia a tutti e due: il piano tocca la faccia davanti dei
+## tubi (misurata sui triangoli della mesh fra x -17,5 e -16,5, a 1,38 e a 2,21 m) e resta al massimo 2,3 mm staccato
+## dove i tubi rientrano, quindi è inclinato indietro di 0,26 gradi e girato di 0,33 ([member disegno_normale], dove
+## guarda). Fra x -17,5 e -16,5: il montante d'angolo comincia a -16,445. Le fascette girano attorno ai tubi
+## ([constant FASCETTE]).
+## Prima (fino alla 0.3.20) era un decal di 1,2 x 0,9 m sul muro ovest della parte profonda.
+@export var disegno_sostegno := "sala_struttura_gioco"
+@export var disegno_centro := Vector3(-17.0, 1.79, -14.6719)
+@export var disegno_normale := Vector3(-0.005843, 0.004489, 1)
+## Il cartoncino (largo, alto): copre i corrimani, il disegno dentro è 4:3, largo quasi quanto lui.
+@export var disegno_misura := Vector2(1.0, 0.86)
+## Un filo di luce propria del disegno (pastelli fosforescenti, come il bordo dei cerchi): solo i segni a pastello, il
+## cartoncino no (prove del 29 ottobre: a 0,3 sembra uno schermo acceso).
 @export_range(0.0, 1.0) var luce_disegno := 0.12
 
 @export_group("Spinta")
@@ -179,27 +223,239 @@ func _costruisci() -> void:
 		g.rotation_degrees.y = partenze[i].y
 		_yaw[i] = g.rotation.y
 		_giocattoli.append(g)
-	if get_node_or_null(^"Disegno") == null:
-		add_child(_disegno())
+	_metti_disegno()
 
 
-## Il disegno: il decal col disegno vero di ambienti-1 se c'è (disegno_piscina.png), se no un segnaposto fatto qui con
-## la piscina dall'alto, la botola e i tre giocattoli nei loro cerchi (solo disegni, niente scritte).
-func _disegno() -> Decal:
-	var d := Decal.new()
-	d.name = "Disegno"
-	d.size = Vector3(disegno_misura.x, 0.3, disegno_misura.y)
-	# guarda a est: lo strato -Y del decal va dentro il muro (ovest), la x del disegno verso nord, la z verso il basso
-	d.basis = Basis(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, -1, 0))
-	d.position = disegno_posizione
+var _disegno_nodo: Node3D
+
+
+## Il disegno guida (il cartoncino sulla struttura di gioco), o null se nella scena non c'è la struttura.
+func disegno() -> Node3D:
+	return _disegno_nodo
+
+
+## Mette il disegno sulla struttura di gioco (figlio della sua mesh: si muove con lei). Senza la sala (le scene di prova
+## dell'enigma) resta qui, nello stesso punto del mondo.
+func _metti_disegno() -> void:
+	if is_instance_valid(_disegno_nodo):
+		return
+	var sostegno := sala.find_child(disegno_sostegno, true, false) as Node3D if sala else null
+	var xf := Transform3D(Basis.looking_at(-disegno_normale.normalized(), Vector3.UP), disegno_centro)
+	_disegno_nodo = _disegno(xf)
+	if sostegno and sostegno.is_inside_tree():
+		sostegno.add_child(_disegno_nodo)
+	else:
+		add_child(_disegno_nodo)
+	_disegno_nodo.global_transform = xf
+
+
+## Il disegno: il cartoncino (grigio chiaro, opaco) col disegno vero di ambienti-1 (disegno_piscina.png; se manca, un
+## segnaposto fatto qui con la piscina dall'alto, la botola e i tre giocattoli nei loro cerchi: solo disegni, niente
+## scritte) e le quattro fascette nere che lo legano ai corrimani della ringhiera, due in alto e due in basso.
+## L'origine è il centro del retro del cartoncino, +Z verso chi guarda, +X a destra di chi guarda; [param xf] è dove va
+## nel mondo (le fascette stringono i tubi veri, misurati nel mondo).
+func _disegno(xf: Transform3D) -> Node3D:
+	var n := Node3D.new()
+	n.name = "Disegno"
+	var spessore := 0.006
+	# le fascette nere, attorno ai tubi e dai fori del cartoncino
+	var nero := StandardMaterial3D.new()
+	nero.albedo_color = Color(0.03, 0.03, 0.03)
+	nero.roughness = 0.5
+	var fori: Array[Rect2] = []
+	var fascette: Array[MeshInstance3D] = []
+	for f in FASCETTE:
+		var fatta := _fascetta(f, xf.affine_inverse(), spessore)
+		var mi := MeshInstance3D.new()
+		mi.name = "Fascetta%d" % (fascette.size() + 1)
+		mi.mesh = fatta[0]
+		mi.material_override = nero
+		fascette.append(mi)
+		fori.append(fatta[1])
+	var cartone := MeshInstance3D.new()
+	cartone.name = "Cartoncino"
+	cartone.mesh = _cartoncino(spessore, fori)
+	var mc := StandardMaterial3D.new()
+	mc.albedo_color = Color(0.78, 0.77, 0.73)
+	mc.roughness = 0.95
+	cartone.material_override = mc
+	n.add_child(cartone)
+	var foglio := MeshInstance3D.new()
+	foglio.name = "Pastelli"
+	var q := QuadMesh.new()
+	q.size = Vector2(disegno_misura.x - 0.03, (disegno_misura.x - 0.03) * 0.75)
+	foglio.mesh = q
+	var m := StandardMaterial3D.new()
 	var vero := DIR + "disegno_piscina.png"
-	d.texture_albedo = load(vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
-	d.texture_emission = d.texture_albedo
-	d.emission_energy = luce_disegno
-	d.upper_fade = 0.0
-	d.lower_fade = 0.0
-	d.cull_mask = 1
-	return d
+	m.albedo_texture = load(vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	m.alpha_scissor_threshold = 0.2
+	m.roughness = 0.85
+	m.emission_enabled = true
+	m.emission_texture = m.albedo_texture
+	m.emission_energy_multiplier = luce_disegno
+	foglio.material_override = m
+	foglio.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	foglio.position = Vector3(0, 0, spessore + 0.0005)
+	n.add_child(foglio)
+	for mi in fascette:
+		n.add_child(mi)
+	return n
+
+
+## Una fascetta ([param f], una voce di [constant FASCETTE]), nel sistema del cartoncino ([param inv]: dal mondo al
+## cartoncino). Il tubo è il poligono delle sue tangenti; il pezzo di cartoncino stretto va dal foro al bordo vicino al
+## tubo. La fascetta è l'involucro convesso di tutti e due, allargato di [constant FASCETTA_AGIO] e arrotondato sugli
+## spigoli, come la stringe la chiusura: da davanti scende dal foro al bordo del cartoncino, lo scavalca e gira dietro
+## al tubo; nel foro attraversa il cartoncino. Torna [mesh, foro (Rect2 in x, y del cartoncino)].
+func _fascetta(f: Array, inv: Transform3D, spessore: float) -> Array:
+	var x: float = f[0]
+	var c: Vector2 = f[1]
+	var h: Array = f[2]
+	var quante := h.size()
+	var tubo := PackedVector2Array()
+	var lx := 0.0
+	for k in quante:
+		# l'incrocio della tangente k con la k+1 (nel piano y, z del mondo, dal centro del tubo)
+		var d1 := Vector2.from_angle(TAU * k / quante)
+		var d2 := Vector2.from_angle(TAU * (k + 1) / quante)
+		var h1: float = h[k]
+		var h2: float = h[(k + 1) % quante]
+		var det := d1.x * d2.y - d1.y * d2.x
+		var q := Vector2((h1 * d2.y - h2 * d1.y) / det, (d1.x * h2 - d2.x * h1) / det)
+		var l := inv * Vector3(x, c.x + q.x, c.y + q.y)
+		tubo.append(Vector2(l.y, l.z))
+		lx += l.x / quante
+	var sopra := c.x > disegno_centro.y
+	var bordo := disegno_misura.y * 0.5 * (1.0 if sopra else -1.0)
+	var ys := Array(tubo).map(func(p: Vector2) -> float: return p.x)
+	var foro: float = (ys.min() - FORO_DAL_TUBO) if sopra else (ys.max() + FORO_DAL_TUBO)
+	var punti := tubo.duplicate()
+	punti.append_array(PackedVector2Array([Vector2(foro, 0), Vector2(foro, spessore), Vector2(bordo, 0), Vector2(bordo, spessore)]))
+	var guscio := Geometry2D.convex_hull(punti)
+	if guscio.size() > 1 and guscio[0].is_equal_approx(guscio[guscio.size() - 1]):
+		guscio.remove_at(guscio.size() - 1)
+	var giro_tot := 0.0
+	for i in guscio.size():
+		giro_tot += guscio[i].cross(guscio[(i + 1) % guscio.size()])
+	if giro_tot < 0.0:
+		guscio.reverse()
+	# la linea di mezzo della fascetta: ogni spigolo dell'involucro allargato con un arco (normali verso fuori)
+	var d := FASCETTA_AGIO + FASCETTA_SPESSA * 0.5
+	var linea := PackedVector2Array()
+	var normali := PackedVector2Array()
+	var g := guscio.size()
+	for i in g:
+		var p := guscio[i]
+		var e_in := (p - guscio[(i - 1 + g) % g]).normalized()
+		var e_out := (guscio[(i + 1) % g] - p).normalized()
+		var a_in := Vector2(e_in.y, -e_in.x).angle()
+		var giro := angle_difference(a_in, Vector2(e_out.y, -e_out.x).angle())
+		# (uno spigolo dritto, coi due lati in fila, ha un punto solo)
+		var passi := ceili(absf(giro) / deg_to_rad(20.0)) if absf(giro) > 0.0001 else 0
+		for j in passi + 1:
+			var nn := Vector2.from_angle(a_in + (giro * j / passi if passi > 0 else 0.0))
+			linea.append(p + nn * d)
+			normali.append(nn)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var w := FASCETTA_LARGA * 0.5
+	var s := FASCETTA_SPESSA * 0.5
+	var punto := func(p: Vector2, dx: float) -> Vector3: return Vector3(lx + dx, p.x, p.y)
+	var dietro := 0
+	for j in linea.size():
+		var j1 := (j + 1) % linea.size()
+		var fa: Vector2 = linea[j] + normali[j] * s
+		var fb: Vector2 = linea[j1] + normali[j1] * s
+		var da: Vector2 = linea[j] - normali[j] * s
+		var db: Vector2 = linea[j1] - normali[j1] * s
+		var nf := Vector3(0, (normali[j] + normali[j1]).normalized().x, (normali[j] + normali[j1]).normalized().y)
+		_quad(st, punto.call(fa, -w), punto.call(fb, -w), punto.call(fb, w), punto.call(fa, w), nf)
+		_quad(st, punto.call(da, -w), punto.call(db, -w), punto.call(db, w), punto.call(da, w), -nf)
+		_quad(st, punto.call(da, -w), punto.call(fa, -w), punto.call(fb, -w), punto.call(db, -w), Vector3.LEFT)
+		_quad(st, punto.call(da, w), punto.call(fa, w), punto.call(fb, w), punto.call(db, w), Vector3.RIGHT)
+		if linea[j].y < linea[dietro].y:
+			dietro = j
+	# la testa, dietro al tubo, sopra la fascetta
+	var nt := normali[dietro]
+	var tg := Vector2(-nt.y, nt.x)
+	var base := linea[dietro] + nt * s
+	var ht := FASCETTA_TESTA * 0.5
+	var spigolo := func(a: float, b: float, cc: float) -> Vector3:
+		var p2 := base + tg * (a * ht.x) + nt * (ht.z + cc * ht.z)
+		return Vector3(lx + b * ht.y, p2.x, p2.y)
+	var n_tg := Vector3(0, tg.x, tg.y)
+	var n_nt := Vector3(0, nt.x, nt.y)
+	_quad(st, spigolo.call(-1, -1, 1), spigolo.call(1, -1, 1), spigolo.call(1, 1, 1), spigolo.call(-1, 1, 1), n_nt)
+	_quad(st, spigolo.call(-1, -1, -1), spigolo.call(1, -1, -1), spigolo.call(1, 1, -1), spigolo.call(-1, 1, -1), -n_nt)
+	_quad(st, spigolo.call(1, -1, -1), spigolo.call(1, 1, -1), spigolo.call(1, 1, 1), spigolo.call(1, -1, 1), n_tg)
+	_quad(st, spigolo.call(-1, -1, -1), spigolo.call(-1, 1, -1), spigolo.call(-1, 1, 1), spigolo.call(-1, -1, 1), -n_tg)
+	_quad(st, spigolo.call(-1, 1, -1), spigolo.call(1, 1, -1), spigolo.call(1, 1, 1), spigolo.call(-1, 1, 1), Vector3.RIGHT)
+	_quad(st, spigolo.call(-1, -1, -1), spigolo.call(1, -1, -1), spigolo.call(1, -1, 1), spigolo.call(-1, -1, 1), Vector3.LEFT)
+	# il foro: largo quanto la fascetta più 0,6 mm per parte; alto da dove la fascetta tira (il bordo del foro verso il
+	# bordo del cartoncino) fino a 1 mm oltre la fascetta
+	var alto := FASCETTA_AGIO + FASCETTA_SPESSA + 0.001
+	var foro_r := Rect2(lx - w - 0.0006, (foro - alto) if sopra else foro, FASCETTA_LARGA + 0.0012, alto)
+	return [st.commit(), foro_r]
+
+
+## Il cartoncino coi fori delle fascette: una lastra chiusa (davanti, dietro, i bordi e le pareti dei fori) da z 0 a
+## [param spessore], grande [member disegno_misura], centrata sull'origine. Una griglia coi tagli sui bordi dei fori:
+## le celle dei fori restano vuote.
+func _cartoncino(spessore: float, fori: Array[Rect2]) -> ArrayMesh:
+	var mx := disegno_misura.x * 0.5
+	var my := disegno_misura.y * 0.5
+	var xs := [-mx, mx]
+	var ys := [-my, my]
+	for r in fori:
+		for v in [r.position.x, r.end.x]:
+			if not xs.has(v):
+				xs.append(v)
+		for v in [r.position.y, r.end.y]:
+			if not ys.has(v):
+				ys.append(v)
+	xs.sort()
+	ys.sort()
+	var pieno := func(i: int, j: int) -> bool:
+		if i < 0 or j < 0 or i >= xs.size() - 1 or j >= ys.size() - 1:
+			return false
+		var m := Vector2((xs[i] + xs[i + 1]) * 0.5, (ys[j] + ys[j + 1]) * 0.5)
+		for r in fori:
+			if r.has_point(m):
+				return false
+		return true
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in xs.size() - 1:
+		for j in ys.size() - 1:
+			if not pieno.call(i, j):
+				continue
+			var x0: float = xs[i]
+			var x1: float = xs[i + 1]
+			var y0: float = ys[j]
+			var y1: float = ys[j + 1]
+			_quad(st, Vector3(x0, y0, spessore), Vector3(x1, y0, spessore), Vector3(x1, y1, spessore), Vector3(x0, y1, spessore), Vector3.BACK)
+			_quad(st, Vector3(x0, y0, 0), Vector3(x1, y0, 0), Vector3(x1, y1, 0), Vector3(x0, y1, 0), Vector3.FORWARD)
+			if not pieno.call(i - 1, j):
+				_quad(st, Vector3(x0, y0, 0), Vector3(x0, y1, 0), Vector3(x0, y1, spessore), Vector3(x0, y0, spessore), Vector3.LEFT)
+			if not pieno.call(i + 1, j):
+				_quad(st, Vector3(x1, y0, 0), Vector3(x1, y1, 0), Vector3(x1, y1, spessore), Vector3(x1, y0, spessore), Vector3.RIGHT)
+			if not pieno.call(i, j - 1):
+				_quad(st, Vector3(x0, y0, 0), Vector3(x1, y0, 0), Vector3(x1, y0, spessore), Vector3(x0, y0, spessore), Vector3.DOWN)
+			if not pieno.call(i, j + 1):
+				_quad(st, Vector3(x0, y1, 0), Vector3(x1, y1, 0), Vector3(x1, y1, spessore), Vector3(x0, y1, spessore), Vector3.UP)
+	return st.commit()
+
+
+## Un quadrilatero a-b-c-d (in giro) con la faccia verso [param n]: l'ordine dei triangoli si gira da solo (in Godot la
+## faccia davanti è quella coi vertici in senso orario).
+static func _quad(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, n: Vector3) -> void:
+	var tri := [a, b, c, a, c, d]
+	if (b - a).cross(c - a).dot(n) > 0.0:
+		tri = [a, c, b, a, d, c]
+	for p in tri:
+		st.set_normal(n)
+		st.add_vertex(p)
 
 
 ## Il segnaposto del disegno: la piscina vista dall'alto (da est: a destra nord, in alto ovest), segni a pastello.
@@ -1065,9 +1321,26 @@ func _fine(col_suono := true) -> void:
 	if risolto_ok:
 		return
 	risolto_ok = true
+	if col_suono:
+		# il "fatto giusto" degli enigmi (scelta A dell'utente del 4 novembre, proposta enigmi-4), dalla botola
+		Audio.suona(&"giusto", _punto_giusto())
 	if col_suono and piscina:
 		Audio.suona(&"piscina_vuota", piscina.call(&"_centro_scarico") if piscina.has_method(&"_centro_scarico") else global_position, 2.0, 0.6)
 	risolto.emit()
+
+
+## Il punto dell'enigma, da dove suona il "fatto giusto": la botola (la lastra dello scarico della piscina), in mezzo ai
+## tre cerchi; senza piscina il centro dei cerchi.
+func _punto_giusto() -> Variant:
+	if not is_inside_tree():
+		return null
+	var lastra := piscina.get(&"scarico") as MeshInstance3D if piscina else null
+	if lastra and lastra.is_inside_tree():
+		return (lastra.global_transform * lastra.get_aabb()).get_center()
+	var c := Vector3.ZERO
+	for k in _cerchi:
+		c += (k as Node3D).global_position
+	return c / maxf(_cerchi.size(), 1.0) if not _cerchi.is_empty() else global_position
 
 
 ## Vero quando la serratura della botola è aperta (PiscinaOnde lo chiede per il pulsante).

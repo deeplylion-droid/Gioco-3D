@@ -65,6 +65,18 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `ambiente/tuono_vicino_02.ogg` | 8.5 s | sintesi + Kenney Sci-Fi Sounds (CC0) | lowFrequency_explosion come sub |
 | `ambiente/tuono_vicino_03.ogg` | 7.5 s | sintesi + Kenney Sci-Fi Sounds (CC0) | lowFrequency_explosion come sub |
 | `ambiente/vento_loop.ogg` | 45.0 s | sintesi (originale) | vento e ululati fuori dalla cupola |
+| `bambini/passo_agnellino_01.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_02.ogg` | 0.1 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_03.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_04.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_05.ogg` | 0.2 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_agnellino_06.ogg` | 0.1 s | sintesi + Kenney Sci-Fi Sounds (CC0) | peluche zuppo: tonfo sordo e acqua strizzata (slime filtrato, 0.3.21) |
+| `bambini/passo_bambino_muta_01.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_02.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_03.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_04.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_05.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
+| `bambini/passo_bambino_muta_06.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
 | `effetti/cancello_fine.ogg` | 0.8 s | Kenney Impact Sounds + RPG Audio (CC0), rielaborati |  |
 | `effetti/cancello_ruota.ogg` | 5.0 s | Kenney RPG Audio (CC0), rielaborato |  |
 | `effetti/emergenza_ronzio_loop.ogg` | 4.0 s | sintesi (originale) |  |
@@ -100,6 +112,12 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `effetti/turbina_bloccata.ogg` | 0.6 s | sintesi (originale) |  |
 | `effetti/turbina_loop.ogg` | 2.0 s | sintesi (originale) |  |
 | `effetti/vasca_svuotata.ogg` | 2.8 s | sintesi (originale) |  |
+| `enigmi/cassaforte_apre.ogg` | 2.2 s | Kenney Impact Sounds e RPG Audio (CC0), rielaborati + sintesi | chiavistello, poi il cigolio dello sportello (enigmi-2 A, 4 novembre) |
+| `enigmi/cassaforte_clic_a.ogg` | 0.2 s | Kenney RPG Audio (CC0), rielaborati + sintesi | il clic di una cifra della rotella testa (enigmi-2 A, 4 novembre) |
+| `enigmi/cassaforte_clic_b.ogg` | 0.2 s | Kenney RPG Audio (CC0), rielaborati + sintesi | il clic di una cifra della rotella corpo (enigmi-2 A, 4 novembre) |
+| `enigmi/cassaforte_clic_c.ogg` | 0.2 s | Kenney RPG Audio (CC0), rielaborati + sintesi | il clic di una cifra della rotella coda (enigmi-2 A, 4 novembre) |
+| `enigmi/disco_lamiera_colpo.ogg` | 2.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | il getto che prende il disco del fiume: colpo di lamiera come un gong (enigmi-3 A, 4 novembre) |
+| `enigmi/giusto.ogg` | 0.8 s | sintesi (originale) | il jingle della botola accorciato e stonato, a ogni enigma risolto (enigmi-4 A, 4 novembre) |
 | `giocatore/atterraggio_acqua_01.ogg` | 0.7 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_acqua_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_bagnato_01.ogg` | 0.5 s | sintesi (originale) | scarpe di gomma: tonfo morbido e smorzato, senza tic (scelta A dell'utente, 30 ottobre; assets_src/passi/genera_passi.py) |
@@ -147,21 +165,28 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `giocatore/torcia_accesa.ogg` | 0.2 s | sintesi (originale) |  |
 | `giocatore/torcia_spenta.ogg` | 0.2 s | sintesi (originale) |  |
 | `giocatore/tuffo.ogg` | 1.6 s | sintesi (originale) |  |
-| `giocatore/zaino_aspira_fine.ogg` | 0.7 s | sintesi (originale) |  |
-| `giocatore/zaino_aspira_inizio.ogg` | 0.6 s | sintesi (originale) |  |
-| `giocatore/zaino_aspira_loop.ogg` | 3.0 s | sintesi (originale) |  |
-| `giocatore/zaino_getto_fine.ogg` | 0.7 s | sintesi (originale) |  |
-| `giocatore/zaino_getto_inizio.ogg` | 0.5 s | sintesi (originale) |  |
-| `giocatore/zaino_getto_loop.ogg` | 2.0 s | sintesi (originale) |  |
+| `giocatore/zaino_aspira_fine.ogg` | 0.9 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_aspira_inizio.ogg` | 0.9 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_aspira_loop.ogg` | 2.4 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_carica.ogg` | 0.3 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_getto_fine.ogg` | 1.1 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_getto_inizio.ogg` | 0.8 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_getto_loop.ogg` | 2.5 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_gocce.ogg` | 1.2 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
 | `giocatore/zaino_impatto_acqua_loop.ogg` | 2.0 s | sintesi (originale) |  |
-| `giocatore/zaino_impatto_loop.ogg` | 2.0 s | sintesi (originale) |  |
-| `giocatore/zaino_pieno.ogg` | 1.1 s | sintesi (originale) |  |
+| `giocatore/zaino_impatto_loop.ogg` | 2.5 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_pieno.ogg` | 0.8 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
 | `giocatore/zaino_pompata.ogg` | 0.7 s | sintesi (originale) |  |
 | `giocatore/zaino_preso.ogg` | 1.7 s | Kenney RPG Audio (CC0) + sintesi | cloth, clothBelt, metalLatch e pompate sintetiche |
 | `giocatore/zaino_ricarica_loop.ogg` | 2.5 s | sintesi (originale) |  |
+| `giocatore/zaino_risucchio_loop.ogg` | 2.4 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
 | `giocatore/zaino_sciabordio_01.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/zaino_sciabordio_02.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/zaino_sciabordio_03.ogg` | 0.8 s | sintesi (originale) |  |
+| `giocatore/zaino_serbatoio_loop.ogg` | 2.0 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_strattone_01.ogg` | 0.6 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_strattone_02.ogg` | 0.6 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
+| `giocatore/zaino_strattone_03.ogg` | 0.6 s | sintesi (originale) | getto B «potenziato» (scelta dell'utente, 16 ottobre; genera_proposte_getto.py) |
 | `giocatore/zaino_vuoto.ogg` | 0.9 s | sintesi (originale) |  |
 | `interfaccia/ui_apri.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | open_002 |
 | `interfaccia/ui_chiudi.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | close_002 |
@@ -170,6 +195,7 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `interfaccia/ui_pausa.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | switch_002 |
 | `interfaccia/ui_scatto.ogg` | 0.1 s | Kenney Interface Sounds (CC0) | toggle_002 |
 | `lei/fossa_ribolle_loop.ogg` | 5.0 s | sintesi (originale) | gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse |
+| `lei/lei_esplosione.ogg` | 3.5 s | sintesi (originale) | il boato del geyser che la copre, versione A (scelta dell'utente, 17 ottobre; proposte_esplosione/genera_boato.py) |
 | `lei/lei_insegue_grata_01.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
 | `lei/lei_insegue_grata_02.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
 | `lei/lei_insegue_grata_03.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
@@ -199,6 +225,7 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `lei/lei_tunnel_verso_02.ogg` | 1.4 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
 | `lei/lei_tunnel_verso_03.ogg` | 1.2 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
 | `lei/lei_tunnel_verso_04.ogg` | 1.4 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
+| `lei/lei_urlo.ogg` | 2.0 s | sintesi (originale) | il jumpscare: urlo stridulo che si inceppa, versione A «glitch» (scelta dell'utente, 17 ottobre; proposte_jumpscare/genera_urlo.py) |
 | `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001 |
 | `musica/polaroid_chiudi.ogg` | 0.3 s | sintesi (originale) |  |
 | `musica/polaroid_raccolta.ogg` | 2.6 s | sintesi (originale) |  |
@@ -247,4 +274,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 222 file, 7.5 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 249 file, 7.9 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

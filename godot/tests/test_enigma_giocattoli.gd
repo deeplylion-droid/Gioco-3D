@@ -70,7 +70,7 @@ func _run() -> void:
 		check(a_galla, "il giocattolo %d galleggia (%.3f, pelo %.3f)" % [i, g.global_position.y, vasca.get_surface_global_y()])
 		check(Vector2(g.position.x, g.position.z).distance_to(Vector2(c.position.x, c.position.z)) > 2.0,
 			"il giocattolo %d parte lontano dal suo cerchio" % i)
-	check(enigma.get_node_or_null(^"Disegno") is Decal, "c'è il disegno dei bambini sul muro")
+	_disegno()
 	check(not pulsante.enabled, "con l'acqua il pulsante della botola è spento")
 
 	print("2. Ordine A: prima i giocattoli sull'acqua, poi lo svuotamento")
@@ -85,6 +85,7 @@ func _run() -> void:
 			accesi += 1
 	check(accesi == 3 and _scesi.is_empty(), "galleggiando sopra il suo cerchio lo accende appena, i piatti non scendono (%d accesi)" % accesi)
 	var stato: Dictionary = enigma.save_state()
+	var giusto0 := int(Audio.conteggio.get(&"giusto", 0))
 	await _svuota()
 	check(vasca.fill <= 0.001, "la piscina si svuota con lo zaino")
 	for k in 600:
@@ -95,6 +96,7 @@ func _run() -> void:
 	for i in 3:
 		check(enigma.piatto_giu(i) and _sul_piatto(i), "il giocattolo %d è appoggiato sul suo piatto sceso (%s)" % [i, str(_dove(i))])
 	check(enigma.risolto_ok and _risolto == 1 and pulsante.enabled, "scesi tutti e tre, il pulsante della botola funziona")
+	check(int(Audio.conteggio.get(&"giusto", 0)) == giusto0 + 1, "e suona il \"fatto giusto\" degli enigmi, una volta")
 	await _frames(100)
 	var luce := piscina.get_node_or_null(^"SegnalePulsante") as OmniLight3D
 	check(luce != null and luce.visible and luce.light_color.g > 0.9 and luce.light_color.r < 0.5, "e il lampeggiante è verde")
@@ -724,6 +726,49 @@ func check(cond: bool, what: String) -> void:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().physics_frame
+
+
+## Il disegno guida (nota dell'utente del 4 novembre): non più sul muro della piscina, ma su un cartoncino legato con le
+## fascette alla ringhiera della struttura di gioco dell'area bimbi, verso il percorso, all'altezza degli occhi.
+func _disegno() -> void:
+	check(enigma.get_node_or_null(^"Disegno") == null and enigma.find_children("*", "Decal", true, false).is_empty(),
+		"sul muro della piscina il disegno non c'è più")
+	var d := enigma.disegno()
+	var struttura := level.find_child("sala_struttura_gioco", true, false) as Node3D
+	check(d != null and struttura != null and d.get_parent() == struttura, "il disegno è sulla struttura di gioco dell'area bimbi, fissato a lei")
+	if d == null:
+		return
+	var y := d.global_position.y
+	check(y > 1.5 and y < 1.95 and d.global_basis.z.dot(Vector3(0, 0, 1)) > 0.99,
+		"all'altezza degli occhi (centro a %.2f m) e girato verso il percorso, a sud" % y)
+	var m := (d.get_node(^"Pastelli") as MeshInstance3D).material_override as StandardMaterial3D
+	check(m != null and m.albedo_texture != null and m.albedo_texture.resource_path.ends_with("disegno_piscina.png"),
+		"col disegno vero a pastello")
+	var fascette := d.find_children("Fascetta*", "MeshInstance3D", true, false)
+	check(fascette.size() == 4, "legato con quattro fascette")
+	# (ricontrollo di ambienti-1 del 6 novembre) ognuna gira attorno al suo corrimano: davanti al cartoncino, dietro, sopra
+	# e sotto il tubo
+	var attorno := 0
+	for i in mini(fascette.size(), EnigmaGiocattoli.FASCETTE.size()):
+		var f := fascette[i] as MeshInstance3D
+		var b := (d.global_transform.affine_inverse() * f.global_transform) * f.get_aabb()
+		var voce: Array = EnigmaGiocattoli.FASCETTE[i]
+		var tubo := d.to_local(Vector3(voce[0], (voce[1] as Vector2).x, (voce[1] as Vector2).y))
+		var raggio: float = (voce[2] as Array).min()
+		if b.end.z > 0.006 and b.position.z < tubo.z - raggio and b.position.y < tubo.y - raggio and b.end.y > tubo.y + raggio:
+			attorno += 1
+	check(attorno == 4, "ogni fascetta gira attorno al suo corrimano, da davanti al cartoncino a dietro il tubo (%d su 4)" % attorno)
+	# dal percorso a sud-est e da vicino niente lo copre: i raggi dagli occhi (a 1,65 m da terra) al disegno non toccano
+	# niente (da sud-ovest c'è il fungo davanti alla pedana)
+	var spazio := d.get_world_3d().direct_space_state
+	var liberi := 0
+	var da := [Vector3(2.5, 0.0, 4.0), Vector3(4.0, 0.0, 3.0), Vector3(0.3, 0.0, 0.9)]
+	for v in da:
+		var occhi := Vector3(d.global_position.x + v.x, 1.65, d.global_position.z + v.z)
+		var q := PhysicsRayQueryParameters3D.create(occhi, d.global_position + Vector3(0, 0, 0.05), 0xFFFFFFFF)
+		if RaggioSicuro.interseca(spazio, q).is_empty():
+			liberi += 1
+	check(liberi == 3, "dal percorso a sud-est e da vicino si vede senza niente in mezzo (%d viste su 3)" % liberi)
 
 
 func _fine() -> void:

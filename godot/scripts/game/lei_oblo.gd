@@ -132,6 +132,9 @@ func _crea(con_morbidezza := true) -> void:
 	_luce.shadow_normal_bias = bias_ombre.y
 	_luce.position = Vector3(0, 2.6, 0.4)
 	_luce.set_meta(&"risveglio_ignora", true)
+	# (non prende il cartello delle pozze, di fronte all'oblò del corridoio del personale: il suo rosa faceva il viola dei
+	# quadratini quasi rosa, come la pozza sbagliata; misura del 6 novembre)
+	Strati.maschera_luce(_luce, 0xFFFFF & ~CartelloPozze.STRATO)
 	lei.add_child(_luce)
 	if con_morbidezza:
 		prepara_morbidezza()

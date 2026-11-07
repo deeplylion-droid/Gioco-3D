@@ -106,17 +106,33 @@ def _inceppa(rng, x):
     return y
 
 
+def suono(v):
+    """La versione [v] ('a' o 'b'), pronta da scrivere."""
+    rng = np.random.default_rng(316 if v == 'a' else 3162)
+    x = urlo(rng, v)
+    x = fade(x, 0.0, 0.03)
+    # Molto forte: è il jumpscare (picco -0,5 dB, loudness massima alta).
+    x = normalize_lufs(f32(x), -8.0, -0.5, short=True)
+    return limiter(x, -0.5)
+
+
 def main():
-    for v, seme in [('a', 316), ('b', 3162)]:
-        rng = np.random.default_rng(seme)
-        x = urlo(rng, v)
-        x = fade(x, 0.0, 0.03)
-        # Molto forte: è il jumpscare (picco -0,5 dB, loudness massima alta).
-        x = normalize_lufs(f32(x), -8.0, -0.5, short=True)
-        x = limiter(x, -0.5)
+    for v in ('a', 'b'):
+        x = suono(v)
         path = os.path.join(QUI, v, 'lei_urlo.ogg')
         write_ogg(path, x, 5)
         print(path, f'{len(x) / SR:.2f}s')
+
+
+def nel_gioco():
+    """Nel gioco c'è A (scelta dell'utente del 17 ottobre): la scrive in godot/audio/lei/ (stessi byte di a/) e la
+    segna nel registro. La chiama genera_tutto.py."""
+    from comune import AUDIO, registra
+    x = suono('a')
+    write_ogg(os.path.join(AUDIO, 'lei', 'lei_urlo.ogg'), x, 5)
+    registra('lei', 'lei_urlo', x,
+             nota="il jumpscare: urlo stridulo che si inceppa, versione A «glitch» (scelta dell'utente, 17 ottobre; "
+                  "proposte_jumpscare/genera_urlo.py)")
 
 
 if __name__ == '__main__':

@@ -73,6 +73,7 @@ const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
 const SQUADRE := [
 	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"], ["Medusa", "mascotte"],
+	["SagomeClub", "enigmi"],   # le sagome del club nelle condotte (sagome_club.gd), sotto SalaInseguimento
 	["SalaInseguimento", "ambienti-2"],   # sala_inseguimento.gd mette anche i dettagli sotto il suo nodo Luci
 	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
 	["Sala/Dettagli", "ambienti-2"],   # il kit dei dettagli (dettagli_sala.gd)

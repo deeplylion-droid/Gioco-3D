@@ -858,6 +858,9 @@ func _luce(pos: Vector3, colore: Color, energia: float, raggio: float, ombre := 
 	o.shadow_enabled = ombre
 	o.light_volumetric_fog_energy = 1.5
 	o.set_meta(&"risveglio_ignora", true)
+	# (senza ombre passerebbero il muro del capannone fino al cartello delle pozze nel corridoio del personale, a 2-3 m:
+	# la lampada rossa e quella calda della porta del personale facevano il viola del cartello quasi rosa)
+	Strati.maschera_luce(o, 0xFFFFF & ~CartelloPozze.STRATO)
 	add_child(o)
 	return o
 
@@ -1320,6 +1323,12 @@ func _checkpoint() -> void:
 # --- i bivi: chiuse, pilastri, travi e cartelli d'uscita --------------------------------------------------
 
 var _chiuse := []   # [paratia, nodo della chiusa a sinistra, a destra, luce a sinistra, a destra]
+## Il suono delle chiuse (scelta A dell'utente del 4 novembre, proposta enigmi-3): mentre una chiusa sale o scende, il
+## motore e le catene delle paratie della camera delle onde (paratia_scende_loop), e quando arriva il loro colpo sordo.
+## Per chiusa: il loop e se si stava muovendo.
+var _suoni_chiuse := {}
+## Sotto questa distanza (m) dalla quota voluta la chiusa è arrivata.
+const CHIUSA_ARRIVATA := 0.03
 
 
 func _bivi() -> void:
@@ -1449,7 +1458,8 @@ func _palo_trave(p: Vector3, m: Material) -> void:
 	_collisioni.add_child(f)
 
 
-## Le chiuse seguono le paratie: quella del lato dove va la corrente è alzata (2,3 m) e illuminata.
+## Le chiuse seguono le paratie: quella del lato dove va la corrente è alzata (2,3 m) e illuminata. Mentre si muovono
+## suonano motore e catene; arrivate, il colpo sordo (più piano quella che sale: in fondo c'è solo quella che scende).
 func _aggiorna_chiuse(k: float) -> void:
 	for c in _chiuse:
 		var par := c[0] as ParatiaFiume
@@ -1460,6 +1470,22 @@ func _aggiorna_chiuse(k: float) -> void:
 			var y := float(ch.get_meta(&"y_chiusa")) + (2.3 if aperta else 0.0)
 			ch.position.y = lerpf(ch.position.y, y, k)
 			luce.light_energy = lerpf(luce.light_energy, 2.5 if aperta else 0.0, k)
+			_suono_chiusa(ch, absf(ch.position.y - y) > CHIUSA_ARRIVATA, aperta)
+
+
+func _suono_chiusa(ch: Node3D, in_moto: bool, sale: bool) -> void:
+	var s: Array = _suoni_chiuse.get(ch, [])
+	if s.is_empty():
+		if not in_moto:
+			return
+		s = [Audio.crea_loop(&"paratia_scende_loop", ch), false]
+		_suoni_chiuse[ch] = s
+	var l := s[0] as AudioLoop
+	if l:
+		l.volume = 1.0 if in_moto else 0.0
+	if bool(s[1]) and not in_moto and ch.is_inside_tree():
+		Audio.suona(&"porta_chiusa", ch.global_position, 0.0 if sale else 6.0, 0.7)
+	s[1] = in_moto
 
 
 func _process(delta: float) -> void:
@@ -1867,6 +1893,20 @@ const PILA_ALTEZZE := [0.1, 0.24, 0.3, 0.36]
 
 
 func _pile() -> void:
+	var t0 := Time.get_ticks_usec()
+	# le pile salvate già pronte (scelta A dell'utente del 4 novembre, "pile nel file"): identiche a quelle costruite qui
+	# sotto, senza rifarle a ogni caricamento. Si rifanno con tools/salva_pile_fiume.gd (che mette costruisci_pile)
+	if not costruisci_pile and not Engine.has_meta(&"costruisci_pile") and ResourceLoader.exists(PILE_FILE):
+		var salvate := load(PILE_FILE) as Resource
+		if salvate and salvate.has_meta(&"dati"):
+			pile_salvate = salvate
+			dati_pile = salvate.get_meta(&"dati")
+			await _pile_metti(dati_pile)
+			print("pile di scatoloni: dal file in %.0f ms (%d unità, %d scatole)" % [(Time.get_ticks_usec() - t0) / 1000.0,
+					(dati_pile["casse"] as Array).size() + (dati_pile["cartone"] as Array).size() + (dati_pile["aperte"] as Array).size(),
+					(dati_pile["scatole"] as Array).size() + (dati_pile["colorate"] as Array).size() + (dati_pile["casse_sciolte"] as Array).size()])
+			return
+		push_warning("pile: %s senza dati, le costruisco" % PILE_FILE)
 	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1023
@@ -2041,8 +2081,35 @@ func _pile() -> void:
 				break
 		if not messo:
 			push_warning("pile: niente posto per il tappo in %s" % str(punto))
+	# la pila dell'angolo a sinistra dell'ingresso (scelta B dell'utente del 4 novembre, "angolo"): una colonna come quelle
+	# di dietro, contro il muro nord, fra la porta e il muro dell'approdo; dietro, nella nicchia contro il muro
+	# dell'approdo, sparisce il bambino col cubo (l'ultimo punto di FUGA_BAMBINO). Dalla strada di fuga sta a
+	# ANGOLO_STACCO dall'asse: il bambino (22 cm) le passa accanto
+	var fuga_stretta: Array[PackedVector2Array] = []
+	for k in FUGA_BAMBINO.size() - 1:
+		var p0: Vector2 = FUGA_BAMBINO[k]
+		var p1: Vector2 = FUGA_BAMBINO[k + 1]
+		var dd := (p1 - p0).normalized()
+		fuga_stretta.append(_rettangolo((p0 + p1) * 0.5, dd, dd.orthogonal(), p0.distance_to(p1) + 0.44, 2.0 * ANGOLO_STACCO, 0.0))
+	# (di traverso: 1,2 m lungo il muro dell'approdo, contro il muro nord, dritta; il controllo della banchina no, perché
+	# sta a 2 mm dal muro: solo che non tocchi gli ingombri, la strada di fuga e le altre pile)
+	var angolo := _posa_colonna(rng2, ANGOLO_PILA, Vector2(0, 1), Vector2(-1, 0), Vector2(1, 0), 0.0, false)
+	if _non_tocca(angolo["poli"], ingombri + fuga_stretta + messe):
+		angolo["muro"] = -2
+		angolo["fila"] = 1
+		angolo["davanti"] = false
+		angolo["ferma"] = false
+		angolo["u"] = 0.0
+		angolo["d"] = Vector2(0, 1)
+		angolo["n"] = Vector2(-1, 0)
+		angolo["nuova"] = true
+		messe.append(angolo["poli"])
+		colonne_messe.append(angolo)
+	else:
+		push_warning("pile: la pila dell'angolo in %s non ci sta" % str(ANGOLO_PILA))
 	# 2. le lampade calde sulla fila davanti dei muri 3 e 1: sulle colonne ferme (o le più vicine fra quelle intere)
-	for l in LAMPADE_PILE:
+	for k_l in LAMPADE_PILE.size():
+		var l: Array = LAMPADE_PILE[k_l]
 		var meglio := {}
 		for col in colonne_messe:
 			if col["muro"] != l[0] or not col["davanti"] or col["sciolta"] or col.get("togli", false):
@@ -2053,6 +2120,7 @@ func _pile() -> void:
 			push_warning("pile: niente unità per la lampada %s" % str(l))
 			continue
 		meglio["lampada"] = l[2]
+		meglio["lampada_k"] = k_l
 	# 3. le altezze: dietro 4 unità; davanti a gradini da 1 a 4, ma più basse di 4 solo se la fila di dietro le copre
 	for col in colonne_messe:
 		var r: RandomNumberGenerator = rng2 if col.get("nuova", false) else rng
@@ -2100,6 +2168,8 @@ func _pile() -> void:
 	var rng_colori2 := RandomNumberGenerator.new()
 	rng_colori2.seed = 212
 	var casse: Array[Transform3D] = []
+	var collisioni_pile := []   # [trasformazione, misura] per colonna
+	var lampade_pile := []      # [posizione, gradi, indice in LAMPADE_PILE]
 	var colonne := 0
 	for col in colonne_messe:
 		var r: RandomNumberGenerator = rng2 if col.get("nuova", false) else rng
@@ -2181,31 +2251,20 @@ func _pile() -> void:
 			if col.has("lampada") and not col.get("togli", false):
 				# la lampada calda appesa alla faccia della colonna verso la strada, sul blocco della terza unità
 				var faccia := c - n * (PILA_PROFONDO * 0.5 + 0.005)
-				_lampada_calda(Vector3(faccia.x, 2.0 * (PILA_BANCALE + PILA_BLOCCO) + PILA_BANCALE + 0.45, faccia.y), rad_to_deg(atan2(-n.x, -n.y)), col["lampada"])
+				lampade_pile.append([Vector3(faccia.x, 2.0 * (PILA_BANCALE + PILA_BLOCCO) + PILA_BANCALE + 0.45, faccia.y), rad_to_deg(atan2(-n.x, -n.y)), col["lampada_k"]])
 		if col.get("togli", false):
 			for arr in [[casse, 0], [cartone, 1], [aperte, 2], [scatole, 3], [tinte_scatole, 4], [colorate, 5], [tinte_colorate, 6], [casse_sciolte, 7]]:
 				(arr[0] as Array).resize(prima[arr[1]])
 			continue
 		colonne += 1
-		var fc := CollisionShape3D.new()
-		var bc := BoxShape3D.new()
 		# (nella base della colonna: x lungo l'unità, anche quando è di traverso)
-		bc.size = Vector3(0.6, alto, col["prof"]) if col["sciolta"] else Vector3(PILA_LUNGO, alto, PILA_PROFONDO)
-		fc.shape = bc
-		fc.transform = Transform3D(base, Vector3(c.x, alto * 0.5, c.y))
-		_collisioni.add_child(fc)
-	await _pausa()
-	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
-	await _pausa()
-	_multimesh_pile("PileCartone", _unita_pila(false, false, false), cartone, [])
-	await _pausa()
-	_multimesh_pile("PileCartoneAperte", _unita_pila(false, false, false, false), aperte, [])
-	await _pausa()
-	_multimesh_pile("PileScatole", _scatola_pila(false), scatole, tinte_scatole)
-	await _pausa()
-	_multimesh_pile("PileScatoleColorate", _scatola_pila(true), colorate, tinte_colorate)
-	await _pausa()
-	_multimesh_pile("PileCasseSciolte", _scatola_pila(false, true), casse_sciolte, [])
+		var misura: Vector3 = Vector3(0.6, alto, col["prof"]) if col["sciolta"] else Vector3(PILA_LUNGO, alto, PILA_PROFONDO)
+		collisioni_pile.append([Transform3D(base, Vector3(c.x, alto * 0.5, c.y)), misura])
+	dati_pile = {"casse": casse, "cartone": cartone, "aperte": aperte, "scatole": scatole, "tinte_scatole": tinte_scatole,
+			"colorate": colorate, "tinte_colorate": tinte_colorate, "casse_sciolte": casse_sciolte,
+			"collisioni": collisioni_pile, "lampade": lampade_pile}
+	await _pile_metti(dati_pile)
+	print("pile di scatoloni: costruite in %.0f ms" % ((Time.get_ticks_usec() - t0) / 1000.0))
 	print("pile di scatoloni: %d colonne (%d sciolte), %d unità (%d aperte), %d scatole di cartone, %d colorate e %d casse sciolte" % [
 			colonne, colonne_messe.filter(func(x): return x["sciolta"]).size(), casse.size() + cartone.size() + aperte.size(),
 			aperte.size(), scatole.size(), colorate.size(), casse_sciolte.size()])
@@ -2215,12 +2274,55 @@ func _pile() -> void:
 ## coordinate del fiume): dalla porta del capannone gira a sinistra e sparisce nella rientranza fra la porta e il muro
 ## dell'approdo. Le pile ne stanno fuori (test_bambini_sfuggita), a FUGA_LARGO dall'asse: il raggio del bambino (22 cm) e
 ## 20 cm di margine. Se cambiano i punti lì, vanno cambiati anche qui.
-const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -27.1), Vector2(-30.0, -26.9)]
+const FUGA_BAMBINO := [Vector2(-26.0, -28.2), Vector2(-27.4, -26.9), Vector2(-30.0, -26.9), Vector2(-29.97, -28.32)]
 const FUGA_LARGO := 0.42
+## La pila dell'angolo (vedi sopra): il centro della base, contro il muro nord come il muro di pile 0, e lo stacco minimo
+## dall'asse della fuga (il raggio del bambino e 2 cm). La pila, di traverso, va da x -29,7 a -28,7 e da z -28,598 (2 mm dal
+## muro nord, ricontrollo di grafica-2 del 6 novembre: prima c'erano 35 cm e si vedeva la nicchia lungo il muro) a -27,39;
+## la nicchia fra la pila e il muro dell'approdo (faccia a x -30,35) è larga 65 cm e profonda 1,2 m, e il bambino sparisce
+## in fondo, a 28 cm dal muro nord: dalla strada la copre la pila, anche di sbieco da 3,6 m (mascotte, 6 novembre).
+const ANGOLO_PILA := Vector2(-29.2, Z0 + PILA_LUNGO * 0.5 + 0.006)
+const ANGOLO_STACCO := 0.24
 ## I tappi delle fessure fra le pile: [la fessura, da dove la si vede dalla strada]. All'angolo fra i muri 3 e 4, vista
 ## dalla fine della fila vicino alla tettoia della cabina (ricontrollo di enigmi, 2 novembre: si vedeva il buio fino
 ## alla roccia).
 const TAPPI_PILE := [[Vector2(-9.4, -5.4), Vector2(-6.5, -6.7)]]
+
+
+## Il file delle pile già pronte (vedi [method _pile]) e, per chi lo rifà, la richiesta di costruirle comunque.
+const PILE_FILE := "res://assets/fiume_lento/pile_fiume.res"
+var costruisci_pile := false
+## Le pile come sono state messe (dal file o costruite): MultiMesh, collisioni e lampade.
+var dati_pile := {}
+## Il file delle pile, tenuto qui anche perché aggiorna_risorse_risalita.gd lo metta fra quelli che il thread carica
+## prima di costruire le stanze.
+var pile_salvate: Resource
+
+
+## Mette le pile dai loro dati: i sei MultiMesh, una collisione per colonna e le lampade calde sulle pile (l'energia
+## viene da LAMPADE_PILE, così segue LUCE_CORRIDOIO anche col file).
+func _pile_metti(d: Dictionary) -> void:
+	for cp in d["collisioni"]:
+		var fc := CollisionShape3D.new()
+		var bc := BoxShape3D.new()
+		bc.size = cp[1]
+		fc.shape = bc
+		fc.transform = cp[0]
+		_collisioni.add_child(fc)
+	for lp in d["lampade"]:
+		_lampada_calda(lp[0], lp[1], LAMPADE_PILE[lp[2]][2])
+	await _pausa()
+	_multimesh_pile("PileCasse", _unita_pila(true), d["casse"], [])
+	await _pausa()
+	_multimesh_pile("PileCartone", _unita_pila(false, false, false), d["cartone"], [])
+	await _pausa()
+	_multimesh_pile("PileCartoneAperte", _unita_pila(false, false, false, false), d["aperte"], [])
+	await _pausa()
+	_multimesh_pile("PileScatole", _scatola_pila(false), d["scatole"], d["tinte_scatole"])
+	await _pausa()
+	_multimesh_pile("PileScatoleColorate", _scatola_pila(true), d["colorate"], d["tinte_colorate"])
+	await _pausa()
+	_multimesh_pile("PileCasseSciolte", _scatola_pila(false, true), d["casse_sciolte"], [])
 
 
 ## Le tre lampade calde spostate dai muri dietro le pile: [muro, posizione lungo il muro, energia]. Appese alla faccia
@@ -2340,6 +2442,15 @@ static func _rettangolo(c: Vector2, d: Vector2, n: Vector2, largo: float, prof: 
 	return PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f])
 
 
+## Vero se il poligono [param poli] non tocca nessuno di [param altri] (senza margine: vedi la pila dell'angolo).
+static func _non_tocca(poli: PackedVector2Array, altri: Array) -> bool:
+	for g in altri:
+		var gg: PackedVector2Array = g
+		if not gg.is_empty() and not Geometry2D.intersect_polygons(poli, gg).is_empty():
+			return false
+	return true
+
+
 ## Il poligono convesso [param poli] allargato di [param m] da ogni parte.
 static func _allarga_poli(poli: PackedVector2Array, m: float) -> PackedVector2Array:
 	var out := Geometry2D.offset_polygon(poli, m)
@@ -2457,7 +2568,7 @@ func _pila_ci_sta(impronta: PackedVector2Array, ingombri: Array[PackedVector2Arr
 	return true
 
 
-func _multimesh_pile(nome: String, mesh: Mesh, trasformazioni: Array[Transform3D], tinte: Array[Color]) -> void:
+func _multimesh_pile(nome: String, mesh: Mesh, trasformazioni: Array, tinte: Array) -> void:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = not tinte.is_empty()

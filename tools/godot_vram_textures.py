@@ -18,6 +18,8 @@ import sys
 TEXTURE_3D = {
     os.path.join("assets", "ambiente", "dettagli"): 1024,
     os.path.join("assets", "models", "medusa"): 0,
+    # gli stendardi dei bambini dell'inseguimento (1024 x 1536): appesi lontano, bastano 683 x 1024
+    os.path.join("assets", "ambiente", "inseguimento", "stendardi"): 1024,
 }
 
 
@@ -26,7 +28,33 @@ TEXTURE_3D = {
 # distinguono da quelle a 2048 (il colore resta a 2048) e il pacchetto del gioco scende di circa 180 MB.
 LIMITI_ESTRATTE = {
     os.path.join("assets", "ambiente", "sala"): {"_nrm.": 1024, "_orm.": 1024},
+    # (la torre come la sala: scelta A dell'utente del 4 novembre, "peso", circa -290 MB col resto qui sotto)
+    os.path.join("assets", "ambiente", "torre"): {"_nrm.": 1024, "_orm.": 1024},
 }
+
+# Gli oggetti piccoli (props di Meshy, "meshy_*" e "hq_*") delle cartelle di texture dei .gltf: a 1024, come scelto
+# dall'utente il 4 novembre (scelta A del peso: "texture degli oggetti piccoli e della torre da 2048 a 1024"). Restano a
+# 2048 gli oggetti grandi o guardati da vicino (porte, armadietti, tornello, cancello della turbina, finestra del
+# gabbiotto, paratia), quelli con disegni (cartelli, bacheca), la testa della mascotte (Jilly non si tocca) e tutti i
+# materiali delle superfici (cemento, metalli, piastrelle).
+PROPS_1024 = [
+    os.path.join("assets", "ambienti_interni", "texture"),
+    os.path.join("assets", "ambienti_tecnici", "texture"),
+    os.path.join("assets", "ambienti_tecnici", "arredo_risalita", "texture"),
+]
+PROPS_PREFISSI = ("meshy_", "hq_")
+PROPS_ESCLUSI = ("porta_", "armadietto_", "tornello_", "turbina_cancello", "finestra_", "paratia", "cartello", "bacheca",
+                  "testa_mascotte")
+
+
+def _limite_prop(root: str, d: str, nome: str):
+    """1024 per le texture degli oggetti piccoli (vedi PROPS_1024), None per le altre."""
+    if os.path.relpath(d, root) not in PROPS_1024:
+        return None
+    low = nome.lower()
+    if not low.startswith(PROPS_PREFISSI) or any(e in low for e in PROPS_ESCLUSI):
+        return None
+    return 1024
 
 
 def _limite_estratta(root: str, d: str, nome: str):
@@ -52,14 +80,16 @@ def main(root: str) -> int:
     for d, _dirs, files in os.walk(os.path.join(root, "assets")):
         glbs = [f.rsplit(".", 1)[0] for f in files if f.endswith(".glb") or f.endswith(".gltf")]
         limit = _in_3d_folder(root, d)
-        if not glbs and limit is None:
+        props = os.path.relpath(d, root) in PROPS_1024
+        if not glbs and limit is None and not props:
             continue
         for f in files:
             if not (f.endswith(".png.import") or f.endswith(".jpg.import")):
                 continue
             # Le texture estratte (il nome comincia con quello di un GLB della cartella) e tutte
             # quelle delle cartelle di texture 3D.
-            if limit is None and not any(f.startswith(g + "_") for g in glbs):
+            lato_prop = _limite_prop(root, d, f)
+            if limit is None and lato_prop is None and not any(f.startswith(g + "_") for g in glbs):
                 continue
             p = os.path.join(d, f)
             with open(p, encoding="utf-8") as fh:
@@ -68,7 +98,7 @@ def main(root: str) -> int:
             low = f.lower()
             if "_nrm" in low or "normal" in low:
                 s2 = s2.replace("compress/normal_map=0", "compress/normal_map=1")
-            lato = _limite_estratta(root, d, f)
+            lato = _limite_estratta(root, d, f) or lato_prop
             if lato:
                 s2 = s2.replace("process/size_limit=0", f"process/size_limit={lato}")
             if limit is not None and limit > 0:

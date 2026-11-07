@@ -163,7 +163,11 @@ func _passi() -> Array:
 	for i in 4:
 		out.append(func(): _modello(i))
 	out.append(_tubi)
-	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
+	out.append_array([_acque, _veli_bocche, _paratie, _grata, _scala, _fondo_porta, _checkpoint, _scolo_zone, _bacino, _lei_crea, _lei_parti, _lei_morbida])
+	# le sagome del club dei bambini attorno alle vasche (SagomeClub, scelta A dell'utente del 6 novembre)
+	out.append_array(SagomeClub.passi(self))
+	# gli stendardi dei bambini appesi nel vuoto dietro le vasche (nota dell'utente del 6 novembre; StendardiInseguimento)
+	out.append_array(StendardiInseguimento.passi(self))
 	if crea_luci:
 		out.append_array(_passi_luci())
 	return out
@@ -231,15 +235,16 @@ func _varco_scalette(glb: Node3D) -> void:
 				(cs as CollisionShape3D).shape = forma
 
 
-## Vero se [param q] (coordinate della sala) sta sul modello di una scaletta: fino a 30 cm dietro il suo piede,
-## largo 0,8 m, dal piede a 1,5 m sopra la cima.
+## Vero se [param q] (coordinate della sala) sta sul modello di una scaletta: da 30 cm dietro il suo piede a 8 cm
+## davanti (nel bacino il tratto basso scende davanti alla faccia del muro, fino sotto il pelo), largo 0,8 m, dal piede
+## a 1,5 m sopra la cima.
 func _nella_scaletta(q: Vector3) -> bool:
 	for s in dati["scale"]:
 		var piede := b([s["x"], s["y"], s["z0"]])
 		var verso := b(s["verso"])
 		var d := q - piede
 		var lungo := d.dot(verso)
-		if lungo > -0.3 and lungo < 0.02 and absf(d.dot(verso.cross(Vector3.UP))) < 0.4 \
+		if lungo > -0.3 and lungo < 0.08 and absf(d.dot(verso.cross(Vector3.UP))) < 0.4 \
 				and q.y > piede.y - 0.5 and q.y < float(s["z1"]) + 1.5:
 			return true
 	return false
@@ -351,6 +356,18 @@ func _acque() -> void:
 ## test_occhio_sopra_acque.
 ## (comincia con "acqua": per il controllo di posizionamento è acqua, come le superfici, e non un ingombro)
 const NOME_VELO := "acqua_velo_bocca_"
+## Nelle bocche dei tubi sotto il pelo, quanto l'occhio resta almeno sopra il pelo finché non ci va sotto, e poi
+## almeno sotto (m): vedi [method occhi_bocca].
+const OCCHI_SOPRA := 0.035
+const OCCHI_SOTTO := 0.02
+
+## La luce propria della parete d'acqua delle bocche (water_inseguimento.gdshader, luce_propria): l'acqua vista da
+## dentro il tubo ha lo stesso colore in tutte e sei le bocche, verde piena (ricontrollo del collaudo dei ritocchi: nelle
+## bocche con la lampada rossa era grigia, quasi nera, e si vedevano le piastrelle dietro).
+const LUCE_VELI := 0.1
+
+## Le pareti d'acqua nelle bocche ([method _veli_bocche]).
+var _veli: Array[MeshInstance3D] = []
 
 
 func _veli_bocche() -> void:
@@ -360,10 +377,14 @@ func _veli_bocche() -> void:
 	for v in dati["scolo"]:
 		acque.append(v)
 	acque.append(dati["bacino"])
-	# (l'acqua delle vasche, senza riflessi e piena com'è l'acqua che ha dietro: vedi water_inseguimento.gdshader)
+	# (l'acqua delle vasche, senza riflessi e piena com'è l'acqua che ha dietro: vedi water_inseguimento.gdshader; da
+	# dentro il tubo il fondo si intravede sfocato e mosso, come sott'acqua: water_inseguimento_velo.gdshader, solo qui)
 	var mat := (load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
+	mat.shader = load("res://shaders/water_inseguimento_velo.gdshader") as Shader
 	mat.set_shader_parameter(&"lucido", 0.0)
 	mat.set_shader_parameter(&"pieno_fisso", 0.97)
+	# (e il colore dell'acqua anche dove la lampada vicina è la rossa guasta: vedi luce_propria nello shader)
+	mat.set_shader_parameter(&"luce_propria", LUCE_VELI)
 	for nome: String in dati["tubi"]:
 		var linea: Array = dati["tubi"][nome]
 		var p0: Array = linea[0]
@@ -402,6 +423,7 @@ func _veli_bocche() -> void:
 			var avanti := Vector3(dx, 0.0, -dy)
 			velo.global_transform = Transform3D(Basis.looking_at(-avanti, Vector3.UP), b([bx, by, (giu + pelo) / 2.0]))
 			velo.set_meta(&"pelo", pelo)
+			_veli.append(velo)
 			break
 
 
@@ -478,6 +500,52 @@ func cala_grata() -> void:
 		var tw := create_tween()
 		tw.tween_property(grata, "global_position", grata.global_position + Vector3.DOWN * float(dati["grata"]["corsa"]), 0.6) \
 				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+
+## Dietro il vano della porta di servizio in cima alla scaletta (nel muro ovest, x 40,4) c'è il tunnel del viaggio
+## sottomarino, che la sala mette nel livello e costruisce nel thread mentre si è nella torre. Ripartendo nelle
+## condotte (dopo una morte, da Continua, F9 Inseguimento) il tunnel arriva circa 4 s dopo (tests/misura_attesa_sb1.gd)
+## e intanto dal vano si vedeva il vuoto (cubo magenta di varchi-cielo, 7 novembre). Finché il tunnel non è pronto
+## (AttesaZone "tunnel") dietro il vano c'è un fondo nero opaco, appoggiato al muro dal lato del tunnel, più grande del
+## vano: da lontano è un corridoio buio. Quando il tunnel è pronto va via; se lo è già, non si mette.
+const FONDO_PORTA_X := 40.396           # 4 mm dietro il muro (il piano del muro è a x 40,4): appoggiato, senza sfarfallio
+const FONDO_PORTA_Z := Vector2(-5.9, -4.1)  # il vano: z -5,75 .. -4,25
+const FONDO_PORTA_Y := Vector2(-30.1, -27.7)  # il vano: y -30 .. -27,85
+var _fondo_porta_nodo: MeshInstance3D
+
+
+func _fondo_porta() -> void:
+	if AttesaZone.e_pronta(&"tunnel") or is_instance_valid(_fondo_porta_nodo):
+		return
+	var q := QuadMesh.new()
+	q.size = Vector2(FONDO_PORTA_Z.y - FONDO_PORTA_Z.x, FONDO_PORTA_Y.y - FONDO_PORTA_Y.x)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color.BLACK
+	m.disable_fog = true
+	q.material = m
+	var f := MeshInstance3D.new()
+	f.name = "FondoPortaServizio"
+	f.mesh = q
+	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	f.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+	add_child(f)
+	# il quad guarda verso +Z: girato verso est (verso le condotte), contro il muro
+	var dove := Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(FONDO_PORTA_X,
+			(FONDO_PORTA_Y.x + FONDO_PORTA_Y.y) * 0.5, (FONDO_PORTA_Z.x + FONDO_PORTA_Z.y) * 0.5))
+	f.transform = (global_transform.affine_inverse() * dove) if is_inside_tree() else dove
+	_fondo_porta_nodo = f
+	var t := Timer.new()
+	t.name = "FondoPortaAttesa"
+	t.wait_time = 0.2
+	t.autostart = true
+	t.timeout.connect(func():
+		if AttesaZone.e_pronta(&"tunnel"):
+			if is_instance_valid(_fondo_porta_nodo):
+				_fondo_porta_nodo.queue_free()
+			_fondo_porta_nodo = null
+			t.queue_free())
+	add_child(t)
 
 
 func _scala() -> void:
@@ -782,12 +850,14 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 		_salta_a(t0)
 		set_meta(&"durata_salita", 1.3 - t0)
 	else:
-		var nome := "sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce"
+		var nome: String = SALITA.get(dove, "sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce")
 		var dur := _anima(nome)
 		var t0 := _quando_radice(StringName("inseguimento/" + nome), sotto, true)
 		_salta_a(t0)
 		set_meta(&"durata_salita", dur - t0)
-	if dove != "sb1":
+	if _con_la_mano():
+		lei.look_at(_muro_della_vasca(), Vector3.UP, true)
+	elif dove != "sb1":
 		_girala_verso_giocatore()
 	# l'acqua che si apre quando sbuca (verso metà della salita)
 	get_tree().create_timer(float(get_meta(&"durata_salita")) * 0.45, false).timeout.connect(func():
@@ -796,6 +866,16 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	lei_compare.emit(dove)
 
 
+## La salita di lei per posto, se non è quella di sempre (sale_dall_acqua; la grata e gli scoli sale_dall_acqua_veloce):
+## una salita diversa per vasca (0.3.21, scelta A dell'utente), con gli stessi tempi per il gioco; quale vasca ha quale
+## salita, scelta C dell'utente: la vasca 2 la salita veloce con l'occhio già puntato, la vasca 3 la mano che si aggrappa
+## al bordo e lei che si tira su.
+const SALITA := {"vasca_1": "sale_puntata", "vasca_2": "sale_mano"}
+## Con la mano sul bordo (sale_mano) lei sale girata dritta verso il muro della vasca (la mano si posa sul bordo vero,
+## a 2,30 m davanti: tools/blender/medusa_inseguimento.py, BORDO_V3) e si gira verso il giocatore solo dopo aver lasciato
+## il bordo (a MANO_LASCIA secondi della clip), al più a GIRA_DOPO_BORDO gradi al secondo.
+const MANO_LASCIA := 1.05
+const GIRA_DOPO_BORDO := 90.0
 ## Quanto può scendere sotto il suo posto "su" senza toccare niente (le animazioni scendono di 5 m): SB1 nel
 ## pozzo pieno d'acqua, la vasca 3 accanto alla vasca, sopra il pavimento della sala (sonda:
 ## proposte/mascotte/sonda_lei_inseguimento.gd).
@@ -899,6 +979,38 @@ func _salto_discesa(anim: StringName) -> float:
 	return 0.0
 
 
+## Lei sale con la mano sul bordo (sale_mano) qui.
+func _con_la_mano() -> bool:
+	return SALITA.get(_lei_dove, "") == "sale_mano"
+
+
+## Con la mano sul bordo: girata dritta verso il muro della vasca finché la mano lo tiene, poi verso il giocatore senza
+## scatti (al più GIRA_DOPO_BORDO gradi al secondo; quando è girata tutta, come _girala_verso_giocatore).
+func _girala_dopo_il_bordo(delta: float) -> void:
+	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var tenendo := lei_stato == Lei.SALE and ap != null and ap.current_animation == &"inseguimento/sale_mano" \
+			and ap.current_animation_position < MANO_LASCIA
+	if tenendo:
+		lei.look_at(_muro_della_vasca(), Vector3.UP, true)
+		return
+	var p := GameState.player
+	if p == null or not is_instance_valid(p):
+		return
+	var verso := p.global_position - lei.global_position
+	verso.y = 0.0
+	if verso.length() < 0.1:
+		return
+	lei.rotation.y = rotate_toward(lei.rotation.y, atan2(verso.x, verso.z), deg_to_rad(GIRA_DOPO_BORDO) * delta)
+
+
+## Il punto del muro della vasca dritto davanti a lei (alla sua altezza), per la vasca dove sale con la mano.
+func _muro_della_vasca() -> Vector3:
+	var v := int(_lei_dove.trim_prefix("vasca_"))
+	var r: Array = dati["vasche"][v]["rett"]
+	var m := b([(r[0] + r[2]) / 2.0, r[1], 0.0])
+	return Vector3(m.x, lei.global_position.y, m.z)
+
+
 func _girala_verso_giocatore() -> void:
 	var p := GameState.player
 	if p == null or not is_instance_valid(p):
@@ -930,7 +1042,9 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 	match lei_stato:
 		Lei.SALE:
 			var dur := float(get_meta(&"durata_salita", 1.6))
-			if _lei_dove != "sb1" and _lei_dove != "grata":
+			if _con_la_mano():
+				_girala_dopo_il_bordo(delta)
+			elif _lei_dove != "sb1" and _lei_dove != "grata":
 				_girala_verso_giocatore()
 			if _lei_t >= dur:
 				lei_stato = Lei.SU
@@ -946,7 +1060,10 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 		Lei.SU:
 			if _lei_dove == "sb1" or _lei_dove == "grata":
 				return      # la sua scena: non ti prende
-			_girala_verso_giocatore()
+			if _con_la_mano():
+				_girala_dopo_il_bordo(delta)
+			else:
+				_girala_verso_giocatore()
 			var limite := 2.5 if _dove_scolo() else tempo_presa
 			var scappato := p != null and in_tubo(p.global_position) and _vasca_di(p.global_position) < 0
 			if _lei_t >= limite and p and not scappato:
@@ -959,6 +1076,22 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 			if _lei_t >= float(get_meta(&"durata_discesa", 1.0)):
 				lei_stato = Lei.VIA
 				lei.visible = false
+
+
+## Il battito del cuore nelle condotte (scelta A dell'utente, 4 novembre: "cuore nelle condotte solo quando lei è
+## su"): lo segnala su di lei la meta "cuore_condotte", che l'audio legge (addons/audio/audio.gd, Statua): 1 mentre sale o
+## è su in una vasca o in uno scolo, 2 mentre torna sotto (ricacciata col getto o da sola: il battito rallenta), 0 quando
+## non c'è, ti prende, o alla grata e in SB1 (dove non ti prende). I colpi bassi restano solo nel tunnel.
+func _segnale_cuore() -> void:
+	var m := 0
+	var vasca := _lei_dove.begins_with("vasca") or _lei_dove.begins_with("scolo")
+	if vasca and lei.visible:
+		match lei_stato:
+			Lei.SALE, Lei.SU:
+				m = 1
+			Lei.SCENDE:
+				m = 2
+	lei.set_meta(&"cuore_condotte", m)
 
 
 ## La grata è calata: lei sale di colpo (1 s) dal pozzetto dietro la grata, a nord della bocca della spirale,
@@ -1127,9 +1260,16 @@ func _physics_process(delta: float) -> void:
 		return
 	if lei_stato != Lei.VIA:
 		_lei_aggiorna(delta, p)
+	if lei and is_instance_valid(lei):
+		_segnale_cuore()
+	p.occhi_pelo = -INF
 	if GameState.is_dying or _sb1:
 		return
 	p.accovacciato_forzato = in_tubo(p.global_position)
+	var ob := occhi_bocca(p.global_position + Vector3.UP * p.crouch_eye_height, p.camera.near)
+	p.occhi_pelo = ob.x
+	p.occhi_sopra = ob.y
+	p.occhi_sotto = OCCHI_SOTTO
 	# in quale vasca sei: lei compare dopo un po', e torna dopo un getto in faccia
 	var v := _vasca_di(p.global_position)
 	if v != _vasca:
@@ -1147,6 +1287,37 @@ func _physics_process(delta: float) -> void:
 		elif _ritorno < 0.0 and _in_vasca_t >= comparsa[_vasca] and not get_meta(&"comparsa_%d" % _vasca, false):
 			set_meta(&"comparsa_%d" % _vasca, true)
 			_lei_sale("vasca_%d" % _vasca, _posto_vasca(_vasca))
+
+
+## Il pelo e quanto la camera deve stare sopra (Player.occhi_pelo e occhi_sopra) per l'occhio in [param occhio]
+## (ritocco del capitolo 1, scelta A dell'utente). Entrando nei tubi e negli scoli che partono sotto il pelo delle
+## vasche l'occhio passava a 1 mm dall'acqua (test_occhio_sopra_acque): un passo più basso e la si rivedeva da sotto.
+## Ora, finché l'occhio è sopra il pelo, la camera ci resta almeno [constant OCCHI_SOPRA] sopra, e a meno di 30 cm
+## dall'acqua anche sopra il piano vicino della camera ([param near]); quando l'occhio scende sotto il pelo (i tubi ci
+## vanno dopo 0,8-1,4 m) la camera lo segue, almeno [constant OCCHI_SOTTO] sotto: lì la superficie la copre la parete
+## d'acqua della bocca, e a filo dell'acqua la camera non ci sta mai (passa in un fotogramma). Nella vasca il
+## margine cala piano verso il centro. La forma delle bocche non cambia. x = -INF lontano dalle bocche.
+func occhi_bocca(occhio: Vector3, near: float) -> Vector2:
+	var out := Vector2(-INF, 0.0)
+	for v in _veli:
+		if not is_instance_valid(v):
+			continue
+		var pelo := float(v.get_meta(&"pelo"))
+		if occhio.y > pelo + 0.6:
+			continue
+		var l := v.global_transform.affine_inverse() * occhio
+		# (+Z del quad lungo il tubo: dentro il tubo l.z > 0, nella vasca < 0)
+		if absf(l.x) > 1.2 or l.z < -0.6 or l.z > 3.0:
+			continue
+		var sopra := near + 0.02 + OCCHI_SOPRA
+		if l.z > 0.3:
+			sopra = lerpf(sopra, OCCHI_SOPRA, minf((l.z - 0.3) / 0.3, 1.0))
+		elif l.z < 0.0:
+			# (nella vasca l'occhio accovacciato sta già più in alto: il margine cala piano, senza salti)
+			sopra += l.z * 0.3
+		if pelo + sopra > out.x + out.y:
+			out = Vector2(pelo, sopra)
+	return out
 
 
 func _vasca_di(pos: Vector3) -> int:
@@ -1181,7 +1352,11 @@ func _luci() -> void:
 		_omni(radice, b(q), CALDO, 6.5, 10.0, 0.09, 8.0, true)
 	for i in luci_dati["paratie"].size():
 		var pa: Array = luci_dati["paratie"][i]
-		_lampada_paratia(radice, b(pa[0]), pa[1] == "verde", b(luci_dati["bersagli"][i]), b(pa[2]), _pannello(i))
+		# (l'ombra solo sulla lampada verde della paratia giusta della vasca 3: senza, la sua luce passava nel tubo 3 che
+		# parte sotto la paratia e faceva una riga verde nel buio; le altre due non la fanno e l'ombra costava dal 2 al
+		# 15% del fotogramma, ricontrollo del collaudo della candidata 0.3.21)
+		var ombra: bool = pa[1] == "verde" and i < (dati["paratie"] as Array).size() and int(dati["paratie"][i].get("vasca", -1)) == 2
+		_lampada_paratia(radice, b(pa[0]), pa[1] == "verde", b(luci_dati["bersagli"][i]), b(pa[2]), _pannello(i), ombra)
 	for u in luci_dati["uscita"]:
 		_omni(radice, b(u), VERDE, 3.0, 7.0, 0.12, 8.0, false)
 	var soffitto: float = luci_dati["info"]["limiti"][5]
@@ -1259,9 +1434,13 @@ func _pannello(k: int) -> Node3D:
 	return mobili.find_child(String(dati["paratie"][k]["nodo"]), true, false) as Node3D
 
 
-func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3, pannello: Node3D = null) -> void:
+func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3, pannello: Node3D = null,
+		ombra := false) -> void:
 	var col := VERDE if giusta else ROSSO
-	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, false)
+	# ([param ombra]: la verde della vasca 3 fa ombra; senza, passava attraverso il tubo che parte sotto la paratia e
+	# faceva una riga verde nel buio del tubo 3, ricontrollo del collaudo dei ritocchi; la rossa sfarfalla ed è debole)
+	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, ombra)
+	o.set_meta(&"lampada_paratia_verde", giusta)
 	var s := SpotLight3D.new()
 	s.light_color = col
 	s.light_energy = 14.0 if giusta else 2.5
@@ -1397,9 +1576,18 @@ static func _percorso_fonte(fonte: String) -> String:
 			else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
 
 
-## I file che la costruzione carica (lei e le fonti degli arredi): la sala li chiede al thread insieme alla torre.
+## Le acque della costruzione (_glb_a_pezzi) e il velo delle bocche (_veli_bocche): la torre le aspetta prima dei suoi
+## passi (SalaTorre._chiedi_precarica).
+const RISORSE_ACQUE := ["res://assets/materials/inseguimento/acqua_inseguimento.tres",
+	"res://assets/materials/sala/acqua_torbida.tres", "res://shaders/water_inseguimento_velo.gdshader"]
+
+
+## I file che la costruzione carica (lei, le fonti degli arredi, le acque e il velo delle bocche): la sala li chiede al
+## thread insieme alla torre.
 static func risorse() -> Array:
 	var out: Array = RISORSE_LEI.duplicate()
+	out.append_array(RISORSE_ACQUE)
+	out.append_array(StendardiInseguimento.risorse())
 	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
 	if dati_luci is Dictionary:
 		for a in dati_luci.get("arredi", []):
@@ -1497,6 +1685,9 @@ static func _rispetto_a(src: Node3D, n: Node3D) -> Transform3D:
 
 
 func _exit_tree() -> void:
+	var p := GameState.player
+	if p != null and is_instance_valid(p):
+		p.occhi_pelo = -INF
 	for f in _fonti.values():
 		if is_instance_valid(f):
 			(f as Node).free()

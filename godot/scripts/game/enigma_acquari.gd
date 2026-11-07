@@ -206,6 +206,8 @@ func _valuta() -> void:
 	if giusto:
 		stato = Stato.RISOLTO
 		_misto.set_mix(WaterMix.pura(WaterMix.VERDE))
+		# il "fatto giusto" degli enigmi (scelta A dell'utente del 4 novembre, proposta enigmi-4), dall'acquario
+		Audio.suona(&"giusto", _misto.global_position if _misto.is_inside_tree() else null)
 		if portone and portone.has_method(&"apri_quando_pronta"):
 			portone.call(&"apri_quando_pronta")
 		elif portone and portone.has_method(&"apri"):

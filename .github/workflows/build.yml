@@ -126,6 +126,14 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
 
+      - name: Test dell'avvio sicuro (dopo una chiusura di colpo il titolo propone qualità bassa e l'altro driver; senza, niente)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_avvio_sicuro.gd
+
+      - name: Test della qualità automatica (al primo avvio sceglie il preset più alto che resta fluido; una scelta a mano resta del giocatore)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_qualita_automatica.gd
+
       - name: Test dell'opzione nascosta della riga di comando del titolo (senza i suoi argomenti non fa niente; la usa la Prova su Vulkan)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_partenza_da_riga.gd
@@ -176,9 +184,13 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_tunnel.gd
 
-      - name: Test del cuore e del ritmo d'inseguimento nel tunnel (seguono la distanza di lei, tacciono quando prende o sparisce)
+      - name: Test del cuore e del ritmo d'inseguimento (nel tunnel seguono la distanza di lei e tacciono quando prende o sparisce; nelle condotte solo il battito)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento_suoni.gd
+
+      - name: Test della scena di morte breve (dalla seconda morte allo stesso checkpoint dura 1,1 s)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morte_breve.gd
 
       - name: L'acqua non si vede mai da sotto (tutte le acque di torre e inseguimento, accovacciati e atterrando, ogni tubo e scolo dalla vasca di partenza)
         if: steps.progetto.outputs.presente == 'si'
@@ -228,9 +240,9 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
-      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata, a scolo_2 e quando lei se ne va da SB1 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
+      - name: Test dei tentacoli morbidi nell'inseguimento a 60 fps, alla grata, a scolo_2, quando lei se ne va da SB1 e nelle salite nuove delle vasche 2 e 3 (come gioca chi ha 60 fps; collisioni e scatti bloccanti, costo solo stampato)
         if: steps.progetto.outputs.presente == 'si'
-        run: SOLO=scolo_2,grata,sb1_scende godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+        run: SOLO=scolo_2,grata,sb1_scende,vasca_1,vasca_2 godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
       - name: Test di lei che torna sotto senza salire prima (SB1 e le respinte, a 30 e a 60 fps)
         if: steps.progetto.outputs.presente == 'si'
@@ -298,6 +310,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/aggiorna_muro_oblo_torre.gd controlla
 
+      - name: Le toppe salvate della torre (i triangoli che mancano in torre_A) corrispondono alla mesh della torre
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/aggiorna_toppe_torre.gd controlla
+
       - name: Test della distanza di lei nei passaggi obbligati del tunnel (gommoni e gallerie basse; mai sotto gli 8 m finché non sbagli, se cadi in acqua ti prende)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_attraversamenti.gd
@@ -306,9 +322,17 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento.gd
 
+      - name: Test delle sagome del club nelle condotte (dodici, girate verso l'acqua, appoggiate o legate, fuori dai passaggi)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sagome_club.gd
+
       - name: Test della scaletta del bacino dopo SB1 (su col giocatore vero in quattro modi, poi oltre la porta nel tunnel)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scaletta_bacino.gd
+
+      - name: Test del fondo nero dietro la porta del bacino finché il tunnel non è pronto (dal titolo, F9, due morti)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_fondo_porta_bacino.gd
 
       - name: Test delle scalette della piscina a onde (piena e vuota, su col giocatore vero in sette modi fin sul bordo; e dalla spiaggia)
         if: steps.progetto.outputs.presente == 'si'
@@ -342,6 +366,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid.gd
 
+      - name: Test dell'album delle Polaroid (menu di pausa, 16 cornici, n su 16, joypad, inglese, salvataggio com'era)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_album_polaroid.gd
+
       - name: Controllo di posizionamento (sospesi, ingombri dove si cammina, interattivi coperti, compenetrazioni)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_posizionamento.gd
@@ -349,6 +377,10 @@ jobs:
       - name: Controllo dei varchi (il corpo del giocatore passa da ogni porta della strada; blocca la build)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_varchi.gd
+
+      - name: Controllo del cielo (dalla strada del capitolo non si vede il cielo da nessun buco; blocca la build)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/controllo_cielo.gd
 
       - name: Test della strada del capitolo col controller vero (dal risveglio alla torre, porta per porta)
         if: steps.progetto.outputs.presente == 'si'
@@ -370,11 +402,16 @@ jobs:
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
+          tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_effetti_primo_uso.gd
           tools/ci/senza_bug.sh xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_oblo_leggeri.gd
 
       - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
+
+      - name: Test della costruzione a pezzi interrotta (niente nodi orfani dai passi degli stendardi e delle sagome del club)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_passi_orfani.gd
 
       - name: Test della memoria a ogni morte (6 ripartenze di fila, niente che cresce)
         if: steps.progetto.outputs.presente == 'si'

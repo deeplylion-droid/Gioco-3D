@@ -22,6 +22,20 @@ uniform sampler2D depth_tex : hint_depth_texture, filter_nearest;
 // quasi zero e faceva una riga chiara). Per l'acqua delle vasche restano 1 e -1: com'era.
 uniform float lucido : hint_range(0.0, 1.0) = 1.0;
 uniform float pieno_fisso = -1.0;
+// La parete d'acqua vista da dentro il tubo è l'acqua stessa, non una superficie: il suo colore non dipende dalle lampade
+// vicine (ricontrollo del collaudo dei ritocchi: col solo albedo, nelle bocche con la lampada verde era verde piena, in
+// quelle con la rossa guasta grigia, quasi nera, e si vedevano le piastrelle dietro). luce_propria è la luce del colore
+// dell'acqua che fa da sola; 0 per l'acqua delle vasche.
+uniform float luce_propria = 0.0;
+// Con l'occhio a pochi cm sopra il pelo (meno di [radente_alto_pieno] m, sfumando fino a [radente_alto_niente]: solo
+// entrando nelle bocche dei tubi che partono sotto il pelo, dove la camera resta qualche cm sopra l'acqua) il pelo prende
+// il colore chiaro dell'acqua al posto del nero dell'ambiente (riscontro del collaudo della 0.3.21: l'acqua è trasparente,
+// quindi senza riflessi SSR, e vista quasi di taglio rifletteva il buio e faceva una fascia nera fra la sala e l'acqua).
+// Conta l'altezza dell'occhio e non l'angolo: dalla bocca il pelo vicino si vede fino a 16 gradi, come dalla vasca
+// quello lontano; ma dalla vasca l'occhio sta ben più in alto (in piedi 0,9 m, accucciati 0,2), e lì niente cambia.
+uniform float radente_alto_pieno = 0.12;
+uniform float radente_alto_niente = 0.18;
+uniform float radente_luce = 0.12;
 
 varying vec3 world_pos;
 
@@ -61,7 +75,22 @@ void fragment() {
 		ALBEDO = mix(deep_color.rgb, water_color.rgb, 0.35 + 0.4 * finestra);
 		ALPHA = mix(0.97, under_alpha, finestra);
 	}
+	// (solo da dentro il tubo: dalla vasca la parete si vede da dietro, sott'acqua, e lì non deve fare luce)
+	if (luce_propria > 0.0 && FRONT_FACING) {
+		ALBEDO *= 0.25;
+		EMISSION = mix(water_color.rgb, deep_color.rgb, 0.5) * luce_propria;
+	}
 	ROUGHNESS = mix(1.0, 0.03, lucido);
 	SPECULAR = 0.6 * lucido;
 	METALLIC = 0.0;
+	if (FRONT_FACING && luce_propria <= 0.0) {
+		// quanto l'occhio sta sopra questo punto del pelo
+		float h = CAMERA_POSITION_WORLD.y - world_pos.y;
+		float r = 1.0 - smoothstep(radente_alto_pieno, radente_alto_niente, h);
+		if (r > 0.0) {
+			ALBEDO = mix(ALBEDO, water_color.rgb, r);
+			SPECULAR *= 1.0 - r;
+			EMISSION = water_color.rgb * radente_luce * r;
+		}
+	}
 }

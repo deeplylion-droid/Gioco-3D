@@ -22,6 +22,8 @@ const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
 const SCENE_TITLE := "res://scenes/ui/menu_principale.tscn"
 const SCENE_CONTROLS := "res://scenes/ui/comandi.tscn"
+## L'album delle Polaroid (dal menu di pausa; scelta A dell'utente del 4 novembre, proposta enigmi-1).
+const SCENE_ALBUM := "res://scenes/ui/album_polaroid.tscn"
 
 ## Al primo avvio (nessun user://settings.cfg) parte con questo preset dell'addon grafica.
 @export var first_run_preset := "alto"
@@ -45,6 +47,9 @@ var _resume_button: Button
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# (il segno della sessione aperta: rimasto dalla volta prima vuol dire una chiusura di colpo, e il titolo propone
+	# l'avvio sicuro; si cancella all'uscita normale)
+	AvvioSicuro.all_avvio()
 	# La X della finestra passa da esci() (NOTIFICATION_WM_CLOSE_REQUEST in _notification).
 	get_tree().auto_accept_quit = false
 	_build_overlay()
@@ -52,6 +57,8 @@ func _ready() -> void:
 	var first_run := not FileAccess.file_exists("user://settings.cfg")
 	if first_run and not is_automated():
 		Grafica.applica_preset(first_run_preset)
+		# (al primo avvio la qualità la sceglie la prova automatica, entrando nella sala: QualitaAutomatica)
+		Grafica.valori["qualita_provata"] = false
 	# Contatore delle prestazioni (F3), spento all'avvio.
 	add_child(load("res://scripts/ui/fps_counter.gd").new())
 	if not is_automated() and not bool(Grafica.valore("calibrato")):
@@ -244,6 +251,7 @@ func esci(codice := 0) -> void:
 		get_tree().quit(codice)
 		return
 	uscendo = true
+	AvvioSicuro.all_uscita()
 	if not _caricamenti.is_empty():
 		# Fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get() (in prova
 		# bloccare non bastava: Godot si fermava lo stesso all'uscita). Si riguardano tutti i caricamenti a ogni
@@ -313,6 +321,20 @@ func open_options() -> void:
 	add_child(_menu_layer)
 	var menu := _menu_layer.get_node(^"Menu")
 	menu.chiuso.connect(func():
+		_menu_layer = null
+		if get_tree().paused:
+			_overlay.visible = true
+			_resume_button.grab_focus.call_deferred())
+
+
+## L'album delle Polaroid (dal menu di pausa), come i comandi.
+func open_album() -> void:
+	if is_instance_valid(_menu_layer):
+		return
+	_overlay.visible = false
+	_menu_layer = load(SCENE_ALBUM).instantiate()
+	add_child(_menu_layer)
+	_menu_layer.get_node(^"Album").connect(&"chiuso", func():
 		_menu_layer = null
 		if get_tree().paused:
 			_overlay.visible = true
@@ -414,6 +436,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 
+func _exit_tree() -> void:
+	# (anche le uscite che non passano da esci(), per esempio get_tree().quit() nelle prove)
+	AvvioSicuro.all_uscita()
+
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		esci()
@@ -446,6 +473,7 @@ func _build_overlay() -> void:
 	label.add_theme_font_size_override("font_size", 34)
 	col.add_child(label)
 	_resume_button = _menu_button(col, "Riprendi", func(): set_paused(false))
+	_menu_button(col, "Polaroid", open_album)
 	_menu_button(col, "Opzioni", open_options)
 	_menu_button(col, "Comandi", open_controls)
 	_menu_button(col, "Torna al titolo", return_to_title)

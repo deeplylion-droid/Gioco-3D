@@ -86,6 +86,10 @@ func _prova(scena: String, cosa: String) -> void:
 		b.punti_fuga = punti
 		b.sparisce_fuori_vista = false
 		b.scappa_ora()
+	# i passi di corsa (0.3.21): un segnale a ogni piede che tocca terra, e Audio li suona
+	var passi := [0]
+	b.passo.connect(func(_q): passi[0] += 1)
+	var suonati0 := int(Audio.conteggio.get(b.suono_passi, 0))
 	var prima := {}
 	_piede_min = 99.0
 	var somma := 0.0
@@ -119,6 +123,13 @@ func _prova(scena: String, cosa: String) -> void:
 	var limite := SCIVOLA_MAX if cosa == "cammina" else (SCIVOLA_MAX_SVOLTA if cosa.begins_with("svolta") else SCIVOLA_MAX_CORSA)
 	check(n > 10 and media < limite, "%s: il piede a terra scivola in media di %.2f m/s (al più %.2f; %d campioni)" % [cosa, media, limite, n])
 	check(absf(minimo) < TERRA_MAX, "%s: le punte dei piedi toccano terra (la più bassa a %+.3f m dal pavimento)" % [cosa, minimo])
+	var suonati := int(Audio.conteggio.get(b.suono_passi, 0)) - suonati0
+	if cosa == "cammina":
+		check(passi[0] == 0, "%s: nessun passo di corsa (%d)" % [cosa, passi[0]])
+	else:
+		var al_secondo: float = passi[0] / maxf(t - 0.5, 0.5)
+		check(al_secondo > 2.5 and al_secondo < 7.0 and suonati == passi[0] and b.suono_passi != &"",
+				"%s: i passi di corsa (%s) a ritmo, %.1f al secondo (%d in %.1f s, %d suonati)" % [cosa, b.suono_passi, al_secondo, passi[0], t, suonati])
 	b.queue_free()
 	for m in punti:
 		m.queue_free()

@@ -105,6 +105,12 @@ var _a_pezzi := false
 ## Il fotogramma più carico della costruzione a pezzi: quanti ms di passi ci sono finiti dentro (per i test).
 var fotogramma_piu_carico_ms := 0.0
 var _coda: Array = []
+## Le risorse dei passi chieste al thread all'inizio della costruzione a pezzi (percorso -> vero finché non è pronta) e,
+## pronte, tenute qui fino alla fine della costruzione: i load() dei passi le trovano già in memoria.
+var _precarica := {}
+var _precaricate: Array[Resource] = []
+## Quanto si aspetta al più il thread prima del primo passo che usa quei file (s).
+const ATTESA_PRECARICA := 15.0
 signal pronta
 
 
@@ -118,11 +124,18 @@ func _ready() -> void:
 ## La costruzione divisa in passi brevi, uno per fotogramma (al più [param ms_per_fotogramma] ms di fila).
 func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	_a_pezzi = true
+	_chiedi_precarica()
 	var t0 := Time.get_ticks_usec()
 	var k := 0
 	_coda = _passi()
 	while not _coda.is_empty():
 		var passo: Callable = _coda.pop_front()
+		# il primo passo che usa le risorse precaricate aspetta (fotogramma per fotogramma) che il thread le abbia pronte
+		if passo == _cartelloni_rovinati and not _precarica.is_empty():
+			await _aspetta_precarica()
+			if not is_inside_tree():
+				return
+			t0 = Time.get_ticks_usec()
 		var tp := Time.get_ticks_usec()
 		passo.call()
 		if OS.has_environment("TORRE_TEMPI"):
@@ -140,8 +153,73 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
 	if inseguimento and inseguimento.has_method(&"costruisci_a_pezzi"):
 		await inseguimento.call(&"costruisci_a_pezzi", ms_per_fotogramma)
+	_precaricate.clear()
 	costruita = true
 	pronta.emit()
+
+
+## I file che i passi della costruzione caricano con load() sul thread principale: i cartelloni rovinati, l'acqua torbida,
+## la Polaroid 10 e la 12 (la scena e le texture dei materiali, PolaroidPhoto), i bambini della balconata, la lamiera
+## dell'oblò di lei (ObloLei._mat_lamiera). La sala li chiede al thread insieme alla torre (SalaPrincipale._precarica_torre,
+## come SalaInseguimento.risorse()), e la costruzione a pezzi aspetta che siano pronti: così nei passi load() li trova già
+## in memoria. Con la cache del disco fredda ogni load() poteva fare da solo un fotogramma lungo (CI di lavoro/salite-lei,
+## 6 novembre: 199 ms; in prova _polaroid 439 ms e _cartelloni_rovinati 146 ms, contro 13 e 8 a cache calda).
+## (i GLB arrivano già caricati in [member modelli])
+static func risorse() -> Array:
+	var out: Array = [ACQUA]
+	for voce: Array in CARTELLONI_ROVINATI.values():
+		if not out.has(voce[1]):
+			out.append(voce[1])
+	out.append(PolaroidPhoto.SCENA)
+	for n in [10, 12]:
+		out.append(PolaroidPhoto.TEX_DIR + "P%02d.jpg" % n)
+		out.append(PolaroidPhoto.TEX_DIR + "P%02d_rugosita.jpg" % n)
+	for f in ["normale.png", "retro.jpg", "retro_rugosita.jpg"]:
+		out.append(PolaroidPhoto.TEX_DIR + f)
+	out.append_array(BAMBINI)
+	for f in ["Color", "NormalGL", "Metalness-MetalPlates013_Roughness"]:
+		out.append("res://assets/ambienti_tecnici/texture/MetalPlates013_%s.jpg" % f)
+	return out
+
+
+## Le risorse di [method risorse] e le acque e il velo dell'inseguimento (SalaInseguimento.RISORSE_ACQUE: si costruisce
+## nella stessa costruzione a pezzi) e degli stendardi (StendardiInseguimento.risorse(): la GLB e le texture dei
+## lenzuoli) che non sono già in memoria: si aspettano quelle che la sala ha già chiesto al thread, e si chiedono
+## quelle che nessuno ha chiesto (la torre costruita da sola, nei test). (Non lei e le fonti degli arredi, le altre SalaInseguimento.risorse(): le fonti, GLTF grandi, costruita la torre da sola nel test restavano in
+## caricamento più di 15 s)
+func _chiedi_precarica() -> void:
+	_precarica.clear()
+	_precaricate.clear()
+	for percorso: String in risorse() + SalaInseguimento.RISORSE_ACQUE + StendardiInseguimento.risorse():
+		if _precarica.has(percorso):
+			continue
+		if ResourceLoader.has_cached(percorso):
+			_precaricate.append(load(percorso))
+		elif Game.stato_thread(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS or Game.carica_in_thread(percorso) == OK:
+			_precarica[percorso] = true
+
+
+## Aspetta, fotogramma per fotogramma, che il thread abbia finito le risorse chieste (senza load_threaded_get, che
+## blocca), e le tiene fino alla fine della costruzione: finite, load() le trova in memoria. Quelle che il thread non
+## carica le carica poi il passo stesso, come prima; e dopo [constant ATTESA_PRECARICA] s (più il ritardo finto dei test,
+## Game.ritardo_thread_test) non si aspetta più: un file che resta in caricamento per sempre non ferma la torre.
+func _aspetta_precarica() -> void:
+	var fino := Time.get_ticks_msec() + (ATTESA_PRECARICA + Game.ritardo_thread_test) * 1000.0
+	while not _precarica.is_empty():
+		if Time.get_ticks_msec() > fino:
+			push_warning("Sala della torre: %d file ancora in caricamento dopo %.0f s, li caricano i passi: %s" % [_precarica.size(), ATTESA_PRECARICA, ", ".join(PackedStringArray(_precarica.keys()))])
+			_precarica.clear()
+			return
+		for percorso: String in _precarica.keys():
+			var stato := Game.stato_thread(percorso)
+			if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+				continue
+			if stato == ResourceLoader.THREAD_LOAD_LOADED:
+				_precaricate.append(load(percorso))
+			_precarica.erase(percorso)
+		if _precarica.is_empty() or not is_inside_tree():
+			return
+		await get_tree().process_frame
 
 
 ## Lo strato di disegno usato da [method prepara_materiali] e da RiscaldamentoShader (strato 16, "preparazione"): la
@@ -226,6 +304,7 @@ func _passi() -> Array:
 	for i in 3:
 		out.append(func(): _modello(i))
 	out.append(_cartelloni_rovinati)
+	out.append(_toppe_torre_A)
 	out.append(_prepara_dati)
 	out.append_array(_passi_scivoli())
 	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _polaroid])
@@ -632,7 +711,7 @@ func checkpoint_raggiunto() -> int:
 
 
 func _polaroid() -> void:
-	var foto: Node3D = (load("res://scenes/props/polaroid.tscn") as PackedScene).instantiate()
+	var foto: Node3D = (load(PolaroidPhoto.SCENA) as PackedScene).instantiate()
 	foto.name = "Polaroid10"
 	if &"photo" in foto:
 		foto.set(&"photo", 10)
@@ -817,6 +896,82 @@ func _oblo_lei() -> void:
 	inseguimento_aggiunto.connect(func(ins: Node3D):
 		if ins.has_signal(&"lei_compare"):
 			ins.connect(&"lei_compare", func(_dove): _oblo_via()))
+
+
+## I triangoli che mancano in torre_A (13 nelle pareti, uno nel tetto di 7,3 m², uno nel fondo del pozzo e altri piccoli:
+## dai buchi si vedeva il cielo, collaudo di varchi-cielo del 6 novembre), trovati da tests/aggiorna_toppe_torre.gd e
+## salvati qui. Li toglie l'intaglio col booleano del generatore (tools/blender/torre_a.py); quando ambienti-2 lo
+## corregge (0.3.22) la mesh torna intera e le toppe vanno via.
+const TOPPE := "res://assets/ambiente/torre/torre_toppe.json"
+
+
+## Rimette i triangoli di [constant TOPPE] in una mesh figlia di torre_A ("torre_A_toppe"), coi materiali delle sue
+## superfici e normali, UV e colori dei vertici dei triangoli vicini (non si leggono come toppe), e con la collisione
+## (la collisione di torre_A viene dalla stessa mesh e ha gli stessi buchi).
+func _toppe_torre_A() -> void:
+	var mi := find_child("torre_A", true, false) as MeshInstance3D
+	if mi == null or mi.mesh == null or not FileAccess.file_exists(TOPPE) or mi.has_node(^"torre_A_toppe"):
+		return
+	var dati_toppe: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TOPPE))
+	var mesh := ArrayMesh.new()
+	var facce := PackedVector3Array()
+	for d: Dictionary in dati_toppe["superfici"]:
+		var s := int(d["superficie"])
+		var mat: Material = mi.get_active_material(s) if s < mi.mesh.get_surface_count() else null
+		if mat == null or mat.resource_name != String(d["materiale"]):
+			push_warning("torre: le toppe non corrispondono più a torre_A (rifai tests/aggiorna_toppe_torre.gd)")
+			return
+		var arr := []
+		arr.resize(Mesh.ARRAY_MAX)
+		var f: Array = d["v"]
+		var v := PackedVector3Array()
+		for i in f.size() / 3:
+			v.append(Vector3(f[i * 3], f[i * 3 + 1], f[i * 3 + 2]))
+		arr[Mesh.ARRAY_VERTEX] = v
+		facce.append_array(v)
+		if d.has("n"):
+			var fn: Array = d["n"]
+			var n := PackedVector3Array()
+			for i in fn.size() / 3:
+				n.append(Vector3(fn[i * 3], fn[i * 3 + 1], fn[i * 3 + 2]))
+			arr[Mesh.ARRAY_NORMAL] = n
+		if d.has("t"):
+			arr[Mesh.ARRAY_TANGENT] = PackedFloat32Array(d["t"])
+		for coppia: Array in [["uv", Mesh.ARRAY_TEX_UV], ["uv2", Mesh.ARRAY_TEX_UV2]]:
+			if d.has(coppia[0]):
+				var fu: Array = d[coppia[0]]
+				var uv := PackedVector2Array()
+				for i in fu.size() / 2:
+					uv.append(Vector2(fu[i * 2], fu[i * 2 + 1]))
+				arr[coppia[1]] = uv
+		if d.has("c"):
+			var fc: Array = d["c"]
+			var c := PackedColorArray()
+			for i in fc.size() / 4:
+				c.append(Color(fc[i * 4], fc[i * 4 + 1], fc[i * 4 + 2], fc[i * 4 + 3]))
+			arr[Mesh.ARRAY_COLOR] = c
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		mesh.surface_set_material(mesh.get_surface_count() - 1, mat)
+	var toppe := MeshInstance3D.new()
+	toppe.name = "torre_A_toppe"
+	toppe.mesh = mesh
+	toppe.layers = mi.layers  # strati: fuori scena
+	toppe.cast_shadow = mi.cast_shadow
+	toppe.gi_mode = mi.gi_mode
+	mi.add_child(toppe)
+	var corpo := StaticBody3D.new()
+	corpo.name = "torre_A_toppe_corpo"
+	var di_a := mi.find_children("*", "StaticBody3D", true, false)
+	if not di_a.is_empty():
+		corpo.collision_layer = (di_a[0] as StaticBody3D).collision_layer
+		corpo.collision_mask = (di_a[0] as StaticBody3D).collision_mask
+	var forma := ConcavePolygonShape3D.new()
+	forma.backface_collision = true
+	forma.set_faces(facce)
+	var cs := CollisionShape3D.new()
+	cs.shape = forma
+	corpo.add_child(cs)
+	toppe.add_child(corpo)
 
 
 ## Il muro della torre attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, le
@@ -1192,6 +1347,7 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 		var ta := find_child("torre_A", true, false) as GeometryInstance3D
 		if ta:
 			Strati.metti(ta, STRATO_SENZA_OMBRA_EST)
+			Strati.metti(ta.get_node_or_null(^"torre_A_toppe") as VisualInstance3D, STRATO_SENZA_OMBRA_EST)
 		else:
 			push_warning("torre: niente torre_A per lo strato senza l'ombra del muro est")
 	radice.add_child(l)
@@ -1361,6 +1517,8 @@ static func materiali_campione(crea := true) -> Array[Material]:
 		out.append(m)
 	# (i cartelloni rovinati, CARTELLONI_ROVINATI)
 	out.append(PosterRovinati.campione_torre())
+	# (gli stendardi dei bambini nella sala delle condotte: stoffa a ritaglio, dai due lati)
+	out.append(StendardiInseguimento.campione())
 	if crea:
 		for m in out:
 			m.get_rid()   # lo shader si crea adesso, non al primo uso

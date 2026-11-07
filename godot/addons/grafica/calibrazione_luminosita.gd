@@ -4,15 +4,29 @@ extends Control
 ## tre simboli su fondo nero; si regola finché quello di sinistra si vede appena,
 ## quello centrale si intuisce e quello di destra non si vede.
 ## Disegna da sé con la gamma scelta (sta sopra il post-processing).
+## Sotto i simboli c'è una seconda prova (scelta A dell'utente, 4 novembre): uno scatto vero del corridoio delle pile del
+## fiume, con le lampade al 20%, preso col preset di serie e la luminosità a 1,0, schiarito o scurito col cursore
+## come i simboli; si regola finché la scatola in fondo si vede appena. La luce del gioco non cambia.
 
 signal chiusa
 
 ## Livelli dei tre simboli (valori sRGB su fondo nero).
 const LIVELLI := [0.05, 0.022, 0.008]
+## Lo scatto della seconda prova (1280x720, senza perdita: i livelli bui devono restare esatti).
+const PROVA := "res://addons/grafica/prova_luminosita.png"
+## La stessa gamma del post-processing (post_processing.gdshader), sui valori sRGB dello scatto.
+const SHADER_PROVA := """shader_type canvas_item;
+uniform float gamma = 1.0;
+void fragment() {
+	vec4 t = texture(TEXTURE, UV);
+	COLOR = vec4(pow(max(t.rgb, vec3(0.0)), vec3(1.0 / gamma)), t.a);
+}
+"""
 
 var _gamma := 1.0
 var _area: Control
 var _cursore: HSlider
+var _prova: TextureRect
 
 
 func _ready() -> void:
@@ -29,7 +43,7 @@ func _ready() -> void:
 	col.offset_right = -80
 	col.offset_top = 50
 	col.offset_bottom = -50
-	col.add_theme_constant_override("separation", 18)
+	col.add_theme_constant_override("separation", 12)
 	add_child(col)
 	var titolo := Label.new()
 	titolo.text = "Luminosità"
@@ -43,8 +57,30 @@ func _ready() -> void:
 	col.add_child(spiega)
 	_area = Control.new()
 	_area.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_area.size_flags_stretch_ratio = 0.7
 	_area.draw.connect(_disegna)
 	col.add_child(_area)
+	if ResourceLoader.exists(PROVA):
+		_prova = TextureRect.new()
+		_prova.name = "Prova"
+		_prova.texture = load(PROVA)
+		_prova.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_prova.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_prova.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		_prova.size_flags_stretch_ratio = 2.0
+		var sh := Shader.new()
+		sh.code = SHADER_PROVA
+		var m := ShaderMaterial.new()
+		m.shader = sh
+		m.set_shader_parameter(&"gamma", _gamma)
+		_prova.material = m
+		col.add_child(_prova)
+		var dice := Label.new()
+		dice.name = "DiceProva"
+		dice.text = "Regola finché vedi appena la scatola in fondo."
+		dice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		dice.add_theme_color_override("font_color", Color(0.7, 0.72, 0.74))
+		col.add_child(dice)
 	var riga := HBoxContainer.new()
 	riga.alignment = BoxContainer.ALIGNMENT_CENTER
 	riga.add_theme_constant_override("separation", 16)
@@ -57,7 +93,7 @@ func _ready() -> void:
 	_cursore.step = 0.01
 	_cursore.value = _gamma
 	_cursore.custom_minimum_size.x = 480
-	_cursore.value_changed.connect(func(v): _gamma = v; _area.queue_redraw())
+	_cursore.value_changed.connect(_cambia)
 	riga.add_child(_cursore)
 	var piu := Label.new()
 	piu.text = "Più chiaro"
@@ -76,17 +112,59 @@ func _ready() -> void:
 	ok.pressed.connect(conferma)
 	bottoni.add_child(ok)
 	col.add_child(bottoni)
+	ok.focus_neighbor_top = ok.get_path_to(pred)
+	ok.focus_neighbor_bottom = ok.get_path_to(pred)
+	pred.focus_neighbor_top = pred.get_path_to(ok)
+	pred.focus_neighbor_bottom = pred.get_path_to(ok)
+	_cursore.focus_mode = Control.FOCUS_NONE
 	ok.grab_focus.call_deferred()
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _cambia(v: float) -> void:
+	_gamma = v
+	_area.queue_redraw()
+	if _prova:
+		(_prova.material as ShaderMaterial).set_shader_parameter(&"gamma", _gamma)
+
+
+## Sinistra e destra (frecce, croce e levetta del joypad) muovono sempre il cursore, prima dei pulsanti: se no la
+## navigazione del focus se le prende e il cursore col joypad non si muove (o si muove solo a volte). Tenute premute, il
+## cursore continua a scorrere. Su e giù passano da Conferma a Predefinito.
+const PASSO := 0.02
+const RITARDO_RIPETI := 0.35
+const OGNI_RIPETI := 0.05
+var _tenuto := 0.0
+var _verso := 0
+
+
+func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		_chiudi()
-	elif event.is_action_pressed("ui_left"):
-		_cursore.value -= 0.02
-	elif event.is_action_pressed("ui_right"):
-		_cursore.value += 0.02
+		return
+	for a: StringName in [&"ui_left", &"ui_right"]:
+		if event.is_action(a):
+			get_viewport().set_input_as_handled()
+			if event.is_action_pressed(a, false):
+				var v := -1 if a == &"ui_left" else 1
+				_cursore.value += PASSO * v
+				_verso = v
+				_tenuto = -RITARDO_RIPETI
+			elif event.is_action_released(a):
+				_verso = 0
+			return
+
+
+func _process(delta: float) -> void:
+	if _verso == 0:
+		return
+	if not Input.is_action_pressed(&"ui_left" if _verso < 0 else &"ui_right"):
+		_verso = 0
+		return
+	_tenuto += delta
+	while _tenuto >= OGNI_RIPETI:
+		_tenuto -= OGNI_RIPETI
+		_cursore.value += PASSO * _verso
 
 
 func conferma() -> void:

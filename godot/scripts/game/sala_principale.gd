@@ -186,8 +186,11 @@ func _collisione_struttura_gioco() -> void:
 	corpo.collision_layer = Layers.WORLD
 	corpo.collision_mask = 0
 	var forma := CollisionShape3D.new()
-	var trimesh := mi.mesh.create_trimesh_shape()
-	trimesh.backface_collision = true   # bordi e testate sottili: niente da attraversare da dietro
+	# (tenuta fra una ripartenza e l'altra: FormeTenute)
+	var trimesh := FormeTenute.trimesh(mi.mesh)
+	# bordi e testate sottili: niente da attraversare da dietro (solo la prima volta: rimesso, Jolt rifà la forma)
+	if not trimesh.backface_collision:
+		trimesh.backface_collision = true
 	forma.shape = trimesh
 	corpo.add_child(forma)
 	mi.add_child(corpo)
@@ -536,7 +539,7 @@ func _precarica_torre() -> void:
 	var tenuta := GameState.tenuta(sala_torre_scena) as PackedScene
 	if tenuta:
 		_torre_fallita = false
-		for r in SalaInseguimento.risorse():
+		for r in SalaInseguimento.risorse() + SalaTorre.risorse():
 			if not ResourceLoader.has_cached(r):
 				Game.carica_in_thread(r)
 		_torre_pronta = tenuta
@@ -545,8 +548,9 @@ func _precarica_torre() -> void:
 	if Game.carica_in_thread(sala_torre_scena, "PackedScene") == OK:
 		_torre_in_caricamento = true
 		_torre_fallita = false
-		# e i file che l'inseguimento carica costruendosi (lei, le fonti degli arredi)
-		for r in SalaInseguimento.risorse():
+		# e i file che la torre e l'inseguimento caricano costruendosi (la Polaroid, i cartelloni, lei, le fonti degli
+		# arredi: SalaTorre.risorse, SalaInseguimento.risorse)
+		for r in SalaInseguimento.risorse() + SalaTorre.risorse():
 			Game.carica_in_thread(r)
 	else:
 		_torre_fallita = true
@@ -563,7 +567,7 @@ func _process(_delta: float) -> void:
 		var scena := ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
 		# tenuta per le ripartenze, con i file dell'inseguimento già arrivati (vedi GameState.tieni)
 		GameState.tieni(sala_torre_scena, scena)
-		for r in SalaInseguimento.risorse():
+		for r in SalaInseguimento.risorse() + SalaTorre.risorse():
 			if ResourceLoader.has_cached(r):
 				GameState.tieni(r, load(r))
 		# (con la riserva già in sala la copia del thread non serve: si lascia andare)
@@ -673,12 +677,142 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 	_completa_torre()
 
 
+## Sulla soglia del portone, senza il guscio, fra il bordo del pavimento della sala (x 20,01) e il grigliato della
+## passerella della torre (x 20,19) resta una fessura per tutto il vano, e oltre i due capi del vano un'intercapedine
+## senza fondo fra il muro della sala e la parete della torre (x 20,03 .. 20,24, da z -19,4 ad almeno -6): guardando in
+## basso si vedeva il cielo (ricontrolli del collaudo su varchi-cielo, 6 novembre). Si chiude da z -18,25 a -7,15. La
+## chiudono delle lastre sotto (SOGLIA_TORRE: x0, x1, z0, z1 e, se c'è, la y del piano; se no SOGLIA_TORRE_Y, 1,5 cm
+## sotto il pavimento), coperte ai bordi dal pavimento e dal grigliato, con la collisione. Sotto il grigliato (z -17,85
+## .. -16,64) la lastra fa da fondo 27 cm più giù, sotto i ferri del grigliato (il telaio scende a -0,26): dai fori si
+## vedeva il cielo; lì una piastra in piedi sotto il bordo del pavimento (x 19,94 .. 19,99, la sesta voce è lo spessore)
+## chiude la vista sotto il pavimento della sala dalla fessura fra il suo bordo e il telaio del grigliato. Hanno il materiale del pavimento della sala lì accanto (quello bagnato, della stessa superficie) e
+## le sue stesse coordinate di texture, prese dal triangolo del pavimento vicino: non si leggono come una toppa. Figlie
+## di [param torre], vanno via con lei.
+const SOGLIA_TORRE := [[19.96, 20.235, -18.25, -17.83], [19.96, 20.235, -17.85, -16.64, -0.27],
+		[19.94, 19.99, -17.85, -16.64, -0.015, 0.555], [19.96, 20.22, -16.66, -13.46], [19.96, 20.235, -13.48, -7.15]]
+const SOGLIA_TORRE_Y := -0.015
+
+
+static func chiudi_soglia_torre(torre: Node3D, pavimento: MeshInstance3D) -> MeshInstance3D:
+	var lastra := MeshInstance3D.new()
+	lastra.name = "soglia_torre_sotto"
+	# le coordinate di texture del pavimento: dal triangolo del pavimento vicino alla soglia, uv = A x + B z + C
+	var mappa := _uv_pavimento(pavimento, Vector2(19.9, -15.0))
+	var materiale: Material = mappa[3] if mappa.size() > 3 else null
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var corpo := StaticBody3D.new()
+	for q: Array in SOGLIA_TORRE:
+		var y: float = q[4] if q.size() > 4 else SOGLIA_TORRE_Y
+		var lo := Vector3(q[0], y - (q[5] if q.size() > 5 else 0.3), q[2])
+		var hi := Vector3(q[1], y, q[3])
+		_scatola_uv(st, lo, hi, mappa)
+		var forma := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = hi - lo
+		forma.shape = bs
+		forma.position = (lo + hi) / 2.0
+		corpo.add_child(forma)
+	st.generate_tangents()
+	lastra.mesh = st.commit()
+	if materiale:
+		lastra.material_override = materiale
+	elif pavimento and pavimento.mesh:
+		lastra.material_override = pavimento.get_active_material(0)
+	torre.add_child(lastra)
+	lastra.global_transform = Transform3D.IDENTITY
+	lastra.add_child(corpo)
+	return lastra
+
+
+## [uv di (x, z) = A x + B z + C, ..., materiale, colore dei vertici (o bianco)]: dal triangolo del pavimento (vicino
+## a y 0) che contiene [param punto] (x, z nel mondo), o dal più vicino. Vuoto se non c'è.
+static func _uv_pavimento(pavimento: MeshInstance3D, punto: Vector2) -> Array:
+	if pavimento == null or pavimento.mesh == null:
+		return []
+	var xf := pavimento.global_transform
+	var meglio: Array = []
+	var dist := INF
+	for s in pavimento.mesh.get_surface_count():
+		var arr := pavimento.mesh.surface_get_arrays(s)
+		var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var uvs = arr[Mesh.ARRAY_TEX_UV]
+		if uvs == null or (uvs as PackedVector2Array).is_empty():
+			continue
+		var idx = arr[Mesh.ARRAY_INDEX]
+		var n: int = (idx as PackedInt32Array).size() if idx != null else vs.size()
+		for k in range(0, n, 3):
+			var i0: int = idx[k] if idx != null else k
+			var i1: int = idx[k + 1] if idx != null else k + 1
+			var i2: int = idx[k + 2] if idx != null else k + 2
+			var a := xf * vs[i0]
+			var b := xf * vs[i1]
+			var c := xf * vs[i2]
+			if absf(a.y) > 0.05 or absf(b.y) > 0.05 or absf(c.y) > 0.05:
+				continue
+			var a2 := Vector2(a.x, a.z)
+			var b2 := Vector2(b.x, b.z)
+			var c2 := Vector2(c.x, c.z)
+			var den := (b2 - a2).cross(c2 - a2)
+			if absf(den) < 1e-8:
+				continue
+			var cen := (a2 + b2 + c2) / 3.0
+			var d := 0.0 if Geometry2D.point_is_inside_triangle(punto, a2, b2, c2) else cen.distance_to(punto)
+			if d >= dist:
+				continue
+			dist = d
+			# risolve uv = A x + B z + C coi tre vertici
+			var ua: Vector2 = uvs[i0]
+			var ub: Vector2 = uvs[i1]
+			var uc: Vector2 = uvs[i2]
+			var m := Transform2D(b2 - a2, c2 - a2, Vector2.ZERO).affine_inverse()
+			var du := Transform2D(ub - ua, uc - ua, Vector2.ZERO)
+			var lin := du * m     # mappa lineare: (x, z) - a2 -> uv - ua
+			var colore := Color.WHITE
+			var cols = arr[Mesh.ARRAY_COLOR]
+			if cols != null and not (cols as PackedColorArray).is_empty():
+				colore = ((cols[i0] as Color) + (cols[i1] as Color) + (cols[i2] as Color)) / 3.0
+			meglio = [lin, a2, ua, pavimento.get_active_material(s), colore]
+	return meglio
+
+
+static func _uv_in(mappa: Array, p: Vector3) -> Vector2:
+	if mappa.size() < 3:
+		return Vector2(p.x, p.z) * 0.5
+	var lin: Transform2D = mappa[0]
+	return (mappa[2] as Vector2) + lin.basis_xform(Vector2(p.x, p.z) - (mappa[1] as Vector2))
+
+
+static func _scatola_uv(st: SurfaceTool, lo: Vector3, hi: Vector3, mappa: Array) -> void:
+	var c := [Vector3(lo.x, lo.y, lo.z), Vector3(hi.x, lo.y, lo.z), Vector3(hi.x, lo.y, hi.z), Vector3(lo.x, lo.y, hi.z),
+			Vector3(lo.x, hi.y, lo.z), Vector3(hi.x, hi.y, lo.z), Vector3(hi.x, hi.y, hi.z), Vector3(lo.x, hi.y, hi.z)]
+	# facce: [vertici in senso antiorario visti da fuori, normale]
+	var facce := [[[4, 7, 6, 5], Vector3.UP], [[0, 1, 2, 3], Vector3.DOWN], [[0, 4, 5, 1], Vector3.FORWARD],
+			[[2, 6, 7, 3], Vector3.BACK], [[0, 3, 7, 4], Vector3.LEFT], [[1, 5, 6, 2], Vector3.RIGHT]]
+	for f in facce:
+		var ids: Array = f[0]
+		var n: Vector3 = f[1]
+		var quad := ids.map(func(i): return c[i])
+		for t in [[0, 1, 2], [0, 2, 3]]:
+			var tri := [quad[t[0]], quad[t[1]], quad[t[2]]]
+			# in Godot la faccia davanti ha i vertici in senso orario visti da fuori
+			if ((tri[1] as Vector3) - (tri[0] as Vector3)).cross((tri[2] as Vector3) - (tri[0] as Vector3)).dot(n) > 0.0:
+				tri = [tri[0], tri[2], tri[1]]
+			for v: Vector3 in tri:
+				st.set_normal(n)
+				if mappa.size() > 4:
+					st.set_color(mappa[4])
+				st.set_uv(_uv_in(mappa, v))
+				st.add_vertex(v)
+
+
 func _completa_torre() -> void:
 	AttesaZone.pronta(&"torre")
 	# il guscio provvisorio dietro il portone (sala_architettura.glb) lascia il posto alla sala vera
 	var guscio := find_child("sala_torre_guscio", true, false)
 	if guscio:
 		guscio.queue_free()
+	chiudi_soglia_torre(sala_torre, find_child("sala_pavimento", true, false) as MeshInstance3D)
 	if sala_torre.has_signal(&"discesa_finita"):
 		sala_torre.connect(&"discesa_finita", _on_fine_torre)
 	# il tunnel del viaggio sottomarino: si carica nel thread da adesso; le condotte lo chiamano dopo SB1
@@ -736,6 +870,8 @@ func _libera_ambienti_subito() -> void:
 	var via: Array = [tecnici, get_node_or_null(^"Interni")]
 	tecnici = null
 	risveglio = null
+	# (le griglie dell'acqua tenute per le ripartenze: non quelle di interni e tecnici)
+	WaterBody.svuota_griglie()
 	# (cancellati subito: le chiamate già in coda su di loro si saltano; quelle di Grafica sulle luci vanno per id)
 	for n in via:
 		if n and is_instance_valid(n):
@@ -750,6 +886,8 @@ func _scarica_ambienti() -> void:
 	var via: Array = [tecnici, get_node_or_null(^"Interni")]
 	tecnici = null
 	risveglio = null
+	# (le griglie dell'acqua tenute per le ripartenze: non quelle di interni e tecnici)
+	WaterBody.svuota_griglie()
 	# a pezzi, dalle foglie (tutti insieme erano 3 s di gioco fermo entrando nella torre)
 	_liberando = true
 	for n in via:

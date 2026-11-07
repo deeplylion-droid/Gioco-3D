@@ -186,6 +186,11 @@ def squalo_ringhio(rng):
     return f32(fade(reverb(r, ir_piccola(), wet=0.15), 0.02, 0.2))
 
 
+# Senza nomi questi non si rifanno: nel gioco ci sono quelli del 21 ottobre (ce0f7aee), approvati, e il codice di
+# adesso ne fa di diversi (dal 22 ottobre ogni suono ha il suo seme, e i suoni di lei sono cambiati). Rifarli con
+# genera_tutto.py cambiava i file del gioco; per rifarli apposta, il loro nome sulla riga di comando.
+FERMI = ('jilly_richiamo', 'squalo_sbuffo')
+
 SUONI = {
     # dal 23 ottobre squalo_minaccia e squalo_ringhio li fa genera_squalo_voce.py (versione B scelta dall'utente;
     # le funzioni di qui sotto sono quelle di prima, i file in scartati/squalo/)
@@ -205,7 +210,7 @@ SUONI = {
 def main():
     import sys
     print('Squalo (inizio)')
-    scelti = [a for a in sys.argv[1:] if a in SUONI] or list(SUONI)
+    scelti = [a for a in sys.argv[1:] if a in SUONI] or [n for n in SUONI if n not in FERMI]
     for nome in scelti:
         SUONI[nome]()
 

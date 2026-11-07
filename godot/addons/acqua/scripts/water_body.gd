@@ -117,7 +117,7 @@ func _ready() -> void:
 		return
 	# subito (prima del primo aggiornamento delle sonde) e di nuovo dopo, per quelle create dopo
 	_exclude_from_probes()
-	_exclude_from_probes.call_deferred()
+	_exclude_from_probes.call_deferred(true)
 	if not get_tree().node_added.is_connected(_on_node_added):
 		get_tree().node_added.connect(_on_node_added)
 	wm.quality_changed.connect(_on_quality_changed)
@@ -339,11 +339,7 @@ func _rebuild_surface() -> void:
 		add_child(_surface, false, Node.INTERNAL_MODE_FRONT)
 	# densita' della griglia: serve per le onde della simulazione e per l'imbuto dei gorghi
 	var cell: float = [0.25, 0.1, 0.05][_quality]
-	var pm := PlaneMesh.new()
-	pm.size = size
-	pm.subdivide_width = clampi(int(size.x / cell), 4, 320)
-	pm.subdivide_depth = clampi(int(size.y / cell), 4, 320)
-	_surface.mesh = pm
+	_surface.mesh = _griglia(size, clampi(int(size.x / cell), 4, 320), clampi(int(size.y / cell), 4, 320))
 	if material == null:
 		material = ShaderMaterial.new()
 		material.shader = SURFACE_SHADER
@@ -352,6 +348,30 @@ func _rebuild_surface() -> void:
 		material.set_shader_parameter("foam_tex", FOAM_TEX)
 	_surface.material_override = material
 	_surface.extra_cull_margin = 0.5
+
+
+## Le griglie del pelo dell'acqua, una per misura e densità, per tutte le acque e tenute per la partita: fitte fino a
+## 320 x 320, rifarle a ogni ripartenza costava 0,1-0,3 s per vasca (ritocco "ripartenze" dell'utente del 4 novembre).
+## Nessuno le cambia dopo.
+static var _griglie := {}
+
+
+## Le griglie tenute si lasciano andare (quelle in uso restano alle loro acque): quando la sala toglie interni e
+## tecnici, perché le loro non restino in memoria insieme alla torre e al tunnel.
+static func svuota_griglie() -> void:
+	_griglie.clear()
+
+
+static func _griglia(misura: Vector2, larghe: int, fonde: int) -> PlaneMesh:
+	var k := "%s|%d|%d" % [misura, larghe, fonde]
+	var pm: PlaneMesh = _griglie.get(k)
+	if pm == null:
+		pm = PlaneMesh.new()
+		pm.size = misura
+		pm.subdivide_width = larghe
+		pm.subdivide_depth = fonde
+		_griglie[k] = pm
+	return pm
 
 
 func _apply_level() -> void:
@@ -448,7 +468,21 @@ func _on_node_added(n: Node) -> void:
 
 ## Le ReflectionProbe non devono ne' riflettersi sull'acqua (i riflessi li calcola lo shader) ne'
 ## catturarla (lo shader dell'acqua legge lo schermo, che dentro una cattura non e' valido).
-func _exclude_from_probes() -> void:
+## (una volta per fotogramma per tutte le acque, subito e poi in differita: ogni giro guarda tutto l'albero, e la sala
+## che entra ha tante acque insieme, circa 0,1 s l'una a ogni ripartenza; quelle che arrivano dopo le prende
+## _on_node_added)
+static var _sonde_fotogramma := -1
+static var _sonde_fotogramma_dopo := -1
+
+
+func _exclude_from_probes(dopo := false) -> void:
+	var f := Engine.get_process_frames()
+	if (_sonde_fotogramma_dopo if dopo else _sonde_fotogramma) == f:
+		return
+	if dopo:
+		_sonde_fotogramma_dopo = f
+	else:
+		_sonde_fotogramma = f
 	for probe in get_tree().root.find_children("*", "ReflectionProbe", true, false):
 		probe.reflection_mask &= ~WATER_LAYER
 		probe.cull_mask &= ~WATER_LAYER

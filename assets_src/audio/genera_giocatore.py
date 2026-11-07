@@ -413,29 +413,26 @@ def riemersione(rng):
 def main():
     rng = np.random.default_rng(1990)
     print('Giocatore')
+    # I passi e gli atterraggi su piastrelle, bagnato e metallo e le scale li scrive assets_src/passi/genera_passi.py
+    # (scarpe di gomma, scelta A dell'utente del 30 ottobre; genera_tutto.py lo chiama subito dopo). Qui si fanno
+    # ancora i vecchi, senza salvarli, per consumare gli stessi numeri casuali: gli altri suoni restano identici.
     K_PASSI = 'Kenney Impact Sounds (CC0), rielaborati'
     for i in range(6):
-        salva(CART, f'passo_piastrelle_{i + 1:02d}', passo_piastrelle(rng, i), loudness=-20, corto=True,
-              qualita=3, fonte=K_PASSI, nota='footstep_concrete + risonanza della ceramica')
+        passo_piastrelle(rng, i)
     for i in range(6):
-        # senza le goccioline che schizzavano: scelta dell'utente del 16 ottobre (le sentiva come
-        # bollicine); stessi numeri casuali, quindi gli altri suoni non cambiano
-        salva(CART, f'passo_bagnato_{i + 1:02d}', passo_bagnato(rng, i, goccioline=False), loudness=-20,
-              corto=True, qualita=3, fonte=K_PASSI + ' + sintesi',
-              nota='lo sciac della suola sul bagnato, senza goccioline (16 ottobre)')
+        passo_bagnato(rng, i, goccioline=False)
     for i in range(6):
         salva(CART, f'passo_acqua_{i + 1:02d}', passo_acqua(rng, i), loudness=-19, corto=True, qualita=3)
     for i in range(6):
-        salva(CART, f'passo_metallo_{i + 1:02d}', passo_metallo(rng, i), loudness=-19, corto=True, qualita=3,
-              fonte=K_PASSI, nota='footstep_concrete + impactPlate_light')
+        passo_metallo(rng, i)
     for i in range(4):
-        salva(CART, f'passo_scala_{i + 1:02d}', passo_scala(rng, i), loudness=-20, corto=True, qualita=3,
-              fonte=K_PASSI, nota='impactMetal_light')
+        passo_scala(rng, i)
     for sup in ['piastrelle', 'bagnato', 'acqua', 'metallo']:
         for i in range(2):
-            salva(CART, f'atterraggio_{sup}_{i + 1:02d}', atterraggio(rng, sup, i), loudness=-16, corto=True,
-                  qualita=3, fonte=K_PASSI + ' + sintesi',
-                  nota='senza goccioline, come i passi bagnati (16 ottobre)' if sup == 'bagnato' else '')
+            x = atterraggio(rng, sup, i)
+            if sup == 'acqua':
+                salva(CART, f'atterraggio_{sup}_{i + 1:02d}', x, loudness=-16, corto=True, qualita=3,
+                      fonte=K_PASSI + ' + sintesi')
     for i in range(2):
         salva(CART, f'salto_{i + 1:02d}', salto(rng, i), loudness=-24, corto=True, qualita=3,
               fonte='Kenney RPG Audio (CC0)', nota='cloth')

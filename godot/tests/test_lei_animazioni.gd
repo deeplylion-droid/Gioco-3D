@@ -11,7 +11,7 @@ extends Node
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lei_animazioni.gd
 
 const DURATE := {
-	&"sale_dall_acqua": 1.6, &"sale_dall_acqua_veloce": 1.0, &"incombe": 2.4, &"presa": 1.2,
+	&"sale_dall_acqua": 1.6, &"sale_dall_acqua_veloce": 1.0, &"sale_puntata": 1.6, &"sale_mano": 1.6, &"incombe": 2.4, &"presa": 1.2,
 	&"respinta": 1.2, &"scende": 1.0, &"colpo_grata": 0.5, &"colpo_grata_sbieco": 0.5, &"affacciata_sb1": 5.4,
 }
 const IN_CICLO := [&"incombe", &"colpo_grata", &"colpo_grata_sbieco"]
@@ -67,6 +67,18 @@ func _run() -> void:
 	check(sc1 < 0.03 and _scarto(fine_veloce, su) < 0.03,
 		"la salita finisce nella posa iniziale di incombe (scarto %.3f m, %s)" % [maxf(sc1, _scarto(fine_veloce, su)), p1])
 	check(_ossa(&"sale_dall_acqua", 0.0)["radice"].y < su["radice"].y - 4.5, "e parte 5 m più sotto, sott'acqua")
+	# la salita veloce con l'occhio puntato (0.3.21): stessa posa finale, parte 5 m sotto e passa 2,9 m sotto allo stesso
+	# momento di sale_dall_acqua (da lì parte dove c'è poco spazio sotto: i tempi del gioco non cambiano)
+	for nuova in [&"sale_puntata", &"sale_mano"]:
+		var sc_p := _scarto(_ossa(nuova, 1.6), su)
+		check(sc_p < 0.03 and _ossa(nuova, 0.0)["radice"].y < su["radice"].y - 4.5,
+			"%s finisce nella posa iniziale di incombe (scarto %.3f m, %s) e parte 5 m sotto" % [nuova, sc_p, peggiore])
+		var t29 := [-1.0, -1.0]
+		for k in 2:
+			for i in 97:
+				if t29[k] < 0.0 and _ossa([&"sale_dall_acqua", nuova][k], i / 60.0)["radice"].y >= _ossa([&"sale_dall_acqua", nuova][k], 1.6)["radice"].y - 2.9:
+					t29[k] = i / 60.0
+		check(absf(t29[0] - t29[1]) < 0.04, "%s passa 2,9 m sotto quando sale_dall_acqua (%.2f e %.2f s)" % [nuova, t29[0], t29[1]])
 	check(_ossa(&"respinta", 1.2)["radice"].y < su["radice"].y - 4.5 and _ossa(&"scende", 1.0)["radice"].y < su["radice"].y - 4.5,
 		"respinta e scende finiscono 5 m sotto")
 	for nome in [&"presa", &"respinta", &"scende"]:

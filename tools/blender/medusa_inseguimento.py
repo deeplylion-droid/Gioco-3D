@@ -19,6 +19,10 @@ della posa insegue, quella su cui ambienti-2 ha messo i posti di lei; a -5 m e' 
 Animazioni (30 fps):
   sale_dall_acqua (1,6 s), sale_dall_acqua_veloce (1,0 s, la grata): da -5 m su fino a busto e braccia fuori,
       finisce nella posa iniziale di incombe;
+  sale_mano (1,6 s, la vasca 3; 0.3.21): esce prima la mano destra, che si posa sul bordo della vasca (BORDO_V3), poi si tira
+      su; stessi tempi di sale_dall_acqua per il gioco e stessa posa finale;
+  sale_puntata (1,6 s, la vasca 2; 0.3.21): sale piu' in fretta, dritta, con l'occhio gia' puntato su di te; stessi tempi
+      di sale_dall_acqua per il gioco (passa 2,9 m sotto allo stesso istante) e stessa posa finale;
   incombe (ciclo 2,4 s): si sporge verso il giocatore con le braccia tese, ondeggia, le dita si aprono e si
       chiudono (la testa che segue il giocatore la fa il gioco: MedusaAffacciata.segui_con_la_testa);
   presa (1,2 s): si ritrae, scatta in avanti e afferra a GRAB (davanti, all'altezza della testa di chi e'
@@ -432,6 +436,138 @@ def pose_sale(arm, C, Z, t, T):
         k = liscio(0.0, 1.0, 0.55, 1.0, u)
         p = [tuple(x + (y - x) * k for x, y in zip(a_, b_)) for a_, b_ in zip(lungo, teso)]
         braccio(arm, suf, *p)
+    Z.segui()
+
+
+def pose_sale_puntata(arm, C, Z, t, T=1.6):
+    """La salita della vasca 2 (0.3.21, scelta C dell'utente): stessa durata e stesso
+    momento in cui passa 2,9 m sotto (0,49 s, come le altre salite; la vasca 2 parte da 5 m), ma resta giu' fino a
+    0,32 s e poi sale in fretta, con la testa gia' giu' verso di te e l'occhio puntato (niente testa piegata indietro ne'
+    busto all'indietro); le braccia si aprono mentre sale. Dopo, ferma a fissarti, si sporge piano fino alla posa iniziale di
+    incombe (come sale_dall_acqua alla fine)."""
+    sal = chiavi(t, [(0.0, GIU), (0.32, GIU), (0.74, 0.16), (0.9, -0.03), (1.05, 0.0)])
+    apri = liscio(0.0, 1.0, 0.45, 0.95, t)
+    tent = campiona(C, 'fluttua', t)
+    dita = mix(campiona(C, 'statua', 0.0, False), dita_incombe(C), apri, DITA_OSSA)
+    applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, dita))
+    Z.leggi()
+    # alla fine coincide con incombe(0), come pose_sale
+    sposta(arm, (0.0, liscio(0.0, Y0, 0.65, T, t), sal + liscio(0.0, -0.12, 0.65, 1.05, t)))
+    busto(arm, avanti=chiavi(t, [(0.0, 10.0), (0.74, 16.0), (1.1, 16.0), (T, 6 + 4 * math.sin(0.6))]),
+          giro=liscio(0.0, 5 * math.sin(1.2), 0.65, T, t))
+    # la testa gia' giu' verso di te (l'occhio puntato: nella vasca 2 sei 4,6 m piu' in basso di lei; il resto lo fa
+    # l'occhio, che ti segue da solo), poi la posa di incombe
+    testa(arm, su=chiavi(t, [(0.0, -25.0), (1.1, -25.0), (T, 0 - 3 * math.sin(0.6))]),
+          giro=liscio(0.0, -4 * math.sin(1.2), 0.65, T, t))
+    for suf in ('.L', '.R'):
+        lungo = ((0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
+        sfasa = 0.0 if suf == '.L' else 0.5
+        a = math.sin(2 * math.pi * sfasa)
+        teso = ((0.30 - 0.04 * a, -0.95 - 0.10 * a, 0.10 + 0.08 * math.cos(2 * math.pi * sfasa)), (0.7, 0.0, -0.4),
+                (0.12, -1.0, 0.05), (0.1, 0.1, 1.0))
+        p = [tuple(x + (y - x) * apri for x, y in zip(a_, b_)) for a_, b_ in zip(lungo, teso)]
+        braccio(arm, suf, *p)
+    Z.segui()
+
+
+# il bordo della vasca 3 (vasca_2 in SalaInseguimento) davanti a lei, girata verso il muro (sonda
+# proposte/mascotte/sonda_bordo_mano.gd): la faccia dalla sua parte a 2,30 m, la cima a 3,500 m sopra la sua base (-27,500 nel
+# mondo, collisione e mesh: ricontrollo di ambienti-1 del 6 novembre; prima 3,485 e la mano entrava 13 mm), larga
+# 18,5 cm. Nello spazio del modello: -y avanti, z su.
+BORDO_V3 = (2.30, 3.500, 0.185)
+MANO_V3_LATO = -0.42        # la mano destra (.R e' dalla parte -x), un po' fuori dalla spalla
+MANO_V3_SU = 0.229          # il polso sopra la cima perche' il palmo ci stia a filo (misurato in Godot sulla pelle vera:
+                            # proposte/mascotte/sonda_mano_bordo.gd; con 0,24 il palmo restava 12,8 mm sopra)
+MANO_V3_LASCIA = 1.05      # quando lascia il bordo (s; SalaInseguimento.MANO_LASCIA deve essere uguale)
+MANO_V3_QUA = 0.15          # salendo, il polso resta almeno tanto prima della faccia del muro, dalla parte di lei
+MANO_V3_DENTRO = 0.05       # il polso tanto oltre la faccia del muro: palmo e dita sulla cima
+
+
+def presa_bordo_v3():
+    f, h, _ = BORDO_V3
+    return Vector((MANO_V3_LATO, -(f + MANO_V3_DENTRO), h + MANO_V3_SU))
+
+
+def pose_sale_mano(arm, C, Z, t, T=1.6):
+    """La salita della vasca 3 (0.3.21, scelta C dell'utente): stessa durata e stesso momento in cui passa 2,9 m sotto
+    (0,49 s) di sale_dall_acqua. Sale col braccio destro alzato, cosi' sopra il muro esce per prima la mano, che si
+    posa sul bordo della vasca (0,82 s); poi si tira su tenendosi (la mano ferma sul bordo: se la spalla e' troppo
+    lontana, e' lei che va verso la mano), lascia il bordo (MANO_V3_LASCIA) e finisce nella posa iniziale di incombe. Salendo e'
+    piu' avanti, verso il muro, e torna al suo posto mentre si tira su e dopo."""
+    sal = chiavi(t, [(0.0, GIU), (0.20, GIU), (0.82, -0.6), (1.12, 0.12), (1.35, -0.02), (1.6, 0.0)])
+    avanti = chiavi(t, [(0.0, -0.95), (0.82, -0.95), (1.05, -0.9), (T, Y0)])
+    apri = liscio(0.0, 1.0, MANO_V3_LASCIA, T, t)
+    tent = campiona(C, 'fluttua', t)
+    dita = mix(campiona(C, 'statua', 0.0, False), dita_incombe(C), liscio(0.0, 1.0, 0.3, 0.7, t), DITA_OSSA)
+    applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, dita))
+    Z.leggi()
+    sposta(arm, (0.0, avanti, sal + liscio(0.0, -0.12, 1.1, T, t)))
+    busto(arm, avanti=chiavi(t, [(0.0, 12.0), (0.82, 28.0), (1.05, 28.0), (T, 6 + 4 * math.sin(0.6))]),
+          giro=liscio(0.0, 5 * math.sin(1.2), 1.1, T, t))
+    testa(arm, su=chiavi(t, [(0.0, 16.0), (0.82, 10.0), (1.05, 4.0), (T, 0 - 3 * math.sin(0.6))]),
+          giro=liscio(0.0, -4 * math.sin(1.2), 1.1, T, t))
+    # i tentacoli stretti sotto la campana mentre e' avanti, verso il muro (il tentacolo 4 ci entrava, nei tentacoli
+    # morbidi); si riaprono piano tornando al suo posto, fino alla posa di incombe
+    raccogli(arm, chiavi(t, [(0.0, 0.1), (0.6, 0.1), (0.82, 0.7), (0.95, 0.7), (1.35, 0.0)]))
+    lungo = ((0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
+
+    def teso(suf):
+        sfasa = 0.0 if suf == '.L' else 0.5
+        a = math.sin(2 * math.pi * sfasa)
+        return ((0.30 - 0.04 * a, -0.95 - 0.10 * a, 0.10 + 0.08 * math.cos(2 * math.pi * sfasa)), (0.7, 0.0, -0.4),
+                (0.12, -1.0, 0.05), (0.1, 0.1, 1.0))
+    # la sinistra: lungo il fianco, poi si apre in avanti come in sale_dall_acqua
+    pl = [tuple(x + (y - x) * apri for x, y in zip(a_, b_)) for a_, b_ in zip(lungo, teso('.L'))]
+    braccio(arm, '.L', *pl)
+    # la destra: alzata in avanti, sopra la testa
+    G = presa_bordo_v3()
+    dir_g, dorso_g = (0.0, -1.0, -0.25), (0.0, 0.0, 1.0)
+    polo_g = (0.8, 0.4, -0.3)
+    d0, z0 = (0.0, -0.4, 1.0), (0.0, 1.0, 0.0)
+    # alzata: il polso sopra la spalla e un po' avanti, ma mai oltre la faccia del muro (meno MANO_V3_QUA) finche' non e'
+    # sopra il bordo
+    sp = arm.matrix_world @ arm.pose.bones['braccio.R'].head
+    alzata = sp + Vector((-0.15, -0.3, 1.0))
+    alzata.y = max(alzata.y, -(BORDO_V3[0] - MANO_V3_QUA))
+    # poi sopra la presa ma ancora dalla sua parte, poi avanti sopra la cima, poi giu' sulla cima
+    qua_sopra = Vector((G.x, -(BORDO_V3[0] - MANO_V3_QUA), G.z + 0.3))
+    sopra = G + Vector((0.0, 0.0, 0.12))
+    if t < MANO_V3_LASCIA:
+        k1 = liscio(0.0, 1.0, 0.50, 0.64, t)
+        k2 = liscio(0.0, 1.0, 0.64, 0.74, t)
+        k3 = liscio(0.0, 1.0, 0.74, 0.82, t)
+        polso = alzata.lerp(qua_sopra, k1).lerp(sopra, k2).lerp(G, k3)
+        dm, zm = gira_mano(d0, z0, dir_g, dorso_g, liscio(0.0, 1.0, 0.55, 0.8, t))
+        if t >= 0.74:
+            # tenendosi: se la spalla e' troppo lontana dal polso, lei va verso la mano (non la mano verso di lei)
+            sp = arm.matrix_world @ arm.pose.bones['braccio.R'].head
+            portata = (POSE.lunghezza(arm, 'braccio.R') + POSE.lunghezza(arm, 'avambraccio.R')) * 0.985
+            dd = polso - sp
+            if dd.length > portata:
+                sposta(arm, tuple(dd * (1.0 - portata / dd.length)))
+                if '--diagnosi' in sys.argv:
+                    print(f'sale_mano t={t:.3f}: verso la mano di {dd.length - portata:.3f} m', flush=True)
+        braccio_mondo(arm, '.R', polso, polo_g, dm, zm)
+    else:
+        # lascia il bordo: su e indietro, poi le braccia tese di incombe
+        k = liscio(0.0, 1.0, MANO_V3_LASCIA, MANO_V3_LASCIA + 0.2, t)
+        lascia = G + Vector((0.0, 0.18, 0.2)) * k
+        dm, zm = gira_mano(dir_g, dorso_g, teso('.R')[2], teso('.R')[3], liscio(0.0, 1.0, MANO_V3_LASCIA, MANO_V3_LASCIA + 0.3, t))
+        if t < MANO_V3_LASCIA + 0.2:
+            # (quello che serviva per tenersi sfuma in 0,15 s: niente scatto quando lascia)
+            sp = arm.matrix_world @ arm.pose.bones['braccio.R'].head
+            portata = (POSE.lunghezza(arm, 'braccio.R') + POSE.lunghezza(arm, 'avambraccio.R')) * 0.985
+            dd = lascia - sp
+            if dd.length > portata:
+                sposta(arm, tuple(dd * (1.0 - portata / dd.length) * (1.0 - liscio(0.0, 1.0, MANO_V3_LASCIA, MANO_V3_LASCIA + 0.15, t))))
+            braccio_mondo(arm, '.R', lascia, polo_g, dm, zm)
+        else:
+            braccio(arm, '.R', *teso('.R'))
+            pb = arm.pose.bones['mano.R']
+            fine = arm.matrix_world @ pb.head
+            braccio_mondo(arm, '.R', lascia.lerp(fine, liscio(0.0, 1.0, MANO_V3_LASCIA + 0.2, MANO_V3_LASCIA + 0.35, t)), polo_g, dm, zm)
+            if t >= MANO_V3_LASCIA + 0.35:
+                braccio(arm, '.R', *teso('.R'))
     Z.segui()
 
 
@@ -1067,6 +1203,8 @@ ANIMAZIONI = {
     # nome: (durata, in ciclo, funzione)
     'sale_dall_acqua': (1.6, False, lambda a, C, Z, t: pose_sale(a, C, Z, t, 1.6)),
     'sale_dall_acqua_veloce': (1.0, False, lambda a, C, Z, t: pose_sale(a, C, Z, t, 1.0)),
+    'sale_puntata': (1.6, False, lambda a, C, Z, t: pose_sale_puntata(a, C, Z, t, 1.6)),
+    'sale_mano': (1.6, False, lambda a, C, Z, t: pose_sale_mano(a, C, Z, t, 1.6)),
     'incombe': (2.4, True, lambda a, C, Z, t: pose_incombe(a, C, Z, t)),
     'presa': (1.2, False, pose_presa),
     'respinta': (1.2, False, pose_respinta),

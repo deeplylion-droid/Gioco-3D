@@ -115,6 +115,9 @@ var _mat_cemento: StandardMaterial3D
 var _mat_lamiere: StandardMaterial3D
 var _mat_pericolo: StandardMaterial3D
 var _mat_giallo: StandardMaterial3D
+## Il nastro e la fascia in cima alla scala di servizio, appena fosforescenti ([method _strisce_cima_scala]).
+var _mat_nastro: StandardMaterial3D
+var _mat_fascia: StandardMaterial3D
 var _mat_pav: Material
 var _zone: Array[AABB] = []
 
@@ -128,15 +131,21 @@ func _ready() -> void:
 	_mat_giallo = _materiale("PaintedMetal006", 1.0)
 	_mat_giallo.albedo_texture = load("res://assets/ambienti_tecnici/texture/vernice_giallo_Color.jpg")
 	_mat_pav = load("res://assets/fiume_lento/mat_cemento.tres")
+	_materiali_strisce()
 	_corpo = StaticBody3D.new()
 	_corpo.name = "Corridoi"
 	add_child(_corpo)
 	for c in COLLEZIONABILI:
 		GameState.register_collectible(c[0], c[1])
 	if a_richiesta and not Engine.has_meta(&"risalita_subito") and ResourceLoader.exists(CAMPIONI):
-		_campioni = load(CAMPIONI).get_meta(&"materiali", [])
+		_campioni = (load(CAMPIONI).get_meta(&"materiali", []) as Array).duplicate()
 		for m in _campioni:
 			(m as Material).get_rid()   # lo shader si crea adesso, non al primo uso
+	# (anche quelli del nastro e della fascia fosforescenti: nella sala all'avvio non c'è un materiale come loro)
+	_campioni.append(_mat_nastro)
+	_campioni.append(_mat_fascia)
+	_mat_nastro.get_rid()
+	_mat_fascia.get_rid()
 	_zona_personale()
 	_scala_di_servizio()
 	_scala_fiume()
@@ -309,7 +318,8 @@ func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "", buchi := {}) 
 
 
 ## [param pos]: 5 cm davanti al muro, all'altezza della lampada; la lampada si appoggia al muro con la staffa.
-func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
+## [param esclusi]: gli strati che la sua luce non prende (il cartello delle pozze accanto: i suoi colori restano veri).
+func _lampada_rossa(pos: Vector3, verso: Vector3, esclusi := 0) -> void:
 	var n := Vector3(verso.x, 0.0, verso.z).normalized()
 	var l := LampadaMuro.monta(self, pos - n * 0.05, verso)
 	var o := OmniLight3D.new()
@@ -319,6 +329,8 @@ func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
 	o.omni_range = 7.0
 	o.omni_attenuation = 1.3
 	o.set_meta(&"risveglio_ignora", true)
+	if esclusi != 0:
+		Strati.maschera_luce(o, 0xFFFFF & ~esclusi)
 	add_child(o)
 
 
@@ -345,10 +357,30 @@ func _zona_personale() -> void:
 			{"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vasca_gradino": Vector2(1.6, -1.8),
 			"vicino": 0.9, "lato_sbircia": 1.0})
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
-	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0))
+	# (la sua luce non prende il cartello delle pozze, a 70 cm: i quadratini restano dei colori delle pozze)
+	_lampada_rossa(Vector3(x + 0.95, Y + 2.25, 49.5), Vector3(-1, -0.5, 0), CartelloPozze.STRATO)
 	# la Polaroid 15 (i bambini che si fanno le maschere, proposta del 25 ottobre notte): per terra nell'angolo nord-est,
 	# accanto alla porta del capannone (alle spalle di chi entra), nella zona del personale dove stavano gli attrezzi
 	PolaroidPhoto.metti(self, 15, Vector3(x + 0.84, Y + 0.03, CENTRO_FIUME.z + F.X0 - 0.48), 65.0)
+	_cartello_pozze(x + 1.0, soglia)
+
+
+## Il cartello delle pozze colorate (CartelloPozze), l'indizio della stanza delle pozze. Scelta B dell'utente del 4
+## novembre ("spostiamolo più lontano, così è troppo facile"): qui nel corridoio del personale, sul muro est, all'altezza
+## degli occhi e dalla parte del capannone, cioè il più lontano possibile dalla porta dell'infermeria (a 2 m), di fronte
+## all'oblò di lei: chi arriva dall'approdo lo ha subito a destra. Fra la lampada rossa e l'angolo, a 18 cm
+## dall'angolo; sotto, per terra, la Polaroid 15. Il faretto bianco a soffitto, 1,2 m davanti al muro, ha l'ombra:
+## senza, la sua luce passerebbe il muro e accenderebbe quello che c'è dietro, e il corridoio deve restare com'era.
+## [param muro_est]: la faccia del muro est (x); [param angolo]: la faccia del muro del capannone (z).
+func _cartello_pozze(muro_est: float, angolo: float) -> void:
+	var c := CartelloPozze.new()
+	c.name = "CartelloPozzeColorate"
+	c.soffitto = 2.6 - 1.5
+	c.angolo = 11.0
+	c.ombra = true
+	c.position = Vector3(muro_est, Y + 1.5, angolo - 0.18 - CartelloPozze.MISURA.x * 0.5)
+	c.rotation_degrees.y = -90.0
+	add_child(c)
 
 
 ## La scala di servizio: dalla porta stagna della stanza delle pozze (nel suo muro nord) un pianerottolo, poi verso est
@@ -393,9 +425,12 @@ func _scala_di_servizio() -> void:
 	# le lampade rosse d'emergenza: in cima alla seconda rampa, sul muro nord del tratto verso sud (dove prima stava in
 	# cima alla rampa: senza, salendo c'erano 5 m di buio, collaudo del 1 novembre), in fondo a quel tratto e sul
 	# pianerottolo in basso
-	_lampada_rossa(Vector3(x + 1.0, 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
-	_lampada_rossa(Vector3(x + 1.0, 2.2, c1 - 0.05), Vector3(0, -0.5, -1))
-	_lampada_rossa(Vector3(xs + 0.6, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
+	# (5 cm più in alto, col fondo a 2,03 m: scelta A dell'utente del 4 novembre, "lampade"; anche quella del
+	# pianerottolo, che era rimasta a 2,2: collaudo finale di enigmi)
+	_lampada_rossa(Vector3(x + 1.0, 2.25, z0 + 0.05), Vector3(0, -0.5, 1))
+	_lampada_rossa(Vector3(x + 1.0, 2.25, c1 - 0.05), Vector3(0, -0.5, -1))
+	_lampada_rossa(Vector3(xs + 0.6, Y + 2.25, z0 + 0.05), Vector3(0, -0.5, 1))
+	_strisce_cima_scala(x, xe, z0, z1, c0, c1)
 	var m := Node3D.new()
 	m.name = "Marker"
 	add_child(m)
@@ -443,9 +478,9 @@ func _scala_fiume() -> void:
 	_box(Vector3(0.2, 0.3, porta1 - porta0), Vector3(xc - 0.1, Y + 2.45, (porta0 + porta1) * 0.5), _mat_lamiere)
 	# tra il nostro muro e quello del capannone (x -6,1): il pavimento sotto la porta
 	_box(Vector3(0.5, 0.2, porta1 - porta0), Vector3(xc - 0.25, Y - 0.1, (porta0 + porta1) * 0.5), _mat_pav)
-	_lampada_rossa(Vector3(x_cima + 1.95, y0 + 2.2, (z0 + z1) * 0.5), Vector3(-1, -0.5, 0))
-	_lampada_rossa(Vector3(xc + 1.95, Y + 2.2, z1 + 1.0), Vector3(-1, -0.5, 0))
-	_lampada_rossa(Vector3(xc + 1.95, Y + 2.2, porta0 - 3.0), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(x_cima + 1.95, y0 + 2.25, (z0 + z1) * 0.5), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(xc + 1.95, Y + 2.25, z1 + 1.0), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(xc + 1.95, Y + 2.25, porta0 - 3.0), Vector3(-1, -0.5, 0))
 	var m := get_node("Marker") as Node3D
 	for d in [["PortaC2", Vector3(PORTA_C2.x, y0, PORTA_C2.z - 0.8)], ["CimaScalaFiume", Vector3(x_cima + 1.0, y0, (z0 + z1) * 0.5)],
 			["FondoScalaFiume", Vector3(xc + 1.0, Y, (z0 + z1) * 0.5)], ["PortaFiume", Vector3(xc + 1.0, Y, (porta0 + porta1) * 0.5)]]:
@@ -541,7 +576,7 @@ func _decal(nome: String, tex: Texture2D, pos: Vector3, normale: Vector3, w: flo
 ## di sfuggita"): il bambino col cubo in fondo al corridoio, a destra della porta del capannone, girato verso la
 ## scala. Compare mentre il giocatore è sul pianerottolo in fondo alla scala o nel corridoio (mai sotto i suoi occhi, e
 ## solo dopo lei all'oblò, mai insieme), ti guarda inclinando la testa, poi corre nella porta aperta del capannone e gira a
-## sinistra, nella rientranza fra la porta e il muro dell'approdo: lì dal corridoio non si vede più, e sparisce.
+## sinistra, dietro la pila nell'angolo fra la porta e il muro dell'approdo: lì non si vede più, e sparisce.
 func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, porta0: float, porta1: float, fine: float,
 		oblo: ObloLei) -> void:
 	var b := BambinoSfuggita.new()
@@ -552,8 +587,15 @@ func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, p
 	b.zona = AABB(Vector3(xc, Y - 0.2, z0), Vector3(x_fondo - xc, 3.0, porta0 - 2.5 - z0))
 	b.aspetta = oblo
 	var pm := (porta0 + porta1) * 0.5
-	b.via = PackedVector3Array([Vector3(xc + 0.7, Y, pm), Vector3(xc - 0.9, Y, pm), Vector3(xc - 2.0, Y, porta0 - 0.7),
-			Vector3(xc - 2.2, Y, porta0 - 3.3)])
+	# l'ultimo punto in fondo alla nicchia dietro la pila dell'angolo (scelta B dell'utente, 0.3.21, pila di ambienti-1 di
+	# traverso contro il muro nord del capannone, x da -7,61 a -6,40, z da 62,3 a 63,3; nicchia z da 61,65 a 62,3, fino al
+	# muro nord a x -6,40): passa davanti alla pila, gira dietro e va in fondo, dove non si vede da nessun punto della strada
+	b.via = PackedVector3Array([Vector3(xc + 0.7, Y, pm), Vector3(xc - 0.9, Y, pm), Vector3(xc - 2.2, Y, porta0 - 0.7),
+			Vector3(xc - 2.2, Y, porta0 - 3.3), Vector3(xc - 0.78, Y, porta0 - 3.27)])
+	# (sparisce solo arrivato in fondo alla nicchia, anche quando è già fuori vista prima: ricontrollo di grafica-2)
+	b.sparisce_dopo = 5
+	# (e solo dopo 0,4 s di seguito fuori vista: un margine di 24 fotogrammi, ricontrollo di grafica-2)
+	b.fuori_vista_minimo = 0.4
 	b.da_dove = Vector3(xc + 1.0, Y + 1.6, z1 + 2.0)
 	# animato meglio (scelta A dell'utente del 1° novembre, "A ma animalo meglio"): da fermo è vivo (il peso da un piede
 	# all'altro, il respiro: solo lui, nella torre restano immobili), la testa ti segue con un po' di
@@ -598,6 +640,78 @@ func _prepara_materiali_oblo(o: ObloLei) -> void:
 		await get_tree().process_frame
 	if is_instance_valid(o) and o.is_inside_tree():
 		await o.prepara_materiali_lei(get_viewport())
+
+
+## La cima della scala di servizio, dopo l'ultima rampa (scelta A dell'utente del 4 novembre, "scala buia": nessuna luce
+## nuova): sul pavimento del tratto verso sud e del corridoio fino alla porta di C3 continuano le strisce gialle e nere
+## dei gradini, come nastro antiscivolo di traverso ogni STRISCE_PASSO m; sul muro alla destra di chi sale (quello
+## ovest del tratto e quello sud del corridoio), all'altezza della mano, una fascia catarifrangente. Tutto incollato:
+## il nastro sul pavimento (4 mm), la fascia sul muro (5 mm).
+const STRISCE_PASSO := 0.8
+const STRISCE_LARGHE := 0.1
+const FASCIA_ALTA := 0.05
+const FASCIA_Y := 1.0
+
+
+## Il verde chiaro della ciambella fosforescente del fiume (FiumeLento._ciambella_fosforescente), molto più debole: il
+## nastro e la fascia brillano pochissimo di luce propria e non illuminano niente intorno (scelta B dell'utente per la
+## 0.3.21, «strisce»: «così la strada si vede nel buio»). Solo qui: nel fiume e nei tubi niente segni fosforescenti.
+const FOSFORO := Color(0.5, 1.0, 0.58)
+const FOSFORO_NASTRO := 0.4
+const FOSFORO_FASCIA := 0.05
+
+
+## I materiali del nastro e della fascia: il nastro è quello dei bordi dei gradini (_mat_pericolo), duplicato, che si
+## illumina solo dove è giallo (l'emissione moltiplica la sua texture, come la ciambella); la fascia, bianca e lucida,
+## prende lo stesso filo di luce verde chiaro.
+func _materiali_strisce() -> void:
+	_mat_nastro = _mat_pericolo.duplicate() as StandardMaterial3D
+	_mat_nastro.emission_enabled = true
+	_mat_nastro.emission = FOSFORO
+	_mat_nastro.emission_texture = _mat_pericolo.albedo_texture
+	_mat_nastro.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+	_mat_nastro.emission_energy_multiplier = FOSFORO_NASTRO
+	_mat_fascia = StandardMaterial3D.new()
+	_mat_fascia.albedo_color = Color(0.92, 0.92, 0.88)
+	_mat_fascia.roughness = 0.12
+	_mat_fascia.metallic_specular = 1.0
+	_mat_fascia.emission_enabled = true
+	_mat_fascia.emission = FOSFORO
+	_mat_fascia.emission_energy_multiplier = FOSFORO_FASCIA
+
+
+func _strisce_cima_scala(x: float, xe: float, z0: float, z1: float, c0: float, c1: float) -> void:
+	var nastro := Node3D.new()
+	nastro.name = "NastroCimaScala"
+	add_child(nastro)
+	# nel tratto verso sud (da x a xe), di traverso, dall'arrivo della rampa fin dentro l'angolo col corridoio
+	var z := z0 + 0.4
+	while z <= c1 - 0.3:
+		_striscia(nastro, Vector3(xe - x - 0.4, 0.004, STRISCE_LARGHE), Vector3((x + xe) * 0.5, 0.002, z), _mat_nastro)
+		z += STRISCE_PASSO
+	# nel corridoio verso la porta di C3 (da xe in poi), di traverso, fino a 60 cm dalla porta
+	var xx := xe + 0.4
+	while xx <= PORTA_C3.x - 0.6:
+		_striscia(nastro, Vector3(STRISCE_LARGHE, 0.004, c1 - c0 - 0.4), Vector3(xx, 0.002, (c0 + c1) * 0.5), _mat_nastro)
+		xx += STRISCE_PASSO
+	# la fascia catarifrangente: bianca e lucida, sul muro ovest del tratto (dalla rampa all'angolo) e sul muro sud del
+	# corridoio (dall'angolo a 30 cm dalla porta)
+	var cat := _mat_fascia
+	_striscia(nastro, Vector3(0.005, FASCIA_ALTA, c1 - z1), Vector3(x + 0.0025, FASCIA_Y, (z1 + c1) * 0.5), cat)
+	_striscia(nastro, Vector3(PORTA_C3.x - 0.3 - x, FASCIA_ALTA, 0.005), Vector3((x + PORTA_C3.x - 0.3) * 0.5, FASCIA_Y, c1 - 0.0025), cat)
+
+
+func _striscia(padre: Node3D, size: Vector3, pos: Vector3, m: Material) -> void:
+	var mi := MeshInstance3D.new()
+	var b := BoxMesh.new()
+	b.size = size
+	mi.mesh = b
+	mi.material_override = m
+	mi.position = pos
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# (fuori dalla GI: la loro luce propria non deve illuminare il pavimento e il muro intorno)
+	mi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+	padre.add_child(mi)
 
 
 ## Una rampa di [param n] gradini che sale verso est da [param lo] (angolo basso a ovest-nord):

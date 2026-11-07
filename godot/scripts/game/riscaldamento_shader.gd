@@ -176,6 +176,11 @@ func _disegna() -> void:
 		await nv.riscalda(sv, 3)
 		if not is_inside_tree():
 			return
+	# gli effetti che compaiono solo con un evento a metà partita (ritocco "scatti" dell'utente del 4 novembre, scelta A;
+	# tests/sonda_primo_uso_effetti.gd): il gorgo dello scarico, il vapore e le medusine, coi loro nodi veri
+	await _disegna_effetti(sv)
+	if not is_inside_tree():
+		return
 	# lei dietro gli oblò (mascotte, 25 ottobre) con l'oblò vero: le sue mesh con lo scheletro (le ossa cambiano il
 	# formato dei vertici: la sfera non basta) e quelle dell'oblò (piastra, vetro, vasca), un pezzo per volta
 	await _disegna_oblo(sv)
@@ -184,6 +189,109 @@ func _disegna() -> void:
 
 
 var _luci: Array[Light3D] = []
+## Gli effetti a metà partita come li fa il gioco, davanti alla camera del riscaldamento: il gorgo dello scarico
+## (DrainVortex: un piano con vortex.gdshader), il vapore (Vapore: particelle a cartellone e il volume di nebbia) e le
+## medusine della piscina a onde (Medusine: due MultiMesh con colori e dati, i loro shader). Senza, al primo uso il
+## motore compilava 2-4 pipeline per ognuno (sonda su Vulkan, 6 novembre).
+static func effetti_campione() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var g := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(1.2, 1.2)
+	g.mesh = pm
+	var gm := ShaderMaterial.new()
+	gm.shader = load("res://shaders/vortex.gdshader")
+	gm.set_shader_parameter(&"strength", 1.0)
+	g.material_override = gm
+	g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	g.rotation_degrees.x = 60.0
+	g.name = "Gorgo"
+	out.append(g)
+	# (il vapore in due passi: le particelle, poi il volume di nebbia da solo; tutto insieme erano 13 pipeline in un
+	# fotogramma, sopra le 10 di test_riscaldamento_pipeline)
+	var v := Vapore.new()
+	v.name = "Vapore"
+	v.volume_nebbia = false
+	v.position = Vector3(0, -0.8, 0)
+	out.append(v)
+	# (il volume come in Vapore: ellissoide con un FogMaterial e la densità da un rumore 3D)
+	var vn := FogVolume.new()
+	vn.name = "VaporeNebbia"
+	vn.shape = RenderingServer.FOG_VOLUME_SHAPE_ELLIPSOID
+	vn.size = Vector3(2.0, 2.5, 2.0)
+	var fm := FogMaterial.new()
+	fm.density = 0.35
+	fm.edge_fade = 0.6
+	var n3 := NoiseTexture3D.new()
+	n3.noise = FastNoiseLite.new()
+	n3.width = 32
+	n3.height = 32
+	n3.depth = 32
+	fm.density_texture = n3
+	vn.material = fm
+	out.append(vn)
+	for parte in [[Medusine.mesh_medusina(), "res://shaders/medusine.gdshader", 2],
+			[QuadMesh.new(), "res://shaders/medusine_alone.gdshader", 1]]:
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.use_colors = true
+		mm.use_custom_data = true
+		mm.mesh = parte[0]
+		mm.instance_count = 1
+		mm.set_instance_transform(0, Transform3D(Basis() * 0.3, Vector3.ZERO))
+		mm.set_instance_color(0, Color(1, 0.5, 0.8, 1))
+		mm.set_instance_custom_data(0, Color(0.5, 0.5, 0.5, 0.5))
+		var mi := MultiMeshInstance3D.new()
+		mi.name = "Medusine_" + String(parte[1]).get_file().get_basename()
+		mi.multimesh = mm
+		var mat := ShaderMaterial.new()
+		mat.shader = load(parte[1])
+		mat.render_priority = parte[2]
+		mi.material_override = mat
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+		out.append(mi)
+	return out
+
+
+func _disegna_effetti(sv: SubViewport) -> void:
+	for n in effetti_campione():
+		pezzo = "effetto " + String(n.name)
+		sv.add_child(n)
+		if n is GPUParticles3D:
+			(n as GPUParticles3D).emitting = true
+		# (prima senza luci, poi una luce alla volta, poi le ombre di ognuna da sola: il gorgo con tutto insieme erano 13
+		# pipeline in un fotogramma)
+		for l in _luci:
+			l.visible = false
+		await get_tree().process_frame
+		for l in _luci:
+			l.visible = true
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+		await _passi_ombre()
+		if not is_inside_tree():
+			return
+		for i in 2:
+			await RenderingServer.frame_post_draw
+		if not is_inside_tree():
+			return
+		# (i materiali tenuti per la partita, come gli altri: con loro restano gli shader compilati)
+		for g in [n] + n.find_children("*", "", true, false):
+			if g is GeometryInstance3D and (g as GeometryInstance3D).material_override:
+				_tenuti.append((g as GeometryInstance3D).material_override)
+			if g is GPUParticles3D:
+				var pp := g as GPUParticles3D
+				if pp.process_material:
+					_tenuti.append(pp.process_material)
+				if pp.draw_pass_1 and pp.draw_pass_1.surface_get_material(0):
+					_tenuti.append(pp.draw_pass_1.surface_get_material(0))
+			if g is FogVolume and (g as FogVolume).material:
+				_tenuti.append((g as FogVolume).material)
+		n.queue_free()
+
+
 ## Il pezzo dell'oblò che si sta disegnando (per i test: dove cadono le pipeline).
 var pezzo := ""
 

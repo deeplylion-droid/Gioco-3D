@@ -164,6 +164,22 @@ dopo `apertura_iniziata`, accelera in circa 1,1 s, frena nell'ultimo 0,9 s e arr
 `Audio.PORTONE_ARRIVA` (6,4 s): lì `aperto()`. `PortoneTorre` non prende i suoni generici delle
 porte (`PoweredDoor`).
 
+## Gli enigmi: cassaforte, dischi del fiume, "fatto giusto" (0.3.21)
+
+Suoni in `res://audio/enigmi/` (`assets_src/audio/genera_enigmi.py`), scelte A dell'utente del 4 novembre (proposte
+enigmi-2, -3, -4). Non li collega l'addon: li suonano gli script degli enigmi con `Audio.suona()`.
+
+| Suono | Cosa | Chi lo suona |
+|---|---|---|
+| `cassaforte_clic_a`, `_b`, `_c` | il clic metallico di una cifra, uno per rotella (testa, corpo, coda), un po' diversi | `CassaforteRotelle.gira()`, sulla rotella |
+| `cassaforte_apre` | il chiavistello pesante (0 s), poi lo sportello che gira cigolando da `Audio.CASSAFORTE_CIGOLIO_DA` (0,38 s) a `_A` (1,75 s), dove arriva aperto col colpetto del fermo | `CassaforteRotelle`, 0,3 s dopo il codice giusto; lo sportello segue quei tempi |
+| `disco_lamiera_colpo` | il getto che prende il disco a strisce del fiume: un colpo di lamiera come un gong (2,6 s) | `ParatiaFiume`, quando il getto la gira |
+| `giusto` | il jingle della botola accorciato: le stesse tre note da giocattolo, un po' stonate, senza lo scatto (0,75 s) | a ogni enigma risolto, dal suo punto: acquari (l'acquario del miscuglio), giocattoli (la botola), pozze, cassaforte |
+
+Le chiuse del fiume, mentre salgono o scendono, suonano `paratia_scende_loop` (motore e catene, come le paratie della
+camera delle onde) e, arrivate, il colpo sordo `porta_chiusa` (`FiumeGioco._suono_chiusa`). Col codice sbagliato della
+cassaforte non suona niente oltre ai clic.
+
 ## Tappa 8: lei nell'area bimbi
 
 Suoni in `res://audio/lei/`. Lei non parla (niente parole né voce umana), ma si sente la sua gola:

@@ -68,6 +68,11 @@ const PREDEFINITI := {
 	"sensibilita_mouse": 1.0,   # moltiplicatore
 	"inverti_y": false,
 	"oscillazione_camera": true,
+	# Qualità scelta in automatico al primo avvio (QualitaAutomatica; scelta A dell'utente del 4 novembre): la prova va
+	# fatta (false solo al primo avvio: chi ha già le impostazioni non la rifà) e il preset che ha scelto ("" = nessuno,
+	# o il giocatore l'ha cambiato a mano).
+	"qualita_provata": true,
+	"scelta_automatica": "",
 }
 
 const PRESET := {
@@ -106,6 +111,8 @@ var _post_layer: CanvasLayer
 var _post_rect: ColorRect
 var _lut_cache := {}
 var _salvataggio_pendente := false
+## Vero mentre la qualità automatica prova i preset: un cambio così non è una scelta del giocatore.
+var prova_automatica := false
 ## La nebbia viola delle zone (NebbiaViola): una per tutto il gioco.
 var nebbia_viola: NebbiaViola
 
@@ -165,6 +172,7 @@ func imposta(chiave: String, v: Variant) -> void:
 	valori[chiave] = v
 	if PRESET["alto"].has(chiave):
 		valori["preset"] = _preset_corrispondente()
+		_scelta_a_mano()
 	_applica_chiave(chiave)
 	impostazione_cambiata.emit(chiave, v)
 	_salva_dopo()
@@ -176,6 +184,7 @@ func applica_preset(nome: String) -> void:
 	for k in PRESET[nome]:
 		valori[k] = PRESET[nome][k]
 	valori["preset"] = nome
+	_scelta_a_mano()
 	applica_tutto()
 	impostazione_cambiata.emit("preset", nome)
 	_salva_dopo()
@@ -587,6 +596,15 @@ static func _grading(indice: int, c: Color) -> Color:
 
 
 # --- Varie -------------------------------------------------------------------
+
+## Una qualità cambiata fuori dalla prova automatica è del giocatore: la prova non si fa più e la scritta «scelto in
+## automatico» sparisce.
+func _scelta_a_mano() -> void:
+	if prova_automatica:
+		return
+	valori["qualita_provata"] = true
+	valori["scelta_automatica"] = ""
+
 
 func _preset_corrispondente() -> String:
 	for nome in PRESET_NOMI:

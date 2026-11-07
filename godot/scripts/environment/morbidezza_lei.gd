@@ -199,11 +199,17 @@ func spegni() -> void:
 	_verso = -1.0
 
 
-## Spento subito, e si ricomincia dalla posa (una ripartenza).
+## Spento subito, e si ricomincia dalla posa (una ripartenza). Si ricomincia da capo anche il tempo (le onde dei
+## tentacoli) e il conto dei fotogrammi (quali tentacoli si simulano a fotogrammi alterni): ogni ripartenza va come la
+## prima, qualunque cosa sia successa prima (nell'inseguimento lo scolo 2 dopo le vasche 2 e 3 cambiava fase, e un
+## tentacolo entrava 1,2 cm nel muro: ricontrollo di ambienti-1 del 6 novembre).
 func azzera() -> void:
 	_verso = -1.0
 	_peso = 0.0
 	_pronte = false
+	_t = 0.0
+	_fotogrammi = 0
+	_dt_acc.clear()
 	_togli_forme()
 
 

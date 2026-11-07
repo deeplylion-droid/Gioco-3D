@@ -22,6 +22,8 @@ signal si_gira    ## comincia a girarsi verso il giocatore
 signal rivelato   ## il travestimento si apre
 signal scappa     ## comincia a scappare (giocatore troppo vicino)
 signal sparito    ## è sparito, alla fine della fuga o del percorso
+## Correndo, un piede ha toccato terra in [param dove] (i passi dei bambini, 0.3.21: li suona Audio, nello spazio).
+signal passo(dove: Vector3)
 
 enum Modalita { STATUA, OSSERVA, CAMMINA, SCAPPA, SPARITO }
 enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
@@ -44,8 +46,13 @@ const PIEDE_A_TERRA := 0.11
 const PUNTA_A_TERRA := 0.06
 ## Da dove parte la corsa dopo il primo passo ("parte", che finisce in questa posa; secondi della clip): la punta sinistra
 ## a terra, sotto le anche come nel fermo, e il piede destro alzato (nella clip da 24 fotogrammi, il 6,4 di 17; a terra la
-## punta è fra 3 e 6 cm, in aria sopra i 7).
+## punta è fra 3 e 6 cm, in aria sopra i 7). Così per il bambino col cubo; l'agnellino ha la sua corsa (vedi
+## [member corsa_primo_passo]).
 const CORSA_PRIMO_PASSO := 6.4 / 24.0
+## Il tempo della corsa dove finisce "parte" per questo bambino: [constant CORSA_PRIMO_PASSO] il bambino col cubo, 7,6 / 24
+## l'agnellino (la sua clip: lì la punta sinistra è a terra sotto le anche e il piede destro alzato). Deve essere quello
+## usato per fare "parte" (tools/blender/bambini_animazioni.py --primo-passo).
+@export var corsa_primo_passo := CORSA_PRIMO_PASSO
 
 @export var modalita := Modalita.STATUA
 ## Comincia già rivelato (il cubo spaccato, l'agnellino con il muso aperto).
@@ -129,10 +136,24 @@ const CORSA_PRIMO_PASSO := 6.4 / 24.0
 ## sono dove si vedrebbe che non c'è più, come una galleria dritta e illuminata: riscontro dell'utente sulla 0.3.16,
 ## "si vede che sparisce perché gli corri dietro"). 0: in qualsiasi punto.
 @export var sparisce_dopo := 0
+## Con [member sparisce_fuori_vista]: sparisce solo dopo essere rimasto fuori vista di seguito per tanti secondi (un
+## margine: sparendo al primo fotogramma non visto, un pezzo di piede sullo spigolo si vedeva ancora un fotogramma prima;
+## ricontrollo di grafica-2 sulla 0.3.21). 0: subito.
+@export var fuori_vista_minimo := 0.0
+var _fuori_vista_t := 0.0
 ## Quando sparisce si toglie dalla scena (altrimenti resta nascosto e si può riusare).
 @export var libera_quando_sparisce := true
 
 var e_rivelato := false
+## Il suono dei suoi passi di corsa (Audio, [signal passo]): &"passo_bambino_muta" il bambino col cubo, &"passo_agnellino"
+## l'agnellino; vuoto, nessun passo.
+@export var suono_passi: StringName = &""
+## Per ogni piede (sinistro, destro): se è alzato da terra (oltre [constant PASSO_SU]); quando torna sotto
+## [constant PASSO_GIU] è un passo.
+var _piede_alzato := [false, false]
+## (il bambino col cubo a terra tiene il punto più basso del piede a circa 3 cm dal pavimento, l'agnellino a 0)
+const PASSO_SU := 0.07
+const PASSO_GIU := 0.045
 
 var _modelli: Array[Node3D] = []
 ## Per ogni modello: lo scheletro e le ossa dei piedi e delle punte (il piede a terra e il punto più basso).
@@ -371,6 +392,7 @@ func _process(delta: float) -> void:
 	if not _corsa_a_tempo():
 		for ap in _player_anim:
 			ap.advance(delta)
+	_passi()
 	var p: Player = GameState.player
 	_aggiorna_sguardo(delta, p)
 	if p == null:
@@ -417,7 +439,7 @@ func _process(delta: float) -> void:
 				if arrivato:
 					_sparisci()
 			elif (arrivato or _in_fuga >= fuga_minima) and _n_punti_fuga - _punti.size() >= sparisce_dopo \
-					and not visibile_da(p):
+					and _fuori_vista_da(p, delta) >= fuori_vista_minimo:
 				_sparisci()
 			elif arrivato and not _fermo_a_fine_fuga:
 				_fermo_a_fine_fuga = true
@@ -465,6 +487,35 @@ func _guardato_da(p: Player) -> bool:
 
 ## Il giocatore lo può vedere: qualche punto del corpo (dai piedi alla testa) è nell'inquadratura e senza
 ## muri in mezzo.
+## Torna come appena messo, prima di ogni fuga (BambinoSfuggita.load_state ripartendo da prima, con la sua stanza
+## scaricata e ricaricata): niente primo passo a metà, nessun piede tenuto fermo, ferma, fermo a riposo.
+func azzera() -> void:
+	_partendo = false
+	_svolta = false
+	_perno_osso = -1
+	_vel = 0.0
+	_punti.clear()
+	_n_punti_fuga = 0
+	_in_fuga = 0.0
+	_fermo_a_fine_fuga = false
+	_fuori_vista_t = 0.0
+	_piede_alzato = [false, false]
+	_reazione_in_corso = false
+	_visto_da = 0.0
+	for ap in _player_anim:
+		ap.speed_scale = 1.0
+	_anima(&"fermo", 0.0)
+
+
+## Da quanti secondi di seguito non è visto (con [member fuori_vista_minimo]; si azzera appena è visto).
+func _fuori_vista_da(p: Player, delta: float) -> float:
+	if visibile_da(p):
+		_fuori_vista_t = 0.0
+		return -1.0
+	_fuori_vista_t += delta
+	return _fuori_vista_t if fuori_vista_minimo > 0.0 else 0.0
+
+
 func visibile_da(p: Player) -> bool:
 	var cam := get_viewport().get_camera_3d()
 	var occhio := p.get_eye_position()
@@ -577,6 +628,11 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 		var ap0 := _player_anim[0]
 		gira = clampf((ap0.current_animation_position - ap0.current_animation_length * 0.35) / 0.15, 0.0, 1.0) \
 				if ap0.current_animation == &"parte" else 1.0
+		# (la girata di scatto, senza voltarsi sul posto: l'agnellino della scala, che deve girarsi in meno di 0,4 s;
+		# aspetta che il piede destro si sia staccato, se no striscerebbe nella girata, e poi gira un po' più svelto,
+		# intorno alla punta tenuta ferma)
+		if not girata_sul_posto and ap0.current_animation == &"parte":
+			gira = 0.0 if ap0.current_animation_position < ap0.current_animation_length * 0.35 else 1.6
 	_gira_verso(prossimo, deg_to_rad(giro) * delta * gira * (_piede_libero_alzato() if _svolta else 1.0))
 	# girandosi molto rallenta (non va di lato); se deve voltarsi (oltre 75 gradi, per esempio per scappare da chi
 	# guardava) prima si volta quasi sul posto, a passi lenti, e poi parte: non fa la curva larga dentro un muro.
@@ -631,17 +687,24 @@ func _segui_punti(delta: float, vel_max: float, giro: float, accel: float, vel_a
 			# finito il primo passo: la corsa da lì, già in questo fotogramma (un fotogramma fermo era uno scatto)
 			_partendo = false
 			_anima(&"corsa", 0.0)
-			_seek_tutti(CORSA_PRIMO_PASSO)
+			_seek_tutti(corsa_primo_passo)
 		# la corsa al tempo giusto: con la punta a terra, il tempo dell'animazione per cui lei arretra proprio di quanto
 		# il corpo deve avanzare (nella clip di Meshy, senza lo spostamento delle anche, arretra fra 1 e 2,8 m/s nello
 		# stesso passo: il corpo che andava con lei faceva scatti); in aria, il tempo alla velocità voluta
 		var dir := global_basis.z
 		dir.y = 0.0
 		dir = dir.normalized()
+		# girandosi di scatto correndo (l'agnellino della scala) si va dritti verso il punto, come prima; piegato in
+		# avanti (l'agnellino che si tuffa nel buco) i piedi si staccano da terra: in tutti e due i casi niente punta ferma
+		var libero := girando or absf(rotation.x) > 0.2
+		if girando:
+			dir = Vector3(verso.x, 0.0, verso.z).normalized()
+		if libero:
+			_perno_osso = -1
 		if not _tempo_della_corsa(delta):
 			# (la punta appena posata va ancora avanti rispetto al corpo: non la tiene ancora, la prende al fotogramma dopo)
 			_perno_osso = -1
-		var punta := _blocca_punta()
+		var punta := 0 if libero else _blocca_punta()
 		if punta != 1:
 			# in aria, o nel fotogramma in cui la punta ferma passa all'altro piede: alla velocità voluta
 			if punta == 0:
@@ -775,6 +838,31 @@ func _blocca_punta() -> int:
 		_perno_y = q.y
 		return 2
 	return 0
+
+
+## Correndo, quando un piede (il più basso fra tallone e punta) torna a terra dopo essersi alzato: [signal passo].
+func _passi() -> void:
+	if suono_passi == &"" or modalita != Modalita.SCAPPA or not is_visible_in_tree():
+		_piede_alzato = [false, false]
+		return
+	for x in _piedi:
+		if not (x[0] as Node3D).visible:
+			continue
+		var sk := x[1] as Skeleton3D
+		var ossa: Array = x[2]
+		for i in 2:
+			var q := sk.global_transform * sk.get_bone_global_pose(ossa[i]).origin
+			if ossa[2 + i] >= 0:
+				var punta := sk.global_transform * sk.get_bone_global_pose(ossa[2 + i]).origin
+				if punta.y < q.y:
+					q = punta
+			var h := q.y - global_position.y
+			if h > PASSO_SU:
+				_piede_alzato[i] = true
+			elif h < PASSO_GIU and _piede_alzato[i]:
+				_piede_alzato[i] = false
+				passo.emit(q)
+		return
 
 
 ## Quanto girare voltandosi sul posto, secondo quanto è sollevato il piede che non fa da perno: 1 da un paio di

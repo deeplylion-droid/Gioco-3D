@@ -56,8 +56,10 @@ func _run() -> void:
 	await _posa("arrivo dalla partenza F9")
 	await _fermo("arrivo dalla partenza F9")
 	var inf := ris.get_node(^"Infermeria") as Node3D
-	check(inf.get_node_or_null(^"CartelloPozze") != null and (inf.get_node_or_null(^"FarettoCartelloPozze/Luce") as Light3D).visible,
-		"accanto alla porta nord dell'infermeria c'è il cartello col faretto acceso")
+	# (dal 4 novembre il cartello è nel corridoio del personale prima dell'infermeria: scelta B dell'utente)
+	var cp := ris.get_node_or_null(^"CartelloPozzeColorate")
+	check(inf.find_child("CartelloPozze*", true, false) == null and cp != null and (cp.get_node(^"FarettoCartelloPozze/Luce") as Light3D).visible,
+		"il cartello col faretto acceso è nel corridoio del personale, non più nell'infermeria")
 	check(_tutte_piene() and e.stato == EnigmaPozze.Stato.APERTO and not _porta_aperta(), "le pozze sono piene e la porta stagna è chiusa")
 	var ingresso := String(GameState.salvataggio().get("checkpoint", ""))
 	check(ingresso.begins_with("Risalita/") and ingresso.ends_with("CheckpointIngresso"),

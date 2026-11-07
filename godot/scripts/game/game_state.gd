@@ -64,6 +64,10 @@ var _collected: Dictionary = {}     # collezione -> { voce: true }
 var _registry: Dictionary = {}      # collezione -> { voce: true }, tutte quelle viste
 var _restore_pending := false
 var _death_sequence: Node = null
+## Le morti di fila dall'ultimo checkpoint ([member _morti_dove]: scena e checkpoint). Dalla seconda la scena della
+## presa dura 1 s (ripartenze, parte B: scelta C = A+B dell'utente, GDD "Dopo la 0.3.20").
+var morti_al_checkpoint := 0
+var _morti_dove := ""
 var _ripartenza_in_corso := false
 ## Secondi che l'ultima ripartenza ha aspettato i caricamenti nel thread (Game.aspetta_caricamenti).
 var attesa_ripartenza := 0.0
@@ -285,8 +289,12 @@ func kill_player(cause: StringName = &"generico") -> void:
 	last_death_cause = cause
 	player.input_enabled = false
 	player_died.emit(cause)
+	var dove := "%s|%s" % [snapshot.get("scene", _scene_path()), snapshot.get("checkpoint", "")]
+	morti_al_checkpoint = morti_al_checkpoint + 1 if dove == _morti_dove else 1
+	_morti_dove = dove
 	var seq: Node = load(DEATH_SEQUENCE_SCENE).instantiate()
 	seq.set(&"cause", cause)
+	seq.set(&"breve", morti_al_checkpoint >= 2)
 	add_child(seq)
 	_death_sequence = seq
 	seq.connect(&"finished", _on_death_sequence_finished, CONNECT_ONE_SHOT)
@@ -491,4 +499,6 @@ func reset_progress() -> void:
 	_collected.clear()
 	_restore_pending = false
 	is_dying = false
+	morti_al_checkpoint = 0
+	_morti_dove = ""
 	imposta_luci(Luci.PRIMA_DEL_RISVEGLIO)

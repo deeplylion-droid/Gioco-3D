@@ -632,3 +632,52 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
 - **Lampade del corridoio delle pile: al 20%.** "ERANO AL 20 QUELLE": per l'utente sono le stesse lampade tonde a muro che il 30 ottobre aveva fatto mettere "al 20% di ora. tutte". Noi le avevamo abbassate solo nel tunnel, e il corridoio era rimasto al 60%. Scendono al 20% di come erano nella 0.3.16, luce e globo (grafica-2). Le altre lampade uguali del fiume (16 sull'anello, una all'approdo e una sulla piazza) scendono anche loro al 20%, risposta dell'utente: "A 20 anche quelle". Restano com'erano le 5 rotte, che sono spente, e la lampada della valvola degli acquari nella sala, che segnala l'enigma.
 - **Bambino col cubo: A, "ma animalo meglio".** La regola resta: compare a chi si ferma nel corridoio o torna indietro, solo dopo lei all'oblò, mai sotto gli occhi. Si migliora l'animazione di tutta la sequenza: quando è fermo, la testa che segue, la partenza e la corsa (mascotte).
 - **Faretto del cartello delle pozze: A**, resta così, con l'alone sul muro.
+
+**Versione 0.3.20 (2 novembre)**: contiene le correzioni qui sopra.
+- Il giro finale del collaudo ha notato una cosa da sapere: col bacino più basso, la scaletta di SB1 parte sopra il bordo di piastrelle, che ora sta 26 cm sopra l'acqua.
+- **Ancora da decidere con l'utente**: l'angolo vuoto di circa 2 m a sinistra dell'ingresso degli scatoloni, dove sparisce il bambino col cubo. Si vede dalla soglia girandosi a sinistra; da 4 m lo coprono le pile e l'anta.
+  - A: resta vuoto.
+  - B: una pila nell'angolo, e il bambino sparisce dietro di lei (ambienti-1 e mascotte).
+  Nella 0.3.20 è come nella 0.3.19.
+  **Deciso il 4 novembre: B** (vedi sotto).
+
+**Dopo la 0.3.20: correzioni e ritocchi del capitolo 1 (4 novembre)**. L'utente: "ti faccio le correzioni ma tu aspetta a ripartire, mettiamo insieme tutte le correzioni e ti dico io quando andare". **Si parte solo quando l'utente scrive «vai».**
+- **Cartello delle pozze**: "spostiamolo più lontano, così è troppo facile". **Scelta B**: va nel corridoio del personale prima dell'infermeria (dopo l'approdo, con l'oblò di lei), lontano dalla porta dell'infermeria, col suo faretto bianco. L'infermeria torna senza cartello e senza faretto (enigmi).
+- **Giro di raffinamento**: "Come quantità di gameplay secondo me ci siamo col capitolo 1. Mi fai un giro di raffinamento con proposte per migliorare il gioco?". Le sette squadre hanno proposto ritocchi a quello che c'è (proposte in `docs/proposte/raffinamento/` sui branch `lavoro/proposte-raffinamento-*`); l'utente ha risposto sulla pagina "Ritocchi del capitolo 1" (https://claude.ai/artifact/7xSt3QTin66sQ79XNyxFDk). Non ha chiesto di vedere o sentire niente prima.
+  - **Sì**:
+    - scaletta del bacino allungata di due pioli fino sotto il pelo (A);
+    - lampade rosse della scala di servizio alzate di 5 cm, fondo a 2,03 m (A);
+    - entrando nei tubi dalle vasche gli occhi restano almeno 3 cm sopra l'acqua, con un test che lo controlla (A);
+    - cima della scala di servizio: strisce gialle e nere sul pavimento e fascia catarifrangente sul muro, nessuna luce nuova (A);
+    - Polaroid: album nel menu di pausa con 16 cornici, contatore sempre "n su 16" (A);
+    - cassaforte: clic a ogni cifra, chiavistello e cigolio col codice giusto, niente col codice sbagliato (A);
+    - dischi del fiume: colpo di lamiera sul disco, poi motore e catene della chiusa (A);
+    - "fatto giusto": il jingle della botola accorciato a 2-3 note a ogni enigma risolto (A);
+    - bambini: passi di corsa leggeri, diversi per il cubo e per l'agnellino (A);
+    - agnellini animati come il bambino col cubo, tutti e due (A);
+    - lei nelle condotte: una salita diversa per vasca, tempi uguali (A);
+    - cuore nelle condotte solo quando lei è su; i colpi bassi restano nel tunnel (A);
+    - luminosità del primo avvio: seconda prova su uno scatto vero del corridoio delle pile (A);
+    - angolo all'ingresso degli scatoloni: una pila, e il bambino sparisce dietro (B);
+    - ripartenze: togliere il lavoro ripetuto (obiettivo 2-4 s) e, dalla seconda morte nello stesso punto, scena della presa di 1 s (C = A+B);
+    - pile del fiume costruite una volta e salvate già pronte (A);
+    - peso: texture degli oggetti piccoli e della torre da 2048 a 1024 (circa -290 MB), con scatti prima e dopo da approvare (A);
+    - effetti al primo uso preparati nel riscaldamento (A);
+    - qualità scelta in automatico al primo avvio con una prova di pochi secondi (A);
+    - "Avvio sicuro" proposto dopo una chiusura di colpo (qualità bassa e l'altro driver) (A).
+  - **No, restano così**: reazione di lei al getto, occhio che si abitua al buio, usura della stanza delle pozze, segni sugli scoli, segni fosforescenti nel fiume, spie delle pozze, strisce nei tubi dell'inseguimento, volantini e stile dei poster.
+  - **Giocattoli**: i cerchi restano coi loro colori, ma "puoi però spostare il disegno guida sulla torre con lo scivolo e il secchio gigante, in un punto facilmente raggiungibile e ben visibile" (la struttura dell'area bimbi della sala).
+- **Scelte della 0.3.21 (6 novembre)**, risposte sulle pagine "Scelte della 0.3.21" (https://claude.ai/artifact/VoAahMHss4xuEdsmayrVon) e "Texture più leggere" (https://claude.ai/artifact/WPSBeWMYemURYegMdMKBzy). Non ha chiesto di vedere niente prima.
+  - **Disegno guida dei giocattoli: A**, va bene così. Resta il cartoncino sulla ringhiera della torretta col tetto blu, all'altezza degli occhi.
+  - **Salite di lei nelle vasche delle condotte: C**, lo scambio. La mano che si aggrappa al bordo va nella vasca 3, dove lei si arrampica davvero fuori da dietro il muro; la salita veloce con l'occhio puntato va nella vasca 2. Tempi uguali.
+  - **Texture più leggere: sì**. Oggetti piccoli e torre da 2048 a 1024, exe da 1,92 a 1,79 GB.
+  - **Strisce in cima alla scala di servizio: B** (risposta delle 11:47, senza chiedere di vederle). Il nastro giallo e nero sul pavimento e la fascia sul muro diventano appena fosforescenti, come la ciambella del fiume: brillano pochissimo di luce propria e non illuminano niente intorno, così la strada fino alla porta di C3 si vede nel buio. Solo qui: nel fiume e nei tubi resta il no ai segni fosforescenti. Prima l'utente aveva chiesto della "texture grigia sulla parete" in fondo al corridoio, quella con l'oblò di lei: "sembra un glitch". Era il cielo, visto solo negli scatti di prova fatti senza il corridoio C3 dietro la porta; nel gioco vero lì c'è C3 al buio. Cercando altri punti come questo, ambienti-1 ha chiuso una fessura vera di 31 cm nel pavimento fra la camera delle onde e la sala pompe, e un controllo della CI (tests/controllo_cielo.gd) guarda il cielo lungo tutta la strada.
+- **Vasche delle condotte come giochi per bambini (richiesta dell'utente, 6 novembre)**: «miglioriamo un po la zona delle vasche dove Jilly si affaccia mentre tu spruzzi i bersagli. Sia le vasche che i bersagli sono troppo low quality. Dovrebbero sembrare giochi per bambini. Ci vorrebbe qualche decorazione tipo cartonati fatti sempre in stile pastello a cera. Robe così, fatte dai bambini negli anni». Le risposte sono sulla pagina "Vasche delle condotte" (https://claude.ai/artifact/YU4Vfrg1twVoJXimPrKbyL).
+  - **Vasche**: restano uguali. Nota dell'utente: «Lascia le vasche uguali ma aggiungi degli stendardi giganti appesi nel vuoto dietro, nella distanza, niente disegni ai, falli come s'è fossero lenzuoli appesi e colorati dai bambini. Per il resto non toccare». Gli stendardi li fa grafica.
+  - **Bersagli: A**, il tiro a segno da luna park a pastello sbiadito. Sulla paratia giusta un sole sorridente, sulla sbagliata un pesce con gli occhi a croce, spento e scrostato. I montanti sono a strisce caramella; luce verde, anello di led e lampada rossa restano. **L'utente vuole vederli prima**, negli scatti del gioco. Li fa grafica-2. **Approvati il 6 novembre** («Sì», pagina "Bersagli nuovi": https://claude.ai/artifact/CnUVRfW8uLRXFMVP3f5EhU), così come negli scatti di lavoro/bersagli-luna-park 90756a37.
+  - **Cartonati: A**, le sagome in piedi del club dei bambini della nave: 12 animali del mare, 4 per vasca, da 60 cm a 1,3 m, legati alle ringhiere e ai pilastri. Hanno età diverse (slavate e gonfie d'acqua, riparate con lo scotch, una nuova per vasca). Al posto della firma c'è una manina colorata. Li fa enigmi.
+  - **Jilly fra i disegni dei bambini: A**. Nei disegni vecchi è la mascotte sorridente coi pesci, nei recenti è alta coi tentacoli sopra i bambini piccoli, nell'ultimo c'è solo l'occhio. Niente sagoma di lei.
+  - **Quando: B**, tutto nella 0.3.21, che aspetta queste cose.
+  - **Stendardi giganti: A** (pagina "Stendardi giganti": https://claude.ai/artifact/K76usGjRpdHZHkyRavGAJv, risposta delle 14:56, senza chiedere di vederli). I primi, di 3 x 4,5 m, dalle vasche sembravano lenzuoli grandi e non stendardi giganti (ricontrollo di enigmi). Diventano di circa 6 x 9 m ciascuno, fatti di più lenzuoli cuciti, ognuno con la sua tinta sbiadita e le cuciture che si vedono, coi disegni dei bambini più grandi. Dalle vasche prendono dal 40 al 60% dell'altezza dello schermo. I posti sono quelli misurati da enigmi: il primo 5 m più a nord (prima copriva una lampada appesa), il secondo e il quarto appesi più in alto, il terzo a ovest della vasca 3. Ogni bastone è legato con corde annodate a golfari avvitati sotto le travi, e le mollette stanno a cavallo del bastone. Niente copre bocche, paratie, bersagli, lampade o i punti dove sale lei, e sopra dove si passa restano liberi 2 m.
+- **Sala della torre chiusa in cima: A** (stessa pagina, voce TORRE_CIMA, risposta delle 14:56). Il controllo del cielo di ambienti-1 ha trovato che la sala della torre non ha soffitto: dalla discesa, guardando in su, si vede il cielo scuro sopra le bandierine (così dalla 0.3.8). Si chiude con un soffitto buio di travi e lamiere, come quello della sala delle condotte, e le luci della sala restano come sono. Si fa nella 0.3.22, dopo questa versione. Nella 0.3.21 ambienti-1 ha già chiuso la fessura vera sulla soglia del portone della torre.
+  - **Niente disegni fatti con l'IA** per stendardi e cartonati: si usa il pastello del gioco (assets_src/scarabocchi/pastello.py).

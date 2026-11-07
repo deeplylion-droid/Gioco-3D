@@ -1,6 +1,7 @@
 extends Node
-## I colori del cartello delle pozze (infermeria, accanto alla porta nord) contro quelli delle pozze, dagli occhi del
-## giocatore, col renderer vero, nella Risalita della scena di prova (come tests/collaudo/pozze_giro.gd del collaudo:
+## I colori del cartello delle pozze (CartelloPozze: dal 4 novembre nel corridoio del personale prima dell'infermeria, prima
+## accanto alla porta nord dell'infermeria) contro quelli delle pozze, dagli occhi del giocatore, col renderer vero, nella
+## Risalita della scena di prova (come tests/collaudo/pozze_giro.gd del collaudo:
 ## ambiente della sala, senza GI, nebbia volumetrica e SSIL se non c'è VERO=1, luci del blackout).
 ## Misura come il collaudo il colore medio sullo schermo al centro dei tre quadratini (viola, arancione, turchese) e
 ## dello smalto, da 1,5, 0,8 e 0,45 m, e al centro delle pozze dalla passerella sud; stampa RGB e tinta, saturazione,
@@ -31,6 +32,10 @@ const VARIANTI := {
 	"lontano_6_tex": [6.0, Color(1, 1, 1), 1.2, 15.0, 0.7, true],
 	"bianco_5_tex": [5.0, Color(1, 1, 1), null, null, 0.7, true],
 	"bianco_6_tex": [6.0, Color(1, 1, 1), null, null, 0.7, true],
+	# nel corridoio del personale (6 novembre): il faretto più forte, e il riferimento senza le luci colorate vicine
+	"faretto_8": [8.0, Color(1, 1, 1), null, null, null, false],
+	"faretto_12": [12.0, Color(1, 1, 1), null, null, null, false],
+	"senza_colorate": [null, null, null, null, null, false],
 }
 
 var p: Player
@@ -42,6 +47,8 @@ var ris: Node3D
 var st: Node3D
 var e: Node3D
 var inf: Node3D
+## Il cartello (le misure sono nelle sue coordinate: il centro sulla faccia del muro, +Z verso chi guarda, +X a destra).
+var cp: CartelloPozze
 var cam: Camera3D
 var luce: SpotLight3D
 var faccia: MeshInstance3D
@@ -74,8 +81,9 @@ func S(v: Vector3) -> Vector3:
 	return st.to_global(v)
 
 
-func I(v: Vector3) -> Vector3:
-	return inf.to_global(v)
+## Un punto nelle coordinate del cartello.
+func C(v: Vector3) -> Vector3:
+	return cp.to_global(v)
 
 
 func _guarda(da: Vector3, verso: Vector3, nome: String, accovacciato := false) -> Image:
@@ -159,18 +167,25 @@ func _run() -> void:
 	st = ris.get(&"pozze") as Node3D
 	inf = ris.get(&"infermeria") as Node3D
 	e = st.get_node(^"EnigmaPozze") as Node3D
-	luce = inf.get_node(^"FarettoCartelloPozze/Luce") as SpotLight3D
-	faccia = inf.find_child("CartelloPozzeFaccia", true, false) as MeshInstance3D
+	cp = ris.find_child("CartelloPozzeColorate", true, false) as CartelloPozze
+	luce = cp.get_node(^"FarettoCartelloPozze/Luce") as SpotLight3D
+	faccia = cp.get_node(^"CartelloPozzeFaccia") as MeshInstance3D
 	var m := faccia.get_active_material(0) as StandardMaterial3D
 	_orig = {"energia": luce.light_energy, "colore": luce.light_color, "xf": luce.global_transform,
 			"angolo": luce.spot_angle, "portata": luce.spot_range, "rough": m.roughness, "tex": m.albedo_texture}
+	# le luci colorate vicine al cartello e quanto sono accese (la rosa di lei nell'oblò di fronte, le lampade rosse)
+	for l in ris.find_children("*", "OmniLight3D", true, false):
+		var o := l as OmniLight3D
+		if o.is_visible_in_tree() and o.global_position.distance_to(cp.global_position) < o.omni_range:
+			print("COLORI: luce vicina %s colore %s energia %.2f a %.2f m, prende il cartello: %s" % [o.name, o.light_color,
+					o.light_energy, o.global_position.distance_to(cp.global_position), (o.light_cull_mask & CartelloPozze.STRATO) != 0])
 	print("COLORI: luci %s; faretto in %s, energia %.2f, angolo %.1f; GI e nebbia %s" % [GameState.luci,
-			inf.to_local(luce.global_position).snapped(Vector3.ONE * 0.01), luce.light_energy, luce.spot_angle,
+			cp.to_local(luce.global_position).snapped(Vector3.ONE * 0.01), luce.light_energy, luce.spot_angle,
 			"accese" if OS.has_environment("VERO") else "spente"])
 	var interr := inf.get_node_or_null(^"Interruttore")
 	if interr:
 		interr.set(&"powered", true)
-	p.teleport(I(Vector3(-1.0, 0.05, -1.0)))
+	p.teleport(C(Vector3(-1.0, -1.45, 1.0)))
 	await _frames(60)
 	for v in varianti:
 		_applica(v)
@@ -181,8 +196,21 @@ func _run() -> void:
 	get_tree().quit()
 
 
+var _spente: Array[Light3D] = []
+
+
 func _applica(nome: String) -> void:
 	var d: Array = VARIANTI[nome]
+	# "senza_colorate": le luci colorate che arrivano al cartello spente (il riferimento: solo il faretto e l'ambiente)
+	for l in _spente:
+		l.visible = true
+	_spente.clear()
+	if nome == "senza_colorate":
+		for l in ris.find_children("*", "OmniLight3D", true, false):
+			var o := l as OmniLight3D
+			if o.is_visible_in_tree() and o.global_position.distance_to(cp.global_position) < o.omni_range and o.light_color.s > 0.2:
+				o.visible = false
+				_spente.append(o)
 	var m := faccia.get_active_material(0) as StandardMaterial3D
 	luce.light_energy = d[0] if d[0] != null else _orig["energia"]
 	luce.light_color = d[1] if d[1] != null else _orig["colore"]
@@ -190,8 +218,8 @@ func _applica(nome: String) -> void:
 	m.roughness = d[4] if d[4] != null else _orig["rough"]
 	if d[2] != null:
 		# il faretto attaccato al soffitto più lontano dal muro, puntato sul cartello (solo la luce: per la misura)
-		var testa := I(Vector3(-2.95, 3.0 - 0.16, -3.2 + float(d[2])))
-		var bersaglio := I(Vector3(-2.95, 1.52, -3.2))
+		var testa := C(Vector3(0, cp.soffitto - 0.16, float(d[2])))
+		var bersaglio := C(Vector3(0, 0.02, 0))
 		var dir := (bersaglio - testa).normalized()
 		luce.global_transform = Transform3D(Basis.looking_at(dir, Vector3.UP), testa + dir * 0.125)
 		luce.spot_range = testa.distance_to(bersaglio) + 1.5
@@ -205,16 +233,16 @@ func _applica(nome: String) -> void:
 	else:
 		m.albedo_texture = _orig["tex"]
 	print("COLORI: variante %s: energia %.2f, colore %s, faretto a %.2f m dal muro, angolo %.1f, roughness %.2f, texture %s" % [
-			nome, luce.light_energy, luce.light_color, absf(inf.to_local(luce.global_position).z + 3.2), luce.spot_angle,
+			nome, luce.light_energy, luce.light_color, absf(cp.to_local(luce.global_position).z), luce.spot_angle,
 			m.roughness, tex_nuova if d[5] and tex_nuova != "" else "del gioco"])
 
 
 func _cartello(v: String) -> void:
-	var c := I(Vector3(-2.95, 1.5, -3.2))
-	var quad := I(Vector3(-2.95, 1.73 - 0.405, -3.2 + 0.0085))
-	var lato := (I(Vector3(1, 0, 0)) - I(Vector3.ZERO)).normalized()
+	var c := C(Vector3.ZERO)
+	var quad := C(Vector3(0, -0.175, 0.0085))
+	var lato := (C(Vector3(1, 0, 0)) - C(Vector3.ZERO)).normalized()
 	for d in [1.5, 0.8, 0.45]:
-		var da := I(Vector3(-2.95, 0, -3.2 + d))
+		var da := C(Vector3(0, -1.5, d))
 		var im := await _guarda(da, c, "%s_cartello_%.2fm" % [v, d], d < 0.6)
 		for k in [-1, 0, 1]:
 			var w: Vector3 = quad + lato * (0.092 * float(k))
@@ -223,9 +251,10 @@ func _cartello(v: String) -> void:
 			# il centro del quadratino, 3 cm per lato (la cera e i buchi del pastello insieme, come li vede l'occhio)
 			print("COLORI: %s da %.2f m, %s: %s" % [v, d, ["viola", "arancione", "turchese"][k + 1],
 					_c(_media_area(im, w, lato, 0.015))])
-		print("COLORI: %s da %.2f m, smalto: %s" % [v, d, _c(_media_area(im, I(Vector3(-2.95, 1.43, -3.2 + 0.0085)) + lato * 0.11, lato, 0.015))])
-	# arrivando verso la porta, come lo vede il giocatore
-	await _guarda(I(Vector3(-1.4, 0, -1.6)), c, "%s_cartello_diagonale" % v)
+		print("COLORI: %s da %.2f m, smalto: %s" % [v, d, _c(_media_area(im, C(Vector3(0.11, -0.07, 0.0085)), lato, 0.015))])
+	# di sbieco, come lo vede il giocatore: entrando dal capannone e dalla porta dell'infermeria
+	await _guarda(C(Vector3(0.7, -1.5, 1.0)), c, "%s_cartello_entrando" % v)
+	await _guarda(C(Vector3(-1.6, -1.5, 1.0)), c, "%s_cartello_dalla_porta_infermeria" % v)
 
 
 func _pozze() -> void:

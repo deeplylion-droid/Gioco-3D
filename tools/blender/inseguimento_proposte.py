@@ -383,9 +383,12 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     lat = Vector((-n.y, n.x, 0))
     base = Vector(centro) - Vector((0, 0, alto / 2))
     top = base.z + alto * 2 + 0.3
+    # nel gioco i montanti sono ridipinti a strisce caramella, giallo e bianco sporco (bersagli da luna park, proposta A
+    # di grafica-2 scelta dall'utente per la 0.3.21)
     for sg in (-1, 1):
         q = base + lat * (sg * (largo / 2 + 0.12))
-        c.scatola_assi(Vector((q.x, q.y, (base.z + top) / 2)), [n, lat, Vector((0, 0, 1))], (0.1, 0.1, (top - base.z) / 2), 'giallo_sicurezza')
+        c.scatola_assi(Vector((q.x, q.y, (base.z + top) / 2)), [n, lat, Vector((0, 0, 1))], (0.1, 0.1, (top - base.z) / 2),
+                       'caramella' if GIOCO else 'giallo_sicurezza')
     # nel gioco la trave a strisce gialle e nere vuol dire "chiuso" (come nella torre, scelta dell'utente del 22
     # ottobre): sulla paratia giusta è liscia, gialla come i montanti
     trave = 'giallo_sicurezza' if (GIOCO and giusta) else 'strisce'
@@ -394,15 +397,37 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     pann = Vector((base.x, base.y, zp)) - n * 0.05
     cp = K.Costruttore(c.mats) if GIOCO else c          # nel gioco il pannello è un nodo a parte
     # nel gioco il pannello va da un montante all'altro e scorre nelle loro guide (alzato, a 2 cm, restava sospeso)
-    cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2 + (0.02 if GIOCO else 0.0), alto / 2), 'acciaio_portone')
-    for k in (-1, 1):       # nervature
-        cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) - n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
-    # bersaglio: tre anelli concentrici, verso la vasca
     t = pann - n * 0.1 + Vector((0, 0, alto * 0.22))      # in alto sul pannello: fuori dall'acqua
     t_centro = Vector(t)
-    for r_, m in ((0.42, 'giallo_sicurezza'), (0.3, 'nero_opaco'), (0.18, 'giallo_sicurezza'), (0.08, 'nero_opaco')):
-        cp.disco(t, -n, r_, m, seg=28)
-        t = t - n * 0.004
+    if GIOCO:
+        # il bersaglio da luna park (proposta A di grafica-2, 0.3.21): la faccia verso la vasca è dipinta come il tiro a
+        # segno delle giostre, coi cerchi e il disegno grande al centro (assets_src/inseguimento/bersagli/bersagli.py:
+        # il sole sulla giusta, il pesce con gli occhi a croce sulla sbagliata); niente più dischi gialli e neri né
+        # nervature. Il centro della sfera di colpo (t_centro) resta dov'era
+        mx, mz = largo / 2 + 0.02, alto / 2
+        destra = -lat                                      # a destra di chi guarda la faccia dipinta (da -n)
+        def P(a, b, c_):
+            return tuple(pann + n * (0.05 * a) + destra * (mx * b) + Vector((0, 0, mz * c_)))
+        cp.faccia_verso([P(-1, -1, -1), P(-1, 1, -1), P(-1, 1, 1), P(-1, -1, 1)],
+                        'bersaglio_giusto' if giusta else 'bersaglio_sbagliato', tuple(-n),
+                        uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
+        for f in ([P(1, -1, -1), P(1, 1, -1), P(1, 1, 1), P(1, -1, 1)],          # retro
+                  [P(-1, -1, -1), P(1, -1, -1), P(1, -1, 1), P(-1, -1, 1)],      # fianchi
+                  [P(-1, 1, -1), P(1, 1, -1), P(1, 1, 1), P(-1, 1, 1)],
+                  [P(-1, -1, -1), P(1, -1, -1), P(1, 1, -1), P(-1, 1, -1)],      # sotto e sopra
+                  [P(-1, -1, 1), P(1, -1, 1), P(1, 1, 1), P(-1, 1, 1)]):
+            q = sum((Vector(v) for v in f), Vector()) / 4.0
+            cp.faccia_verso(f, 'acciaio_portone', tuple(q - pann))
+        # (niente nervature: sul davanti coprivano il disegno, sul retro entravano nella bocca del tubo dietro)
+        t = t - n * 0.016       # il punto dei bersagli nelle luci resta quello dei dischi di prima (mira della lampada)
+    else:
+        cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2, alto / 2), 'acciaio_portone')
+        for k in (-1, 1):       # nervature
+            cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) - n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
+        # bersaglio: tre anelli concentrici, verso la vasca
+        for r_, m in ((0.42, 'giallo_sicurezza'), (0.3, 'nero_opaco'), (0.18, 'giallo_sicurezza'), (0.08, 'nero_opaco')):
+            cp.disco(t, -n, r_, m, seg=28)
+            t = t - n * 0.004
     if GIOCO:
         k_ = len(GIOCO_DATI['paratie'])
         ob = S.con_perno(cp.crea(f'ins_paratia_{k_}'), tuple(pann))
@@ -538,6 +563,35 @@ def scala_pioli(c, x, y, z0, z1, verso_x=1):
     zz = z0 + 0.3
     while zz < z1 + 0.2:
         c.cilindro((x, y - 0.25, zz), (x, y + 0.25, zz), 0.022, 'giallo_sicurezza', seg=6)
+        zz += 0.3
+
+
+def scala_bacino(c, x, x_muro, y, t, z_bordo, z1):
+    """La scaletta del bacino nel gioco (ritocco del capitolo 1, scelta A dell'utente): sopra il bordo come scala_pioli
+    (piede sul bordo del muro, i pioli ogni 30 cm da t), e i montanti che scavalcano il bordo e scendono contro la
+    faccia del muro verso l'acqua con due pioli in più, fino sotto il pelo (prima i due pioli più bassi erano chiusi
+    nel muro e la scaletta cominciava sul bordo, 26 cm sopra l'acqua: da dentro sembrava appesa)."""
+    r = 0.03
+    xb = x_muro + r                 # i montanti del tratto basso toccano la faccia del muro
+    zc = z_bordo + r                # il tratto sopra il bordo, appoggiato
+    r1 = 0.05                       # la curva in alto, dal montante al tratto sul bordo
+    for sg in (-0.25, 0.25):
+        # ogni montante è un tubo solo, piegato (prima tre cilindri: il tappo piatto del pezzo sul bordo sporgeva dal
+        # gomito, ricontrollo del collaudo): giù, sul bordo, attorno allo spigolo del bordo, giù contro il muro
+        pts = [(x, y + sg, z1 + 1.0), (x, y + sg, zc + r1)]
+        for k in range(1, 6):
+            a = math.radians(180 + 90 * k / 6)
+            pts.append((x + r1 + r1 * math.cos(a), y + sg, zc + r1 + r1 * math.sin(a)))
+        pts += [(x + r1, y + sg, zc), (x_muro, y + sg, zc)]
+        for k in range(1, 6):
+            a = math.radians(90 - 90 * k / 6)
+            pts.append((x_muro + r * math.cos(a), y + sg, z_bordo + r * math.sin(a)))
+        pts += [(xb, y + sg, z_bordo), (xb, y + sg, t - 0.12)]
+        c.tubo(pts, r, 'giallo_sicurezza', seg=8, tappi=True)
+    zz = t
+    while zz < z1 + 0.2:
+        xp = xb if zz < z_bordo else x
+        c.cilindro((xp, y - 0.25, zz), (xp, y + 0.25, zz), 0.022, 'giallo_sicurezza', seg=6)
         zz += 0.3
 
 
@@ -712,7 +766,10 @@ def versione_A(mats):
     # la grata di sicurezza sulla bocca del tubo finale (chiusa: è calata davanti a lei)
     grata(c, (BX[2] - 0.1, 6.5, z0 + 2.0), (1, 0), not GIOCO, largo=3.0, alto=4.0)   # nel gioco alzata: cala dopo
     # la strada per uscire: scaletta sul bordo ovest del bacino, passerella, porta di servizio
-    scala_pioli(c, BX[0] + 0.15, 3.2, T - 0.3, porta[1])
+    if GIOCO:
+        scala_bacino(c, BX[0] + 0.15, BX[0] + 0.3, 3.2, T, T + 0.55, porta[1])
+    else:
+        scala_pioli(c, BX[0] + 0.15, 3.2, T - 0.3, porta[1])
     GIOCO_DATI['scale'].append(dict(x=BX[0] + 0.3, y=3.2, z0=z0, z1=porta[1], verso=[1.0, 0.0, 0.0]))
     P.piattaforma(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1], lati=('s', 'n'), pali=False)
     # nel gioco le gambe dal lato del bacino stanno fuori dal suo muro (prima ci passavano dentro, e la croce di quel
@@ -1361,6 +1418,24 @@ def versione_B(mats):
 VERSIONI = {'A': versione_A, 'B': versione_B}
 
 
+def materiali_bersagli(mats):
+    """I materiali dei bersagli da luna park e dei montanti a caramella (proposta A di grafica-2, 0.3.21): le texture
+    di assets_src/inseguimento/bersagli/bersagli.py, smalto un po' lucido sull'acciaio."""
+    cartella = os.path.normpath(os.path.join(QUI, '..', '..', 'assets_src', 'inseguimento', 'bersagli'))
+    for nome, rough, metallo, lato in (('bersaglio_giusto', 0.62, 0.05, 1.0), ('bersaglio_sbagliato', 0.7, 0.15, 1.0),
+                                       ('caramella', 0.55, 0.05, 0.5)):
+        m, nt, b = mats._base(nome)
+        uv = nt.nodes.new('ShaderNodeUVMap'); uv.uv_map = 'UVMap'
+        t = nt.nodes.new('ShaderNodeTexImage')
+        t.image = bpy.data.images.load(os.path.join(cartella, f'{nome}_col.png'), check_existing=True)
+        nt.links.new(uv.outputs['UV'], t.inputs['Vector'])
+        nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
+        b.inputs['Roughness'].default_value = rough
+        b.inputs['Metallic'].default_value = metallo
+        mats.cache[nome] = m
+        mats.lati[nome] = lato
+
+
 def main():
     argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
     nome = argv[0] if argv else 'A'
@@ -1373,6 +1448,7 @@ def main():
     S.materiali_nuovi(mats)
     P.materiali_torre(mats)
     TA.materiali_scivoli(mats)
+    materiali_bersagli(mats)
     gioco = '--gioco' in argv
     uscita, prefisso = USCITA, f'inseguimento_{nome}'
     if gioco:

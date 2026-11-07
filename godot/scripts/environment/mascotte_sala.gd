@@ -76,7 +76,7 @@ func _metti_statua(s: Dictionary) -> void:
 		if m == null:
 			continue
 		var cs := CollisionShape3D.new()
-		cs.shape = m.create_trimesh_shape()
+		cs.shape = FormeTenute.trimesh(m)   # (tenuta fra una ripartenza e l'altra)
 		corpo.add_child(cs)
 		cs.global_transform = (mi as MeshInstance3D).global_transform
 	# Sotto le braccia alzate non si passa: un cilindro largo quanto la parte che sporge di più fino a 2 m

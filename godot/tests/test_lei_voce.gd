@@ -59,7 +59,7 @@ func _run() -> void:
 
 	print("Le animazioni")
 	for coppia in [[&"sale_dall_acqua", &"lei_insegue_sale"], [&"presa", &"lei_insegue_presa"],
-			[&"respinta", &"lei_insegue_respinta"], [&"sale_dall_acqua_veloce", &"lei_insegue_sale"],
+			[&"respinta", &"lei_insegue_respinta"], [&"sale_dall_acqua_veloce", &"lei_insegue_sale"], [&"sale_puntata", &"lei_insegue_sale"], [&"sale_mano", &"lei_insegue_sale"],
 			[&"affacciata_sb1", &"lei_insegue_sb1"]]:
 		var prima := int(Audio.conteggio.get(coppia[1], 0))
 		ap.play(StringName("inseguimento/" + String(coppia[0])))
