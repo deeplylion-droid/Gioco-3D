@@ -1,0 +1,2 @@
+ERROR: Parameter "data.tree" is null.
+   at: get_tree (scene/main/node.h:559)

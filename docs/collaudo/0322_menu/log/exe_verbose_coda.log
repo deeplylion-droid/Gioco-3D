@@ -1,0 +1,60 @@
+Loading resource: res://.godot/imported/foam.png-63e7a7c2f827747008090765d97212b3.ctex remapped: res://.godot/imported/foam.png-63e7a7c2f827747008090765d97212b3.ctex
+Completed load for: 'res://addons/acqua/textures/foam.png' remapped 'res://addons/acqua/textures/foam.png' at thread 0
+Loading resource: res://.godot/exported/133200997/export-04700dee211ee85e7d2a24b5929e0a5a-bambino_agnello.scn remapped: res://.godot/exported/133200997/export-04700dee211ee85e7d2a24b5929e0a5a-bambino_agnello.scn
+Completed load for: 'res://scenes/creature/bambino_agnello.tscn' remapped 'res://.godot/exported/133200997/export-04700dee211ee85e7d2a24b5929e0a5a-bambino_agnello.scn' at thread 0
+Loading resource: res://.godot/exported/133200997/export-6ea457b07c9fcdcd3df8c7909f000886-ambiente_sala.res remapped: res://.godot/exported/133200997/export-6ea457b07c9fcdcd3df8c7909f000886-ambiente_sala.res
+Completed load for: 'res://addons/grafica/sala/ambiente_sala.tres' remapped 'res://.godot/exported/133200997/export-6ea457b07c9fcdcd3df8c7909f000886-ambiente_sala.res' at thread 0
+Loading resource: res://.godot/exported/133200997/export-6d5b1bfcdda51b69b41e51e1fd1014f8-attributi_camera_sala.res remapped: res://.godot/exported/133200997/export-6d5b1bfcdda51b69b41e51e1fd1014f8-attributi_camera_sala.res
+Completed load for: 'res://addons/grafica/sala/attributi_camera_sala.tres' remapped 'res://.godot/exported/133200997/export-6d5b1bfcdda51b69b41e51e1fd1014f8-attributi_camera_sala.res' at thread 0
+Loading resource: res://.godot/exported/133200997/export-1e0ae88fb6eabbe97bb0ffc926754541-ambiente_interni.res remapped: res://.godot/exported/133200997/export-1e0ae88fb6eabbe97bb0ffc926754541-ambiente_interni.res
+Completed load for: 'res://addons/grafica/interni/ambiente_interni.tres' remapped 'res://.godot/exported/133200997/export-1e0ae88fb6eabbe97bb0ffc926754541-ambiente_interni.res' at thread 0
+Loading resource: res://.godot/exported/133200997/export-5029b9a48c367faed85da10fbbed2c38-attributi_interni.res remapped: res://.godot/exported/133200997/export-5029b9a48c367faed85da10fbbed2c38-attributi_interni.res
+Completed load for: 'res://addons/grafica/interni/attributi_interni.tres' remapped 'res://.godot/exported/133200997/export-5029b9a48c367faed85da10fbbed2c38-attributi_interni.res' at thread 0
+Loading resource: res://addons/acqua/shaders/invisible.gdshader remapped: res://addons/acqua/shaders/invisible.gdshader
+Completed load for: 'res://addons/acqua/shaders/invisible.gdshader' remapped 'res://addons/acqua/shaders/invisible.gdshader' at thread 0
+Loading resource: res://.godot/exported/133200997/export-884e17c9d3cc8efe9fee7830a33a3e00-bambino_cubo.scn remapped: res://.godot/exported/133200997/export-884e17c9d3cc8efe9fee7830a33a3e00-bambino_cubo.scn
+Completed load for: 'res://scenes/creature/bambino_cubo.tscn' remapped 'res://.godot/exported/133200997/export-884e17c9d3cc8efe9fee7830a33a3e00-bambino_cubo.scn' at thread 0
+Loading resource: res://assets/ambienti_tecnici/corridoio_fiume/corridoio_fiume.gltf remapped: res://assets/ambienti_tecnici/corridoio_fiume/corridoio_fiume.gltf
+Loading resource: res://.godot/imported/corridoio_fiume.gltf-bcebbef2396e6f0cc3a872a10dbbed80.scn remapped: res://.godot/imported/corridoio_fiume.gltf-bcebbef2396e6f0cc3a872a10dbbed80.scn
+Completed load for: 'res://assets/ambienti_tecnici/corridoio_fiume/corridoio_fiume.gltf' remapped 'res://assets/ambienti_tecnici/corridoio_fiume/corridoio_fiume.gltf' at thread 0
+Loading resource: res://.godot/exported/133200997/export-c2c62cb8c73458cd122faf659769dc80-player.scn remapped: res://.godot/exported/133200997/export-c2c62cb8c73458cd122faf659769dc80-player.scn
+Completed load for: 'res://scenes/player/player.tscn' remapped 'res://.godot/exported/133200997/export-c2c62cb8c73458cd122faf659769dc80-player.scn' at thread 0
+Loading resource: res://addons/acqua/shaders/underwater_post.gdshader remapped: res://addons/acqua/shaders/underwater_post.gdshader
+Completed load for: 'res://addons/acqua/shaders/underwater_post.gdshader' remapped 'res://addons/acqua/shaders/underwater_post.gdshader' at thread 0
+Loading resource: res://addons/acqua/shaders/bubble_particle.gdshader remapped: res://addons/acqua/shaders/bubble_particle.gdshader
+Completed load for: 'res://addons/acqua/shaders/bubble_particle.gdshader' remapped 'res://addons/acqua/shaders/bubble_particle.gdshader' at thread 0
+Loading resource: res://addons/grafica/getto_nucleo.gdshader remapped: res://addons/grafica/getto_nucleo.gdshader
+Completed load for: 'res://addons/grafica/getto_nucleo.gdshader' remapped 'res://addons/grafica/getto_nucleo.gdshader' at thread 0
+Loading resource: res://addons/grafica/colonna_aspirata.gdshader remapped: res://addons/grafica/colonna_aspirata.gdshader
+Completed load for: 'res://addons/grafica/colonna_aspirata.gdshader' remapped 'res://addons/grafica/colonna_aspirata.gdshader' at thread 0
+Loading resource: res://assets/geyser/rumore_schiuma.png remapped: res://assets/geyser/rumore_schiuma.png
+Loading resource: res://.godot/imported/rumore_schiuma.png-0328fecb5750db9e1cd28d0878e6e058.s3tc.ctex remapped: res://.godot/imported/rumore_schiuma.png-0328fecb5750db9e1cd28d0878e6e058.s3tc.ctex
+Completed load for: 'res://assets/geyser/rumore_schiuma.png' remapped 'res://assets/geyser/rumore_schiuma.png' at thread 0
+Loading resource: res://shaders/interni/vetro_sporco.gdshader remapped: res://shaders/interni/vetro_sporco.gdshader
+Completed load for: 'res://shaders/interni/vetro_sporco.gdshader' remapped 'res://shaders/interni/vetro_sporco.gdshader' at thread 0
+Loading resource: res://.godot/exported/133200997/export-c78c9ab20666986ec28bbccf87ab5066-bocchetta.scn remapped: res://.godot/exported/133200997/export-c78c9ab20666986ec28bbccf87ab5066-bocchetta.scn
+Completed load for: 'res://addons/acqua/scenes/bocchetta.tscn' remapped 'res://.godot/exported/133200997/export-c78c9ab20666986ec28bbccf87ab5066-bocchetta.scn' at thread 0
+Loading resource: res://shaders/creature/bocca_squalo.gdshader remapped: res://shaders/creature/bocca_squalo.gdshader
+Completed load for: 'res://shaders/creature/bocca_squalo.gdshader' remapped 'res://shaders/creature/bocca_squalo.gdshader' at thread 0
+Loading resource: res://shaders/creature/denti_squalo.gdshader remapped: res://shaders/creature/denti_squalo.gdshader
+Completed load for: 'res://shaders/creature/denti_squalo.gdshader' remapped 'res://shaders/creature/denti_squalo.gdshader' at thread 0
+Loading resource: res://shaders/creature/bava_squalo.gdshader remapped: res://shaders/creature/bava_squalo.gdshader
+Completed load for: 'res://shaders/creature/bava_squalo.gdshader' remapped 'res://shaders/creature/bava_squalo.gdshader' at thread 0
+Loading resource: res://shaders/interni/parete.gdshader remapped: res://shaders/interni/parete.gdshader
+Completed load for: 'res://shaders/interni/parete.gdshader' remapped 'res://shaders/interni/parete.gdshader' at thread 0
+Loading resource: res://shaders/interni/piastrelle.gdshader remapped: res://shaders/interni/piastrelle.gdshader
+Completed load for: 'res://shaders/interni/piastrelle.gdshader' remapped 'res://shaders/interni/piastrelle.gdshader' at thread 0
+Loading resource: res://shaders/tecnici/crt.gdshader remapped: res://shaders/tecnici/crt.gdshader
+Completed load for: 'res://shaders/tecnici/crt.gdshader' remapped 'res://shaders/tecnici/crt.gdshader' at thread 0
+Loading resource: res://addons/grafica/geyser_acqua.gdshader remapped: res://addons/grafica/geyser_acqua.gdshader
+Completed load for: 'res://addons/grafica/geyser_acqua.gdshader' remapped 'res://addons/grafica/geyser_acqua.gdshader' at thread 0
+Loading resource: res://addons/grafica/acqua_schiuma.gdshader remapped: res://addons/grafica/acqua_schiuma.gdshader
+Completed load for: 'res://addons/grafica/acqua_schiuma.gdshader' remapped 'res://addons/grafica/acqua_schiuma.gdshader' at thread 0
+Loading resource: res://assets/enigma_acquari/acqua_acquario.gdshader remapped: res://assets/enigma_acquari/acqua_acquario.gdshader
+Completed load for: 'res://assets/enigma_acquari/acqua_acquario.gdshader' remapped 'res://assets/enigma_acquari/acqua_acquario.gdshader' at thread 0
+Loading resource: res://assets/enigma_acquari/vetro_acquario.gdshader remapped: res://assets/enigma_acquari/vetro_acquario.gdshader
+Completed load for: 'res://assets/enigma_acquari/vetro_acquario.gdshader' remapped 'res://assets/enigma_acquari/vetro_acquario.gdshader' at thread 0
+Loading resource: res://.godot/exported/133200997/export-c84001c94c4642632f5d883c5581dd10-acqua_giallo.res remapped: res://.godot/exported/133200997/export-c84001c94c4642632f5d883c5581dd10-acqua_giallo.res
+Completed load for: 'res://assets/enigma_acquari/acqua_giallo.tres' remapped 'res://.godot/exported/133200997/export-c84001c94c4642632f5d883c5581dd10-acqua_giallo.res' at thread 0
+Loading resource: res://.godot/exported/133200997/export-7d1989c0d1ae7f1418a0b0ea9bc760d3-acqua_blu.res remapERROR: Parameter "data.tree" is null.
+   at: get_tree (scene/main/node.h:559)

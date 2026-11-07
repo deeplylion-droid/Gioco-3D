@@ -1,0 +1,5 @@
+PASSO torno alla prima scheda e chiudo
+BATTITO frame 2517 
+BATTITO frame 2524 
+PASSO FINE
+BATTITO frame 2530 

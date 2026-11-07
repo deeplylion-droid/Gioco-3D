@@ -1,0 +1,35 @@
+WARNING: 1137 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 510 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PROVA: parto da torre -> true
+PROVA: ARRIVATO a 8 s, giocatore a (21.4, -0.009443, -15.0)
+PROVA t=8 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=525 dall_arrivo=0 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=15426 fps=40
+PROVA t=13 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=1110 dall_arrivo=585 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=18458 fps=145
+PROVA t=18 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=1833 dall_arrivo=1308 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=18458 fps=144
+PROVA: MUORE dopo 2033 fotogrammi di gioco (picco video dall'arrivo 0 MB; giocatore true, muore true, in pausa false)
+PROVA t=23 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=2558 dall_arrivo=2033 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=18478 fps=145
+PROVA t=28 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=3283 dall_arrivo=2033 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=18491 fps=145
+PROVA: ARRIVATO DOPO LA MORTE a 35 s, giocatore a (21.4, -0.009443, -15.0)
+PROVA t=35 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=3693 dall_arrivo=0 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=20213 fps=117
+PROVA t=40 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=4418 dall_arrivo=725 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=20213 fps=145
+PROVA t=45 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=5142 dall_arrivo=1449 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=20220 fps=145
+PROVA t=50 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=5867 dall_arrivo=2174 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=20220 fps=145
+PROVA t=55 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=6591 dall_arrivo=2898 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=20229 fps=145
+PROVA: RESTATO 24 s e 3623 fotogrammi di gioco dopo l'arrivo, esco; picco video in tutto 0 MB, dall'arrivo 0 MB
+PROVA t=60 scena=SalaPrincipale caricamenti=false pos=(21.4, -0.009443, -15.0) fotogrammi=7316 dall_arrivo=3623 picco_video=0 MB video=0 MB texture=0 MB buffer=0 MB oggetti=20228 fps=145
+ERROR: 11 RID allocations of type 'P11JoltShape3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'N26RendererEnvironmentStorage11EnvironmentE' were leaked at exit.
+ERROR: 143 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 67 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 62 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 173 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N24RendererCameraAttributes16CameraAttributesE' were leaked at exit.
+ERROR: 5 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
+ERROR: 2 RID allocations of type 'PN18TextServerAdvanced27FontAdvancedLinkedVariationE' were leaked at exit.
