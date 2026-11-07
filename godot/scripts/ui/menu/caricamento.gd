@@ -267,7 +267,8 @@ func _metti_testi() -> void:
 	testata.add_child(StileMenu.etichetta("CAPITOLO 1", StileMenu.oswald(600, 6), 26, StileMenu.TESTO_SPENTO))
 	col.add_child(testata)
 	var spazio := Control.new()
-	spazio.custom_minimum_size.y = 48
+	# (con Jilly i testi stanno tutti a sinistra: meno spazio in alto, perché il consiglio non arrivi alla barra)
+	spazio.custom_minimum_size.y = 26 if _video else 48
 	col.add_child(spazio)
 
 	var centro := HBoxContainer.new()
@@ -287,7 +288,7 @@ func _metti_testi() -> void:
 	if _video:
 		# con Jilly a destra il consiglio va sotto i comandi, e la destra resta a lei
 		var spazio_c := Control.new()
-		spazio_c.custom_minimum_size.y = 26
+		spazio_c.custom_minimum_size.y = 16
 		sx.add_child(spazio_c)
 		sx.add_child(dx)
 		var lei := Control.new()
@@ -305,7 +306,7 @@ func _metti_testi() -> void:
 	_consiglio.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	Lingua.segui(_consiglio, func(): _consiglio.text = consiglio(scelto))
 	_consiglio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_consiglio.custom_minimum_size.x = 380
+	_consiglio.custom_minimum_size.x = 470 if _video else 380
 	dx.add_child(_consiglio)
 	_torna = StileMenu.voce("Torna al titolo", 24)
 	_torna.name = "TornaAlTitolo"

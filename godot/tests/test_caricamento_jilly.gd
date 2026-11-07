@@ -63,6 +63,22 @@ func _run() -> void:
 	var w := float(s.get_viewport_rect().size.x)
 	check(cons != null and cons.get_global_rect().end.x <= w * 0.55,
 			"il consiglio sta a sinistra (finisce a %.0f su %.0f)" % [cons.get_global_rect().end.x if cons else -1.0, w])
+	# ogni consiglio, in italiano e in inglese, sta sopra la riga dello stato e la barra resta dentro lo schermo
+	var stato := s.find_child("Stato", true, false) as Control
+	var barra := s.find_child("Barra", true, false) as Control
+	var lingua := Lingua.lingua
+	var peggiore := ""
+	for l in ["it", "en"]:
+		Lingua.imposta(l)
+		for c in car.CONSIGLI:
+			cons.text = car.consiglio(c)
+			await _frames(2)
+			if cons.get_global_rect().end.y > stato.get_global_rect().position.y - 4.0 \
+					or barra.get_global_rect().end.y > s.get_viewport_rect().size.y or cons.get_global_rect().end.x > w * 0.55:
+				peggiore = "%s: %s" % [l, c]
+	Lingua.imposta(lingua)
+	check(peggiore == "", "ogni consiglio, in italiano e in inglese, sta sopra lo stato, a sinistra, e la barra si vede%s" % [
+			"" if peggiore == "" else " (non ci sta: %s)" % peggiore])
 	var posto := s.find_child("PostoJilly", true, false) as Control
 	check(posto != null and posto.get_global_rect().position.x >= w * 0.4, "la destra è libera per Jilly")
 	# la memoria mentre gira (il costo di un fotogramma si misura col renderer vero: tests/misura_caricamento_jilly.gd)
