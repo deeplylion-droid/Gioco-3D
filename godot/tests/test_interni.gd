@@ -252,6 +252,12 @@ func _scena_squalo(start: Marker3D) -> void:
 	var salto_cam := 0.0
 	var salto_cam_quando := ""
 	var cam_prima := Vector3.ZERO
+	# (ricontrollo di grafica-2 su 8e481b9c: la mano destra entrava nel cartello del pavimento bagnato) polso, mano e
+	# artigli mai dentro le collisioni del corridoio (cartello compreso), con 3 cm di margine; il pavimento no (le mani
+	# possono poggiare a terra)
+	var mani_oggetti := ""
+	var sfera_mano := SphereShape3D.new()
+	sfera_mano.radius = 0.03
 	while not fatto[0] and t < 24.0:
 		await get_tree().process_frame
 		t += 1.0 / 60.0
@@ -310,6 +316,26 @@ func _scena_squalo(start: Marker3D) -> void:
 			morso_min = minf(morso_min, (s.call(&"_bone_mondo", "bocca") as Vector3).distance_to(s.call(&"_bone_mondo", "mento_punta")))
 		if s.squalo == null or not s.squalo.visible:
 			continue
+		if mani_oggetti == "":
+			for lato in ["L", "R"]:
+				var im := sch.find_bone("mano." + lato)
+				var gm := sch.global_transform * sch.get_bone_global_pose(im)
+				var lungo := 0.15
+				for c in sch.get_bone_children(im):
+					lungo = maxf(lungo, sch.get_bone_rest(c).origin.length())
+				for k in 6:
+					var qm := gm.origin + gm.basis.y.normalized() * (lungo + 0.10) * k / 5.0
+					if qm.y < p.global_position.y + 0.05:
+						continue
+					var qq := PhysicsShapeQueryParameters3D.new()
+					qq.shape = sfera_mano
+					qq.transform = Transform3D(Basis(), qm)
+					qq.collision_mask = Layers.WORLD
+					for h in spazio.intersect_shape(qq, 4):
+						if h["collider"] is Player:
+							continue
+						mani_oggetti = "mano.%s a %.2f s, (%.2f, %.2f, %.2f) in %s" % [lato, t, qm.x, qm.y, qm.z, (h["collider"] as Node).name]
+						break
 		var occhio := p.camera.global_position
 		for q: Vector3 in s.call(&"_pelle_vicina", occhio):
 			pelle_min = minf(pelle_min, q.distance_to(occhio))
@@ -426,6 +452,7 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(max_angolo_in_minaccia < 22.0, "la camera la guarda in faccia (al massimo %.0f° di lato)" % max_angolo_in_minaccia)
 	check(dentro, "lo squalo resta dentro il corridoio (niente muri attraversati)")
 	check(mani_z.x > -2.4 and mani_z.y < -0.2, "anche le mani, fino alla porta: nel giro non entrano nei muri (polsi fra z %.2f e %.2f, i muri a -2,5 e -0,1; la più a nord: %s)" % [mani_z.x, mani_z.y, mani_quando])
+	check(mani_oggetti == "", "polsi, mani e artigli non entrano mai negli oggetti del corridoio, cartello compreso (3 cm di margine)%s" % ((": " + mani_oggetti) if mani_oggetti != "" else ""))
 	check(mano_bocca >= 0.26, "le braccia restano accanto al muso: gomiti, polsi e artigli ad almeno 26 cm da bocca, mascella e mento (al più vicino %.2f m, %s)" % [mano_bocca, mano_bocca_quando])
 	check(mani_salto <= SALTO_MANI, "mani e gomiti si muovono lisci: la velocità rispetto al petto non cambia più che nella 0.3.16 in un fotogramma (%s)" % mani_salto_quando)
 	check(coda_porta > 22.02, "con la porta chiusa la coda è tutta oltre il battente (il punto più indietro a x %.2f, il battente fino a 22,00; %s)" % [coda_porta, coda_porta_quando])
