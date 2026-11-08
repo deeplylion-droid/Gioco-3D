@@ -317,7 +317,12 @@ func _ravvicinati() -> void:
 		bocca.clear()
 		momenti_piedi.clear()
 		piedi = [sk.find_bone("mano.R"), sk.find_bone("mano.L")]
-		for t in [2.9, 3.1, 3.2, 3.3, 3.5]:
+		var tempi_mani := [2.9, 3.1, 3.2, 3.3, 3.5]
+		if OS.get_environment("RAVV_MANI") == "tutta":
+			tempi_mani = []
+			for k in 29:
+				tempi_mani.append(0.3 + 0.5 * k)
+		for t in tempi_mani:
 			lista.append(["piedi", "mani_%05.2f" % t, t])
 	for b in bocca:
 		lista.append(["bocca", b[0], b[1]])
