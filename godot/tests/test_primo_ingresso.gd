@@ -7,12 +7,15 @@ extends Node
 ## 2. la qualità è segnata come provata, col preset scelto;
 ## 3. alla fine lo schermo si schiarisce (il velo nero della dissolvenza va a zero);
 ## 4. finita la prova, il suo nodo se ne va.
+## Che la prova parta si vede dal segnale node_added dell'albero: con la misura finta il nodo vive 2-3 fotogrammi, e
+## guardarlo ogni 5 fotogrammi a volte non lo trovava (CI di main della 0.3.22, 42456683462, con la prova fatta).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_primo_ingresso.gd
 
 const TITOLO := "res://scenes/ui/menu_principale.tscn"
 
 var _ok := 0
 var _ko := 0
+var _prova_vista := false
 
 
 func _ready() -> void:
@@ -33,6 +36,11 @@ func _frames(n: int) -> void:
 		await get_tree().process_frame
 
 
+func _nodo_aggiunto(n: Node) -> void:
+	if n is QualitaAutomatica:
+		_prova_vista = true
+
+
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
@@ -45,17 +53,18 @@ func _run() -> void:
 	check(QualitaAutomatica.da_fare(), "profilo nuovo: la prova della qualità è da fare")
 	get_tree().change_scene_to_file(TITOLO)
 	await _frames(30)
+	get_tree().node_added.connect(_nodo_aggiunto)
 	get_tree().current_scene.call(&"_avvia_nuova_partita")
 	# la sala: fino a 10 minuti (il caricamento nel thread), poi la prova
-	var prova_vista := false
 	var fino := Time.get_ticks_msec() + 600000
 	while Time.get_ticks_msec() < fino:
 		await _frames(5)
 		if get_tree().root.get_node_or_null(^"QualitaAutomatica") != null:
-			prova_vista = true
+			_prova_vista = true
 		if bool(Grafica.valore("qualita_provata")):
 			break
-	check(prova_vista, "entrando nella sala la prova della qualità parte")
+	get_tree().node_added.disconnect(_nodo_aggiunto)
+	check(_prova_vista, "entrando nella sala la prova della qualità parte")
 	check(bool(Grafica.valore("qualita_provata")), "la prova finisce: qualità segnata come provata")
 	check(String(Grafica.valore("scelta_automatica")) == "alto" and String(Grafica.valore("preset")) == "alto",
 		"il preset scelto dalla prova è applicato (%s)" % Grafica.valore("preset"))
