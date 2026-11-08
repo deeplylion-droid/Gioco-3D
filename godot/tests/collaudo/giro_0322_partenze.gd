@@ -148,7 +148,7 @@ func _run() -> void:
 			await _scatto("caricamento")
 			car_scatto = true
 		var p := GameState.player
-		if is_instance_valid(p) and p.input_enabled and Dissolvenza.presente(get_tree()) and Dissolvenza.di(get_tree()).opacita() < 0.02:
+		if is_instance_valid(p) and p.input_enabled and (not Dissolvenza.presente(get_tree()) or Dissolvenza.di(get_tree()).opacita() < 0.02):
 			break
 	var p := GameState.player
 	if not is_instance_valid(p) or not p.input_enabled:
@@ -176,7 +176,7 @@ func _run() -> void:
 	while Time.get_ticks_msec() - t_in < 900000:
 		await get_tree().process_frame
 		var q := GameState.player
-		if is_instance_valid(q) and q != p and q.input_enabled and Dissolvenza.presente(get_tree()) and Dissolvenza.di(get_tree()).opacita() < 0.02:
+		if is_instance_valid(q) and q != p and q.input_enabled and (not Dissolvenza.presente(get_tree()) or Dissolvenza.di(get_tree()).opacita() < 0.02):
 			p2 = q
 			break
 	if p2 == null:
@@ -188,6 +188,15 @@ func _run() -> void:
 	await _attorno(p2, "ripartenza")
 	await _secondi(6.0)
 	await _scatto("ripartenza_8s")
+	# (scorciatoia, per provare Continua dopo: il checkpoint più vicino raggiunto e scritto su disco)
+	var cp: Checkpoint = null
+	for n in get_tree().current_scene.find_children("*", "Checkpoint", true, false):
+		if cp == null or (n as Node3D).global_position.distance_to(p2.global_position) < cp.global_position.distance_to(p2.global_position):
+			cp = n as Checkpoint
+	if cp:
+		GameState.reach_checkpoint(cp)
+		await _secondi(3.0)
+		print("GIRO0322P: (scorciatoia) checkpoint %s raggiunto, salvataggio su disco %s" % [cp.name, GameState.has_save()])
 	print("GIRO0322P: FINE a %.2f s (RSS %d MB)" % [_ora(), _rss_mb()])
 	get_tree().quit()
 
