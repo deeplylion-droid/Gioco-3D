@@ -43,10 +43,10 @@ func _ora() -> float:
 
 
 func _rss_mb() -> int:
-	for riga in FileAccess.get_file_as_string("/proc/self/status").split("\n"):
-		if riga.begins_with("VmRSS:"):
-			return int(riga.split(":")[1].strip_edges().split(" ")[0]) / 1024
-	return -1
+	var out := []
+	OS.execute("sh", ["-c", "grep VmRSS /proc/%d/status" % OS.get_process_id()], out)
+	var t := String(out[0]) if not out.is_empty() else ""
+	return int(t.split(":")[1].strip_edges().split(" ")[0]) / 1024 if t.contains(":") else -1
 
 
 func _scatto(nome: String) -> void:
@@ -64,7 +64,13 @@ func _secondi(s: float) -> void:
 
 
 func _clic(b: Control) -> void:
+	var scena := get_tree().current_scene
 	var c := b.get_global_rect().get_center()
+	var mossa := InputEventMouseMotion.new()
+	mossa.position = c
+	mossa.global_position = c
+	Input.parse_input_event(mossa)
+	await get_tree().process_frame
 	for premuto in [true, false]:
 		var ev := InputEventMouseButton.new()
 		ev.button_index = MOUSE_BUTTON_LEFT
@@ -74,6 +80,11 @@ func _clic(b: Control) -> void:
 		Input.parse_input_event(ev)
 		await get_tree().process_frame
 		await get_tree().process_frame
+	# (se il clic simulato non arriva al pulsante, come col menu F9 sopra il titolo: il pulsante premuto, come col joypad)
+	await _secondi(2.0)
+	if get_tree().current_scene == scena and is_instance_valid(b) and b.is_visible_in_tree() and not (b as BaseButton).disabled:
+		print("GIRO0322P: il clic non è arrivato a «%s»: premuto col segnale" % (b as Button).text)
+		(b as BaseButton).pressed.emit()
 
 
 func _bottone(radice: Node, testo: String) -> Button:
