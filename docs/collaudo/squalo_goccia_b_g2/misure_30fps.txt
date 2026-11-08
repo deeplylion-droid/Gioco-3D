@@ -1,0 +1,49 @@
+SONDA: ossa misurate ["coda1", "coda2", "coda3", "piede.L", "piede.R", "mano.L", "mano.R", "testa", "bocca", "mento_punta"]
+SONDA: mesh fuori dallo squalo che la luce dei lampi può illuminare: 0 []
+SONDA: camera dai muri al minimo 0.307 m a 0.10 s
+SONDA: salto più grande della camera in un fotogramma 0.077 m a 2.17 s, giro più grande 4.4 gradi a 2.90 s
+SONDA: osso coda1 dalla superficie più vicina al minimo inf m a 0.03 s
+SONDA: osso coda2 dalla superficie più vicina al minimo 0.469 m a 12.17 s
+SONDA: osso coda3 dalla superficie più vicina al minimo 0.280 m a 12.17 s
+SONDA: osso piede.L dalla superficie più vicina al minimo 0.228 m a 5.47 s
+SONDA: osso piede.R dalla superficie più vicina al minimo 0.228 m a 5.03 s
+SONDA: osso mano.L dalla superficie più vicina al minimo 0.105 m a 14.00 s
+SONDA: osso mano.R dalla superficie più vicina al minimo 0.256 m a 3.37 s
+SONDA: osso testa dalla superficie più vicina al minimo inf m a 0.03 s
+SONDA: osso bocca dalla superficie più vicina al minimo 0.465 m a 13.73 s
+SONDA: osso mento_punta dalla superficie più vicina al minimo 0.432 m a 14.00 s
+SONDA: piede piede.L sul pavimento fra 0.219 e 0.575 m; scivolata più lunga a terra in un fotogramma -
+SONDA: piede piede.R sul pavimento fra 0.219 e 0.536 m; scivolata più lunga a terra in un fotogramma -
+SONDA: goccia ["compare a 4.50 s", "sparisce a 7.20 s"]
+SUONO 0.03 s parte annusa
+SUONO 0.57 s parte lampo0
+SUONO 1.30 s parte lampo1
+SUONO 2.00 s parte lampo2
+SUONO 2.40 s parte luce
+SUONO 4.43 s parte goccia
+SUONO 5.03 s parte minaccia
+SUONO 5.93 s parte denti0
+SUONO 6.33 s parte denti1
+SUONO 7.70 s parte denti2
+SUONO 8.43 s parte richiamo
+SUONO 9.07 s parte ringhio
+SUONO 9.43 s parte passo0
+SUONO 9.83 s parte passo1
+SUONO 10.23 s parte passo2
+SUONO 10.63 s parte passo3
+SUONO 11.03 s parte passo4
+SUONO 11.33 s parte sbuffo
+SUONO 11.43 s parte passo5
+SUONO 11.93 s parte passo6
+SUONO 12.30 s parte passo7
+SUONO 12.67 s parte passo8
+SUONO 12.80 s parte passo9
+SUONO 13.20 s parte passo10
+SUONO 13.53 s parte passo11
+SUONO 13.87 s parte passo12
+SUONO 14.20 s parte passo13
+SUONO 14.50 s parte porta
+SUONO 14.60 s parte passo14
+SONDA: 2 s dopo la fine suonano ancora []
+SONDA: dopo la fine le lampade hanno fattore min 1.00 max 1.00 (16)
+SONDA FINE

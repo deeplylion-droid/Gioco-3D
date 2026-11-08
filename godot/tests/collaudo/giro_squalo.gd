@@ -68,6 +68,20 @@ func _ready() -> void:
 func _monta_interni() -> void:
 	var velo := Dissolvenza.di(get_tree())
 	await velo.scurisci(0.0)
+	# GIRO_RISCALDA=goccia (ricontrollo della goccia B, grafica-2): prima degli interni la goccia disegnata come la disegna il
+	# riscaldamento della schermata di caricamento (RiscaldamentoShader._disegna: SubViewport 64x64 come la finestra), che
+	# questo giro salta
+	if OS.get_environment("GIRO_RISCALDA") == "goccia":
+		var sv := SubViewport.new()
+		sv.size = Vector2i(64, 64)
+		sv.own_world_3d = true
+		sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		RiscaldamentoShader.copia_viewport(sv, get_viewport())
+		get_tree().root.add_child(sv)
+		var c0 := int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS))
+		await RiscaldamentoShader.riscalda_goccia(sv, 3)
+		print("GIRO: riscaldamento della goccia fatto, pipeline 2D compilate %d" % (int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS)) - c0))
+		sv.queue_free()
 	var radice := Node3D.new()
 	radice.name = "SalaSoloInterni"
 	var look := LookSala.new()
@@ -165,6 +179,14 @@ func _registra() -> void:
 		var ultimo: Array = (s.tempi.get("morsi", [[M + 2.2, 0.3]]) as Array).back()
 		istanti.append_array([float(ultimo[0]) + 0.3, R + 0.4, E, P - 0.5, P + 0.8])
 		istanti.sort()
+	# GIRO_ISTANTI=goccia (ricontrollo della goccia B, grafica-2): ogni 0,02 s da G-0,05 a G+1,1 s, poi ogni 0,1 s fino
+	# a quando sparisce
+	elif OS.get_environment("GIRO_ISTANTI") == "goccia":
+		var G := float(s.tempi.get("goccia", 4.4))
+		for k in 58:
+			istanti.append(G - 0.05 + 0.02 * k)
+		for k in 18:
+			istanti.append(G + 1.2 + 0.1 * k)
 	var n := 0
 	var t_controllo := -1.0
 	var t := 0.0
@@ -187,7 +209,7 @@ func _registra() -> void:
 		elif scatti and t >= t_scatto:
 			await _scatto("%03d_%s_%05.2fs" % [n, fase, t])
 			n += 1
-			t_scatto += PASSO
+			t_scatto += float(OS.get_environment("GIRO_PASSO")) if OS.has_environment("GIRO_PASSO") else PASSO
 		if t_controllo >= 0.0 and t >= t_controllo + DOPO:
 			break
 		if fino > 0.0 and t >= fino:

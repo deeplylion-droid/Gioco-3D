@@ -1,0 +1,11 @@
+PASSO 1. pausa nel buio (1 s): scena SalaPrincipale, lampade fattore min 0.03 max 1.00 su 38, gocce visibili 0, luci dei lampi accese 0
+PASSO 1. ripresa, durante la goccia (4,9 s): scena SalaPrincipale, lampade fattore min 1.00 max 1.00 su 38, gocce visibili 1, luci dei lampi accese 0
+PASSO 1. pausa durante la goccia: scena SalaPrincipale, lampade fattore min 1.00 max 1.00 su 38, gocce visibili 1, luci dei lampi accese 0
+PASSO 1. scena finita: scena SalaPrincipale, lampade fattore min 1.00 max 1.00 su 38, gocce visibili 0, luci dei lampi accese 1
+PASSO 2. tornato al titolo dal buio: scena MenuPrincipale, lampade fattore min 1.00 max 1.00 su 2, gocce visibili 0, luci dei lampi accese 0
+PASSO 2. Nuova partita, durante la goccia: scena SalaPrincipale, lampade fattore min 1.00 max 1.00 su 38, gocce visibili 1, luci dei lampi accese 0
+PASSO 2. tornato al titolo durante la goccia: scena MenuPrincipale, lampade fattore min 1.00 max 1.00 su 2, gocce visibili 0, luci dei lampi accese 0
+PASSO 3. salvataggio su disco: true
+PASSO 3. Continua: scena dello squalo ferma
+PASSO 3. Continua: scena SalaPrincipale, lampade fattore min 1.00 max 1.00 su 38, gocce visibili 0, luci dei lampi accese 0
+SONDA FINE
