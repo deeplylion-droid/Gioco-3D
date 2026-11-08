@@ -16,6 +16,7 @@ var _preset: OptionButton
 var _automatico: Label
 var _nota_aa: Label
 var _calibrazione: CalibrazioneLuminosita
+var _pulsante_calibra: Button
 var _tabs: TabContainer
 
 
@@ -40,7 +41,8 @@ func _ready() -> void:
 
 	var testa := HBoxContainer.new()
 	var titolo := Label.new()
-	titolo.text = "Opzioni grafiche"
+	# (solo «Opzioni»: nel menu ci sono anche i comandi e l'audio, collaudo della 0.3.22)
+	titolo.text = "Opzioni"
 	titolo.add_theme_font_size_override("font_size", 26)
 	titolo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	testa.add_child(titolo)
@@ -124,9 +126,11 @@ func _ready() -> void:
 	t = _scheda("Luminosità")
 	_cursore(t, "Luminosità (gamma)", "luminosita", 0.6, 1.8, 0.01, "%.2f")
 	var b := Button.new()
+	b.name = "CalibraLuminosita"
 	b.text = "Calibra la luminosità…"
 	b.pressed.connect(apri_calibrazione)
 	t.add_child(b)
+	_pulsante_calibra = b
 
 	var piede := HBoxContainer.new()
 	piede.alignment = BoxContainer.ALIGNMENT_END
@@ -147,6 +151,24 @@ func _ready() -> void:
 	chiudi.grab_focus.call_deferred()
 
 
+## Sulla barra delle schede le frecce (e la croce del joypad) cambiano scheda: prima la freccia destra portava il
+## focus su Preset, e con tastiera e joypad alle schede dopo la prima (Audio compresa) non si arrivava.
+func _input(event: InputEvent) -> void:
+	if not visible or _tabs == null or _calibrazione != null:
+		return
+	var barra := _tabs.get_tab_bar()
+	if get_viewport().gui_get_focus_owner() != barra:
+		return
+	var passo := 0
+	if event.is_action_pressed("ui_right", true):
+		passo = 1
+	elif event.is_action_pressed("ui_left", true):
+		passo = -1
+	if passo != 0:
+		_tabs.current_tab = clampi(_tabs.current_tab + passo, 0, _tabs.get_tab_count() - 1)
+		get_viewport().set_input_as_handled()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if visible and event.is_action_pressed("ui_cancel") and _calibrazione == null:
 		chiudi_menu()
@@ -164,7 +186,16 @@ func chiudi_menu() -> void:
 
 func apri_calibrazione() -> void:
 	_calibrazione = CalibrazioneLuminosita.new()
-	_calibrazione.chiusa.connect(func(): _calibrazione = null; _aggiorna())
+	_calibrazione.chiusa.connect(func():
+		_calibrazione = null
+		_aggiorna()
+		# chiusa in ogni modo (B, Esc, Conferma), il fuoco torna su «Calibra la luminosità…»: senza, col joypad nelle
+		# opzioni non si muoveva più niente (collaudo della 0.3.22)
+		if is_instance_valid(_pulsante_calibra) and _pulsante_calibra.is_visible_in_tree():
+			_pulsante_calibra.grab_focus.call_deferred()
+		elif _tabs:
+			_tabs.get_tab_bar().grab_focus.call_deferred()
+	)
 	add_child(_calibrazione)
 
 

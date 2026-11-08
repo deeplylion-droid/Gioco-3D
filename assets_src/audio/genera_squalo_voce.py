@@ -35,9 +35,18 @@ from genera_lei import gola, tratto, respiro  # noqa: E402
 from lib_audio import (SR, mono, bp, env_points, f32, fade, hp, lp, mix_into, n_of, resonator_bank, reverb,  # noqa: E402
                        smooth_noise, white, normalize_lufs, limiter, lufs, read_audio, write_wav)
 
-MINACCIA_INIZIO = 0.8
-RICHIAMO = 5.4
-SCATTI = (2.4 + 0.7, 2.4 + 1.6, 2.4 + 2.5)
+# Dalla 0.3.23 (le tre proposte per far più paura: il buio, ti annusa, i morsi imprevedibili) la scena comincia 3 s
+# prima e il fiato a bocca aperta parte quando la bocca si spalanca (mostro_anim.SUONO_MINACCIA = APRE); i morsi non
+# sono più tre a tempo: due svelti, una pausa a bocca spalancata (solo il fiato), e uno scatto con la bocca chiusa
+# 0,3 s (mostro_anim.MORSI, PAUSA). Gli stessi numeri di mostro_anim.py.
+MINACCIA = 5.4
+MINACCIA_INIZIO = 5.0
+RICHIAMO = 8.4
+SCATTI = tuple(MINACCIA + d for d in (0.45, 0.85, 2.2))
+PAUSA = (MINACCIA + 1.25, MINACCIA + 2.05)
+# il buio e il fiuto (squalo_annusa, dall'inizio della scena ad APRE): LUCE, i colpi di fiuto
+LUCE = 2.4
+FIUTI = (LUCE + 0.45, LUCE + 1.15, LUCE + 1.75, MINACCIA_INIZIO - 0.35)
 USCITA = os.path.join(RADICE, 'docs', 'proposte', 'squalo_suoni')
 
 CARATTERI = {
@@ -166,15 +175,60 @@ def minaccia(variante):
         if tipo == 'esp':
             i0, k = n_of(t0), n_of(d)
             e[i0:i0 + k] += env_points([(0, 0), (d * 0.3, 0.6), (d, 0)], len(e[i0:i0 + k]))
+    # (0.3.23) nella pausa a bocca spalancata il brontolio tace: resta solo il fiato
+    a, b = PAUSA[0] - MINACCIA_INIZIO, PAUSA[1] - MINACCIA_INIZIO
+    e *= 1.0 - env_points([(0, 0), (a - 0.15, 0), (a, 1), (b, 1), (b + 0.1, 0), (dur, 0)], n)
     mix_into(out, sotto * e * 0.32, 0)
     from genera_squalo import schiocco
-    for tc in SCATTI:
+    for k, tc in enumerate(SCATTI):
         t = tc - MINACCIA_INIZIO
-        mix_into(out, risucchio(rng) * 0.5, n_of(t - 0.28))
-        mix_into(out, ringhio_corto(rng, car) * 0.95, n_of(t - 0.06))
+        # l'ultimo, dopo la pausa, di colpo: niente risucchio prima, il ringhio più forte e più lungo
+        if k < 2:
+            mix_into(out, risucchio(rng) * 0.5, n_of(t - 0.28))
+            mix_into(out, ringhio_corto(rng, car) * 0.95, n_of(t - 0.06))
+        else:
+            mix_into(out, ringhio_corto(rng, car, dur=0.85, forza=1.3), n_of(t - 0.1))
         mix_into(out, schiocco(rng) * 0.8, n_of(t + 0.12))
     out = reverb(out, ir_piccola(), wet=0.12)
     return f32(mono(fade(out, 0.05, 0.3)))
+
+
+def annusa():
+    """(0.3.23) Dall'inizio della scena ad APRE, attaccato alla bocca (nel gioco la distanza fa il resto: da lontano
+    nel buio, poi addosso): nel buio il fiato lento e profondo e le gocce di bava che cadono sul pavimento; dalla luce
+    il fiuto, tre-quattro colpi svelti di naso (7 al secondo) per ogni FIUTI, con il fiato trattenuto fra uno e
+    l'altro; nessuna voce."""
+    rng = np.random.default_rng(3150)
+    dur = MINACCIA_INIZIO + 0.3
+    n = n_of(dur)
+    out = np.zeros(n)
+    # il fiato nel buio: lento, profondo e umido (cicli di 1,6 s), poi trattenuto annusando
+    cicli = []
+    t = 0.1
+    while t < LUCE - 0.3:
+        cicli.append((t, 0.7, 'insp', 0.5))
+        cicli.append((t + 0.7, 0.85, 'esp', 0.9))
+        t += 1.6 + rng.uniform(0.0, 0.15)
+    mix_into(out, _norm(fiato_B(rng, dur, cicli)) * 0.7, 0)
+    # le gocce di bava sul pavimento, nel buio e mentre annusa
+    from genera_ambiente import goccia_pavimento
+    for tg in (0.35, 0.95, 1.6, 2.2, 3.1, 3.9):
+        mix_into(out, goccia_pavimento(rng) * rng.uniform(0.35, 0.5), n_of(tg))
+    # il fiuto: colpi corti di aria che entra dal naso (rumore stretto e nasale), sempre più vicini
+    for k, t0 in enumerate(FIUTI):
+        for j in range(4 if k < 3 else 3):
+            d = rng.uniform(0.07, 0.1)
+            kk = n_of(d)
+            e = env_points([(0, 0), (d * 0.3, 1), (d, 0)], kk) ** 1.3
+            aria = bp(white(kk, rng), 1100, 5200, 2)
+            v = tratto(rng, aria, [(1300, 4.0, 1.0), (2600, 5.0, 0.6), (4200, 6.0, 0.3)], moto=0.2, velocita=2.0)
+            mix_into(out, _norm(v) * e * (0.55 + 0.1 * k) * rng.uniform(0.85, 1.1), n_of(t0 + j * 0.135))
+        # e lo sbuffo corto che lo chiude
+        kk = n_of(0.25)
+        e = env_points([(0, 0), (0.03, 1), (0.25, 0)], kk)
+        mix_into(out, lp(white(kk, rng), 1800, 2) * e * 0.3, n_of(t0 + 0.55))
+    out = reverb(out, ir_piccola(), wet=0.12)
+    return f32(mono(fade(out, 0.3, 0.3)))
 
 
 def ringhio(variante):
@@ -259,6 +313,17 @@ def main():
         nuovi = {('minaccia', 'B'): _pronto(minaccia('B')), ('ringhio', 'B'): _pronto(ringhio('B'))}
         g = mix_scena(nuovi, 'B', 'B', 'scena_B')
         mix_scena(nuovi, 'B', 'B', 'scena_B_bassa', piu=0.0, guadagno=g)
+        return
+    if len(sys.argv) > 1 and sys.argv[1] in ('minaccia', 'annusa'):
+        # (0.3.23) solo uno dei due, con la versione B della minaccia scelta il 23 ottobre
+        from comune import salva
+        if sys.argv[1] == 'minaccia':
+            salva('squalo', 'squalo_minaccia', minaccia('B'), loudness=-15, qualita=5,
+                  nota="fiato a 30 cm, gola che brontola sotto (zitta nella pausa) e i morsi: due svelti e uno dopo la "
+                       "pausa; versione B del 23 ottobre, tempi della 0.3.23")
+        else:
+            salva('squalo', 'squalo_annusa', annusa(), loudness=-18, qualita=5,
+                  nota="il fiato nel buio e le gocce di bava, poi il fiuto (0.3.23)")
         return
     if len(sys.argv) > 1 and sys.argv[1] == 'gioco':
         from comune import salva
