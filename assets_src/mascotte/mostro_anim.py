@@ -565,9 +565,12 @@ def posa(t, piedi):
         riposo = Vector(MANI_RIPOSO[s]) - spalla
         minaccia = Vector((0.40 * segno, GIOCATORE_Y + 0.42, 1.12 + (0.08 if s == 'R' else 0.0))) - spalla
         minaccia += Vector((0.0, 0.03, 0.03)) * rumore(t, 1.7, 2.0 + segno) * (1.0 - ferma)
-        # (0.3.23) annusando le mani giù, ai lati del giocatore, gli artigli verso di lui
-        basse = Vector((0.46 * segno, GIOCATORE_Y + 0.55, 0.62)) - spalla
-        minaccia = minaccia.lerp(basse, giu)
+        # (0.3.23) annusando la sinistra giù, accanto al giocatore, gli artigli verso di lui; la destra (a sinistra del
+        # giocatore) resta alzata come nella minaccia: col corpo girato scendeva dentro il cartello del pavimento
+        # bagnato, alto 0,62 m, e gli artigli pendono mezzo metro sotto il polso (ricontrollo di grafica-2 su 8e481b9c)
+        if s == 'L':
+            basse = Vector((0.46 * segno, GIOCATORE_Y + 0.55, 0.62)) - spalla
+            minaccia = minaccia.lerp(basse, giu)
         # nella corsa la mano che pende si tiene su, davanti al petto (non deve strisciare a terra)
         # (meno su e più avanti di prima: alzata a 42 cm, con l'avambraccio in su, gli artigli puntavano al mento)
         su = Vector((-0.05, -0.20, 0.30)) if s == 'L' else Vector((0.0, 0.0, -0.05))
