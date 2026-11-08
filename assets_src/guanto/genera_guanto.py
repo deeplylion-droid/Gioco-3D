@@ -212,6 +212,28 @@ sm.factor = 0.5
 bpy.ops.object.modifier_apply(modifier="liscia2")
 
 # --- appoggio: i vertici dentro l'impugnatura o a meno di 3 mm escono sulla superficie (+0,4 mm)
+STRAPPO = g2b(Vector((-0.043, -0.199, 0.426)))
+
+
+def rilassa_strappo(ob, giri=10):
+    """Lisciatura e fuori dall'impugnatura, a turno, attorno allo spigolo dello strappo (dopo la riduzione dei poligoni,
+    che lì ripiegava gli spigoli)."""
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    zona = [v for v in bm.verts if (ob.matrix_world @ v.co - STRAPPO).length < 0.010]
+    inv = ob.matrix_world.inverted()
+    for _g in range(giri):
+        bmesh.ops.smooth_vert(bm, verts=zona, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+        for v in zona:
+            pw = ob.matrix_world @ v.co
+            loc, n, _, d = bvh.find_nearest(pw)
+            if loc is not None and (pw - loc).dot(n) < 0.0004:
+                v.co = inv @ (loc + n * 0.0004)
+    bm.to_mesh(ob.data)
+    bm.free()
+    ob.data.update()
+
+
 def appoggia(ob, soglia=0.003, fuori=0.0004):
     mosse = 0
     for v in ob.data.vertices:
@@ -225,7 +247,10 @@ def appoggia(ob, soglia=0.003, fuori=0.0004):
         if (lg.x < -0.034 or lg.x > 0.038) and lg.y > -0.215:
             continue
         dentro = (p - loc).dot(n) < 0
-        if dentro or d < soglia:
+        # (vicino allo spigolo davanti a sinistra, sotto la fascia, solo i vertici dentro: tirare sulla superficie anche
+        # quelli vicini piegava la pelle in una fossetta, lo "strappo" sulla punta dell'indice del collaudo di enigmi)
+        vicino_strappo = (p - STRAPPO).length < 0.010
+        if dentro or (d < soglia and not vicino_strappo):
             v.co = ob.matrix_world.inverted() @ (loc + n * fuori)
             mosse += 1
     return mosse
@@ -277,6 +302,7 @@ dec = guanto.modifiers.new("dec", 'DECIMATE')
 dec.ratio = FACCE_GUANTO / max(1, len(guanto.data.polygons))
 bpy.ops.object.modifier_apply(modifier="dec")
 print("GUANTO: ricontrollo appoggio", appoggia(guanto, soglia=0.0, fuori=0.0004))
+rilassa_strappo(guanto)
 for p in guanto.data.polygons:
     p.use_smooth = True
 

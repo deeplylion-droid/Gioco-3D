@@ -12,8 +12,9 @@ w.node_tree.nodes["Background"].inputs[0].default_value = (0.6, 0.62, 0.66, 1)
 cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam")); sc.collection.objects.link(cam); sc.camera = cam
 cam.data.lens = 60
 cam.data.clip_start = 0.005
+cam.data.clip_start = 0.005
 g = lambda v: Vector((v[0], -v[2], v[1]))
-punti = {"punta_indice": ((-0.044, -0.197, 0.424), [(-1, 0.3, -0.6), (-0.4, 0.8, -1), (-1, -0.6, -0.2)]),
+punti = {"punta_indice": ((-0.044, -0.197, 0.424), [(-0.1, 0.1, -1), (-1, 0.1, -0.1), (-0.7, 0.3, -0.7)]),
          "anulare_mignolo": ((0.034, -0.262, 0.463), [(1, 0.1, -0.3), (1, -0.4, -0.6), (0.8, 0.5, 0.2)])}
 for nome, (p, dirs) in punti.items():
     c = g(p)
