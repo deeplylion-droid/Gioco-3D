@@ -156,6 +156,8 @@ func _registra() -> void:
 		for f in s.tempi.get("fiuti", []):
 			istanti.append(float(f) + 0.15)
 		istanti.append_array([G + 0.08, G + 0.6, G + 1.4, G + 2.1, float(s.tempi.get("apre", M - 0.4)) + 0.15, M])
+		# (goccia B, 0.3.23) appesa al filo, il filo che si spezza, e i momenti della pagina per l'utente (4,5, 4,8, 6,4 s)
+		istanti.append_array([G + 0.25, G + 0.45, G + 0.62, 4.5, 4.8, 6.4])
 		for m in s.tempi.get("morsi", []):
 			istanti.append(float(m[0]) + 0.1)
 		var pausa: Array = s.tempi.get("pausa", [M + 1.25, M + 2.05])
