@@ -1,0 +1,18 @@
+PARETE dubbio (acqua dai due lati true) a (-25.13, -0.3, 3.15), davanti (-0.17, 0.0, -0.99)
+PARETE dubbio (acqua dai due lati true) a (-25.27, -0.6, 3.17), davanti (-0.17, 0.0, -0.99)
+PARETE dubbio (acqua dai due lati true) a (-25.27, -0.3, 3.17), davanti (0.17, 0.0, 0.99)
+PARETE dubbio (acqua dai due lati true) a (-25.13, -0.6, 3.15), davanti (0.17, 0.0, 0.99)
+PARETE dubbio (acqua dai due lati true) a (-3.13, -0.3, 25.02), davanti (0.99, 0.0, 0.17)
+PARETE dubbio (acqua dai due lati true) a (-3.07, -0.6, 24.64), davanti (0.99, 0.0, 0.17)
+PARETE dubbio (acqua dai due lati true) a (-3.07, -0.3, 24.64), davanti (-0.99, 0.0, -0.17)
+PARETE dubbio (acqua dai due lati true) a (-3.13, -0.6, 25.02), davanti (-0.99, 0.0, -0.17)
+PARETE dubbio (acqua dai due lati true) a (3.07, -0.3, 24.64), davanti (-0.99, 0.0, 0.17)
+PARETE dubbio (acqua dai due lati true) a (3.13, -0.6, 25.02), davanti (-0.99, 0.0, 0.17)
+PARETE dubbio (acqua dai due lati true) a (3.13, -0.3, 25.02), davanti (0.99, 0.0, -0.17)
+PARETE dubbio (acqua dai due lati true) a (3.07, -0.6, 24.64), davanti (0.99, 0.0, -0.17)
+PARETE dubbio (acqua dai due lati true) a (24.54, -0.3, -3.05), davanti (0.17, 0.0, 0.99)
+PARETE dubbio (acqua dai due lati true) a (24.77, -0.6, -3.09), davanti (0.17, 0.0, 0.99)
+PARETE dubbio (acqua dai due lati true) a (24.77, -0.3, -3.09), davanti (-0.17, 0.0, -0.99)
+PARETE: mesh @MeshInstance3D@35, 2662 triangoli verticali
+PARETE: mesh @MeshInstance3D@38, 0 triangoli verticali
+PARETE: 2662 triangoli, 0 con la faccia davanti non verso l'acqua, 24 con l'acqua dai due lati o da nessuno, 0 con la normale contro la faccia

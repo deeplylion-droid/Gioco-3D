@@ -1,0 +1,82 @@
+== prima: e3104cd2 [skip ci] GDD: risposte sullo squalo della 0.3.22 (faccia A, 
+== import prima 0
+== SINTASSI: res://tests/cz/fiume_raggi.gd ok SINTASSI: res://tests/cz/fiume_giro.gd ok SINTASSI: res://tests/cz/sonda_barriere_fiume.gd ok SINTASSI: res://tests/cz/sonda_pareti_fiume.gd ok SINTASSI: res://tests/cz/sonda_punto_fiume.gd ok 
+== raggi prima 0; RAGGI: 6752 origini, 324096 raggi in /home/user/collaudo_log/rg/raggi_prima.txt; BUG 0; SCRIPT ERROR 0; ERROR 0
+== barriere prima 0
+== giro prima 0; GIRO: 221 scatti; BUG 0; SCRIPT ERROR 0; ERROR 1
+== secco prima 0; GIRO: nascoste 13 acque; 100 scatti con magenta
+== dopo: fed6fd28 Fiume (#130): chiusi i residui al bivio nord, il buco all'est
+== import dopo 0
+== SINTASSI: res://tests/cz/fiume_raggi.gd ok SINTASSI: res://tests/cz/fiume_giro.gd ok SINTASSI: res://tests/cz/sonda_barriere_fiume.gd ok SINTASSI: res://tests/cz/sonda_pareti_fiume.gd ok SINTASSI: res://tests/cz/sonda_punto_fiume.gd ok 
+== raggi dopo 0; RAGGI: 6780 origini, 325440 raggi in /home/user/collaudo_log/rg/raggi_dopo.txt; BUG 0; SCRIPT ERROR 0; ERROR 0
+== barriere dopo 0
+== giro dopo 0; GIRO: 221 scatti; BUG 0; SCRIPT ERROR 0; ERROR 1
+== secco dopo 0; GIRO: nascoste 18 acque; 23 scatti con magenta
+== test_fiume 0; RISULTATO: 35 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_fiume_gioco 0; RISULTATO: 34 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== controllo_cielo 0; RISULTATO: ok, il cielo non si vede da nessuna parte; BUG 0; SCRIPT ERROR 0; ERROR 13
+CIELO:   posti da dove si vede il cielo: 0
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: il fiume dalla ciambella, 7 tratti (corpi dalle mesh nuovi 115)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: posti controllati 686, con il cielo 0; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): 18; fessure sottili 0
+== controllo_posizionamento 0; RISULTATO: 2 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 129
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+CIELO: Risalita caricata, fiume Fiume:<Node3D#448740208414>
+CIELO: interni: dal corridoio del risveglio agli spogliatoi (corpi dalle mesh nuovi 1659)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: interni: dagli spogliatoi allo stanzino del bagnino (corpi dalle mesh nuovi 27)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: interni: dagli spogliatoi al lavapiedi, fino al tornello (corpi dalle mesh nuovi 26)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: interni: il tornello (sbloccato col getto) (corpi dalle mesh nuovi 48)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: interni: la saracinesca verso la sala (corpi dalle mesh nuovi 95)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: sala: dalla saracinesca alla statua (corpi dalle mesh nuovi 81)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: tecnici: la camera delle onde, dal pozzo alla sala pompe (i due portali e il vano est) (corpi dalle mesh nuovi 3)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: interni: la porta della sala pompe (corridoio) (corpi dalle mesh nuovi 1)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: tecnici: la porta del ponte inferiore (sala pompe) (corpi dalle mesh nuovi 485)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: la porta di servizio di C2 (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: il corridoio fino alla porta del capannone (corpi dalle mesh nuovi 141)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: dall'approdo all'infermeria (porta di servizio, porta sud) (corpi dalle mesh nuovi 83)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: dalla porta nord dell'infermeria nella stanza delle pozze (si apre col pulsantone) (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: la stanza delle pozze, dalla passerella alla porta stagna (si apre a enigma risolto) (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: dalla cima della scala di servizio alla porta di C3 (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: raccordo: da C3 al magazzino dei gonfiabili (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: raccordo: la serranda del magazzino (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: sala: il portone della torre (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: il capannone del fiume, dalla porta all'approdo (corpi dalle mesh nuovi 33)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: l'infermeria, dalla porta sud a quella nord (corpi dalle mesh nuovi 0)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: risalita: il fiume dalla ciambella, 7 tratti (corpi dalle mesh nuovi 115)
+CIELO:   posti da dove si vede il cielo: 0
+CIELO: torre caricata, costruita true, checkpoint 11, guscio false
+CIELO: torre Checkpoint_portone: ok
+CIELO: torre Checkpoint_NEm3: ok
+CIELO: torre Checkpoint_SEm6: ok
+CIELO: torre Checkpoint_SOm9: ok
+CIELO: torre Checkpoint_NOm12: ok
+CIELO: torre Checkpoint_NEm15: ok
+CIELO: torre Checkpoint_fondo: ok
+CIELO: torre Checkpoint_vasca_1: ok
+CIELO: torre Checkpoint_vasca_2: ok
+CIELO: torre Checkpoint_vasca_3: ok
+CIELO: torre Checkpoint_bacino: ok
+CIELO: condotte, dal bacino verso la porta di servizio (tunnel costruito): raggi 81, escono 0
+CIELO: posti controllati 686, con il cielo 0; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): 18; fessure sottili 0

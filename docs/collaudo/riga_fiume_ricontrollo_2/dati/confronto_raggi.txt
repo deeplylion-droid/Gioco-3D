@@ -1,0 +1,45 @@
+raggi prima 324096, dopo 325440, in comune 323712
+('banchina_basso', 'colpisce ora') 448
+('banchina_basso', 'colpisce più lontano') 9
+('banchina_basso', 'da - a Fiume/Barriere') 55
+('banchina_basso', 'da Fiume/Barriere a Fiume/Barriere') 126
+('banchina_basso', 'da Fiume/Collisioni a Fiume/Barriere') 275
+('banchina_basso', 'da Fiume/Collisioni a Fiume/Collisioni') 1
+('banchina_basso', 'diversi') 457
+('banchina_basso', 'tot') 151200
+('banchina_occhi', 'colpisce ora') 481
+('banchina_occhi', 'colpisce più lontano') 8
+('banchina_occhi', 'da - a Fiume/Barriere') 49
+('banchina_occhi', 'da Fiume/Barriere a Fiume/Barriere') 125
+('banchina_occhi', 'da Fiume/Collisioni a Fiume/Barriere') 312
+('banchina_occhi', 'da Fiume/Collisioni a Fiume/Collisioni') 3
+('banchina_occhi', 'diversi') 489
+('banchina_occhi', 'tot') 151200
+('ciambella_basso', 'colpisce ora') 181
+('ciambella_basso', 'colpisce più lontano') 79
+('ciambella_basso', 'da - a Fiume/Barriere') 1
+('ciambella_basso', 'da Fiume/Barriere a -') 9
+('ciambella_basso', 'da Fiume/Barriere a Fiume/Barriere') 59
+('ciambella_basso', 'da Fiume/Barriere a Fiume/Collisioni') 16
+('ciambella_basso', 'da Fiume/Collisioni a Fiume/Barriere') 163
+('ciambella_basso', 'da Fiume/Collisioni a Fiume/Collisioni') 12
+('ciambella_basso', 'diversi') 260
+('ciambella_basso', 'tot') 10656
+('ciambella_occhi', 'colpisce ora') 121
+('ciambella_occhi', 'colpisce più lontano') 65
+('ciambella_occhi', 'da - a Fiume/Barriere') 1
+('ciambella_occhi', 'da Fiume/Barriere a -') 8
+('ciambella_occhi', 'da Fiume/Barriere a Fiume/Barriere') 42
+('ciambella_occhi', 'da Fiume/Barriere a Fiume/Collisioni') 19
+('ciambella_occhi', 'da Fiume/Collisioni a Fiume/Barriere') 100
+('ciambella_occhi', 'da Fiume/Collisioni a Fiume/Collisioni') 16
+('ciambella_occhi', 'diversi') 186
+('ciambella_occhi', 'tot') 10656
+esempi banchina_basso
+   banchina_-10_2_basso dir 37: -1.000 - -> 11.000 Fiume/Barriere
+   banchina_-11_23_basso dir 10: 9.407 Fiume/Barriere -> 8.659 Fiume/Barriere
+   banchina_-11_2_basso dir 37: -1.000 - -> 10.000 Fiume/Barriere
+   banchina_-12_2_basso dir 37: -1.000 - -> 9.000 Fiume/Barriere
+   banchina_-13_22_basso dir 10: 12.020 Fiume/Barriere -> 10.824 Fiume/Barriere
+   banchina_-13_2_basso dir 37: -1.000 - -> 8.000 Fiume/Barriere
+   banchina_-14_-2_basso dir 40: 12.020 Fiume/Barriere -> 12.350 Fiume/Barriere
