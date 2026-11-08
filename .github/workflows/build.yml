@@ -152,6 +152,12 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_primo_ingresso.gd
 
+      - name: Test della scena dello squalo a schermo chiaro (dalla schermata di caricamento vera, col profilo nuovo e con la qualità già provata, la scena aspetta la prova della qualità e la dissolvenza; il primo lampo cade con lo schermo chiaro)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_squalo_schermo.gd nuovo
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_squalo_schermo.gd provato
+
       - name: Test dell'opzione nascosta della riga di comando del titolo (senza i suoi argomenti non fa niente; la usa la Prova su Vulkan)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_partenza_da_riga.gd

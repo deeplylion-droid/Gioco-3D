@@ -38,6 +38,12 @@ static func da_fare() -> bool:
 ## Solo per i test (tests/test_primo_ingresso.gd): la prova si fa anche con --script, dalla schermata di caricamento vera,
 ## e la misura è [member misura_finta_test] (preset -> fluido) se c'è.
 static var forza_nei_test := false
+
+
+## La prova della qualità è in corso adesso (lo schermo resta nero finché non finisce)?
+static func in_corso(albero: SceneTree) -> bool:
+	var q := albero.root.get_node_or_null(^"QualitaAutomatica")
+	return q != null and not q.is_queued_for_deletion()
 static var misura_finta_test: Callable
 
 
