@@ -772,8 +772,10 @@ func _process(delta: float) -> void:
 	if not _da_esaminare.is_empty():
 		var lista := _da_esaminare
 		_da_esaminare = []
-		for n in lista:
-			if is_instance_valid(n) and n.is_inside_tree():
+		# (Variant: un nodo aggiunto e liberato nello stesso fotogramma, per esempio un menu aperto e chiuso subito, in una
+		# variabile Node poteva dare «previously freed» e saltare il resto della lista e del fotogramma)
+		for n: Variant in lista:
+			if is_instance_valid(n) and (n as Node).is_inside_tree():
 				_esamina(n)
 	var i := 0
 	while i < _attivi.size():

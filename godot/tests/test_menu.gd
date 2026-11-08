@@ -1,8 +1,8 @@
 extends Node
 ## Test del titolo, del caricamento e del menu di pausa:
 ## il titolo è la scena principale e si carica (statua, piedistallo, lampi); le voci ci sono e si
-## scorrono con la tastiera (anche dall'ultima alla prima); Esc nel titolo non apre la pausa; la
-## calibrazione della luminosità sopra il titolo lo ferma e poi gli ridà il focus; Comandi e
+## scorrono con la tastiera (anche dall'ultima alla prima); Esc nel titolo non apre la pausa;
+## al primo avvio niente calibrazione della luminosità (la calibrazione si apre dalle opzioni); Comandi e
 ## Opzioni si aprono e si chiudono con Esc; Nuova partita passa al caricamento a thread e arriva
 ## alla sala con la dissolvenza dal nero; nel menu di pausa ci sono Comandi e Torna al titolo.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
@@ -100,22 +100,25 @@ func _run() -> void:
 	await _premi(&"pause")
 	check(not get_tree().paused and not Game.is_paused(), "Esc nel titolo non apre la pausa")
 
-	print("Calibrazione della luminosità al primo avvio, sopra il titolo")
-	Game.call(&"_show_calibration")
+	print("Niente calibrazione della luminosità al primo avvio (richiesta dell'utente del 7 novembre: «non mi piace, levala»)")
+	check(not Game.has_method(&"_show_calibration"), "Game non apre più la calibrazione al primo avvio")
+	var aperte := Game.find_children("*", "CalibrazioneLuminosita", true, false)
+	aperte.append_array(menu.find_children("*", "CalibrazioneLuminosita", true, false))
+	check(aperte.is_empty() and not get_tree().paused, "sopra il titolo non c'è nessuna calibrazione, e il titolo non è fermo")
+
+	print("La calibrazione dalle opzioni (scheda Luminosità, «Calibra la luminosità…»)")
+	voci[1].pressed.emit()
 	await _frames(3)
-	check(get_tree().paused, "la calibrazione ferma il titolo")
+	var opz_cal := menu.find_children("*", "MenuOpzioni", true, false)
+	check(not opz_cal.is_empty(), "Opzioni apre il menu delle opzioni")
 	var cal: CalibrazioneLuminosita = null
-	for n in Game.find_children("*", "Control", true, false):
-		if n is CalibrazioneLuminosita:
+	if not opz_cal.is_empty():
+		(opz_cal[0] as MenuOpzioni).apri_calibrazione()
+		await _frames(3)
+		for n in opz_cal[0].find_children("*", "CalibrazioneLuminosita", true, false):
 			cal = n
 	check(cal != null, "la calibrazione è aperta")
 	if cal:
-		# Deve stare sopra tutti i livelli del titolo, se no il menu la copre e non si può confermare.
-		var livello_cal := (cal.owner as CanvasLayer).layer if cal.owner is CanvasLayer else 0
-		var livello_titolo := -1000
-		for l in menu.find_children("*", "CanvasLayer", true, false):
-			livello_titolo = maxi(livello_titolo, (l as CanvasLayer).layer)
-		check(livello_cal > livello_titolo, "la calibrazione sta sopra il menu del titolo (%d > %d)" % [livello_cal, livello_titolo])
 		# Come il giocatore: Conferma ha il focus e si preme con Invio.
 		var conferma := _pulsante(cal, "Conferma")
 		check(conferma != null and _focus() == conferma, "Conferma ha il focus")
@@ -149,13 +152,16 @@ func _run() -> void:
 		check(_focus() == conferma, "croce in su: di nuovo Conferma")
 		await _premi_joypad(JOY_BUTTON_A)
 		await _frames(3)
-		if get_tree().paused:
+		if is_instance_valid(cal) and cal.is_inside_tree():
 			check(false, "A del joypad conferma la calibrazione")
 			cal.conferma()
-	await _frames(5)
-	check(not get_tree().paused, "confermata la calibrazione, il titolo riparte")
+		await _frames(3)
+		check(not is_instance_valid(cal) or not cal.is_inside_tree(), "confermata, la calibrazione si chiude")
 	check(bool(Grafica.valore("calibrato")), "la calibrazione è segnata come fatta")
-	check(_focus() == voci[0], "il titolo riprende il focus")
+	if not opz_cal.is_empty():
+		(opz_cal[0] as MenuOpzioni).chiudi_menu()
+	await _frames(5)
+	check(_focus() == voci[1], "chiuse le opzioni, il focus torna su Opzioni")
 
 	print("Comandi")
 	voci[2].pressed.emit()

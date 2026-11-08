@@ -32,7 +32,19 @@ var _frame_assestamento := 0
 
 ## La prova va fatta adesso? (primo avvio, nessuna scelta a mano; mai nei test automatici, che la avviano da soli)
 static func da_fare() -> bool:
-	return not bool(Grafica.valore("qualita_provata")) and not Game.is_automated()
+	return not bool(Grafica.valore("qualita_provata")) and (not Game.is_automated() or forza_nei_test)
+
+
+## Solo per i test (tests/test_primo_ingresso.gd): la prova si fa anche con --script, dalla schermata di caricamento vera,
+## e la misura è [member misura_finta_test] (preset -> fluido) se c'è.
+static var forza_nei_test := false
+
+
+## La prova della qualità è in corso adesso (lo schermo resta nero finché non finisce)?
+static func in_corso(albero: SceneTree) -> bool:
+	var q := albero.root.get_node_or_null(^"QualitaAutomatica")
+	return q != null and not q.is_queued_for_deletion()
+static var misura_finta_test: Callable
 
 
 ## Avvia la prova sull'albero (resta fra un cambio di scena e l'altro) e poi schiarisce lo schermo dopo
@@ -41,6 +53,8 @@ static func avvia(albero: SceneTree, frame_di_assestamento := 0) -> QualitaAutom
 	var q := QualitaAutomatica.new()
 	q.name = "QualitaAutomatica"
 	q._frame_assestamento = frame_di_assestamento
+	if misura_finta_test.is_valid():
+		q.misura_finta = misura_finta_test
 	albero.root.add_child(q)
 	return q
 

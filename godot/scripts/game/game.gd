@@ -1,7 +1,8 @@
 extends Node
 ## Autoload "Game": pausa con Esc e cattura del mouse.
 ## Esc mette in pausa e libera il mouse: dal menu di pausa si riprende, si aprono le opzioni
-## grafiche (addon grafica) o si esce. Al primo avvio: preset Alto e calibrazione della luminosità.
+## grafiche (addon grafica) o si esce. Al primo avvio: preset Alto (la calibrazione della luminosità al primo avvio
+## non c'è più, richiesta dell'utente del 7 novembre: si apre dalle opzioni, scheda Luminosità).
 ## F3 mostra FPS, tempo del fotogramma e preset.
 
 signal paused_changed(is_paused: bool)
@@ -61,8 +62,6 @@ func _ready() -> void:
 		Grafica.valori["qualita_provata"] = false
 	# Contatore delle prestazioni (F3), spento all'avvio.
 	add_child(load("res://scripts/ui/fps_counter.gd").new())
-	if not is_automated() and not bool(Grafica.valore("calibrato")):
-		_show_calibration.call_deferred()
 	# Aberrazione cromatica più leggera di quella dell'addon (frange colorate ai bordi).
 	var post := Grafica.get_node_or_null(^"PostProcessing")
 	if post and post.get_child_count() > 0 and post.get_child(0) is CanvasItem:
@@ -297,22 +296,6 @@ static func is_automated() -> bool:
 	return OS.get_cmdline_args().has("--script")
 
 
-func _show_calibration() -> void:
-	var cal: CanvasLayer = load("res://addons/grafica/calibrazione_luminosita.tscn").instantiate()
-	# Sopra il menu del titolo (livello 100) e sotto la dissolvenza (120): allo stesso livello
-	# il titolo copriva la calibrazione, e con il gioco in pausa nessuno dei due rispondeva.
-	cal.layer = 110
-	add_child(cal)
-	get_tree().paused = true
-	release_mouse()
-	cal.tree_exited.connect(func():
-		# All'uscita dal gioco l'albero non c'è più: niente da riprendere.
-		if not is_inside_tree():
-			return
-		get_tree().paused = false
-		capture_mouse())
-
-
 func open_options() -> void:
 	if is_instance_valid(_menu_layer):
 		return
@@ -427,7 +410,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return  # il menu delle opzioni gestisce da solo Esc
 	if event.is_action_pressed("pause"):
 		if get_tree().paused and not _overlay.visible:
-			return  # in pausa per altro (Polaroid, calibrazione)
+			return  # in pausa per altro (Polaroid)
 		set_paused(not get_tree().paused)
 		get_viewport().set_input_as_handled()
 	elif event is InputEventMouseButton and event.pressed and not get_tree().paused:

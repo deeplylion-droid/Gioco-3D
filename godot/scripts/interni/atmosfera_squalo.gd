@@ -150,11 +150,15 @@ func _process(delta: float) -> void:
 		var rich: float = _r.tempi.get("richiamo", 5.4)
 		# il boato: cresce in mezzo secondo e torna in uno e mezzo
 		var boato := clampf((t - rich) / 0.5, 0.0, 1.0) * clampf(1.0 - (t - rich - 0.5) / 1.5, 0.0, 1.0)
-		luce.light_energy = 0.0 if porta_chiusa else energia * (1.0 + richiamo_in_piu * boato)
+		# (0.3.23) nel buio dell'inizio il viola si spegne e sfarfalla con il corridoio (RisveglioSqualo.luce_scena)
+		var acceso: float = _r.luce_scena()
+		luce.light_energy = 0.0 if porta_chiusa else energia * (1.0 + richiamo_in_piu * boato) * acceso
 		# la luce della corsa di mascotte (davanti a lui, solo sullo squalo) più bassa: col viola dietro resta una
 		# sagoma, leggibile ma non illuminata di fronte (RisveglioSqualo la rifà a ogni fotogramma, prima di qui)
 		_metti_bordo(porta_chiusa, boato)
 		_metti_riflesso(porta_chiusa, t)
+		bordo.light_energy *= acceso
+		riflesso.light_energy *= acceso
 		if not _sagoma_fatta and _r.squalo and is_instance_valid(_r.squalo):
 			_sagoma()
 		var lc := _r.get(&"_luce_corsa") as OmniLight3D
@@ -204,7 +208,8 @@ func _metti_bordo(porta_chiusa: bool, boato: float) -> void:
 
 
 ## Il riflesso viola sulla faccia (vedi [member energia_riflesso]): fra il giocatore e la bocca, poco sopra gli occhi,
-## acceso dalla minaccia (in 0,4 s) fino a quando arretra (si spegne in 0,6 s, poi c'è la luce della corsa).
+## acceso dalla minaccia (in 0,4 s; dalla 0.3.23 da quando la luce resta accesa, mentre lo annusa) fino a quando arretra
+## (si spegne in 0,6 s, poi c'è la luce della corsa).
 func _metti_riflesso(porta_chiusa: bool, t: float) -> void:
 	var sq: Node3D = _r.squalo
 	if porta_chiusa or sq == null or not is_instance_valid(sq) or not sq.visible or _r.get(&"_p") == null:
@@ -212,7 +217,10 @@ func _metti_riflesso(porta_chiusa: bool, t: float) -> void:
 		return
 	var m: float = _r.tempi.get("minaccia", 2.4)
 	var a: float = _r.tempi.get("arretra", 6.05)
-	var k := clampf((t - m + 0.4) / 0.4, 0.0, 1.0) * clampf(1.0 - (t - a) / 0.6, 0.0, 1.0)
+	# (0.3.23) acceso già da quando la luce resta accesa: annusando, chino sul giocatore, la faccia verso di lui era
+	# tutta nera (il muso si leggeva solo come una macchia scura)
+	var da: float = _r.tempi.get("luce", m - 0.4)
+	var k := clampf((t - da) / 0.4, 0.0, 1.0) * clampf(1.0 - (t - a) / 0.6, 0.0, 1.0)
 	if k <= 0.0:
 		riflesso.light_energy = 0.0
 		return
@@ -232,7 +240,9 @@ func _sagoma() -> void:
 	var radice := get_tree().current_scene if get_tree().current_scene else _r.get_parent()
 	for l in radice.find_children("*", "Light3D", true, false):
 		var luce3 := l as Light3D
-		if luce3 == luce or luce3 == bordo or luce3 == riflesso or luce3 == _r.get(&"_luce_corsa"):
+		# (le luci della scena che illuminano solo lui restano: la corsa e, dalla 0.3.23, quella dei lampi)
+		if luce3 == luce or luce3 == bordo or luce3 == riflesso or luce3 == _r.get(&"_luce_corsa") \
+				or luce3 == _r.get(&"_luce_lampo"):
 			continue
 		if luce3.light_cull_mask & RisveglioSqualo.STRATO_SQUALO:
 			_luci_tolte.append([luce3, luce3.light_cull_mask])

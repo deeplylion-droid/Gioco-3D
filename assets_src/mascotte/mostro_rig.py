@@ -353,7 +353,8 @@ def cuoci(arm, piedi, nome='risveglio'):
             Mp = Rp.to_4x4(); Mp.translation = pbs[f'stinco.{s}'].tail.copy()
             pbs[f'piede.{s}'].matrix = Mp
             bpy.context.view_layer.update()
-        if f in (int(A.FASI['MINACCIA'] * A.FPS), int((A.FASI['MINACCIA'] + 1.6) * A.FPS)):
+        if f in (int(A.FASI['MINACCIA'] * A.FPS), int((A.FASI['MINACCIA'] + 1.6) * A.FPS)) or \
+                f % int(os.environ.get('SONDA_OGNI', '100000')) == 0:
             bt = arm.matrix_world @ pbs['testa'].tail
             bm_ = arm.matrix_world @ pbs['mascella'].tail
             print(f'BOCCA t={t:.2f}: muso {tuple(round(c, 3) for c in bt)} mento {tuple(round(c, 3) for c in bm_)}')
