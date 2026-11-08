@@ -241,9 +241,31 @@ func _tracciato() -> void:
 		_striscia(_punti2([Vector3(dentro.x, 0, dentro.y), Vector3(fine.x, 0, fine.y)]))
 		# la conca del bivio: un quadrato allineato al raggio
 		_conche.append(_quadrato(Vector2(c.x, c.z), CONCA, atan2(verso.y, verso.x)))
+	_toppe_conche()
 	_conche.append(_quadrato(Vector2.ZERO, VASCA, 0.0))
 	# l'approdo
 	_conche.append(PackedVector2Array([APPRODO + Vector2(-2.2, -2.4), APPRODO + Vector2(2.2, -2.4), APPRODO + Vector2(2.2, 2.4), APPRODO + Vector2(-2.2, 2.4)]))
+
+
+## Le punte squadrate dei canali dell'anello escono di qualche centimetro dal lato della conca del bivio dove entrano:
+## fra la punta e la conca restava una lama di pavimento larga 5-15 cm con l'acqua dai due lati (#130). La toppa è il
+## canale prolungato dritto di 1 m dentro la conca, meno la conca: proprio la lama, che diventa acqua. Non tocca le
+## strisce, quindi i bordi dell'anello restano dov'erano.
+func _toppe_conche() -> void:
+	for i in 3:
+		var pts: PackedVector2Array = _strisce[i]
+		for fine in ([pts.size() - 1] if i == 0 else [0, pts.size() - 1]):
+			var p: Vector2 = pts[fine]
+			var d: Vector2 = (p - pts[fine - 1 if fine > 0 else 1]).normalized()
+			var o := d.orthogonal() * W * 0.5
+			var ext := PackedVector2Array([p - o, p + o, p + o + d, p - o + d])
+			for c: PackedVector2Array in _conche.duplicate():
+				if Geometry2D.intersect_polygons(ext, c).is_empty():
+					continue
+				for t: PackedVector2Array in Geometry2D.clip_polygons(ext, c):
+					if Geometry2D.is_polygon_clockwise(t) != Geometry2D.is_polygon_clockwise(c):
+						t.reverse()
+					_conche.append(t)
 
 
 func _punti2(punti: Array) -> PackedVector2Array:
@@ -330,21 +352,41 @@ func _acqua_e_banchine() -> void:
 				for i in pz.size():
 					var a: Vector2 = pz[i]
 					var b: Vector2 = pz[(i + 1) % pz.size()]
-					if _sulla_griglia(a, b, x, xa, z, za) or a.distance_to(b) < 0.001:
+					if a.distance_to(b) < 0.001:
 						continue
 					# la normale verso l'acqua (fuori dal pezzo di pavimento)
 					var m := (a + b) * 0.5
 					var n := (b - a).orthogonal().normalized()
 					if Geometry2D.is_point_in_polygon(m + n * 0.01, pz):
 						n = -n
-					_parete(pareti, a, b, Vector3(n.x, 0, n.y))
-					for q in [Vector3(a.x, 0, a.y), Vector3(b.x, 0, b.y), Vector3(b.x, 2.0, b.y),
-							Vector3(a.x, 0, a.y), Vector3(b.x, 2.0, b.y), Vector3(a.x, 2.0, a.y)]:
-						barriere.append(q)
+					var tratti_lato: Array = [[a, b]]
+					# un lato sul bordo del quadrotto è bordo d'acqua solo dove di là c'è l'acqua: i lati delle conche dei
+					# bivi a x ±3 e a x 21, 27, -21, -27 stanno proprio sulla griglia (#130, la riga e il buco all'est)
+					if _sulla_griglia(a, b, x, xa, z, za):
+						tratti_lato = _tratti_in_acqua(a, b, n * 0.01, polys)
+					for ab: Array in tratti_lato:
+						var a2: Vector2 = ab[0]
+						var b2: Vector2 = ab[1]
+						_parete(pareti, a2, b2, Vector3(n.x, 0, n.y))
+						for q in [Vector3(a2.x, 0, a2.y), Vector3(b2.x, 0, b2.y), Vector3(b2.x, 2.0, b2.y),
+								Vector3(a2.x, 0, a2.y), Vector3(b2.x, 2.0, b2.y), Vector3(a2.x, 2.0, a2.y)]:
+							barriere.append(q)
 			z += 2.0
 		x += 2.0
 	_mesh(pav, mat_banca, true, true)
-	_mesh(pareti, mat_vasca, true, true)
+	# Le pareti si vedono dalla parte dell'acqua, ma la loro collisione resta quella di prima (#130): una faccia sola,
+	# verso la banchina, così i raggi dall'acqua (il getto, chi cerca il fondo o il pelo) passano fino al fondo.
+	var mp := _mesh(pareti, mat_vasca, true, false)
+	var facce := mp.mesh.get_faces()
+	for k in range(0, facce.size(), 3):
+		var t := facce[k + 1]
+		facce[k + 1] = facce[k + 2]
+		facce[k + 2] = t
+	var fp := CollisionShape3D.new()
+	var sp := ConcavePolygonShape3D.new()
+	sp.set_faces(facce)
+	fp.shape = sp
+	_collisioni.add_child(fp)
 	# Muro invisibile lungo il bordo dell'acqua (livello "barriere": ferma il giocatore, non il getto né
 	# il raggio del tasto E): nel canale non si cade, e sulla ciambella si sale dalla banchina.
 	var fb := CollisionShape3D.new()
@@ -464,6 +506,31 @@ func _faccia(st: SurfaceTool, q: Array, verso: Vector3) -> void:
 	for k in idx:
 		st.set_normal(nn)
 		st.add_vertex(q[k])
+
+
+## I pezzi del lato a-b che hanno l'acqua dalla parte di [param fuori] (i poligoni dell'acqua si sovrappongono: i pezzi
+## si uniscono lungo il lato).
+static func _tratti_in_acqua(a: Vector2, b: Vector2, fuori: Vector2, polys: Array) -> Array:
+	var lung := a.distance_to(b)
+	var dir := (b - a) / lung
+	var pezzi: Array = []
+	for w in polys:
+		for pl in Geometry2D.intersect_polyline_with_polygon(PackedVector2Array([a + fuori, b + fuori]), w):
+			var t0 := clampf((pl[0] - fuori - a).dot(dir), 0.0, lung)
+			var t1 := clampf((pl[pl.size() - 1] - fuori - a).dot(dir), 0.0, lung)
+			pezzi.append(Vector2(minf(t0, t1), maxf(t0, t1)))
+	pezzi.sort_custom(func(p, q): return p.x < q.x)
+	var uniti: Array = []
+	for p: Vector2 in pezzi:
+		if not uniti.is_empty() and p.x <= (uniti[-1] as Vector2).y + 0.001:
+			uniti[-1] = Vector2((uniti[-1] as Vector2).x, maxf((uniti[-1] as Vector2).y, p.y))
+		else:
+			uniti.append(p)
+	var out: Array = []
+	for p: Vector2 in uniti:
+		if p.y - p.x > 0.001:
+			out.append([a + dir * p.x, a + dir * p.y])
+	return out
 
 
 ## Vero se il lato a-b sta su un bordo del quadrotto (non è bordo d'acqua).
