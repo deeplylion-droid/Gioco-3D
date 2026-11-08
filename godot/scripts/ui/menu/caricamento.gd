@@ -138,15 +138,20 @@ func _entra() -> void:
 	if pacchetto == null:
 		_errore("Il caricamento della sala non è riuscito.")
 		return
-	var velo := Dissolvenza.di(get_tree())
+	# (l'albero preso prima del cambio di scena: change_scene_to_packed toglie subito questa schermata dall'albero, e
+	# dopo get_tree() è null. Prima la qualità automatica partiva con un albero null: al primo avvio di ogni giocatore
+	# lo schermo restava nero e l'exe release andava in segfault entrando nella sala, collaudo della 0.3.22)
+	var albero := get_tree()
+	var velo := Dissolvenza.di(albero)
 	# Mentre la sala si prepara lo schermo resta nero, con una scritta per le attese lunghe.
 	await velo.scurisci(0.7, "Preparazione della sala…")
 	Game.pause_on_focus_loss = _pausa_fuoco
 	Game.capture_mouse()
-	get_tree().change_scene_to_packed(pacchetto)
-	if scena == SCENA_SALA and QualitaAutomatica.da_fare():
+	var prova := scena == SCENA_SALA and QualitaAutomatica.da_fare()
+	albero.change_scene_to_packed(pacchetto)
+	if prova:
 		# (il primo avvio: la prova della qualità dietro lo schermo ancora nero, che poi si schiarisce da sé)
-		QualitaAutomatica.avvia(get_tree(), frame_di_assestamento)
+		QualitaAutomatica.avvia(albero, frame_di_assestamento)
 		return
 	velo.schiarisci(1.6, frame_di_assestamento)
 

@@ -98,6 +98,57 @@ func _run() -> void:
 		await _joy(JOY_BUTTON_DPAD_RIGHT)
 	check(tabs.current_tab == ultima, "con la croce a destra si arriva ad Audio")
 
+	# col joypad, dalla barra delle schede sulla scheda Audio: il primo «giù» va sul volume generale e la croce a
+	# sinistra lo abbassa; il secondo «giù» va sulla musica (ricontrollo di grafica-2, 7 novembre)
+	tabs.get_tab_bar().grab_focus()
+	await _frames(2)
+	var generale := tabs.get_current_tab_control().find_children("Cursore_generale", "HSlider", true, false)
+	await _joy(JOY_BUTTON_DPAD_DOWN)
+	check(not generale.is_empty() and get_viewport().gui_get_focus_owner() == generale[0],
+		"joypad: il primo giù dalla barra va sul volume generale (%s)" % get_viewport().gui_get_focus_owner())
+	var g0 := float(audio_ad.call(&"volume", "generale"))
+	for i in 3:
+		await _joy(JOY_BUTTON_DPAD_LEFT)
+	var g1 := float(audio_ad.call(&"volume", "generale"))
+	check(g1 < g0, "joypad: la croce a sinistra abbassa il volume generale (%.2f -> %.2f)" % [g0, g1])
+	for i in 3:
+		await _joy(JOY_BUTTON_DPAD_RIGHT)
+	await _joy(JOY_BUTTON_DPAD_DOWN)
+	var musica := tabs.get_current_tab_control().find_children("Cursore_musica", "HSlider", true, false)
+	check(not musica.is_empty() and get_viewport().gui_get_focus_owner() == musica[0], "joypad: il secondo giù va sulla musica")
+
+	# la calibrazione dalla scheda Luminosità col joypad: A la apre, B la chiude, e il fuoco torna su «Calibra la
+	# luminosità…» e la croce lo muove (collaudo della 0.3.22: prima nessun controllo aveva più il fuoco)
+	for chiudi_con in [JOY_BUTTON_B, KEY_ESCAPE]:
+		tabs.current_tab = tabs.get_tab_count() - 2
+		await _frames(2)
+		var calibra: Button = null
+		for bt: Button in m.find_children("*", "Button", true, false):
+			if bt.text == "Calibra la luminosità…":
+				calibra = bt
+		check(calibra != null, "nella scheda Luminosità c'è «Calibra la luminosità…»")
+		if calibra == null:
+			break
+		calibra.grab_focus()
+		await _joy(JOY_BUTTON_A)
+		await _frames(3)
+		check(not m.find_children("*", "CalibrazioneLuminosita", true, false).is_empty(), "A del joypad apre la calibrazione")
+		if chiudi_con == JOY_BUTTON_B:
+			await _joy(JOY_BUTTON_B)
+		else:
+			await _tasto(KEY_ESCAPE)
+		await _frames(3)
+		var come := "B" if chiudi_con == JOY_BUTTON_B else "Esc"
+		check(m.find_children("*", "CalibrazioneLuminosita", true, false).is_empty() and m.is_inside_tree(),
+			"%s chiude la calibrazione e le opzioni restano aperte" % come)
+		check(get_viewport().gui_get_focus_owner() == calibra, "chiusa con %s, il fuoco torna su «Calibra la luminosità…» (%s)" % [come, get_viewport().gui_get_focus_owner()])
+		await _joy(JOY_BUTTON_DPAD_UP)
+		var dopo := get_viewport().gui_get_focus_owner()
+		check(dopo != null and dopo != calibra, "poi la croce in su sposta il fuoco (%s)" % dopo)
+	tabs.current_tab = tabs.get_tab_count() - 1
+	await _frames(2)
+	check(String((m.find_children("*", "Label", true, false)[0] as Label).text) == "Opzioni", "il titolo del menu è «Opzioni»")
+
 	# 3. i cursori dell'audio
 	var cursori := tabs.get_current_tab_control().find_children("Cursore_*", "HSlider", true, false)
 	check(cursori.size() == 4, "nella scheda Audio ci sono i 4 cursori dei volumi (%d)" % cursori.size())

@@ -79,7 +79,8 @@ func _ready() -> void:
 
 ## Per le prove (il controllo "Prova su Vulkan" della CI, .github/workflows/prova_vulkan.yml, e il collaudo), dopo il --
 ## della riga di comando; senza questi argomenti non fa niente (tests/test_partenza_da_riga.gd):
-## --partenza=<id>   parte subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...);
+## --partenza=<id>   parte subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...;
+##                    inizio è la nuova partita, come il pulsante);
 ## --preset=<nome>   mette prima quel preset grafico;
 ## --muori-dopo=<s>  quei secondi dopo l'arrivo il giocatore muore (GameState.kill_player) e si riparte dal checkpoint,
 ##                   come la morte nelle vasche dopo la torre (crash della 0.3.17); il resto conta dal secondo arrivo;
@@ -190,7 +191,12 @@ func _partenza_da_riga() -> void:
 		albero.create_timer(esci, true, false, true).timeout.connect(func() -> void:
 			_prova("PROVA: esco dopo %s s" % esci)
 			albero.quit())
-	if partenza != "":
+	if partenza == "inizio":
+		# la nuova partita, come il pulsante del titolo (dalla schermata di caricamento vera: col profilo nuovo c'è anche
+		# la prova della qualità automatica)
+		_prova("PROVA: parto da inizio (nuova partita)")
+		_avvia_nuova_partita()
+	elif partenza != "":
 		_prova("PROVA: parto da %s -> %s" % [partenza, MenuProva.parti(albero, partenza)])
 
 
