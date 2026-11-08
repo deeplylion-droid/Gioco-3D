@@ -7,7 +7,7 @@
 # Il guanto esce già nelle coordinate della lancia (glTF: punta nell'origine, +Z verso chi guarda): nella scena della
 # lancia va con posizione e rotazione zero.
 # Uso: /home/user/tools/blender-venv/bin/python assets_src/guanto/genera_guanto.py [uscita.glb] [blend]
-import bpy, bmesh, math, sys
+import bpy, bmesh, math, os, sys
 import numpy as np
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
@@ -22,6 +22,9 @@ PASSO_DITA = 0.0255      # da un dito all'altro lungo l'impugnatura (si toccano 
 Y_INDICE = -0.202        # altezza (glTF y) dell'indice, sotto il ponticello del grilletto
 AGGIO = 0.0006           # quanto il dito sta fuori dalla superficie prima dell'appoggio
 VOXEL = 0.0016
+# l'involucro (il punto più fuori sopra e sotto il centro del dito) solo dal davanti in poi, dove la fascia grigia sporge
+# e lo strappo stava; sul lato destro, vicino al palmo, alzava la base dell'indice di 5-9 mm dall'impugnatura (enigmi, 8 novembre)
+ANGOLO_INVOLUCRO = float(os.environ.get("ANGOLO_INVOLUCRO", "60"))
 FACCE_GUANTO = int(__import__("os").environ.get("FACCE_GUANTO", "9000"))      # dopo la riduzione (si vede da vicino, ma è una mano sola)
 
 
@@ -40,6 +43,27 @@ lancia = [o for o in bpy.data.objects if o.type == 'MESH' and o.name.startswith(
 bm_l = bmesh.new()
 bm_l.from_mesh(lancia.data)
 bm_l.transform(lancia.matrix_world)
+# il modello della lancia ha qualche triangolo rovesciato (uno sulla punta dell'indice, glTF (-0,024, -0,195, 0,433)): lì
+# "dentro" e "fuori" si scambiavano, l'appoggio tirava i vertici dalla parte sbagliata e faceva la conchetta col suo
+# spigolo vivo (enigmi, 8 novembre). Solo per le misure del guanto, si girano i triangoli opposti ai vicini (entro 3 mm)
+from mathutils.kdtree import KDTree
+bm_l.faces.ensure_lookup_table()
+_kd = KDTree(len(bm_l.faces))
+for _f in bm_l.faces:
+    _kd.insert(_f.calc_center_median(), _f.index)
+_kd.balance()
+_girare = []
+for _f in bm_l.faces:
+    _m = Vector()
+    for (_c, _i, _d) in _kd.find_range(_f.calc_center_median(), 0.003):
+        if _i != _f.index:
+            _g = bm_l.faces[_i]
+            _m += _g.normal * _g.calc_area()
+    if _m.length > 0 and _f.normal.dot(_m.normalized()) < -0.3:
+        _girare.append(_f)
+for _f in _girare:
+    _f.normal_flip()
+print("GUANTO: triangoli rovesciati della lancia girati per le misure", len(_girare))
 bvh = BVHTree.FromBMesh(bm_l)
 
 
@@ -155,7 +179,7 @@ for i in range(4):
         d = Vector((math.cos(math.radians(angoli[k])), 0.0, -math.sin(math.radians(angoli[k]))))
         db = g2b(d)
         fuori_max = (p - g2b(Vector((0.002, gy, 0.49)))).dot(db)
-        for cc in c_altri:
+        for cc in (c_altri if angoli[k] >= ANGOLO_INVOLUCRO else ()):
             altro = cc[k]
             if altro is not None:
                 fuori_max = max(fuori_max, (altro[0] - g2b(Vector((0.002, b2g(altro[0]).y, 0.49)))).dot(db))
@@ -212,28 +236,6 @@ sm.factor = 0.5
 bpy.ops.object.modifier_apply(modifier="liscia2")
 
 # --- appoggio: i vertici dentro l'impugnatura o a meno di 3 mm escono sulla superficie (+0,4 mm)
-STRAPPO = g2b(Vector((-0.043, -0.199, 0.426)))
-
-
-def rilassa_strappo(ob, giri=10):
-    """Lisciatura e fuori dall'impugnatura, a turno, attorno allo spigolo dello strappo (dopo la riduzione dei poligoni,
-    che lì ripiegava gli spigoli)."""
-    bm = bmesh.new()
-    bm.from_mesh(ob.data)
-    zona = [v for v in bm.verts if (ob.matrix_world @ v.co - STRAPPO).length < 0.010]
-    inv = ob.matrix_world.inverted()
-    for _g in range(giri):
-        bmesh.ops.smooth_vert(bm, verts=zona, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
-        for v in zona:
-            pw = ob.matrix_world @ v.co
-            loc, n, _, d = bvh.find_nearest(pw)
-            if loc is not None and (pw - loc).dot(n) < 0.0004:
-                v.co = inv @ (loc + n * 0.0004)
-    bm.to_mesh(ob.data)
-    bm.free()
-    ob.data.update()
-
-
 def appoggia(ob, soglia=0.003, fuori=0.0004):
     mosse = 0
     for v in ob.data.vertices:
@@ -247,10 +249,7 @@ def appoggia(ob, soglia=0.003, fuori=0.0004):
         if (lg.x < -0.034 or lg.x > 0.038) and lg.y > -0.215:
             continue
         dentro = (p - loc).dot(n) < 0
-        # (vicino allo spigolo davanti a sinistra, sotto la fascia, solo i vertici dentro: tirare sulla superficie anche
-        # quelli vicini piegava la pelle in una fossetta, lo "strappo" sulla punta dell'indice del collaudo di enigmi)
-        vicino_strappo = (p - STRAPPO).length < 0.010
-        if dentro or (d < soglia and not vicino_strappo):
+        if dentro or d < soglia:
             v.co = ob.matrix_world.inverted() @ (loc + n * fuori)
             mosse += 1
     return mosse
@@ -302,7 +301,30 @@ dec = guanto.modifiers.new("dec", 'DECIMATE')
 dec.ratio = FACCE_GUANTO / max(1, len(guanto.data.polygons))
 bpy.ops.object.modifier_apply(modifier="dec")
 print("GUANTO: ricontrollo appoggio", appoggia(guanto, soglia=0.0, fuori=0.0004))
-rilassa_strappo(guanto)
+# la riduzione rifà qualche piega stretta isolata (una fossetta di 95 gradi sul lato fuori del pollice, glTF (-0,061,
+# -0,177, 0,469)): ancora una lisciatura degli spigoli sopra PIEGA_DOPO gradi lontani dall'impugnatura (lì il contatto lo
+# tiene l'appoggio), poi fuori dall'impugnatura
+PIEGA_DOPO = float(os.environ.get("PIEGA_DOPO", "70"))
+for giro in range(3):
+    bm = bmesh.new()
+    bm.from_mesh(guanto.data)
+    vv = set()
+    for e in bm.edges:
+        if len(e.link_faces) == 2 and math.degrees(e.calc_face_angle()) > PIEGA_DOPO:
+            for v in e.verts:
+                if bvh.find_nearest(guanto.matrix_world @ v.co)[3] > 0.002:
+                    vv.add(v)
+                    for e2 in v.link_edges:
+                        vv.add(e2.other_vert(v))
+    if not vv:
+        bm.free()
+        break
+    for _k in range(4):
+        bmesh.ops.smooth_vert(bm, verts=list(vv), factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    bm.to_mesh(guanto.data)
+    bm.free()
+    appoggia(guanto, soglia=0.0, fuori=0.0004)
+print("GUANTO: spigoli piegati oltre %d gradi dopo la riduzione" % PIEGA_DOPO, pieghe(guanto, PIEGA_DOPO))
 for p in guanto.data.polygons:
     p.use_smooth = True
 
