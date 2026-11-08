@@ -602,14 +602,13 @@ func _prepara_torre() -> void:
 	t.process_mode = Node.PROCESS_MODE_DISABLED
 	_torre_nascosta = t
 	add_child(t)
+	# le coordinate di texture del pavimento per la soglia (chiudi_soglia_torre in _completa_torre): a pezzi, insieme
+	# alla costruzione (che dura secondi; questo pochi fotogrammi), non tutte in un fotogramma quando la torre si mostra.
+	# Senza aspettarlo: la torre è pronta quando lo era prima
+	prepara_uv_pavimento(find_child("sala_pavimento", true, false) as MeshInstance3D, PUNTO_UV_SOGLIA)
 	# (col portone già aperto, a pezzi più grandi: si entra prima, mai tutta in un fotogramma)
 	await t.call(&"costruisci_a_pezzi", 20.0 if _torre_voluta or _torre_in_attesa else 8.0)
 	# (fuori dall'albero: una morte ha ricaricato la sala mentre la torre si preparava)
-	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
-		return
-	# le coordinate di texture del pavimento per la soglia (chiudi_soglia_torre in _completa_torre): a pezzi adesso,
-	# non tutte in un fotogramma quando la torre si mostra
-	await prepara_uv_pavimento(find_child("sala_pavimento", true, false) as MeshInstance3D, PUNTO_UV_SOGLIA)
 	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
 	await t.call(&"prepara_materiali", get_viewport())
