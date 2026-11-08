@@ -1,0 +1,145 @@
+SONDA: ossa misurate ["coda1", "coda2", "coda3", "piede.L", "piede.R", "mano.L", "mano.R", "testa", "bocca", "mento_punta"]
+SONDA: mesh fuori dallo squalo che la luce dei lampi può illuminare: 0 []
+SALTO 1.917 0.0270 m
+SALTO 1.933 0.0270 m
+SALTO 1.950 0.0273 m
+SALTO 1.967 0.0275 m
+SALTO 1.983 0.0212 m
+SALTO 2.000 0.0149 m
+SALTO 2.017 0.0070 m
+SALTO 2.033 0.0152 m
+SALTO 2.050 0.0153 m
+SALTO 2.067 0.0066 m
+SALTO 2.083 0.0154 m
+SALTO 2.100 0.0154 m
+SALTO 2.117 0.0154 m
+SALTO 2.133 0.0154 m
+SALTO 2.150 0.0155 m
+SALTO 2.167 0.0386 m
+SALTO 2.183 0.0385 m
+SALTO 2.200 0.0383 m
+SALTO 2.217 0.0381 m
+SALTO 2.233 0.0379 m
+SALTO 2.250 0.0377 m
+SALTO 2.267 0.0375 m
+SALTO 2.283 0.0297 m
+SALTO 2.300 0.0298 m
+SALTO 2.317 0.0300 m
+SALTO 2.333 0.0302 m
+SALTO 2.350 0.0303 m
+SALTO 2.367 0.0304 m
+SALTO 2.383 0.0306 m
+SALTO 2.400 0.0308 m
+SALTO 2.417 0.0205 m
+SALTO 2.433 0.0078 m
+SALTO 2.450 0.0070 m
+SALTO 2.467 0.0066 m
+SALTO 2.483 0.0240 m
+SALTO 2.500 0.0065 m
+SALTO 2.517 0.0214 m
+SALTO 2.533 0.0179 m
+SALTO 2.550 0.0148 m
+SALTO 2.567 0.0121 m
+SALTO 2.583 0.0101 m
+SALTO 2.600 0.0088 m
+SALTO 2.617 0.0162 m
+SALTO 2.633 0.0101 m
+SALTO 2.650 0.0128 m
+SALTO 2.667 0.0088 m
+SALTO 2.683 0.0106 m
+SALTO 2.700 0.0100 m
+SALTO 2.717 0.0095 m
+SALTO 2.733 0.0092 m
+SALTO 2.750 0.0089 m
+SALTO 2.767 0.0089 m
+SALTO 2.783 0.0086 m
+SALTO 2.800 0.0086 m
+SALTO 8.117 0.0030 m
+SALTO 8.133 0.0033 m
+SALTO 8.150 0.0036 m
+SALTO 8.167 0.0037 m
+SALTO 8.183 0.0040 m
+SALTO 8.200 0.0041 m
+SALTO 8.217 0.0043 m
+SALTO 8.233 0.0043 m
+SALTO 8.250 0.0040 m
+SALTO 8.267 0.0036 m
+SALTO 8.283 0.0031 m
+SALTO 8.300 0.0027 m
+SALTO 8.317 0.0024 m
+SALTO 8.333 0.0021 m
+SALTO 8.350 0.0020 m
+SALTO 8.367 0.0018 m
+SALTO 8.383 0.0013 m
+SALTO 8.400 0.0009 m
+SALTO 8.417 0.0015 m
+SALTO 8.433 0.0029 m
+SALTO 8.450 0.0042 m
+SALTO 8.467 0.0053 m
+SALTO 8.483 0.0058 m
+SALTO 8.500 0.0061 m
+SALTO 8.517 0.0055 m
+SALTO 8.533 0.0047 m
+SALTO 8.550 0.0040 m
+SALTO 8.567 0.0030 m
+SALTO 8.583 0.0029 m
+SALTO 8.600 0.0046 m
+SALTO 8.617 0.0079 m
+SALTO 8.633 0.0109 m
+SALTO 8.650 0.0181 m
+SALTO 8.667 0.0240 m
+SALTO 8.683 0.0260 m
+SALTO 8.700 0.0290 m
+SALTO 8.717 0.0227 m
+SALTO 8.733 0.0219 m
+SALTO 8.750 0.0186 m
+SALTO 8.767 0.0174 m
+SALTO 8.783 0.0104 m
+SALTO 8.800 0.0067 m
+SALTO 8.817 0.0053 m
+SALTO 8.833 0.0042 m
+SALTO 8.850 0.0036 m
+SALTO 8.867 0.0033 m
+SALTO 8.883 0.0031 m
+SALTO 8.900 0.0030 m
+SALTO 8.917 0.0030 m
+SALTO 8.933 0.0030 m
+SALTO 8.950 0.0030 m
+SALTO 8.967 0.0030 m
+SALTO 8.983 0.0029 m
+SALTO 9.000 0.0017 m
+SALTO 9.017 0.0196 m
+SALTO 9.033 0.0019 m
+SALTO 9.050 0.0197 m
+SALTO 9.067 0.0021 m
+SALTO 9.083 0.0199 m
+SALTO 9.100 0.0022 m
+SALTO 9.117 0.0023 m
+SALTO 9.133 0.0024 m
+SALTO 9.150 0.0025 m
+SALTO 9.167 0.0026 m
+SALTO 9.183 0.0027 m
+SALTO 9.200 0.0191 m
+SALTO 9.217 0.0189 m
+SALTO 9.233 0.0028 m
+SALTO 9.250 0.0185 m
+SALTO 9.267 0.0028 m
+SALTO 9.283 0.0027 m
+SONDA: camera dai muri al minimo 0.307 m a 0.10 s
+SONDA: salto più grande della camera in un fotogramma 0.039 m a 2.17 s, giro più grande 2.2 gradi a 2.92 s
+SONDA: osso coda1 dalla superficie più vicina al minimo inf m a 0.02 s
+SONDA: osso coda2 dalla superficie più vicina al minimo 0.469 m a 12.15 s
+SONDA: osso coda3 dalla superficie più vicina al minimo 0.280 m a 12.17 s
+SONDA: osso piede.L dalla superficie più vicina al minimo 0.226 m a 0.48 s
+SONDA: osso piede.R dalla superficie più vicina al minimo 0.226 m a 0.75 s
+SONDA: osso mano.L dalla superficie più vicina al minimo 0.105 m a 14.00 s
+SONDA: osso mano.R dalla superficie più vicina al minimo 0.010 m a 3.45 s
+SONDA: osso testa dalla superficie più vicina al minimo inf m a 0.02 s
+SONDA: osso bocca dalla superficie più vicina al minimo 0.465 m a 13.73 s
+SONDA: osso mento_punta dalla superficie più vicina al minimo 0.432 m a 14.00 s
+SONDA: piede piede.L sul pavimento fra 0.217 e 0.575 m; scivolata più lunga a terra in un fotogramma -
+SONDA: piede piede.R sul pavimento fra 0.218 e 0.536 m; scivolata più lunga a terra in un fotogramma -
+SONDA: goccia ["compare a 4.45 s", "sparisce a 7.15 s"]
+SONDA: 2 s dopo la fine suonano ancora []
+SONDA: dopo la fine le lampade hanno fattore min 1.00 max 1.00 (16)
+SONDA FINE

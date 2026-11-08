@@ -1,0 +1,323 @@
+SONDA: ossa misurate ["coda1", "coda2", "coda3", "piede.L", "piede.R", "mano.L", "mano.R", "testa", "bocca", "mento_punta"]
+SONDA: mesh fuori dallo squalo che la luce dei lampi può illuminare: 0 []
+LUCE_LAMPO 0.60 energia 7.00 maschera 65536
+LUCE_LAMPO 0.67 energia 7.00 maschera 65536
+LUCE_LAMPO 1.33 energia 3.00 maschera 65536
+LUCE_LAMPO 1.40 energia 3.00 maschera 65536
+LUCE_LAMPO 1.47 energia 3.00 maschera 65536
+SALTO 1.900 0.0539 m
+SALTO 1.933 0.0541 m
+SALTO 1.967 0.0549 m
+SALTO 2.000 0.0362 m
+LUCE_LAMPO 2.00 energia 1.60 maschera 65536
+SALTO 2.033 0.0124 m
+SALTO 2.067 0.0126 m
+SALTO 2.100 0.0308 m
+SALTO 2.133 0.0308 m
+LUCE_LAMPO 2.13 energia 1.60 maschera 65536
+SALTO 2.167 0.0772 m
+SALTO 2.200 0.0766 m
+SALTO 2.233 0.0758 m
+SALTO 2.267 0.0591 m
+SALTO 2.300 0.0597 m
+SALTO 2.333 0.0604 m
+SALTO 2.367 0.0609 m
+SALTO 2.400 0.0109 m
+FIUTO 2.40 bocca dalla camera: destra 0.12 avanti 0.70 su -0.05; dal giocatore (corpo): destra 0.23 avanti 0.64
+SALTO 2.433 0.0135 m
+SALTO 2.467 0.0286 m
+SALTO 2.500 0.0272 m
+FIUTO 2.50 bocca dalla camera: destra 0.13 avanti 0.72 su -0.09; dal giocatore (corpo): destra 0.23 avanti 0.70
+SALTO 2.533 0.0379 m
+SALTO 2.567 0.0152 m
+SALTO 2.600 0.0324 m
+FIUTO 2.60 bocca dalla camera: destra 0.19 avanti 0.73 su -0.12; dal giocatore (corpo): destra 0.25 avanti 0.79
+SALTO 2.633 0.0248 m
+SALTO 2.667 0.0195 m
+SALTO 2.700 0.0199 m
+FIUTO 2.70 bocca dalla camera: destra 0.23 avanti 0.71 su -0.10; dal giocatore (corpo): destra 0.26 avanti 0.83
+SALTO 2.733 0.0181 m
+SALTO 2.767 0.0172 m
+FIUTO 2.80 bocca dalla camera: destra 0.14 avanti 0.68 su -0.06; dal giocatore (corpo): destra 0.16 avanti 0.84
+FIUTO 2.90 bocca dalla camera: destra -0.06 avanti 0.84 su -0.10; dal giocatore (corpo): destra -0.03 avanti 0.96
+FIUTO 3.00 bocca dalla camera: destra -0.10 avanti 1.18 su -0.11; dal giocatore (corpo): destra -0.08 avanti 1.13
+FIUTO 3.10 bocca dalla camera: destra -0.10 avanti 1.43 su -0.04; dal giocatore (corpo): destra -0.10 avanti 1.29
+FIUTO 3.20 bocca dalla camera: destra -0.13 avanti 1.54 su 0.02; dal giocatore (corpo): destra -0.13 avanti 1.34
+FIUTO 3.30 bocca dalla camera: destra -0.13 avanti 1.56 su 0.05; dal giocatore (corpo): destra -0.13 avanti 1.35
+FIUTO 3.40 bocca dalla camera: destra -0.14 avanti 1.56 su 0.06; dal giocatore (corpo): destra -0.14 avanti 1.34
+FIUTO 3.50 bocca dalla camera: destra -0.05 avanti 1.49 su 0.06; dal giocatore (corpo): destra -0.05 avanti 1.27
+FIUTO 3.60 bocca dalla camera: destra 0.04 avanti 1.43 su 0.06; dal giocatore (corpo): destra 0.03 avanti 1.21
+FIUTO 3.70 bocca dalla camera: destra 0.04 avanti 1.39 su 0.05; dal giocatore (corpo): destra 0.04 avanti 1.17
+FIUTO 3.80 bocca dalla camera: destra 0.06 avanti 1.35 su 0.05; dal giocatore (corpo): destra 0.06 avanti 1.15
+FIUTO 3.90 bocca dalla camera: destra 0.10 avanti 1.32 su 0.05; dal giocatore (corpo): destra 0.10 avanti 1.12
+FIUTO 4.00 bocca dalla camera: destra 0.17 avanti 1.33 su 0.05; dal giocatore (corpo): destra 0.17 avanti 1.12
+FIUTO 4.10 bocca dalla camera: destra 0.23 avanti 1.35 su 0.06; dal giocatore (corpo): destra 0.23 avanti 1.13
+FIUTO 4.20 bocca dalla camera: destra 0.28 avanti 1.34 su 0.07; dal giocatore (corpo): destra 0.28 avanti 1.10
+FIUTO 4.30 bocca dalla camera: destra 0.33 avanti 1.29 su 0.08; dal giocatore (corpo): destra 0.33 avanti 1.04
+FIUTO 4.40 bocca dalla camera: destra 0.35 avanti 1.20 su 0.08; dal giocatore (corpo): destra 0.36 avanti 0.96
+FIUTO 4.50 bocca dalla camera: destra 0.37 avanti 1.04 su 0.07; dal giocatore (corpo): destra 0.38 avanti 0.82
+FIUTO 4.60 bocca dalla camera: destra 0.33 avanti 0.91 su 0.06; dal giocatore (corpo): destra 0.34 avanti 0.72
+FIUTO 4.70 bocca dalla camera: destra 0.26 avanti 0.80 su 0.06; dal giocatore (corpo): destra 0.28 avanti 0.65
+FIUTO 4.80 bocca dalla camera: destra 0.16 avanti 0.76 su 0.05; dal giocatore (corpo): destra 0.20 avanti 0.62
+FIUTO 4.90 bocca dalla camera: destra 0.07 avanti 0.70 su 0.03; dal giocatore (corpo): destra 0.11 avanti 0.61
+FIUTO 5.00 bocca dalla camera: destra 0.01 avanti 0.66 su 0.02; dal giocatore (corpo): destra 0.06 avanti 0.60
+FIUTO 5.10 bocca dalla camera: destra -0.05 avanti 0.66 su -0.01; dal giocatore (corpo): destra 0.01 avanti 0.62
+FIUTO 5.20 bocca dalla camera: destra -0.05 avanti 0.64 su -0.00; dal giocatore (corpo): destra 0.01 avanti 0.60
+FIUTO 5.30 bocca dalla camera: destra -0.05 avanti 0.65 su -0.01; dal giocatore (corpo): destra 0.01 avanti 0.60
+FIUTO 5.40 bocca dalla camera: destra -0.06 avanti 0.66 su -0.01; dal giocatore (corpo): destra 0.00 avanti 0.61
+SALTO 8.133 0.0066 m
+SALTO 8.167 0.0075 m
+SALTO 8.200 0.0083 m
+SALTO 8.233 0.0088 m
+SALTO 8.267 0.0072 m
+SALTO 8.300 0.0055 m
+SALTO 8.333 0.0043 m
+SALTO 8.367 0.0036 m
+SALTO 8.400 0.0019 m
+SALTO 8.433 0.0043 m
+SALTO 8.467 0.0094 m
+SALTO 8.500 0.0117 m
+SALTO 8.533 0.0093 m
+SALTO 8.567 0.0061 m
+SALTO 8.600 0.0086 m
+SALTO 8.633 0.0204 m
+SALTO 8.667 0.0429 m
+SALTO 8.700 0.0548 m
+SALTO 8.733 0.0436 m
+SALTO 8.767 0.0347 m
+SALTO 8.800 0.0159 m
+SALTO 8.833 0.0085 m
+SALTO 8.867 0.0065 m
+SALTO 8.900 0.0060 m
+SALTO 8.933 0.0059 m
+SALTO 8.967 0.0059 m
+SALTO 9.000 0.0059 m
+SALTO 9.033 0.0196 m
+SALTO 9.067 0.0199 m
+SALTO 9.100 0.0204 m
+SALTO 9.133 0.0046 m
+SALTO 9.167 0.0051 m
+SALTO 9.200 0.0185 m
+SALTO 9.233 0.0177 m
+SALTO 9.267 0.0171 m
+SALTO 9.300 0.0054 m
+SONDA: camera dai muri al minimo 0.307 m a 0.10 s
+SONDA: salto più grande della camera in un fotogramma 0.077 m a 2.17 s, giro più grande 4.4 gradi a 2.90 s
+SONDA: osso coda1 dalla superficie più vicina al minimo inf m a 0.03 s
+SONDA: osso coda2 dalla superficie più vicina al minimo 0.469 m a 12.17 s
+SONDA: osso coda3 dalla superficie più vicina al minimo 0.280 m a 12.17 s
+SONDA: osso piede.L dalla superficie più vicina al minimo 0.228 m a 5.47 s
+SONDA: osso piede.R dalla superficie più vicina al minimo 0.228 m a 5.03 s
+SONDA: osso mano.L dalla superficie più vicina al minimo 0.105 m a 14.00 s
+SONDA: osso mano.R dalla superficie più vicina al minimo 0.025 m a 3.20 s
+SONDA: osso testa dalla superficie più vicina al minimo inf m a 0.03 s
+SONDA: osso bocca dalla superficie più vicina al minimo 0.465 m a 13.73 s
+SONDA: osso mento_punta dalla superficie più vicina al minimo 0.432 m a 14.00 s
+SONDA: piede piede.L sul pavimento fra 0.219 e 0.575 m; scivolata più lunga a terra in un fotogramma -
+SONDA: piede piede.R sul pavimento fra 0.219 e 0.536 m; scivolata più lunga a terra in un fotogramma -
+LAMPADE [0.1, 0.03, [0.03, 0.03]]
+LAMPADE [0.2, 0.03, [0.03, 0.03]]
+LAMPADE [0.3, 0.03, [0.03, 0.03]]
+LAMPADE [0.4, 0.03, [0.03, 0.03]]
+LAMPADE [0.5, 0.03, [0.03, 0.03]]
+LAMPADE [0.6, 1.0, [1.0, 1.0]]
+LAMPADE [0.7, 1.0, [1.0, 1.0]]
+LAMPADE [0.8, 0.03, [0.03, 0.03]]
+LAMPADE [0.9, 0.03, [0.03, 0.03]]
+LAMPADE [1.0, 0.03, [0.03, 0.03]]
+LAMPADE [1.1, 0.03, [0.03, 0.03]]
+LAMPADE [1.2, 0.03, [0.03, 0.03]]
+LAMPADE [1.3, 1.0, [1.0, 1.0]]
+LAMPADE [1.4, 1.0, [1.0, 1.0]]
+LAMPADE [1.5, 0.03, [0.03, 0.03]]
+LAMPADE [1.6, 0.03, [0.03, 0.03]]
+LAMPADE [1.7, 0.03, [0.03, 0.03]]
+LAMPADE [1.8, 0.03, [0.03, 0.03]]
+LAMPADE [1.9, 0.03, [0.03, 0.03]]
+LAMPADE [2.0, 1.0, [1.0, 1.0]]
+LAMPADE [2.1, 1.0, [1.0, 1.0]]
+LAMPADE [2.2, 0.03, [0.03, 0.03]]
+LAMPADE [2.3, 0.03, [0.03, 0.03]]
+LAMPADE [2.4, 1.0, [1.0, 1.0]]
+LAMPADE [2.5, 0.0, [0.0, 0.0]]
+LAMPADE [2.6, 1.0, [1.0, 1.0]]
+LAMPADE [2.7, 1.0, [1.0, 1.0]]
+LAMPADE [2.8, 1.0, [1.0, 1.0]]
+LAMPADE [2.9, 1.0, [1.0, 1.0]]
+LAMPADE [3.0, 1.0, [1.0, 1.0]]
+LAMPADE [3.1, 1.0, [1.0, 1.0]]
+LAMPADE [3.2, 1.0, [1.0, 1.0]]
+LAMPADE [3.3, 1.0, [1.0, 1.0]]
+LAMPADE [3.4, 1.0, [1.0, 1.0]]
+LAMPADE [3.5, 1.0, [1.0, 1.0]]
+LAMPADE [3.6, 1.0, [1.0, 1.0]]
+LAMPADE [3.7, 1.0, [1.0, 1.0]]
+LAMPADE [3.8, 1.0, [1.0, 1.0]]
+LAMPADE [3.9, 1.0, [1.0, 1.0]]
+LAMPADE [4.0, 1.0, [1.0, 1.0]]
+LAMPADE [4.1, 1.0, [1.0, 1.0]]
+LAMPADE [4.2, 1.0, [1.0, 1.0]]
+LAMPADE [4.3, 1.0, [1.0, 1.0]]
+LAMPADE [4.4, 1.0, [1.0, 1.0]]
+LAMPADE [4.5, 1.0, [1.0, 1.0]]
+LAMPADE [4.6, 1.0, [1.0, 1.0]]
+LAMPADE [4.7, 1.0, [1.0, 1.0]]
+LAMPADE [4.8, 1.0, [1.0, 1.0]]
+LAMPADE [4.9, 1.0, [1.0, 1.0]]
+LAMPADE [5.0, 1.0, [1.0, 1.0]]
+LAMPADE [5.1, 1.0, [1.0, 1.0]]
+LAMPADE [5.2, 1.0, [1.0, 1.0]]
+LAMPADE [5.3, 1.0, [1.0, 1.0]]
+LAMPADE [5.4, 1.0, [1.0, 1.0]]
+LAMPADE [5.5, 1.0, [1.0, 1.0]]
+LAMPADE [5.6, 1.0, [1.0, 1.0]]
+LAMPADE [5.7, 1.0, [1.0, 1.0]]
+LAMPADE [5.8, 1.0, [1.0, 1.0]]
+LAMPADE [5.9, 1.0, [1.0, 1.0]]
+LAMPADE [6.0, 1.0, [1.0, 1.0]]
+LAMPADE [6.1, 1.0, [1.0, 1.0]]
+LAMPADE [6.2, 1.0, [1.0, 1.0]]
+LAMPADE [6.3, 1.0, [1.0, 1.0]]
+LAMPADE [6.4, 1.0, [1.0, 1.0]]
+LAMPADE [6.5, 1.0, [1.0, 1.0]]
+LAMPADE [6.6, 1.0, [1.0, 1.0]]
+LAMPADE [6.7, 1.0, [1.0, 1.0]]
+LAMPADE [6.8, 1.0, [1.0, 1.0]]
+LAMPADE [6.9, 1.0, [1.0, 1.0]]
+LAMPADE [7.0, 1.0, [1.0, 1.0]]
+LAMPADE [7.1, 1.0, [1.0, 1.0]]
+LAMPADE [7.2, 1.0, [1.0, 1.0]]
+LAMPADE [7.3, 1.0, [1.0, 1.0]]
+LAMPADE [7.4, 1.0, [1.0, 1.0]]
+LAMPADE [7.5, 1.0, [1.0, 1.0]]
+LAMPADE [7.6, 1.0, [1.0, 1.0]]
+LAMPADE [7.7, 1.0, [1.0, 1.0]]
+LAMPADE [7.8, 1.0, [1.0, 1.0]]
+LAMPADE [7.9, 1.0, [1.0, 1.0]]
+LAMPADE [8.0, 1.0, [1.0, 1.0]]
+LAMPADE [8.1, 1.0, [1.0, 1.0]]
+LAMPADE [8.2, 1.0, [1.0, 1.0]]
+LAMPADE [8.3, 1.0, [1.0, 1.0]]
+LAMPADE [8.4, 1.0, [1.0, 1.0]]
+LAMPADE [8.5, 1.0, [1.0, 1.0]]
+LAMPADE [8.6, 1.0, [1.0, 1.0]]
+LAMPADE [8.7, 1.0, [1.0, 1.0]]
+LAMPADE [8.8, 1.0, [1.0, 1.0]]
+LAMPADE [8.9, 1.0, [1.0, 1.0]]
+LAMPADE [9.0, 1.0, [1.0, 1.0]]
+LAMPADE [9.1, 1.0, [1.0, 1.0]]
+LAMPADE [9.2, 1.0, [1.0, 1.0]]
+LAMPADE [9.3, 1.0, [1.0, 1.0]]
+LAMPADE [9.4, 1.0, [1.0, 1.0]]
+LAMPADE [9.5, 1.0, [1.0, 1.0]]
+LAMPADE [9.6, 1.0, [1.0, 1.0]]
+LAMPADE [9.7, 1.0, [1.0, 1.0]]
+LAMPADE [9.8, 1.0, [1.0, 1.0]]
+LAMPADE [9.9, 1.0, [1.0, 1.0]]
+LAMPADE [10.0, 1.0, [1.0, 1.0]]
+LAMPADE [10.1, 1.0, [1.0, 1.0]]
+LAMPADE [10.2, 1.0, [1.0, 1.0]]
+LAMPADE [10.3, 1.0, [1.0, 1.0]]
+LAMPADE [10.4, 1.0, [1.0, 1.0]]
+LAMPADE [10.5, 1.0, [1.0, 1.0]]
+LAMPADE [10.6, 1.0, [1.0, 1.0]]
+LAMPADE [10.7, 1.0, [1.0, 1.0]]
+LAMPADE [10.8, 1.0, [1.0, 1.0]]
+LAMPADE [10.9, 1.0, [1.0, 1.0]]
+LAMPADE [11.0, 1.0, [1.0, 1.0]]
+LAMPADE [11.1, 1.0, [1.0, 1.0]]
+LAMPADE [11.2, 1.0, [1.0, 1.0]]
+LAMPADE [11.3, 1.0, [1.0, 1.0]]
+LAMPADE [11.4, 1.0, [1.0, 1.0]]
+LAMPADE [11.5, 1.0, [1.0, 1.0]]
+LAMPADE [11.6, 1.0, [1.0, 1.0]]
+LAMPADE [11.7, 1.0, [1.0, 1.0]]
+LAMPADE [11.8, 1.0, [1.0, 1.0]]
+LAMPADE [11.9, 1.0, [1.0, 1.0]]
+LAMPADE [12.0, 1.0, [1.0, 1.0]]
+LAMPADE [12.1, 1.0, [1.0, 1.0]]
+LAMPADE [12.2, 1.0, [1.0, 1.0]]
+LAMPADE [12.3, 1.0, [1.0, 1.0]]
+LAMPADE [12.4, 1.0, [1.0, 1.0]]
+LAMPADE [12.5, 1.0, [1.0, 1.0]]
+LAMPADE [12.6, 1.0, [1.0, 1.0]]
+LAMPADE [12.7, 1.0, [1.0, 1.0]]
+LAMPADE [12.8, 1.0, [1.0, 1.0]]
+LAMPADE [12.9, 1.0, [1.0, 1.0]]
+LAMPADE [13.0, 1.0, [1.0, 1.0]]
+LAMPADE [13.1, 1.0, [1.0, 1.0]]
+LAMPADE [13.2, 1.0, [1.0, 1.0]]
+LAMPADE [13.3, 1.0, [1.0, 1.0]]
+LAMPADE [13.4, 1.0, [1.0, 1.0]]
+LAMPADE [13.5, 1.0, [1.0, 1.0]]
+LAMPADE [13.6, 1.0, [1.0, 1.0]]
+LAMPADE [13.7, 1.0, [1.0, 1.0]]
+LAMPADE [13.8, 1.0, [1.0, 1.0]]
+LAMPADE [13.9, 1.0, [1.0, 1.0]]
+LAMPADE [14.0, 1.0, [1.0, 1.0]]
+LAMPADE [14.1, 1.0, [1.0, 1.0]]
+LAMPADE [14.2, 1.0, [1.0, 1.0]]
+LAMPADE [14.3, 1.0, [1.0, 1.0]]
+LAMPADE [14.4, 1.0, [1.0, 1.0]]
+LAMPADE [14.5, 1.0, [1.0, 1.0]]
+LAMPADE [14.6, 1.0, [1.0, 1.0]]
+LAMPADE [14.7, 1.0, [1.0, 1.0]]
+LAMPADE [14.8, 1.0, [1.0, 1.0]]
+LAMPADE [14.9, 1.0, [1.0, 1.0]]
+LAMPADE [15.0, 1.0, [1.0, 1.0]]
+LAMPADE [15.1, 1.0, [1.0, 1.0]]
+LAMPADE [15.2, 1.0, [1.0, 1.0]]
+LAMPADE [15.3, 1.0, [1.0, 1.0]]
+LAMPADE [15.4, 1.0, [1.0, 1.0]]
+LAMPADE [15.5, 1.0, [1.0, 1.0]]
+LAMPADE [15.6, 1.0, [1.0, 1.0]]
+LAMPADE [15.7, 1.0, [1.0, 1.0]]
+LAMPADE [15.8, 1.0, [1.0, 1.0]]
+LAMPADE [15.9, 1.0, [1.0, 1.0]]
+LAMPADE [16.0, 1.0, [1.0, 1.0]]
+LAMPADE [16.1, 1.0, [1.0, 1.0]]
+LAMPADE [16.2, 1.0, [1.0, 1.0]]
+LAMPADE [16.3, 1.0, [1.0, 1.0]]
+LAMPADE [16.4, 1.0, [1.0, 1.0]]
+LAMPADE [16.5, 1.0, [1.0, 1.0]]
+LAMPADE [16.6, 1.0, [1.0, 1.0]]
+LAMPADE [16.7, 1.0, [1.0, 1.0]]
+LAMPADE [16.8, 1.0, [1.0, 1.0]]
+LAMPADE [16.9, 1.0, [1.0, 1.0]]
+LAMPADE [17.0, 1.0, [1.0, 1.0]]
+LAMPADE [17.1, 1.0, [1.0, 1.0]]
+LAMPADE [17.2, 1.0, [1.0, 1.0]]
+LAMPADE [17.3, 1.0, [1.0, 1.0]]
+SONDA: goccia ["compare a 4.50 s", "sparisce a 7.20 s"]
+SUONO 0.03 s parte annusa
+SUONO 0.57 s parte lampo0
+SUONO 1.30 s parte lampo1
+SUONO 2.00 s parte lampo2
+SUONO 2.40 s parte luce
+SUONO 4.43 s parte goccia
+SUONO 5.03 s parte minaccia
+SUONO 5.93 s parte denti0
+SUONO 6.33 s parte denti1
+SUONO 7.70 s parte denti2
+SUONO 8.43 s parte richiamo
+SUONO 9.07 s parte ringhio
+SUONO 9.43 s parte passo0
+SUONO 9.83 s parte passo1
+SUONO 10.23 s parte passo2
+SUONO 10.63 s parte passo3
+SUONO 11.03 s parte passo4
+SUONO 11.33 s parte sbuffo
+SUONO 11.43 s parte passo5
+SUONO 11.93 s parte passo6
+SUONO 12.30 s parte passo7
+SUONO 12.67 s parte passo8
+SUONO 12.80 s parte passo9
+SUONO 13.20 s parte passo10
+SUONO 13.53 s parte passo11
+SUONO 13.87 s parte passo12
+SUONO 14.20 s parte passo13
+SUONO 14.50 s parte porta
+SUONO 14.60 s parte passo14
+SONDA: 2 s dopo la fine suonano ancora []
+SONDA: dopo la fine le lampade hanno fattore min 1.00 max 1.00 (16)
+SONDA FINE
