@@ -75,6 +75,57 @@ func _titolo() -> void:
 		for i in 5:
 			await get_tree().process_frame
 		_check(t.get_node_or_null(^"MenuProva") == null, "Esc lo chiude")
+	await _clic_mouse(t)
+
+
+## Il clic vero col mouse su una partenza (#143, collaudo finale della 0.3.22: la Radice del titolo, su layer 100 e con
+## MOUSE_FILTER_STOP, si prendeva i clic prima del menu di prova): F9, poi un clic sinistro (premuto e rilasciato) sul
+## centro della prima partenza dopo "Inizio", passato al viewport. La partenza scelta arriva al segnale del menu (staccato
+## dal titolo, così non parte davvero).
+func _clic_mouse(t: Node) -> void:
+	var ev := InputEventKey.new()
+	ev.keycode = MenuProva.TASTO
+	ev.pressed = true
+	Input.parse_input_event(ev)
+	for i in 5:
+		await get_tree().process_frame
+	var m := t.get_node_or_null(^"MenuProva") as MenuProva
+	_check(m != null, "F9 riapre il menu di prova")
+	if m == null:
+		return
+	var partenze := MenuProva.disponibili()
+	if partenze.size() < 2:
+		print("  (nessuna partenza oltre Inizio: il clic non si prova)")
+		m.chiudi()
+		return
+	for c in m.scelta.get_connections():
+		m.scelta.disconnect(c["callable"])
+	var scelte: Array[String] = []
+	m.scelta.connect(func(id: String): scelte.append(id))
+	var voce := m.find_children("*", "Button", true, false)[1] as Button
+	var centro := voce.get_global_rect().get_center()
+	var mossa := InputEventMouseMotion.new()
+	mossa.position = centro
+	mossa.global_position = centro
+	get_viewport().push_input(mossa, true)
+	await get_tree().process_frame
+	var sotto := get_viewport().gui_get_hovered_control()
+	for premuto in [true, false]:
+		var clic := InputEventMouseButton.new()
+		clic.button_index = MOUSE_BUTTON_LEFT
+		clic.pressed = premuto
+		clic.position = centro
+		clic.global_position = centro
+		get_viewport().push_input(clic, true)
+		await get_tree().process_frame
+	await get_tree().process_frame
+	var atteso: String = partenze[1]["id"]
+	_check(scelte == [atteso], "un clic col mouse sulla partenza «%s» la sceglie (sotto il mouse %s, scelte: %s)" % [voce.text,
+			sotto.name if sotto else "niente", scelte])
+	if is_instance_valid(m):
+		m.chiudi()
+	for i in 3:
+		await get_tree().process_frame
 
 
 func _partenza(id: String) -> void:

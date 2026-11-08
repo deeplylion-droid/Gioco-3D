@@ -55,8 +55,13 @@ static func parti(albero: SceneTree, id: String) -> bool:
 	return true
 
 
+## Sopra il titolo (la sua Radice è su layer 100 e ferma i clic a vuoto: col menu sotto, il mouse non arrivava alle
+## partenze, #143) e sotto la dissolvenza (120).
+const LAYER := 110
+
+
 func _ready() -> void:
-	layer = 50
+	layer = LAYER
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var fondo := ColorRect.new()
 	fondo.color = Color(0, 0, 0, 0.72)
