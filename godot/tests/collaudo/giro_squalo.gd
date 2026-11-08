@@ -135,6 +135,34 @@ func _registra() -> void:
 		var E := float(s.tempi.get("esita", 6.75))
 		var P := float(s.tempi.get("porta", 10.15))
 		istanti = [1.6, M, M + 0.80, M + 1.25, M + 1.70, M + 2.15, M + 2.60, R + 0.4, E, P - 0.5, P + 0.8]
+	# GIRO_ISTANTI=paura (0.3.23): il buio, i tre lampi (dentro ogni lampo, prima e dopo lo sfarfallio), la luce che
+	# resta accesa, il fiuto, la goccia sullo schermo (appena caduta, a metà, mentre scivola), la bocca che si spalanca,
+	# i morsi (chiusi), la pausa, lo scatto dell'ultimo morso tenuto chiuso, poi come morsi
+	elif OS.get_environment("GIRO_ISTANTI") == "paura":
+		var M := float(s.tempi.get("minaccia", 2.4))
+		var R := float(s.tempi.get("richiamo", 5.4))
+		var E := float(s.tempi.get("esita", 6.75))
+		var P := float(s.tempi.get("porta", 10.15))
+		var L := float(s.tempi.get("luce", 0.0))
+		var G := float(s.tempi.get("goccia", 4.4))
+		istanti = [0.3]
+		for l in s.tempi.get("lampi", []):
+			# (lo scatto esce un fotogramma dopo: all'inizio e a metà della parte accesa, non nello sfarfallio)
+			istanti.append_array([float(l[0]), float(l[0]) + 0.09])
+		istanti.append_array([L + 0.3, L + 0.9])
+		# (ricontrollo del collaudo di grafica-2: da 2,0 a 2,7 s ogni 0,1 s)
+		for k in 8:
+			istanti.append(2.0 + 0.1 * k + 0.01)
+		for f in s.tempi.get("fiuti", []):
+			istanti.append(float(f) + 0.15)
+		istanti.append_array([G + 0.08, G + 0.6, G + 1.4, G + 2.1, float(s.tempi.get("apre", M - 0.4)) + 0.15, M])
+		for m in s.tempi.get("morsi", []):
+			istanti.append(float(m[0]) + 0.1)
+		var pausa: Array = s.tempi.get("pausa", [M + 1.25, M + 2.05])
+		istanti.append(lerpf(float(pausa[0]), float(pausa[1]), 0.5))
+		var ultimo: Array = (s.tempi.get("morsi", [[M + 2.2, 0.3]]) as Array).back()
+		istanti.append_array([float(ultimo[0]) + 0.3, R + 0.4, E, P - 0.5, P + 0.8])
+		istanti.sort()
 	var n := 0
 	var t_controllo := -1.0
 	var t := 0.0
@@ -187,7 +215,7 @@ func _riga(f: int, t: float, fase: String, s: RisveglioSqualo, atm: AtmosferaSqu
 	var cam := p.camera
 	var d := {"f": f, "t": snappedf(t, 0.001), "fase": fase, "t_scena": snappedf(float(s.get(&"_t")), 0.001),
 		"cam": _v(cam.global_position), "cam_rot": _v(cam.global_rotation_degrees), "input": p.input_enabled,
-		"porta_chiusa": bool(s.get(&"_porta_chiusa")), "scossa": snappedf(float(s.get(&"_scossa")), 0.0001)}
+		"porta_chiusa": bool(s.get(&"_porta_chiusa")), "luce_scena": snappedf(float(s.get(&"_luce")), 0.01)}
 	if p.water_pack:
 		d["zaino"] = [p.water_pack.equipped, p.water_pack.view_model.is_visible_in_tree() if p.water_pack.view_model else false,
 			p.has_item(&"zaino_pompa")]

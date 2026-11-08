@@ -46,7 +46,29 @@ MANI_NORD = 1.02          # fin dove arrivano i polsi verso il muro nord (x del 
 MANO_R_FUORI = 0.10      # di quanto la mano destra va più in fuori nella minaccia (m), vedi posa
 MANO_R_POLSO = -30.0     # e di quanto gira il suo polso (gradi attorno a z)
 MANO_MUSO = 0.42          # quanto i polsi restano lontani dalla bocca e dal muso dopo il richiamo, vedi mostro_rig.cuoci
-FASI = dict(MINACCIA=2.4, RICHIAMO=5.4, ARRETRA=6.05)
+# --- dalla 0.3.23 (le tre proposte per far più paura, sì dell'utente: GDD 29f78c94) la scena comincia ANTICIPO s prima:
+# - IL BUIO (A): il corridoio al buio, lui che arriva dal fondo, verso la porta, a passi lenti; la luce sfarfalla tre
+#   volte (LAMPI, Godot: risveglio_squalo.gd) e a ogni lampo è più vicino; a LUCE la luce resta accesa;
+# - TI ANNUSA (C): da LUCE ad APRE è chino sul giocatore, la bocca chiusa, il muso basso che passa lento dalla sua
+#   sinistra alla sua destra e sale verso la faccia mentre lui si tira su, a scatti di fiuto (FIUTI); a GOCCIA una
+#   goccia di bava gli cade sulla faccia (sullo schermo, Godot);
+# - APRE: la bocca si spalanca, e da MINACCIA i MORSI (B): non più tre a tempo, ma due svelti, una PAUSA lunga a bocca
+#   spalancata e ferma, e uno scatto improvviso fin quasi alla faccia con la bocca chiusa 0,3 s.
+ANTICIPO = 3.0
+FASI = dict(MINACCIA=2.4 + ANTICIPO, RICHIAMO=5.4 + ANTICIPO, ARRETRA=6.05 + ANTICIPO)
+LUCE = 2.4                                   # fine del buio: la luce resta accesa
+LAMPI = ((0.55, 0.16), (1.30, 0.18), (2.00, 0.20))     # (inizio, durata) dei lampi nel buio
+APRE = FASI['MINACCIA'] - 0.4                # la bocca chiusa si spalanca (spalancata a MINACCIA)
+GOCCIA = APRE - 0.6                          # la goccia di bava sulla faccia (sullo schermo)
+FIUTI = (LUCE + 0.45, LUCE + 1.15, LUCE + 1.75, APRE - 0.35)   # i colpi di fiuto (0,35 s l'uno)
+SUONO_MINACCIA = APRE                        # quando parte squalo_minaccia (il fiato a bocca aperta)
+# i morsi: (dalla MINACCIA, quanto resta chiusa); la pausa ferma a bocca spalancata
+MORSI = ((0.45, 0.08), (0.85, 0.08), (2.2, 0.30))
+PAUSA = (1.25, 2.05)
+# l'arrivo nel buio: dalla radice a Y_BUIO (verso la porta) a 0, a passi di 0,4 m (un piede fa al più 0,8 m)
+Y_BUIO = 2.6
+PASSO_AVVICINA = 0.27
+AVVICINA_PIEDI = (('L', 2.2), ('R', 1.8), ('L', 1.4), ('R', 1.0), ('L', 0.6), ('R', 0.2), ('L', 0.0), ('R', 0.0))
 FASI.update(GIRO=round(FASI['ARRETRA'] + PASSO_ARRETRA * len(ARRETRA_PIEDI) + 0.12, 3))
 FASI.update(ESITA=round(FASI['GIRO'] + T_GIRO, 3))
 FASI.update(CORSA=FASI['ESITA'], PORTA=None, FINE=None)
@@ -65,6 +87,22 @@ def passi_arretra():
     """[(lato, inizio, fine, y del piede a fine passo)] dei passi all'indietro."""
     return [(lato, FASI['ARRETRA'] + k * PASSO_ARRETRA, FASI['ARRETRA'] + (k + 1) * PASSO_ARRETRA - 0.04, y)
             for k, (lato, y) in enumerate(ARRETRA_PIEDI)]
+
+
+def passi_avvicina():
+    """[(lato, inizio, fine, y del piede a fine passo)] dei passi nel buio, verso il giocatore."""
+    return [(lato, 0.1 + k * PASSO_AVVICINA, 0.1 + (k + 1) * PASSO_AVVICINA - 0.03, y)
+            for k, (lato, y) in enumerate(AVVICINA_PIEDI)]
+
+
+def avvicinato(t):
+    """Quanto manca all'arrivo (m, verso la porta): da Y_BUIO a 0, a metà tra i due piedi, liscio a ogni passo."""
+    piedi = {'L': Y_BUIO, 'R': Y_BUIO}
+    for lato, a, b, y in passi_avvicina():
+        piedi[lato] = liscio(piedi[lato], y, a, b, t) if t < b else y
+        if t < b:
+            break
+    return 0.5 * (piedi['L'] + piedi['R'])
 
 
 def arretrato(t):
@@ -182,7 +220,7 @@ def _cicli_fiato():
     """Gli istanti del fiato del suono squalo_minaccia (assets_src/audio/genera_squalo.py: gli stessi cicli,
     con lo stesso seme), nel tempo della scena: [(inizio, durata, 'insp' | 'esp')]."""
     rng = np.random.default_rng(2110)
-    inizio = 0.8                            # MINACCIA_INIZIO del suono
+    inizio = SUONO_MINACCIA                 # MINACCIA_INIZIO del suono (dalla 0.3.23 parte quando apre la bocca)
     dur = FASI['RICHIAMO'] - inizio + 0.4
     out = []
     t = 0.05
@@ -213,26 +251,68 @@ def fiato_mascella(t):
 MORSO_CHIUSA = -6.0
 
 
-def morso(dt):
+def morso(dt, tieni=0.08):
     """Quanto è chiusa la mascella in un morso (0..1), dt secondi dallo scatto della testa: si chiude in 0,12 s
-    (chiusa da + 0,06 a + 0,14 s), si riapre in 0,4 s."""
-    if dt < -0.06 or dt > 0.55:
+    (chiusa da + 0,06 a + 0,06 + tieni), si riapre in 0,4 s."""
+    if dt < -0.06 or dt > 0.47 + tieni:
         return 0.0
     if dt < 0.06:
         return liscio(0.0, 1.0, -0.06, 0.06, dt)
-    if dt < 0.14:
+    if dt < 0.06 + tieni:
         return 1.0
-    return liscio(1.0, 0.0, 0.14, 0.55, dt)
+    return liscio(1.0, 0.0, 0.06 + tieni, 0.47 + tieni, dt)
+
+
+def fermo_nella_pausa(t):
+    """1 nella pausa a bocca spalancata (testa, mani e corpo fermi), 0 fuori; entra ed esce in 0,15 s."""
+    a, b = FASI['MINACCIA'] + PAUSA[0], FASI['MINACCIA'] + PAUSA[1]
+    return liscio(0.0, 1.0, a - 0.15, a, t) - liscio(0.0, 1.0, b, b + 0.15, t)
+
+
+def annusa(t):
+    """Quanto è chino a annusare (0..1): giù dalla luce, risale verso la faccia fino ad APRE. (Collaudo di grafica-2
+    su 86ab11f9: la testa scendeva già da LUCE - 0,4, nel buio, sopra la camera ancora sdraiata, e la camera saltava
+    indietro di mezzo metro per restare fuori dalla pelle; ora scende solo dalla luce, mentre la camera si tira su.)"""
+    return chiavi(t, [(LUCE + 0.25, 0.0), (LUCE + 0.85, 1.0), (APRE - 1.0, 0.75), (APRE - 0.05, 0.0)])
+
+
+def ritira(t):
+    """(0.3.23) Quanto si è ritratto col corpo per annusare (0..1): prima si ritrae (all'arrivo la testa è sopra la
+    camera sdraiata), poi la testa scende davanti al petto del giocatore (annusa); torna avanti con la bocca che si
+    apre. Così il muso non passa mai dove sta la camera."""
+    return chiavi(t, [(LUCE - 0.1, 0.0), (LUCE + 0.35, 1.0), (APRE - 1.0, 1.0), (APRE - 0.05, 0.0)])
+
+
+def fiuto(t):
+    """Gli scatti di fiuto: tre-quattro colpi svelti del muso (7 al secondo) in 0,35 s, per ogni FIUTI."""
+    out = 0.0
+    for t0 in FIUTI:
+        if t0 <= t < t0 + 0.35:
+            u = (t - t0) / 0.35
+            out += math.sin(u * math.pi) * math.sin((t - t0) * 7.0 * 2 * math.pi)
+    return out
+
+
+def yaw_annusa(t):
+    """(0.3.23) Annusando gira tutto il corpo (gradi): il muso parte dalla sinistra del giocatore e passa alla sua
+    destra. Non è il giro: busto e testa non lo compensano (vedi posa, yaw_g)."""
+    return chiavi(t, [(LUCE + 0.2, 0.0), (LUCE + 1.0, -42.0), (APRE - 1.4, -18.0), (APRE - 0.6, 4.0), (APRE, 0.0)])
 
 
 def radice(t):
     """(x, y, yaw) della radice: fermo, arretra a passi, il giro di 180°, la corsa."""
     yaw = chiavi(t, [(g_(0.0), 0.0), (g_(1.0), math.pi)])
+    # (0.3.23) annusando gira il corpo: il muso parte dalla sinistra del giocatore e passa alla sua destra
+    yaw += math.radians(yaw_annusa(t))
     # mentre minaccia si sporge in avanti e indietro di qualche centimetro
     avanti = 0.0
+    M = FASI['MINACCIA']
     if t < FASI['RICHIAMO']:
-        avanti = chiavi(t, [(0.0, 0.0), (FASI['MINACCIA'], -0.10), (FASI['MINACCIA'] + 0.6, -0.04),
-                            (FASI['MINACCIA'] + 1.4, -0.12), (FASI['MINACCIA'] + 2.0, -0.06), (FASI['RICHIAMO'], -0.08)])
+        # (dalla 0.3.23) fermo nella pausa, poi lo scatto fin quasi alla faccia con l'ultimo morso
+        ul = M + MORSI[2][0]
+        avanti = chiavi(t, [(LUCE, 0.0), (APRE, -0.04), (M, -0.10), (M + 0.6, -0.05), (M + PAUSA[0], -0.10),
+                            (M + PAUSA[1], -0.10), (ul - 0.02, -0.20), (ul + MORSI[2][1] + 0.06, -0.20),
+                            (ul + MORSI[2][1] + 0.4, -0.10), (FASI['RICHIAMO'], -0.08)])
     else:
         avanti = chiavi(t, [(FASI['RICHIAMO'], -0.08), (FASI['ARRETRA'], 0.0)])
     passo = arretrato(t)
@@ -243,9 +323,15 @@ def radice(t):
     # centro e nella corsa va verso il centro del vano della porta
     # (arretrando 4 cm più a nord: al primo passo il fianco dietro entrava di qualche centimetro nel cartello del
     # corridoio, ricontrollo del 30 ottobre)
-    x = chiavi(t, [(FASI['ARRETRA'], X0), (FASI['ARRETRA'] + 0.3, X0 + 0.04), (g_(0.12), X0 + 0.04), (g_(0.75), 0.0),
+    # (0.3.23) annusando anche un poco di lato, verso la sinistra del giocatore (col corpo girato, vedi yaw_annusa)
+    x0 = X0 - 0.14 * annusa(t)
+    x = chiavi(t, [(FASI['ARRETRA'], x0), (FASI['ARRETRA'] + 0.3, X0 + 0.04), (g_(0.12), X0 + 0.04), (g_(0.75), 0.0),
                    (FASI['CORSA'] + 0.8, X_PORTA)])
-    return x, avanti + passo + s, yaw
+    # (0.3.23) annusando sta un poco più indietro: chino, il muso arriva davanti al petto del giocatore, a 0,4-0,5 m
+    # dalla camera (sporgendosi verso di lui il muso passava dove stava la camera, appena sotto, e la camera saltava
+    # via per restare fuori dalla pelle)
+    avanti += 0.25 * ritira(t)
+    return x, avanti + passo + s + avvicinato(t), yaw
 
 
 # ---------------------------------------------------------------- appoggi dei piedi
@@ -272,7 +358,12 @@ class Piedi:
         # (gli appoggi: dalla fine del passo fino all'inizio del passo dopo dello stesso piede)
         inizio = {'L': 0.0, 'R': 0.0}
         lato0 = Vector((X0, 0.0, 0.0))
-        dove = {s: self.fermo[s] + lato0 for s in 'LR'}
+        # (dalla 0.3.23) prima l'arrivo nel buio, da Y_BUIO verso il giocatore
+        dove = {s: self.fermo[s] + lato0 + Vector((0.0, Y_BUIO, 0.0)) for s in 'LR'}
+        for lato, a, b, y in passi_avvicina():
+            self.appoggi[lato].append((inizio[lato], a, dove[lato].copy(), 0.0))
+            dove[lato] = self.fermo[lato] + lato0 + Vector((0.0, y, 0.0))
+            inizio[lato] = b
         for lato, a, b, y in passi_arretra():
             self.appoggi[lato].append((inizio[lato], a, dove[lato].copy(), 0.0))
             dove[lato] = self.fermo[lato] + lato0 + Vector((0.0, y, 0.0))
@@ -345,7 +436,10 @@ def posa(t, piedi):
     # (nel giro meno chino e meno peso sui passi: lo stinco piegato entrava nel pavimento, collaudo del 23 ottobre)
     chino = chiavi(t, [(0.0, 1.0), (R + 0.05, 1.0), (R + 0.45, 0.25), (A + 0.3, 0.55), (G - 0.3, 0.45), (G, 0.3),
                        (g_(0.6), 0.2), (C, 0.35)])
-    abbassa = 0.14 * chino
+    giu = annusa(t)
+    ferma = fermo_nella_pausa(t)
+    # (0.3.23) chino ad annusare: il bacino più giù
+    abbassa = 0.14 * chino + 0.22 * giu
     # il peso: a ogni piede che si pianta (arretra e giro) il bacino scende e risale
     for lato, a, b, y in passi_arretra():
         abbassa += 0.045 * math.exp(-((t - b - 0.06) / 0.11) ** 2)
@@ -386,7 +480,7 @@ def posa(t, piedi):
     # nel giro il busto resta indietro e la testa resta sul giocatore (girano al contrario della radice) finché
     # metà giro passato; poi si staccano piano (0,8 s: legati all'angolo della radice scattavano di 150° in 0,2 s)
     # e raggiungono il corpo nei primi passi della corsa. tiene: quanto lo tiene d'occhio
-    yaw_g = math.degrees(radice(t)[2])
+    yaw_g = math.degrees(radice(t)[2]) - yaw_annusa(t)
     tiene = 1.0 - liscio(0.0, 1.0, g_(0.55), C + 0.6, t)
     torsione = -yaw_g * tiene * 0.4 / 58.0
     p['spina'] = [('x', 5 * chino + 9 * corsa + 1.5 * resp), ('z', -4 * corsa * math.sin(fase) * dritto + 26 * torsione)]
@@ -406,22 +500,35 @@ def posa(t, piedi):
     guarda += -yaw_g * tiene * 0.6
     alza = chiavi(t, [(R + 0.08, 0.0), (R + 0.55, -18.0), (A + 0.4, -6.0), (G, -6.0), (C, 0.0)])
     scatti = 0.0
+    tremito = rumore(t, 3.0, 1.0) * (1.0 if t < R else 0.4) * (1.0 - ferma)
+    # (0.3.23) i morsi: piccoli scatti i primi due, l'ultimo uno scatto fin quasi alla faccia, tenuto finché è chiusa
     if M < t < R:
-        # piccoli scatti in avanti della testa, come per mordere
-        for tc in (M + 0.7, M + 1.6, M + 2.5):
-            scatti += math.exp(-((t - tc) / 0.09) ** 2) * 7.0
-    tremito = rumore(t, 3.0, 1.0) * (1.0 if t < R else 0.4)
+        scatti = 0.0
+        for k, (dm, tieni) in enumerate(MORSI):
+            tc = M + dm
+            if k < 2:
+                scatti += math.exp(-((t - tc) / 0.09) ** 2) * 7.0
+            else:
+                scatti += 11.0 * (liscio(0.0, 1.0, tc - 0.12, tc, t) - liscio(0.0, 1.0, tc + tieni + 0.06, tc + tieni + 0.4, t))
+    # annusando: il muso giù verso il corpo, che passa dalla sua sinistra (-) alla sua destra (+) e sale verso la
+    # faccia (vedi annusa), coi colpi di fiuto
+    lato_muso = chiavi(t, [(LUCE, -26.0), (APRE - 1.4, -8.0), (APRE - 0.6, 10.0), (APRE, 0.0)]) * min(1.0, giu * 3.0)
+    fiu = fiuto(t)
     # dietro la porta, fermandosi, gira la testa di lato (il muso non arriva al muro di fondo del vano)
     gira_testa = liscio(0.0, TESTA_GIRA, tp + 0.05, tp + 0.4, t)
-    p['collo'] = [('x', 6 * chino + 0.5 * tremito - 4 * corsa), ('z', guarda * 0.45 + gira_testa * 0.45), ('x', alza * 0.5)]
+    p['collo'] = [('x', 6 * chino + 0.5 * tremito - 4 * corsa + 44 * giu), ('z', guarda * 0.45 + gira_testa * 0.45 + 0.45 * lato_muso),
+                  ('x', alza * 0.5)]
     # con la bocca spalancata il muso si alza: l'apertura guarda in avanti, verso la faccia del giocatore
-    muso_su = chiavi(t, [(0.0, 0.0), (1.2, -4.0), (M, -24.0), (R + 0.05, -24.0), (R + 0.50, 0.0)])
-    p['testa'] = [('x', 4 * chino + muso_su + scatti - 6 * corsa - 3 * corsa * math.cos(2 * fase)),
-                  ('z', guarda * 0.55 + 1.5 * tremito + gira_testa * 0.55), ('x', alza * 0.5), ('y', 6 * chino * math.sin(t * 0.9))]
+    muso_su = chiavi(t, [(0.0, 0.0), (APRE - 0.3, -4.0), (M, -24.0), (R + 0.05, -24.0), (R + 0.50, 0.0)])
+    p['testa'] = [('x', 4 * chino + muso_su + scatti - 6 * corsa - 3 * corsa * math.cos(2 * fase) + 24 * giu - 2.0 * fiu),
+                  ('z', guarda * 0.55 + 1.5 * tremito + gira_testa * 0.55 + 0.55 * lato_muso), ('x', alza * 0.5),
+                  ('y', 6 * chino * math.sin(t * 0.9) * (1.0 - ferma))]
     # --- mascella: si apre piano al risveglio, spalancata nella minaccia, mezza chiusa al richiamo, sbuffo
     # nell'esitazione, ansima nella corsa
     # arretrando la bocca mezza aperta (ringhia); lo sbuffo prima del giro; nel giro si chiude
-    apri = chiavi(t, [(0.0, 8.0), (1.2, 12.0), (M, 52.0), (R + 0.05, 55.0), (R + 0.50, 30.0), (A + 0.3, 24.0),
+    # (0.3.23) nel buio la bocca socchiusa, annusando chiusa, ad APRE si spalanca di colpo
+    apri = chiavi(t, [(0.0, 10.0), (LUCE - 0.2, 10.0), (LUCE + 0.3, MORSO_CHIUSA + 3.0), (APRE, MORSO_CHIUSA + 3.0),
+                      (APRE + 0.15, 30.0), (M, 52.0), (R + 0.05, 55.0), (R + 0.50, 30.0), (A + 0.3, 24.0),
                       (SBUFFO - 0.12, 20.0), (SBUFFO + 0.05, 34.0), (SBUFFO + 0.35, 14.0), (g_(0.6), 10.0),
                       (C, 14.0)])
     # il respiro della mascella, a tempo con il fiato del suono (squalo_minaccia, dal suo inizio a 0,8 s): si
@@ -435,7 +542,7 @@ def posa(t, piedi):
     # completamente, dovrebbe"): prima toglieva 46 gradi da 52-59 e restavano 1-13 gradi di fessura; ora va verso
     # MORSO_CHIUSA, la bocca chiusa davvero (le arcate di sopra e di sotto si toccano, i denti si incastrano).
     if M < t < R:
-        chiusa = max(morso(t - tc) for tc in (M + 0.7, M + 1.6, M + 2.5))
+        chiusa = max(morso(t - M - dm, tieni) for dm, tieni in MORSI)
         apri += (MORSO_CHIUSA - apri) * chiusa
     if corsa > 0:
         apri += corsa * 6.0 * (0.5 + 0.5 * math.sin(2 * fase + 1.0))
@@ -457,7 +564,13 @@ def posa(t, piedi):
         spalla = Vector(SPALLE[s])
         riposo = Vector(MANI_RIPOSO[s]) - spalla
         minaccia = Vector((0.40 * segno, GIOCATORE_Y + 0.42, 1.12 + (0.08 if s == 'R' else 0.0))) - spalla
-        minaccia += Vector((0.0, 0.03, 0.03)) * rumore(t, 1.7, 2.0 + segno)
+        minaccia += Vector((0.0, 0.03, 0.03)) * rumore(t, 1.7, 2.0 + segno) * (1.0 - ferma)
+        # (0.3.23) annusando la sinistra giù, accanto al giocatore, gli artigli verso di lui; la destra (a sinistra del
+        # giocatore) resta alzata come nella minaccia: col corpo girato scendeva dentro il cartello del pavimento
+        # bagnato, alto 0,62 m, e gli artigli pendono mezzo metro sotto il polso (ricontrollo di grafica-2 su 8e481b9c)
+        if s == 'L':
+            basse = Vector((0.46 * segno, GIOCATORE_Y + 0.55, 0.62)) - spalla
+            minaccia = minaccia.lerp(basse, giu)
         # nella corsa la mano che pende si tiene su, davanti al petto (non deve strisciare a terra)
         # (meno su e più avanti di prima: alzata a 42 cm, con l'avambraccio in su, gli artigli puntavano al mento)
         su = Vector((-0.05, -0.20, 0.30)) if s == 'L' else Vector((0.0, 0.0, -0.05))
@@ -484,9 +597,9 @@ def posa(t, piedi):
         p['_mano.' + s] = mano
     # (nel giro i polsi seguono il dondolo, in ritardo: le mani non restano rigide)
     # (nella corsa il polso sinistro piegato in giù: gli artigli verso terra, non verso il mento)
-    p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia + 14 * dondolo * nel_giro + 30 * corsa),
+    p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia * (1.0 - ferma) + 14 * dondolo * nel_giro + 30 * corsa),
                    ('z', math.degrees(ritardo) * 0.6 * nel_giro)]
-    p['mano.R'] = [('x', 4 * rumore(t, 2.2, 5.0) * braccia - 12 * dondolo * nel_giro),
+    p['mano.R'] = [('x', 4 * rumore(t, 2.2, 5.0) * braccia * (1.0 - ferma) - 12 * dondolo * nel_giro),
                    ('z', math.degrees(ritardo) * 0.6 * nel_giro + MANO_R_POLSO * minaccia_r)]
     # --- coda: ondeggia lenta, nella corsa fa da contrappeso (in ritardo sul bacino)
     amp = (6 + 14 * corsa) * (1.0 - 0.8 * sbieco)
@@ -508,8 +621,13 @@ def dati_per_godot(piedi):
     passi = []
     for s in 'LR':
         for a, b in piedi.tempi_appoggio(s):
-            if a > 0.05 and a < tp + 0.8:
+            # (dalla 0.3.23 i passi dell'arrivo nel buio non si sentono: solo il fiato e le gocce)
+            if a > LUCE and a < tp + 0.8:
                 passi.append(round(a, 3))
     return dict(fps=FPS, durata=round(tp + 0.9, 3), porta=round(tp, 3), passi=sorted(passi), sbuffo=SBUFFO,
                 ringhio=round(FASI['ARRETRA'] + 0.1, 3),
-                giocatore_y=GIOCATORE_Y, porta_y=PORTA_Y, **{k.lower(): v for k, v in FASI.items() if v is not None})
+                giocatore_y=GIOCATORE_Y, porta_y=PORTA_Y, luce=LUCE, lampi=[list(l) for l in LAMPI], apre=APRE,
+                goccia=GOCCIA, fiuti=list(FIUTI), suono_minaccia=SUONO_MINACCIA,
+                morsi=[[round(FASI['MINACCIA'] + dm, 3), tieni] for dm, tieni in MORSI],
+                pausa=[round(FASI['MINACCIA'] + PAUSA[0], 3), round(FASI['MINACCIA'] + PAUSA[1], 3)],
+                **{k.lower(): v for k, v in FASI.items() if v is not None})
