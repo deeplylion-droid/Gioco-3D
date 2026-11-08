@@ -163,9 +163,8 @@ func _run() -> void:
 		get_tree().quit()
 		return
 	# una morte, la scena intera, e la ripartenza
-	var morto := [false, false]
-	GameState.player_died.connect(func(_c): morto[0] = true)
-	GameState.player_respawned.connect(func(): morto[1] = true)
+	GameState.player_died.connect(func(c): print("GIRO0322P: MORTE (%s) a %.2f s" % [c, _ora()]))
+	GameState.player_respawned.connect(func(): print("GIRO0322P: RIPARTENZA a %.2f s" % _ora()))
 	GameState.kill_player(&"collaudo")
 	await _secondi(0.6)
 	await _scatto("morte_0.6s")
@@ -190,13 +189,16 @@ func _run() -> void:
 	await _scatto("ripartenza_8s")
 	# (scorciatoia, per provare Continua dopo: il checkpoint più vicino raggiunto e scritto su disco)
 	var cp: Checkpoint = null
+	if not is_instance_valid(p2):
+		p2 = GameState.player
 	for n in get_tree().current_scene.find_children("*", "Checkpoint", true, false):
-		if cp == null or (n as Node3D).global_position.distance_to(p2.global_position) < cp.global_position.distance_to(p2.global_position):
+		if is_instance_valid(p2) and (cp == null or (n as Node3D).global_position.distance_to(p2.global_position) < cp.global_position.distance_to(p2.global_position)):
 			cp = n as Checkpoint
-	if cp:
+	if cp and is_instance_valid(cp):
+		var nome_cp := String(cp.name)
 		GameState.reach_checkpoint(cp)
 		await _secondi(3.0)
-		print("GIRO0322P: (scorciatoia) checkpoint %s raggiunto, salvataggio su disco %s" % [cp.name, GameState.has_save()])
+		print("GIRO0322P: (scorciatoia) checkpoint %s raggiunto, salvataggio su disco %s" % [nome_cp, GameState.has_save()])
 	print("GIRO0322P: FINE a %.2f s (RSS %d MB)" % [_ora(), _rss_mb()])
 	get_tree().quit()
 
