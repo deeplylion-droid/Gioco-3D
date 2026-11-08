@@ -78,7 +78,7 @@ func _clic(b: Control) -> void:
 
 func _bottone(radice: Node, testo: String) -> Button:
 	for n in radice.find_children("*", "Button", true, false):
-		if String((n as Button).text).contains(testo) and (n as Button).is_visible_in_tree():
+		if String((n as Button).text).to_lower().contains(testo.to_lower()) and (n as Button).is_visible_in_tree():
 			return n as Button
 	return null
 
@@ -87,7 +87,11 @@ func _run() -> void:
 	_t0 = Time.get_ticks_msec()
 	DirAccess.make_dir_recursive_absolute(cartella)
 	print("GIRO0322P: %s %s, cartella utente %s, salvataggio %s" % [modo, id, OS.get_user_data_dir(), GameState.has_save()])
-	await _secondi(4.0)
+	await _secondi(2.0)
+	var t_tit := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_tit < 300000 and (not Dissolvenza.presente(get_tree()) or Dissolvenza.di(get_tree()).opacita() > 0.02):
+		await get_tree().process_frame
+	await _secondi(1.0)
 	await _scatto("titolo")
 	if modo == "f9":
 		var ev := InputEventKey.new()
@@ -109,7 +113,7 @@ func _run() -> void:
 			return
 		await _clic(b)
 	else:
-		var b := _bottone(get_tree().current_scene, "Continua")
+		var b := get_tree().current_scene.find_child("Continua", true, false) as Button
 		if b == null:
 			print("GIRO0322P: KO la voce Continua non c'è")
 			get_tree().quit(1)
