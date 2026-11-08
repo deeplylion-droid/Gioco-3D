@@ -389,9 +389,15 @@ for o in list(bpy.data.objects):
 bpy.ops.object.select_all(action='DESELECT')
 guanto.hide_set(False)
 guanto.select_set(True)
-# senza UV (non ha texture): stesso formato dei vertici delle mani di prima, la pipeline è già riscaldata
+# con le UV (proiezione automatica: le texture del materiale nel gioco sono uniformi): il gioco gli dà il materiale della
+# canna della lancia (LanceRig.mani_col_materiale_del_modello), che ha bisogno di UV e tangenti
+bpy.context.view_layer.objects.active = guanto
+bpy.ops.object.mode_set(mode='EDIT')
+bpy.ops.mesh.select_all(action='SELECT')
+bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=0.01)
+bpy.ops.object.mode_set(mode='OBJECT')
 bpy.ops.export_scene.gltf(filepath=OUT, use_selection=True, export_format='GLB', export_yup=True, export_apply=True,
-                          export_texcoords=False)
+                          export_texcoords=True)
 print("GUANTO: scritto", OUT)
 if BLEND:
     for o in bpy.data.objects:
