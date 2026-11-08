@@ -1,0 +1,13 @@
+CALIB: joypad: aperta true
+CALIB: joypad: chiusa true, opzioni aperte true, fuoco CalibraLuminosita (Button)
+CALIB: joypad: dopo la croce 12 il fuoco è @Button@442 (Button)
+CALIB: joypad: dopo la croce 11 il fuoco è CalibraLuminosita (Button)
+CALIB: joypad: dopo la croce 14 il fuoco è @TabBar@154 (TabBar)
+CALIB: joypad: dopo la freccia giù il fuoco è @HSlider@440 (HSlider)
+CALIB: esc: aperta true
+CALIB: esc: chiusa true, opzioni aperte true, fuoco CalibraLuminosita (Button)
+CALIB: esc: dopo la croce 12 il fuoco è @Button@784 (Button)
+CALIB: esc: dopo la croce 11 il fuoco è CalibraLuminosita (Button)
+CALIB: esc: dopo la croce 14 il fuoco è @TabBar@496 (TabBar)
+CALIB: esc: dopo la freccia giù il fuoco è @HSlider@782 (HSlider)
+CALIB: finito

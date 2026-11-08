@@ -1,0 +1,15 @@
+== SINTASSI: res://tests/cz/prova_continua.gd ok 
+== prova_continua it 0; albero null 0; SCRIPT ERROR 0
+PC: nuova partita arrivata true, salvataggio false
+PC: ripartiti true, salvataggio true
+PC: al titolo, prova da fare true, salvataggio true, lingua it
+PC: Continua: schermata di caricamento true, prova partita true, provata true, preset alto, scena SalaPrincipale
+PC: schermo schiarito true, nodo della prova andato true, giocatore true
+PC: finito
+== prova_continua en 0; albero null 0; SCRIPT ERROR 0
+PC: nuova partita arrivata true, salvataggio false
+PC: ripartiti true, salvataggio true
+PC: al titolo, prova da fare true, salvataggio true, lingua en
+PC: Continua: schermata di caricamento true, prova partita true, provata true, preset alto, scena SalaPrincipale
+PC: schermo schiarito true, nodo della prova andato true, giocatore true
+PC: finito

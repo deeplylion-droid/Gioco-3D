@@ -1,0 +1,14 @@
+== import 0
+== check_scripts 0; ERROR: 3 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.
+== test_primo_ingresso 0; RISULTATO: 7 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_menu_schede 0; RISULTATO: 29 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_qualita_automatica 0; RISULTATO: 26 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_caricamento_jilly 0; RISULTATO: 17 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_avvio_sicuro 0; RISULTATO: 21 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_continua 0; RISULTATO: 127 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 16
+== test_partenze_prova 0; RISULTATO: 72 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== SINTASSI: res://tests/cz/calib_pausa.gd ok 
+== calib_fuoco 0; ; BUG 0; SCRIPT ERROR 0; ERROR 0
+== calib_pausa 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12
+== calib_pausa_en 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12
+== export 0 1622190432 JillyJubilee.pck 73519416 JillyJubilee.x86_64 

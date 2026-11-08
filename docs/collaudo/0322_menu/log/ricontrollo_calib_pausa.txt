@@ -1,0 +1,26 @@
+CALIBP: arrivati true
+CALIBP: titoli del pannello ["Opzioni"]
+CALIBP: joypad: aperta true
+CALIBP: joypad: chiusa true, opzioni aperte true, fuoco CalibraLuminosita (Button) (il pulsante è CalibraLuminosita)
+CALIBP: joypad: dopo la croce 11 il fuoco è @HSlider@3140 (HSlider)
+CALIBP: joypad: dopo la croce 12 il fuoco è CalibraLuminosita (Button)
+CALIBP: joypad: dopo la freccia su il fuoco è @HSlider@3140 (HSlider)
+CALIBP: tastiera: aperta true
+CALIBP: tastiera: chiusa true, opzioni aperte true, fuoco CalibraLuminosita (Button) (il pulsante è CalibraLuminosita)
+CALIBP: tastiera: dopo la croce 11 il fuoco è @HSlider@3140 (HSlider)
+CALIBP: tastiera: dopo la croce 12 il fuoco è CalibraLuminosita (Button)
+CALIBP: tastiera: dopo la freccia su il fuoco è @HSlider@3140 (HSlider)
+CALIBP: finito
+CALIBP: arrivati true
+CALIBP: titoli del pannello ["Opzioni"]
+CALIBP: joypad: aperta true
+CALIBP: joypad: chiusa true, opzioni aperte true, fuoco CalibraLuminosita (Button) (il pulsante è CalibraLuminosita)
+CALIBP: joypad: dopo la croce 11 il fuoco è @HSlider@3143 (HSlider)
+CALIBP: joypad: dopo la croce 12 il fuoco è CalibraLuminosita (Button)
+CALIBP: joypad: dopo la freccia su il fuoco è @HSlider@3143 (HSlider)
+CALIBP: tastiera: aperta true
+CALIBP: tastiera: chiusa true, opzioni aperte true, fuoco CalibraLuminosita (Button) (il pulsante è CalibraLuminosita)
+CALIBP: tastiera: dopo la croce 11 il fuoco è @HSlider@3143 (HSlider)
+CALIBP: tastiera: dopo la croce 12 il fuoco è CalibraLuminosita (Button)
+CALIBP: tastiera: dopo la freccia su il fuoco è @HSlider@3143 (HSlider)
+CALIBP: finito

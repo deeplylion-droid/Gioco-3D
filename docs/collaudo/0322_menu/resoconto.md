@@ -4,6 +4,8 @@ Squadra collaudo. Lo stato provato è `lavoro/candidata-0322` 34177697 (main 29f
 
 **Esito: due difetti da correggere (il primo grave, c'è già nella 0.3.21), un difetto piccolo già girato, alcune osservazioni.**
 
+**Aggiornamento dell'8 novembre: col ricontrollo di fa71293d (in fondo) i difetti 1 e 2 sono corretti: superato.**
+
 ## Difetti
 1. **Crash dell'exe alla prima entrata nella sala con un profilo nuovo (GRAVE).** `scripts/ui/menu/caricamento.gd:146-149`, `_entra()`: prima `get_tree().change_scene_to_packed(pacchetto)`, che toglie subito la schermata dall'albero, poi `QualitaAutomatica.avvia(get_tree(), …)` con `get_tree()` ormai null.
    - Editor, `--headless -- --partenza=torre`, profilo con `qualita_provata=false`: `ERROR: Parameter "data.tree" is null` in `_entra` (riga 149), poi `SCRIPT ERROR: Invalid access to property or key 'root'` in `avvia` (`qualita_automatica.gd:44`). La prova non parte e il `return` salta lo `schiarisci` (`log/editor_partenza_torre_errore.log`).
@@ -58,3 +60,18 @@ Il cursore va da 1,00 a 1,02 con la croce; «Calibra la luminosità…» si apre
 - `tests/misura_caricamento_jilly.gd`: aspetta la sala, e sul renderer software arriva a 12,3 GB e il sistema la uccide (OOM nel cgroup; la macchina non si è riavviata). Legge l'RSS con `get_as_text()` su `/proc/self/status`, che torna vuoto: stampa sempre 0 MB. Al suo posto `car_scatti.gd`, che fa gli scatti e chiude il processo prima della sala.
 - Sul renderer software i tre scatti della misura cadevano nello stesso fotogramma (fotogrammi fino a 7 s durante il caricamento): per questo erano identici.
 - Strumenti in `godot/tests/collaudo/`: `opzioni_scatti.gd`, `calib_fuoco.gd`, `sonda_audio_battito.gd`, `car_entrate.gd`, `car_scatti.gd`; `vero.sh`, `diag_as.sh` e `xin.py` (tasti veri con XTEST) qui accanto.
+
+## Ricontrollo delle correzioni (8 novembre): `lavoro/menu-0322` fa71293d (sopra 0a05c8d0)
+Provato sulla candidata 34177697 con fa71293d unito sopra (unione pulita, in locale), e sull'exe release esportato da lì.
+
+**Esito: superato.** I difetti 1 e 2 sono corretti.
+
+- **Test** (`log/ricontrollo_test.txt`): import e check_scripts ok; test_primo_ingresso 7, menu_schede 29, qualita_automatica 26, caricamento_jilly 17, avvio_sicuro 21, continua 127, partenze_prova 72, tutti 0 falliti, 0 BUG, 0 SCRIPT ERROR.
+- **Exe release, qualità automatica** (`log/ricontrollo_exe_partenze.txt`; `--headless -- --partenza=<zona> --muori-dopo=10 --resta=20`): torre, inseguimento, tunnel, fiume e inizio (la Nuova partita nuova da riga di comando, con lo spot), ognuna con la cartella dei dati vuota (`qualita_provata` falso) e poi con lo stesso profilo già provato; torre e inizio anche in EN. Tutti e 12: uscita 0, arrivo, morte, ripartenza e uscita normale, 0 «data.tree is null», 0 SCRIPT ERROR. Col profilo nuovo la riga «Qualità automatica: …» c'è e il profilo dopo ha `qualita_provata=true` col preset scelto (senza schermo la misura vale poco: «ultra», una volta «medio» con la macchina carica).
+- **Continua con la qualità da provare** (`tests/collaudo/prova_continua.gd`, editor, `log/ricontrollo_continua.txt`), IT ed EN: Nuova partita, morte (salvataggio), titolo, profilo rimesso «nuovo», Continua: passa dalla schermata, la prova parte e finisce (preset alto), il velo nero torna a zero, il giocatore c'è, 0 errori. Per la Nuova partita lo stesso lo controlla test_primo_ingresso.
+- **Fuoco dopo la calibrazione**:
+  - dal titolo (`log/ricontrollo_calib_titolo.txt`): chiusa col B o con Esc il fuoco torna su «Calibra la luminosità…», la croce (su, giù, destra) e le frecce si muovono di nuovo;
+  - dalla pausa nella torre (`tests/collaudo/calib_pausa.gd`, `log/ricontrollo_calib_pausa.txt`), IT ed EN: uguale col joypad (A, B) e con la tastiera (Invio, Esc);
+  - sull'exe, a schermo e coi tasti veri (`fogli/ricontrollo_calibrazione_esc_it.jpg`, `_en.jpg`): il pannello si chiama «Opzioni» / «Options»; Esc chiude la calibrazione e il pulsante ha il bordo del fuoco; su e giù si spostano e tornano; Invio la riapre ed Esc la richiude di nuovo col fuoco al suo posto.
+
+**Non provato qui:** la sala a schermo sull'exe (la prova della qualità che si vede e lo schermo che si schiarisce davvero) e la Nuova partita / Continua coi tasti veri sull'exe: la sala su Vulkan software va oltre i 15 GB della macchina (la Prova su Vulkan della CI ha 24 GB di swap e il giro primo_avvio apposta). Il renderer finto (`--rendering-method dummy`) per usare i tasti veri senza disegnare non serve: va in segfault nel motore (`texture_2d_get` del renderer finto, `log/exe_renderer_dummy_crash.log`), non nel gioco.
