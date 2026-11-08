@@ -273,7 +273,7 @@ func _squalo_e_corridoi(velo: Dissolvenza, prova: bool) -> void:
 		await get_tree().process_frame
 		_riga()
 		var ts := float(_squalo.get(&"_t"))
-		var nero := velo.opacita()
+		var nero := Dissolvenza.di(get_tree()).opacita() if Dissolvenza.presente(get_tree()) else 0.0
 		if t_prova_fine < 0.0 and prova and not get_tree().root.has_node(^"QualitaAutomatica"):
 			t_prova_fine = ts
 			print("GIRO0322: prova della qualità finita a %.2f s della scena, preset %s" % [ts, Grafica.valore("preset")])
