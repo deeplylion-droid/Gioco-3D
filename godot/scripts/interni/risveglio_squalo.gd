@@ -116,7 +116,29 @@ func _ready() -> void:
 	_crea_goccia()
 
 
-## La scena del risveglio: blocca il giocatore e parte.
+## La scena parte solo a schermo chiaro (passaggio finale di ambienti-2 su b18a9003: al primo avvio la prova della
+## qualità teneva lo schermo nero mentre la scena era già partita, e i primi due lampi cadevano nel nero; anche negli
+## avvii normali la sala entra con la dissolvenza di 1,6 s): finché c'è il velo nero della dissolvenza, anche solo un
+## poco, o la prova della qualità, il giocatore resta sdraiato al buio come all'inizio della scena, senza tempo che
+## passa e senza suoni. Dopo [constant ATTESA_MASSIMA] s parte comunque.
+const ATTESA_MASSIMA := 30.0
+## Solo per i test: la scena parte anche nelle prove automatiche (Interni.fai_risveglio).
+static var forza_nei_test := false
+var _in_attesa := false
+var _attesa := 0.0
+
+
+## Lo schermo è chiaro: niente velo della dissolvenza e niente prova della qualità.
+static func schermo_pronto(albero: SceneTree) -> bool:
+	return Dissolvenza.schermo_libero(albero) and not QualitaAutomatica.in_corso(albero)
+
+
+## Vero mentre la scena aspetta lo schermo chiaro (è avviata ma il suo tempo non è ancora partito).
+func in_attesa() -> bool:
+	return _attivo and _in_attesa
+
+
+## La scena del risveglio: blocca il giocatore e parte (appena lo schermo è chiaro).
 func avvia(p: Player) -> void:
 	_p = p
 	_p.input_enabled = false
@@ -127,6 +149,8 @@ func avvia(p: Player) -> void:
 	_t = 0.0
 	_passi_fatti = 0
 	_attivo = true
+	_attesa = 0.0
+	_in_attesa = not schermo_pronto(get_tree())
 	_sguardo = _punto_bocca()
 	set_process(true)
 	_process(0.0)
@@ -347,14 +371,24 @@ func _punto_bocca() -> Vector3:
 func _process(delta: float) -> void:
 	if not _attivo:
 		return
-	_t += delta
-	if _anim and _anim.is_playing():
-		_anim.advance(delta)
 	var M: float = tempi.get("minaccia", 2.4)
 	var R: float = tempi.get("richiamo", 5.4)
 	var G: float = tempi.get("giro", 5.85)
 	var E: float = tempi.get("esita", 6.75)
 	var porta_t: float = tempi.get("porta", 10.15)
+	if _in_attesa:
+		_attesa += delta
+		if schermo_pronto(get_tree()) or _attesa >= ATTESA_MASSIMA:
+			_in_attesa = false
+		else:
+			# fermo all'inizio della scena: al buio, sdraiato, lui in fondo al corridoio; niente tempo, niente suoni
+			_luci_del_buio()
+			_muovi_goccia()
+			_camera(M, R, G, E, porta_t, 0.0)
+			return
+	_t += delta
+	if _anim and _anim.is_playing():
+		_anim.advance(delta)
 	_suoni_e_porta(R, E, porta_t)
 	_luci_del_buio()
 	_muovi_goccia()

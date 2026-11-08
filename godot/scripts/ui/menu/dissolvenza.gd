@@ -32,6 +32,13 @@ static func presente(albero: SceneTree) -> bool:
 	return d != null and not d.is_queued_for_deletion()
 
 
+## Lo schermo è libero dal velo: non c'è, o è del tutto trasparente (per chi deve aspettare che si veda tutto, come la
+## scena dello squalo all'inizio).
+static func schermo_libero(albero: SceneTree) -> bool:
+	var d := albero.root.get_node_or_null(NodePath(NOME)) as Dissolvenza
+	return d == null or d.is_queued_for_deletion() or d.opacita() <= 0.001
+
+
 func _init() -> void:
 	layer = 120
 	process_mode = Node.PROCESS_MODE_ALWAYS

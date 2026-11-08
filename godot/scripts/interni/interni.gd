@@ -467,7 +467,7 @@ func _crea_giocatore() -> void:
 ## parte solo con [param con_squalo]: dura più di 13 secondi.
 ## Il checkpoint del risveglio (lì dove ci si sveglia) conta solo a scena finita: chi esce durante la scena la rivede
 ## da capo, chi riparte da lì no.
-func fai_risveglio(p: Player, con_squalo := not Game.is_automated()) -> void:
+func fai_risveglio(p: Player, con_squalo := not Game.is_automated() or RisveglioSqualo.forza_nei_test) -> void:
 	_checkpoint_risveglio(false)
 	var squalo := get_node_or_null(^"Gioco/RisveglioSqualo") as RisveglioSqualo
 	if squalo and con_squalo:
