@@ -278,7 +278,10 @@ const VISTE_RISCALDA := [[0.0, -1.0], [6.0, 1.0], [70.0, 1.0], [90.0, -1.0], [12
 ## del tunnel per qualche fotogramma, con lo stesso mondo, le stesse luci e la stessa resa della vista del gioco. Così
 ## le pipeline degli shader si compilano lì e non quando si entra (senza: 18 compilazioni al primo sguardo).
 func _riscalda() -> void:
-	if not is_inside_tree() or DisplayServer.get_name() == "headless":
+	if not is_inside_tree():
+		return
+	strati_riscaldamento()
+	if DisplayServer.get_name() == "headless":
 		return
 	var vista := get_viewport()
 	var vp := SubViewport.new()
@@ -329,6 +332,17 @@ func _riscalda() -> void:
 	if effetti:
 		effetti.riscalda_da(cam, false)
 	vp.queue_free()
+
+
+## Le mesh del tunnel sullo strato del riscaldamento (EffettiInseguimento.STRATO_RISCALDA), in più del loro: la luce
+## rosa accesa per il riscaldamento si posa solo su di loro (#131). Solo quelle sullo strato 1, quello di tutto il
+## mondo: le altre (l'acqua sul suo strato, la lancia in mano) hanno strati che le camere dei riflessi escludono apposta,
+## e col bit in più ci rientrerebbero. Il bit resta: le camere e le luci del gioco le prendono già per lo strato 1.
+func strati_riscaldamento() -> void:
+	for n in find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		if g.layers & 1:
+			Strati.metti(g, g.layers | EffettiInseguimento.STRATO_RISCALDA)
 
 
 func _passi() -> Array:
