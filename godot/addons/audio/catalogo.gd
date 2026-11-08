@@ -106,6 +106,7 @@ const SUONI := {
 	&"sigla_rovinata": ["res://audio/musica/sigla_rovinata.ogg"],
 	&"sirena_lontana": ["res://audio/ambiente/sirena_lontana_01.ogg", "res://audio/ambiente/sirena_lontana_02.ogg"],
 	&"sottacqua_loop": ["res://audio/ambiente/sottacqua_loop.ogg"],
+	&"squalo_annusa": ["res://audio/squalo/squalo_annusa.ogg"],
 	&"squalo_denti": ["res://audio/squalo/squalo_denti_01.ogg", "res://audio/squalo/squalo_denti_02.ogg", "res://audio/squalo/squalo_denti_03.ogg"],
 	&"squalo_minaccia": ["res://audio/squalo/squalo_minaccia.ogg"],
 	&"squalo_passo": ["res://audio/squalo/squalo_passo_01.ogg", "res://audio/squalo/squalo_passo_02.ogg", "res://audio/squalo/squalo_passo_03.ogg", "res://audio/squalo/squalo_passo_04.ogg"],

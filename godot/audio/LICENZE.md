@@ -250,7 +250,8 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `squalo/squalo_denti_01.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_02.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_03.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
-| `squalo/squalo_minaccia.ogg` | 6.0 s | sintesi (originale) | fiato a 30 cm, gola che brontola sotto e tre ringhi corti con il risucchio della saliva (2,3 s, 3,2 s, 4,1 s dall'inizio del file); versione B del 23 ottobre |
+| `squalo/squalo_annusa.ogg` | 6.3 s | sintesi (originale) | il buio prima che apra la bocca: il fiato che si avvicina, le gocce di bava e i colpi di fiuto da sinistra a destra (0.3.22) |
+| `squalo/squalo_minaccia.ogg` | 4.8 s | sintesi (originale) | fiato a 30 cm, gola che brontola sotto, due ringhi svelti, la pausa col solo fiato e il ringhio dello scatto, coi tempi della 0.3.22; la versione B del 23 ottobre è in `assets_src/audio/scartati/squalo/squalo_minaccia_B_0322.ogg` |
 | `squalo/squalo_passo_01.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
 | `squalo/squalo_passo_02.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
 | `squalo/squalo_passo_03.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |

@@ -46,7 +46,11 @@ func _run() -> void:
 	# la luce viene da dietro la porta (più in là dello squalo, guardando dal giocatore) e punta verso il giocatore
 	var porta := s.get(&"_perno") as Node3D
 	level.call(&"fai_risveglio", p, true)
+	# (dalla 0.3.23 all'inizio c'è il buio: il viola si spegne e sfarfalla con il corridoio, poi resta acceso)
 	for i in 30:
+		await get_tree().process_frame
+	_check(a.luce.light_energy < 2.0, "nel buio dell'inizio il viola è spento (%.1f)" % a.luce.light_energy)
+	while float(s.get(&"_t")) < float(s.tempi.get("luce", 0.0)) + 0.5:
 		await get_tree().process_frame
 	var occhio := p.camera.global_position
 	var dalla_luce := (occhio - a.luce.global_position).normalized()
@@ -63,14 +67,14 @@ func _run() -> void:
 			"la controluce dietro lo squalo è accesa e illumina solo lui")
 	# la porta si chiude dietro di lui: il viola si spegne
 	var t := 0.0
-	while t < 16.0 and not bool(s.get(&"_porta_chiusa")):
+	while t < 22.0 and not bool(s.get(&"_porta_chiusa")):
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	await get_tree().process_frame
 	_check(bool(s.get(&"_porta_chiusa")) and a.luce.light_energy == 0.0, "a porta chiusa la luce viola è spenta")
 	_check((a.nebbia.material as FogMaterial).density > 0.03, "la nebbia resta finché il giocatore non riprende il controllo")
 	# il controllo torna: la nebbia si dirada in circa 4 s
-	while t < 20.0 and not p.input_enabled:
+	while t < 26.0 and not p.input_enabled:
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	_check(p.input_enabled, "il giocatore riprende il controllo")

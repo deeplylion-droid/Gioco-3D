@@ -126,13 +126,37 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
 
+      - name: Test della schermata di caricamento con Jilly (il video in ciclo dietro i testi, per tutte le entrate; la memoria non cresce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_caricamento_jilly.gd
+
       - name: Test dell'avvio sicuro (dopo una chiusura di colpo il titolo propone qualità bassa e l'altro driver; senza, niente)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_avvio_sicuro.gd
 
+      - name: Test delle schede delle opzioni (tastiera e joypad fino ad Audio, cursori dei volumi, menu riaperto)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_schede.gd
+
+      - name: Test delle opzioni dalla pausa nel gioco (sala principale e torre; tutte le schede, appena arrivati e dopo una morte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_pausa_zone.gd --partenza=inizio
+          godot --headless --path godot --script res://tests/run.gd -- res://tests/test_menu_pausa_zone.gd --partenza=torre
+
       - name: Test della qualità automatica (al primo avvio sceglie il preset più alto che resta fluido; una scelta a mano resta del giocatore)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_qualita_automatica.gd
+
+      - name: Test del primo ingresso nella sala col profilo nuovo (dalla schermata di caricamento vera la qualità automatica parte e lo schermo si schiarisce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_primo_ingresso.gd
+
+      - name: Test della scena dello squalo a schermo chiaro (dalla schermata di caricamento vera, col profilo nuovo e con la qualità già provata, la scena aspetta la prova della qualità e la dissolvenza; il primo lampo cade con lo schermo chiaro)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_squalo_schermo.gd nuovo
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_squalo_schermo.gd provato
 
       - name: Test dell'opzione nascosta della riga di comando del titolo (senza i suoi argomenti non fa niente; la usa la Prova su Vulkan)
         if: steps.progetto.outputs.presente == 'si'
@@ -334,6 +358,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_fondo_porta_bacino.gd
 
+      - name: Test della luce rosa del riscaldamento del tunnel (si posa solo sul tunnel, non sul bacino delle condotte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_riscalda_tunnel_strati.gd
+
       - name: Test delle scalette della piscina a onde (piena e vuota, su col giocatore vero in sette modi fin sul bordo; e dalla spiaggia)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scalette_piscina.gd
@@ -366,7 +394,7 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid.gd
 
-      - name: Test dell'album delle Polaroid (menu di pausa, 16 cornici, n su 16, joypad, inglese, salvataggio com'era)
+      - name: Test dell'album delle Polaroid (menu di pausa, 16 cornici, n su 16, joypad, la foto si chiude coi bottoni A e B del joypad e non con Start, inglese, salvataggio com'era)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_album_polaroid.gd
 
@@ -407,6 +435,10 @@ jobs:
 
       - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)
         if: steps.progetto.outputs.presente == 'si'
+        # TORRE_TEMPI stampa i passi lunghi della costruzione a pezzi: se un fotogramma supera i 100 ms, il log dice quale passo era
+        # (il 7 novembre un fotogramma di 149 ms dopo i passi _emergenza della torre, una volta sola, senza il nome del passo).
+        env:
+          TORRE_TEMPI: "1"
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
 
       - name: Test della costruzione a pezzi interrotta (niente nodi orfani dai passi degli stendardi e delle sagome del club)

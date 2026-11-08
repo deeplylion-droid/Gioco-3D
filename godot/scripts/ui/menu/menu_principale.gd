@@ -6,7 +6,7 @@ extends Node3D
 ## dall'ultimo checkpoint, GameState.continue_from_disk), Nuova partita (porta alla schermata di caricamento della sala), Opzioni
 ## (menu dell'addon grafica), Comandi, Esci. Mouse, tastiera e joypad (azioni ui_*). F9 apre il menu di prova
 ## nascosto (MenuProva: partire da una parte del capitolo), che non è fra le voci.
-## La calibrazione della luminosità del primo avvio la mostra Game, sopra il titolo.
+## Al primo avvio niente calibrazione della luminosità (richiesta dell'utente del 7 novembre): si apre dalle opzioni.
 
 const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 const SCENA_COMANDI := "res://scenes/ui/comandi.tscn"
@@ -70,7 +70,7 @@ func _ready() -> void:
 	velo.schiarisci(2.4, 2)
 	_audio(&"ferma_tutto")
 	_audio(&"musica_titolo")
-	_fuoco_iniziale.call_deferred()
+	_voci[0].grab_focus.call_deferred()
 	_partenza_da_riga.call_deferred()
 	# l'ultima volta il gioco si è chiuso di colpo: prima di tutto la domanda dell'avvio sicuro (AvvioSicuro)
 	if AvvioSicuro.da_chiedere():
@@ -79,7 +79,8 @@ func _ready() -> void:
 
 ## Per le prove (il controllo "Prova su Vulkan" della CI, .github/workflows/prova_vulkan.yml, e il collaudo), dopo il --
 ## della riga di comando; senza questi argomenti non fa niente (tests/test_partenza_da_riga.gd):
-## --partenza=<id>   parte subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...);
+## --partenza=<id>   parte subito da una partenza del menu di prova (MenuProva.PARTENZE: torre, inseguimento, tunnel...;
+##                    inizio è la nuova partita, come il pulsante);
 ## --preset=<nome>   mette prima quel preset grafico;
 ## --muori-dopo=<s>  quei secondi dopo l'arrivo il giocatore muore (GameState.kill_player) e si riparte dal checkpoint,
 ##                   come la morte nelle vasche dopo la torre (crash della 0.3.17); il resto conta dal secondo arrivo;
@@ -123,11 +124,6 @@ func _partenza_da_riga() -> void:
 	# titolo, e la sequenza di morte, che si ferma con la pausa, non finirebbe; come nei test)
 	_pausa_fuoco = false
 	Game.pause_on_focus_loss = false
-	# e niente calibrazione della luminosità del primo avvio (col profilo nuovo della prova si aprirebbe e terrebbe il
-	# gioco in pausa: nei test la salta --script, Game.is_automated); chiusa, toglie la pausa da sola
-	for c in Game.get_children():
-		if c is CanvasLayer and String(c.scene_file_path).ends_with("calibrazione_luminosita.tscn"):
-			c.queue_free()
 	if _registro_prova != "":
 		var f := FileAccess.open(_registro_prova, FileAccess.WRITE)
 		if f:
@@ -195,7 +191,12 @@ func _partenza_da_riga() -> void:
 		albero.create_timer(esci, true, false, true).timeout.connect(func() -> void:
 			_prova("PROVA: esco dopo %s s" % esci)
 			albero.quit())
-	if partenza != "":
+	if partenza == "inizio":
+		# la nuova partita, come il pulsante del titolo (dalla schermata di caricamento vera: col profilo nuovo c'è anche
+		# la prova della qualità automatica)
+		_prova("PROVA: parto da inizio (nuova partita)")
+		_avvia_nuova_partita()
+	elif partenza != "":
 		_prova("PROVA: parto da %s -> %s" % [partenza, MenuProva.parti(albero, partenza)])
 
 
@@ -225,8 +226,7 @@ func _process(delta: float) -> void:
 		tempesta.lampo_ora(1.35, 0.7, PI * 0.8)
 	if _avviato:
 		return
-	# Il mouse resta libero anche se qualcuno lo cattura (per esempio Game alla fine della
-	# calibrazione della luminosità).
+	# Il mouse resta libero anche se qualcuno lo cattura.
 	if DisplayServer.get_name() != "headless" and Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if not is_instance_valid(_sottomenu) and get_viewport().gui_get_focus_owner() == null:
@@ -286,17 +286,6 @@ func _chiedi_nuova_partita() -> void:
 func _chiedi_avvio_sicuro() -> void:
 	if is_instance_valid(_sottomenu) or _avviato:
 		return
-	# con la calibrazione della luminosità aperta sopra il titolo (il primo avvio chiuso di colpo prima di confermarla)
-	# la domanda aspetta che si chiuda: sotto, nascosta, avrebbe preso il focus, e l'Invio per confermare la luminosità
-	# avrebbe scelto l'avvio sicuro senza vederlo (collaudo finale di grafica-2, 6 novembre). Il segno della sessione
-	# resta finché non si risponde.
-	var cal := _calibrazione_aperta()
-	if cal:
-		cal.tree_exited.connect(func():
-			if is_inside_tree():
-				_chiedi_avvio_sicuro.call_deferred()
-		, CONNECT_ONE_SHOT)
-		return
 	var d: CanvasLayer = DOMANDA.new("Avvio sicuro?", AvvioSicuro.nota(), "Avvio sicuro", "Avvio normale", true)
 	d.name = "DomandaAvvioSicuro"
 	_sottomenu = d
@@ -312,21 +301,6 @@ func _chiedi_avvio_sicuro() -> void:
 		_testata.visible = true
 		_logo.visible = true
 		_voci[0].grab_focus.call_deferred())
-
-
-## Il focus sulla prima voce, ma non se sopra c'è la calibrazione della luminosità: il focus resta sul suo Conferma
-## (col titolo in pausa sotto, un Invio non farebbe niente). Chiusa la calibrazione lo prende _process.
-func _fuoco_iniziale() -> void:
-	if _calibrazione_aperta() == null:
-		_voci[0].grab_focus()
-
-
-## La calibrazione della luminosità del primo avvio, se è aperta (Game._show_calibration la mette sopra il titolo).
-func _calibrazione_aperta() -> Node:
-	for c in Game.get_children():
-		if c is CanvasLayer and String(c.scene_file_path).ends_with("calibrazione_luminosita.tscn") and not c.is_queued_for_deletion():
-			return c
-	return null
 
 
 func _avvia_nuova_partita() -> void:
