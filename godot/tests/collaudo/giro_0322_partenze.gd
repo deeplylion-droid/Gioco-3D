@@ -108,6 +108,9 @@ func _run() -> void:
 		var nome := {"tunnel": "Tunnel sottomarino", "inseguimento": "Inseguimento"}.get(id, id) as String
 		var b := _bottone(get_tree().root, nome)
 		if b == null:
+			# (con la lingua di sistema inglese)
+			b = _bottone(get_tree().root, {"tunnel": "Underwater tunnel", "inseguimento": "Chase"}.get(id, id))
+		if b == null:
 			print("GIRO0322P: KO la partenza %s non c'è nel menu F9" % nome)
 			get_tree().quit(1)
 			return
