@@ -1,0 +1,3 @@
+PARETE: mesh @MeshInstance3D@35, 2338 triangoli verticali
+PARETE: mesh @MeshInstance3D@38, 0 triangoli verticali
+PARETE: 2338 triangoli, 0 con la faccia davanti non verso l'acqua, 0 con l'acqua dai due lati o da nessuno, 0 con la normale contro la faccia

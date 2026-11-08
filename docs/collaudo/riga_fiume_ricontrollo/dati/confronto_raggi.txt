@@ -1,0 +1,55 @@
+raggi prima 324096, dopo 324096, in comune 324096
+('banchina_basso', 'colpisce ora') 17
+('banchina_basso', 'da Fiume/Collisioni a Fiume/Collisioni') 17
+('banchina_basso', 'diversi') 17
+('banchina_basso', 'tot') 151392
+('banchina_occhi', 'colpisce ora') 108
+('banchina_occhi', 'da Fiume/Collisioni a Fiume/Collisioni') 108
+('banchina_occhi', 'diversi') 108
+('banchina_occhi', 'tot') 151392
+('ciambella_basso', 'colpisce ora') 154
+('ciambella_basso', 'colpisce più lontano') 3
+('ciambella_basso', 'da Fiume/Collisioni a Fiume/Collisioni') 157
+('ciambella_basso', 'diversi') 157
+('ciambella_basso', 'tot') 10656
+('ciambella_occhi', 'colpisce ora') 853
+('ciambella_occhi', 'colpisce più lontano') 2
+('ciambella_occhi', 'da Fiume/Collisioni a Fiume/Collisioni') 855
+('ciambella_occhi', 'diversi') 855
+('ciambella_occhi', 'tot') 10656
+esempi banchina_occhi
+   banchina_-10_-2_occhi dir 0: 4.359 Fiume/Collisioni -> 3.906 Fiume/Collisioni
+   banchina_-10_-2_occhi dir 3: 4.359 Fiume/Collisioni -> 4.228 Fiume/Collisioni
+   banchina_-10_-2_occhi dir 45: 4.359 Fiume/Collisioni -> 4.228 Fiume/Collisioni
+   banchina_-11_-2_occhi dir 0: 4.359 Fiume/Collisioni -> 3.906 Fiume/Collisioni
+   banchina_-11_-2_occhi dir 3: 4.359 Fiume/Collisioni -> 4.228 Fiume/Collisioni
+   banchina_-11_-2_occhi dir 45: 4.359 Fiume/Collisioni -> 4.228 Fiume/Collisioni
+   banchina_-12_-2_occhi dir 0: 4.359 Fiume/Collisioni -> 3.906 Fiume/Collisioni
+   banchina_-12_-2_occhi dir 3: 4.359 Fiume/Collisioni -> 4.228 Fiume/Collisioni
+esempi banchina_basso
+   banchina_-27_-3_basso dir 15: 2.092 Fiume/Collisioni -> 1.276 Fiume/Collisioni
+   banchina_-27_-3_basso dir 18: 2.092 Fiume/Collisioni -> 0.691 Fiume/Collisioni
+   banchina_-27_-3_basso dir 21: 2.092 Fiume/Collisioni -> 0.529 Fiume/Collisioni
+   banchina_-27_2_basso dir 3: 2.092 Fiume/Collisioni -> 0.793 Fiume/Collisioni
+   banchina_-27_2_basso dir 6: 2.092 Fiume/Collisioni -> 1.036 Fiume/Collisioni
+   banchina_-27_2_basso dir 9: 2.092 Fiume/Collisioni -> 1.914 Fiume/Collisioni
+   banchina_21_-3_basso dir 15: 1.548 Fiume/Collisioni -> 1.276 Fiume/Collisioni
+   banchina_21_-3_basso dir 18: 1.861 Fiume/Collisioni -> 0.691 Fiume/Collisioni
+esempi ciambella_occhi
+   ciambella_Giusto1_001_occhi dir 3: 2.773 Fiume/Collisioni -> 2.644 Fiume/Collisioni
+   ciambella_Giusto1_001_occhi dir 6: 3.853 Fiume/Collisioni -> 3.454 Fiume/Collisioni
+   ciambella_Giusto1_002_occhi dir 42: 3.853 Fiume/Collisioni -> 3.204 Fiume/Collisioni
+   ciambella_Giusto1_003_occhi dir 3: 3.853 Fiume/Collisioni -> 3.622 Fiume/Collisioni
+   ciambella_Giusto1_003_occhi dir 6: 3.853 Fiume/Collisioni -> 2.409 Fiume/Collisioni
+   ciambella_Giusto1_003_occhi dir 39: 3.853 Fiume/Collisioni -> 2.296 Fiume/Collisioni
+   ciambella_Giusto1_003_occhi dir 42: 3.853 Fiume/Collisioni -> 3.402 Fiume/Collisioni
+   ciambella_Giusto1_004_occhi dir 3: 3.853 Fiume/Collisioni -> 3.413 Fiume/Collisioni
+esempi ciambella_basso
+   ciambella_Giusto1_002_basso dir 3: 1.340 Fiume/Collisioni -> 1.324 Fiume/Collisioni
+   ciambella_Giusto1_002_basso dir 6: 1.848 Fiume/Collisioni -> 1.730 Fiume/Collisioni
+   ciambella_Giusto1_004_basso dir 18: 1.698 Fiume/Collisioni -> 1.597 Fiume/Collisioni
+   ciambella_Giusto1_034_basso dir 42: 1.848 Fiume/Collisioni -> 1.162 Fiume/Collisioni
+   ciambella_Giusto1_034_basso dir 45: 1.848 Fiume/Collisioni -> 1.779 Fiume/Collisioni
+   ciambella_Giusto1_035_basso dir 3: 1.225 Fiume/Collisioni -> 1.848 Fiume/Collisioni
+   ciambella_Giusto1_036_basso dir 9: 1.757 Fiume/Collisioni -> 1.848 Fiume/Collisioni
+   ciambella_Giusto2_002_basso dir 39: 1.340 Fiume/Collisioni -> 1.848 Fiume/Collisioni

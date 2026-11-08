@@ -1,0 +1,17 @@
+== prima: 29f78c94 GDD: lo squalo fa più paura, sì alle tre proposte di mascotte (buio p
+== import prima 0
+== SINTASSI: res://tests/cz/fiume_raggi.gd ok SINTASSI: res://tests/cz/fiume_giro.gd ok 
+== raggi prima 0; RAGGI: 6752 origini, 324096 raggi in /home/user/collaudo_log/rf/raggi_prima.txt; BUG 0; SCRIPT ERROR 0; ERROR 0
+== giro prima 0; GIRO: ciambella a (-2.9, -0.34, -2.9) GIRO: 221 scatti ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== magenta prima 0; 97 scatti con magenta; BUG 0; SCRIPT ERROR 0; ERROR 1
+== dopo: d59e2d44 Fiume: le pareti del canale guardano l'acqua (#130), con gli scatti pri
+== import dopo 0
+== SINTASSI: res://tests/cz/fiume_raggi.gd ok SINTASSI: res://tests/cz/fiume_giro.gd ok 
+== raggi dopo 0; RAGGI: 6752 origini, 324096 raggi in /home/user/collaudo_log/rf/raggi_dopo.txt; BUG 0; SCRIPT ERROR 0; ERROR 0
+== giro dopo 0; GIRO: ciambella a (-2.9, -0.34, -2.9) GIRO: 221 scatti ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== magenta dopo 0; 57 scatti con magenta; BUG 0; SCRIPT ERROR 0; ERROR 1
+== test_fiume 0; RISULTATO: 35 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_fiume_gioco 0; RISULTATO: 34 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== controllo_posizionamento 0; RISULTATO: 2 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 129
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
