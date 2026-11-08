@@ -1,0 +1,99 @@
+dito 0, quota -2 mm: 68 punti, distacco medio 0.65 mm, massimo 9.18 mm (a -19 gradi), sopra 1 mm 3, sopra 2 mm 3, senza guanto sopra 0
+dito 0, quota +0 mm: 68 punti, distacco medio 1.47 mm, massimo 48.72 mm (a -19 gradi), sopra 1 mm 12, sopra 2 mm 4, senza guanto sopra 0
+dito 0, quota +2 mm: 67 punti, distacco medio 1.69 mm, massimo 7.80 mm (a -19 gradi), sopra 1 mm 34, sopra 2 mm 25, senza guanto sopra 1
+dito 1, quota -2 mm: 66 punti, distacco medio 0.39 mm, massimo 0.45 mm (a 53 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 1, quota +0 mm: 66 punti, distacco medio 0.50 mm, massimo 1.05 mm (a 170 gradi), sopra 1 mm 1, sopra 2 mm 0, senza guanto sopra 0
+dito 1, quota +2 mm: 66 punti, distacco medio 1.32 mm, massimo 3.13 mm (a 170 gradi), sopra 1 mm 35, sopra 2 mm 20, senza guanto sopra 0
+dito 2, quota -2 mm: 64 punti, distacco medio 0.39 mm, massimo 0.51 mm (a 131 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 2, quota +0 mm: 64 punti, distacco medio 0.40 mm, massimo 0.63 mm (a 131 gradi), sopra 1 mm 0, sopra 2 mm 0, senza guanto sopra 0
+dito 2, quota +2 mm: 64 punti, distacco medio 0.59 mm, massimo 1.30 mm (a 50 gradi), sopra 1 mm 9, sopra 2 mm 0, senza guanto sopra 0
+dito 3, quota -2 mm: 62 punti, distacco medio 0.46 mm, massimo 2.15 mm (a 137 gradi), sopra 1 mm 3, sopra 2 mm 1, senza guanto sopra 0
+dito 3, quota +0 mm: 62 punti, distacco medio 0.42 mm, massimo 1.15 mm (a 137 gradi), sopra 1 mm 1, sopra 2 mm 0, senza guanto sopra 0
+dito 3, quota +2 mm: 62 punti, distacco medio 0.42 mm, massimo 1.06 mm (a 44 gradi), sopra 1 mm 1, sopra 2 mm 0, senza guanto sopra 0
+DITA: 779 punti, massimo 48.72 mm, sopra 0,8 mm 119, sopra 1 mm 99, sopra 2 mm 53
+PALMO (lato destro, y -0,27..-0,19): 221 punti, distacco medio 3.10 mm, massimo 33.06 mm, sopra 2 mm 98, sopra 10 mm 7
+PALMO, i punti sopra 5 mm (y, angolo, mm):
+   y -0.270: [(-40, 5.6)]
+   y -0.260: [(-10, 5.2), (-5, 5.2), (0, 5.1), (5, 5.1)]
+   y -0.240: [(0, 5.8), (5, 6.1), (10, 6.1), (15, 6.0), (20, 5.5)]
+   y -0.230: [(-40, 10.0)]
+   y -0.225: [(-40, 11.4)]
+   y -0.220: [(-40, 7.3), (-35, 14.7)]
+   y -0.215: [(-40, 8.1), (-35, 8.1), (-30, 8.7), (-10, 5.2), (-5, 6.3), (0, 6.6), (5, 6.8), (10, 6.9), (15, 6.8), (20, 6.8)]
+   y -0.210: [(-40, 8.6), (-35, 8.4), (-30, 33.1)]
+   y -0.205: [(-40, 6.3), (-35, 5.7), (-30, 5.4), (-25, 8.2)]
+   y -0.200: [(-40, 5.4), (-20, 5.7)]
+   y -0.195: [(-40, 6.7), (-35, 5.4), (-30, 5.5), (-25, 5.8), (-20, 6.9), (-15, 7.4)]
+   y -0.190: [(-40, 11.9), (-35, 9.9), (-30, 9.2), (-25, 9.5), (-20, 10.4), (-15, 23.6), (-10, 23.6), (-5, 7.3), (0, 7.7), (5, 7.8), (10, 8.2), (15, 8.6), (20, 8.7)]
+
+vertici del guanto 13027; a meno di 3 cm dalla lancia 8700
+dentro la lancia: 24 vertici, al più 0.47 mm
+scatola del guanto (glTF): da [-0.061 -0.341  0.403] a [ 0.095 -0.154  0.641]
+== misura_indice.py, modello di prima (0.3.22)
+INDICE quota -2 mm: -25:0.4 -22:0.9 -19:0.3 -16:0.3 -13:0.3 -10:0.4 -7:0.4 -4:0.4 -1:0.4 2:0.4 5:0.4 8:0.4 11:0.4 14:0.4 17:0.4 20:0.4 23:0.4 26:0.4 29:0.4 32:0.4 35:0.4 38:0.4 41:0.4 44:0.4 47:0.4 50:0.3 53:0.3 56:0.8 59:0.4 62:0.4 65:0.3 68:0.3 71:0.3 74:0.4 77:0.4 80:0.4 83:0.4 86:0.4 89:0.4 92:0.4 95:0.4 98:0.4 101:0.4 104:0.4 107:0.4 110:0.4 113:0.4 116:0.3 119:0.4 122:0.4 125:1.2 128:0.4 131:0.3 134:0.4 137:0.4 140:0.4 143:0.4 146:0.4 149:0.4 152:0.4 155:0.4 158:0.4 161:0.4 164:0.4 167:0.4 170:0.4 173:0.4 176:0.4
+INDICE quota +0 mm: -25:0.4 -22:0.5 -19:0.6 -16:0.3 -13:0.1 -10:0.4 -7:0.4 -4:0.4 -1:0.4 2:0.4 5:0.4 8:0.4 11:0.4 14:0.4 17:0.4 20:0.4 23:0.4 26:0.4 29:0.4 32:0.4 35:0.4 38:0.4 41:0.4 44:0.4 47:0.4 50:0.3 53:0.3 56:0.5 59:0.4 62:0.4 65:0.4 68:0.2 71:0.4 74:0.4 77:0.3 80:0.4 83:0.4 86:0.4 89:0.4 92:0.4 95:0.4 98:0.4 101:0.4 104:0.4 107:0.4 110:0.4 113:0.3 116:0.3 119:0.4 122:0.4 125:0.8 128:0.4 131:0.3 134:0.4 137:0.4 140:0.4 143:0.4 146:0.4 149:0.4 152:0.4 155:0.4 158:0.4 161:0.4 164:0.4 167:0.4 170:0.4 173:0.4 176:0.4
+INDICE quota +2 mm: -25:0.4 -22:0.4 -19:1.0 -16:0.4 -13:0.2 -10:0.4 -7:0.4 -4:0.4 -1:0.4 2:0.4 5:0.4 8:0.4 11:0.4 14:0.4 17:0.4 20:0.4 23:0.4 26:0.4 29:0.4 32:0.4 35:0.4 38:0.4 41:0.4 44:0.4 47:0.4 50:0.3 53:0.4 56:0.6 59:0.4 62:0.4 65:0.4 68:0.3 71:0.4 74:0.4 77:0.4 80:0.4 83:0.4 86:0.4 89:0.4 92:0.4 95:0.4 98:0.4 101:0.4 104:0.4 107:0.4 110:0.4 113:0.3 116:0.3 119:0.4 122:0.4 125:0.5 128:0.4 131:0.4 134:0.4 137:0.4 140:0.4 143:0.4 146:0.4 149:0.4 152:0.4 155:0.4 158:0.4 161:0.4 164:0.4 167:0.4 170:0.4 173:0.4 176:0.4
+
+== misura_indice.py, modello nuovo (0.3.23)
+INDICE quota -2 mm: -25:4.7 -22:5.2 -19:9.2 -16:0.3 -13:0.4 -10:0.4 -7:0.4 -4:0.4 -1:0.4 2:0.4 5:0.4 8:0.4 11:0.4 14:0.4 17:0.4 20:0.4 23:0.4 26:0.4 29:0.4 32:0.4 35:0.4 38:0.4 41:0.4 44:0.4 47:0.4 50:0.4 53:0.4 56:0.5 59:0.4 62:0.4 65:0.4 68:0.3 71:0.3 74:0.4 77:0.4 80:0.4 83:0.4 86:0.4 89:0.4 92:0.4 95:0.4 98:0.4 101:0.4 104:0.4 107:0.4 110:0.4 113:0.3 116:0.1 119:0.4 122:0.4 125:0.4 128:0.3 131:0.4 134:0.4 137:0.4 140:0.4 143:0.4 146:0.4 149:0.4 152:0.4 155:0.4 158:0.4 161:0.4 164:0.4 167:0.4 170:0.4 173:0.4 176:0.4
+   -25 gradi: 4.7 mm, impugnatura in glTF (0.0304, -0.198, 0.5033)
+   -22 gradi: 5.2 mm, impugnatura in glTF (0.0308, -0.198, 0.5016)
+   -19 gradi: 9.2 mm, impugnatura in glTF (0.033, -0.198, 0.5007)
+INDICE quota +0 mm: -25:5.4 -22:5.3 -19:48.7 -16:5.0 -13:0.8 -10:0.5 -7:0.5 -4:0.5 -1:0.4 2:0.4 5:0.6 8:0.8 11:1.0 14:1.1 17:1.1 20:1.1 23:1.1 26:1.0 29:0.7 32:0.6 35:0.4 38:0.4 41:0.4 44:0.4 47:0.4 50:0.3 53:0.4 56:0.5 59:0.4 62:0.4 65:0.4 68:0.2 71:0.3 74:0.4 77:0.3 80:0.4 83:0.4 86:0.4 89:0.4 92:0.4 95:0.4 98:0.4 101:0.4 104:0.4 107:0.4 110:0.4 113:0.4 116:0.4 119:0.4 122:0.4 125:0.4 128:0.4 131:0.3 134:0.4 137:0.4 140:0.4 143:0.4 146:0.5 149:0.6 152:0.6 155:0.7 158:0.7 161:0.7 164:0.7 167:0.8 170:1.0 173:1.2 176:1.5
+   -25 gradi: 5.4 mm, impugnatura in glTF (0.0304, -0.196, 0.5032)
+   -22 gradi: 5.3 mm, impugnatura in glTF (0.0305, -0.196, 0.5015)
+   -19 gradi: 48.7 mm, impugnatura in glTF (0.0316, -0.196, 0.5002)
+   -16 gradi: 5.0 mm, impugnatura in glTF (0.0341, -0.196, 0.4992)
+INDICE quota +2 mm: -25:6.3 -22:6.4 -19:7.8 -16:- -13:3.8 -10:2.0 -7:1.6 -4:1.7 -1:1.8 2:2.0 5:2.3 8:2.6 11:2.9 14:3.1 17:3.2 20:3.2 23:3.2 26:2.9 29:2.6 32:2.2 35:1.7 38:1.2 41:0.9 44:0.4 47:0.4 50:0.4 53:0.4 56:1.0 59:0.4 62:0.4 65:0.4 68:0.3 71:0.4 74:0.4 77:0.4 80:0.4 83:0.4 86:0.7 89:0.7 92:0.7 95:0.6 98:0.4 101:0.4 104:0.4 107:0.4 110:0.4 113:0.0 116:0.3 119:0.4 122:1.1 125:0.8 128:0.4 131:0.4 134:0.4 137:0.6 140:0.9 143:1.6 146:2.1 149:2.3 152:2.4 155:2.5 158:2.6 161:2.7 164:2.7 167:2.9 170:3.0 173:3.3 176:3.6
+   -25 gradi: 6.3 mm, impugnatura in glTF (0.0303, -0.194, 0.5032)
+   -22 gradi: 6.4 mm, impugnatura in glTF (0.0305, -0.194, 0.5015)
+   -19 gradi: 7.8 mm, impugnatura in glTF (0.0306, -0.194, 0.4999)
+   -13 gradi: 3.8 mm, impugnatura in glTF (0.0348, -0.194, 0.4976)
+   5 gradi: 2.3 mm, impugnatura in glTF (0.0363, -0.194, 0.487)
+   8 gradi: 2.6 mm, impugnatura in glTF (0.0363, -0.194, 0.4852)
+   11 gradi: 2.9 mm, impugnatura in glTF (0.0363, -0.194, 0.4833)
+   14 gradi: 3.1 mm, impugnatura in glTF (0.0363, -0.194, 0.4815)
+   17 gradi: 3.2 mm, impugnatura in glTF (0.0363, -0.194, 0.4795)
+   20 gradi: 3.2 mm, impugnatura in glTF (0.0363, -0.194, 0.4775)
+   23 gradi: 3.2 mm, impugnatura in glTF (0.0363, -0.194, 0.4755)
+   26 gradi: 2.9 mm, impugnatura in glTF (0.0362, -0.194, 0.4733)
+   29 gradi: 2.6 mm, impugnatura in glTF (0.0362, -0.194, 0.471)
+   32 gradi: 2.2 mm, impugnatura in glTF (0.0362, -0.194, 0.4686)
+   146 gradi: 2.1 mm, impugnatura in glTF (-0.0318, -0.194, 0.4672)
+   149 gradi: 2.3 mm, impugnatura in glTF (-0.0319, -0.194, 0.4696)
+   152 gradi: 2.4 mm, impugnatura in glTF (-0.032, -0.194, 0.4719)
+   155 gradi: 2.5 mm, impugnatura in glTF (-0.032, -0.194, 0.4741)
+   158 gradi: 2.6 mm, impugnatura in glTF (-0.032, -0.194, 0.4763)
+   161 gradi: 2.7 mm, impugnatura in glTF (-0.0321, -0.194, 0.4783)
+   164 gradi: 2.7 mm, impugnatura in glTF (-0.0321, -0.194, 0.4802)
+   167 gradi: 2.9 mm, impugnatura in glTF (-0.0321, -0.194, 0.4821)
+   170 gradi: 3.0 mm, impugnatura in glTF (-0.032, -0.194, 0.484)
+   173 gradi: 3.3 mm, impugnatura in glTF (-0.032, -0.194, 0.4858)
+   176 gradi: 3.6 mm, impugnatura in glTF (-0.0319, -0.194, 0.4876)
+
+== pieghe_np.py, modello nuovo
+facce minuscole (area < 1e-10 m2): 0
+spigoli piegati oltre 60 gradi: 254
+spigoli piegati oltre 90 gradi: 53
+spigoli piegati oltre 120 gradi: 8
+spigoli piegati oltre 150 gradi: 4
+   10 spigoli, fino a 90 gradi, centro (0.0741, -0.2648, 0.4979), scatola [2.5 2.3 3.2] mm
+   10 spigoli, fino a 90 gradi, centro (0.0787, -0.2458, 0.4979), scatola [2.2 2.3 3. ] mm
+   10 spigoli, fino a 90 gradi, centro (0.0794, -0.2268, 0.4979), scatola [2.  2.3 2.9] mm
+    8 spigoli, fino a 163 gradi, centro (-0.0286, -0.1974, 0.4328), scatola [3.5 3.4 2.6] mm
+    8 spigoli, fino a 90 gradi, centro (0.0836, -0.2551, 0.5564), scatola [1.9 2.3 2.9] mm
+    8 spigoli, fino a 90 gradi, centro (0.0841, -0.2361, 0.5564), scatola [2.  2.3 2.9] mm
+    8 spigoli, fino a 90 gradi, centro (0.0806, -0.2171, 0.5564), scatola [2.2 2.3 3. ] mm
+    7 spigoli, fino a 165 gradi, centro (-0.0239, -0.1938, 0.4330), scatola [0.9 2.8 1.6] mm
+    4 spigoli, fino a 126 gradi, centro (0.0259, -0.2572, 0.5413), scatola [1.8 4.4 1.2] mm
+    4 spigoli, fino a 122 gradi, centro (-0.0319, -0.1961, 0.4296), scatola [1.4 1.5 0.4] mm
+    4 spigoli, fino a 116 gradi, centro (0.0372, -0.2697, 0.5092), scatola [0.3 0.5 0.9] mm
+    4 spigoli, fino a 85 gradi, centro (0.0259, -0.2351, 0.5354), scatola [1.6 5.5 2.7] mm
+    4 spigoli, fino a 60 gradi, centro (0.0853, -0.2425, 0.5178), scatola [1.2 2.  0.6] mm
+    4 spigoli, fino a 60 gradi, centro (0.0839, -0.2433, 0.5132), scatola [1.1 2.  0.7] mm
+    4 spigoli, fino a 60 gradi, centro (0.0857, -0.2220, 0.5270), scatola [1.2 2.  0.4] mm
+
+== bordi_np.py, modello nuovo
+nodi [('GuantoDestro', None, None, None)]
+vertici 13027 (uniti 9636), facce 19260, spigoli 28890, aperti 0, con più di 2 facce 0
+anelli aperti 0
