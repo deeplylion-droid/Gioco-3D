@@ -624,11 +624,11 @@ func _muovi_goccia() -> void:
 	var vp := get_viewport().get_visible_rect().size
 	mat.set_shader_parameter(&"aspetto", vp.x / maxf(vp.y, 1.0))
 	# (goccia B dalla 0.3.23, scelta dell'utente) cade e si schiaccia (0,06 s) e resta appesa al muso con un filo di bava
-	# per FILO_GOCCIA s, tirata in su; poi il filo si spezza e si ritira verso il muso (0,18 s), la goccia ricade un poco
+	# per FILO_GOCCIA s, tirata in su; poi il filo si spezza, i due capi si ritirano col rimbalzo (0,3 s), la goccia ricade un poco
 	# e scivola giù sempre più svelta, lasciando la scia spessa; alla fine si assottiglia e sparisce. Tutto a tempo di
 	# scena: uguale a 30 e a 60 fps
 	var arrivo := clampf(x / 0.06, 0.0, 1.0)
-	var spezzato := clampf((x - FILO_GOCCIA) / 0.18, 0.0, 1.0)
+	var spezzato := clampf((x - FILO_GOCCIA) / 0.3, 0.0, 1.0)
 	var tirata := arrivo * (1.0 - spezzato) * (0.7 + 0.3 * sin(x * 9.0))
 	var scivola := maxf(x - FILO_GOCCIA - 0.1, 0.0)
 	var giu := 0.12 * scivola * scivola + 0.03 * scivola
@@ -637,7 +637,10 @@ func _muovi_goccia() -> void:
 	mat.set_shader_parameter(&"raggio", lerpf(0.035, 0.08, arrivo) * (1.0 - 0.3 * clampf(scivola / 2.0, 0.0, 1.0)))
 	mat.set_shader_parameter(&"scia", clampf(giu / 0.05, 0.0, 9.0))
 	mat.set_shader_parameter(&"tirata", tirata)
-	mat.set_shader_parameter(&"filo", arrivo * (1.0 - spezzato))
+	# (spezzato i due capi si ritirano in 0,3 s col rimbalzo, poi il filo sparisce)
+	mat.set_shader_parameter(&"rottura", spezzato)
+	mat.set_shader_parameter(&"filo", arrivo * (1.0 - smoothstep(0.75, 1.0, spezzato)))
+	mat.set_shader_parameter(&"tempo", x)
 	mat.set_shader_parameter(&"aggancio", _muso_sullo_schermo(centro))
 	mat.set_shader_parameter(&"forza", arrivo * (1.0 - clampf((x - (DURATA_GOCCIA - 0.7)) / 0.7, 0.0, 1.0)))
 
