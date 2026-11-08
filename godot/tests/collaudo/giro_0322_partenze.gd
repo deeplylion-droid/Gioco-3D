@@ -50,6 +50,10 @@ func _rss_mb() -> int:
 
 
 func _scatto(nome: String) -> void:
+	if DisplayServer.get_name() == "headless":
+		print("POSA %s: %s guardando %.1f gradi" % [nome, GameState.player.global_position.snapped(Vector3.ONE * 0.01) if is_instance_valid(GameState.player) else "-",
+				rad_to_deg(GameState.player.yaw) if is_instance_valid(GameState.player) else 0.0])
+		return
 	await RenderingServer.frame_post_draw
 	var f := "%s_%02d_%s" % [(modo + id).replace(" ", ""), _n, nome]
 	_n += 1
