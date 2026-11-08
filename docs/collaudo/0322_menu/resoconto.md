@@ -75,3 +75,10 @@ Provato sulla candidata 34177697 con fa71293d unito sopra (unione pulita, in loc
   - sull'exe, a schermo e coi tasti veri (`fogli/ricontrollo_calibrazione_esc_it.jpg`, `_en.jpg`): il pannello si chiama «Opzioni» / «Options»; Esc chiude la calibrazione e il pulsante ha il bordo del fuoco; su e giù si spostano e tornano; Invio la riapre ed Esc la richiude di nuovo col fuoco al suo posto.
 
 **Non provato qui:** la sala a schermo sull'exe (la prova della qualità che si vede e lo schermo che si schiarisce davvero) e la Nuova partita / Continua coi tasti veri sull'exe: la sala su Vulkan software va oltre i 15 GB della macchina (la Prova su Vulkan della CI ha 24 GB di swap e il giro primo_avvio apposta). Il renderer finto (`--rendering-method dummy`) per usare i tasti veri senza disegnare non serve: va in segfault nel motore (`texture_2d_get` del renderer finto, `log/exe_renderer_dummy_crash.log`), non nel gioco.
+
+## Passaggio finale sulla candidata b18a9003 (8 novembre, 02:45-03:20)
+Candidata finale `lavoro/candidata-0322` b18a9003 (menu fa71293d, squalo, lampo-bacino, versione 0.3.22) ed exe release Linux esportato da lì. **Esito: superato.** (`log/finale_b18a9003.txt`)
+- import ok, check_scripts 0 errori;
+- test del menu, tutti 0 falliti, 0 BUG, 0 SCRIPT ERROR: test_primo_ingresso 7, menu_schede 29, qualita_automatica 26, caricamento_jilly 17, avvio_sicuro 21, continua 127, partenze_prova 72, test_menu 85;
+- il titolo dice «Capitolo 1 · demo 0.3.22» in IT e «Chapter 1 · demo 0.3.22» in EN (`fogli/finale_titolo_0322_it_en.jpg`); chiusa la calibrazione col B il fuoco torna su «Calibra la luminosità…» (IT ed EN);
+- exe release, 12 giri (`--headless -- --partenza=<zona> --muori-dopo=10 --resta=20`): torre, inseguimento, tunnel, fiume, inizio con la cartella vuota e poi già provata, torre e inizio in EN con la cartella vuota. Tutti: uscita 0, due arrivi (prima e dopo la morte), restato, 0 «data.tree is null», 0 SCRIPT ERROR; col profilo nuovo la prova della qualità c'è e il profilo dopo è segnato provato col preset scelto («medio» o «ultra»: senza schermo la misura non dice niente).

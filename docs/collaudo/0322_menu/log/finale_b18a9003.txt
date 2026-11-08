@@ -1,0 +1,25 @@
+== import 0
+== check_scripts 0; CHECK: 0 errori 
+== test_primo_ingresso 0; RISULTATO: 7 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_menu_schede 0; RISULTATO: 29 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_qualita_automatica 0; RISULTATO: 26 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_caricamento_jilly 0; RISULTATO: 17 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_avvio_sicuro 0; RISULTATO: 21 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_continua 0; RISULTATO: 127 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 16
+== test_partenze_prova 0; RISULTATO: 72 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_menu 0; RISULTATO: 85 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== scatti titolo it 0
+== scatti titolo en 0
+== export 0 1622281784 JillyJubilee.pck 73519416 JillyJubilee.x86_64 
+== falso_torre: uscita 0; prima vuota; dopo preset="medio" qualita_provata=true scelta_automatica="medio" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; Qualità automatica: medio ([["alto", 0.
+== vero_torre: uscita 0; prima preset="medio" qualita_provata=true scelta_automatica="medio" ; dopo preset="medio" qualita_provata=true scelta_automatica="medio" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; 
+== falso_inseguimento: uscita 0; prima vuota; dopo preset="medio" qualita_provata=true scelta_automatica="medio" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; Qualità automatica: medio ([["alto", 0.
+== vero_inseguimento: uscita 0; prima preset="medio" qualita_provata=true scelta_automatica="medio" ; dopo preset="medio" qualita_provata=true scelta_automatica="medio" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; 
+== falso_tunnel: uscita 0; prima vuota; dopo preset="ultra" qualita_provata=true scelta_automatica="ultra" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; Qualità automatica: ultra ([["alto", 0.
+== vero_tunnel: uscita 0; prima preset="ultra" qualita_provata=true scelta_automatica="ultra" ; dopo preset="ultra" qualita_provata=true scelta_automatica="ultra" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; 
+== falso_fiume: uscita 0; prima vuota; dopo preset="ultra" qualita_provata=true scelta_automatica="ultra" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; Qualità automatica: ultra ([["alto", 0.
+== vero_fiume: uscita 0; prima preset="ultra" qualita_provata=true scelta_automatica="ultra" ; dopo preset="ultra" qualita_provata=true scelta_automatica="ultra" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; 
+== falso_inizio: uscita 0; prima vuota; dopo preset="ultra" qualita_provata=true scelta_automatica="ultra" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; Qualità automatica: ultra ([["alto", 0.
+== vero_inizio: uscita 0; prima preset="ultra" qualita_provata=true scelta_automatica="ultra" ; dopo preset="ultra" qualita_provata=true scelta_automatica="ultra" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; 
+== falso_en_torre: uscita 0; prima vuota; dopo preset="medio" qualita_provata=true scelta_automatica="medio" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; Qualità automatica: medio ([["alto", 0.
+== falso_en_inizio: uscita 0; prima vuota; dopo preset="ultra" qualita_provata=true scelta_automatica="ultra" ; albero null 0; SCRIPT ERROR 0; arrivi 2; restato 1; Qualità automatica: ultra ([["alto", 0.
