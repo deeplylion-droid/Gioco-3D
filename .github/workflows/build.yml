@@ -429,6 +429,10 @@ jobs:
 
       - name: Test dell'attesa delle zone (thread rallentato apposta; la porta aspetta, niente fotogrammi sopra 100 ms)
         if: steps.progetto.outputs.presente == 'si'
+        # TORRE_TEMPI stampa i passi lunghi della costruzione a pezzi: se un fotogramma supera i 100 ms, il log dice quale passo era
+        # (il 7 novembre un fotogramma di 149 ms dopo i passi _emergenza della torre, una volta sola, senza il nome del passo).
+        env:
+          TORRE_TEMPI: "1"
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
 
       - name: Test della costruzione a pezzi interrotta (niente nodi orfani dai passi degli stendardi e delle sagome del club)
