@@ -19,7 +19,7 @@ BLEND = next((a for a in sys.argv if a.endswith(".blend")), None)
 # misure (metri)
 R_DITO = 0.0135          # raggio delle dita (cartone: grosse e tonde)
 PASSO_DITA = 0.0255      # da un dito all'altro lungo l'impugnatura (si toccano appena)
-Y_INDICE = -0.196        # altezza (glTF y) dell'indice, sotto il ponticello del grilletto
+Y_INDICE = -0.202        # altezza (glTF y) dell'indice, sotto il ponticello del grilletto
 AGGIO = 0.0006           # quanto il dito sta fuori dalla superficie prima dell'appoggio
 VOXEL = 0.0016
 FACCE_GUANTO = int(__import__("os").environ.get("FACCE_GUANTO", "9000"))      # dopo la riduzione (si vede da vicino, ma è una mano sola)
@@ -83,6 +83,37 @@ def tubo(nome, punti, raggi):
     return ob
 
 
+def tubo_liscio(nome, punti, r):
+    """Un dito come tubo continuo (curva con la sezione tonda, poi mesh) e una sfera sulla punta e una alla base: le catene
+    di sfere lasciavano una scanalatura a V fuori dalle curve strette (lo "strappo" sulla punta dell'indice)."""
+    cu = bpy.data.curves.new(nome, 'CURVE')
+    cu.dimensions = '3D'
+    cu.bevel_depth = r
+    cu.bevel_resolution = 6
+    cu.resolution_u = 6
+    cu.use_fill_caps = True
+    sp = cu.splines.new('NURBS')
+    sp.points.add(len(punti) - 1)
+    for i, q in enumerate(punti):
+        sp.points[i].co = (q.x, q.y, q.z, 1.0)
+    sp.use_endpoint_u = True
+    sp.order_u = 3
+    ob = bpy.data.objects.new(nome, cu)
+    bpy.context.scene.collection.objects.link(ob)
+    bpy.ops.object.select_all(action='DESELECT')
+    ob.select_set(True)
+    bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.convert(target='MESH')
+    ob = bpy.context.view_layer.objects.active
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    for q in (punti[0], punti[-1]):
+        bmesh.ops.create_uvsphere(bm, u_segments=20, v_segments=12, radius=r, matrix=Matrix.Translation(q))
+    bm.to_mesh(ob.data)
+    bm.free()
+    return ob
+
+
 def ellissoide(nome, centro, assi, rot=Matrix.Identity(3)):
     bm = bmesh.new()
     bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=16, radius=1.0)
@@ -99,21 +130,44 @@ def ellissoide(nome, centro, assi, rot=Matrix.Identity(3)):
 parti = []
 # --- le quattro dita: dal lato destro (+x, dove sta il palmo) attorno al davanti (-z) fino al lato sinistro (-x)
 dita_info = []
+dita_raggi = []
+gy = Y_INDICE
 for i in range(4):
-    gy = Y_INDICE - i * PASSO_DITA
     r = R_DITO * (1.0 - 0.06 * i)         # il mignolo un po' più piccolo
+    if i > 0:
+        # ogni dito tocca il precedente (1 mm di sovrapposizione): col raggio che cala, un passo fisso lasciava 2 mm di
+        # spiraglio fra anulare e mignolo, e si vedeva l'impugnatura (collaudo di enigmi, 7 novembre)
+        gy -= dita_raggi[-1] + r - 0.001
+    dita_raggi.append(r)
     angoli = list(range(-25, 200, 12))     # da dietro a destra, per il davanti, fino a dietro a sinistra
     fine = 178 - i * 6                     # la punta a sinistra, un po' prima per il mignolo
     angoli = [a for a in angoli if a <= fine] + [fine]
-    cont = contorno(gy, angoli)
+    # su tutta l'altezza del dito (al centro, sopra e sotto) il punto più fuori: dove c'è una sporgenza (la fascia grigia in
+    # cima all'impugnatura, che sporge ai lati fino a y -0,21) il dito ci passa sopra; prima la toccava con metà dito e
+    # lì l'appoggio lo spaccava ("strappo" sulla punta dell'indice, collaudo di enigmi)
+    c_mid = contorno(gy, angoli)
+    c_altri = [contorno(gy + r * f, angoli) for f in (0.7, -0.7)]
     pts = []
-    for c in cont:
-        if c is None:
+    for k in range(len(angoli)):
+        if c_mid[k] is None:
             continue
-        p, n = c
-        pts.append(p + n * (r + AGGIO))
+        p, n = c_mid[k]
+        d = Vector((math.cos(math.radians(angoli[k])), 0.0, -math.sin(math.radians(angoli[k]))))
+        db = g2b(d)
+        fuori_max = (p - g2b(Vector((0.002, gy, 0.49)))).dot(db)
+        for cc in c_altri:
+            altro = cc[k]
+            if altro is not None:
+                fuori_max = max(fuori_max, (altro[0] - g2b(Vector((0.002, b2g(altro[0]).y, 0.49)))).dot(db))
+        base = g2b(Vector((0.002, gy, 0.49))) + db * fuori_max
+        pts.append(base + n * (r + AGGIO))
+    # il percorso liscio: dove il raggio trova una sporgenza dell'impugnatura (a circa 125 gradi sull'indice, il bordo
+    # davanti) il punto saltava e il dito faceva una piega stretta, lo "strappo" del collaudo di enigmi; tre passate di
+    # media sui vicini (gli estremi restano), poi l'appoggio rimette il contatto
+    for _k in range(3):
+        pts = [pts[0]] + [(pts[j - 1] + pts[j] * 2.0 + pts[j + 1]) / 4.0 for j in range(1, len(pts) - 1)] + [pts[-1]]
     dita_info.append((gy, r, pts))
-    parti.append(tubo("dito_%d" % i, pts, [r] * len(pts)))
+    parti.append(tubo_liscio("dito_%d" % i, pts, r))
 
 # --- il palmo: contro il lato destro dell'impugnatura e il dorso dietro, dalle basi delle dita al polso; inclinato
 # come l'impugnatura (circa 15 gradi indietro andando giù)
@@ -165,6 +219,11 @@ def appoggia(ob, soglia=0.003, fuori=0.0004):
         loc, n, _, d = bvh.find_nearest(p)
         if loc is None:
             continue
+        # la fascia grigia in cima all'impugnatura sporge oltre i fianchi (x fuori da -0,034 .. 0,038): lì il dito la copre
+        # e basta; portarci sopra i vertici apriva una piega (lo "strappo" sulla punta dell'indice)
+        lg = b2g(loc)
+        if (lg.x < -0.034 or lg.x > 0.038) and lg.y > -0.215:
+            continue
         dentro = (p - loc).dot(n) < 0
         if dentro or d < soglia:
             v.co = ob.matrix_world.inverted() @ (loc + n * fuori)
@@ -173,6 +232,47 @@ def appoggia(ob, soglia=0.003, fuori=0.0004):
 
 
 print("GUANTO: vertici appoggiati", appoggia(guanto))
+# l'appoggio sugli spigoli dell'impugnatura lasciava pieghe strette (lo "strappo" sulla punta dell'indice, collaudo di
+# enigmi): una lisciatura leggera e di nuovo fuori dall'impugnatura, due volte
+for k in range(2):
+    ls = guanto.modifiers.new("liscia_appoggio", 'SMOOTH')
+    ls.iterations = 4
+    ls.factor = 0.5
+    bpy.ops.object.modifier_apply(modifier="liscia_appoggio")
+    appoggia(guanto, soglia=0.0012, fuori=0.0004)
+# le pieghe strette rimaste (lo "strappo" sulla punta dell'indice del collaudo di enigmi: una scanalatura fra le sfere del
+# dito dove gira attorno allo spigolo davanti dell'impugnatura, 19 spigoli piegati fino a 116 gradi): gli spigoli con
+# più di 50 gradi fra le facce e i loro vicini si lisciano, poi di nuovo fuori dall'impugnatura
+def pieghe(ob, soglia_gradi=50.0):
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bm.edges.ensure_lookup_table()
+    tese = [e for e in bm.edges if len(e.link_faces) == 2 and math.degrees(e.calc_face_angle()) > soglia_gradi]
+    n = len(tese)
+    bm.free()
+    return n
+
+
+print("GUANTO: spigoli piegati oltre 50 gradi prima", pieghe(guanto))
+for giro in range(3):
+    bm = bmesh.new()
+    bm.from_mesh(guanto.data)
+    vv = set()
+    for e in bm.edges:
+        if len(e.link_faces) == 2 and math.degrees(e.calc_face_angle()) > 50.0:
+            for v in e.verts:
+                vv.add(v)
+                for e2 in v.link_edges:
+                    vv.add(e2.other_vert(v))
+    if not vv:
+        bm.free()
+        break
+    for _k in range(6):
+        bmesh.ops.smooth_vert(bm, verts=list(vv), factor=0.6, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    bm.to_mesh(guanto.data)
+    bm.free()
+    appoggia(guanto, soglia=0.0, fuori=0.0004)
+print("GUANTO: spigoli piegati oltre 50 gradi dopo", pieghe(guanto))
 dec = guanto.modifiers.new("dec", 'DECIMATE')
 dec.ratio = FACCE_GUANTO / max(1, len(guanto.data.polygons))
 bpy.ops.object.modifier_apply(modifier="dec")
@@ -200,7 +300,9 @@ for k, dy in enumerate((-0.019, 0.0, 0.019)):
         q = palmo_g + Vector((0.0, dy, 0.0)) + Vector((0.0, -0.010 * t, 0.034 - 0.060 * t))
         start = g2b(Vector((0.20, q.y, q.z)))
         hit = bvh_g.ray_cast(start, g2b(Vector((-1.0, 0.0, 0.0))), 0.3)
-        if hit[0] is not None:
+        # solo sul dorso: un raggio che manca il dorso attraversa il guanto e trovava il lato sinistro, e un pezzo di
+        # cucitura scura finiva sulla punta dell'indice (lo "strappo" del collaudo di enigmi)
+        if hit[0] is not None and b2g(hit[0]).x > 0.02:
             pts.append(hit[0] - g2b(Vector((0.0004, 0.0, 0.0))))
     if len(pts) > 2:
         # una curva con lo spessore (poche facce), poi mesh
@@ -257,8 +359,10 @@ print("GUANTO: facce", len(guanto.data.polygons), "cuciture", len(cuc))
 bvh_f = BVHTree.FromObject(guanto, bpy.context.evaluated_depsgraph_get())
 peggiore = 0.0
 for i, (gy, r, pts) in enumerate(dita_info):
-    angoli = list(range(-10, 170, 15))
+    angoli = [a * 0.5 for a in range(-20, 340, 15)]
     dist = []
+    # lungo la linea di contatto del dito (al centro della sua altezza): un dito tondo su una faccia piana la tocca su una
+    # linea, e ai lati si stacca per forza (a 0,45 r dal centro sono già 1,4 mm)
     for c in contorno(gy, angoli):
         if c is None:
             continue
@@ -266,8 +370,9 @@ for i, (gy, r, pts) in enumerate(dita_info):
         hit = bvh_f.ray_cast(p - n * 0.0002, n, 0.05)
         dist.append(hit[3] - 0.0002 if hit[0] is not None else 99.0)
     peggiore = max(peggiore, max(dist))
-    print("GUANTO: dito %d, distacco dall'impugnatura lungo il dito: max %.1f mm, medio %.1f mm" % (
-        i, max(dist) * 1000, sum(dist) / len(dist) * 1000))
+    peggio = angoli[dist.index(max(dist))] if len(dist) == len(angoli) else 0
+    print("GUANTO: dito %d, distacco dall'impugnatura lungo il dito: max %.1f mm (a %.0f gradi), medio %.1f mm" % (
+        i, max(dist) * 1000, peggio, sum(dist) / len(dist) * 1000))
 dentro = 0
 for v in guanto.data.vertices:
     loc, n, _, d = bvh.find_nearest(guanto.matrix_world @ v.co)
