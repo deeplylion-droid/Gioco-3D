@@ -268,12 +268,49 @@ func _squalo_e_corridoi(velo: Dissolvenza, prova: bool) -> void:
 	var t_prova_fine := -1.0
 	var t_controllo := -1.0
 	var prossimo_passo := 0.0
+	# l'attesa dello schermo chiaro (eda4fc21): quanti fotogrammi, i suoni che suonano nella scena e negli interni, se la
+	# camera e la testa dello squalo si muovono
+	var n_attesa := 0
+	var suoni_attesa := {}
+	var cam0 = null
+	var cam_mossa := 0.0
+	var testa0 = null
+	var testa_mossa := 0.0
+	var attesa_finita := false
+	var lampo_visto := false
+	var primo_lampo: float = float((tempi.get("lampi", [[0.55, 0.16]]) as Array)[0][0])
 	var t_in := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t_in < 3600000:
 		await get_tree().process_frame
 		_riga()
 		var ts := float(_squalo.get(&"_t"))
 		var nero := Dissolvenza.di(get_tree()).opacita() if Dissolvenza.presente(get_tree()) else 0.0
+		var attesa: bool = _squalo.has_method(&"in_attesa") and bool(_squalo.call(&"in_attesa"))
+		if attesa:
+			n_attesa += 1
+			for a in _interni.find_children("*", "", true, false):
+				if (a is AudioStreamPlayer or a is AudioStreamPlayer3D) and a.get(&"playing"):
+					suoni_attesa[str(_interni.get_path_to(a))] = true
+			var cam := get_viewport().get_camera_3d()
+			if cam:
+				if cam0 == null:
+					cam0 = cam.global_transform
+				cam_mossa = maxf(cam_mossa, (cam.global_transform.origin - (cam0 as Transform3D).origin).length()
+						+ (cam.global_transform.basis.z - (cam0 as Transform3D).basis.z).length())
+			var sk := _squalo.get(&"_scheletro") as Skeleton3D
+			var ossa: Dictionary = _squalo.get(&"_ossa")
+			if sk and int(ossa.get("testa", -1)) >= 0:
+				var o := sk.to_global(sk.get_bone_global_pose(int(ossa["testa"])).origin)
+				if testa0 == null:
+					testa0 = o
+				testa_mossa = maxf(testa_mossa, (o - (testa0 as Vector3)).length())
+		elif not attesa_finita and _squalo.in_corso():
+			attesa_finita = true
+			print("GIRO0322: ATTESA dello schermo chiaro: %d fotogrammi, finita a %.2f s (nero %.3f, prova della qualità %s); suoni che suonavano: %s; camera mossa %.4f; testa dello squalo mossa %.4f m" % [
+					n_attesa, _ora(), nero, get_tree().root.has_node(^"QualitaAutomatica"), str(suoni_attesa.keys()), cam_mossa, testa_mossa])
+		if not lampo_visto and ts >= primo_lampo + 0.05:
+			lampo_visto = true
+			print("GIRO0322: PRIMO LAMPO a %.2f s della scena: nero %.3f, prova della qualità %s" % [ts, nero, get_tree().root.has_node(^"QualitaAutomatica")])
 		if t_prova_fine < 0.0 and prova and not get_tree().root.has_node(^"QualitaAutomatica"):
 			t_prova_fine = ts
 			print("GIRO0322: prova della qualità finita a %.2f s della scena, preset %s" % [ts, Grafica.valore("preset")])
