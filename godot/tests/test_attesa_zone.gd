@@ -15,7 +15,6 @@ const LIMITE_MS := 100.0
 ## Si stampano con la loro misura; ogni altro fotogramma sopra il limite fa fallire il test. Da togliere appena
 ## corretti: nessuna build esce così senza che il coordinatore lo sappia.
 const NOTI := {
-	"_modello(struttura)": ["instantiate di inseguimento_struttura.glb in un passo: da dividere il GLB, con ambienti", "25 ottobre"],
 	"_lei_crea": ["MedusaAffacciata col rebuild del modello di lei in un passo: lei creata prima, con mascotte", "25 ottobre"],
 }
 
