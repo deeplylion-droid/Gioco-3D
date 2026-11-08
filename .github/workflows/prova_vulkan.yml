@@ -88,7 +88,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        partenza: [torre, inseguimento, tunnel, fiume]
+        # primo_avvio: la torre col profilo nuovo e senza --preset, come il primo avvio vero di un giocatore (la qualità
+        # automatica entrando nella sala; collaudo della 0.3.22: lì l'exe andava in segfault)
+        partenza: [torre, inseguimento, tunnel, fiume, primo_avvio]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -116,6 +118,14 @@ jobs:
         run: |
           p=${{ matrix.partenza }}
           prova="$PWD/prova_$p.log"
+          # il primo avvio: la partenza della torre senza --preset e con la cartella dei dati vuota
+          partenza=$p
+          preset="--preset=basso"
+          if [ "$p" = primo_avvio ]; then
+            partenza=torre
+            preset=""
+            rm -rf "$HOME/.local/share/godot/app_userdata/Jilly Jubilee" "$HOME/.local/share/godot/app_userdata/Splash Lagoon"
+          fi
           # la memoria della macchina ogni 5 s, nel log del job (resta anche se il runner muore)
           ( while sleep 5; do
               pid=$(pgrep -f 'gioco/JillyJubilee.x86_64 --rendering' | tail -1)
@@ -127,7 +137,7 @@ jobs:
           set +e
           timeout 160m xvfb-run -a -s "-screen 0 640x360x24" gdb -q -batch -ex run -ex bt -ex "thread apply all bt 15" \
             --args gioco/JillyJubilee.x86_64 --rendering-driver vulkan --resolution 640x360 -- \
-            --partenza=$p --preset=basso --muori-dopo=20 --resta=60 --fotogrammi=$FOTOGRAMMI --registro-prova="$prova" \
+            --partenza=$partenza $preset --muori-dopo=20 --resta=60 --fotogrammi=$FOTOGRAMMI --registro-prova="$prova" \
             > godot_$p.log 2>&1
           codice=$?
           kill $M $T 2>/dev/null; pkill -f 'tail -F' || true
@@ -138,6 +148,9 @@ jobs:
           normale=$(grep -c 'exited normally' godot_$p.log)
           picco=$(grep -o 'picco video in tutto [0-9]* MB' "$prova" | grep -o '[0-9]*' | tail -1)
           fotogrammi=$(grep -o 'e [0-9]* fotogrammi di gioco dopo' "$prova" | grep -o '[0-9]*' | tail -1)
+          # la prova della qualità automatica fatta (solo al primo avvio) e gli errori dell'albero nullo
+          qualita=$(grep -c 'Qualità automatica:' godot_$p.log)
+          albero_nullo=$(grep -cE 'data.tree" is null|on null instance|Invalid access to property .root. on null' godot_$p.log)
           # perché non è uscito normalmente: tempo scaduto (timeout dà 124), la memoria del runner (l'OOM killer del
           # kernel, o il processo ucciso con SIGKILL), o un segnale del gioco (SIGSEGV, SIGABRT...)
           scaduto=$([ $codice -eq 124 ] && echo 1 || echo 0)
@@ -147,7 +160,7 @@ jobs:
           swap_max=$(grep -o 'swap_usato=[0-9]*' mem_$p.txt 2>/dev/null | grep -o '[0-9]*' | sort -n | tail -1)
           echo "$p arrivato=$arrivato di_nuovo=$di_nuovo restato=$restato normale=$normale picco=${picco:-0}" \
             "fotogrammi=${fotogrammi:-0} codice=$codice scaduto=$scaduto oom=$oom rss_max=${rss_max:-0} swap_max=${swap_max:-0}" \
-            "segnale=${segnale:-nessuno}" | tee esito_$p.txt
+            "qualita=$qualita albero_nullo=$albero_nullo segnale=${segnale:-nessuno}" | tee esito_$p.txt
           echo "--- segnali e backtrace:"
           grep -E 'received signal|^#[0-9]+ ' godot_$p.log | head -40
           exit 0
@@ -297,7 +310,7 @@ jobs:
               return f"codice d'uscita {e.get('codice', '?')}, senza segnale né OOM"
           esiti = {}
           righe = {}
-          for p in ["torre", "inseguimento", "tunnel", "fiume"]:
+          for p in ["torre", "inseguimento", "tunnel", "fiume", "primo_avvio"]:
               try:
                   riga = open(f"esito_{p}.txt").read()
               except OSError:
@@ -316,6 +329,10 @@ jobs:
                   if e.get(k, 0) < 1:
                       print(f"ROSSO {p}: {cosa}: {causa(e, righe[p])}")
                       rosso.append(p)
+              if p == "primo_avvio" and (e.get("qualita", 0) < 1 or e.get("albero_nullo", 0) > 0):
+                  print(f"ROSSO primo_avvio: la qualità automatica {'non è partita' if e.get('qualita', 0) < 1 else 'è partita'}, "
+                        f"{e.get('albero_nullo', 0)} errori dell'albero nullo")
+                  rosso.append(p)
               print(f"{p}: {e.get('fotogrammi', 0)} fotogrammi di gioco dopo il riarrivo, rss max {e.get('rss_max', 0)} MB, "
                     f"swap max {e.get('swap_max', 0)} MB")
           margine = int(os.environ.get("MARGINE_PICCO", "10"))
