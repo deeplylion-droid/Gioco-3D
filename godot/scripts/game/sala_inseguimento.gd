@@ -178,8 +178,14 @@ func _passi() -> Array:
 func _modello(i: int) -> void:
 	var nome: String = ["struttura", "tubi", "prop", "mobili"][i]
 	_nome_passo = "_modello(%s)" % nome
+	var tm := Time.get_ticks_usec()
 	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else load(DIR + "inseguimento_%s.glb" % nome)
+	var tl := Time.get_ticks_usec()
 	var glb: Node3D = scena.instantiate()
+	if OS.has_environment("TORRE_TEMPI"):
+		print("  _modello(%s): load %.1f ms, instantiate %.1f ms (%d nodi)" % [nome, (tl - tm) / 1000.0,
+				(Time.get_ticks_usec() - tl) / 1000.0, glb.find_children("*", "", true, false).size()])
+		tm = Time.get_ticks_usec()
 	glb.name = "Inseguimento" + nome.capitalize()
 	# nelle vasche (e negli scoli e nel bacino) l'acqua meno torbida, verde-azzurra, col fondo che si
 	# intravede (scelta dell'utente del 22 ottobre); il fondo allagato della sala resta torbido: da lì sale lei
@@ -187,8 +193,17 @@ func _modello(i: int) -> void:
 	var torbida: Material = load("res://assets/materials/sala/acqua_torbida.tres")
 	for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = torbida if String(m.name).begins_with("acqua_allagata") else acqua
+	var tv := Time.get_ticks_usec()
+	# (a pezzi i varchi delle scalette sono passi loro, prima che i nodi della struttura entrino nella sala)
+	var passi_varco: Array = []
 	if nome == "struttura":
-		_varco_scalette(glb)
+		if _a_pezzi:
+			passi_varco = _passi_varco_scalette(glb)
+		else:
+			_varco_scalette(glb)
+	if OS.has_environment("TORRE_TEMPI"):
+		print("  _modello(%s): acque %.1f ms, varchi %.1f ms (%d passi a parte)" % [nome, (tv - tm) / 1000.0,
+				(Time.get_ticks_usec() - tv) / 1000.0, passi_varco.size()])
 	if _a_pezzi:
 		var figli := glb.get_children()
 		var proprietari := {}
@@ -204,7 +219,7 @@ func _modello(i: int) -> void:
 				glb.add_child(c)
 				if is_instance_valid(proprietari[c]) and (proprietari[c] as Node).is_ancestor_of(c):
 					c.owner = proprietari[c])
-		_coda = passi + _coda
+		_coda = passi_varco + passi + _coda
 	add_child(glb)
 
 
@@ -212,27 +227,97 @@ func _modello(i: int) -> void:
 ## montanti salgono 1 m sopra la passerella a 0,5 m l'uno dall'altro, e il giocatore, largo 0,7 m, scavalcando il
 ## bordo restava incastrato fra i due (collaudo T1). Sulla scala lo tiene già l'area della scala (Ladder).
 func _varco_scalette(glb: Node3D) -> void:
+	for stato in _varco_forme(glb):
+		_varco_tratto(stato, (stato["facce"] as PackedVector3Array).size())
+		_varco_fine(stato)
+
+
+## Come [method _varco_scalette], in passi per la costruzione a pezzi: tutte le facce della struttura in un passo
+## erano 85-185 ms in un fotogramma (TORRE_TEMPI, «inseguimento passo 0 (_modello(struttura))»). Ogni passo guarda al
+## più [constant VARCO_FACCE_PER_PASSO] facce; l'ultimo di ogni forma la cambia. Stesse facce nello stesso ordine:
+## stesso risultato.
+func _passi_varco_scalette(glb: Node3D) -> Array:
+	var out: Array = []
+	for stato in _varco_forme(glb):
+		var n := (stato["facce"] as PackedVector3Array).size() / 3
+		var da := 0
+		while da < n:
+			var fino := mini(da + VARCO_FACCE_PER_PASSO, n)
+			out.append(func():
+				_nome_passo = "_varco_scalette"
+				_varco_tratto(stato, fino * 3))
+			da = fino
+		out.append(func():
+			_nome_passo = "_varco_scalette"
+			_varco_fine(stato))
+	return out
+
+
+const VARCO_FACCE_PER_PASSO := 4000
+
+
+## Le forme di collisione della struttura da guardare: per ognuna la forma, la trasformazione nelle coordinate della
+## sala (il GLB entra nella sala senza spostamenti), le facce, quelle tenute e dove si è arrivati.
+func _varco_forme(glb: Node3D) -> Array:
+	var out: Array = []
 	for sb in glb.find_children("*", "StaticBody3D", true, false):
 		for cs in sb.get_children():
 			if not cs is CollisionShape3D or not (cs as CollisionShape3D).shape is ConcavePolygonShape3D:
 				continue
-			# la forma nelle coordinate della sala (il GLB entra nella sala senza spostamenti)
 			var t := Transform3D.IDENTITY
 			var n: Node = cs
 			while n != glb:
 				t = (n as Node3D).transform * t
 				n = n.get_parent()
 			t = glb.transform * t
-			var facce := ((cs as CollisionShape3D).shape as ConcavePolygonShape3D).get_faces()
-			var tenute := PackedVector3Array()
-			for i in range(0, facce.size(), 3):
-				if not (_nella_scaletta(t * facce[i]) and _nella_scaletta(t * facce[i + 1]) and _nella_scaletta(t * facce[i + 2])):
-					tenute.append_array([facce[i], facce[i + 1], facce[i + 2]])
-			if tenute.size() < facce.size():
-				var forma := ConcavePolygonShape3D.new()
-				forma.backface_collision = ((cs as CollisionShape3D).shape as ConcavePolygonShape3D).backface_collision
-				forma.set_faces(tenute)
-				(cs as CollisionShape3D).shape = forma
+			var forma := (cs as CollisionShape3D).shape as ConcavePolygonShape3D
+			var chiave := "%s|%s" % [forma.resource_path if forma.resource_path != "" else str(forma.get_instance_id()), str(t)]
+			if _varco_cache.has(chiave):
+				# già fatta (una ripartenza): niente facce da guardare, la forma di allora
+				out.append({"cs": cs, "chiave": chiave, "facce": PackedVector3Array(), "tenute": PackedVector3Array(), "i": 0})
+			else:
+				out.append({"cs": cs, "chiave": chiave, "t": t, "facce": forma.get_faces(), "tenute": PackedVector3Array(), "i": 0})
+	return out
+
+
+## Le forme della struttura coi varchi già fatti: chiave (forma del GLB, trasformazione) -> forma nuova (o null se non
+## c'era niente da togliere). La forma del GLB è sempre la stessa finché il GLB è in memoria: alle ripartenze, con la
+## torre costruita tutta insieme, i varchi (100-200 ms) non si rifanno.
+static var _varco_cache := {}
+
+
+## Guarda le facce della forma fino al vertice [param fino] (escluso).
+func _varco_tratto(stato: Dictionary, fino: int) -> void:
+	if not stato.has("t"):
+		return
+	var facce: PackedVector3Array = stato["facce"]
+	var tenute: PackedVector3Array = stato["tenute"]
+	var t: Transform3D = stato["t"]
+	var i: int = stato["i"]
+	while i < fino:
+		if not (_nella_scaletta(t * facce[i]) and _nella_scaletta(t * facce[i + 1]) and _nella_scaletta(t * facce[i + 2])):
+			tenute.append_array([facce[i], facce[i + 1], facce[i + 2]])
+		i += 3
+	stato["i"] = i
+	stato["tenute"] = tenute
+
+
+## Finite le facce: se ne ha tolte, la forma nuova senza (la forma del GLB non si tocca: è condivisa).
+func _varco_fine(stato: Dictionary) -> void:
+	var cs: CollisionShape3D = stato["cs"]
+	var chiave: String = stato["chiave"]
+	if _varco_cache.has(chiave):
+		if _varco_cache[chiave] != null:
+			cs.shape = _varco_cache[chiave]
+		return
+	var tenute: PackedVector3Array = stato["tenute"]
+	var forma: ConcavePolygonShape3D = null
+	if tenute.size() < (stato["facce"] as PackedVector3Array).size():
+		forma = ConcavePolygonShape3D.new()
+		forma.backface_collision = (cs.shape as ConcavePolygonShape3D).backface_collision
+		forma.set_faces(tenute)
+		cs.shape = forma
+	_varco_cache[chiave] = forma
 
 
 ## Vero se [param q] (coordinate della sala) sta sul modello di una scaletta: da 30 cm dietro il suo piede a 8 cm
