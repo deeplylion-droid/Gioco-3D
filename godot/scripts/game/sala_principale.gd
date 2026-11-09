@@ -613,7 +613,9 @@ func _prepara_torre() -> void:
 		return
 	var tpm := Time.get_ticks_msec()
 	var fpm := Engine.get_process_frames()
+	RiscaldamentoShader.segno("torre costruita, prima di prepara_materiali")
 	await t.call(&"prepara_materiali", get_viewport())
+	RiscaldamentoShader.segno("torre: dopo prepara_materiali")
 	if OS.has_environment("TORRE_TEMPI"):
 		print("torre prepara_materiali: %d ms in %d fotogrammi" % [Time.get_ticks_msec() - tpm, Engine.get_process_frames() - fpm])
 	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
