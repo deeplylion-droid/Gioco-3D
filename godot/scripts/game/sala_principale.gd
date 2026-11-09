@@ -1032,7 +1032,9 @@ func _torna_al_titolo() -> void:
 func _precarica_sottomarino() -> void:
 	if sala_sottomarino or _sottomarino_in_caricamento or Game.uscendo:
 		return
-	if _campioni_tunnel.is_empty():
+	# (i materiali campione dal thread, col tunnel: caricati qui, sul thread principale, erano 4 ms mentre si gioca e da
+	# disco freddo di più, sonda dei load del 9 novembre; si preparano quando il thread ha finito, _aggiorna_sottomarino)
+	if _campioni_tunnel.is_empty() and ResourceLoader.has_cached(CampioniTunnel.FILE):
 		_campioni_tunnel = CampioniTunnel.carica()
 	if Game.carica_in_thread(sala_sottomarino_scena, "PackedScene") == OK:
 		_sottomarino_in_caricamento = true
@@ -1046,7 +1048,12 @@ func _aggiorna_sottomarino() -> void:
 	var stato := Game.stato_thread(sala_sottomarino_scena)
 	if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		return
+	# (e i materiali campione, chiesti al thread col tunnel: finché sono in corso si riguarda al fotogramma dopo)
+	if _campioni_tunnel.is_empty() and Game.stato_thread(CampioniTunnel.FILE) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		return
 	_sottomarino_in_caricamento = false
+	if _campioni_tunnel.is_empty():
+		_campioni_tunnel = CampioniTunnel.carica()
 	if stato == ResourceLoader.THREAD_LOAD_LOADED and sala_sottomarino == null:
 		var tg := Time.get_ticks_usec()
 		var scena := ResourceLoader.load_threaded_get(sala_sottomarino_scena) as PackedScene

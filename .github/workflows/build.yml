@@ -554,6 +554,21 @@ jobs:
           # e nessun errore interno del motore (tools/ci/senza_bug.sh)
           ! grep -n "ERROR: BUG," pool_sala.log
 
+      - name: Nessun load() lungo sul thread principale a gioco avviato (la sonda riscrive i load degli script solo qui, poi li rimette; sopra 5 ms fallisce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          python3 tools/sonda/sonda_load_codemod.py godot
+          set +e
+          godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd > /tmp/sonda_attesa.log 2>&1
+          a=$?
+          godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_partenze_prova.gd > /tmp/sonda_partenze.log 2>&1
+          b=$?
+          set -e
+          git checkout -- godot/scripts godot/addons
+          grep -E "RISULTATO" /tmp/sonda_attesa.log /tmp/sonda_partenze.log || true
+          test $a -eq 0 && test $b -eq 0
+          python3 tools/sonda/sonda_load_controllo.py /tmp/sonda_attesa.log /tmp/sonda_partenze.log
+
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'
         run: |

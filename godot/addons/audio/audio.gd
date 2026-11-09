@@ -514,7 +514,8 @@ func _precarica_suoni() -> void:
 	for nome in Catalogo.SUONI:
 		for p in Catalogo.SUONI[nome]:
 			var percorso := String(p)
-			if _precaricati.has(percorso) or not ResourceLoader.exists(percorso) or ResourceLoader.has_cached(percorso):
+			# (anche quelli già in cache: se poi nessuno li tiene escono dalla cache, come i tuoni lontani)
+			if _precaricati.has(percorso) or not ResourceLoader.exists(percorso):
 				continue
 			if game.call(&"carica_in_thread", percorso) == OK:
 				_precaricati[percorso] = true
