@@ -1,0 +1,33 @@
+SONDA mappa interact: E - Physical
+SONDA mappa skip: Space - Physical, E - Physical, Enter
+SONDA mappa pause: Escape
+SONDA mappa ui_accept: Enter, Kp Enter, Space, Joypad Button 0 (Bottom Action, Sony Cross, Xbox A, Nintendo B)
+SONDA mappa ui_cancel: Escape, Joypad Button 1 (Right Action, Sony Circle, Xbox B, Nintendo A)
+  ok    mondo_it_tastiera: raccolta Polaroid15 con E, il visore si apre
+  ok    mondo_it: il testo è «E · Spazio · clic · A · B per continuare» (E · Spazio · clic · A · B per continuare)
+  ok    mondo_it: sta nello schermo su una riga (309 px su 1280)
+  ok    mondo_it_tastiera: Start del joypad non chiude la foto
+  ok    mondo_it_tastiera: si chiude con E
+  ok    mondo_it_joypad: raccolta Polaroid13 con E, il visore si apre
+  ok    mondo_it_joypad: si chiude con A
+  ok    mondo_en_tastiera: raccolta Polaroid01 con E, il visore si apre
+  ok    mondo_en: il testo è «E · Space · click · A · B to continue» (E · Space · click · A · B to continue)
+  ok    mondo_en: sta nello schermo su una riga (285 px su 1280)
+  ok    mondo_en_tastiera: si chiude con Spazio
+  ok    mondo_en_joypad: raccolta Polaroid02 con E, il visore si apre
+  ok    mondo_en_joypad: Start del joypad non chiude la foto
+  ok    mondo_en_joypad: si chiude con B
+  ok    album it: la foto si riapre con Invio
+  ok    album_it: il testo è «E · Spazio · clic · A · B per continuare» (E · Spazio · clic · A · B per continuare)
+  ok    album_it: sta nello schermo su una riga (309 px su 1280)
+  ok    album_it: si chiude con clic
+  ok    album it: chiusa la foto si resta nell'album, in pausa
+  ok    album_it_2: si chiude con E
+  ok    album en: la foto si riapre con A
+  ok    album_en: il testo è «E · Space · click · A · B to continue» (E · Space · click · A · B to continue)
+  ok    album_en: sta nello schermo su una riga (285 px su 1280)
+  ok    album_en: Start del joypad non chiude la foto
+  ok    album_en: si chiude con B
+  ok    album en: chiusa la foto si resta nell'album, in pausa
+  ok    album_en_2: si chiude con Spazio
+RISULTATO: 27 controlli ok, 0 falliti

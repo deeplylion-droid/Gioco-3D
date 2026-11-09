@@ -1,0 +1,60 @@
+extends Node
+## Sonda temporanea (ricontrollo visore-joypad #128): gli scatti del visore col renderer vero, sopra gli interni del gioco
+## (la sala intera col Vulkan supera la memoria della macchina). Il visore si apre come PolaroidPhoto._on_interact, con
+## la foto della Polaroid degli interni; in italiano e in inglese, il suggerimento misurato.
+## Uso: xvfb-run ... --resolution WxH --script res://tests/run.gd -- res://tests/collaudo/_scatti_visore_tmp.gd <cartella> <nome>
+
+func _ready() -> void:
+	_run.call_deferred()
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame
+
+func _run() -> void:
+	var a := OS.get_cmdline_user_args()
+	var cartella := a[1]
+	var nome := a[2]
+	DirAccess.make_dir_recursive_absolute(cartella)
+	Game.pause_on_focus_loss = false
+	var radice := Node3D.new()
+	get_tree().root.add_child(radice)
+	var interni := (load("res://scenes/interni/interni.tscn") as PackedScene).instantiate() as Node3D
+	radice.add_child(interni)
+	var we := WorldEnvironment.new()
+	we.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
+	we.environment.sdfgi_enabled = false
+	we.environment.volumetric_fog_enabled = false
+	radice.add_child(we)
+	var foto: PolaroidPhoto = null
+	for f in interni.find_children("*", "PolaroidPhoto", true, false):
+		foto = f
+		break
+	var cam := Camera3D.new()
+	radice.add_child(cam)
+	var c := foto.global_position
+	cam.look_at_from_position(c + Vector3(0.0, 1.2, 0.9), c)
+	cam.make_current()
+	await _frames(40)
+	for lingua in ["it", "en"]:
+		TranslationServer.set_locale(lingua)
+		var v: CanvasLayer = PolaroidPhoto.VIEWER.new()
+		v.set(&"texture", foto.get_texture())
+		get_tree().root.add_child(v)
+		await _frames(40)
+		var l: Label = v.find_children("*", "Label", true, false)[0]
+		var testo := l.atr(l.text)
+		var vp := get_viewport().get_visible_rect().size
+		var font := l.get_theme_font("font")
+		var fs := l.get_theme_font_size("font_size")
+		var largo := font.get_string_size(testo, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+		var r := l.get_global_rect()
+		var dentro := r.position.x >= 0 and r.position.y >= 0 and r.end.x <= vp.x + 0.5 and r.end.y <= vp.y + 0.5 and largo <= r.size.x
+		print("SCATTO %s %s: «%s», schermo %s, rettangolo %s, testo largo %.0f px, carattere %s %d, colore %s, righe %d, dentro %s" % [nome, lingua,
+				testo, str(vp), str(r), largo, font.get_font_name(), fs, str(l.get_theme_color("font_color")), l.get_line_count(), dentro])
+		get_viewport().get_texture().get_image().save_jpg(cartella.path_join("visore_%s_%s.jpg" % [nome, lingua]), 0.92)
+		v.call(&"chiudi")
+		await _frames(5)
+	get_tree().paused = false
+	TranslationServer.set_locale("it")
+	Game.esci(0)

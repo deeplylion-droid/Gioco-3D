@@ -1,0 +1,240 @@
+extends Node
+## Sonda temporanea (ricontrollo visore-joypad #128): nel gioco vero, il visore delle Polaroid raccolte nel mondo e
+## riaperte dall'album, in italiano e in inglese, con tastiera, mouse e joypad; il suggerimento misurato e fotografato.
+## Uso: xvfb-run ... godot --path godot --rendering-driver vulkan --resolution WxH --script res://tests/run.gd --
+##   res://tests/collaudo/_sonda_visore_tmp.gd <cartella> <nome>
+
+var _ok := 0
+var _ko := 0
+var _cartella := ""
+var _nome := ""
+var _usate: Array = []
+
+func _ready() -> void:
+	_run.call_deferred()
+
+func check(c: bool, msg: String) -> void:
+	if c:
+		_ok += 1
+		print("  ok    ", msg)
+	else:
+		_ko += 1
+		print("  KO    ", msg)
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame
+
+func _visore() -> CanvasLayer:
+	for n in get_tree().root.get_children():
+		if n is CanvasLayer and n.get_script() == PolaroidPhoto.VIEWER:
+			return n as CanvasLayer
+	return null
+
+## Gli eventi veri: tasto, bottone del joypad, clic.
+func _tasto(k: Key) -> void:
+	for giu in [true, false]:
+		var e := InputEventKey.new()
+		e.keycode = k
+		e.physical_keycode = k
+		e.pressed = giu
+		Input.parse_input_event(e)
+		await _frames(2)
+
+func _joy(b: JoyButton) -> void:
+	for giu in [true, false]:
+		var e := InputEventJoypadButton.new()
+		e.button_index = b
+		e.pressed = giu
+		e.device = 0
+		Input.parse_input_event(e)
+		await _frames(2)
+
+func _clic() -> void:
+	var vp := get_viewport().get_visible_rect().size
+	for giu in [true, false]:
+		var e := InputEventMouseButton.new()
+		e.button_index = MOUSE_BUTTON_LEFT
+		e.pressed = giu
+		e.position = vp * 0.5
+		e.global_position = vp * 0.5
+		Input.parse_input_event(e)
+		await _frames(2)
+
+func _premi(come: String) -> void:
+	match come:
+		"E": await _tasto(KEY_E)
+		"Spazio": await _tasto(KEY_SPACE)
+		"Invio": await _tasto(KEY_ENTER)
+		"clic": await _clic()
+		"A": await _joy(JOY_BUTTON_A)
+		"B": await _joy(JOY_BUTTON_B)
+		"X": await _joy(JOY_BUTTON_X)
+		"Start": await _joy(JOY_BUTTON_START)
+		"Esc": await _tasto(KEY_ESCAPE)
+
+## Il suggerimento: testo a schermo, misure, carattere e stile; scatto.
+func _misura(v: CanvasLayer, dove: String, atteso: String) -> void:
+	var l: Label = null
+	for n in v.find_children("*", "Label", true, false):
+		l = n as Label
+	if l == null:
+		check(false, "%s: il suggerimento c'è" % dove)
+		return
+	var testo := l.atr(l.text) if l.auto_translate_mode != Node.AUTO_TRANSLATE_MODE_DISABLED else l.text
+	check(testo == atteso, "%s: il testo è «%s» (%s)" % [dove, atteso, testo])
+	var vp := get_viewport().get_visible_rect().size
+	var font := l.get_theme_font("font")
+	var fs := l.get_theme_font_size("font_size")
+	var largo := font.get_string_size(testo, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+	var r := l.get_global_rect()
+	var dentro := r.position.x >= 0 and r.position.y >= 0 and r.end.x <= vp.x + 0.5 and r.end.y <= vp.y + 0.5
+	print("SONDA %s %s: schermo %s, rettangolo %s, testo largo %.0f px, carattere %s %d, colore %s, righe %d" % [_nome, dove,
+			str(vp), str(r), largo, font.get_font_name() if font else "-", fs, str(l.get_theme_color("font_color")), l.get_line_count()])
+	check(dentro and largo <= r.size.x and l.get_line_count() == 1, "%s: sta nello schermo su una riga (%.0f px su %.0f)" % [dove, largo, r.size.x])
+	await _frames(25)
+	if DisplayServer.get_name() == "headless":
+		return
+	get_viewport().get_texture().get_image().save_jpg(_cartella.path_join("%s_%s.jpg" % [_nome, dove]), 0.92)
+
+## Chiude con [param come] e controlla; prima Start non deve chiudere.
+func _chiudi(dove: String, come: String, start_prima := false) -> void:
+	await _frames(25)
+	if start_prima:
+		await _premi("Start")
+		await _frames(3)
+		check(_visore() != null, "%s: Start del joypad non chiude la foto" % dove)
+	await _premi(come)
+	await _frames(4)
+	check(_visore() == null, "%s: si chiude con %s" % [dove, come])
+
+## Raccoglie una Polaroid del mondo col giocatore vero (raggio dell'interazione e [param come]).
+func _raccogli(dove: String, come: String) -> bool:
+	var p := GameState.player as Player
+	for f in get_tree().current_scene.find_children("*", "PolaroidPhoto", true, false):
+		var foto := f as PolaroidPhoto
+		if not is_instance_valid(foto) or foto in _usate or not foto.is_visible_in_tree() or not foto.is_inside_tree():
+			continue
+		for dir in [Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, 1), Vector3(0, 0, -1)]:
+			var c := foto.global_position
+			# i piedi sul pavimento sotto il punto a 0,9 m dalla foto (raggio verso il basso)
+			var sopra: Vector3 = c + dir * 0.9 + Vector3(0, 0.6, 0)
+			var q := PhysicsRayQueryParameters3D.create(sopra, sopra + Vector3(0, -3.0, 0), Layers.WORLD | Layers.PROPS)
+			var hit: Dictionary = p.get_world_3d().direct_space_state.intersect_ray(q)
+			if _usate.is_empty():
+				print("SONDA raggio %s da %s: %s, giocatore pronto %s, in albero %s" % [foto.name, str(dir), str(hit.get("collider")), p.input_enabled, p.is_inside_tree()])
+			if hit.is_empty():
+				continue
+			var piedi: Vector3 = hit.position + Vector3(0, 0.05, 0)
+			for i in 6:
+				p.teleport(piedi)
+				p.look_at_point(c)
+				await get_tree().physics_frame
+			var cur = p.interactor.current
+			if _usate.is_empty():
+				print("SONDA prova %s da %s: guarda %s, piedi %s, occhi %s" % [foto.name, str(dir), str(cur), str(piedi), str(p.get_eye_position())])
+			if cur != foto:
+				continue
+			_usate.append(foto)
+			var nome_foto := String(foto.name)
+			print("SONDA %s %s: %s a %s" % [_nome, dove, nome_foto, str(c)])
+			await _premi(come)
+			await _frames(4)
+			if _visore() != null:
+				check(true, "%s: raccolta %s con %s, il visore si apre" % [dove, nome_foto, come])
+				return true
+			check(false, "%s: raccolta %s con %s, il visore non si apre" % [dove, nome_foto, come])
+			return false
+	print("SONDA %s: candidate %s" % [dove, str(get_tree().current_scene.find_children("*", "PolaroidPhoto", true, false).map(func(f): return "%s %s %s" % [f.name, f.global_position, f.is_visible_in_tree()]))])
+	check(false, "%s: nessuna Polaroid raggiungibile per la prova" % dove)
+	return false
+
+func _run() -> void:
+	var a := OS.get_cmdline_user_args()
+	_cartella = a[1]
+	_nome = a[2]
+	DirAccess.make_dir_recursive_absolute(_cartella)
+	Game.pause_on_focus_loss = false
+	GameState.save_to_disk = false
+	for az in ["interact", "skip", "pause", "ui_accept", "ui_cancel"]:
+		print("SONDA mappa %s: %s" % [az, ", ".join(InputMap.action_get_events(az).map(func(e): return e.as_text()))])
+	TranslationServer.set_locale("it")
+	get_tree().change_scene_to_file(a[3] if a.size() > 3 else "res://scenes/sala_principale.tscn")
+	Engine.physics_ticks_per_second = 480
+	for i in 300:
+		await get_tree().process_frame
+		if GameState.player and is_instance_valid(GameState.player):
+			break
+	Engine.physics_ticks_per_second = 60
+	# (all'inizio c'è la scena dello squalo: il giocatore si muove solo dopo)
+	var t1 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t1 < 120000 and not (GameState.player as Player).input_enabled:
+		await get_tree().process_frame
+	await _frames(60)
+	print("SONDA giocatore pronto: %s dopo %.0f s" % [(GameState.player as Player).input_enabled, (Time.get_ticks_msec() - t1) / 1000.0])
+	var it := "E · Spazio · clic · A · B per continuare"
+	var en := "E · Space · click · A · B to continue"
+	# 1. nel mondo, in italiano: tastiera (E) e joypad
+	if await _raccogli("mondo_it_tastiera", "E"):
+		await _misura(_visore(), "mondo_it", it)
+		await _chiudi("mondo_it_tastiera", "E", true)
+	await _frames(10)
+	if await _raccogli("mondo_it_joypad", "E"):
+		await _chiudi("mondo_it_joypad", "A")
+	# 2. nel mondo, in inglese
+	TranslationServer.set_locale("en")
+	await _frames(5)
+	if await _raccogli("mondo_en_tastiera", "E"):
+		await _misura(_visore(), "mondo_en", en)
+		await _chiudi("mondo_en_tastiera", "Spazio")
+	await _frames(10)
+	if await _raccogli("mondo_en_joypad", "E"):
+		await _chiudi("mondo_en_joypad", "B", true)
+	# 3. dall'album della pausa
+	for lingua in ["it", "en"]:
+		TranslationServer.set_locale(lingua)
+		Game.set_paused(true)
+		await _frames(4)
+		var overlay := Game.get_node("PauseOverlay") as CanvasLayer
+		var bottone: Button = null
+		for b in overlay.find_children("*", "Button", true, false):
+			if (b as Button).text == "Polaroid":
+				bottone = b
+		if bottone == null:
+			check(false, "album %s: c'è Polaroid nel menu di pausa" % lingua)
+			continue
+		bottone.pressed.emit()
+		await _frames(4)
+		var album := Game.find_child("Album", true, false) as AlbumPolaroid
+		var prima: Control = null
+		for c in album.cornici():
+			if c.get_node_or_null(^"Foto"):
+				prima = c
+				break
+		if prima == null:
+			check(false, "album %s: nessuna foto trovata nell'album" % lingua)
+			album.chiudi()
+			await _frames(3)
+			Game.set_paused(false)
+			continue
+		prima.grab_focus()
+		await _frames(2)
+		# tastiera: Invio apre, clic chiude; joypad: A apre, E chiude (it) / A apre, Start no, B chiude (en)
+		await _premi("Invio" if lingua == "it" else "A")
+		await _frames(4)
+		check(_visore() != null, "album %s: la foto si riapre con %s" % [lingua, "Invio" if lingua == "it" else "A"])
+		if _visore():
+			await _misura(_visore(), "album_%s" % lingua, it if lingua == "it" else en)
+			await _chiudi("album_%s" % lingua, "clic" if lingua == "it" else "B", lingua == "en")
+			check(get_tree().paused and is_instance_valid(album) and album.is_inside_tree(), "album %s: chiusa la foto si resta nell'album, in pausa" % lingua)
+		await _premi("A" if lingua == "it" else "Invio")
+		await _frames(4)
+		if _visore():
+			await _chiudi("album_%s_2" % lingua, "E" if lingua == "it" else "Spazio")
+		album.chiudi()
+		await _frames(3)
+		Game.set_paused(false)
+		await _frames(4)
+	TranslationServer.set_locale("it")
+	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
+	Game.esci(1 if _ko > 0 else 0)
