@@ -1,0 +1,23 @@
+== 812f163f Fiume (#130): niente pinne di parete nell'acqua dove le toppe
+== import 0
+== SINTASSI: res://tests/cz/fiume_raggi.gd ok SINTASSI: res://tests/cz/fiume_giro.gd ok SINTASSI: res://tests/cz/sonda_barriere_fiume.gd ok SINTASSI: res://tests/cz/sonda_pareti_fiume.gd ok SINTASSI: res://tests/cz/sonda_punto_fiume.gd ok SINTASSI: res://tests/cz/fiume_pinne.gd ok 
+== raggi 0; BUG 0; SCRIPT ERROR 0; ERROR 0
+== barriere 0; BUG 0; SCRIPT ERROR 0; ERROR 0
+== pareti 0; BUG 0; SCRIPT ERROR 0; ERROR 0
+== punto 0; BUG 0; SCRIPT ERROR 0; ERROR 0
+== lati 0; BUG 0; SCRIPT ERROR 0; ERROR 0
+LATI: 0 pareti storte, 0 barriere storte, dove []
+== pinne 0; PINNE FINITO ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== giro 0; GIRO: 221 scatti ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== secco 0; GIRO: nascoste 18 acque GIRO: 221 scatti ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== risalita_secco 0; GIRO: nascoste 18 acque GIRO: 23 scatti ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== risalita_giro 0; GIRO: 23 scatti ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== test_fiume 0; RISULTATO: 35 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_fiume_gioco 0; RISULTATO: 35 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+  ok   pareti e barriere solo sul bordo dell'acqua (storte: 0 pareti, 0 barriere [])
+== controllo_cielo 0; RISULTATO: ok, il cielo non si vede da nessuna parte; BUG 0; SCRIPT ERROR 0; ERROR 13
+CIELO: risalita: il fiume dalla ciambella, 7 tratti (corpi dalle mesh nuovi 115)
+CIELO: posti controllati 686, con il cielo 0; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): 18; fessure sottili 0
+== controllo_posizionamento 0; RISULTATO: 2 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 129
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)

@@ -1,0 +1,4 @@
+coppie prima 24084, dopo 24084, in comune 24084
+barriere: bloccate prima 20, dopo 20; nuove chiuse 0, nuove aperte 0
+tutte le collisioni: bloccate prima 2597, dopo 2597; nuove chiuse 0, nuove aperte 0
+coppie solo prima 0, solo dopo 0 (pavimento diventato acqua o il contrario)

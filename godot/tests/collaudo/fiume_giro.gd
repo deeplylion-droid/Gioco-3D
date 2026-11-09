@@ -15,6 +15,9 @@ var magenta := false
 var cam: Camera3D
 var _righe: Array[String] = []
 var n := 0
+## SOLO=<nomi separati da virgola>: fa solo quegli scatti (per esempio i residui magenta). RISALITA=1: carica tutta la
+## risalita (fiume, corridoi, infermeria), come nel gioco, invece del fiume da solo.
+var solo: PackedStringArray = []
 
 
 func _ready() -> void:
@@ -27,6 +30,8 @@ func _ready() -> void:
 
 
 func _scatto(nome: String, da: Vector3, verso: Vector3) -> void:
+	if not solo.is_empty() and not solo.has(nome):
+		return
 	cam.global_position = da
 	cam.look_at(verso, Vector3.UP)
 	for i in 8:
@@ -69,8 +74,22 @@ func _run() -> void:
 	if not magenta:
 		we.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
 	add_child(we)
-	var f: Node3D = (load("res://scenes/risalita/fiume.tscn") as PackedScene).instantiate()
-	add_child(f)
+	if OS.get_environment("SOLO") != "":
+		solo = OS.get_environment("SOLO").split(",")
+	var f: Node3D = null
+	if OS.get_environment("RISALITA") == "1":
+		Engine.set_meta(&"risalita_subito", true)
+		var ris: Node3D = (load("res://scenes/risalita/risalita.tscn") as PackedScene).instantiate()
+		add_child(ris)
+		for i in 20000:
+			await get_tree().process_frame
+			f = ris.get(&"fiume") as Node3D
+			if f:
+				break
+		print("GIRO: risalita intera, fiume %s" % f)
+	else:
+		f = (load("res://scenes/risalita/fiume.tscn") as PackedScene).instantiate()
+		add_child(f)
 	cam = Camera3D.new()
 	cam.fov = 62.0
 	cam.near = 0.05

@@ -1,0 +1,2 @@
+BARR: barriera con pavimento dai due lati a (21.61, 1.33, 5.91)
+BARR: 12640 punti di pavimento, 24084 coppie; 2638 triangoli di barriera, 1 senza acqua da un lato solo
