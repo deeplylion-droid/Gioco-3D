@@ -76,10 +76,17 @@ func _appoggia() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	# (il fiume caricato a gioco avviato entra nella scena prima del suo pavimento: si riprova finché c'è, al massimo
-	# 20 secondi, poi Posa dice che non c'è niente sotto)
-	for i in 120:
+	# 20 secondi, poi Posa dice che non c'è niente sotto. I 20 secondi contano solo con la stanza accesa: costruita
+	# nascosta e ferma, come il fiume, i suoi corpi sono fuori dalla fisica e le sue mesh nascoste, quindi si aspetta
+	# senza limite che AccensioneAPezzi la riaccenda; prima, ferma più di 20 s, la foto non trovava niente sotto)
+	var i := 0
+	while i < 120:
 		if not is_inside_tree():
 			return
+		if not can_process():
+			await get_tree().create_timer(0.17, false, true).timeout
+			continue
+		i += 1
 		var da := global_position + Vector3.UP * 0.05
 		var q := PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * Posa.PORTATA, Posa.STRATI)
 		if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():
