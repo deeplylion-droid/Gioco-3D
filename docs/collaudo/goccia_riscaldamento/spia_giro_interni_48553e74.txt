@@ -1,0 +1,4 @@
+SPIA: canvas all'inizio 0
+SPIA: fotogramma 2, canvas +2 (totale 2); visibili da poco: ["/root/Grafica/PostProcessing/@ColorRect@2 (ColorRect shader res://addons/grafica/post_processing.gdshader)", "/root/Dissolvenza/@ColorRect
+SPIA: fotogramma 3, canvas +1 (totale 3); visibili da poco: ["/root/SalaSoloInterni/Player/HUD/@Control@181 (Control)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@ColorRect@182 (ColorRect)", "/ro
+SPIA: fotogramma 190, canvas +1 (totale 4); ... Goccia (res://shaders/creature/goccia_schermo.gdshader) ...

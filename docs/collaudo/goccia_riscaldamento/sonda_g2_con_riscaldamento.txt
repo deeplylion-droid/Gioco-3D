@@ -1,0 +1,7 @@
+FASE avvio                                                   canvas +0 (totale 1)
+FASE riscaldamento intero (schermata di caricamento)         canvas +2 (totale 3)
+FASE post-processing di nuovo visibile                       canvas +0 (totale 3)
+FASE vista 3D                                                canvas +0 (totale 3)
+FASE goccia creata e disegnata trasparente (forza 0)         canvas +0 (totale 3)
+FASE goccia nascosta                                         canvas +0 (totale 3)
+FASE goccia accesa per 2,7 s (dopo l'ultima riga sopra)      canvas +0 (totale 3)

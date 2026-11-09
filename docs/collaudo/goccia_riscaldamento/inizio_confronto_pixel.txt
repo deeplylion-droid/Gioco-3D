@@ -1,0 +1,14 @@
+000_scena_00.00s.jpg: differenza massima 0 (su 255), pixel oltre 8: 0, luminosità media 0.00
+001_scena_00.03s.jpg: differenza massima 6 (su 255), pixel oltre 8: 0, luminosità media 1.99
+002_scena_00.07s.jpg: differenza massima 8 (su 255), pixel oltre 8: 0, luminosità media 1.97
+003_scena_00.10s.jpg: differenza massima 7 (su 255), pixel oltre 8: 0, luminosità media 1.94
+004_scena_00.13s.jpg: differenza massima 5 (su 255), pixel oltre 8: 0, luminosità media 1.88
+005_scena_00.17s.jpg: differenza massima 6 (su 255), pixel oltre 8: 0, luminosità media 1.81
+006_scena_00.23s.jpg: differenza massima 5 (su 255), pixel oltre 8: 0, luminosità media 1.71
+007_scena_00.27s.jpg: differenza massima 4 (su 255), pixel oltre 8: 0, luminosità media 1.67
+008_scena_00.30s.jpg: differenza massima 7 (su 255), pixel oltre 8: 0, luminosità media 1.63
+009_scena_00.33s.jpg: differenza massima 7 (su 255), pixel oltre 8: 0, luminosità media 1.61
+010_scena_00.37s.jpg: differenza massima 5 (su 255), pixel oltre 8: 0, luminosità media 1.60
+011_scena_00.40s.jpg: differenza massima 4 (su 255), pixel oltre 8: 0, luminosità media 1.56
+012_scena_00.43s.jpg: differenza massima 2 (su 255), pixel oltre 8: 0, luminosità media 1.55
+013_scena_00.47s.jpg: differenza massima 2 (su 255), pixel oltre 8: 0, luminosità media 1.52

@@ -1,0 +1,5 @@
+FASE avvio                                                   canvas +0 (totale 1)
+FASE vista 3D                                                canvas +0 (totale 1)
+FASE goccia creata e disegnata trasparente (forza 0)         canvas +1 (totale 2)
+FASE goccia nascosta                                         canvas +0 (totale 2)
+FASE goccia accesa per 2,7 s (dopo l'ultima riga sopra)      canvas +0 (totale 2)
