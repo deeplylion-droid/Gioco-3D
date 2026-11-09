@@ -66,6 +66,21 @@ func _run() -> void:
 	if s == null:
 		_fine()
 		return
+	# la goccia di bava: all'inizio si disegna trasparente per qualche fotogramma anche se la scena è già partita, così la
+	# sua pipeline 2D è pronta prima che compaia (sonda di grafica-2, 0.3.24: la scena la nascondeva al primo fotogramma,
+	# e la pipeline si compilava quando compariva); poi resta nascosta fino al suo momento
+	var goccia := s.get(&"_goccia") as ColorRect
+	var disegnata := 0
+	var a_vista := false
+	for i in RisveglioSqualo.FOTOGRAMMI_GOCCIA + 5:
+		if goccia and goccia.is_visible_in_tree() and not bool(s.get(&"_goccia_disegnata")):
+			disegnata += 1
+			a_vista = a_vista or s.goccia_visibile()
+		await get_tree().process_frame
+	check(disegnata > 0 and not a_vista,
+		"la goccia si disegna trasparente all'inizio della scena per %d fotogrammi (pipeline pronta), senza vedersi" % disegnata)
+	check(goccia != null and not goccia.is_visible_in_tree() and bool(s.get(&"_goccia_disegnata")),
+		"poi la goccia resta nascosta fino al suo momento")
 	var audio := get_node_or_null(^"/root/Audio")
 	var lampo0 := float((s.tempi.get("lampi", [[0.55, 0.16]]) as Array)[0][0])
 	var attesa_vista := false
