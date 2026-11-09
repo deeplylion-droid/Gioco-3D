@@ -510,7 +510,11 @@ func stream_di(nome: StringName) -> AudioStream:
 		return null
 	var streams: Array[AudioStream] = []
 	for p in percorsi:
+		var tl := Time.get_ticks_usec()
 		var s := load(p) as AudioStream
+		# (coi tempi accesi: un suono caricato qui mentre il thread carica una zona può aspettarlo)
+		if Time.get_ticks_usec() - tl > 5000:
+			RiscaldamentoShader.segno("Audio: load %s %.1f ms" % [p, (Time.get_ticks_usec() - tl) / 1000.0])
 		if s:
 			if String(nome).ends_with("_loop") and s is AudioStreamOggVorbis:
 				(s as AudioStreamOggVorbis).loop = true

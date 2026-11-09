@@ -97,7 +97,10 @@ func carica_in_thread(percorso: String, tipo := "") -> Error:
 ## Con [member ritardo_thread_test] (solo i test: un PC lento) risulta in corso finché non è passato quel ritardo
 ## dalla richiesta.
 func stato_thread(percorso: String) -> ResourceLoader.ThreadLoadStatus:
+	var tl := Time.get_ticks_usec()
 	var st := ResourceLoader.load_threaded_get_status(percorso)
+	if Time.get_ticks_usec() - tl > 5000:
+		RiscaldamentoShader.segno("Game.stato_thread %s %.1f ms" % [percorso, (Time.get_ticks_usec() - tl) / 1000.0])
 	if ritardo_thread_test > 0.0 and st == ResourceLoader.THREAD_LOAD_LOADED \
 			and Time.get_ticks_msec() - int(_richiesto_ms.get(percorso, 0)) < ritardo_thread_test * 1000.0:
 		return ResourceLoader.THREAD_LOAD_IN_PROGRESS

@@ -63,12 +63,19 @@ func _run() -> void:
 	var peggiore := 0.0
 	var lunghi := 0
 	var n := 0
+	var dopo_lungo := false
 	while not portone.in_movimento and Time.get_ticks_msec() - t0 < 120000:
 		await get_tree().process_frame
 		var ora := Time.get_ticks_usec()
 		var ms := (ora - prima) / 1000.0
 		prima = ora
 		n += 1
+		# (i tempi di process e fisica del fotogramma lungo arrivano col fotogramma dopo)
+		if dopo_lungo:
+			dopo_lungo = false
+			print("      al fotogramma dopo: process %.1f ms, fisica %.1f ms; segni: %s" % [
+					Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
+					Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0, RiscaldamentoShader.segni_recenti(1)])
 		if n > 3:
 			peggiore = maxf(peggiore, ms)
 		if ms > LIMITE_MS and n > 3:
@@ -81,6 +88,7 @@ func _run() -> void:
 						Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
 						Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
 						Performance.get_monitor(Performance.OBJECT_COUNT), Performance.get_monitor(Performance.OBJECT_NODE_COUNT)])
+				dopo_lungo = true
 	var attesa := (Time.get_ticks_msec() - t0) / 1000.0
 	check(portone.in_movimento, "poi il portone si apre da solo (dopo %.1f s)" % attesa)
 	check(attesa >= RITARDO * 0.9, "e non prima che il thread (rallentato a %.0f s) abbia finito (%.1f s)" % [RITARDO, attesa])
