@@ -1153,24 +1153,39 @@ func _passi_luci(d: Dictionary = {}) -> Array:
 	for g in d["gocce"]:
 		out.append(func(): _gocce(luci.call(), b(g)))
 	out.append(func(): _catena(luci.call(), b(d["lei"])))
-	out.append(func(): _segnali_strada(luci.call()))
+	# (un passo per imbocco e uno per le bocche chiuse: tutti insieme erano 15-19 ms, test_attesa_zone del 9 novembre)
+	# (la lista dei passi si fa prima di leggere torre_gioco.json: PASSI_IMBOCCHI passi, i 6 imbocchi più margine;
+	# quelli in più non fanno niente, e se un giorno gli imbocchi fossero di più li fa l'ultimo passo)
+	for i in PASSI_IMBOCCHI:
+		out.append(func(): _segnali_strada(luci.call(), i))
+	out.append(func(): _segnali_strada(luci.call(), -1))
 	return out
 
 
 const VERDE := Color(0.1, 1.0, 0.3)
+## [la sfera, il materiale] dei led degli imbocchi, gli stessi per tutti (_segnali_strada, un passo per imbocco).
+var _led_imbocco: Array = []
+## I passi dei segnali degli imbocchi (_passi_luci).
+const PASSI_IMBOCCHI := 8
 
 
 ## La strada che si legge (S1, S2): sul portale di ogni imbocco della discesa i led verdi lungo i montanti e la
 ## traversa e la lampada verde che illumina il canale; sopra i cancelli delle bocche chiuse una lampada
 ## rossa, guasta che sfarfalla o spenta (una sì e una no). Dai dati di torre_gioco.json.
-func _segnali_strada(radice: Node3D) -> void:
-	var led := SphereMesh.new()
-	led.radius = 0.035
-	led.height = 0.07
-	led.radial_segments = 8
-	led.rings = 4
-	var m_led := _emissivo(VERDE, 1.8)   # più forte si brucia in bianco e il verde non si legge
-	for im in dati.get("imbocchi", []):
+## [param quale]: l'imbocco (il suo indice nei dati), o -1 per le lampade delle bocche chiuse.
+func _segnali_strada(radice: Node3D, quale: int) -> void:
+	if _led_imbocco.is_empty():
+		var sfera := SphereMesh.new()
+		sfera.radius = 0.035
+		sfera.height = 0.07
+		sfera.radial_segments = 8
+		sfera.rings = 4
+		_led_imbocco = [sfera, _emissivo(VERDE, 1.8)]   # più forte si brucia in bianco e il verde non si legge
+	var led: SphereMesh = _led_imbocco[0]
+	var m_led: Material = _led_imbocco[1]
+	var imbocchi: Array = dati.get("imbocchi", [])
+	var questi: Array = imbocchi.slice(PASSI_IMBOCCHI) if quale < 0 else ([imbocchi[quale]] if quale < imbocchi.size() else [])
+	for im in questi:
 		var base := b(im["base"])
 		var v := Vector3(float(im["verso"][0]), 0.0, -float(im["verso"][1])).normalized()
 		var lat := v.cross(Vector3.UP).normalized()
@@ -1237,6 +1252,8 @@ func _segnali_strada(radice: Node3D) -> void:
 		o.set_meta(&"risveglio_ignora", true)
 		radice.add_child(o)
 		o.global_position = base + Vector3.UP * (alto - 0.4) - v * 0.5
+	if quale >= 0:
+		return
 	var k := 0
 	for bc in dati.get("bocche_chiuse", []):
 		if bool(bc["tubo"]):
@@ -1348,10 +1365,8 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	if davanti > -INF:
 		corpo.global_position = p0 + v * (davanti + 0.08 - p0.dot(v))
 	if OS.has_environment("TORRE_TEMPI"):
-		var tm := Time.get_ticks_usec()
-		var n := get_tree().root.find_children("*", "MeshInstance3D", true, false).size()
-		print("  emergenza: fissa_al_muro %.1f ms, 9 raggi %.1f ms; %d mesh nell'albero, contarle %.1f ms" % [(te1 - te) / 1000.0,
-				(tm - te1) / 1000.0, n, (Time.get_ticks_usec() - tm) / 1000.0])
+		# (senza più contare le mesh dell'albero: quel conto, solo per questa stampa, aggiungeva 3-6 ms al passo)
+		print("  emergenza: fissa_al_muro %.1f ms, 9 raggi %.1f ms" % [(te1 - te) / 1000.0, (Time.get_ticks_usec() - te1) / 1000.0])
 	p = corpo.global_position
 	var l := OmniLight3D.new()
 	l.light_color = ROSSO
