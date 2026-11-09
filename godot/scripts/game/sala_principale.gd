@@ -539,13 +539,15 @@ func _percorsi_torre() -> Array:
 ## Proposta D della sonda dei load (scelta del coordinatore del 9 novembre): uscendo dalla sala con la torre ancora
 ## dentro (una morte o una ripartenza nella torre o nelle condotte), la torre e i file dell'inseguimento già in memoria
 ## restano tenuti (GameState.tieni) anche se sono arrivati senza il thread (partenze F9, ripartenze da un checkpoint
-## della torre): la sala nuova li trova in cache, ripartenze da 1,5-1,9 s a 1,0-1,5 s, la stessa memoria (picco 2042 MB).
+## della torre): la sala nuova li trova in cache, ripartenze più corte, la stessa memoria (picco 2042 MB).
 ## Entrando nel tunnel si lasciano (_libera_torre, _ripristina_sottomarino): lì tenuti costavano 473 MB.
 func _tieni_torre() -> void:
 	if _torre_liberata or sala_torre == null or sala_torre_scena == "":
 		return
+	# (anche quelli già usciti dalla cache, come il GLB degli stendardi o la scena della Polaroid, che non restano
+	# legati ai nodi: la sala nuova li caricherebbe comunque costruendo la torre, qui costano lo stesso tempo)
 	for r in _percorsi_torre():
-		if ResourceLoader.has_cached(r) and GameState.tenuta(r) == null:
+		if GameState.tenuta(r) == null and ResourceLoader.exists(r):
 			GameState.tieni(r, load(r))
 
 
@@ -708,6 +710,8 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 	if _torre_nascosta and is_instance_valid(_torre_nascosta):
 		_torre_nascosta.queue_free()
 		_torre_nascosta = null
+	if not _torre_liberata:
+		GameState.tieni(sala_torre_scena, scena)
 	sala_torre = scena.instantiate()
 	sala_torre.set(&"inseguimento_continua", sala_sottomarino_scena != "")
 	add_child(sala_torre)
