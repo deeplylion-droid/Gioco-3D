@@ -93,7 +93,6 @@ func _tartaruga() -> void:
 	var nodo := _nodo("Tartaruga")
 	var p := sala.punto(TARTARUGA_S)
 	var d := sala.direzione(TARTARUGA_S)
-	var r := sala.destra(TARTARUGA_S)
 	var t := _modello(nodo, "tartaruga", Vector3(p.x, 0.0, p.z), d, TARTARUGA_SCALA)
 	t.name = "tartaruga"
 	# appena girata, come se nuotasse verso chi arriva salendo
@@ -103,22 +102,42 @@ func _tartaruga() -> void:
 	for v in tri_t:
 		basso = minf(basso, v.y)
 	t.position.y += SOPRA_LEI + 0.06 - basso
-	tri_t = _triangoli(t)
-	# le catene: dal guscio (davanti, dietro a sinistra, dietro a destra) dritte su fino alla volta
-	var k := 0
+	# (le catene e i faretti nei passi dopo: tutto insieme erano 45-56 ms in un passo, quasi tutti nei due giri sui
+	# triangoli della tartaruga e nei raggi delle catene)
+	sala.aggiungi_passi([_tartaruga_catene.bind(nodo, t), _tartaruga_faretti.bind(nodo)])
+
+
+## Le catene della tartaruga: dal guscio (davanti, dietro a sinistra, dietro a destra) dritte su fino alla volta.
+func _tartaruga_catene(nodo: Node3D, t: Node3D) -> void:
+	# (i triangoli della tartaruga qui, una catena per passo)
+	var st := {"tri_t": _triangoli(t), "k": 0}
+	var passi: Array = []
 	for off: Vector2 in [Vector2(0.0, -0.55), Vector2(-0.45, 0.45), Vector2(0.45, 0.45)]:
-		var base := Vector3(p.x, 0.0, p.z) + r * off.x + d * off.y
-		var giu = _raggio(tri_t, Vector3(base.x, -21.0, base.z), Vector3(base.x, -25.0, base.z))
-		var su = _raggio(_tri_tunnel(TARTARUGA_S), Vector3(base.x, -24.5, base.z), Vector3(base.x, -21.0, base.z))
-		if giu == null or su == null:
-			push_warning("tartaruga: catena %d senza attacco" % k)
-			continue
-		var a: Vector3 = giu
-		var b: Vector3 = su
-		_piastra(nodo, b, "piastra_tartaruga_%d" % k)
-		_catena(nodo, a + Vector3.DOWN * 0.008, b + Vector3.DOWN * 0.012, "catena_tartaruga_%d" % k)
-		k += 1
-	# i faretti: sui muri, prima e dopo, puntati da sotto sulla pancia
+		passi.append(_tartaruga_catena.bind(nodo, st, off))
+	sala.aggiungi_passi(passi)
+
+
+func _tartaruga_catena(nodo: Node3D, st: Dictionary, off: Vector2) -> void:
+	var p := sala.punto(TARTARUGA_S)
+	var d := sala.direzione(TARTARUGA_S)
+	var r := sala.destra(TARTARUGA_S)
+	var k: int = st["k"]
+	var base := Vector3(p.x, 0.0, p.z) + r * off.x + d * off.y
+	var giu = _raggio(st["tri_t"], Vector3(base.x, -21.0, base.z), Vector3(base.x, -25.0, base.z))
+	var su = _raggio(_tri_tunnel(TARTARUGA_S), Vector3(base.x, -24.5, base.z), Vector3(base.x, -21.0, base.z))
+	if giu == null or su == null:
+		push_warning("tartaruga: catena %d senza attacco" % k)
+		return
+	var a: Vector3 = giu
+	var b: Vector3 = su
+	_piastra(nodo, b, "piastra_tartaruga_%d" % k)
+	_catena(nodo, a + Vector3.DOWN * 0.008, b + Vector3.DOWN * 0.012, "catena_tartaruga_%d" % k)
+	st["k"] = k + 1
+
+
+## I faretti della tartaruga: sui muri, prima e dopo, puntati da sotto sulla pancia.
+func _tartaruga_faretti(nodo: Node3D) -> void:
+	var p := sala.punto(TARTARUGA_S)
 	var centro := Vector3(p.x, SOPRA_LEI + 0.4, p.z)
 	_faretto(nodo, TARTARUGA_S - 4.0, -1.0, 3.7, centro, Color(0.75, 0.95, 1.0), 6.0)
 	_faretto(nodo, TARTARUGA_S + 3.0, 1.0, 3.7, centro, Color(0.75, 0.95, 1.0), 6.0)
@@ -129,15 +148,22 @@ func _reti() -> void:
 	if not reti_accese:
 		return
 	var nodo := _nodo("Reti")
+	# (una rete per passo, nello stesso ordine: tutte insieme erano 26-28 ms)
+	var altre: Array = []
 	for q in RETI:
-		_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
-		# il faretto sopra la rete, puntato giù: al buio le lampade non ci arrivavano (collaudo del tunnel)
-		var s: float = q[0]
-		var alto := float(q[2]) + RETE_ALTA + 0.32
-		var p := sala.punto(s)
-		var centro := sala._al(p, sala.destra(s), Vector2(float(q[1]) * (sala.muro - 0.3), sala.piano + float(q[2]) + RETE_ALTA * 0.5))
-		_faretto(nodo, s, float(q[1]), alto, centro, Color(1.0, 0.9, 0.75), 14.0, 60.0, 5.0)
-		_cavo_faretto(nodo, s, float(q[1]), alto)
+		altre.append(_rete_col_faretto.bind(nodo, q))
+	sala.aggiungi_passi(altre)
+
+
+func _rete_col_faretto(nodo: Node3D, q: Array) -> void:
+	_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
+	# il faretto sopra la rete, puntato giù: al buio le lampade non ci arrivavano (collaudo del tunnel)
+	var s: float = q[0]
+	var alto := float(q[2]) + RETE_ALTA + 0.32
+	var p := sala.punto(s)
+	var centro := sala._al(p, sala.destra(s), Vector2(float(q[1]) * (sala.muro - 0.3), sala.piano + float(q[2]) + RETE_ALTA * 0.5))
+	_faretto(nodo, s, float(q[1]), alto, centro, Color(1.0, 0.9, 0.75), 14.0, 60.0, 5.0)
+	_cavo_faretto(nodo, s, float(q[1]), alto)
 
 
 ## Una rete da pesca tesa sul muro (il modello Meshy della rete è venuto male: quattro bastoni, la si fa qui): la
@@ -289,23 +315,35 @@ func _buco_volta() -> void:
 	var b := {"nodo": nodo, "sc": sc, "tri": _tri_tunnel(sc), "n_ang": n_ang, "raggio_j": raggio_j,
 		"anelli": [1.0, 0.93, 0.85, 0.6, 0.3, 0.0], "alzo": [-0.01, 0.04, 0.015, 0.015, 0.015, 0.015],
 		"pv": [], "nv": [], "ok": true}
+	# (e ogni anello in BUCO_TRATTI passi: un anello intero, 28 raggi sui triangoli della volta, era 40-75 ms)
 	var passi: Array = []
 	for k in (b["anelli"] as Array).size():
-		passi.append(_buco_anello.bind(b, k))
+		for q in BUCO_TRATTI:
+			passi.append(_buco_anello.bind(b, k, ceili(float(n_ang) * q / BUCO_TRATTI), ceili(float(n_ang) * (q + 1) / BUCO_TRATTI)))
 	passi.append(_buco_mesh.bind(b))
 	sala.aggiungi_passi(passi)
 
 
-func _buco_anello(b: Dictionary, k: int) -> void:
+## In quanti passi si fa un anello del buco nella volta.
+const BUCO_TRATTI := 4
+
+
+## Gli spicchi da [param j0] a [param j1] (escluso) dell'anello [param k]; finito l'ultimo, l'anello è fatto.
+func _buco_anello(b: Dictionary, k: int, j0 := 0, j1 := -1) -> void:
 	if not b["ok"]:
 		return
 	var sc: float = b["sc"]
 	var mu := sala.muro
 	var ki := sala.chiave - sala.imposta
 	var n_ang: int = b["n_ang"]
-	var riga := []
-	var rn := []
-	for j in n_ang:
+	if j1 < 0:
+		j1 = n_ang
+	if j0 == 0:
+		b["riga"] = []
+		b["rn"] = []
+	var riga: Array = b["riga"]
+	var rn: Array = b["rn"]
+	for j in range(j0, j1):
 		var a := TAU * float(j) / n_ang
 		var f: float = b["anelli"][k] * b["raggio_j"][j]
 		var s := sc + cos(a) * BUCO_MEZZO_S * f
@@ -322,8 +360,9 @@ func _buco_anello(b: Dictionary, k: int) -> void:
 			return
 		riga.append((h[0] as Vector3) + (h[1] as Vector3) * float(b["alzo"][k]))
 		rn.append(h[1])
-	(b["pv"] as Array).append(riga)
-	(b["nv"] as Array).append(rn)
+	if j1 >= n_ang:
+		(b["pv"] as Array).append(riga)
+		(b["nv"] as Array).append(rn)
 
 
 func _buco_mesh(buco: Dictionary) -> void:
@@ -379,8 +418,12 @@ func _pesci() -> void:
 	if scelta_pesci == "":
 		return
 	var nodo := _nodo("Pesci")
+	# (i tratti di muro occupati a pezzi, poi i pesci: _occupati_muri da solo era 50-60 ms)
+	sala.aggiungi_passi(_passi_occupati(_pesci_dopo.bind(nodo)))
+
+
+func _pesci_dopo(occupati: Array, nodo: Node3D) -> void:
 	var amb := _ambiente("pesci")
-	var occupati := _occupati_muri()
 	var k := 0
 	# (un pesce per passo: tutti insieme erano 0,6 s di gioco fermo nella costruzione a pezzi)
 	var pesci: Array = []
@@ -431,12 +474,25 @@ func _pesce_mensola(nodo: Node3D, s: float, lato: float, k: int) -> void:
 	var p := _modello(nodo, "pesce_vetroresina", Vector3.ZERO, Vector3.ZERO, PESCE_SCALA)
 	p.name = "pesce_%d" % k
 	p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), pm + nrm * (fuori * 0.5))
+	sala.aggiungi_passi([_pesce_mensola_gap.bind(nodo, p, pm, nrm, lungo, largo, fuori, k)])
+
+
+## Il pesce [param p] lontano dal muro almeno 3 cm (seconda parte di [method _pesce_mensola]).
+func _pesce_mensola_gap(nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3, lungo: Vector3, largo: float, fuori: float,
+		k: int) -> void:
 	# lontano dal muro almeno 3 cm (le pinne)
 	var gap := INF
 	for v in _triangoli(p):
 		gap = minf(gap, (v - pm).dot(nrm))
 	if gap < 0.03:
 		p.position += nrm * (0.03 - gap)
+	# (il piede e il faretto nel passo dopo: i due giri sui triangoli del pesce insieme erano 35-58 ms)
+	sala.aggiungi_passi([_pesce_mensola_piede.bind(nodo, p, pm, nrm, lungo, largo, fuori, k)])
+
+
+## Il piede del palo del pesce [param p] sulla mensola e il faretto sotto (ultima parte di [method _pesce_mensola]).
+func _pesce_mensola_piede(nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3, lungo: Vector3, largo: float, fuori: float,
+		k: int) -> void:
 	# il piede del palo sulla mensola: il punto più basso fra quelli sopra la mensola (le pinne fuori possono
 	# scendere oltre il bordo)
 	var basso := INF
@@ -549,27 +605,96 @@ func _appoggia_su(n: Node3D, quota: float) -> void:
 func _occupati_muri() -> Array:
 	var out: Array = []
 	for n in sala.find_children("*", "Node3D", true, false):
-		# (i fratelli con lo stesso nome Godot li rinomina "@Oblo@12": si cerca il pezzo nel nome)
-		var nome := String(n.name).to_lower()
-		if not (nome.contains("lampada") or nome.contains("oblo") or nome.contains("rete_") or nome.contains("faretto")
-				or nome.contains("cartello") or nome.contains("salvagente") or nome.contains("fanale") or nome.contains("mensola")):
-			continue
-		var pos := _xf(n as Node3D).origin
-		var pr := sala.proietta(pos)
-		if absf(float(pr[1])) < sala.muro - 1.0:
-			continue
-		out.append([float(pr[0]), signf(float(pr[1])), 1.2 if nome.begins_with("rete_") else 0.6])
+		var o = _occupato(n)
+		if o != null:
+			out.append(o)
+	_occupati_luci_ostacoli(out)
+	return out
+
+
+## Il tratto di muro occupato dal nodo [param n] (null se non occupa niente).
+func _occupato(n: Node):
+	# (i fratelli con lo stesso nome Godot li rinomina "@Oblo@12": si cerca il pezzo nel nome)
+	var nome := String(n.name).to_lower()
+	if not (nome.contains("lampada") or nome.contains("oblo") or nome.contains("rete_") or nome.contains("faretto")
+			or nome.contains("cartello") or nome.contains("salvagente") or nome.contains("fanale") or nome.contains("mensola")):
+		return null
+	var pos := _xf(n as Node3D).origin
+	var pr := sala.proietta(pos)
+	if absf(float(pr[1])) < sala.muro - 1.0:
+		return null
+	return [float(pr[0]), signf(float(pr[1])), 1.2 if nome.begins_with("rete_") else 0.6]
+
+
+func _occupati_luci_ostacoli(out: Array) -> void:
 	# le lampade e gli oblò piccoli di _luci (i loro nodi hanno nomi automatici, "@Node3D@367"): tutti i figli di Luci
 	var luci := sala.get_node_or_null("Luci")
 	if luci:
-		for n in luci.get_children():
-			if n is Node3D and not n is Light3D:
-				var pr := sala.proietta(_xf(n as Node3D).origin)
-				if absf(float(pr[1])) > sala.muro - 1.0:
-					out.append([float(pr[0]), signf(float(pr[1])), 0.6])
+		_occupati_luci(out, luci.get_children())
+	_occupati_ostacoli(out)
+
+
+func _occupati_luci(out: Array, figli: Array) -> void:
+	for n in figli:
+		if n is Node3D and not n is Light3D:
+			var pr := sala.proietta(_xf(n as Node3D).origin)
+			if absf(float(pr[1])) > sala.muro - 1.0:
+				out.append([float(pr[0]), signf(float(pr[1])), 0.6])
+
+
+func _occupati_ostacoli(out: Array) -> void:
 	for o in sala.ostacoli:
 		out.append([float(o["s"]) + float(o["lungo"]) * 0.5, float(o["lato"]), float(o["lungo"]) * 0.5 + 0.8])
-	return out
+
+
+## [method _occupati_muri] a pezzi: un passo prende i nodi, poi [constant OCCUPATI_PER_PASSO] nodi per passo, e alla
+## fine [param poi] riceve la lista (la stessa: fra un passo e l'altro la costruzione non mette niente).
+func _passi_occupati(poi: Callable) -> Array:
+	var stato := {"nodi": [], "out": []}
+	return [_occupati_inizio.bind(stato, poi)]
+
+
+const OCCUPATI_PER_PASSO := 250
+
+
+func _occupati_inizio(stato: Dictionary, poi: Callable) -> void:
+	stato["nodi"] = sala.find_children("*", "Node3D", true, false)
+	var n: int = (stato["nodi"] as Array).size()
+	var passi: Array = []
+	var da := 0
+	while da < n:
+		passi.append(_occupati_tratto.bind(stato, da, mini(da + OCCUPATI_PER_PASSO, n)))
+		da += OCCUPATI_PER_PASSO
+	# (poi i figli di Luci, OCCUPATI_LUCI_PER_PASSO per passo: le loro proiezioni insieme erano 25-30 ms)
+	var luci := sala.get_node_or_null("Luci")
+	var figli: Array = luci.get_children() if luci else []
+	da = 0
+	while da < figli.size():
+		passi.append(_occupati_luci_tratto.bind(stato, figli.slice(da, da + OCCUPATI_LUCI_PER_PASSO)))
+		da += OCCUPATI_LUCI_PER_PASSO
+	passi.append(_occupati_fine.bind(stato, poi))
+	sala.aggiungi_passi(passi)
+
+
+const OCCUPATI_LUCI_PER_PASSO := 12
+
+
+func _occupati_luci_tratto(stato: Dictionary, figli: Array) -> void:
+	_occupati_luci(stato["out"], figli)
+
+
+func _occupati_tratto(stato: Dictionary, da: int, fino: int) -> void:
+	var nodi: Array = stato["nodi"]
+	for i in range(da, fino):
+		var o = _occupato(nodi[i]) if is_instance_valid(nodi[i]) else null
+		if o != null:
+			(stato["out"] as Array).append(o)
+
+
+func _occupati_fine(stato: Dictionary, poi: Callable) -> void:
+	var out: Array = stato["out"]
+	_occupati_ostacoli(out)
+	poi.call(out)
 
 
 func _libero(occupati: Array, s: float, lato: float, mezzo: float) -> bool:
@@ -643,14 +768,29 @@ func _abisso_oblo() -> void:
 	if scelta_abisso == "":
 		return
 	var nodo := _nodo("AbissoOblo")
-	var amb := _ambiente("abisso")
-	var occupati := _occupati_muri()
-	var shader := load(DIR + "oblo_abisso.gdshader") as Shader
-	var k := 0
-	for lato: float in [-1.0, 1.0]:
-		var messi := 0
-		var s := float(amb[0]) + 8.0 + (0.0 if lato < 0.0 else 9.0)
-		while s < float(amb[1]) - 4.0 and messi < 3:
+	# (i tratti di muro occupati a pezzi, poi un oblò per passo: tutto insieme erano 70-86 ms)
+	sala.aggiungi_passi(_passi_occupati(_abisso_oblo_dopo.bind(nodo)))
+
+
+func _abisso_oblo_dopo(occupati: Array, nodo: Node3D) -> void:
+	var st := {"nodo": nodo, "occupati": occupati, "amb": _ambiente("abisso"),
+			"shader": load(DIR + "oblo_abisso.gdshader") as Shader, "k": 0, "li": 0, "messi": 0, "s": null}
+	_abisso_oblo_passo(st)
+
+
+## Va avanti finché mette un oblò (e il prossimo lo cerca il passo dopo) o finché i muri sono finiti: lo stesso giro
+## di prima (tre oblò per lato al più, 22 m fra l'uno e l'altro), un oblò per passo.
+func _abisso_oblo_passo(st: Dictionary) -> void:
+	var amb: Array = st["amb"]
+	var occupati: Array = st["occupati"]
+	var lati := [-1.0, 1.0]
+	while int(st["li"]) < lati.size():
+		var lato: float = lati[st["li"]]
+		if st["s"] == null:
+			st["s"] = float(amb[0]) + 8.0 + (0.0 if lato < 0.0 else 9.0)
+			st["messi"] = 0
+		var s: float = st["s"]
+		while s < float(amb[1]) - 4.0 and int(st["messi"]) < 3:
 			if not _libero(occupati, s, lato, OBLO_R + 0.6) or sala._lato(s, lato)["crollo"] or _bocca_galleria(s, lato):
 				s += 0.5
 				continue
@@ -658,51 +798,64 @@ func _abisso_oblo() -> void:
 			if w == null:
 				s += 0.5
 				continue
-			var pm: Vector3 = w[0]
-			var nrm: Vector3 = w[1]
-			var n := Node3D.new()
-			n.name = "oblo_grande_%d" % k
-			nodo.add_child(n)
-			n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), pm)
-			var anello := MeshInstance3D.new()
-			var tm := TorusMesh.new()
-			tm.inner_radius = OBLO_R - 0.02
-			tm.outer_radius = OBLO_R + 0.12
-			tm.rings = 48
-			anello.mesh = tm
-			anello.rotation_degrees.x = 90
-			anello.position.z = 0.07 - 0.003
-			anello.material_override = sala._mat_ottone()
-			n.add_child(anello)
-			var vetro := MeshInstance3D.new()
-			var cm := CylinderMesh.new()
-			cm.top_radius = OBLO_R
-			cm.bottom_radius = OBLO_R
-			cm.height = 0.02
-			cm.radial_segments = 48
-			vetro.mesh = cm
-			vetro.rotation_degrees.x = 90
-			vetro.position.z = 0.011
-			var m := ShaderMaterial.new()
-			m.shader = shader
-			m.set_shader_parameter(&"animato", scelta_abisso == "A")
-			m.set_shader_parameter(&"fase", float(k) * 0.37 if fase_oblo_prova < 0.0 else fase_oblo_prova)
-			vetro.material_override = m
-			n.add_child(vetro)
-			m.set_shader_parameter(&"raggio", OBLO_R)
-			# una luce debole davanti, del colore del mare: si vede l'anello d'ottone (senza, al buio il vetro sembrava
-			# un disco attaccato al muro)
-			var o := OmniLight3D.new()
-			o.light_color = Color(0.3, 0.5, 0.85)
-			o.light_energy = 0.6
-			o.omni_range = 2.6
-			o.shadow_enabled = false
-			o.position = Vector3(0, 0, 0.6)
-			n.add_child(o)
-			occupati.append([s, lato, OBLO_R + 0.2])
-			k += 1
-			messi += 1
-			s += 22.0
+			_abisso_oblo_uno(st, s, lato, w)
+			st["s"] = s + 22.0
+			sala.aggiungi_passi([_abisso_oblo_passo.bind(st)])
+			return
+		st["li"] = int(st["li"]) + 1
+		st["s"] = null
+
+
+## Un oblò grande dell'abisso nel muro in [param w] ([punto, normale]).
+func _abisso_oblo_uno(st: Dictionary, s: float, lato: float, w: Array) -> void:
+	var nodo: Node3D = st["nodo"]
+	var occupati: Array = st["occupati"]
+	var shader: Shader = st["shader"]
+	var k: int = st["k"]
+	var pm: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var n := Node3D.new()
+	n.name = "oblo_grande_%d" % k
+	nodo.add_child(n)
+	n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), pm)
+	var anello := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = OBLO_R - 0.02
+	tm.outer_radius = OBLO_R + 0.12
+	tm.rings = 48
+	anello.mesh = tm
+	anello.rotation_degrees.x = 90
+	anello.position.z = 0.07 - 0.003
+	anello.material_override = sala._mat_ottone()
+	n.add_child(anello)
+	var vetro := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = OBLO_R
+	cm.bottom_radius = OBLO_R
+	cm.height = 0.02
+	cm.radial_segments = 48
+	vetro.mesh = cm
+	vetro.rotation_degrees.x = 90
+	vetro.position.z = 0.011
+	var m := ShaderMaterial.new()
+	m.shader = shader
+	m.set_shader_parameter(&"animato", scelta_abisso == "A")
+	m.set_shader_parameter(&"fase", float(k) * 0.37 if fase_oblo_prova < 0.0 else fase_oblo_prova)
+	vetro.material_override = m
+	n.add_child(vetro)
+	m.set_shader_parameter(&"raggio", OBLO_R)
+	# una luce debole davanti, del colore del mare: si vede l'anello d'ottone (senza, al buio il vetro sembrava
+	# un disco attaccato al muro)
+	var o := OmniLight3D.new()
+	o.light_color = Color(0.3, 0.5, 0.85)
+	o.light_energy = 0.6
+	o.omni_range = 2.6
+	o.shadow_enabled = false
+	o.position = Vector3(0, 0, 0.6)
+	n.add_child(o)
+	occupati.append([s, lato, OBLO_R + 0.2])
+	st["k"] = k + 1
+	st["messi"] = int(st["messi"]) + 1
 
 
 func _bocca_galleria(s: float, lato: float) -> bool:
@@ -716,14 +869,17 @@ func _bocca_galleria(s: float, lato: float) -> bool:
 
 func _approdo() -> void:
 	var nodo := _nodo("Approdo")
+	# (un pezzo per passo, nello stesso ordine: tutto insieme erano 40 ms)
+	var altri: Array = []
 	for b in BITTE:
-		_bitta(nodo, float(b[0]), float(b[1]))
+		altri.append(_bitta.bind(nodo, float(b[0]), float(b[1])))
 	for c in CARTELLI:
-		_cartello(nodo, float(c[0]), float(c[1]))
-	_fanale(nodo, FANALI_S, -1.0, Color(1.0, 0.12, 0.08), "fanale_rosso")
-	_fanale(nodo, FANALI_S, 1.0, Color(0.15, 1.0, 0.3), "fanale_verde")
-	_salvagente(nodo)
-	_vetrina_vuota(nodo)
+		altri.append(_cartello.bind(nodo, float(c[0]), float(c[1])))
+	altri.append(_fanale.bind(nodo, FANALI_S, -1.0, Color(1.0, 0.12, 0.08), "fanale_rosso"))
+	altri.append(_fanale.bind(nodo, FANALI_S, 1.0, Color(0.15, 1.0, 0.3), "fanale_verde"))
+	altri.append(_salvagente.bind(nodo))
+	altri.append(_vetrina_vuota.bind(nodo))
+	sala.aggiungi_passi(altri)
 
 
 ## Una bitta d'ottone scuro sul bordo della banchina: base, collo e testa a fungo, alta 28 cm.

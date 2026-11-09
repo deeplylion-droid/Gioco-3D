@@ -782,6 +782,7 @@ func giro_nella_sua_luce(principale: Viewport, fotogrammi := 2) -> void:
 		cam.look_at_from_position(centro, centro + dove, Vector3.UP if absf(dove.y) < 0.9 else b * Vector3.FORWARD)
 		for i in fotogrammi:
 			await get_tree().process_frame
+			RiscaldamentoShader.segno("giro_nella_sua_luce: direzione %s, fotogramma %d" % [d, i])
 			if not is_inside_tree():
 				sv.queue_free()
 				return
@@ -802,6 +803,7 @@ func giro_nella_sua_luce(principale: Viewport, fotogrammi := 2) -> void:
 				cam.look_at_from_position(pt, mira, Vector3.UP)
 				for i in fotogrammi:
 					await get_tree().process_frame
+					RiscaldamentoShader.segno("giro_nella_sua_luce: punto %s, fotogramma %d" % [pt, i])
 					if not is_inside_tree():
 						sv.queue_free()
 						return
@@ -819,6 +821,7 @@ func giro_nella_sua_luce(principale: Viewport, fotogrammi := 2) -> void:
 		cam.global_transform = gioc.camera.global_transform
 		for i in fotogrammi + 1:
 			await get_tree().process_frame
+			RiscaldamentoShader.segno("giro_nella_sua_luce: occhi del giocatore, fotogramma %d" % i)
 		luce.queue_free()
 	sv.queue_free()
 

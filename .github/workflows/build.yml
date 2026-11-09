@@ -469,6 +469,12 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_posizioni_tunnel.gd
 
+      - name: Test del tunnel che esce durante l'attesa dell'involucro della lampada (ogni compito del thread aspettato una volta, niente «Invalid Task ID»)
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --script res://tests/run.gd -- res://tests/test_tunnel_involucri_uscita.gd 2>&1 | tee /tmp/tunnel_involucri.log; test ${PIPESTATUS[0]} -eq 0
+          ! grep -q "Invalid Task ID" /tmp/tunnel_involucri.log
+
       - name: Test del prototipo del fiume lento
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume.gd
@@ -492,6 +498,14 @@ jobs:
       - name: Test della risalita caricata più tardi (memoria)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita_tardi.gd
+
+      - name: Test della Polaroid 16 col fiume costruito nascosto e fermo a lungo (si appoggia quando la stanza si riaccende)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid_fiume_ferma.gd
+
+      - name: Test delle Polaroid appoggiate (il fondo di ognuna a filo della superficie sotto, al più 1 mm e niente dentro; anche P10 e P12 nella torre)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid_appoggiate.gd
 
       - name: Le ciambelle tolte dal fiume stanno sulla riva, nel gioco vero
         if: steps.progetto.outputs.presente == 'si'

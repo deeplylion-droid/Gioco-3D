@@ -69,11 +69,24 @@ static func _relitto(sala: SalaSottomarino) -> void:
 	# piastre murate ai lati del fusto coi bulloni, due bracci che vengono avanti lungo i fianchi del fusto e il collare
 	# davanti (misurati sulla mesh vera del fusto)
 	var alta: float = 1.5 * float(ANCORA[2])
+	# (le staffe, il salvagente e il forziere nei passi dopo: tutto il relitto insieme erano 40-50 ms)
+	sala.aggiungi_passi([_relitto_staffe.bind(sala, ancora, alta), _relitto_salvagente.bind(sala, nodo),
+			_relitto_forziere.bind(sala, nodo)])
+
+
+static func _relitto_staffe(sala: SalaSottomarino, ancora: Node3D, alta: float) -> void:
 	for f: float in [0.62, 0.7]:
 		_staffa(sala, ancora, alta * f)
-	# il salvagente del relitto, col suo asse di legno (gancio e cima compresi nel modello) fissato al muro
+
+
+## Il salvagente del relitto, col suo asse di legno (gancio e cima compresi nel modello) fissato al muro.
+static func _relitto_salvagente(sala: SalaSottomarino, nodo: Node3D) -> void:
 	var salv := _contro_il_muro(sala, nodo, "salvagente", SALVAGENTE[0], SALVAGENTE[1], SALVAGENTE[2], 0.0, false)
 	salv.name = "Salvagente"
+
+
+## La mensola del forziere, il forziere e il suo faretto.
+static func _relitto_forziere(sala: SalaSottomarino, nodo: Node3D) -> void:
 	var men_f := _mensola(sala, nodo, FORZIERE[0], FORZIERE[1], 0.9, 0.454 * float(FORZIERE[2]) + DAL_MURO + 0.08)
 	var forziere := _contro_il_muro(sala, nodo, "forziere", FORZIERE[0], FORZIERE[1], FORZIERE[2], 0.0, true)
 	forziere.name = "Forziere"

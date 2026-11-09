@@ -724,10 +724,12 @@ func _polaroid() -> void:
 	# Appoggiata sul sedile, lungo la stecca: con lo snap (raggio dall'alto) finiva in cima allo schienale,
 	# o 5 cm sopra il sedile se il lettino non era ancora costruito (tests/polaroid_libere.gd).
 	foto.set(&"snap_to_surface", false)
+	foto.set(&"ferma", true)
 	add_child(foto)
-	# il fondo mezzo millimetro sopra la stecca più alta sotto la foto (a -11,670; collaudo del 23 ottobre: a +1 cm
-	# restava 8 mm sopra il sedile, posata sul doppione di sotto)
-	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.0023, 0)
+	# il fondo 0,2 mm sopra la stecca più alta sotto la foto (a -11,670; collaudo del 23 ottobre: a +1 cm restava 8 mm
+	# sopra il sedile, posata sul doppione di sotto; con +2,3 mm il fondo restava a 1,03 mm, collaudo di grafica del 9
+	# novembre, test_polaroid_appoggiate)
+	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.00147, 0)
 	foto.global_rotation = Vector3(0.0, PI * 0.5, 0.0)
 	# la Polaroid ferma del modello (torre_a.py, per i render) è un doppione sotto quella vera: copriva quella da
 	# raccogliere e la teneva staccata dal lettino
@@ -739,7 +741,8 @@ func _polaroid() -> void:
 	# (sul grigliato: l'altezza sulle barre, sotto tutta la foto, è calcolata una volta da tests/posa_polaroid12.gd; a
 	# gioco avviato i raggi mentre la torre si costruisce facevano fotogrammi da 130 ms, test_attesa_zone del 29 ottobre)
 	var p12 := b([22.1, 13.95, 0.0])
-	p12.y = -0.0063
+	# (con -0,0063 il fondo restava a 3,4 mm dalle barre: collaudo di grafica del 9 novembre, test_polaroid_appoggiate)
+	p12.y = -0.0095
 	PolaroidPhoto.metti(self, 12, p12, 30.0, true)
 
 
@@ -1701,12 +1704,16 @@ func _raggio_fisica(da: Vector3, a: Vector3, maschera: int = Layers.WORLD) -> Di
 		return h
 	var meglio := INF if h.is_empty() else da.distance_to(h.position as Vector3)
 	var segmento := AABB(da, Vector3.ZERO).expand(a).grow(0.01)
-	# (le forme della torre una volta per fotogramma: i passi coi led ne fanno decine di raggi)
-	if _forme_fotogramma != Engine.get_process_frames():
-		_forme_fotogramma = Engine.get_process_frames()
+	# (l'elenco delle forme della torre si rifà solo quando ne entra una nuova: i passi coi led ne fanno decine di raggi.
+	# Prima si rifaceva una volta per fotogramma, e le forme messe da un passo dopo il primo raggio del fotogramma
+	# restavano fuori fino al fotogramma dopo)
+	if _forme_sporche:
+		if not get_tree().node_added.is_connected(_forma_aggiunta):
+			get_tree().node_added.connect(_forma_aggiunta)
 		_forme_lista = find_children("*", "CollisionShape3D", true, false)
+		_forme_sporche = false
 	for cs in _forme_lista:
-		if not is_instance_valid(cs):
+		if not is_instance_valid(cs) or not (cs as Node).is_inside_tree():
 			continue
 		var f := cs as CollisionShape3D
 		var corpo := f.get_parent() as CollisionObject3D
@@ -1733,7 +1740,12 @@ func _raggio_fisica(da: Vector3, a: Vector3, maschera: int = Layers.WORLD) -> Di
 ## [TriangleMesh, riquadro] delle facce di una forma di collisione (in cache per forma).
 var _forme_tm := {}
 var _forme_lista: Array = []
-var _forme_fotogramma := -1
+var _forme_sporche := true
+
+
+func _forma_aggiunta(n: Node) -> void:
+	if n is CollisionShape3D:
+		_forme_sporche = true
 
 
 func _forma_triangoli(forma: Shape3D) -> Array:
