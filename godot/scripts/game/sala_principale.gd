@@ -531,6 +531,30 @@ func _carica_torre() -> void:
 			_aggiungi_torre(load(sala_torre_scena) as PackedScene)
 
 
+## La scena della torre e i file che la torre e l'inseguimento caricano costruendosi.
+func _percorsi_torre() -> Array:
+	return [sala_torre_scena] + SalaInseguimento.risorse() + SalaTorre.risorse()
+
+
+## Proposta D della sonda dei load (scelta del coordinatore del 9 novembre): uscendo dalla sala con la torre ancora
+## dentro (una morte o una ripartenza nella torre o nelle condotte), la torre e i file dell'inseguimento già in memoria
+## restano tenuti (GameState.tieni) anche se sono arrivati senza il thread (partenze F9, ripartenze da un checkpoint
+## della torre): la sala nuova li trova in cache, ripartenze da 1,5-1,9 s a 1,0-1,5 s, la stessa memoria (picco 2042 MB).
+## Entrando nel tunnel si lasciano (_libera_torre, _ripristina_sottomarino): lì tenuti costavano 473 MB.
+func _tieni_torre() -> void:
+	if _torre_liberata or sala_torre == null or sala_torre_scena == "":
+		return
+	for r in _percorsi_torre():
+		if ResourceLoader.has_cached(r) and GameState.tenuta(r) == null:
+			GameState.tieni(r, load(r))
+
+
+func _exit_tree() -> void:
+	# (non tornando al titolo, che le ha appena lasciate con GameState.reset_progress, e non uscendo dal gioco)
+	if not Game.tornando_al_titolo and not Game.uscendo:
+		_tieni_torre()
+
+
 ## Comincia a caricare la torre in un thread, senza metterla ancora nella sala.
 func _precarica_torre() -> void:
 	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "" or Game.uscendo or _torre_liberata:
@@ -1121,6 +1145,7 @@ func _libera_torre() -> void:
 	if _torre_liberata:
 		return
 	_torre_liberata = true
+	GameState.lascia(_percorsi_torre())
 	if sala_sottomarino:
 		sala_sottomarino.call(&"chiudi_porta_bacino")
 	if sala_torre and is_instance_valid(sala_torre):
@@ -1131,6 +1156,7 @@ func _libera_torre() -> void:
 ## Ripartenza da un checkpoint del tunnel: solo il tunnel (costruito tutto), lei dietro, gli ambienti di prima via.
 func _ripristina_sottomarino() -> void:
 	_torre_liberata = true
+	GameState.lascia(_percorsi_torre())
 	_dentro_torre = true
 	if portone and portone.has_method(&"resta_chiuso"):
 		portone.call(&"resta_chiuso")

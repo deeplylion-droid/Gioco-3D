@@ -89,6 +89,12 @@ func tieni(percorso: String, risorsa: Resource) -> void:
 		_tenute[percorso] = risorsa
 
 
+## Lascia andare le risorse tenute per [param percorsi] (la torre e l'inseguimento, entrando nel tunnel).
+func lascia(percorsi: Array) -> void:
+	for p in percorsi:
+		_tenute.erase(String(p))
+
+
 ## La risorsa tenuta per [param percorso], o null.
 func tenuta(percorso: String) -> Resource:
 	return _tenute.get(percorso)
