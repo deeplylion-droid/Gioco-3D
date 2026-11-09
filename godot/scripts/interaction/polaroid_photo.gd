@@ -43,6 +43,56 @@ func _ready() -> void:
 	super()
 	if snap_to_surface:
 		_snap.call_deferred()
+	elif not _da_appoggiare and not ferma:
+		# messa ferma (nella scena): solo il fondo a filo, quando la sua zona c'è
+		_adagia_dopo.call_deferred()
+
+
+## Vero per quelle messe da codice già al posto giusto, col fondo a filo calcolato una volta (la P10 e la P12 della
+## torre, test_polaroid_appoggiate): niente raggi a gioco avviato, e lo stesso posto dal portone (torre nascosta) e da F9.
+var ferma := false
+
+
+## Vero per quelle messe da [method metti] che Posa appoggia ([method _appoggia] le adagia alla fine).
+var _da_appoggiare := false
+
+
+## Il fondo a filo per una foto messa ferma: dopo che la sua zona è costruita (anche nascosta: le sue mesh si guardano lo
+## stesso), qualche fotogramma di fisica dopo (lo sportello della P02 la mette lui) e una foto per fotogramma.
+func _adagia_dopo() -> void:
+	var radice := await _aspetta_zona()
+	if not is_inside_tree():
+		return
+	if not await _aspetta(4, true) or not await _aspetta(photo):
+		return
+	adagia(radice)
+
+
+## Aspetta [param quanti] fotogrammi (di fisica con [param fisica]); falso se intanto la foto è uscita dalla scena (la
+## sua zona tolta a metà della preparazione).
+func _aspetta(quanti: int, fisica := false) -> bool:
+	for i in quanti:
+		if not is_inside_tree():
+			return false
+		if fisica:
+			await get_tree().physics_frame
+		else:
+			await get_tree().process_frame
+	return is_inside_tree()
+
+
+## Aspetta che le zone che la contengono siano costruite; torna la più vicina (null se nessuna).
+func _aspetta_zona() -> Node:
+	var radice: Node = null
+	var n := get_parent()
+	while n and is_inside_tree():
+		if &"costruita" in n:
+			while not bool(n.get(&"costruita")) and is_inside_tree():
+				await get_tree().process_frame
+			if radice == null:
+				radice = n
+		n = n.get_parent()
+	return radice
 
 
 ## Una Polaroid messa da codice sotto [param padre]: [param pos] (locale, appena sopra il sostegno) e girata di
@@ -56,6 +106,8 @@ static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float, posata :
 	p.photo = foto
 	p.entry_id = StringName("p%02d" % foto)
 	p.snap_to_surface = false
+	p._da_appoggiare = not posata
+	p.ferma = posata
 	p.position = pos
 	p.rotation_degrees.y = gradi
 	padre.add_child(p)
@@ -66,27 +118,160 @@ static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float, posata :
 
 func _appoggia() -> void:
 	# (nelle stanze costruite a pezzi mentre si gioca, come il fiume, il pavimento può arrivare dopo: si aspetta la fine)
-	var n := get_parent()
-	while n:
-		while &"costruita" in n and not bool(n.get(&"costruita")) and is_inside_tree():
-			await get_tree().process_frame
-		n = n.get_parent()
-	if not is_inside_tree():
+	var radice := await _aspetta_zona()
+	if not await _aspetta(2, true):
 		return
-	await get_tree().physics_frame
-	await get_tree().physics_frame
 	# (il fiume caricato a gioco avviato entra nella scena prima del suo pavimento: si riprova finché c'è, al massimo
-	# 20 secondi, poi Posa dice che non c'è niente sotto)
-	for i in 120:
+	# 20 secondi, poi Posa dice che non c'è niente sotto. I 20 secondi contano solo con la stanza accesa: costruita
+	# nascosta e ferma, come il fiume, i suoi corpi sono fuori dalla fisica e le sue mesh nascoste, quindi si aspetta
+	# senza limite che AccensioneAPezzi la riaccenda; prima, ferma più di 20 s, la foto non trovava niente sotto)
+	var i := 0
+	while i < 120:
 		if not is_inside_tree():
 			return
+		if not can_process():
+			await get_tree().create_timer(0.17, false, true).timeout
+			continue
+		i += 1
 		var da := global_position + Vector3.UP * 0.05
 		var q := PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * Posa.PORTATA, Posa.STRATI)
 		if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():
 			break
 		await get_tree().create_timer(0.17, false, true).timeout
-	if is_inside_tree():
-		Posa.appoggia_a_terra(self, 0.004)
+	if is_inside_tree() and Posa.appoggia_a_terra(self, 0.004):
+		if await _aspetta(photo):
+			adagia(radice)
+
+
+## Il fondo della foto a [constant AGIO] dalla superficie sotto, nel punto più vicino, e nessun punto dentro. Prima
+## l'origine stava 4 mm sopra il pavimento, e il fondo della foto (quasi piatta, da 0,1 a 0,8 mm sotto l'origine)
+## restava 3,2-3,9 mm sollevato: di lato, radente, si vedeva uno spicchio scuro sotto il bordo (collaudo di grafica del
+## 9 novembre, docs/collaudo/polaroid_fiume). In ognuno dei punti di [constant SOTTO] il fondo vero della foto (dalla sua
+## mesh) e la superficie che si vede sotto (Posa, raggio dall'alto in basso): la foto sale o scende di quanto serve
+## perché il più vicino sia ad AGIO. Su un fondo curvo (la conca dello scarico) tocca coi bordi e resta staccata in mezzo.
+## [param radice]: la zona in cui sta, se si costruisce nascosta (le sue mesh si guardano lo stesso: Posa.mesh_vicine).
+## Se la superficie sotto è un piano un po' inclinato rispetto alla foto (il fondo della piscina, collaudo di grafica: la
+## P05 e la P08 toccavano da un lato e restavano a 6-10 mm dall'altro), la foto prima si gira come lui; su stecche,
+## grigliati e feritoie (non un piano) resta com'è e tocca coi punti più alti.
+func adagia(radice: Node = null) -> void:
+	if not is_inside_tree():
+		return
+	var mesh := find_children("*", "MeshInstance3D", true, false)
+	if mesh.is_empty():
+		return
+	var zona := AABB(global_position, Vector3.ZERO).grow(0.08)
+	zona = zona.expand(global_position - global_basis.y.normalized() * 0.35)
+	var vicine := Posa.mesh_vicine(self, zona, radice)
+	var misure := _distanze(mesh, vicine)
+	if misure.size() >= 6:
+		var n_l = _piano(misure)
+		if n_l != null:
+			var su := global_basis.y.normalized()
+			var n_w := (global_basis * (n_l as Vector3)).normalized()
+			global_basis = Basis(Quaternion(su, n_w)) * global_basis
+			misure = _distanze(mesh, vicine)
+	var minimo := INF
+	for m in misure:
+		minimo = minf(minimo, float(m[2]))
+	if minimo < INF and absf(minimo - AGIO) < 0.05:
+		global_position += global_basis.y.normalized() * (AGIO - minimo)
+
+
+## [x, z, distanza, altezza della superficie sopra l'origine della foto] in ogni punto di [constant SOTTO]: dal fondo vero della foto alla superficie sotto, lungo il -y della
+## foto (giù per quelle appoggiate, il muro per quelle appese).
+func _distanze(mesh: Array, vicine: Array) -> Array:
+	var out: Array = []
+	var su := global_basis.y.normalized()
+	for pl: Vector3 in SOTTO:
+		var fondo = _fondo_in(pl, mesh)
+		if fondo == null:
+			continue
+		var w: Vector3 = fondo
+		var h := Posa._raggio(self, w + su * 0.03, w - su * 0.3, [], vicine)
+		if not h.is_empty():
+			out.append([pl.x, pl.z, (w - (h.position as Vector3)).dot(su), ((h.position as Vector3) - global_position).dot(su)])
+	return out
+
+
+## La normale (in coordinate della foto) del piano della superficie sotto, se le altezze della superficie in [param misure]
+## stanno su un piano (scarto al più 2 mm) inclinato di più di mezzo grado e meno di 25 gradi rispetto alla foto; se no
+## null. (Dalla superficie sola: con le distanze contava anche la curva del fondo della foto, e sui pavimenti piani la
+## girava di un grado.)
+static func _piano(misure: Array) -> Variant:
+	# minimi quadrati di d = a x + b z + c, con d = -altezza della superficie
+	var sxx := 0.0
+	var szz := 0.0
+	var sxz := 0.0
+	var sx := 0.0
+	var sz := 0.0
+	var sd := 0.0
+	var sxd := 0.0
+	var szd := 0.0
+	var n := float(misure.size())
+	for m in misure:
+		var x: float = m[0]
+		var z: float = m[1]
+		var d: float = -float(m[3])
+		sxx += x * x
+		szz += z * z
+		sxz += x * z
+		sx += x
+		sz += z
+		sd += d
+		sxd += x * d
+		szd += z * d
+	var mat := Basis(Vector3(sxx, sxz, sx), Vector3(sxz, szz, sz), Vector3(sx, sz, n))
+	if absf(mat.determinant()) < 1e-12:
+		return null
+	var abc := mat.inverse() * Vector3(sxd, szd, sd)
+	var scarto := 0.0
+	for m in misure:
+		scarto = maxf(scarto, absf(-float(m[3]) - (abc.x * float(m[0]) + abc.y * float(m[1]) + abc.z)))
+	# (la superficie, rispetto al fondo della foto, sta a -d: il piano y = -a x - b z, normale (a, 1, b))
+	var normale := Vector3(abc.x, 1.0, abc.y).normalized()
+	var angolo := rad_to_deg(normale.angle_to(Vector3.UP))
+	if scarto > 0.002 or angolo < 0.5 or angolo > 25.0:
+		return null
+	return normale
+
+
+## Quanto resta fra il fondo della foto e la superficie sotto, nel punto più vicino (m).
+const AGIO := 0.0002
+## I punti sotto la foto (8,8 x 10,7 cm) dove si guarda il fondo: una griglia di 5 x 5, dagli angoli appena dentro il
+## bordo al centro.
+## (una costante: una static var calcolata da una funzione girerebbe quando la classe si carica, anche nel thread
+## di caricamento, tools/ci/morbidezza_operatori.py)
+const SOTTO: Array[Vector3] = [
+	Vector3(-0.042, 0, -0.051), Vector3(-0.042, 0, -0.0255), Vector3(-0.042, 0, 0.0), Vector3(-0.042, 0, 0.0255), Vector3(-0.042, 0, 0.051),
+	Vector3(-0.021, 0, -0.051), Vector3(-0.021, 0, -0.0255), Vector3(-0.021, 0, 0.0), Vector3(-0.021, 0, 0.0255), Vector3(-0.021, 0, 0.051),
+	Vector3(0.0, 0, -0.051), Vector3(0.0, 0, -0.0255), Vector3(0.0, 0, 0.0), Vector3(0.0, 0, 0.0255), Vector3(0.0, 0, 0.051),
+	Vector3(0.021, 0, -0.051), Vector3(0.021, 0, -0.0255), Vector3(0.021, 0, 0.0), Vector3(0.021, 0, 0.0255), Vector3(0.021, 0, 0.051),
+	Vector3(0.042, 0, -0.051), Vector3(0.042, 0, -0.0255), Vector3(0.042, 0, 0.0), Vector3(0.042, 0, 0.0255), Vector3(0.042, 0, 0.051),
+]
+
+
+## Il punto del fondo della foto sotto [param pl] (in coordinate della foto, y ignorata), in coordinate del mondo: la
+## faccia più bassa della sua mesh lungo la verticale della foto. null se lì la mesh non c'è.
+func _fondo_in(pl: Vector3, mesh: Array) -> Variant:
+	var meglio: Variant = null
+	for n in mesh:
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var tm := Posa._triangoli_di(mi.mesh)
+		if tm == null:
+			continue
+		var inv := mi.global_transform.affine_inverse()
+		var da := inv * (global_transform * Vector3(pl.x, -0.02, pl.z))
+		var a := inv * (global_transform * Vector3(pl.x, 0.02, pl.z))
+		# (intersect_ray: con intersect_segment, su questi 4 cm, la mesh della foto non dava niente)
+		var r := tm.intersect_ray(da, (a - da).normalized())
+		if r.is_empty() or (r.position as Vector3).distance_to(da) > da.distance_to(a):
+			continue
+		var w: Vector3 = mi.global_transform * (r.position as Vector3)
+		if meglio == null or w.y < (meglio as Vector3).y:
+			meglio = w
+	return meglio
 
 
 func get_texture() -> Texture2D:
@@ -158,9 +343,7 @@ static func _back_material() -> StandardMaterial3D:
 
 
 func _snap() -> void:
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	if not is_inside_tree():
+	if not await _aspetta(2, true):
 		return
 	var space := get_world_3d().direct_space_state
 	var from := global_position + Vector3(0, 0.6, 0)
@@ -177,16 +360,12 @@ func _snap() -> void:
 	else:
 		n = Vector3.UP
 	global_position = hit.position + n * 0.004
-	# Su un fondo curvo (la conca dello scarico) la pendenza del centro non basta: se un angolo entra, si alza
-	# quanto serve (controllo di posizionamento del 22 ottobre, Polaroid05).
-	var alza := 0.0
-	for a in [Vector3(0.07, 0, 0.07), Vector3(-0.07, 0, 0.07), Vector3(0.07, 0, -0.07), Vector3(-0.07, 0, -0.07)]:
-		var angolo: Vector3 = global_transform * (a as Vector3)
-		var qa := PhysicsRayQueryParameters3D.create(angolo + Vector3(0, 0.3, 0), angolo + Vector3(0, -0.3, 0), Layers.WORLD | Layers.PROPS)
-		var ha: Dictionary = RaggioSicuro.interseca(space, qa)
-		if not ha.is_empty():
-			alza = maxf(alza, (ha.position as Vector3).y + 0.002 - angolo.y)
-	global_position.y += alza
+	# Poi il fondo vero a filo della superficie, guardando sotto tutta la foto: su un fondo curvo (la conca dello scarico,
+	# Polaroid05, controllo di posizionamento del 22 ottobre) la pendenza del centro non basta e tocca coi bordi. Prima si
+	# guardavano 4 punti a 7 cm dal centro, fuori dalla foto, e la P05 e la P08 restavano a 7-8 mm. (Una foto per
+	# fotogramma: Posa.mesh_vicine guarda tutto l'albero, qualche ms.)
+	if await _aspetta(photo):
+		adagia()
 
 
 func _on_interact(by: Node) -> void:
