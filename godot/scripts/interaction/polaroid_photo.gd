@@ -43,9 +43,14 @@ func _ready() -> void:
 	super()
 	if snap_to_surface:
 		_snap.call_deferred()
-	elif not _da_appoggiare:
-		# messa ferma (nella scena, o da codice al posto giusto): solo il fondo a filo, quando la sua zona c'è
+	elif not _da_appoggiare and not ferma:
+		# messa ferma (nella scena): solo il fondo a filo, quando la sua zona c'è
 		_adagia_dopo.call_deferred()
+
+
+## Vero per quelle messe da codice già al posto giusto, col fondo a filo calcolato una volta (la P10 e la P12 della
+## torre, test_polaroid_appoggiate): niente raggi a gioco avviato, e lo stesso posto dal portone (torre nascosta) e da F9.
+var ferma := false
 
 
 ## Vero per quelle messe da [method metti] che Posa appoggia ([method _appoggia] le adagia alla fine).
@@ -102,6 +107,7 @@ static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float, posata :
 	p.entry_id = StringName("p%02d" % foto)
 	p.snap_to_surface = false
 	p._da_appoggiare = not posata
+	p.ferma = posata
 	p.position = pos
 	p.rotation_degrees.y = gradi
 	padre.add_child(p)
