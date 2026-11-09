@@ -1,5 +1,9 @@
 # Ricontrollo del guanto per la 0.3.23 (enigmi, 8 novembre)
 
+> **Nota del 9 novembre.** Qui alcune misure dell'indice e del mignolo erano prese a quote sbagliate (indice a y -0,196
+> invece di -0,202). Sono rifatte alle quote vere in `terzo_5325f596/LEGGIMI.md`, sezione «Correzioni»: il «bordo alto a
+> 2-3,6 mm» era un errore dello strumento, la base era a 4,3-13,3 mm, il mignolo a 2,15 mm.
+
 - Base `lavoro/guanto` `98ded0d2` di ambienti-1, già unito con main `e3104cd2`.
 - Lo stesso giro del collaudo della 0.3.22 (`lavoro/collaudo-0322-guanto` `d567a73d`), con lo stesso strumento.
 - Per confronto, il modello di prima (`efed85b1`) nelle stesse viste.

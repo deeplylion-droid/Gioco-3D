@@ -12,8 +12,7 @@ extends Node
 ##  - scene: la morte (camera che cade), la presa di lei (camera tirata verso il suo viso), la ripartenza: fotogrammi dalla
 ##    camera del giocatore e proiezione del guanto.
 ## Uso: xvfb-run -a -s "-screen 0 1920x1080x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##   --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/collaudo_guanto.gd <cartella> \
-##   [occhi,vicino,soglia,scene,punti,aspetto] (CONF="16x9:62,4x3:90" e FOV_SCENE=90 nell'ambiente)
+##   --fixed-fps 60 --script res://tests/run.gd -- <questo> <cartella> [occhi,vicino,scene]
 
 const LEVEL := "res://scenes/test/test_level.tscn"
 const FORMATI := [["16x9", Vector2i(1280, 720)], ["16x10", Vector2i(1280, 800)], ["21x9", Vector2i(1680, 720)], ["4x3", Vector2i(960, 720)]]
@@ -96,6 +95,34 @@ func _trova_guanto() -> void:
 		var f := guanto.mesh.get_faces()
 		for i in range(0, f.size(), 3):
 			_punti.append(f[i])
+
+
+## La maglia del guanto com'è nel motore (dopo l'import), nelle coordinate della lancia (= glTF del guanto): per ogni
+## superficie i vertici (float32 x y z), le normali (x y z) e gli indici (int32), in <cartella>/maglia_motore_<n>.bin
+## con un'intestazione di due int32 (vertici, indici). Le pieghe si misurano poi fuori (pieghe_np.py).
+func _salva_maglia() -> void:
+	if guanto == null:
+		return
+	var rig := p.water_pack.lance_rig as Node3D
+	var xf := rig.global_transform.affine_inverse() * guanto.global_transform
+	for s in guanto.mesh.get_surface_count():
+		var arr := guanto.mesh.surface_get_arrays(s)
+		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var nn: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+		var ii: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
+		var f := FileAccess.open(cart.path_join("maglia_motore_%d.bin" % s), FileAccess.WRITE)
+		f.store_32(v.size())
+		f.store_32(ii.size())
+		for q in v:
+			var w := xf * q
+			f.store_float(w.x); f.store_float(w.y); f.store_float(w.z)
+		for q in nn:
+			var w := (xf.basis * q).normalized()
+			f.store_float(w.x); f.store_float(w.y); f.store_float(w.z)
+		for k in ii:
+			f.store_32(k)
+		f.close()
+		print("MAGLIA: superficie %d (%s), %d vertici, %d triangoli" % [s, guanto.mesh.surface_get_material(s).resource_name if guanto.mesh.surface_get_material(s) else "-", v.size(), ii.size() / 3])
 
 
 func _tutte(n: Node, out: Array) -> void:
@@ -412,6 +439,18 @@ const PUNTI := [
 	["indice_bordo_alto_davanti", Vector3(0.036, -0.194, 0.48), Vector3(0.3, 0.4, -1)],
 	["indice_bordo_alto_sinistra", Vector3(-0.032, -0.194, 0.478), Vector3(-1, 0.4, 0)],
 	["spiraglio_anulare_mignolo", Vector3(0.034, -0.262, 0.463), Vector3(1, 0.1, 0)],
+	# dal terzo ricontrollo (5325f596): alla quota vera del centro dell'indice (y -0,202), dove su 98ded0d2 c'erano 4-13 mm
+	["indice_base_destra_quota_vera", Vector3(0.032, -0.202, 0.503), Vector3(0.9, 0.1, 0.42)],
+	["indice_base_destra_quota_vera_sotto", Vector3(0.032, -0.202, 0.503), Vector3(0.9, -0.35, 0.3)],
+	# il pollice: dov'era la fossetta di 95 gradi, e sopra
+	["pollice_fuori_ex_fossetta", Vector3(-0.061, -0.177, 0.469), Vector3(-1, 0.2, 0)],
+	["pollice_fuori_ex_fossetta_davanti", Vector3(-0.061, -0.177, 0.469), Vector3(-0.6, 0.3, -0.8)],
+	["pollice_sopra", Vector3(-0.012, -0.165, 0.556), Vector3(-0.2, 1, 0.3)],
+	# il mignolo, sotto, ai due angoli davanti dell'impugnatura (1,7 e 2,2 mm in Blender)
+	["mignolo_sotto_sinistra", Vector3(-0.026, -0.275, 0.464), Vector3(-0.73, -0.25, -0.68)],
+	["mignolo_sotto_destra", Vector3(0.031, -0.275, 0.4645), Vector3(0.75, -0.25, -0.66)],
+	# la piega di 126 gradi fra anulare e mignolo, sul dorso
+	["dorso_anulare_mignolo", Vector3(0.026, -0.257, 0.541), Vector3(0.45, 0.1, 0.9)],
 ]
 
 
@@ -600,6 +639,8 @@ func _run() -> void:
 	print("GUANTO: trovato %s (%s), %d punti, colore %s" % [guanto != null, guanto.get_path() if guanto else "-", _punti.size(),
 			(guanto.get_active_material(0) as BaseMaterial3D).albedo_color if guanto and guanto.get_active_material(0) is BaseMaterial3D else "-"])
 	_elenco_mesh()
+	if cosa.contains("maglia"):
+		_salva_maglia()
 	if cosa.contains("punti"):
 		await _punti_vicini()
 	if cosa.contains("aspetto"):

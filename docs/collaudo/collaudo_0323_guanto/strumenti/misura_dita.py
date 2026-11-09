@@ -32,9 +32,14 @@ def distacco(p, n):
     hit = bvh_g.ray_cast(p - n * 0.0003, n, 0.05)
     return (hit[3] - 0.0003) if hit[0] is not None else None
 Y_INDICE, PASSO = -0.196, 0.0255
+# le quote dei centri delle dita: DITA_Y="-0.202,-0.2272,-0.2508,-0.2727" (genera_guanto.py dalla 0.3.23: raggi che calano
+# e dita che si toccano); senza, quelle della 0.3.22 (indice a -0,196, passo 2,55 cm)
+import os
+QUOTE = [float(x) for x in os.environ.get("DITA_Y", "").split(",") if x] or [Y_INDICE - i * PASSO for i in range(4)]
+Y_INDICE = QUOTE[0]
 tot = []
 for i in range(4):
-    gy0 = Y_INDICE - i * PASSO
+    gy0 = QUOTE[i]
     fine = 178 - i * 6
     for dy in (-0.002, 0.0, 0.002):
         ds = []; buchi = 0; peggio = (0, None)
@@ -46,6 +51,9 @@ for i in range(4):
                 buchi += 1; continue
             ds.append(d)
             if d > peggio[0]: peggio = (d, a)
+            if d > 0.001 and os.environ.get("DETTAGLI"):
+                q = b2g(c[0])
+                print("   dito %d, quota %+.0f mm, %d gradi: %.2f mm, impugnatura in glTF (%.4f, %.4f, %.4f)" % (i, dy * 1000, a, d * 1000, q[0], q[1], q[2]))
         ds = np.array(ds); tot += list(ds)
         print("dito %d, quota %+.0f mm: %d punti, distacco medio %.2f mm, massimo %.2f mm (a %s gradi), sopra 1 mm %d, sopra 2 mm %d, senza guanto sopra %d" % (
             i, dy * 1000, len(ds), ds.mean() * 1000, peggio[0] * 1000, peggio[1], (ds > 0.001).sum(), (ds > 0.002).sum(), buchi))

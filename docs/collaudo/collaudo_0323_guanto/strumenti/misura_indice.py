@@ -32,6 +32,11 @@ def distacco(p, n):
     hit = bvh_g.ray_cast(p - n * 0.0003, n, 0.05)
     return (hit[3] - 0.0003) if hit[0] is not None else None
 Y_INDICE, PASSO = -0.196, 0.0255
+# le quote dei centri delle dita: DITA_Y="-0.202,-0.2272,-0.2508,-0.2727" (genera_guanto.py dalla 0.3.23: raggi che calano
+# e dita che si toccano); senza, quelle della 0.3.22 (indice a -0,196, passo 2,55 cm)
+import os
+QUOTE = [float(x) for x in os.environ.get("DITA_Y", "").split(",") if x] or [Y_INDICE - i * PASSO for i in range(4)]
+Y_INDICE = QUOTE[0]
 # il distacco dell'indice (dito 0) a ogni angolo, alle tre quote, e il punto del guanto colpito
 for dy in (-0.002, 0.0, 0.002):
     riga = []
