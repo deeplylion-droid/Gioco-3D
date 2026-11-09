@@ -1,0 +1,82 @@
+TT: inizio, RSS 0 MB, picco 0 MB
+TT: F9 inseguimento: true
+TT: inseguimento: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+TT:   il tunnel entra in scena a 0.13 s
+tunnel passo _pezzo: 23.5 ms
+tunnel passo _pezzo: 23.5 ms
+tunnel passo _pezzo: 22.0 ms
+tunnel passo _pezzo: 20.1 ms
+tunnel passo _pezzo: 20.9 ms
+tunnel passo _fine: 42.2 ms
+tunnel passo _luci: 369.0 ms
+tunnel passo _corallo: 22.9 ms
+tunnel passo _relitto: 60.7 ms
+tunnel passo _palombaro: 28.8 ms
+tunnel passo _tartaruga: 60.0 ms
+tunnel passo _reti: 28.1 ms
+tunnel passo _buco_anello: 45.9 ms
+tunnel passo _buco_anello: 45.5 ms
+tunnel passo _buco_anello: 47.2 ms
+tunnel passo _buco_anello: 52.3 ms
+tunnel passo _buco_anello: 71.5 ms
+tunnel passo _buco_anello: 66.7 ms
+tunnel passo _abisso_lampade: 44.0 ms
+tunnel passo _approdo: 48.2 ms
+tunnel passo _pesci: 59.2 ms
+tunnel passo _pesce_mensola: 33.1 ms
+tunnel passo _pesce_mensola: 24.2 ms
+tunnel passo _pesce_mensola: 21.5 ms
+tunnel passo _pesce_mensola: 23.5 ms
+tunnel passo _pesce_mensola: 23.1 ms
+tunnel passo _pesce_mensola: 22.5 ms
+tunnel passo _abisso_oblo: 85.8 ms
+tunnel passo _galleria: 27.2 ms
+tunnel passo _galleria: 24.2 ms
+TT:   tunnel costruito e pronto a 7.23 s
+TT: inseguimento: la prima costruzione (dall'arrivo a 3 s dopo il tunnel pronto): 10.2 s, fotogrammi 781, il più lungo 385.6 ms, sopra 33 ms 23 ["99.7 ms a 0.15 s", "33.0 ms a 0.29 s", "54.3 ms a 0.71 s", "385.6 ms a 1.10 s", "39.0 ms a 1.13 s", "65.6 ms a 1.46 s", "39.5 ms a 1.50 s", "69.0 ms a 1.57 s", "41.1 ms a 1.61 s", "54.9 ms a 1.67 s", "54.6 ms a 1.72 s", "55.8 ms a 1.78 s", "61.5 ms a 1.84 s", "79.7 ms a 1.92 s", "81.5 ms a 2.00 s", "58.0 ms a 2.06 s", "59.6 ms a 2.12 s", "67.0 ms a 2.
+TT: morte nelle condotte: dalla morte all'arrivo (con la schermata): 8.0 s, fotogrammi 685, il più lungo 655.5 ms, sopra 33 ms 2 ["655.5 ms a 5.66 s", "64.4 ms a 5.73 s"]; RSS 0 MB, picco 0 MB
+TT: dopo la morte nelle condotte: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+tunnel passo _pezzo: 22.7 ms
+TT:   il tunnel entra in scena a 0.14 s
+tunnel passo _pezzo: 20.1 ms
+tunnel passo _fine: 42.3 ms
+tunnel passo _luci: 421.6 ms
+tunnel passo _corallo: 31.1 ms
+tunnel passo _corallo: 26.4 ms
+tunnel passo _corallo: 24.7 ms
+tunnel passo _corallo: 25.3 ms
+tunnel passo _relitto: 40.3 ms
+tunnel passo _tartaruga: 35.4 ms
+tunnel passo _reti: 33.3 ms
+tunnel passo _buco_anello: 56.3 ms
+tunnel passo _buco_anello: 49.1 ms
+tunnel passo _buco_anello: 48.3 ms
+tunnel passo _buco_anello: 46.9 ms
+tunnel passo _buco_anello: 49.8 ms
+tunnel passo _buco_anello: 41.7 ms
+tunnel passo _abisso_lampade: 48.8 ms
+tunnel passo _approdo: 40.6 ms
+tunnel passo _pesci: 59.5 ms
+tunnel passo _pesce_mensola: 25.2 ms
+tunnel passo _pesce_mensola: 21.0 ms
+tunnel passo _pesce_mensola: 21.8 ms
+tunnel passo _pesce_mensola: 23.5 ms
+tunnel passo _pesce_mensola: 23.6 ms
+tunnel passo _pesce_mensola: 24.1 ms
+tunnel passo _pesce_mensola: 20.8 ms
+tunnel passo _pesce_mensola: 22.1 ms
+tunnel passo _abisso_oblo: 80.0 ms
+tunnel passo _galleria: 24.4 ms
+tunnel passo _galleria: 27.4 ms
+TT:   tunnel costruito e pronto a 7.18 s
+TT: inseguimento: la seconda costruzione, dopo la morte nelle condotte: 10.2 s, fotogrammi 789, il più lungo 444.9 ms, sopra 33 ms 24 ["98.0 ms a 0.16 s", "58.6 ms a 0.68 s", "444.9 ms a 1.13 s", "48.9 ms a 1.17 s", "36.9 ms a 1.21 s", "33.1 ms a 1.24 s", "36.1 ms a 1.28 s", "45.7 ms a 1.56 s", "42.9 ms a 1.62 s", "43.2 ms a 1.67 s", "66.8 ms a 1.73 s", "58.8 ms a 1.79 s", "57.0 ms a 1.85 s", "56.0 ms a 1.90 s", "57.8 ms a 1.96 s", "49.9 ms a 2.01 s", "60.2 ms a 2.07 s", "51.8 ms a 2.12 s", "68
+TT: inseguimento: l'ingresso nel tunnel (sb1_finito, +4 s): 4.0 s, fotogrammi 545, il più lungo 17.7 ms, sopra 33 ms 0 []; RSS 0 MB, picco 0 MB
+TT: F9 tunnel: true
+TT: tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s nel tunnel (F9): 5.0 s, fotogrammi 445, il più lungo 1626.6 ms, sopra 33 ms 2 ["48.8 ms a 0.12 s", "1626.6 ms a 3.46 s"]; RSS 0 MB, picco 0 MB
+TT: morte nel tunnel: dalla morte all'arrivo (con la schermata): 9.0 s, fotogrammi 666, il più lungo 431.1 ms, sopra 33 ms 2 ["431.1 ms a 5.43 s", "46.4 ms a 5.48 s"]; RSS 0 MB, picco 0 MB
+TT: dopo la morte nel tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s dopo la ripartenza nel tunnel: 5.0 s, fotogrammi 432, il più lungo 1846.5 ms, sopra 33 ms 2 ["49.9 ms a 0.15 s", "1846.5 ms a 3.69 s"]; RSS 0 MB, picco 0 MB
+TT: tunnel dopo la morte: costruito true
+TT: fine, RSS 0 MB, picco 0 MB
+TT: finito

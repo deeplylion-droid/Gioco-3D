@@ -1,0 +1,41 @@
+TT: inizio, RSS 327 MB, picco 327 MB
+TT: F9 torre: true
+TT: torre: arrivato true, giocatore a (21.4, -0.01, -15.0), checkpoint SalaTorre/Checkpoint_portone
+tunnel passo _pezzo: 24.9 ms
+TT:   il tunnel entra in scena a 0.15 s
+tunnel passo _pezzo: 21.5 ms
+tunnel passo _pezzo: 21.5 ms
+tunnel passo _pezzo: 20.4 ms
+tunnel passo _pezzo: 24.4 ms
+tunnel passo _pezzo: 26.4 ms
+tunnel passo _corallo: 20.3 ms
+tunnel passo _corallo: 22.3 ms
+tunnel passo _corallo: 20.1 ms
+tunnel passo _relitto_staffe: 27.6 ms
+tunnel passo _relitto_forziere: 21.5 ms
+tunnel passo _tartaruga: 24.8 ms
+tunnel passo _buco_anello: 28.4 ms
+tunnel passo _salvagente: 21.4 ms
+TT:   tunnel costruito e pronto a 6.03 s
+TT: torre: dall'arrivo nella torre al tunnel pronto, +3 s: 9.0 s, fotogrammi 867, il più lungo 94.5 ms, sopra 33 ms 4 ["94.5 ms a 0.17 s", "34.1 ms a 0.32 s", "34.2 ms a 1.55 s", "75.0 ms a 6.01 s"]; RSS 2236 MB, picco 2236 MB
+tunnel passo _pezzo: 22.0 ms
+TT:   il tunnel entra in scena a 1.49 s
+tunnel passo _pezzo: 20.9 ms
+tunnel passo _pezzo: 21.9 ms
+tunnel passo _pezzo: 24.7 ms
+tunnel passo _corallo: 29.8 ms
+tunnel passo _corallo: 28.9 ms
+tunnel passo _corallo: 32.8 ms
+tunnel passo _corallo: 24.6 ms
+tunnel passo _corallo: 24.1 ms
+tunnel passo _corallo: 23.2 ms
+tunnel passo _corallo: 21.7 ms
+tunnel passo _corallo: 20.5 ms
+tunnel passo _corallo: 21.7 ms
+tunnel passo _corallo: 20.6 ms
+tunnel passo _relitto_forziere: 30.0 ms
+tunnel passo _palombaro: 27.1 ms
+TT:   tunnel costruito e pronto a 7.98 s
+TT: portone: dall'enigma alla torre e al tunnel pronto, +3 s: 11.0 s, fotogrammi 975, il più lungo 69.1 ms, sopra 33 ms 22 ["62.6 ms a 0.55 s", "39.1 ms a 0.62 s", "37.0 ms a 0.87 s", "34.1 ms a 1.00 s", "36.3 ms a 1.06 s", "35.0 ms a 1.13 s", "63.3 ms a 1.51 s", "35.1 ms a 1.72 s", "34.5 ms a 1.79 s", "36.4 ms a 1.82 s", "35.5 ms a 1.92 s", "38.0 ms a 1.96 s", "43.3 ms a 2.00 s", "44.4 ms a 2.05 s", "34.7 ms a 2.17 s", "34.3 ms a 2.21 s", "37.2 ms a 2.54 s", "35.0 ms a 2.57 s", "40.5 ms a 2.61
+TT: fine, RSS 3000 MB, picco 3000 MB
+TT: finito

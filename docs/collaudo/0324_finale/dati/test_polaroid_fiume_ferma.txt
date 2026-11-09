@@ -1,0 +1,9 @@
+  ok    la P16 c'è
+    P16 in (-40.55, 0.0008, 2.55), fondo a 0.20 mm dal pavimento
+  ok    appoggiata: il fondo a 0.20 mm dal pavimento, 0 punti dentro
+  ok    da ferma la P16 non si è mossa (aspetta la stanza accesa)
+  ok    la P16 c'è
+    P16 in (-40.55, 0.0008, 2.55), fondo a 0.20 mm dal pavimento
+  ok    appoggiata: il fondo a 0.20 mm dal pavimento, 0 punti dentro
+  ok    nello stesso posto di quando il fiume si costruisce acceso (0.00 mm)
+RISULTATO: 6 controlli ok, 0 falliti

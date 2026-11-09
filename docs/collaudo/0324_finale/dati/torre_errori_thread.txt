@@ -1,0 +1,71 @@
+## c24/sonda_thread_dummy.log
+ST: renderer vulkan, giri 6
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 12, "in corso": 11 }; in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.t
+ST: giro 1: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 2: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 3: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 4: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 5: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giri con errori all'instantiate: 0 su 6
+ST: finito
+## c24/sonda_thread_vulkan.log
+ST: renderer vulkan, giri 6
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 16, "in corso": 7 }; in corso ["bambino_agnello.tscn", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 1: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 2: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 3: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 4: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 5: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giri con errori all'instantiate: 0 su 6
+ST: finito
+## c24/main_sonda_1.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 11, "in corso": 12 }; in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno"
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## c24/main_sonda_2.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 11, "in corso": 12 }; in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno"
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## c24/main_sonda_3.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 11, "in corso": 12 }; in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno"
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## c24/main_sonda_4.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 12, "in corso": 11 }; in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.t
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## c24/cand_sonda_1.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 12, "in corso": 11 }; in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.t
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## c24/cand_sonda_2.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 12, "in corso": 11 }; in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.t
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## c24/cand_sonda_3.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 12, "in corso": 11 }; in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.t
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## c24/cand_sonda_4.log
+ST: renderer vulkan, giri 1
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 11, "in corso": 12 }; in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno"
+ST: giri con errori all'instantiate: 0 su 1
+ST: finito
+## test_torre (RID, m null)
+c24/test_torre.log: ERROR 20, RID 1, m null 4
+c24/test_torre_2.log: ERROR 14, RID 0, m null 0
+c24/test_torre_3.log: ERROR 14, RID 0, m null 0
+c24/main_test_torre.log: ERROR 14, RID 0, m null 0
+c24/main_test_torre_2.log: ERROR 14, RID 0, m null 0
+  ok       e la torre torna sui suoi strati
+ERROR: Initializing already initialized RID
+   at: get_or_null (./core/templates/rid_owner.h:236)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/test_torre.gd:64)

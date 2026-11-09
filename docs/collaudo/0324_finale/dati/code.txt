@@ -1,0 +1,363 @@
+
+## q1.out
+== fb33bd56 Candidata 0.3.24: versione 0.3.24 e note 
+== check_scripts 0; CHECK: 0 errori 
+== test_polaroid_appoggiate 0; RISULTATO: 19 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+== test_polaroid_fiume_ferma 0; RISULTATO: 6 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0; Invalid Task 0
+== test_polaroid 0; RISULTATO: 5 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11; Invalid Task 0
+== test_squalo_schermo 0; RISULTATO: 7 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+== test_tunnel_involucri_uscita 0; RISULTATO: 2 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0; Invalid Task 0
+== test_inseguimento 0; RISULTATO: 43 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0; Invalid Task 0
+== test_attesa_zone 0; RISULTATO: 6 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11; Invalid Task 0
+== test_torre 0; RISULTATO: 95 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 20; Invalid Task 0
+== test_lampade_torre_strade 0; RISULTATO: 22 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+== test_posizioni_tunnel 0; RISULTATO: 4 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0; Invalid Task 0
+== test_forme_tunnel 0; RISULTATO: 28 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0; Invalid Task 0
+== test_lei_tunnel_strada 0; RISULTATO: 4 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0; Invalid Task 0
+== test_continua 0; RISULTATO: 127 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 16; Invalid Task 0
+== test_partenze_prova 0; RISULTATO: 74 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+== sonda_nodi_gioco_1 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+NODI SalaSottomarino: 2844 nodi, md5 3abdaaa5728f0e4060947ec01370bcf7 (ordine e43fc815af471132ec108ce7be44424d) -> /home/user/collaudo_log/c24/nodi_1_tunnel.txt
+NODI SalaTorre: 1132 nodi, md5 8f3391f6c0eaab395154a91ec528b5ab (ordine cbdfaa47d076be26ee86604529dac55a) -> /home/user/collaudo_log/c24/nodi_1_torre.txt
+NODI: FINE dopo 19.8 s
+== thread_titolo_0 0; THREAD 26.12 s: RISULTATO titolo dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+THREAD 8.84 s: ADESSO titolo (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true)
+THREAD 26.12 s: RISULTATO titolo dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo
+== thread_esci_0 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+THREAD 8.65 s: ADESSO esci (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true)
+== thread_morte_0 0; THREAD 23.37 s: RISULTATO morte dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+THREAD 9.02 s: ADESSO morte (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true)
+THREAD 23.37 s: RISULTATO morte dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo
+== thread_titolo_meta 0; THREAD 26.00 s: RISULTATO titolo dopo meta: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+THREAD 10.23 s: ADESSO titolo (compiti 0 (finiti 0), costruendo true, costruita false, passi rimasti 76, nell'albero true)
+THREAD 26.00 s: RISULTATO titolo dopo meta: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo
+== controllo_posizionamento 0; RISULTATO: 2 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 129; Invalid Task 0
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+Q1 FINITO 20:25
+
+## qd.out
+== test_torre_2 0; RISULTATO: 95 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 14; RID 0; m null 0
+== test_torre_3 0; RISULTATO: 95 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 14; RID 0; m null 0
+QD FINITO
+
+## qs.out
+== fb33bd56 Candidata 0.3.24: versione 0.3.
+== SINTASSI: res://tests/cz/sonda_torre_thread.gd ok 
+== sonda_thread_dummy 0
+ST: renderer vulkan, giri 6
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 12, "in corso": 11 }; in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_NormalGL.jpg", "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg", "acqua_inseguimento.tres", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 1: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 2: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 3: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 4: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 5: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giri con errori all'instantiate: 0 su 6
+ST: finito
+== sonda_thread_vulkan 0
+ST: renderer vulkan, giri 6
+ST: giro 0: alla seconda instantiate i 23 caricamenti chiesti dalla prima torre: { "caricato (non ancora preso)": 16, "in corso": 7 }; in corso ["bambino_agnello.tscn", "water_inseguimento_velo.gdshader", "stendardi.glb", "stendardo_1.png", "stendardo_2.png", "stendardo_3.png", "stendardo_4.png"]; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 1: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 2: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 3: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 4: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giro 5: alla seconda instantiate i 0 caricamenti chiesti dalla prima torre: {  }; in corso []; altri { "sala_torre.tscn": "nessuno", "sala_sottomarino.tscn": "nessuno" }; errori nell'instantiate 0 []
+ST: giri con errori all'instantiate: 0 su 6
+ST: finito
+RID nel log: 0
+QS FINITO
+
+## qm.out
+== 48553e74 Versione 0.3.23: unione di lavoro/candida
+== import main 0
+== main_test_torre 0; RISULTATO: 95 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 14; RID 0; Invalid Task 0
+== main_test_torre_2 0; RISULTATO: 95 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 14; RID 0; Invalid Task 0
+== main_sonda_1: in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+== main_sonda_2: in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+== main_sonda_3: in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+== main_sonda_4: in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_No; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+== main_tunnel_1 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12; RID 0; Invalid Task 0
+TT: inizio, RSS 0 MB, picco 0 MB
+TT: F9 inseguimento: true
+TT: inseguimento: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+TT:   il tunnel entra in scena a 0.13 s
+tunnel passo _pezzo: 23.5 ms
+tunnel passo _pezzo: 23.5 ms
+tunnel passo _pezzo: 22.0 ms
+tunnel passo _pezzo: 20.1 ms
+tunnel passo _pezzo: 20.9 ms
+tunnel passo _fine: 42.2 ms
+tunnel passo _luci: 369.0 ms
+tunnel passo _corallo: 22.9 ms
+tunnel passo _relitto: 60.7 ms
+tunnel passo _palombaro: 28.8 ms
+tunnel passo _tartaruga: 60.0 ms
+tunnel passo _reti: 28.1 ms
+tunnel passo _buco_anello: 45.9 ms
+tunnel passo _buco_anello: 45.5 ms
+tunnel passo _buco_anello: 47.2 ms
+tunnel passo _buco_anello: 52.3 ms
+tunnel passo _buco_anello: 71.5 ms
+tunnel passo _buco_anello: 66.7 ms
+tunnel passo _abisso_lampade: 44.0 ms
+tunnel passo _approdo: 48.2 ms
+tunnel passo _pesci: 59.2 ms
+tunnel passo _pesce_mensola: 33.1 ms
+tunnel passo _pesce_mensola: 24.2 ms
+tunnel passo _pesce_mensola: 21.5 ms
+tunnel passo _pesce_mensola: 23.5 ms
+tunnel passo _pesce_mensola: 23.1 ms
+tunnel passo _pesce_mensola: 22.5 ms
+tunnel passo _abisso_oblo: 85.8 ms
+tunnel passo _galleria: 27.2 ms
+tunnel passo _galleria: 24.2 ms
+TT:   tunnel costruito e pronto a 7.23 s
+TT: inseguimento: la prima costruzione (dall'arrivo a 3 s dopo il tunnel pronto): 10.2 s, fotogrammi 781, il più lungo 385.6 ms, sopra 33 ms 23 ["99.7 ms a 0.15 s", "33.0 ms a 0.29 s", "54.3 ms a 0.71 s", "385.6 ms a 1.10 s", "39.0 ms a 1.13 s", "65.6 ms a 1.46 s", "39.5 ms a 1.50 s", "69.0 ms a 1.57 s", "41.1 ms a 1.61 s", "54.9 ms a 1.67 s", "54.6 ms a 1.72 s", "55.8 ms a 1.78 s", "61.5 ms a 1.
+TT: morte nelle condotte: dalla morte all'arrivo (con la schermata): 8.0 s, fotogrammi 685, il più lungo 655.5 ms, sopra 33 ms 2 ["655.5 ms a 5.66 s", "64.4 ms a 5.73 s"]; RSS 0 MB, picco 0 MB
+TT: dopo la morte nelle condotte: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+tunnel passo _pezzo: 22.7 ms
+TT:   il tunnel entra in scena a 0.14 s
+tunnel passo _pezzo: 20.1 ms
+tunnel passo _fine: 42.3 ms
+tunnel passo _luci: 421.6 ms
+tunnel passo _corallo: 31.1 ms
+tunnel passo _corallo: 26.4 ms
+tunnel passo _corallo: 24.7 ms
+tunnel passo _corallo: 25.3 ms
+tunnel passo _relitto: 40.3 ms
+tunnel passo _tartaruga: 35.4 ms
+tunnel passo _reti: 33.3 ms
+tunnel passo _buco_anello: 56.3 ms
+tunnel passo _buco_anello: 49.1 ms
+tunnel passo _buco_anello: 48.3 ms
+tunnel passo _buco_anello: 46.9 ms
+tunnel passo _buco_anello: 49.8 ms
+tunnel passo _buco_anello: 41.7 ms
+tunnel passo _abisso_lampade: 48.8 ms
+tunnel passo _approdo: 40.6 ms
+tunnel passo _pesci: 59.5 ms
+tunnel passo _pesce_mensola: 25.2 ms
+tunnel passo _pesce_mensola: 21.0 ms
+tunnel passo _pesce_mensola: 21.8 ms
+tunnel passo _pesce_mensola: 23.5 ms
+tunnel passo _pesce_mensola: 23.6 ms
+tunnel passo _pesce_mensola: 24.1 ms
+tunnel passo _pesce_mensola: 20.8 ms
+tunnel passo _pesce_mensola: 22.1 ms
+tunnel passo _abisso_oblo: 80.0 ms
+tunnel passo _galleria: 24.4 ms
+tunnel passo _galleria: 27.4 ms
+TT:   tunnel costruito e pronto a 7.18 s
+TT: inseguimento: la seconda costruzione, dopo la morte nelle condotte: 10.2 s, fotogrammi 789, il più lungo 444.9 ms, sopra 33 ms 24 ["98.0 ms a 0.16 s", "58.6 ms a 0.68 s", "444.9 ms a 1.13 s", "48.9 ms a 1.17 s", "36.9 ms a 1.21 s", "33.1 ms a 1.24 s", "36.1 ms a 1.28 s", "45.7 ms a 1.56 s", "42.9 ms a 1.62 s", "43.2 ms a 1.67 s", "66.8 ms a 1.73 s", "58.8 ms a 1.79 s", "57.0 ms a 1.85 s", "56
+TT: inseguimento: l'ingresso nel tunnel (sb1_finito, +4 s): 4.0 s, fotogrammi 545, il più lungo 17.7 ms, sopra 33 ms 0 []; RSS 0 MB, picco 0 MB
+TT: F9 tunnel: true
+TT: tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s nel tunnel (F9): 5.0 s, fotogrammi 445, il più lungo 1626.6 ms, sopra 33 ms 2 ["48.8 ms a 0.12 s", "1626.6 ms a 3.46 s"]; RSS 0 MB, picco 0 MB
+TT: morte nel tunnel: dalla morte all'arrivo (con la schermata): 9.0 s, fotogrammi 666, il più lungo 431.1 ms, sopra 33 ms 2 ["431.1 ms a 5.43 s", "46.4 ms a 5.48 s"]; RSS 0 MB, picco 0 MB
+TT: dopo la morte nel tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s dopo la ripartenza nel tunnel: 5.0 s, fotogrammi 432, il più lungo 1846.5 ms, sopra 33 ms 2 ["49.9 ms a 0.15 s", "1846.5 ms a 3.69 s"]; RSS 0 MB, picco 0 MB
+TT: tunnel dopo la morte: costruito true
+TT: fine, RSS 0 MB, picco 0 MB
+TT: finito
+== import candidata 0
+== cand_sonda_1: in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_No; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+== cand_sonda_2: in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_No; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+== cand_sonda_3: in corso ["bambino_agnello.tscn", "MetalPlates013_Color.jpg", "MetalPlates013_No; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+== cand_sonda_4: in corso ["bambino_cubo.tscn", "bambino_agnello.tscn", "MetalPlates013_Color.jpg; errori ST: giri con errori all'instantiate: 0 su 1; RID 0
+Q4 FINITO 20:37
+
+## q2.out
+== fb33bd56 Candidata 0.3.24: versione 0.3.24 e note 
+== SINTASSI: res://tests/cz/tunnel_tempi.gd ok SINTASSI: res://tests/cz/goccia_strade.gd ok SCRIPT ERROR: Parse Error: Cannot infer the type of "k" variable because the value doesn't have a set type. ERROR: Failed to load script "res://tests/cz/polaroid_vicine.gd" with error "Parse error". SINTASSI: res://tests/cz/polaroid_vicine.gd ERRORE 
+== tunnel_1 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+TT: inizio, RSS 327 MB, picco 327 MB
+TT: F9 inseguimento: true
+TT: inseguimento: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+tunnel passo _pezzo: 20.5 ms
+TT:   il tunnel entra in scena a 0.14 s
+tunnel passo _pezzo: 22.2 ms
+tunnel passo _pezzo: 23.1 ms
+tunnel passo _pezzo: 22.9 ms
+tunnel passo _pezzo: 23.5 ms
+tunnel passo _corallo: 26.2 ms
+tunnel passo _corallo: 29.7 ms
+tunnel passo _corallo: 21.8 ms
+tunnel passo _corallo: 20.1 ms
+tunnel passo _corallo: 20.8 ms
+tunnel passo _relitto_staffe: 21.7 ms
+tunnel passo _relitto_forziere: 20.1 ms
+tunnel passo _salvagente: 21.3 ms
+TT:   tunnel costruito e pronto a 7.54 s
+TT: inseguimento: la prima costruzione (dall'arrivo a 3 s dopo il tunnel pronto): 10.5 s, fotogrammi 853, il più lungo 83.4 ms, sopra 33 ms 9 ["83.4 ms a 0.15 s", "41.7 ms a 0.24 s", "34.0 ms a 0.28 s", "35.4 ms a 0.31 s", "37.5 ms a 0.91 s", "33.5 ms a 3.33 s", "34.3 ms a 3.40 s", "36.2 ms a 4.91 s", "48.6 ms a 7.53 s"]; RSS 2242 MB, picco 2242 MB
+TT: morte nelle condotte: dalla morte all'arrivo (con la schermata): 7.5 s, fotogrammi 695, il più lungo 512.0 ms, sopra 33 ms 2 ["512.0 ms a 5.52 s", "56.9 ms a 5.58 s"]; RSS 2551 MB, picco 2551 MB
+TT: dopo la morte nelle condotte: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+TT:   il tunnel entra in scena a 0.10 s
+tunnel passo _pezzo: 22.2 ms
+tunnel passo _pezzo: 23.2 ms
+tunnel passo _pezzo: 23.5 ms
+tunnel passo _pezzo: 23.5 ms
+tunnel passo _pezzo: 22.0 ms
+tunnel passo _pezzo: 23.9 ms
+tunnel passo _pezzo: 20.5 ms
+tunnel passo _pezzo: 23.3 ms
+tunnel passo _pezzo: 23.3 ms
+tunnel passo _corallo: 30.1 ms
+tunnel passo _corallo: 25.6 ms
+tunnel passo _corallo: 21.7 ms
+tunnel passo _corallo: 27.3 ms
+tunnel passo _corallo: 34.1 ms
+tunnel passo _corallo: 21.5 ms
+tunnel passo _relitto_staffe: 25.4 ms
+tunnel passo _relitto_forziere: 23.3 ms
+tunnel passo _salvagente: 20.9 ms
+tunnel passo _galleria: 22.4 ms
+TT:   tunnel costruito e pronto a 7.98 s
+TT: inseguimento: la seconda costruzione, dopo la morte nelle condotte: 11.0 s, fotogrammi 873, il più lungo 76.7 ms, sopra 33 ms 10 ["76.7 ms a 0.12 s", "34.0 ms a 0.23 s", "34.8 ms a 0.27 s", "34.2 ms a 0.30 s", "33.9 ms a 0.45 s", "37.9 ms a 0.91 s", "33.9 ms a 0.94 s", "33.7 ms a 1.00 s", "39.5 ms a 1.18 s", "50.9 ms a 7.96 s"]; RSS 2564 MB, picco 2564 MB
+TT: inseguimento: l'ingresso nel tunnel (sb1_finito, +4 s): 4.0 s, fotogrammi 549, il più lungo 20.7 ms, sopra 33 ms 0 []; RSS 2564 MB, picco 2564 MB
+TT: F9 tunnel: true
+TT: tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s nel tunnel (F9): 5.0 s, fotogrammi 481, il più lungo 1584.0 ms, sopra 33 ms 2 ["42.3 ms a 0.10 s", "1584.0 ms a 3.41 s"]; RSS 3360 MB, picco 3366 MB
+TT: morte nel tunnel: dalla morte all'arrivo (con la schermata): 8.8 s, fotogrammi 722, il più lungo 384.9 ms, sopra 33 ms 2 ["384.9 ms a 5.39 s", "45.3 ms a 5.43 s"]; RSS 3360 MB, picco 3366 MB
+TT: dopo la morte nel tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s dopo la ripartenza nel tunnel: 5.0 s, fotogrammi 408, il più lungo 2043.6 ms, sopra 33 ms 2 ["46.8 ms a 0.12 s", "2043.6 ms a 3.87 s"]; RSS 3360 MB, picco 3366 MB
+TT: tunnel dopo la morte: costruito true
+TT: fine, RSS 3360 MB, picco 3366 MB
+TT: finito
+== tunnel_2 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+TT: inizio, RSS 327 MB, picco 327 MB
+TT: F9 torre: true
+TT: torre: arrivato true, giocatore a (21.4, -0.01, -15.0), checkpoint SalaTorre/Checkpoint_portone
+tunnel passo _pezzo: 24.9 ms
+TT:   il tunnel entra in scena a 0.15 s
+tunnel passo _pezzo: 21.5 ms
+tunnel passo _pezzo: 21.5 ms
+tunnel passo _pezzo: 20.4 ms
+tunnel passo _pezzo: 24.4 ms
+tunnel passo _pezzo: 26.4 ms
+tunnel passo _corallo: 20.3 ms
+tunnel passo _corallo: 22.3 ms
+tunnel passo _corallo: 20.1 ms
+tunnel passo _relitto_staffe: 27.6 ms
+tunnel passo _relitto_forziere: 21.5 ms
+tunnel passo _tartaruga: 24.8 ms
+tunnel passo _buco_anello: 28.4 ms
+tunnel passo _salvagente: 21.4 ms
+TT:   tunnel costruito e pronto a 6.03 s
+TT: torre: dall'arrivo nella torre al tunnel pronto, +3 s: 9.0 s, fotogrammi 867, il più lungo 94.5 ms, sopra 33 ms 4 ["94.5 ms a 0.17 s", "34.1 ms a 0.32 s", "34.2 ms a 1.55 s", "75.0 ms a 6.01 s"]; RSS 2236 MB, picco 2236 MB
+tunnel passo _pezzo: 22.0 ms
+TT:   il tunnel entra in scena a 1.49 s
+tunnel passo _pezzo: 20.9 ms
+tunnel passo _pezzo: 21.9 ms
+tunnel passo _pezzo: 24.7 ms
+tunnel passo _corallo: 29.8 ms
+tunnel passo _corallo: 28.9 ms
+tunnel passo _corallo: 32.8 ms
+tunnel passo _corallo: 24.6 ms
+tunnel passo _corallo: 24.1 ms
+tunnel passo _corallo: 23.2 ms
+tunnel passo _corallo: 21.7 ms
+tunnel passo _corallo: 20.5 ms
+tunnel passo _corallo: 21.7 ms
+tunnel passo _corallo: 20.6 ms
+tunnel passo _relitto_forziere: 30.0 ms
+tunnel passo _palombaro: 27.1 ms
+TT:   tunnel costruito e pronto a 7.98 s
+TT: portone: dall'enigma alla torre e al tunnel pronto, +3 s: 11.0 s, fotogrammi 975, il più lungo 69.1 ms, sopra 33 ms 22 ["62.6 ms a 0.55 s", "39.1 ms a 0.62 s", "37.0 ms a 0.87 s", "34.1 ms a 1.00 s", "36.3 ms a 1.06 s", "35.0 ms a 1.13 s", "63.3 ms a 1.51 s", "35.1 ms a 1.72 s", "34.5 ms a 1.79 s", "36.4 ms a 1.82 s", "35.5 ms a 1.92 s", "38.0 ms a 1.96 s", "43.3 ms a 2.00 s", "44.4 ms a 2.05
+TT: fine, RSS 3000 MB, picco 3000 MB
+TT: finito
+== squalo_interni 0; BUG 0; SCRIPT ERROR 0; ERROR 1; Invalid Task 0; GIRO: modo alto, preset alto, nebbia 1, in /home/user/collaudo_log/c24/squalo_interni GIRO: sala pronta, scena dello squalo in corso GIRO: controllo di nuovo al giocatore a 19.17 s GIRO FINITO 
+SPIA: canvas all'inizio 0
+SPIA: fotogramma 2, canvas +3 (totale 3); visibili da poco: ["/root/Grafica/PostProcessing/@ColorRect@2 (ColorRect shader res://addons/grafica/post_processing.gdshader)", "/root/Dissolvenza/@ColorRect@35 (ColorRect)", "/root/Dissolvenza/@ColorRect@35/@Label@36 (Label)"]
+SPIA: fotogramma 3, canvas +1 (totale 4); visibili da poco: ["/root/SalaSoloInterni/Interni/Gioco/RisveglioSqualo/GocciaSchermo/Goccia (ColorRect shader res://shaders/creature/goccia_schermo.gdshader)", "/root/SalaSoloInterni/Player/HUD/@Control@181 (Control)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@ColorRect@182 (ColorRect)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@Label@183 (Label)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@Label@184 (Label)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@Label@187 (Label)", "/root/SalaSoloInterni/Player/HUD/StratoScritta/@Control@1
+== polaroid_fiume 0; BUG 0; SCRIPT ERROR 0; ERROR 1; Invalid Task 0
+PV: Polaroid16 in (-40.55, 0.0008, 2.55), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 48
+PV: finito
+== polaroid_fiume_fermo 0; BUG 0; SCRIPT ERROR 0; ERROR 1; Invalid Task 0
+PV: fiume fermo, P16 prima in (-40.55, 0.03, 2.55); 30 s fermo
+PV: fiume riacceso, P16 in (-40.55, 0.0008, 2.55) (spostata di 29.20 mm)
+PV: Polaroid16 in (-40.55, 0.0008, 2.55), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 48
+PV: finito
+== polaroid_torre 0; BUG 0; SCRIPT ERROR 0; ERROR 1; Invalid Task 0
+PV: Polaroid10 in (23.5931, -11.6695, -22.4069), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.19 mm, più lontano 18.11 mm, punti dentro 0 su 45
+PV: Polaroid12 in (22.1, -0.0095, -13.95), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 48
+PV: finito
+== polaroid_sala 0; BUG 0; SCRIPT ERROR 0; ERROR 1; Invalid Task 0
+PV: Polaroid05 in (1.1998, -2.17, 2.8999), inclinata 0.0°, fondo dalla superficie sotto: più vicino 4.49 mm, più lontano 14.74 mm, punti dentro 0 su 49
+PV: Polaroid08 in (-8.9, 0.016, 6.6), inclinata 0.0°, fondo dalla superficie sotto: più vicino inf mm, più lontano -inf mm, punti dentro 0 su 0
+PV: finito
+== goccia_h_nuova 1; ; BUG 0; SCRIPT ERROR 0; ERROR 0; Invalid Task 0
+GS: strada nuova, salvataggio true, preset medio, qualita_provata true
+GS: la scena dello squalo non è partita (<null>)
+Q2 FINITO 21:33
+
+## q3.out
+== fb33bd56 Candidata 0.3.24: versione 0.3.24 e note 
+== goccia_nuova 137; BUG 0; SCRIPT ERROR 0; ERROR 1; Invalid Task 0
+GS: strada nuova, salvataggio false, preset basso, qualita_provata true
+
+## q5.out
+== 48553e74 Versione 0.3.23: unione di lavo
+== import main 0
+== main_tunnel_2 0; ; BUG 0; SCRIPT ERROR 0; ERROR 12; Invalid Task 0
+TT: inizio, RSS 326 MB, picco 326 MB
+TT: F9 inseguimento: true
+TT: inseguimento: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+TT:   il tunnel entra in scena a 0.14 s
+TT:   tunnel costruito e pronto a 6.95 s
+TT: inseguimento: la prima costruzione (dall'arrivo a 3 s dopo il tunnel pronto): 10.0 s, fotogrammi 789, il più lungo 401.1 ms, sopra 33 ms 24 ["84.5 ms a 0.16 s", "52.0 ms a 0.64 s", "401.1 ms a 1.04 s", "35.2 ms a 1.08 s", "52.1 ms a 1.38 s", "56.6 ms a 1.46 s", "36.4 ms a 1.50 s", "51.2 ms a 1.
+TT: morte nelle condotte: dalla morte all'arrivo (con la schermata): 7.2 s, fotogrammi 714, il più lungo 463.7 ms, sopra 33 ms 2 ["463.7 ms a 5.47 s", "47.6 ms a 5.51 s"]; RSS 2554 MB, picco 2554 MB
+TT: dopo la morte nelle condotte: arrivato true, giocatore a (37.91, -19.98, -14.84), checkpoint SalaTorre/Checkpoint_fondo
+TT:   il tunnel entra in scena a 0.11 s
+TT:   tunnel costruito e pronto a 6.32 s
+TT: inseguimento: la seconda costruzione, dopo la morte nelle condotte: 9.3 s, fotogrammi 776, il più lungo 339.9 ms, sopra 33 ms 20 ["78.8 ms a 0.12 s", "33.6 ms a 0.44 s", "42.0 ms a 0.62 s", "339.9 ms a 0.96 s", "33.4 ms a 1.09 s", "50.7 ms a 1.33 s", "45.0 ms a 1.40 s", "43.7 ms a 1.44 s", "65.
+TT: inseguimento: l'ingresso nel tunnel (sb1_finito, +4 s): 4.0 s, fotogrammi 569, il più lungo 15.1 ms, sopra 33 ms 0 []; RSS 2567 MB, picco 2567 MB
+TT: F9 tunnel: true
+TT: tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s nel tunnel (F9): 5.0 s, fotogrammi 467, il più lungo 1658.8 ms, sopra 33 ms 2 ["47.7 ms a 0.12 s", "1658.8 ms a 3.49 s"]; RSS 3369 MB, picco 3375 MB
+TT: morte nel tunnel: dalla morte all'arrivo (con la schermata): 8.7 s, fotogrammi 728, il più lungo 398.6 ms, sopra 33 ms 2 ["398.6 ms a 5.42 s", "39.0 ms a 5.46 s"]; RSS 3369 MB, picco 3375 MB
+TT: dopo la morte nel tunnel: arrivato true, giocatore a (38.0, -30.0, -1.0), checkpoint SalaSottomarino/Checkpoint_6
+TT: tunnel: i primi 5 s dopo la ripartenza nel tunnel: 5.0 s, fotogrammi 502, il più lungo 1434.8 ms, sopra 33 ms 2 ["48.5 ms a 0.12 s", "1434.8 ms a 3.26 s"]; RSS 3369 MB, picco 3375 MB
+TT: tunnel dopo la morte: costruito true
+TT: fine, RSS 3369 MB, picco 3375 MB
+TT: finito
+== import candidata 0
+Q5 FINITO 21:39
+
+## q6.out
+== fb33bd56 Candidata 0.3.24: versione 0.3.
+== SINTASSI: res://tests/cz/polaroid_vicine.gd ok 
+== polaroid_sala2 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+PV: Polaroid05 adagiata qui: da (1.1998, -2.17, 2.8999) a (1.2002, -2.1776, 2.9001)
+PV: Polaroid08 adagiata qui: da (-8.9, 0.016, 6.6) a (-8.9, 0.016, 6.6)
+PV: Polaroid05 in (1.2002, -2.1776, 2.9001), inclinata 3.8°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.94 mm, punti dentro 0 su 49
+PV: Polaroid08 in (-8.9, 0.016, 6.6), inclinata 0.0°, fondo dalla superficie sotto: più vicino inf mm, più lontano -inf mm, punti dentro 0 su 0
+PV: finito
+Q6 FINITO 21:43
+
+## q7.out
+== e97e1277 Riscaldamento fuori vista: il n
+== import 0
+== check_scripts 0; CHECK: 0 errori 
+== test_strati_luci 0; RISULTATO: 5 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 1
+Q7 FINITO 21:44
+
+## q8.out
+== e97e1277 Riscaldamento fuori vista: il n
+== squalo_riscaldato 137; BUG 0; SCRIPT ERROR 0; ERROR 1; GIRO: modo alto, preset alto, nebbia 1, in /home/user/collaudo_log/c24/squalo_riscaldato GIRO: riscaldamento intero fatto, pipeline 2D compilate 3 GIRO: sala pronta, scena dello squalo in corso 
+SPIA: canvas all'inizio 0
+SPIA: fotogramma 2, canvas +1 (totale 1); visibili da poco: ["/root/Grafica/PostProcessing/@ColorRect@2 (ColorRect shader res://addons/grafica/post_processing.gdshader)", "/root/Dissolvenza/@ColorRect
+SPIA: fotogramma 309, canvas +1 (totale 2); visibili da poco: ["/root/@Node@37/RiscaldamentoShader/@CanvasLayer@120/@ColorRect@119 (ColorRect shader res://addons/grafica/nebbia_viola/colore_viola.gdsh
+SPIA: fotogramma 312, canvas +1 (totale 3); visibili da poco: ["/root/@Node@37/RiscaldamentoShader/@CanvasLayer@122/@ColorRect@121 (ColorRect shader res://shaders/creature/goccia_schermo.gdshader)"]
+SPIA: fotogramma 621, canvas +2 (totale 5); visibili da poco: ["/root/Grafica/PostProcessing/@ColorRect@2 (ColorRect shader res://addons/grafica/post_processing.gdshader)", "/root/SalaSoloInterni/Inte
+== goccia_h2 1
+GS: strada nuova, salvataggio false, preset alto, qualita_provata true
+GS: la scena dello squalo non è partita (RisveglioSqualo:<Node3D#434462793911>)
+Q8 FINITO 22:02
+
+## q9.out
+== SINTASSI: res://tests/cz/polaroid_vicine.gd ok 
+== polaroid_sala3 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+PV: Polaroid08 adagiata qui: da (-8.9, 0.016, 6.6) a (-8.9004, 0.0098, 6.6)
+PV: Polaroid08 in (-8.9004, 0.0098, 6.6), inclinata 3.4°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 46
+PV: finito
+Q9 FINITO 22:04

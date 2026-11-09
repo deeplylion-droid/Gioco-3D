@@ -1,0 +1,8 @@
+SPIA: canvas all'inizio 0
+GIRO: modo alto, preset alto, nebbia 1, in /home/user/collaudo_log/c24/squalo_interni
+GIRO: sala pronta, scena dello squalo in corso
+SPIA: fotogramma 2, canvas +3 (totale 3); visibili da poco: ["/root/Grafica/PostProcessing/@ColorRect@2 (ColorRect shader res://addons/grafica/post_processing.gdshader)", "/root/Dissolvenza/@ColorRect@35 (ColorRect)", "/root/Dissolvenza/@ColorRect@35/@Label@36 (Label)"]
+SPIA: fotogramma 3, canvas +1 (totale 4); visibili da poco: ["/root/SalaSoloInterni/Interni/Gioco/RisveglioSqualo/GocciaSchermo/Goccia (ColorRect shader res://shaders/creature/goccia_schermo.gdshader)", "/root/SalaSoloInterni/Player/HUD/@Control@181 (Control)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@ColorRect@182 (ColorRect)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@Label@183 (Label)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@Label@184 (Label)", "/root/SalaSoloInterni/Player/HUD/@Control@181/@Label@187 (Label)", "/root/SalaSoloInterni/Player/HUD/StratoScritta/@Control@185 (Control)", "/root/SalaSoloInterni/Player/HUD/StratoScritta/@Control@185/@Label@186 (Label)"]
+GIRO: controllo di nuovo al giocatore a 19.17 s
+GIRO FINITO
+pipeline [canvas, mesh, surface, draw, specialization] [4, 66, 164, 56, 119] -> [4, 66, 167, 65, 147] ; aumenti (t del giro, la goccia a 6,267): [(0.067, [0, 0, 3, 6, 12]), (0.2, [0, 0, 0, 1, 1]), (0.233, [0, 0, 0, 0, 1]), (0.267, [0, 0, 0, 0, 3]), (0.3, [0, 0, 0, 0, 2]), (0.333, [0, 0, 0, 2, 5]), (0.833, [0, 0, 0, 0, 4])]

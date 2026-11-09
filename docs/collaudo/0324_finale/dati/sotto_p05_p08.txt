@@ -1,0 +1,15 @@
+SP: Polaroid08 in (-8.9004, 0.0098, 6.6); mesh vicine sotto: 9
+SP:   Sala/Architettura/sala_pareti_basse
+SP:   Sala/Architettura/sala_pavimento
+SP:   Sala/Architettura/sala_piastrelle_mancanti
+SP:   Sala/Architettura/sala_pozzanghere
+SP:   Sala/Architettura/sala_schegge_cupola
+SP:   Sala/TorreScivoli/arrivo_bordi
+SP:   Vasche/VascaArrivo/Graybox/Superficie
+SP:   Vasche/AcquaVascaArrivo/Surface
+SP:   Polaroid/Polaroid08/Modello/Polaroid
+SP: Polaroid05 in (1.2002, -2.1776, 2.9001); mesh vicine sotto: 3
+SP:   Sala/Piscina/sala_piscina_onde
+SP:   Piscina/LucePortellone/Anello
+SP:   Polaroid/Polaroid05/Modello/Polaroid
+SP: finito

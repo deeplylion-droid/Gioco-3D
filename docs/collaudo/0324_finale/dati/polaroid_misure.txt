@@ -1,0 +1,20 @@
+PV: Polaroid16 in (-40.55, 0.0008, 2.55), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 48
+PV: finito
+PV: fiume fermo, P16 prima in (-40.55, 0.03, 2.55); 30 s fermo
+PV: fiume riacceso, P16 in (-40.55, 0.0008, 2.55) (spostata di 29.20 mm)
+PV: Polaroid16 in (-40.55, 0.0008, 2.55), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 48
+PV: finito
+PV: Polaroid05 in (1.1998, -2.17, 2.8999), inclinata 0.0°, fondo dalla superficie sotto: più vicino 4.49 mm, più lontano 14.74 mm, punti dentro 0 su 49
+PV: Polaroid08 in (-8.9, 0.016, 6.6), inclinata 0.0°, fondo dalla superficie sotto: più vicino inf mm, più lontano -inf mm, punti dentro 0 su 0
+PV: finito
+PV: Polaroid05 adagiata qui: da (1.1998, -2.17, 2.8999) a (1.2002, -2.1776, 2.9001)
+PV: Polaroid08 adagiata qui: da (-8.9, 0.016, 6.6) a (-8.9, 0.016, 6.6)
+PV: Polaroid05 in (1.2002, -2.1776, 2.9001), inclinata 3.8°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.94 mm, punti dentro 0 su 49
+PV: Polaroid08 in (-8.9, 0.016, 6.6), inclinata 0.0°, fondo dalla superficie sotto: più vicino inf mm, più lontano -inf mm, punti dentro 0 su 0
+PV: finito
+PV: Polaroid08 adagiata qui: da (-8.9, 0.016, 6.6) a (-8.9004, 0.0098, 6.6)
+PV: Polaroid08 in (-8.9004, 0.0098, 6.6), inclinata 3.4°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 46
+PV: finito
+PV: Polaroid10 in (23.5931, -11.6695, -22.4069), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.19 mm, più lontano 18.11 mm, punti dentro 0 su 45
+PV: Polaroid12 in (22.1, -0.0095, -13.95), inclinata 0.0°, fondo dalla superficie sotto: più vicino 0.20 mm, più lontano 2.86 mm, punti dentro 0 su 48
+PV: finito
