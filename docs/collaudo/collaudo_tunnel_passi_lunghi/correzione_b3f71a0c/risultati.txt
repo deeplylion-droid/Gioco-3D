@@ -1,0 +1,31 @@
+# Ricontrollo della correzione b3f71a0c: righe chiave dei log
+
+## Il compito lento simulato (8 s), sonda_thread_lento.gd
+- lento_esci: LENTO 160.44 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 160.94 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);LENTO 160.94 s: Game.esci; errori: 0
+- lento_morte: LENTO 6.18 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 6.69 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);tunnel involucri della lampada: pronti dopo 1107 fotogrammi di attesa (7631.5 ms);LENTO 22.30 s: RISULTATO morte col compito lento: tunnel pronto true, il fotogramma più lungo dopo 1307 ms, checkpoint SalaTorre/Checkpoint_fondo; errori: 0
+- lento_niente: LENTO 6.28 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 6.79 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);tunnel involucri della lampada: pronti dopo 1059 fotogrammi di attesa (7636.1 ms);LENTO 18.25 s: RISULTATO niente col compito lento: tunnel pronto true, il fotogramma più lungo dopo 350 ms, checkpoint SalaTorre/Checkpoint_fondo; errori: 0
+- lento_titolo: LENTO 6.40 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 6.92 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);tunnel involucri della lampada: pronti dopo 1105 fotogrammi di attesa (7616.7 ms);LENTO 18.42 s: al titolo in 11496 ms;LENTO 27.83 s: RISULTATO titolo col compito lento: tunnel pronto true, il fotogramma più lungo dopo 1431 ms, checkpoint SalaTorre/Checkpoint_fondo; errori: 0
+
+## Le uscite durante la costruzione, sonda_thread_tunnel.gd
+- thread_esci_0: THREAD 6.19 s: ADESSO esci (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true); errori: 0
+- thread_esci_3: THREAD 6.09 s: ADESSO esci (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 77, nell'albero true); errori: 0
+- thread_morte_0: THREAD 6.13 s: ADESSO morte (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);THREAD 14.23 s: RISULTATO morte dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo; errori: 0
+- thread_titolo_0: THREAD 6.16 s: ADESSO titolo (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);THREAD 17.90 s: RISULTATO titolo dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo; errori: 0
+
+## test_tunnel_involucri_uscita
+  ok    il compito veloce, aspettato, è uscito dall'elenco (3 fotogrammi; resta 1)
+  ok    uscito, _exit_tree ha aspettato i compiti rimasti e l'elenco è vuoto
+RISULTATO: 2 controlli ok, 0 falliti
+
+## I nodi (sonda_nodi_tunnel.gd, seconda versione)
+CONFRONTO prova_pezzi.txt / prova_pezzi.txt: nodi 2844 / 2844
+  stessi nodi, stesso ordine; proprietà diverse: 0 (più 216 che cambiano da sole fra due giri: {'mesh': 28, 'metadata/posa': 14, 'bones/*/rotation': 172, 'bones/*/position': 2})
+gioco vero, F9 Inseguimento: vedi LEGGIMI (tunnel e torre: 0 differenze oltre il rumore, contro 48201c67 e contro la candidata)
+
+## Tempi nel gioco vero (TORRE_TEMPI, F9 Inseguimento, il tunnel a pezzi nelle condotte)
+- f2f810a2 gioco_1: tunnel passo _luci: 335.7 ms;tunnel passo _abisso_oblo: 60.6 ms;tunnel passo _pesci: 45.1 ms;tunnel passo _approdo: 44.0 ms;tunnel passo _tartaruga: 37.6 ms;tunnel passo _relitto: 34.4 ms;tunnel passo _fine: 34.0 ms;tunnel passo _abisso_lampade: 33.0 ms;
+- f2f810a2 gioco_2: tunnel passo _luci: 313.3 ms;tunnel passo _abisso_oblo: 61.6 ms;tunnel passo _pesci: 44.5 ms;tunnel passo _tartaruga: 41.8 ms;tunnel passo _relitto: 41.0 ms;tunnel passo _approdo: 38.0 ms;tunnel passo _abisso_lampade: 34.8 ms;tunnel passo _fine: 34.4 ms;
+- f2f810a2 gioco_3: tunnel passo _luci: 333.5 ms;tunnel passo _abisso_oblo: 92.3 ms;tunnel passo _pesci: 49.3 ms;tunnel passo _relitto: 41.5 ms;tunnel passo _tartaruga: 41.2 ms;tunnel passo _approdo: 40.2 ms;tunnel passo _fine: 39.3 ms;tunnel passo _buco_anello: 36.7 ms;
+- b3f71a0c gioco_1: 
+- b3f71a0c gioco_2: tunnel passo _corallo: 25.5 ms;tunnel passo _corallo: 22.0 ms;tunnel passo _corallo: 21.1 ms;
+- b3f71a0c gioco_3: tunnel passo _pezzo: 23.7 ms;

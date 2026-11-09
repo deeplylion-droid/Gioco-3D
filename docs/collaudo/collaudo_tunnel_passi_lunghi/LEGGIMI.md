@@ -60,6 +60,10 @@ conta quello che cambia da solo fra due letture della stessa versione:
 
 ### 2. I tempi della costruzione (`misura_tunnel_pezzi.gd` con `TORRE_TEMPI`)
 
+> **Correzione del 9 novembre, pomeriggio.** Questi tempi sono della scena del solo tunnel. Nel gioco vero, con la sala e
+> la torre, i passi costano di più, e su `48201c67` alcuni passi nuovi sono arrivati sopra i 25 ms (`_occupati_tratto` fino
+> a 36,6). Vedi `correzione_b3f71a0c/LEGGIMI.md`, «Correzione al primo ricontrollo».
+
 | | Candidata (3 giri) | Branch (5 giri) |
 |---|---|---|
 | Passi sopra 20 ms | `_abisso_oblo` 79-95, `_pesci` 57-93, `_luci` 85-87, `_tartaruga` 52-69, `_approdo` 39-53, `_buco_anello` 42-51 (6 per giro), `_relitto` 27-42, `_pesce_mensola` 21-33, `_reti` 27-29, `_pezzo` 22-28, `_fine` 23-25 | `_pezzo` 20-27 (una volta 47,7), `_relitto_staffe` 22,6-24,9, `_occupati_tratto` 20,2-22,2, `_galleria` 20,5, `_tartaruga` 20,1 |
