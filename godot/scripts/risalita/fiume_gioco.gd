@@ -88,6 +88,13 @@ var _conche: Array = []
 var _collisioni: StaticBody3D
 var _barriere: StaticBody3D
 var _poligoni_acqua_cache: Array = []
+## Le toppe d'acqua delle conche come le vede il pavimento: cominciano qualche cm dentro la striscia (#130, le pinne).
+var _toppe_pavimento: Array = []
+## Le pareti dei canali e le barriere lungo l'acqua (per [method lati_storti]).
+var _pareti_mesh: MeshInstance3D
+var _barriere_forma: ConcavePolygonShape3D
+## I pezzi di pavimento 2D con il loro rettangolo (per [method lati_storti]).
+var _pezzi_pavimento: Array = []
 var _mat_globo: StandardMaterial3D
 var _mat_faro: StandardMaterial3D
 ## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un po' per fotogramma.
@@ -259,13 +266,22 @@ func _toppe_conche() -> void:
 			var d: Vector2 = (p - pts[fine - 1 if fine > 0 else 1]).normalized()
 			var o := d.orthogonal() * W * 0.5
 			var ext := PackedVector2Array([p - o, p + o, p + o + d, p - o + d])
+			# Il pavimento si taglia con la toppa allungata di 3 cm dentro la striscia: la fine della striscia di
+			# offset_polyline e l'inizio della toppa non coincidono al decimo di mm, e fra le due restava una lama di
+			# pavimento larga meno di 1 cm con due pareti schiena contro schiena dentro l'acqua (#130, le pinne).
+			var dentro := d * 0.03
+			var ext_pav := PackedVector2Array([p - o - dentro, p + o - dentro, p + o + d, p - o + d])
+			var tocca := false
 			for c: PackedVector2Array in _conche.duplicate():
 				if Geometry2D.intersect_polygons(ext, c).is_empty():
 					continue
+				tocca = true
 				for t: PackedVector2Array in Geometry2D.clip_polygons(ext, c):
 					if Geometry2D.is_polygon_clockwise(t) != Geometry2D.is_polygon_clockwise(c):
 						t.reverse()
 					_conche.append(t)
+			if tocca:
+				_toppe_pavimento.append(ext_pav)
 
 
 func _punti2(punti: Array) -> PackedVector2Array:
@@ -311,6 +327,7 @@ func _poligoni_acqua() -> Array:
 		for p in Geometry2D.offset_polyline(s, W * 0.5, Geometry2D.JOIN_ROUND, Geometry2D.END_BUTT):
 			polys.append(p)
 	polys.append_array(_conche)
+	polys.append_array(_toppe_pavimento)
 	return polys
 
 
@@ -339,6 +356,7 @@ func _acqua_e_banchine() -> void:
 					dopo.append_array(Geometry2D.clip_polygons(pz, w))
 				pezzi = dopo
 			for pz in pezzi:
+				_pezzi_pavimento.append([Rect2(Vector2(x, z), Vector2(xa - x, za - z)), pz])
 				var tri := Geometry2D.triangulate_polygon(pz)
 				for k in range(0, tri.size(), 3):
 					var t := [pz[tri[k]], pz[tri[k + 1]], pz[tri[k + 2]]]
@@ -377,6 +395,7 @@ func _acqua_e_banchine() -> void:
 	# Le pareti si vedono dalla parte dell'acqua, ma la loro collisione resta quella di prima (#130): una faccia sola,
 	# verso la banchina, così i raggi dall'acqua (il getto, chi cerca il fondo o il pelo) passano fino al fondo.
 	var mp := _mesh(pareti, mat_vasca, true, false)
+	_pareti_mesh = mp
 	var facce := mp.mesh.get_faces()
 	for k in range(0, facce.size(), 3):
 		var t := facce[k + 1]
@@ -393,6 +412,7 @@ func _acqua_e_banchine() -> void:
 	var cs := ConcavePolygonShape3D.new()
 	cs.set_faces(barriere)
 	cs.backface_collision = true
+	_barriere_forma = cs
 	fb.shape = cs
 	_barriere.add_child(fb)
 	# il fondo: un piano sotto tutto il capannone
@@ -1274,6 +1294,38 @@ static func in_piazza(p: Vector3) -> bool:
 	if p.x < MURO_APPRODO or p.z > -W * 0.5:
 		return false
 	return p.x < -W * 0.5 or (p.z < Z_PIAZZA_NORD and p.x < MURO_PIAZZA)
+
+
+## I triangoli delle pareti dei canali e delle barriere che non stanno sul bordo del pavimento: a 5 cm dai due lati
+## manca il pavimento (una pinna dentro il canale) o c'è da tutti e due (un muro in mezzo alla banchina). Devono essere
+## 0 (#130). Si guardano i pezzi di pavimento veri, non i poligoni dell'acqua: quelli si sovrappongono fra loro.
+## Ritorna {"pareti": n, "barriere": n, "dove": [punti, al massimo 20]}.
+func lati_storti() -> Dictionary:
+	var out := {"pareti": 0, "barriere": 0, "dove": []}
+	var gruppi := {"pareti": _pareti_mesh.mesh.get_faces() if _pareti_mesh else PackedVector3Array(),
+			"barriere": _barriere_forma.get_faces() if _barriere_forma else PackedVector3Array()}
+	for chi: String in gruppi:
+		var fc: PackedVector3Array = gruppi[chi]
+		for k in range(0, fc.size(), 3):
+			var g := (fc[k + 1] - fc[k]).cross(fc[k + 2] - fc[k])
+			var n := Vector2(g.x, g.z)
+			if n.length() < 1e-6:
+				continue
+			n = n.normalized()
+			var m := (fc[k] + fc[k + 1] + fc[k + 2]) / 3.0
+			var c := Vector2(m.x, m.z)
+			if _sul_pavimento(c + n * 0.05) == _sul_pavimento(c - n * 0.05):
+				out[chi] += 1
+				if (out["dove"] as Array).size() < 20:
+					(out["dove"] as Array).append(m.snappedf(0.01))
+	return out
+
+
+func _sul_pavimento(v: Vector2) -> bool:
+	for pr: Array in _pezzi_pavimento:
+		if (pr[0] as Rect2).grow(0.001).has_point(v) and Geometry2D.is_point_in_polygon(v, pr[1]):
+			return true
+	return false
 
 
 ## Vero se il punto (a quota 0) è sulla banchina libera: non nell'acqua, né troppo vicino al bordo.

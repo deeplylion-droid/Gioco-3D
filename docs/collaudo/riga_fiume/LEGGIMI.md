@@ -11,3 +11,10 @@ Ora la faccia davanti guarda l'acqua.
   sulle pareti del canale, che prima erano nere (si vedeva il loro retro).
 
 Controlli: test_fiume 35/0, test_fiume_gioco 34/0, controllo_posizionamento 0 da correggere.
+
+## Le fessure vicino all'imbarco e sotto la valvola dell'approdo (9 novembre)
+`fessure_risalita_intera.jpg`: nel fiume da solo i pixel magenta di quegli scatti escono dalla porta d'ingresso
+(x −26, z −28,6) e dalla porta di servizio dell'approdo (x −41, z 0), viste fra la capanna e la parete e sotto la valvola
+(`godot/tests/collaudo/fiume_fessure.gd`). Con la risalita intera (fiume, corridoi, infermeria) gli stessi scatti hanno
+0 pixel magenta (`fessure_risalita_scatti.gd`), e nel gioco vero i raggi verso le due porte arrivano al corridoio e
+all'infermeria, mai al cielo (`fessure_fiume_gioco.gd`). Non sono buchi del guscio.
