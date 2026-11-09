@@ -1,6 +1,7 @@
 extends CanvasLayer
 ## Guarda da vicino una Polaroid appena raccolta (o riaperta dall'album del menu di pausa): la foto riempie lo schermo,
-## un po' storta, il gioco resta in pausa finché non premi E, Spazio, Esc, B sul joypad o un tasto del mouse.
+## un po' storta, il gioco resta in pausa finché non premi E, Spazio, Esc, A o B sul joypad o un tasto del mouse (lo dice il
+## suggerimento sotto la foto, coi bottoni del joypad: #128, scelta A dell'utente).
 
 var texture: Texture2D
 ## Falso: chiudendo il gioco resta in pausa (dall'album, che sta nel menu di pausa).
@@ -31,7 +32,7 @@ func _ready() -> void:
 	_card.anchor_bottom = 0.88
 	add_child(_card)
 	var hint := Label.new()
-	hint.text = "E · Spazio · clic per continuare"
+	hint.text = "E · Spazio · clic · A · B per continuare"
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	hint.offset_top = -48

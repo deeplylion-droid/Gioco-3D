@@ -602,6 +602,10 @@ func _prepara_torre() -> void:
 	t.process_mode = Node.PROCESS_MODE_DISABLED
 	_torre_nascosta = t
 	add_child(t)
+	# le coordinate di texture del pavimento per la soglia (chiudi_soglia_torre in _completa_torre): a pezzi, insieme
+	# alla costruzione (che dura secondi; questo pochi fotogrammi), non tutte in un fotogramma quando la torre si mostra.
+	# Senza aspettarlo: la torre è pronta quando lo era prima
+	prepara_uv_pavimento(find_child("sala_pavimento", true, false) as MeshInstance3D, PUNTO_UV_SOGLIA)
 	# (col portone già aperto, a pezzi più grandi: si entra prima, mai tutta in un fotogramma)
 	await t.call(&"costruisci_a_pezzi", 20.0 if _torre_voluta or _torre_in_attesa else 8.0)
 	# (fuori dall'albero: una morte ha ricaricato la sala mentre la torre si preparava)
@@ -691,13 +695,15 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 const SOGLIA_TORRE := [[19.96, 20.235, -18.25, -17.83], [19.96, 20.235, -17.85, -16.64, -0.27],
 		[19.94, 19.99, -17.85, -16.64, -0.015, 0.555], [19.96, 20.22, -16.66, -13.46], [19.96, 20.235, -13.48, -7.15]]
 const SOGLIA_TORRE_Y := -0.015
+## Dove si prendono le coordinate di texture del pavimento per la soglia (x, z).
+const PUNTO_UV_SOGLIA := Vector2(19.9, -15.0)
 
 
 static func chiudi_soglia_torre(torre: Node3D, pavimento: MeshInstance3D) -> MeshInstance3D:
 	var lastra := MeshInstance3D.new()
 	lastra.name = "soglia_torre_sotto"
 	# le coordinate di texture del pavimento: dal triangolo del pavimento vicino alla soglia, uv = A x + B z + C
-	var mappa := _uv_pavimento(pavimento, Vector2(19.9, -15.0))
+	var mappa := _uv_pavimento(pavimento, PUNTO_UV_SOGLIA)
 	var materiale: Material = mappa[3] if mappa.size() > 3 else null
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -727,53 +733,123 @@ static func chiudi_soglia_torre(torre: Node3D, pavimento: MeshInstance3D) -> Mes
 
 ## [uv di (x, z) = A x + B z + C, ..., materiale, colore dei vertici (o bianco)]: dal triangolo del pavimento (vicino
 ## a y 0) che contiene [param punto] (x, z nel mondo), o dal più vicino. Vuoto se non c'è.
+## Il giro su tutti i triangoli del pavimento costa 25-50 ms (più in CI): il risultato resta in [member _uv_cache]
+## (dipende solo dal pavimento e dal punto), e [method prepara_uv_pavimento] lo calcola prima, a pezzi, mentre la torre
+## si prepara; qui allora non costa niente (in CI «mostra torre ... completa» era di 105 ms in un fotogramma).
 static func _uv_pavimento(pavimento: MeshInstance3D, punto: Vector2) -> Array:
 	if pavimento == null or pavimento.mesh == null:
 		return []
-	var xf := pavimento.global_transform
+	var chiave := _chiave_uv(pavimento, punto)
+	if not _uv_cache.has(chiave):
+		var stato := _UvPavimento.new(pavimento, punto)
+		stato.avanza(INF)
+		_uv_cache[chiave] = stato.meglio
+	# (in cache la geometria e l'indice della superficie: il materiale si prende adesso, la sala lo cambia dopo il suo
+	# ingresso, col pavimento bagnato)
+	var m: Array = (_uv_cache[chiave] as Array).duplicate()
+	if m.size() > 3:
+		m[3] = pavimento.get_active_material(int(m[3]))
+	return m
+
+
+## Le mappe già calcolate del pavimento (chiave: mesh, trasformazione, punto), con l'indice della superficie al posto
+## del materiale.
+static var _uv_cache := {}
+
+
+static func _chiave_uv(pavimento: MeshInstance3D, punto: Vector2) -> String:
+	var m := pavimento.mesh
+	return "%s|%d|%s|%s" % [m.resource_path if m.resource_path != "" else str(m.get_instance_id()), m.get_surface_count(),
+			str(pavimento.global_transform), str(punto)]
+
+
+## Come [method _uv_pavimento], ma a pezzi: al più [param ms_per_fotogramma] ms per fotogramma, poi il resto al
+## fotogramma dopo. Il risultato (identico: stessi triangoli nello stesso ordine) resta nella cache.
+static func prepara_uv_pavimento(pavimento: MeshInstance3D, punto: Vector2, ms_per_fotogramma := 6.0) -> void:
+	if pavimento == null or pavimento.mesh == null or _uv_cache.has(_chiave_uv(pavimento, punto)):
+		return
+	var chiave := _chiave_uv(pavimento, punto)
+	var albero := Engine.get_main_loop() as SceneTree
+	var stato := _UvPavimento.new(pavimento, punto)
+	while not stato.avanza(ms_per_fotogramma * 1000.0):
+		await albero.process_frame
+		if not is_instance_valid(pavimento):
+			return
+	_uv_cache[chiave] = stato.meglio
+
+
+## Il giro sui triangoli del pavimento, che si può fermare e riprendere.
+class _UvPavimento:
 	var meglio: Array = []
-	var dist := INF
-	for s in pavimento.mesh.get_surface_count():
-		var arr := pavimento.mesh.surface_get_arrays(s)
-		var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
-		var uvs = arr[Mesh.ARRAY_TEX_UV]
-		if uvs == null or (uvs as PackedVector2Array).is_empty():
-			continue
-		var idx = arr[Mesh.ARRAY_INDEX]
-		var n: int = (idx as PackedInt32Array).size() if idx != null else vs.size()
-		for k in range(0, n, 3):
-			var i0: int = idx[k] if idx != null else k
-			var i1: int = idx[k + 1] if idx != null else k + 1
-			var i2: int = idx[k + 2] if idx != null else k + 2
-			var a := xf * vs[i0]
-			var b := xf * vs[i1]
-			var c := xf * vs[i2]
-			if absf(a.y) > 0.05 or absf(b.y) > 0.05 or absf(c.y) > 0.05:
+	var _pav: MeshInstance3D
+	var _punto: Vector2
+	var _xf: Transform3D
+	var _dist := INF
+	var _s := 0
+	var _k := 0
+	var _arr: Array = []
+
+	func _init(pavimento: MeshInstance3D, punto: Vector2) -> void:
+		_pav = pavimento
+		_punto = punto
+		_xf = pavimento.global_transform
+
+	## Va avanti per al più [param us] microsecondi; vero se ha finito.
+	func avanza(us: float) -> bool:
+		var t0 := Time.get_ticks_usec()
+		var mesh := _pav.mesh
+		while _s < mesh.get_surface_count():
+			if _arr.is_empty():
+				_arr = mesh.surface_get_arrays(_s)
+				_k = 0
+			var vs: PackedVector3Array = _arr[Mesh.ARRAY_VERTEX]
+			var uvs = _arr[Mesh.ARRAY_TEX_UV]
+			if uvs == null or (uvs as PackedVector2Array).is_empty():
+				_s += 1
+				_arr = []
 				continue
-			var a2 := Vector2(a.x, a.z)
-			var b2 := Vector2(b.x, b.z)
-			var c2 := Vector2(c.x, c.z)
-			var den := (b2 - a2).cross(c2 - a2)
-			if absf(den) < 1e-8:
-				continue
-			var cen := (a2 + b2 + c2) / 3.0
-			var d := 0.0 if Geometry2D.point_is_inside_triangle(punto, a2, b2, c2) else cen.distance_to(punto)
-			if d >= dist:
-				continue
-			dist = d
-			# risolve uv = A x + B z + C coi tre vertici
-			var ua: Vector2 = uvs[i0]
-			var ub: Vector2 = uvs[i1]
-			var uc: Vector2 = uvs[i2]
-			var m := Transform2D(b2 - a2, c2 - a2, Vector2.ZERO).affine_inverse()
-			var du := Transform2D(ub - ua, uc - ua, Vector2.ZERO)
-			var lin := du * m     # mappa lineare: (x, z) - a2 -> uv - ua
-			var colore := Color.WHITE
-			var cols = arr[Mesh.ARRAY_COLOR]
-			if cols != null and not (cols as PackedColorArray).is_empty():
-				colore = ((cols[i0] as Color) + (cols[i1] as Color) + (cols[i2] as Color)) / 3.0
-			meglio = [lin, a2, ua, pavimento.get_active_material(s), colore]
-	return meglio
+			var idx = _arr[Mesh.ARRAY_INDEX]
+			var n: int = (idx as PackedInt32Array).size() if idx != null else vs.size()
+			while _k < n:
+				var k := _k
+				_k += 3
+				if (k / 3) % 64 == 63 and Time.get_ticks_usec() - t0 > us:
+					_k = k
+					return false
+				var i0: int = idx[k] if idx != null else k
+				var i1: int = idx[k + 1] if idx != null else k + 1
+				var i2: int = idx[k + 2] if idx != null else k + 2
+				var a := _xf * vs[i0]
+				var b := _xf * vs[i1]
+				var c := _xf * vs[i2]
+				if absf(a.y) > 0.05 or absf(b.y) > 0.05 or absf(c.y) > 0.05:
+					continue
+				var a2 := Vector2(a.x, a.z)
+				var b2 := Vector2(b.x, b.z)
+				var c2 := Vector2(c.x, c.z)
+				var den := (b2 - a2).cross(c2 - a2)
+				if absf(den) < 1e-8:
+					continue
+				var cen := (a2 + b2 + c2) / 3.0
+				var d := 0.0 if Geometry2D.point_is_inside_triangle(_punto, a2, b2, c2) else cen.distance_to(_punto)
+				if d >= _dist:
+					continue
+				_dist = d
+				# risolve uv = A x + B z + C coi tre vertici
+				var ua: Vector2 = uvs[i0]
+				var ub: Vector2 = uvs[i1]
+				var uc: Vector2 = uvs[i2]
+				var m := Transform2D(b2 - a2, c2 - a2, Vector2.ZERO).affine_inverse()
+				var du := Transform2D(ub - ua, uc - ua, Vector2.ZERO)
+				var lin := du * m     # mappa lineare: (x, z) - a2 -> uv - ua
+				var colore := Color.WHITE
+				var cols = _arr[Mesh.ARRAY_COLOR]
+				if cols != null and not (cols as PackedColorArray).is_empty():
+					colore = ((cols[i0] as Color) + (cols[i1] as Color) + (cols[i2] as Color)) / 3.0
+				meglio = [lin, a2, ua, _s, colore]
+			_s += 1
+			_arr = []
+		return true
 
 
 static func _uv_in(mappa: Array, p: Vector3) -> Vector2:
@@ -807,17 +883,27 @@ static func _scatola_uv(st: SurfaceTool, lo: Vector3, hi: Vector3, mappa: Array)
 
 
 func _completa_torre() -> void:
+	var tt := [Time.get_ticks_usec()]
+	var tempo := func(cosa: String) -> void:
+		if OS.has_environment("TORRE_TEMPI"):
+			var t := Time.get_ticks_usec()
+			print("  completa torre, %s: %.1f ms" % [cosa, (t - int(tt[0])) / 1000.0])
+			tt[0] = t
 	AttesaZone.pronta(&"torre")
+	tempo.call("AttesaZone.pronta")
 	# il guscio provvisorio dietro il portone (sala_architettura.glb) lascia il posto alla sala vera
 	var guscio := find_child("sala_torre_guscio", true, false)
 	if guscio:
 		guscio.queue_free()
+	tempo.call("guscio")
 	chiudi_soglia_torre(sala_torre, find_child("sala_pavimento", true, false) as MeshInstance3D)
+	tempo.call("soglia")
 	if sala_torre.has_signal(&"discesa_finita"):
 		sala_torre.connect(&"discesa_finita", _on_fine_torre)
 	# il tunnel del viaggio sottomarino: si carica nel thread da adesso; le condotte lo chiamano dopo SB1
 	if sala_sottomarino_scena != "":
 		_precarica_sottomarino()
+		tempo.call("precarica tunnel")
 		var ins: Node3D = sala_torre.get(&"inseguimento")
 		if ins:
 			_collega_inseguimento(ins)

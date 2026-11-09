@@ -441,6 +441,14 @@ jobs:
           TORRE_TEMPI: "1"
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
 
+      - name: Test dei lavori della torre spezzati su più fotogrammi (varchi delle scalette e soglia, uguali a tutti insieme; cache alle ripartenze)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_torre_pezzi_uguali.gd
+
+      - name: Test delle lampade della torre dal portone (torre nascosta) e da F9 (stessi posti, a filo del muro, niente dentro)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lampade_torre_strade.gd
+
       - name: Test della costruzione a pezzi interrotta (niente nodi orfani dai passi degli stendardi e delle sagome del club)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_passi_orfani.gd
