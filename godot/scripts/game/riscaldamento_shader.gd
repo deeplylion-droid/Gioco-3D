@@ -460,20 +460,23 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 	if principale == null or not radice.is_inside_tree():
 		return
 	var albero := radice.get_tree()
+	# (il nome per i segni preso subito: se si muore a metà del riscaldamento, dopo un'attesa la radice è già liberata;
+	# radice.name dava SCRIPT ERROR, Prova su Vulkan del 9 novembre, test_strati_luci)
+	var nome := radice.name
 	var t := Time.get_ticks_usec()
 	var stato := _fuori_vista(radice)
-	segno("disegna_fuori_vista %s: _fuori_vista %.1f ms" % [radice.name, (Time.get_ticks_usec() - t) / 1000.0])
+	segno("disegna_fuori_vista %s: _fuori_vista %.1f ms" % [nome, (Time.get_ticks_usec() - t) / 1000.0])
 	t = Time.get_ticks_usec()
 	var sv := _camera(radice, principale, stato["aabb"])
-	segno("disegna_fuori_vista %s: _camera %.1f ms" % [radice.name, (Time.get_ticks_usec() - t) / 1000.0])
+	segno("disegna_fuori_vista %s: _camera %.1f ms" % [nome, (Time.get_ticks_usec() - t) / 1000.0])
 	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
 	for i in fotogrammi + 1:
 		if i == fotogrammi / 2 and a_meta.is_valid():
 			t = Time.get_ticks_usec()
 			a_meta.call()
-			segno("disegna_fuori_vista %s: a_meta %.1f ms" % [radice.name, (Time.get_ticks_usec() - t) / 1000.0])
+			segno("disegna_fuori_vista %s: a_meta %.1f ms" % [nome, (Time.get_ticks_usec() - t) / 1000.0])
 		await albero.process_frame
-		segno("disegna_fuori_vista %s: fotogramma %d" % [radice.name, i])
+		segno("disegna_fuori_vista %s: fotogramma %d" % [nome, i])
 		if not _viva(radice):
 			break
 	if is_instance_valid(sv):
@@ -482,7 +485,7 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 		await alla_fine.call()
 	t = Time.get_ticks_usec()
 	_rimetti(radice, stato)
-	segno("disegna_fuori_vista %s: _rimetti %.1f ms" % [radice.name, (Time.get_ticks_usec() - t) / 1000.0])
+	segno("disegna_fuori_vista %s: _rimetti %.1f ms" % [nome, (Time.get_ticks_usec() - t) / 1000.0])
 
 
 ## Coi tempi accesi (TORRE_TEMPI): l'ultimo punto passato, che test_attesa_zone stampa coi fotogrammi lunghi (per
