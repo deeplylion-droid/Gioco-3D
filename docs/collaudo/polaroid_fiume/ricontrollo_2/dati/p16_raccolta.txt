@@ -1,0 +1,4 @@
+POSTI: modo richiesta, fiume pronto dopo 22.3 s
+POSTI: P16 raccolta prima: false, foto trovate 0
+POSTI: P16 raccolta dopo: true, foto trovate 1, nodo tolto
+POSTI FINITO

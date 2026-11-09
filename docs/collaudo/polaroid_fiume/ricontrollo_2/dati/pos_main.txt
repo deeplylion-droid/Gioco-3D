@@ -1,0 +1,3 @@
+  ok    nessun caso nuovo di posizionamento (0 nuovi, 64 già noti, 0 eccezioni non più trovate)
+  casi da correggere (non "voluto"): 0
+RISULTATO: 2 controlli ok, 0 falliti
