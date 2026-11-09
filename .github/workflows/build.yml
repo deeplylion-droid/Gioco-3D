@@ -497,6 +497,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid_fiume_ferma.gd
 
+      - name: Test delle Polaroid appoggiate (il fondo di ognuna a filo della superficie sotto, al più 1 mm e niente dentro; anche P10 e P12 nella torre)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid_appoggiate.gd
+
       - name: Le ciambelle tolte dal fiume stanno sulla riva, nel gioco vero
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_ciambelle_riva.gd
