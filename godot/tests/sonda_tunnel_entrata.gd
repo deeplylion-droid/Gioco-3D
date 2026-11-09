@@ -41,6 +41,9 @@ func _process(_d: float) -> void:
 			stato = "costruita" if bool(tun.get(&"costruita")) else "a pezzi"
 		if AttesaZone.e_pronta(&"tunnel"):
 			stato += ", pronta"
+		# (il velo nero: se c'è e quanto copre; un fotogramma lungo a schermo nero il giocatore non lo vede)
+		var velo := get_tree().root.get_node_or_null(NodePath(Dissolvenza.NOME)) as Dissolvenza
+		stato += ", velo %.2f" % (velo.opacita() if velo and not velo.is_queued_for_deletion() else 0.0)
 		print("LUNGO giro %d fotogramma %d: %.1f ms (%s) | %s" % [_giro, Engine.get_process_frames() - 1,
 				(ora - _t) / 1000.0, stato, RiscaldamentoShader.segni_recenti(2)])
 	_t = ora
@@ -81,4 +84,5 @@ func _run() -> void:
 	for i in 120:
 		await get_tree().process_frame
 	print("FINITO_SONDA")
-	get_tree().quit()
+	# (l'uscita del gioco, che aspetta i caricamenti nel thread: con quit() subito la sonda finiva in Aborted)
+	Game.esci()
