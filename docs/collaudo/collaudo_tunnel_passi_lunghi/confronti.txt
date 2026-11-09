@@ -1,0 +1,91 @@
+# Confronti dei nodi (sonda_nodi_tunnel.gd + confronta_nodi.py). 'cambiano da sole' = diverse anche fra due giri della stessa versione.
+
+## Tunnel, scena di prova (prima versione della sonda)
+CONFRONTO prova_pezzi.txt / prova_pezzi2.txt: nodi 2844 / 2844
+  stessi nodi, stesso ordine; proprietà diverse: 7 (più 216 che cambiano da sole fra due giri: {'punti_fuga': 1, 'mesh': 28, 'metadata/posa': 14, 'bones/*/rotation': 171, 'bones/*/position': 2})
+    libraries/                     3 nodi
+    scena                          1 nodi
+    model                          1 nodi
+    material_map                   1 nodi
+    libraries/inseguimento         1 nodi
+    BambinoGalleria Node3D scena:
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#de917b35c26e
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#a0401946a6b7
+    BambinoGalleria/BambinoAgnello/Calmo/AnimationPlayer AnimationPlayer libraries/:
+       AnimationLibrary#9e7bf9f6fa92
+
+CONFRONTO prova_subito.txt / prova_subito.txt: nodi 2844 / 2844
+  stessi nodi, stesso ordine; proprietà diverse: 8 (più 215 che cambiano da sole fra due giri: {'punti_fuga': 1, 'mesh': 28, 'metadata/posa': 14, 'bones/*/rotation': 170, 'bones/*/position': 2})
+    libraries/                     3 nodi
+    scena                          1 nodi
+    model                          1 nodi
+    material_map                   1 nodi
+    volume_db                      1 nodi
+    libraries/inseguimento         1 nodi
+    BambinoGalleria Node3D scena:
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#de917b35c26e
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#a0401946a6b7
+    BambinoGalleria/BambinoAgnello/Calmo/AnimationPlayer AnimationPlayer libraries/:
+
+CONFRONTO prova_pezzi.txt / prova_subito.txt: nodi 2844 / 2844
+  stessi nodi, stesso ordine; proprietà diverse: 1037 (più 218 che cambiano da sole fra due giri: {'punti_fuga': 1, 'mesh': 28, 'metadata/posa': 14, 'bones/*/rotation': 173, 'bones/*/position': 2})
+    layers                         1036 nodi
+    volume_db                      1 nodi
+    Approdo/@MeshInstance3D MeshInstance3D layers:
+       4097
+       1
+    Approdo/@MeshInstance3D MeshInstance3D layers:
+       4097
+       1
+    Approdo/@MeshInstance3D MeshInstance3D layers:
+       4097
+
+CONFRONTO prova_pezzi2.txt / prova_subito.txt: nodi 2844 / 2844
+  stessi nodi, stesso ordine; proprietà diverse: 1037 (più 218 che cambiano da sole fra due giri: {'punti_fuga': 1, 'mesh': 28, 'metadata/posa': 14, 'bones/*/rotation': 173, 'bones/*/position': 2})
+    layers                         1036 nodi
+    volume_db                      1 nodi
+    Approdo/@MeshInstance3D MeshInstance3D layers:
+       4097
+       1
+    Approdo/@MeshInstance3D MeshInstance3D layers:
+       4097
+       1
+    Approdo/@MeshInstance3D MeshInstance3D layers:
+       4097
+
+## Tunnel nel gioco vero (prima versione della sonda): F9 Inseguimento (a pezzi nelle condotte) e F9 Tunnel (tutto insieme)
+CONFRONTO gioco_ins_tunnel.txt / gioco_ins_tunnel.txt: nodi 2844 / 2844
+  stessi nodi, stesso ordine; proprietà diverse: 7 (più 216 che cambiano da sole fra due giri: {'punti_fuga': 1, 'mesh': 28, 'metadata/posa': 14, 'bones/*/rotation': 171, 'bones/*/position': 2})
+    libraries/                     3 nodi
+    scena                          1 nodi
+    model                          1 nodi
+    material_map                   1 nodi
+    libraries/inseguimento         1 nodi
+    BambinoGalleria Node3D scena:
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#de917b35c26e
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#a0401946a6b7
+    BambinoGalleria/BambinoAgnello/Calmo/AnimationPlayer AnimationPlayer libraries/:
+       AnimationLibrary#9e7bf9f6fa92
+
+CONFRONTO gioco_tun_tunnel.txt / gioco_tun_tunnel.txt: nodi 2845 / 2845
+  stessi nodi, stesso ordine; proprietà diverse: 8 (più 188 che cambiano da sole fra due giri: {'punti_fuga': 1, 'mesh': 28, 'metadata/posa': 14, 'bones/*/rotation': 143, 'bones/*/position': 2})
+    libraries/                     3 nodi
+    scena                          1 nodi
+    model                          1 nodi
+    material_map                   1 nodi
+    volume_db                      1 nodi
+    libraries/inseguimento         1 nodi
+    BambinoGalleria Node3D scena:
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#de917b35c26e
+       PackedScene(res://scenes/creature/bambino_agnello.tscn)#a0401946a6b7
+    BambinoGalleria/BambinoAgnello/Calmo/AnimationPlayer AnimationPlayer libraries/:
+
+Le righe diverse qui sopra (BambinoGalleria scena, librerie delle animazioni, material_map, model) sono impronte di risorse che contengono
+oggetti: la prima versione della sonda le scriveva col numero d'istanza. Con la seconda (sotto) spariscono.
+
+## Seconda versione della sonda (oggetti dentro elenchi e dizionari con la loro impronta), gioco vero, F9 Inseguimento,
+## lettura a (appena il tunnel è pronto) e b (95 s dopo); rumore = differenze fra a e b della stessa versione
+tunnel, lettura a: candidata 2844 nodi, branch 2844 nodi, stesso ordine; proprietà diverse non di rumore: 0 {}; di rumore: {'mesh': 28, 'metadata': 14, 'bones': 174}
+tunnel, lettura b: candidata 2844 nodi, branch 2844 nodi, stesso ordine; proprietà diverse non di rumore: 0 {}; di rumore: {'mesh': 28, 'metadata': 14, 'bones': 173}
+torre, lettura a: candidata 1132 nodi, branch 1132 nodi, stesso ordine; proprietà diverse non di rumore: 0 {}; di rumore: {'material_override': 1, 'light_energy': 1, 'bones': 334, 'blend_shapes': 3}
+torre, lettura b: candidata 1132 nodi, branch 1132 nodi, stesso ordine; proprietà diverse non di rumore: 0 {}; di rumore: {'material_override': 1, 'light_energy': 1, 'bones': 335, 'blend_shapes': 3}

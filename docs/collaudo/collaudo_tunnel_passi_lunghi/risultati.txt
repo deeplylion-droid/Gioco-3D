@@ -1,0 +1,134 @@
+# Risultati del ricontrollo dei passi lunghi del tunnel (#149): le righe chiave dei log
+
+## candidata 0.3.23 f2f810a2
+### tempi (TORRE_TEMPI, misura_tunnel_pezzi.gd)
+- tunnel passo _pezzo: 22.8 ms;tunnel passo _pezzo: 21.6 ms;tunnel passo _pezzo: 22.2 ms;tunnel passo _fine: 25.1 ms;tunnel passo _luci: 85.6 ms;BLOCCO 94 ms;tunnel passo _relitto: 42.2 ms;tunnel passo _tartaruga: 69.2 ms;BLOCCO 77 ms;tunnel passo _reti: 26.6 ms;tunnel passo _buco_anello: 50.6 ms;BLOCCO 53 ms;tunnel passo _buco_anello: 44.4 ms;tunnel passo _buco_anello: 42.1 ms;tunnel passo _buco_anello: 47.2 ms;tunnel passo _buco_anello: 44.9 ms;tunnel passo _buco_anello: 43.3 ms;tunnel passo _approdo: 39.2 ms;tunnel passo _pesci: 56.8 ms;BLOCCO 58 ms;tunnel passo _pesce_mensola: 30.6 ms;tunnel passo _abisso_oblo: 83.0 ms;BLOCCO 85 ms;TUNNEL: costruito in 3.9 s (23 campioni);
+- tunnel passo _fine: 23.1 ms;tunnel passo _luci: 84.8 ms;BLOCCO 93 ms;tunnel passo _relitto: 27.4 ms;tunnel passo _tartaruga: 53.9 ms;BLOCCO 60 ms;tunnel passo _reti: 28.5 ms;tunnel passo _buco_anello: 44.6 ms;tunnel passo _buco_anello: 43.6 ms;tunnel passo _buco_anello: 46.0 ms;tunnel passo _buco_anello: 44.1 ms;tunnel passo _buco_anello: 43.2 ms;tunnel passo _buco_anello: 42.8 ms;tunnel passo _approdo: 52.6 ms;BLOCCO 59 ms;tunnel passo _pesci: 93.2 ms;BLOCCO 95 ms;tunnel passo _pesce_mensola: 32.5 ms;tunnel passo _pesce_mensola: 20.5 ms;tunnel passo _pesce_mensola: 29.6 ms;tunnel passo _abisso_oblo: 94.9 ms;BLOCCO 97 ms;TUNNEL: costruito in 4.1 s (23 campioni);
+- tunnel passo _pezzo: 28.4 ms;tunnel passo _fine: 24.4 ms;tunnel passo _luci: 87.1 ms;BLOCCO 95 ms;tunnel passo _relitto: 28.3 ms;tunnel passo _tartaruga: 52.2 ms;BLOCCO 58 ms;tunnel passo _reti: 26.6 ms;tunnel passo _buco_anello: 43.3 ms;tunnel passo _buco_anello: 42.8 ms;tunnel passo _buco_anello: 42.7 ms;tunnel passo _buco_anello: 44.2 ms;tunnel passo _buco_anello: 43.9 ms;tunnel passo _buco_anello: 43.3 ms;tunnel passo _approdo: 39.5 ms;tunnel passo _pesci: 57.9 ms;BLOCCO 60 ms;tunnel passo _pesce_mensola: 31.2 ms;tunnel passo _abisso_oblo: 78.6 ms;BLOCCO 81 ms;TUNNEL: costruito in 4.0 s (23 campioni);
+### test_lampade_torre_strade
+RISULTATO: 22 controlli ok, 0 falliti
+### corsa intera (sonda_corsa_tunnel.gd)
+CORSA 9.25 s: tunnel, tunnel pronto: 2845 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie; checkpoint SalaSottomarino/Checkpoint_6; torre no
+CORSA 9.28 s: checkpoint SalaSottomarino/Checkpoint_6 a s 0
+CORSA 9.28 s: torre e condotte liberate a s 0
+CORSA 13.93 s: MORTE a s 98 (ultimo checkpoint SalaSottomarino/Checkpoint_6)
+CORSA 18.20 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_6, giocatore a s 6.0, tunnel costruito (2845 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 24.44 s: checkpoint SalaSottomarino/Checkpoint_160 a s 158
+CORSA 28.64 s: checkpoint SalaSottomarino/Checkpoint_300 a s 299
+CORSA 28.70 s: MORTE a s 299 (ultimo checkpoint SalaSottomarino/Checkpoint_300)
+CORSA 33.39 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_300, giocatore a s 300.1, tunnel costruito (2843 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 37.79 s: checkpoint SalaSottomarino/Checkpoint_445 a s 443
+CORSA 41.55 s: in fondo, giocatore a s 552.3; chiudo il portello
+CORSA 47.94 s: fine del tunnel (fine_demo) true
+CORSA 58.97 s: RISULTATO tunnel: checkpoint presi 4 ["SalaSottomarino/Checkpoint_6", "SalaSottomarino/Checkpoint_160", "SalaSottomarino/Checkpoint_300", "SalaSottomarino/Checkpoint_445"], morti 2, al titolo true
+CORSA 14.19 s: inseguimento, tunnel pronto: 2844 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie; checkpoint SalaTorre/Checkpoint_fondo; torre c'è
+CORSA 14.44 s: checkpoint SalaTorre/Checkpoint_fondo a s 0
+CORSA 14.74 s: checkpoint SalaSottomarino/Checkpoint_6 a s 5
+CORSA 16.44 s: torre e condotte liberate a s 56
+CORSA 17.79 s: MORTE a s 98 (ultimo checkpoint SalaSottomarino/Checkpoint_6)
+CORSA 21.94 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_6, giocatore a s 6.0, tunnel costruito (2845 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 28.37 s: checkpoint SalaSottomarino/Checkpoint_160 a s 158
+CORSA 32.57 s: checkpoint SalaSottomarino/Checkpoint_300 a s 299
+CORSA 32.62 s: MORTE a s 299 (ultimo checkpoint SalaSottomarino/Checkpoint_300)
+CORSA 37.56 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_300, giocatore a s 300.1, tunnel costruito (2843 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 41.95 s: checkpoint SalaSottomarino/Checkpoint_445 a s 443
+CORSA 45.71 s: in fondo, giocatore a s 552.3; chiudo il portello
+CORSA 52.11 s: fine del tunnel (fine_demo) true
+CORSA 62.00 s: RISULTATO inseguimento: checkpoint presi 5 ["SalaTorre/Checkpoint_fondo", "SalaSottomarino/Checkpoint_6", "SalaSottomarino/Checkpoint_160", "SalaSottomarino/Checkpoint_300", "SalaSottomarino/Checkpoint_445"], morti 2, al titolo true
+### fondo nero (sonda_lampo_casi.gd)
+STRATI f9: RISULTATO tunnel costruiti 1, giusti 1, sbagliati 0
+FONDO f9: RISULTATO fotogrammi col vuoto 0 [], col nero sopra il tunnel pronto 4 (0.07 s a 60/s), fondi al massimo 1, fotogrammi con doppioni 0, fondo comparso 1 volte e tolto 1
+STRATI morte: RISULTATO tunnel costruiti 2, giusti 2, sbagliati 0
+FONDO morte: RISULTATO fotogrammi col vuoto 0 [], col nero sopra il tunnel pronto 8 (0.13 s a 60/s), fondi al massimo 1, fotogrammi con doppioni 0, fondo comparso 2 volte e tolto 2
+### posizionamento
+  ok    nessun caso nuovo di posizionamento (0 nuovi, 64 già noti, 0 eccezioni non più trovate)
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+
+## branch 48201c67
+### tempi (TORRE_TEMPI, misura_tunnel_pezzi.gd)
+- tunnel passo _pezzo: 20.5 ms;tunnel passo _pezzo: 47.7 ms;tunnel passo _pezzo: 26.9 ms;tunnel passo _pezzo: 21.3 ms;tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);tunnel passo _relitto_staffe: 23.3 ms;tunnel passo _occupati_tratto: 20.2 ms;TUNNEL: costruito in 4.0 s (23 campioni);
+- tunnel passo _pezzo: 21.3 ms;tunnel passo _pezzo: 23.7 ms;tunnel passo _pezzo: 21.5 ms;tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);tunnel passo _relitto_staffe: 23.2 ms;tunnel passo _galleria: 20.5 ms;TUNNEL: costruito in 4.0 s (23 campioni);
+- tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);tunnel passo _relitto_staffe: 22.6 ms;TUNNEL: costruito in 3.9 s (23 campioni);
+- tunnel passo _pezzo: 24.2 ms;tunnel passo _pezzo: 21.1 ms;tunnel passo _pezzo: 20.2 ms;tunnel passo _pezzo: 21.6 ms;tunnel passo _pezzo: 20.7 ms;tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);tunnel passo _relitto_staffe: 23.8 ms;tunnel passo _occupati_tratto: 22.2 ms;tunnel passo _occupati_tratto: 20.2 ms;TUNNEL: costruito in 4.2 s (23 campioni);
+- tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.1 ms);tunnel passo _relitto_staffe: 24.9 ms;tunnel passo _tartaruga: 20.1 ms;TUNNEL: costruito in 3.7 s (23 campioni);BLOCCO 50 ms;
+### test_lampade_torre_strade
+RISULTATO: 22 controlli ok, 0 falliti
+### corsa intera (sonda_corsa_tunnel.gd)
+CORSA 8.56 s: tunnel, tunnel pronto: 2845 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie; checkpoint SalaSottomarino/Checkpoint_6; torre no
+CORSA 8.58 s: checkpoint SalaSottomarino/Checkpoint_6 a s 0
+CORSA 8.58 s: torre e condotte liberate a s 0
+CORSA 13.15 s: MORTE a s 98 (ultimo checkpoint SalaSottomarino/Checkpoint_6)
+CORSA 17.01 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_6, giocatore a s 6.0, tunnel costruito (2845 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 23.39 s: checkpoint SalaSottomarino/Checkpoint_160 a s 158
+CORSA 27.59 s: checkpoint SalaSottomarino/Checkpoint_300 a s 299
+CORSA 27.64 s: MORTE a s 299 (ultimo checkpoint SalaSottomarino/Checkpoint_300)
+CORSA 32.05 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_300, giocatore a s 300.1, tunnel costruito (2843 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 36.44 s: checkpoint SalaSottomarino/Checkpoint_445 a s 443
+CORSA 40.20 s: in fondo, giocatore a s 552.3; chiudo il portello
+CORSA 46.60 s: fine del tunnel (fine_demo) true
+CORSA 56.37 s: RISULTATO tunnel: checkpoint presi 4 ["SalaSottomarino/Checkpoint_6", "SalaSottomarino/Checkpoint_160", "SalaSottomarino/Checkpoint_300", "SalaSottomarino/Checkpoint_445"], morti 2, al titolo true
+CORSA 14.05 s: inseguimento, tunnel pronto: 2844 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie; checkpoint SalaTorre/Checkpoint_fondo; torre c'è
+CORSA 14.30 s: checkpoint SalaTorre/Checkpoint_fondo a s 0
+CORSA 14.60 s: checkpoint SalaSottomarino/Checkpoint_6 a s 5
+CORSA 16.30 s: torre e condotte liberate a s 56
+CORSA 17.66 s: MORTE a s 98 (ultimo checkpoint SalaSottomarino/Checkpoint_6)
+CORSA 20.83 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_6, giocatore a s 6.0, tunnel costruito (2845 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 27.07 s: checkpoint SalaSottomarino/Checkpoint_160 a s 158
+CORSA 31.27 s: checkpoint SalaSottomarino/Checkpoint_300 a s 299
+CORSA 31.32 s: MORTE a s 299 (ultimo checkpoint SalaSottomarino/Checkpoint_300)
+CORSA 35.72 s: RIPARTENZA true, checkpoint SalaSottomarino/Checkpoint_300, giocatore a s 300.1, tunnel costruito (2843 nodi, 87 luci omni (52 delle lampade tonde a energia 0,8 = 4 x 20%), 14 gommoni, 3 gallerie), pronto true, torre liberata
+CORSA 40.12 s: checkpoint SalaSottomarino/Checkpoint_445 a s 443
+CORSA 43.87 s: in fondo, giocatore a s 552.3; chiudo il portello
+CORSA 50.28 s: fine del tunnel (fine_demo) true
+CORSA 60.03 s: RISULTATO inseguimento: checkpoint presi 5 ["SalaTorre/Checkpoint_fondo", "SalaSottomarino/Checkpoint_6", "SalaSottomarino/Checkpoint_160", "SalaSottomarino/Checkpoint_300", "SalaSottomarino/Checkpoint_445"], morti 2, al titolo true
+### fondo nero (sonda_lampo_casi.gd)
+STRATI continua: RISULTATO tunnel costruiti 2, giusti 2, sbagliati 0
+FONDO continua: RISULTATO fotogrammi col vuoto 0 [], col nero sopra il tunnel pronto 3 (0.05 s a 60/s), fondi al massimo 1, fotogrammi con doppioni 0, fondo comparso 2 volte e tolto 2
+STRATI due_morti: RISULTATO tunnel costruiti 3, giusti 3, sbagliati 0
+FONDO due_morti: RISULTATO fotogrammi col vuoto 0 [], col nero sopra il tunnel pronto 10 (0.17 s a 60/s), fondi al massimo 1, fotogrammi con doppioni 0, fondo comparso 3 volte e tolto 3
+STRATI f9: RISULTATO tunnel costruiti 1, giusti 1, sbagliati 0
+FONDO f9: RISULTATO fotogrammi col vuoto 0 [], col nero sopra il tunnel pronto 9 (0.15 s a 60/s), fondi al massimo 1, fotogrammi con doppioni 0, fondo comparso 1 volte e tolto 1
+STRATI morte: RISULTATO tunnel costruiti 2, giusti 2, sbagliati 0
+FONDO morte: RISULTATO fotogrammi col vuoto 0 [], col nero sopra il tunnel pronto 26 (0.43 s a 60/s), fondi al massimo 1, fotogrammi con doppioni 0, fondo comparso 2 volte e tolto 2
+STRATI torre: RISULTATO tunnel costruiti 1, giusti 1, sbagliati 0
+FONDO torre: RISULTATO fotogrammi col vuoto 0 [], col nero sopra il tunnel pronto 2 (0.03 s a 60/s), fondi al massimo 1, fotogrammi con doppioni 0, fondo comparso 1 volte e tolto 1
+### posizionamento
+  ok    nessun caso nuovo di posizionamento (0 nuovi, 64 già noti, 0 eccezioni non più trovate)
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+
+## branch: test_attesa_zone 5 volte (TORRE_TEMPI)
+- giro 1: RISULTATO: 6 controlli ok, 0 falliti il peggiore 39 ms su 959
+- giro 2: RISULTATO: 6 controlli ok, 0 falliti il peggiore 52 ms su 958
+- giro 3: RISULTATO: 6 controlli ok, 0 falliti il peggiore 38 ms su 962
+- giro 4: RISULTATO: 6 controlli ok, 0 falliti il peggiore 60 ms su 958
+- giro 5: RISULTATO: 6 controlli ok, 0 falliti il peggiore 42 ms su 968
+
+## branch: controllo_cielo
+RISULTATO: ok, il cielo non si vede da nessuna parte
+
+## branch: il thread (sonda_thread_tunnel.gd)
+- thread_esci_0: THREAD 8.16 s: ADESSO esci (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);
+- thread_esci_3: THREAD 7.88 s: ADESSO esci (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 77, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);
+- thread_morte_0: THREAD 8.39 s: ADESSO morte (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 21.15 s: RISULTATO morte dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread_morte_4: THREAD 8.19 s: ADESSO morte (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 76, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 19.51 s: RISULTATO morte dopo 4: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread_morte_meta: tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 8.44 s: ADESSO morte (compiti 0 (finiti 0), costruendo true, costruita false, passi rimasti 75, nell'albero true);THREAD 20.77 s: RISULTATO morte dopo meta: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread_titolo_0: THREAD 8.16 s: ADESSO titolo (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 23.24 s: RISULTATO titolo dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread_titolo_2: THREAD 8.08 s: ADESSO titolo (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 78, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 22.64 s: RISULTATO titolo dopo 2: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread_titolo_8: THREAD 7.97 s: ADESSO titolo (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 72, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 22.24 s: RISULTATO titolo dopo 8: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread_titolo_fine: tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 10.92 s: ADESSO titolo (compiti 0 (finiti 0), costruendo true, costruita false, passi rimasti 0, nell'albero true);THREAD 24.85 s: RISULTATO titolo dopo fine: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread_titolo_meta: tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 8.68 s: ADESSO titolo (compiti 0 (finiti 0), costruendo true, costruita false, passi rimasti 75, nell'albero true);THREAD 23.07 s: RISULTATO titolo dopo meta: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread2_esci_0_pieno0_12_2500: THREAD 37.49 s: ADESSO esci (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);
+- thread2_esci_attesa_pieno0_12_2500: tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 40.25 s: ADESSO esci (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true);
+- thread2_morte_attesa_pieno0_12_2500: tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 40.14 s: ADESSO morte (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true);THREAD 48.50 s: RISULTATO morte dopo attesa: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread2_titolo_0_pieno0_12_2500: THREAD 38.08 s: ADESSO titolo (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 41.61 s: Game.return_to_title finito in 3533 ms (300 fotogrammi);THREAD 53.86 s: RISULTATO titolo dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread2_titolo_0_pieno_6_2500: THREAD 8.42 s: ADESSO titolo (compiti 2 (finiti 2), costruendo true, costruita false, passi rimasti 80, nell'albero true);tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 12.13 s: Game.return_to_title finito in 3707 ms (306 fotogrammi);THREAD 36.01 s: RISULTATO titolo dopo 0: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread2_titolo_attesa_pieno0_12_2500: tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 40.84 s: ADESSO titolo (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true);THREAD 41.15 s: Game.return_to_title finito in 306 ms (8 fotogrammi);THREAD 53.66 s: RISULTATO titolo dopo attesa: tunnel pronto true (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true), checkpoint SalaTorre/Checkpoint_fondo;
+- thread2_titolo_attesa_pieno_6_2500: tunnel involucri della lampada: pronti dopo 0 fotogrammi di attesa (0.0 ms);THREAD 11.10 s: ADESSO titolo (compiti 0 (finiti 0), costruendo false, costruita true, passi rimasti 0, nell'albero true);THREAD 11.41 s: Game.return_to_title finito in 302 ms (8 fotogrammi);
+
+## branch: il compito lento simulato (sonda_thread_lento.gd)
+- lento_esci: LENTO 7.96 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 8.54 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);LENTO 8.54 s: Game.esci;ERROR: Invalid Task ID;       [0] _exit_tree (res://scripts/game/sala_sottomarino.gd:3089);ERROR: Invalid Task ID;       [0] _exit_tree (res://scripts/game/sala_sottomarino.gd:3089);
+- lento_morte: LENTO 8.02 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 8.63 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);tunnel involucri della lampada: pronti dopo 1092 fotogrammi di attesa (7526.6 ms);LENTO 26.94 s: RISULTATO morte col compito lento: tunnel pronto true, il fotogramma più lungo dopo 1689 ms, checkpoint SalaTorre/Checkpoint_fondo;
+- lento_niente: LENTO 7.86 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 8.52 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);tunnel involucri della lampada: pronti dopo 1086 fotogrammi di attesa (7492.2 ms);LENTO 20.93 s: RISULTATO niente col compito lento: tunnel pronto true, il fotogramma più lungo dopo 55 ms, checkpoint SalaTorre/Checkpoint_fondo;
+- lento_titolo: LENTO 7.58 s: compiti veri 2 (finiti [true, true]), aggiunto un compito lento simulato di 8000 ms;LENTO 8.19 s: la costruzione aspetta (passi rimasti 57, costruita false, compito lento finito false);tunnel involucri della lampada: pronti dopo 1092 fotogrammi di attesa (7527.0 ms);LENTO 18.64 s: al titolo in 10450 ms;LENTO 29.49 s: RISULTATO titolo col compito lento: tunnel pronto true, il fotogramma più lungo dopo 1843 ms, checkpoint SalaTorre/Checkpoint_fondo;
