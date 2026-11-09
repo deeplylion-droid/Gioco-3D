@@ -136,6 +136,12 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 			if not is_inside_tree():
 				return
 			t0 = Time.get_ticks_usec()
+		# prima delle luci, le TriangleMesh che i loro raggi useranno, nei thread
+		if _passo_luci.is_valid() and passo == _passo_luci:
+			await _prepara_triangoli_luci()
+			if not is_inside_tree():
+				return
+			t0 = Time.get_ticks_usec()
 		var tp := Time.get_ticks_usec()
 		passo.call()
 		if OS.has_environment("TORRE_TEMPI"):
@@ -1132,7 +1138,12 @@ func _passi_luci(d: Dictionary = {}) -> Array:
 		var radice := Node3D.new()
 		radice.name = "Luci"
 		add_child(radice)]
+	_passo_luci = out[0]
+	_dati_luci = d
 	var luci := func() -> Node3D: return get_node(^"Luci") as Node3D
+	# (la 5, sul muro est, sta 50 cm più su che nei primi dati, sopra il tubo che corre lungo il muro: a -16,5 si
+	# appoggiava al tubo, a 49 cm dal muro, e il tubo le entrava 16,6 mm nel fondo; collaudo di ambienti-1 su 4e9551c8,
+	# tests/sonda_posto_lampada5.gd)
 	for e in d["emergenza"]:
 		out.append(func(): _emergenza(luci.call(), b(e[0]), versi[e[1]]))
 	for p in d["lavoro"]:
@@ -1181,7 +1192,7 @@ func _segnali_strada(radice: Node3D) -> void:
 				var meglio := INF
 				var spinta := Vector3.ZERO
 				for dir in [Vector3.UP, v]:
-					var h := sp.intersect_ray(PhysicsRayQueryParameters3D.create(q, q + dir * 0.2, Layers.WORLD))
+					var h := _raggio_fisica(q, q + dir * 0.2)
 					if not h.is_empty():
 						var d := q.distance_to(h.position as Vector3)
 						if d < meglio:
@@ -1308,23 +1319,26 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	radice.add_child(corpo)
 	corpo.global_position = p
 	var te := Time.get_ticks_usec()
-	# appoggiata al muro dietro (il retro della scatola, 8 cm dietro il centro): dai dati restava a 1-3 cm
-	Posa.fissa_al_muro(corpo, verso, 0.08)
-	var te1 := Time.get_ticks_usec()
-	# davanti a un tubo il raggio dal centro non trova il punto più sporgente sotto il retro: 9 raggi su tutto il retro e
-	# la scatola si appoggia al più sporgente (collaudo del 24 ottobre: una lampada a 8 mm dal tubo, senza niente sotto)
 	var v := verso.normalized()
 	var a1 := v.cross(Vector3.UP).normalized() if absf(v.y) < 0.9 else Vector3.RIGHT
 	var a2 := v.cross(a1).normalized()
-	var p0 := corpo.global_position
-	var davanti := -INF
-	# (le mesh vicine una volta sola per i 9 raggi: tutte quelle che un raggio può toccare, nello stesso ordine)
-	var zona := AABB(p0, Vector3.ZERO)
+	# le mesh vicine una volta sola per il raggio di fissa_al_muro e per i 9 raggi dopo (tutte quelle che un raggio può
+	# toccare, nello stesso ordine): la zona va da 0,3 m davanti al centro a due volte la portata dietro (dopo
+	# fissa_al_muro il centro è al più una portata più indietro), larga quanto la scatola. Con la torre come radice: dal
+	# portone la torre si costruisce nascosta, e senza le lampade non vedevano il muro (collaudo di ambienti-1 su 4e9551c8)
+	var zona := AABB(p, Vector3.ZERO)
 	for i in [-1, 1]:
 		for j in [-1, 1]:
 			var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
-			zona = zona.expand(p0 + o + v * 0.3).expand(p0 + o - v * Posa.PORTATA)
-	var vicine := Posa.mesh_vicine(corpo, zona)
+			zona = zona.expand(p + o + v * 0.3).expand(p + o - v * Posa.PORTATA * 2.0)
+	var vicine := Posa.mesh_vicine(corpo, zona, self)
+	# appoggiata al muro dietro (il retro della scatola, 8 cm dietro il centro): dai dati restava a 1-3 cm
+	Posa.fissa_al_muro(corpo, verso, 0.08, false, [], vicine)
+	var te1 := Time.get_ticks_usec()
+	# davanti a un tubo il raggio dal centro non trova il punto più sporgente sotto il retro: 9 raggi su tutto il retro e
+	# la scatola si appoggia al più sporgente (collaudo del 24 ottobre: una lampada a 8 mm dal tubo, senza niente sotto)
+	var p0 := corpo.global_position
+	var davanti := -INF
 	for i in [-1, 0, 1]:
 		for j in [-1, 0, 1]:
 			var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
@@ -1404,10 +1418,8 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 	if appoggio == "palo":
 		# il palo fino alla pedana vera sotto (dai dati finiva 1 cm sopra), piantato 2 cm
 		var giu := p + Vector3(0, -1.25, 0)
-		var sp := get_world_3d().direct_space_state if is_inside_tree() else null
-		if sp:
-			var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, -0.2, 0), p + Vector3(0, -3.0, 0), Layers.WORLD)
-			var h := sp.intersect_ray(q)
+		if is_inside_tree():
+			var h := _raggio_fisica(p + Vector3(0, -0.2, 0), p + Vector3(0, -3.0, 0))
 			if not h.is_empty():
 				giu = (h.position as Vector3) + Vector3(0, -0.02, 0)
 		_asta(radice, p + Vector3(0, 0.18, 0), giu, 0.03, metallo)
@@ -1567,11 +1579,9 @@ static func _griglia() -> ImageTexture:
 ## la loro collisione), 5 mm dentro; se non c'è niente, [param verso_punto].
 func _fino_al_sostegno(da: Vector3, verso_punto: Vector3) -> Vector3:
 	var dir := (verso_punto - da).normalized()
-	var sp := get_world_3d().direct_space_state if is_inside_tree() else null
-	if sp == null:
+	if not is_inside_tree():
 		return verso_punto
-	var q := PhysicsRayQueryParameters3D.create(da + dir * 0.05, verso_punto + dir * 0.3, Layers.WORLD)
-	var h := sp.intersect_ray(q)
+	var h := _raggio_fisica(da + dir * 0.05, verso_punto + dir * 0.3)
 	return (h.position as Vector3) + dir * 0.005 if not h.is_empty() else verso_punto
 
 
@@ -1658,3 +1668,208 @@ func _catena(radice: Node3D, fondo: Vector3) -> void:
 		l.light_volumetric_fog_energy = 0.6
 		radice.add_child(l)
 		l.global_position = Vector3(fondo.x + 1.2, y - 0.2, fondo.z)
+
+
+## Il raggio della fisica ({position, normal, collider} o vuoto) anche con la torre preparata nascosta e ferma.
+## Dal portone la torre si costruisce con process_mode DISABLED (SalaPrincipale._prepara_torre), e i suoi corpi fermi
+## sono fuori dalla fisica (disable_mode REMOVE; rientrano a pezzi quando si mostra, AccensioneAPezzi): i raggi dei passi
+## (i pali delle lampade da cantiere fino alla pedana, i bracci al muro e gli attacchi dei fari, i led degli imbocchi)
+## non trovavano la torre, e le cose finivano altrove che da F9, una morte o Continua, dove la torre è attiva (collaudo
+## di ambienti-1 su 4e9551c8: pali 1,5 cm più corti, bracci dei fari 9 cm più lunghi). Qui, a torre ferma, oltre alla
+## fisica (la sala) si guardano le forme di collisione della torre stessa, con le loro facce (le stesse della fisica),
+## e vale il punto più vicino. (Rimettere i corpi nella fisica mentre si costruisce costerebbe 80-230 ms a corpo.)
+func _raggio_fisica(da: Vector3, a: Vector3, maschera: int = Layers.WORLD) -> Dictionary:
+	if not is_inside_tree():
+		return {}
+	var h := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(da, a, maschera))
+	if can_process():
+		return h
+	var meglio := INF if h.is_empty() else da.distance_to(h.position as Vector3)
+	var segmento := AABB(da, Vector3.ZERO).expand(a).grow(0.01)
+	# (le forme della torre una volta per fotogramma: i passi coi led ne fanno decine di raggi)
+	if _forme_fotogramma != Engine.get_process_frames():
+		_forme_fotogramma = Engine.get_process_frames()
+		_forme_lista = find_children("*", "CollisionShape3D", true, false)
+	for cs in _forme_lista:
+		if not is_instance_valid(cs):
+			continue
+		var f := cs as CollisionShape3D
+		var corpo := f.get_parent() as CollisionObject3D
+		if f.disabled or f.shape == null or corpo == null or not (corpo.collision_layer & maschera):
+			continue
+		var tm_box: Array = _forma_triangoli(f.shape)
+		if tm_box.is_empty():
+			continue
+		var xf := f.global_transform
+		if not (xf * (tm_box[1] as AABB)).grow(0.01).intersects(segmento):
+			continue
+		var inv := xf.affine_inverse()
+		var r := (tm_box[0] as TriangleMesh).intersect_segment(inv * da, inv * a)
+		if r.is_empty():
+			continue
+		var p: Vector3 = xf * (r.position as Vector3)
+		var d := da.distance_to(p)
+		if d < meglio:
+			meglio = d
+			h = {"position": p, "normal": (xf.basis.inverse().transposed() * (r.normal as Vector3)).normalized(), "collider": corpo}
+	return h
+
+
+## [TriangleMesh, riquadro] delle facce di una forma di collisione (in cache per forma).
+var _forme_tm := {}
+var _forme_lista: Array = []
+var _forme_fotogramma := -1
+
+
+func _forma_triangoli(forma: Shape3D) -> Array:
+	var id := forma.get_instance_id()
+	if _forme_tm.has(id):
+		return _forme_tm[id]
+	var facce := PackedVector3Array()
+	if forma is ConcavePolygonShape3D:
+		facce = (forma as ConcavePolygonShape3D).get_faces()
+	else:
+		var dm := forma.get_debug_mesh()
+		if dm:
+			facce = dm.get_faces()
+	var out: Array = []
+	if not facce.is_empty():
+		var tm := TriangleMesh.new()
+		tm.create_from_faces(facce)
+		var box := AABB(facce[0], Vector3.ZERO)
+		for v in facce:
+			box = box.expand(v)
+		out = [tm, box]
+	_forme_tm[id] = out
+	return out
+
+
+## Il primo passo delle luci (costruisci_a_pezzi aspetta lì [method _prepara_triangoli_luci]) e i loro dati.
+var _passo_luci := Callable()
+var _dati_luci := {}
+
+
+## Prima dei passi delle luci, a pezzi: le TriangleMesh che i loro raggi useranno si costruiscono nei thread del pool, e
+## si aspettano fotogramma per fotogramma. Sono quelle delle mesh vicine alle lampade d'emergenza (Posa, torre compresa
+## anche nascosta) e, a torre ferma, delle forme di collisione della torre (_raggio_fisica). Costruite nel passo che le
+## usa la prima volta erano 78-98 ms in un fotogramma (torre_A è grande); stesse facce, stesso risultato. Le facce si
+## copiano qui al più 6 ms per fotogramma; nel thread solo chiamate (nessun operatore: crash_operatori_thread).
+func _prepara_triangoli_luci() -> void:
+	var t0 := Time.get_ticks_usec()
+	var tf := t0
+	var fotogrammi := 0
+	var lavori: Array[_LavoroTriangoli] = []
+	var versi := {"e": Vector3.RIGHT, "o": Vector3.LEFT, "n": Vector3.FORWARD, "s": Vector3.BACK}
+	var viste := {}
+	for e in _dati_luci.get("emergenza", []):
+		var p := b(e[0])
+		var v: Vector3 = (versi[e[1]] as Vector3).normalized()
+		var a1 := v.cross(Vector3.UP).normalized() if absf(v.y) < 0.9 else Vector3.RIGHT
+		var a2 := v.cross(a1).normalized()
+		var zona := AABB(p, Vector3.ZERO)
+		for i in [-1, 1]:
+			for j in [-1, 1]:
+				var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
+				zona = zona.expand(p + o + v * 0.3).expand(p + o - v * Posa.PORTATA * 2.0)
+		for mi in Posa.mesh_vicine(self, zona, self):
+			var m: Mesh = (mi as MeshInstance3D).mesh
+			if viste.has(m) or Posa.ha_triangoli(m):
+				continue
+			viste[m] = true
+			var tc := Time.get_ticks_usec()
+			# (non Mesh.get_faces: costruisce lei la TriangleMesh, 66 ms per torre_A; qui solo vertici e indici delle
+			# superfici a triangoli, le facce nel thread, nello stesso ordine di Mesh.generate_triangle_mesh)
+			var superfici: Array = []
+			for k in m.get_surface_count():
+				if m.surface_get_primitive_type(k) != Mesh.PRIMITIVE_TRIANGLES:
+					continue
+				var arr := m.surface_get_arrays(k)
+				superfici.append([arr[Mesh.ARRAY_VERTEX], arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array()])
+			var lavoro := _LavoroTriangoli.new(m, PackedVector3Array())
+			lavoro.superfici = superfici
+			lavori.append(lavoro)
+			if Time.get_ticks_usec() - tc > 10000 and OS.has_environment("TORRE_TEMPI"):
+				print("  triangoli: le facce di %s in %.1f ms" % [(mi as Node).name, (Time.get_ticks_usec() - tc) / 1000.0])
+			if Time.get_ticks_usec() - tf > 6000:
+				await get_tree().process_frame
+				fotogrammi += 1
+				tf = Time.get_ticks_usec()
+				if not is_inside_tree():
+					return
+	if not can_process():
+		for cs in find_children("*", "CollisionShape3D", true, false):
+			var f := (cs as CollisionShape3D).shape
+			if f == null or viste.has(f) or _forme_tm.has(f.get_instance_id()):
+				continue
+			viste[f] = true
+			var facce := PackedVector3Array()
+			var tc := Time.get_ticks_usec()
+			if f is ConcavePolygonShape3D:
+				facce = (f as ConcavePolygonShape3D).get_faces()
+			elif f.get_debug_mesh():
+				facce = f.get_debug_mesh().get_faces()
+			if Time.get_ticks_usec() - tc > 10000 and OS.has_environment("TORRE_TEMPI"):
+				print("  triangoli: le facce di %s (%s) in %.1f ms" % [(cs as Node).name, f.get_class(), (Time.get_ticks_usec() - tc) / 1000.0])
+			lavori.append(_LavoroTriangoli.new(f, facce))
+			if Time.get_ticks_usec() - tf > 6000:
+				await get_tree().process_frame
+				fotogrammi += 1
+				tf = Time.get_ticks_usec()
+				if not is_inside_tree():
+					return
+	var compiti: Array[int] = []
+	for l in lavori:
+		# (a bassa priorità: con quella alta i thread si prendevano tutti i core e il fotogramma del gioco aspettava)
+		compiti.append(WorkerThreadPool.add_task(l.esegui, false, "triangoli torre") if not l.vuoto() else -1)
+	for c in compiti:
+		while c >= 0 and not WorkerThreadPool.is_task_completed(c):
+			await get_tree().process_frame
+			fotogrammi += 1
+		if c >= 0:
+			WorkerThreadPool.wait_for_task_completion(c)
+	if not is_inside_tree():
+		return
+	var tr := Time.get_ticks_usec()
+	for l in lavori:
+		if l.cosa is Mesh:
+			if not l.facce.is_empty():
+				Posa.metti_triangoli(l.cosa as Mesh, l.tm)
+		else:
+			_forme_tm[(l.cosa as Shape3D).get_instance_id()] = [l.tm, l.box] if not l.facce.is_empty() else []
+	if OS.has_environment("TORRE_TEMPI"):
+		print("triangoli delle luci: %d mesh e forme nei thread, pronte in %.0f ms e %d fotogrammi (rimesse in %.1f ms)" % [
+				lavori.size(), (Time.get_ticks_usec() - t0) / 1000.0, fotogrammi, (Time.get_ticks_usec() - tr) / 1000.0])
+
+
+## Una TriangleMesh da costruire in un thread: le facce di [member cosa] (una mesh o una forma) e il loro riquadro.
+class _LavoroTriangoli:
+	var cosa: Object
+	var facce: PackedVector3Array
+	## Per le mesh: [vertici, indici] di ogni superficie a triangoli (le facce si fanno nel thread).
+	var superfici: Array = []
+	var tm := TriangleMesh.new()
+	var box := AABB()
+
+	func _init(c: Object, f: PackedVector3Array) -> void:
+		cosa = c
+		facce = f
+
+	func vuoto() -> bool:
+		return facce.is_empty() and superfici.is_empty()
+
+	## Nel thread: solo chiamate e operatori fra interi con tipo (nessun operando senza tipo: crash_operatori_thread).
+	func esegui() -> void:
+		for sup: Array in superfici:
+			var vs: PackedVector3Array = sup[0]
+			var idx: PackedInt32Array = sup[1]
+			if idx.is_empty():
+				facce.append_array(vs)
+			else:
+				for i: int in idx:
+					facce.append(vs[i])
+		if facce.is_empty():
+			return
+		tm.create_from_faces(facce)
+		box = AABB(facce[0], Vector3.ZERO)
+		for q: Vector3 in facce:
+			box = box.expand(q)
