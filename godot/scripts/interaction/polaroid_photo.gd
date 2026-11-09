@@ -239,15 +239,15 @@ static func _piano(misure: Array) -> Variant:
 const AGIO := 0.0002
 ## I punti sotto la foto (8,8 x 10,7 cm) dove si guarda il fondo: una griglia di 5 x 5, dagli angoli appena dentro il
 ## bordo al centro.
-static var SOTTO: Array[Vector3] = _griglia()
-
-
-static func _griglia() -> Array[Vector3]:
-	var out: Array[Vector3] = []
-	for i in 5:
-		for j in 5:
-			out.append(Vector3(-0.042 + 0.021 * i, 0.0, -0.051 + 0.0255 * j))
-	return out
+## (una costante: una static var calcolata da una funzione girerebbe quando la classe si carica, anche nel thread
+## di caricamento, tools/ci/morbidezza_operatori.py)
+const SOTTO: Array[Vector3] = [
+	Vector3(-0.042, 0, -0.051), Vector3(-0.042, 0, -0.0255), Vector3(-0.042, 0, 0.0), Vector3(-0.042, 0, 0.0255), Vector3(-0.042, 0, 0.051),
+	Vector3(-0.021, 0, -0.051), Vector3(-0.021, 0, -0.0255), Vector3(-0.021, 0, 0.0), Vector3(-0.021, 0, 0.0255), Vector3(-0.021, 0, 0.051),
+	Vector3(0.0, 0, -0.051), Vector3(0.0, 0, -0.0255), Vector3(0.0, 0, 0.0), Vector3(0.0, 0, 0.0255), Vector3(0.0, 0, 0.051),
+	Vector3(0.021, 0, -0.051), Vector3(0.021, 0, -0.0255), Vector3(0.021, 0, 0.0), Vector3(0.021, 0, 0.0255), Vector3(0.021, 0, 0.051),
+	Vector3(0.042, 0, -0.051), Vector3(0.042, 0, -0.0255), Vector3(0.042, 0, 0.0), Vector3(0.042, 0, 0.0255), Vector3(0.042, 0, 0.051),
+]
 
 
 ## Il punto del fondo della foto sotto [param pl] (in coordinate della foto, y ignorata), in coordinate del mondo: la
