@@ -1498,12 +1498,19 @@ func _interattivi(z: Dictionary) -> void:
 		for a in _acqua:
 			if _corpo_di.has(a):
 				esclusi_vista.append((_corpo_di[a] as StaticBody3D).get_rid())
-		# compenetrato da un oggetto di scena (non l'architettura, non i suoi pezzi)
+		# compenetrato da un oggetto di scena (non l'architettura, non i suoi pezzi). Il riquadro orientato come
+		# l'interattivo: allineato agli assi del mondo, per una cosa inclinata (una Polaroid adagiata sul fondo in
+		# pendenza della piscina, 9 novembre) prendeva l'aria sotto il lato alto, che lì è dentro il pavimento
+		var xf := (n as Node3D).global_transform.orthonormalized()
+		var inv := xf.affine_inverse()
+		var locale := inv * (proprie[0] as MeshInstance3D).global_transform * (proprie[0] as MeshInstance3D).get_aabb()
+		for m in proprie:
+			locale = locale.merge(inv * (m as MeshInstance3D).global_transform * (m as MeshInstance3D).get_aabb())
 		var forma := BoxShape3D.new()
-		forma.size = box.size * 0.7
+		forma.size = locale.size * 0.7
 		var q := PhysicsShapeQueryParameters3D.new()
 		q.shape = forma
-		q.transform = Transform3D(Basis(), box.get_center())
+		q.transform = Transform3D(xf.basis, xf * locale.get_center())
 		q.collision_mask = STRATO
 		q.exclude = esclusi
 		var gia := {}
