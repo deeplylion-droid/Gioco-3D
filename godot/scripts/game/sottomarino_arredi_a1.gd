@@ -654,7 +654,7 @@ func _passi_occupati(poi: Callable) -> Array:
 	return [_occupati_inizio.bind(stato, poi)]
 
 
-const OCCUPATI_PER_PASSO := 500
+const OCCUPATI_PER_PASSO := 250
 
 
 func _occupati_inizio(stato: Dictionary, poi: Callable) -> void:
