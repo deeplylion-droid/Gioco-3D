@@ -564,12 +564,15 @@ func _process(_delta: float) -> void:
 	var stato := Game.stato_thread(sala_torre_scena)
 	if stato == ResourceLoader.THREAD_LOAD_LOADED:
 		_torre_in_caricamento = false
+		var tg := Time.get_ticks_usec()
 		var scena := ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
+		var tg1 := Time.get_ticks_usec()
 		# tenuta per le ripartenze, con i file dell'inseguimento già arrivati (vedi GameState.tieni)
 		GameState.tieni(sala_torre_scena, scena)
 		for r in SalaInseguimento.risorse() + SalaTorre.risorse():
 			if ResourceLoader.has_cached(r):
 				GameState.tieni(r, load(r))
+		RiscaldamentoShader.segno("torre dal thread: load_threaded_get %.1f ms, tenute %.1f ms" % [(tg1 - tg) / 1000.0, (Time.get_ticks_usec() - tg1) / 1000.0])
 		# (con la riserva già in sala la copia del thread non serve: si lascia andare)
 		if sala_torre == null:
 			_torre_pronta = scena
@@ -1045,7 +1048,10 @@ func _aggiorna_sottomarino() -> void:
 		return
 	_sottomarino_in_caricamento = false
 	if stato == ResourceLoader.THREAD_LOAD_LOADED and sala_sottomarino == null:
-		_metti_sottomarino(ResourceLoader.load_threaded_get(sala_sottomarino_scena) as PackedScene, true)
+		var tg := Time.get_ticks_usec()
+		var scena := ResourceLoader.load_threaded_get(sala_sottomarino_scena) as PackedScene
+		RiscaldamentoShader.segno("tunnel dal thread: load_threaded_get %.1f ms" % ((Time.get_ticks_usec() - tg) / 1000.0))
+		_metti_sottomarino(scena, true)
 
 
 func _metti_sottomarino(scena: PackedScene, a_pezzi: bool) -> void:
