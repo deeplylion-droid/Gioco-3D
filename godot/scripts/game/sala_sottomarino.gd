@@ -1709,6 +1709,8 @@ static func risorse() -> Array:
 	out.append_array(["res://assets/enigma_acquari/lampada_gabbia.glb", DIR_FIUME + "mat_cemento.tres",
 		DIR_FIUME + "mat_mosaico_blu.tres", DIR_FIUME + "mat_graniglia.tres", DIR_FIUME + "acqua_fiume.tres"])
 	out.append_array(SalaInseguimento.RISORSE_LEI)
+	# (i materiali campione: CampioniTunnel.carica li prendeva sul thread principale mentre si gioca, sonda dei load)
+	out.append(CampioniTunnel.FILE)
 	return out.filter(func(p): return ResourceLoader.exists(p))
 
 

@@ -264,6 +264,7 @@ func _ready() -> void:
 	_attivi.append(_emergenza_vicine)
 	get_tree().node_added.connect(_su_nodo_aggiunto)
 	_collega_autoload.call_deferred()
+	_precarica_suoni.call_deferred()
 	_esamina_albero.call_deferred(get_tree().root)
 
 
@@ -499,6 +500,47 @@ func salva_impostazioni() -> void:
 	cfg.save(percorso_impostazioni)
 
 
+## Tutti i suoni del Catalogo chiesti al thread all'avvio (250 file, 9 MB in memoria): stream_di li trova già caricati e
+## non li carica sul thread principale mentre si gioca (sonda dei load del 9 novembre: 35 ogg al primo uso, piccoli a
+## disco caldo ma da disco freddo possono fare uno scatto). Coi caricamenti del gioco (Game.carica_in_thread), così
+## all'uscita si aspettano anche loro.
+var _precaricati := {}
+
+
+func _precarica_suoni() -> void:
+	var game := get_tree().root.get_node_or_null(^"Game")
+	if game == null or not game.has_method(&"carica_in_thread"):
+		return
+	for nome in Catalogo.SUONI:
+		for p in Catalogo.SUONI[nome]:
+			var percorso := String(p)
+			if _precaricati.has(percorso) or not ResourceLoader.exists(percorso) or ResourceLoader.has_cached(percorso):
+				continue
+			if game.call(&"carica_in_thread", percorso) == OK:
+				_precaricati[percorso] = true
+
+
+## Lo stream [param p]: dal thread se l'aveva chiesto [method _precarica_suoni] (se è ancora in corso aspetta, come
+## farebbe load), se no load.
+func _prendi(p: String) -> Resource:
+	if _precaricati.has(p):
+		_precaricati.erase(p)
+		var st := ResourceLoader.load_threaded_get_status(p)
+		if st == ResourceLoader.THREAD_LOAD_LOADED or st == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			var r := ResourceLoader.load_threaded_get(p)
+			if r:
+				return r
+	return load(p)
+
+
+## Vero se i suoni chiesti all'avvio sono tutti caricati (per i test).
+func suoni_pronti() -> bool:
+	for p in _precaricati:
+		if ResourceLoader.load_threaded_get_status(p) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			return false
+	return true
+
+
 ## Lo stream di un suono (con le varianti, se ce ne sono più di una). null se non esiste.
 func stream_di(nome: StringName) -> AudioStream:
 	if _stream_cache.has(nome):
@@ -510,7 +552,7 @@ func stream_di(nome: StringName) -> AudioStream:
 		return null
 	var streams: Array[AudioStream] = []
 	for p in percorsi:
-		var s := load(p) as AudioStream
+		var s := _prendi(p) as AudioStream
 		if s:
 			if String(nome).ends_with("_loop") and s is AudioStreamOggVorbis:
 				(s as AudioStreamOggVorbis).loop = true
