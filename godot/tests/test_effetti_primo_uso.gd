@@ -164,6 +164,36 @@ func _run() -> void:
 	for n in mmi:
 		n.queue_free()
 
+	# la goccia di bava sullo schermo della scena dello squalo (goccia B dalla 0.3.23), accesa col filo e la scia
+	var gs := CanvasLayer.new()
+	gs.layer = 2
+	var gr := ColorRect.new()
+	gr.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var gmat := ShaderMaterial.new()
+	gmat.shader = RisveglioSqualo.SHADER_GOCCIA
+	gmat.set_shader_parameter(&"forza", 1.0)
+	gmat.set_shader_parameter(&"raggio", 0.1)
+	gmat.set_shader_parameter(&"scia", 3.0)
+	gmat.set_shader_parameter(&"filo", 1.0)
+	gr.material = gmat
+	gs.add_child(gr)
+	_azzera()
+	# (è un ColorRect: si contano anche le pipeline 2D, "canvas"; nel collaudo di grafica-2 della 0.3.22 la goccia A ne
+	# compilava una quando compariva)
+	var canvas0 := Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS)
+	get_tree().root.add_child(gs)
+	await _frames(20)
+	var canvas := int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS) - canvas0)
+	if canvas == 0:
+		_passed += 1
+		print("  ok   goccia di bava sullo schermo: canvas 0")
+	else:
+		_failed += 1
+		printerr("  FAIL goccia di bava sullo schermo: canvas %d: compila al primo uso, va nel riscaldamento (RiscaldamentoShader.riscalda_goccia)" % canvas)
+	_stampa("goccia di bava sullo schermo")
+	gs.queue_free()
+	await _frames(5)
+
 	# la Polaroid ingrandita
 	var viewer: CanvasLayer = load("res://scripts/ui/photo_viewer.gd").new()
 	viewer.set(&"texture", load("res://icon.svg") if ResourceLoader.exists("res://icon.svg") else null)
