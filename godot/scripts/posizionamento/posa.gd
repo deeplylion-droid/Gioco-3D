@@ -61,11 +61,13 @@ static func appoggia_su_impronta(nodo: Node3D, punti: Array[Vector3], fondo := 0
 
 ## Fissa [param nodo] al muro dietro di lui: [param verso] è la direzione verso cui guarda l'oggetto (fuori dal muro);
 ## si cerca il muro nella direzione opposta e il retro dell'oggetto ([param spessore] metri dietro l'origine) va sul muro.
-static func fissa_al_muro(nodo: Node3D, verso: Vector3, spessore := 0.0, lega := false, escludi: Array[RID] = []) -> bool:
+## [param candidate]: le mesh da guardare (vedi [method mesh_vicine]); senza, tutte quelle visibili dell'albero.
+static func fissa_al_muro(nodo: Node3D, verso: Vector3, spessore := 0.0, lega := false, escludi: Array[RID] = [],
+		candidate: Variant = null) -> bool:
 	var v := verso.normalized()
 	var p := nodo.global_position
 	# il raggio parte un po' davanti: un oggetto già un po' dentro il muro torna a filo
-	var h := _raggio(nodo, p + v * 0.3, p - v * PORTATA, escludi)
+	var h := _raggio(nodo, p + v * 0.3, p - v * PORTATA, escludi, candidate)
 	if h.is_empty():
 		push_warning("Posa: nessun muro dietro %s (%s, verso %s)" % [nodo.name, p, v])
 		return false
@@ -129,7 +131,10 @@ static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3, candidate: Varia
 	var d_min := INF
 	for n in (candidate as Array if candidate != null else nodo.get_tree().root.find_children("*", "MeshInstance3D", true, false)):
 		var mi := n as MeshInstance3D
-		if mi.mesh == null or mi == nodo or nodo.is_ancestor_of(mi) or not mi.is_visible_in_tree():
+		if not is_instance_valid(mi) or mi.mesh == null or mi == nodo or nodo.is_ancestor_of(mi):
+			continue
+		# (le candidate di mesh_vicine sono già quelle visibili, anche dentro una zona ancora nascosta)
+		if candidate == null and not mi.is_visible_in_tree():
 			continue
 		if mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
 			continue
@@ -151,19 +156,35 @@ static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3, candidate: Varia
 	return meglio
 
 
-## Le mesh dell'albero (nello stesso ordine di [method _raggio_mesh]) il cui riquadro tocca [param zona]: date a
-## [method _raggio] come [param candidate] per più raggi tutti dentro la zona, il risultato è lo stesso di guardarle
-## tutte (le altre non toccano nessun segmento), e l'albero si scorre una volta sola invece che a ogni raggio (2200 mesh
-## nella sala con la torre: 4 ms a raggio; le lampade d'emergenza della torre ne lanciano 9, passi da 40-70 ms).
-static func mesh_vicine(nodo: Node3D, zona: AABB) -> Array:
+## Le mesh visibili dell'albero (nello stesso ordine di [method _raggio_mesh]) il cui riquadro tocca [param zona]: date a
+## [method _raggio] o [method fissa_al_muro] come [param candidate] per più raggi tutti dentro la zona, il risultato è
+## lo stesso di guardarle tutte (le altre non toccano nessun segmento), e l'albero si scorre una volta sola invece che a
+## ogni raggio (2200 mesh nella sala con la torre: 4 ms a raggio).
+## [param radice]: una zona che si costruisce nascosta (la torre dal portone, _prepara_torre: visible = false finché
+## non si mostra). Le sue mesh contano come se lei fosse visibile: visibili lei e i loro genitori fino a lei. Senza,
+## dal portone gli oggetti messi con Posa non vedevano la torre e finivano dentro il muro (lampade d'emergenza 0 e 4,
+## 15 e 40 mm, collaudo di ambienti-1 su 4e9551c8), mentre da F9, una morte o Continua (torre visibile) no.
+static func mesh_vicine(nodo: Node3D, zona: AABB, radice: Node = null) -> Array:
 	var out: Array = []
 	for n in nodo.get_tree().root.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
-		if mi.mesh == null:
+		if mi.mesh == null or not _visibile(mi, radice):
 			continue
-		if (mi.global_transform * mi.get_aabb()).grow(0.01).intersects(zona):
+		if (mi.global_transform * mi.get_aabb()).grow(0.01).intersects(zona.grow(0.01)):
 			out.append(mi)
 	return out
+
+
+## Visibile nell'albero; dentro [param radice] (se c'è), visibile fino a lei, che conta come visibile.
+static func _visibile(n: Node3D, radice: Node) -> bool:
+	if radice == null or not radice.is_ancestor_of(n):
+		return n.is_visible_in_tree()
+	var x: Node = n
+	while x != radice:
+		if x is Node3D and not (x as Node3D).visible:
+			return false
+		x = x.get_parent()
+	return true
 
 
 ## L'oggetto diventa figlio del sostegno (il nodo del corpo colpito o, per i corpi importati, il suo genitore
@@ -173,6 +194,18 @@ static func _lega(nodo: Node3D, corpo: Object) -> void:
 	if sostegno == null or sostegno == nodo or nodo.is_ancestor_of(sostegno):
 		return
 	nodo.reparent(sostegno)
+
+
+## Vero se la TriangleMesh di [param mesh] è già nella cache.
+static func ha_triangoli(mesh: Mesh) -> bool:
+	var e: Array = _triangoli.get(mesh.get_instance_id(), [])
+	return not e.is_empty() and (e[0] as WeakRef).get_ref() == mesh
+
+
+## Mette nella cache la TriangleMesh [param tm] di [param mesh], costruita da chi chiama (per esempio in un thread, con
+## le facce di [method Mesh.get_faces]: le stesse di [method Mesh.generate_triangle_mesh]).
+static func metti_triangoli(mesh: Mesh, tm: TriangleMesh) -> void:
+	_triangoli[mesh.get_instance_id()] = [weakref(mesh), tm]
 
 
 ## La TriangleMesh di [param mesh], dalla cache (vedi [member _triangoli]) o calcolata adesso.
