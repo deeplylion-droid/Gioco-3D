@@ -6,24 +6,23 @@ extends Node
 ## - da vicino, a 45 cm, di taglio lungo il muro da sinistra, da destra e da sopra (campo visivo 40°);
 ## - il distacco: 25 raggi dal retro della scatola verso il muro (tutte le mesh): il più vicino è il contatto (0 mm
 ##   = appoggiata), e se il muro entra nella scatola.
+## Con "nascosta" la torre si costruisce come dal portone. Per ogni lampada anche le cose sopra e sotto la scatola.
 ## Uso: xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##   --script res://tests/run.gd -- res://tests/collaudo/scatti_lampade_emergenza.gd <cartella>
+##   --script res://tests/run.gd -- res://tests/collaudo/scatti_lampade_emergenza.gd <cartella> [nascosta]
 
 const SCENA := "res://scenes/sala/torre/sala_torre.tscn"
 
 var cartella := "/tmp/scatti_lampade"
-## "portone": le lampade nelle posizioni che prendono giocando dal portone (la torre si costruisce nascosta e Posa salta le
-## mesh invisibili: posa_prima_dopo.gd), al posto di quelle della torre costruita visibile (F9, morte, Continua)
-var portone := false
-const POSIZIONI_PORTONE := [Vector3(20.3050, 6.0, -20.5), Vector3(39.92, 1.5, -15.0), Vector3(31.0, -2.5, -4.08),
-		Vector3(31.0, -8.0, -25.92), Vector3(20.28, -12.0, -10.0), Vector3(39.92, -16.5, -15.0), Vector3(27.0, 9.0, -25.92)]
+## "nascosta": la torre si costruisce a pezzi nascosta e ferma (visible = false, process_mode DISABLED), come dal portone
+## (SalaPrincipale._prepara_torre), e poi si mostra; senza, si costruisce a pezzi visibile, come da F9, morte e Continua.
+var nascosta := false
 
 
 func _ready() -> void:
 	var a := OS.get_cmdline_user_args()
 	if a.size() > 1:
 		cartella = a[1]
-	portone = a.has("portone")
+	nascosta = a.has("nascosta")
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -43,7 +42,15 @@ func _run() -> void:
 	env.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
 	add_child(env)
 	var sala := (load(SCENA) as PackedScene).instantiate()
+	sala.set(&"costruzione_a_pezzi", true)
+	if nascosta:
+		sala.visible = false
+		sala.process_mode = Node.PROCESS_MODE_DISABLED
 	add_child(sala)
+	await sala.call(&"costruisci_a_pezzi", 8.0)
+	sala.visible = true
+	sala.process_mode = Node.PROCESS_MODE_INHERIT
+	print("TORRE costruita a pezzi, ", "nascosta" if nascosta else "visibile")
 	var cam := Camera3D.new()
 	add_child(cam)
 	cam.current = true
@@ -57,16 +64,6 @@ func _run() -> void:
 		if corpo == null or not corpo.mesh is BoxMesh:
 			continue
 		var bx := corpo.mesh as BoxMesh
-		if portone:
-			var luce_vicina: Node3D = null
-			for l in luci.get_children():
-				if l is OmniLight3D and (l as Node3D).global_position.distance_to(corpo.global_position) < 0.6:
-					luce_vicina = l
-			var spost: Vector3 = POSIZIONI_PORTONE[k] - corpo.global_position
-			corpo.global_position += spost
-			if luce_vicina:
-				luce_vicina.global_position += spost
-			await get_tree().process_frame
 		# il verso verso fuori dal muro: il lato sottile della scatola (16 cm), dalla parte libera
 		var asse := Vector3.RIGHT if bx.size.x < 0.2 else Vector3.BACK
 		var p := corpo.global_position
@@ -93,6 +90,28 @@ func _run() -> void:
 				contatto = minf(contatto, gap)
 				if gap < -0.001:
 					dentro += 1
+		# sopra e sotto la scatola (alta 30 cm): 9 raggi verso il basso dal fondo e verso l'alto dal coperchio, fino a 60 cm
+		for su_giu: Vector3 in [Vector3.DOWN, Vector3.UP]:
+			var minimo := INF
+			var cosa := ""
+			for i in [-1, 0, 1]:
+				for j in [-1, 0, 1]:
+					var o2: Vector3 = a1 * (i * 0.07) + v * (j * 0.07)
+					var faccia: Vector3 = p + o2 + su_giu * 0.15
+					var h2 := Posa._raggio(corpo, p + o2, faccia + su_giu * 0.6, [])
+					if h2.is_empty():
+						continue
+					var g: float = ((h2.position as Vector3) - faccia).dot(su_giu)
+					if g < minimo:
+						minimo = g
+						var col: Object = h2.get("collider")
+						cosa = str(sala.get_path_to(col)) if col is Node and sala.is_ancestor_of(col) else str(col)
+			print("LAMPADA %d %s: la cosa più vicina a %s mm (%s)" % [k, "sotto" if su_giu == Vector3.DOWN else "sopra",
+					"%.1f" % (minimo * 1000.0) if minimo < INF else "oltre 600", cosa])
+		var pav := st.intersect_ray(PhysicsRayQueryParameters3D.create(p + v * 0.3, p + v * 0.3 + Vector3.DOWN * 40.0))
+		if not pav.is_empty():
+			print("LAMPADA %d: fondo della scatola %.2f m sopra la superficie sotto, 30 cm davanti (%s)" % [k,
+					p.y - 0.15 - (pav.position as Vector3).y, pav.collider])
 		print("LAMPADA %d a (%.2f, %.2f, %.2f), fuori %s: contatto %.1f mm, raggi col muro dentro la scatola %d" % [k, p.x,
 				p.y, p.z, v, contatto * 1000.0, dentro])
 		# dagli occhi

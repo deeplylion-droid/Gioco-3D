@@ -1,0 +1,69 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+== torre
+  ok  torre: parte
+  ok  torre (partenza): la sala è aperta, col giocatore
+  entrati: ["Interni", "Tecnici", "torre", "tunnel"]
+  ok  torre (partenza): la torre è entrata
+  ok  torre (partenza): quando entra la torre, interni e tecnici sono già via ({ "interni": false, "tecnici": false, "tunnel_nel_thread": false, "tunnel_in_sala": false })
+  ok  torre (partenza): il tunnel non era ancora partito
+  ok  torre (partenza): il tunnel parte dopo la torre
+  ok  torre (partenza): vivo all'arrivo
+  ok  torre (partenza): interni e tecnici non ci sono
+  ok  torre (partenza): la torre c'è, una sola
+  ok  torre (partenza): vivo dopo 4 s di gioco (causa )
+== torre, dopo una morte
+  ok  torre (morte): la sala è aperta, col giocatore
+  entrati: ["Interni", "Tecnici", "torre", "tunnel"]
+  ok  torre (morte): la torre è entrata
+  ok  torre (morte): quando entra la torre, interni e tecnici sono già via ({ "interni": false, "tecnici": false, "tunnel_nel_thread": false, "tunnel_in_sala": false })
+  ok  torre (morte): il tunnel non era ancora partito
+  ok  torre (morte): il tunnel parte dopo la torre
+  ok  torre (morte): vivo all'arrivo
+  ok  torre (morte): interni e tecnici non ci sono
+  ok  torre (morte): la torre c'è, una sola
+  ok  torre (morte): vivo dopo 4 s di gioco (causa )
+== inseguimento
+  ok  inseguimento: parte
+  ok  inseguimento (partenza): la sala è aperta, col giocatore
+  entrati: ["Interni", "Tecnici", "torre", "tunnel"]
+  ok  inseguimento (partenza): la torre è entrata
+  ok  inseguimento (partenza): quando entra la torre, interni e tecnici sono già via ({ "interni": false, "tecnici": false, "tunnel_nel_thread": false, "tunnel_in_sala": false })
+  ok  inseguimento (partenza): il tunnel non era ancora partito
+  ok  inseguimento (partenza): il tunnel parte dopo la torre
+  ok  inseguimento (partenza): vivo all'arrivo
+  ok  inseguimento (partenza): interni e tecnici non ci sono
+  ok  inseguimento (partenza): la torre c'è, una sola
+  ok  inseguimento (partenza): vivo dopo 4 s di gioco (causa )
+== inseguimento, dopo una morte
+  ok  inseguimento (morte): la sala è aperta, col giocatore
+  entrati: ["Interni", "Tecnici", "torre", "tunnel"]
+  ok  inseguimento (morte): la torre è entrata
+  ok  inseguimento (morte): quando entra la torre, interni e tecnici sono già via ({ "interni": false, "tecnici": false, "tunnel_nel_thread": false, "tunnel_in_sala": false })
+  ok  inseguimento (morte): il tunnel non era ancora partito
+  ok  inseguimento (morte): il tunnel parte dopo la torre
+  ok  inseguimento (morte): vivo all'arrivo
+  ok  inseguimento (morte): interni e tecnici non ci sono
+  ok  inseguimento (morte): la torre c'è, una sola
+  ok  inseguimento (morte): vivo dopo 4 s di gioco (causa )
+== tunnel
+  ok  tunnel: parte
+  ok  tunnel (partenza): la sala è aperta, col giocatore
+  entrati: ["Interni", "Tecnici", "tunnel"]
+  ok  tunnel (partenza): il tunnel è entrato
+  ok  tunnel (partenza): quando entra il tunnel, interni e tecnici sono già via ({ "interni": false, "tecnici": false, "tunnel_nel_thread": false, "tunnel_in_sala": true })
+  ok  tunnel (partenza): vivo all'arrivo
+  ok  tunnel (partenza): interni e tecnici non ci sono
+  ok  tunnel (partenza): nel tunnel la torre non si prepara
+  ok  tunnel (partenza): vivo dopo 4 s di gioco (causa )
+== tunnel, dopo una morte
+  ok  tunnel (morte): la sala è aperta, col giocatore
+  entrati: ["Interni", "Tecnici", "tunnel"]
+  ok  tunnel (morte): il tunnel è entrato
+  ok  tunnel (morte): quando entra il tunnel, interni e tecnici sono già via ({ "interni": false, "tecnici": false, "tunnel_nel_thread": false, "tunnel_in_sala": true })
+  ok  tunnel (morte): vivo all'arrivo
+  ok  tunnel (morte): interni e tecnici non ci sono
+  ok  tunnel (morte): nel tunnel la torre non si prepara
+  ok  tunnel (morte): vivo dopo 4 s di gioco (causa )
+RISULTATO: 53 controlli ok, 0 falliti
+WARNING: 1136 ObjectDB instances were leaked at exit (run with `--verbose` for details).

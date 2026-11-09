@@ -1,0 +1,2435 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 49 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+  MultiMesh: 1077 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  3031 mesh visibili
+  nascoste all'inizio (non controllate): 98 parti, 1110 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@2335 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@2336 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@2337 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@2338 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@2339 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@2340 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2395/@MeshInstance3D@2396 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2395/@MeshInstance3D@2397 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2395/@MeshInstance3D@2398 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2395/@MeshInstance3D@2399 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2401/@MeshInstance3D@2402 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2401/@MeshInstance3D@2403 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2401/@MeshInstance3D@2404 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2401/@MeshInstance3D@2405 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2407/@MeshInstance3D@2408 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2407/@MeshInstance3D@2409 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2407/@MeshInstance3D@2410 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2407/@MeshInstance3D@2411 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2413/@MeshInstance3D@2414 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2413/@MeshInstance3D@2415 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2413/@MeshInstance3D@2416 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@2413/@MeshInstance3D@2417 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@2692 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@105/@MeshInstance3D@106 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@105/@MeshInstance3D@107 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@105/@MeshInstance3D@108 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@105/@MeshInstance3D@109 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@105/@MeshInstance3D@110 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@105/@MeshInstance3D@111 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113/@MeshInstance3D@114 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113/@MeshInstance3D@115 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113/@MeshInstance3D@116 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113/@MeshInstance3D@117 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113/@MeshInstance3D@118 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113/@MeshInstance3D@119 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@121/@MeshInstance3D@122 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@121/@MeshInstance3D@123 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@121/@MeshInstance3D@124 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@121/@MeshInstance3D@125 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@121/@MeshInstance3D@126 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@121/@MeshInstance3D@127 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@129/@MeshInstance3D@130 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@129/@MeshInstance3D@131 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@129/@MeshInstance3D@132 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@129/@MeshInstance3D@133 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@129/@MeshInstance3D@134 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@129/@MeshInstance3D@135 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@89/@MeshInstance3D@90 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@89/@MeshInstance3D@91 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@89/@MeshInstance3D@92 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@89/@MeshInstance3D@93 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@89/@MeshInstance3D@94 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@89/@MeshInstance3D@95 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@97/@MeshInstance3D@100 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@97/@MeshInstance3D@101 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@97/@MeshInstance3D@102 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@97/@MeshInstance3D@103 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@97/@MeshInstance3D@98 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@97/@MeshInstance3D@99 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@82 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@83 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@84 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@85 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@86 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@87 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@6029:<StaticBody3D#875586151182>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  2776 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27408 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 14
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 14
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (53 s)
+Scena res://scenes/sala/torre/sala_torre.tscn
+  MultiMesh: 174 istanze controllate come mesh
+  652 mesh visibili
+  nascoste all'inizio (non controllate): 6 parti, 34 mesh
+    NASCOSTA BambinoBalconata0 · 2 mesh
+    NASCOSTA BambinoBalconata1 · 3 mesh
+    NASCOSTA BambinoBalconata2 · 2 mesh
+    NASCOSTA BambinoBalconata3 · 3 mesh
+    NASCOSTA ObloLei/Lei/Lei · 12 mesh
+    NASCOSTA SalaInseguimento/Lei · 12 mesh
+  611 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  4039 celle raggiungibili a piedi
+  565 celle dove si sta accovacciati per forza (spazio libero fino a 1.05 m)
+  b) ingombri nello spazio di chi cammina: 6
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (10 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 41 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: interni_dopo
+  MultiMesh: 1077 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  3031 mesh visibili
+  nascoste all'inizio (non controllate): 97 parti, 1109 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@13091 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@13092 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@13093 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@13094 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@13095 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@13096 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13152/@MeshInstance3D@13153 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13152/@MeshInstance3D@13154 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13152/@MeshInstance3D@13155 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13152/@MeshInstance3D@13156 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13158/@MeshInstance3D@13159 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13158/@MeshInstance3D@13160 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13158/@MeshInstance3D@13161 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13158/@MeshInstance3D@13162 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13164/@MeshInstance3D@13165 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13164/@MeshInstance3D@13166 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13164/@MeshInstance3D@13167 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13164/@MeshInstance3D@13168 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13170/@MeshInstance3D@13171 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13170/@MeshInstance3D@13172 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13170/@MeshInstance3D@13173 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@13170/@MeshInstance3D@13174 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@13449 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10845/@MeshInstance3D@10847 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10845/@MeshInstance3D@10848 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10845/@MeshInstance3D@10849 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10845/@MeshInstance3D@10850 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10845/@MeshInstance3D@10851 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10853/@MeshInstance3D@10854 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10853/@MeshInstance3D@10855 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10853/@MeshInstance3D@10856 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10853/@MeshInstance3D@10857 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10853/@MeshInstance3D@10858 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10853/@MeshInstance3D@10859 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10861/@MeshInstance3D@10862 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10861/@MeshInstance3D@10863 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10861/@MeshInstance3D@10864 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10861/@MeshInstance3D@10865 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10861/@MeshInstance3D@10866 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10861/@MeshInstance3D@10867 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10869/@MeshInstance3D@10870 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10869/@MeshInstance3D@10871 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10869/@MeshInstance3D@10872 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10869/@MeshInstance3D@10873 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10869/@MeshInstance3D@10874 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10869/@MeshInstance3D@10875 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10877/@MeshInstance3D@10878 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10877/@MeshInstance3D@10879 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10877/@MeshInstance3D@10880 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10877/@MeshInstance3D@10881 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10877/@MeshInstance3D@10882 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10877/@MeshInstance3D@10883 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10885/@MeshInstance3D@10886 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10885/@MeshInstance3D@10887 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10885/@MeshInstance3D@10888 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10885/@MeshInstance3D@10889 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10885/@MeshInstance3D@10890 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@10885/@MeshInstance3D@10891 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@10838 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@10839 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@10840 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@10841 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@10842 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@10843 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@16786:<StaticBody3D#43114425245566>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  2776 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27419 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (51 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 47 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: lei_fossa
+  MultiMesh: 1077 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 18
+  3040 mesh visibili
+  nascoste all'inizio (non controllate): 99 parti, 1100 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@22057 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@22058 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@22059 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@22060 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@22061 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@22062 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22117/@MeshInstance3D@22118 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22117/@MeshInstance3D@22119 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22117/@MeshInstance3D@22120 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22117/@MeshInstance3D@22121 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22123/@MeshInstance3D@22124 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22123/@MeshInstance3D@22125 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22123/@MeshInstance3D@22126 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22123/@MeshInstance3D@22127 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22129/@MeshInstance3D@22130 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22129/@MeshInstance3D@22131 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22129/@MeshInstance3D@22132 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22129/@MeshInstance3D@22133 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22135/@MeshInstance3D@22136 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22135/@MeshInstance3D@22137 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22135/@MeshInstance3D@22138 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@22135/@MeshInstance3D@22139 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@22414 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19811/@MeshInstance3D@19812 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19811/@MeshInstance3D@19813 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19811/@MeshInstance3D@19814 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19811/@MeshInstance3D@19815 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19811/@MeshInstance3D@19816 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19811/@MeshInstance3D@19817 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19819/@MeshInstance3D@19820 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19819/@MeshInstance3D@19821 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19819/@MeshInstance3D@19822 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19819/@MeshInstance3D@19823 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19819/@MeshInstance3D@19824 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19819/@MeshInstance3D@19825 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19827/@MeshInstance3D@19828 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19827/@MeshInstance3D@19829 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19827/@MeshInstance3D@19830 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19827/@MeshInstance3D@19831 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19827/@MeshInstance3D@19832 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19827/@MeshInstance3D@19833 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19835/@MeshInstance3D@19836 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19835/@MeshInstance3D@19837 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19835/@MeshInstance3D@19838 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19835/@MeshInstance3D@19839 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19835/@MeshInstance3D@19840 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19835/@MeshInstance3D@19841 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19843/@MeshInstance3D@19845 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19843/@MeshInstance3D@19846 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19843/@MeshInstance3D@19847 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19843/@MeshInstance3D@19848 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19843/@MeshInstance3D@19849 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19851/@MeshInstance3D@19852 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19851/@MeshInstance3D@19853 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19851/@MeshInstance3D@19854 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19851/@MeshInstance3D@19855 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19851/@MeshInstance3D@19856 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@19851/@MeshInstance3D@19857 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@19804 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@19805 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@19806 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@19807 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@19808 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@19809 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@25751:<StaticBody3D#56808710364204>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@28327:<StaticBody3D#56888049825221>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+  2785 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27409 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (53 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 45 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: risalita_arrivo
+  MultiMesh: 4778 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  7626 mesh visibili
+  nascoste all'inizio (non controllate): 109 parti, 214 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@31040 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@31041 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@31042 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@31043 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@31044 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@31045 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31100/@MeshInstance3D@31101 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31100/@MeshInstance3D@31102 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31100/@MeshInstance3D@31103 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31100/@MeshInstance3D@31104 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31106/@MeshInstance3D@31107 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31106/@MeshInstance3D@31108 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31106/@MeshInstance3D@31109 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31106/@MeshInstance3D@31110 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31112/@MeshInstance3D@31113 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31112/@MeshInstance3D@31114 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31112/@MeshInstance3D@31115 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31112/@MeshInstance3D@31116 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31118/@MeshInstance3D@31119 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31118/@MeshInstance3D@31120 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31118/@MeshInstance3D@31121 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@31118/@MeshInstance3D@31122 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@31397 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto11/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto12/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto13/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto14/Frontale/Radiografia · 1 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto14/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto15/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto21/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto22/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto23/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto24/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto25/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Keycard · 2 mesh
+    NASCOSTA Risalita/Infermeria/Negatoscopio/Lastra · 2 mesh
+    NASCOSTA Risalita/Infermeria/PolaroidPecora · 1 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze/LampeggianteErrore/Acceso · 1 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28794/@MeshInstance3D@28796 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28794/@MeshInstance3D@28797 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28794/@MeshInstance3D@28798 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28794/@MeshInstance3D@28799 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28794/@MeshInstance3D@28800 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28802/@MeshInstance3D@28803 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28802/@MeshInstance3D@28804 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28802/@MeshInstance3D@28805 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28802/@MeshInstance3D@28806 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28802/@MeshInstance3D@28807 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28802/@MeshInstance3D@28808 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28810/@MeshInstance3D@28811 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28810/@MeshInstance3D@28812 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28810/@MeshInstance3D@28813 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28810/@MeshInstance3D@28814 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28810/@MeshInstance3D@28815 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28810/@MeshInstance3D@28816 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28818/@MeshInstance3D@28819 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28818/@MeshInstance3D@28820 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28818/@MeshInstance3D@28821 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28818/@MeshInstance3D@28822 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28818/@MeshInstance3D@28823 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28818/@MeshInstance3D@28824 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28826/@MeshInstance3D@28827 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28826/@MeshInstance3D@28828 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28826/@MeshInstance3D@28829 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28826/@MeshInstance3D@28830 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28826/@MeshInstance3D@28831 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28826/@MeshInstance3D@28832 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28834/@MeshInstance3D@28835 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28834/@MeshInstance3D@28836 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28834/@MeshInstance3D@28837 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28834/@MeshInstance3D@28838 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28834/@MeshInstance3D@28839 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@28834/@MeshInstance3D@28840 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@28787 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@28788 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@28789 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@28790 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@28791 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@28792 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@34734:<StaticBody3D#70684222975590>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  7000 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27632 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 3
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (75 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 46 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: risalita_dopo
+  MultiMesh: 4778 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  7667 mesh visibili
+  nascoste all'inizio (non controllate): 103 parti, 166 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@49196 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@49197 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@49198 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@49199 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@49200 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49255/@MeshInstance3D@49258 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49255/@MeshInstance3D@49259 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49261/@MeshInstance3D@49263 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49261/@MeshInstance3D@49264 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49261/@MeshInstance3D@49265 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49267/@MeshInstance3D@49270 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49267/@MeshInstance3D@49271 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49273/@MeshInstance3D@49276 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@49273/@MeshInstance3D@49277 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@49552 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_0_0/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_0_1/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_0_4/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_1_1/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_1_2/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_1_3/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_2_0/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_2_3/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_2_4/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_3_0/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_3_1/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_3_2/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_4_2/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_4_3/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/EnigmaPozze/Pozza_4_4/Graybox/Superficie · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/LampeggianteErrore/Acceso · 1 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46949/@MeshInstance3D@46950 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46949/@MeshInstance3D@46951 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46949/@MeshInstance3D@46952 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46949/@MeshInstance3D@46953 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46949/@MeshInstance3D@46954 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46949/@MeshInstance3D@46955 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46957/@MeshInstance3D@46958 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46957/@MeshInstance3D@46959 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46957/@MeshInstance3D@46960 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46957/@MeshInstance3D@46961 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46957/@MeshInstance3D@46962 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46957/@MeshInstance3D@46963 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46965/@MeshInstance3D@46966 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46965/@MeshInstance3D@46967 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46965/@MeshInstance3D@46968 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46965/@MeshInstance3D@46969 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46965/@MeshInstance3D@46970 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46965/@MeshInstance3D@46971 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46973/@MeshInstance3D@46974 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46973/@MeshInstance3D@46975 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46973/@MeshInstance3D@46976 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46973/@MeshInstance3D@46977 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46973/@MeshInstance3D@46978 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46973/@MeshInstance3D@46979 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46981/@MeshInstance3D@46982 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46981/@MeshInstance3D@46983 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46981/@MeshInstance3D@46984 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46981/@MeshInstance3D@46985 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46981/@MeshInstance3D@46986 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46981/@MeshInstance3D@46987 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46989/@MeshInstance3D@46990 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46989/@MeshInstance3D@46991 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46989/@MeshInstance3D@46992 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46989/@MeshInstance3D@46993 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46989/@MeshInstance3D@46994 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@46989/@MeshInstance3D@46995 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@46942 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@46943 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@46944 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@46945 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@46946 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@46947 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@52889:<StaticBody3D#91369104237721>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  7056 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  28720 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (75 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 47 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: risalita_oblo
+  MultiMesh: 4778 istanze controllate come mesh
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+  mesh con scheletro nella posa del momento (modificatori compresi): 36
+  7653 mesh visibili
+  nascoste all'inizio (non controllate): 111 parti, 183 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@67433 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@67434 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@67435 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@67436 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@67437 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67492/@MeshInstance3D@67494 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67492/@MeshInstance3D@67495 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67492/@MeshInstance3D@67496 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67498/@MeshInstance3D@67500 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67498/@MeshInstance3D@67501 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67498/@MeshInstance3D@67502 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67504/@MeshInstance3D@67506 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67504/@MeshInstance3D@67507 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67504/@MeshInstance3D@67508 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67510/@MeshInstance3D@67512 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67510/@MeshInstance3D@67513 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@67510/@MeshInstance3D@67514 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@67789 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto11/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto12/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto13/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto14/Frontale/Radiografia · 1 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto14/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto15/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto21/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto22/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto23/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto24/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Cassetto25/Frontale/Tirato · 5 mesh
+    NASCOSTA Risalita/Infermeria/Keycard · 2 mesh
+    NASCOSTA Risalita/Infermeria/Negatoscopio/Lastra · 2 mesh
+    NASCOSTA Risalita/Infermeria/PolaroidPecora · 1 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+    NASCOSTA Risalita/StanzaPozze/LampeggianteErrore/Acceso · 1 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65186/@MeshInstance3D@65187 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65186/@MeshInstance3D@65188 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65186/@MeshInstance3D@65189 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65186/@MeshInstance3D@65190 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65186/@MeshInstance3D@65191 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65186/@MeshInstance3D@65192 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65194/@MeshInstance3D@65195 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65194/@MeshInstance3D@65196 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65194/@MeshInstance3D@65197 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65194/@MeshInstance3D@65198 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65194/@MeshInstance3D@65199 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65194/@MeshInstance3D@65200 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65202/@MeshInstance3D@65203 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65202/@MeshInstance3D@65204 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65202/@MeshInstance3D@65205 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65202/@MeshInstance3D@65206 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65202/@MeshInstance3D@65207 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65202/@MeshInstance3D@65208 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65210/@MeshInstance3D@65211 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65210/@MeshInstance3D@65212 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65210/@MeshInstance3D@65213 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65210/@MeshInstance3D@65214 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65210/@MeshInstance3D@65215 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65210/@MeshInstance3D@65216 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65218/@MeshInstance3D@65219 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65218/@MeshInstance3D@65220 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65218/@MeshInstance3D@65221 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65218/@MeshInstance3D@65222 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65218/@MeshInstance3D@65223 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65218/@MeshInstance3D@65224 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65226/@MeshInstance3D@65227 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65226/@MeshInstance3D@65228 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65226/@MeshInstance3D@65229 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65226/@MeshInstance3D@65230 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65226/@MeshInstance3D@65231 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@65226/@MeshInstance3D@65232 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@65179 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@65180 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@65181 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@65182 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@65183 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@65184 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@71126:<StaticBody3D#112325608627455>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@80518:<StaticBody3D#112571126424422>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@80946:<StaticBody3D#112585336727737>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@81336:<StaticBody3D#112598305517032>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+  7027 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27629 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (77 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 66 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: tappa7
+  MultiMesh: 1077 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  3031 mesh visibili
+  nascoste all'inizio (non controllate): 98 parti, 1110 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@85641 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@85642 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@85643 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@85644 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@85645 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@85646 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85701/@MeshInstance3D@85702 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85701/@MeshInstance3D@85703 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85701/@MeshInstance3D@85704 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85701/@MeshInstance3D@85705 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85707/@MeshInstance3D@85708 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85707/@MeshInstance3D@85709 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85707/@MeshInstance3D@85710 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85707/@MeshInstance3D@85711 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85713/@MeshInstance3D@85714 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85713/@MeshInstance3D@85715 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85713/@MeshInstance3D@85716 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85713/@MeshInstance3D@85717 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85719/@MeshInstance3D@85720 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85719/@MeshInstance3D@85721 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85719/@MeshInstance3D@85722 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@85719/@MeshInstance3D@85723 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@85998 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83395/@MeshInstance3D@83396 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83395/@MeshInstance3D@83397 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83395/@MeshInstance3D@83398 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83395/@MeshInstance3D@83399 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83395/@MeshInstance3D@83400 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83395/@MeshInstance3D@83401 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83403/@MeshInstance3D@83404 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83403/@MeshInstance3D@83405 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83403/@MeshInstance3D@83406 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83403/@MeshInstance3D@83407 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83403/@MeshInstance3D@83408 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83403/@MeshInstance3D@83409 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83411/@MeshInstance3D@83412 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83411/@MeshInstance3D@83413 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83411/@MeshInstance3D@83414 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83411/@MeshInstance3D@83415 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83411/@MeshInstance3D@83416 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83411/@MeshInstance3D@83417 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83419/@MeshInstance3D@83420 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83419/@MeshInstance3D@83421 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83419/@MeshInstance3D@83422 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83419/@MeshInstance3D@83423 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83419/@MeshInstance3D@83424 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83419/@MeshInstance3D@83425 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83427/@MeshInstance3D@83428 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83427/@MeshInstance3D@83429 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83427/@MeshInstance3D@83430 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83427/@MeshInstance3D@83431 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83427/@MeshInstance3D@83432 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83427/@MeshInstance3D@83433 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83435/@MeshInstance3D@83436 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83435/@MeshInstance3D@83437 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83435/@MeshInstance3D@83438 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83435/@MeshInstance3D@83439 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83435/@MeshInstance3D@83440 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@83435/@MeshInstance3D@83441 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@83388 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@83389 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@83390 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@83391 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@83392 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@83393 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@89335:<StaticBody3D#132961080987766>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  2776 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27501 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (52 s)
+Scena res://scenes/sala/torre/sala_torre.tscn
+  stato: inseguimento_dopo
+  MultiMesh: 174 istanze controllate come mesh
+  652 mesh visibili
+  nascoste all'inizio (non controllate): 6 parti, 34 mesh
+    NASCOSTA BambinoBalconata0 · 2 mesh
+    NASCOSTA BambinoBalconata1 · 3 mesh
+    NASCOSTA BambinoBalconata2 · 2 mesh
+    NASCOSTA BambinoBalconata3 · 3 mesh
+    NASCOSTA ObloLei/Lei/Lei · 12 mesh
+    NASCOSTA SalaInseguimento/Lei · 12 mesh
+  611 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  4737 celle raggiungibili a piedi
+  1272 celle dove si sta accovacciati per forza (spazio libero fino a 1.05 m)
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (11 s)
+Scena res://scenes/sala/torre/sala_torre.tscn
+  stato: torre_oblo
+  MultiMesh: 174 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  661 mesh visibili
+  nascoste all'inizio (non controllate): 8 parti, 25 mesh
+    NASCOSTA BambinoBalconata0 · 2 mesh
+    NASCOSTA BambinoBalconata1 · 3 mesh
+    NASCOSTA BambinoBalconata2 · 2 mesh
+    NASCOSTA BambinoBalconata3 · 3 mesh
+    NASCOSTA ObloLei/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA ObloLei/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA ObloLei/Lei/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+    NASCOSTA SalaInseguimento/Lei · 12 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@94741:<StaticBody3D#174690714820668>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1749)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _togli_forme (res://scripts/environment/morbidezza_lei.gd:1750)
+       [1] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1728)
+       [2] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 2 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 0 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1737)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+ERROR: Index p_blend_shape = 1 is out of bounds ((int)blend_shape_tracks.size() = 0).
+   GDScript backtrace (most recent call first):
+       [0] _campana_forme (res://scripts/environment/morbidezza_lei.gd:1739)
+       [1] _process_modification (res://scripts/environment/morbidezza_lei.gd:676)
+  620 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  4039 celle raggiungibili a piedi
+  565 celle dove si sta accovacciati per forza (spazio libero fino a 1.05 m)
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (12 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 44 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: piscina_vuota
+  MultiMesh: 1077 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  3029 mesh visibili
+  nascoste all'inizio (non controllate): 94 parti, 1106 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@98206 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@98208 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@98209 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@98210 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@98211 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98266/@MeshInstance3D@98268 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98266/@MeshInstance3D@98269 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98266/@MeshInstance3D@98270 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98272/@MeshInstance3D@98273 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98272/@MeshInstance3D@98275 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98272/@MeshInstance3D@98276 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98278/@MeshInstance3D@98280 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98278/@MeshInstance3D@98281 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98278/@MeshInstance3D@98282 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98284/@MeshInstance3D@98286 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98284/@MeshInstance3D@98287 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@98284/@MeshInstance3D@98288 · 1 mesh
+    NASCOSTA Piscina/AcquaPozza/Surface · 1 mesh
+    NASCOSTA Piscina/Pozza/Graybox/Superficie · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@98563 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95960/@MeshInstance3D@95961 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95960/@MeshInstance3D@95962 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95960/@MeshInstance3D@95963 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95960/@MeshInstance3D@95964 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95960/@MeshInstance3D@95965 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95960/@MeshInstance3D@95966 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95968/@MeshInstance3D@95969 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95968/@MeshInstance3D@95970 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95968/@MeshInstance3D@95971 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95968/@MeshInstance3D@95972 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95968/@MeshInstance3D@95973 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95968/@MeshInstance3D@95974 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95976/@MeshInstance3D@95978 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95976/@MeshInstance3D@95979 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95976/@MeshInstance3D@95980 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95976/@MeshInstance3D@95981 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95976/@MeshInstance3D@95982 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95984/@MeshInstance3D@95985 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95984/@MeshInstance3D@95986 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95984/@MeshInstance3D@95987 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95984/@MeshInstance3D@95988 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95984/@MeshInstance3D@95989 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95984/@MeshInstance3D@95990 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95992/@MeshInstance3D@95993 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95992/@MeshInstance3D@95994 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95992/@MeshInstance3D@95995 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95992/@MeshInstance3D@95996 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95992/@MeshInstance3D@95997 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@95992/@MeshInstance3D@95998 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@96000/@MeshInstance3D@96001 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@96000/@MeshInstance3D@96002 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@96000/@MeshInstance3D@96003 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@96000/@MeshInstance3D@96004 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@96000/@MeshInstance3D@96005 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@96000/@MeshInstance3D@96006 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@95953 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@95954 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@95955 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@95956 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@95957 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@95958 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@101900:<StaticBody3D#203866595414600>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  2776 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27414 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (54 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 47 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: piatti_scesi
+  MultiMesh: 1077 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  3029 mesh visibili
+  nascoste all'inizio (non controllate): 95 parti, 1107 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@107167 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@107169 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@107170 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@107171 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@107172 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107227/@MeshInstance3D@107229 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107227/@MeshInstance3D@107230 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107227/@MeshInstance3D@107231 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107233/@MeshInstance3D@107234 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107233/@MeshInstance3D@107236 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107233/@MeshInstance3D@107237 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107239/@MeshInstance3D@107241 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107239/@MeshInstance3D@107242 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107239/@MeshInstance3D@107243 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107245/@MeshInstance3D@107247 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107245/@MeshInstance3D@107248 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@107245/@MeshInstance3D@107249 · 1 mesh
+    NASCOSTA Piscina/AcquaPozza/Surface · 1 mesh
+    NASCOSTA Piscina/Pozza/Graybox/Superficie · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@107524 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104921/@MeshInstance3D@104922 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104921/@MeshInstance3D@104923 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104921/@MeshInstance3D@104924 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104921/@MeshInstance3D@104925 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104921/@MeshInstance3D@104926 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104921/@MeshInstance3D@104927 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104929/@MeshInstance3D@104930 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104929/@MeshInstance3D@104931 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104929/@MeshInstance3D@104932 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104929/@MeshInstance3D@104933 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104929/@MeshInstance3D@104934 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104929/@MeshInstance3D@104935 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104937/@MeshInstance3D@104938 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104937/@MeshInstance3D@104939 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104937/@MeshInstance3D@104940 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104937/@MeshInstance3D@104941 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104937/@MeshInstance3D@104942 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104937/@MeshInstance3D@104943 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104945/@MeshInstance3D@104946 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104945/@MeshInstance3D@104947 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104945/@MeshInstance3D@104948 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104945/@MeshInstance3D@104949 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104945/@MeshInstance3D@104950 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104945/@MeshInstance3D@104951 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104953/@MeshInstance3D@104954 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104953/@MeshInstance3D@104955 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104953/@MeshInstance3D@104956 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104953/@MeshInstance3D@104957 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104953/@MeshInstance3D@104958 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104953/@MeshInstance3D@104959 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104961/@MeshInstance3D@104962 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104961/@MeshInstance3D@104963 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104961/@MeshInstance3D@104964 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104961/@MeshInstance3D@104965 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104961/@MeshInstance3D@104966 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@104961/@MeshInstance3D@104967 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@104914 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@104915 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@104916 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@104917 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@104918 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@104919 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@110861:<StaticBody3D#217570862983159>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  2776 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27413 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (53 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 46 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: acquari_comparsi
+  acquari comparsi: true, stato 0
+  MultiMesh: 1074 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  3034 mesh visibili
+  nascoste all'inizio (non controllate): 92 parti, 1104 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@116128 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@116129 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@116130 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@116131 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@116132 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@116133 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116188/@MeshInstance3D@116189 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116188/@MeshInstance3D@116190 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116188/@MeshInstance3D@116191 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116188/@MeshInstance3D@116192 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116194/@MeshInstance3D@116195 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116194/@MeshInstance3D@116196 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116194/@MeshInstance3D@116197 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116194/@MeshInstance3D@116198 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116200/@MeshInstance3D@116201 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116200/@MeshInstance3D@116202 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116200/@MeshInstance3D@116203 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116200/@MeshInstance3D@116204 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116206/@MeshInstance3D@116207 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116206/@MeshInstance3D@116208 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116206/@MeshInstance3D@116209 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@116206/@MeshInstance3D@116210 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@116485 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113882/@MeshInstance3D@113883 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113882/@MeshInstance3D@113884 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113882/@MeshInstance3D@113885 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113882/@MeshInstance3D@113886 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113882/@MeshInstance3D@113887 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113882/@MeshInstance3D@113888 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113890/@MeshInstance3D@113891 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113890/@MeshInstance3D@113892 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113890/@MeshInstance3D@113893 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113890/@MeshInstance3D@113894 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113890/@MeshInstance3D@113895 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113890/@MeshInstance3D@113896 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113898/@MeshInstance3D@113899 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113898/@MeshInstance3D@113900 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113898/@MeshInstance3D@113901 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113898/@MeshInstance3D@113902 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113898/@MeshInstance3D@113903 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113898/@MeshInstance3D@113904 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113906/@MeshInstance3D@113907 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113906/@MeshInstance3D@113908 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113906/@MeshInstance3D@113909 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113906/@MeshInstance3D@113910 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113906/@MeshInstance3D@113911 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113906/@MeshInstance3D@113912 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113914/@MeshInstance3D@113915 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113914/@MeshInstance3D@113916 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113914/@MeshInstance3D@113917 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113914/@MeshInstance3D@113918 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113914/@MeshInstance3D@113919 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113914/@MeshInstance3D@113920 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113922/@MeshInstance3D@113923 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113922/@MeshInstance3D@113924 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113922/@MeshInstance3D@113925 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113922/@MeshInstance3D@113926 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113922/@MeshInstance3D@113927 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@113922/@MeshInstance3D@113928 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@113875 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@113876 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@113877 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@113878 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@113879 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@113880 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@119822:<StaticBody3D#231331703339150>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  2775 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27408 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 6
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (52 s)
+Scena res://scenes/sala_principale.tscn
+rocce nei buchi: 115
+rocce: 167, doppie 115, già coperte 2, senza posto 50 [(20.03115, 0.0, -18.18268), (21.34238, 0.0, -16.63309), (22.85821, 0.0, -14.49227), (23.94569, 0.0, -12.58811), (20.30132, 0.0, -5.173096), (26.55066, 0.0, -5.117293), (27.7745, 0.0, 3.831831), (19.63423, 0.0, 3.458162), (26.37929, 0.0, 5.979541), (18.86751, 0.0, 19.40032), (17.28547, 0.0, 20.81654), (16.0856, 0.0, 21.75705), (14.3325, 0.0, 22.95506), (12.58538, 0.0, 23.9439), (4.657643, 0.0, 20.42424), (5.032062, 0.0, 26.56795), (-3.831831, 0.0, 27.7745), (-3.458162, 0.0, 19.63423), (-5.979541, 0.0, 26.37929), (-18.19061, 0.0, 10.40917), (-20.42424, 0.0, 4.657643), (-26.56795, 0.0, 5.032062), (-27.03436, 0.0, -4.05), (-27.03436, 0.0, 4.55), (-28.28256, 0.0, -4.05), (-28.28256, 0.0, 4.05), (19.94903, 0.0, -4.05), (19.94903, 0.0, 4.05), (18.70592, 0.0, -3.05), (18.70592, 0.0, 3.05), (3.784486, 0.0, -4.55), (3.784486, 0.0, 4.55), (4.05, 0.0, 19.94903), (-4.05, 0.0, 19.94903), (3.05, 0.0, 18.70592), (-3.05, 0.0, 18.70592), (4.55, 0.0, 3.784486), (-4.55, 0.0, 3.784486), (-20.81551, 0.0, -4.05), (-19.94903, 0.0, 4.05), (-18.70592, 0.0, 3.05), (-18.70592, 0.0, -3.05), (-3.784487, 0.0, 4.55), (28.25, 0.0, -3.6), (28.22, 0.0, -1.2), (28.25, 0.0, 1.2), (-1.2, 0.0, 28.22), (1.2, 0.0, 28.25), (3.6, 0.0, 28.22), (-14.65795, 0.0, 14.9682)]
+rocce della riva dell'imbarco: 1
+pile di scatoloni: dal file in 51 ms (375 unità, 3326 scatole)
+ciambella a riva: (21.07, 0.56, 4.8), inclinata 8.7 gradi
+ciambella a riva: (-12.27, 0.58, 23.35), inclinata 4.7 gradi
+ciambella a riva: (-25.88, 0.58, 5.37), inclinata 4.9 gradi
+WARNING: Adding 'sala_pulsante_portello_cassetta' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_pulsante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+WARNING: Adding 'sala_lampeggiante_portello' as child to 'PulsanteParco' will make owner 'sala_interattivi' inconsistent. Consider unsetting the owner beforehand.
+     at: add_child (scene/main/node.cpp:1728)
+     GDScript backtrace (most recent call first):
+         [0] _pulsante_parco (res://scripts/risalita/infermeria_gioco.gd:539)
+         [1] _negatoscopio (res://scripts/risalita/infermeria_gioco.gd:513)
+         [2] _costruisci (res://scripts/risalita/infermeria_gioco.gd:110)
+         [3] _ready (res://scripts/risalita/infermeria_gioco.gd:81)
+         [4] _metti_infermeria (res://scripts/risalita/risalita_gioco.gd:808)
+         [5] _metti_stanze (res://scripts/risalita/risalita_gioco.gd:801)
+         [6] _ready (res://scripts/risalita/risalita_gioco.gd:168)
+         [7] _controlla_scena (res://tests/controllo_posizionamento.gd:215)
+         [8] _run (res://tests/controllo_posizionamento.gd:202)
+         [9] _controlla_scena (res://tests/controllo_posizionamento.gd:293)
+  stato: acquari_risolti
+AttesaZone: torre non ancora pronta, si aspetta senza bloccare
+AttesaZone: torre pronta dopo 1351 ms di attesa
+  acquari comparsi: true, stato 3
+  MultiMesh: 1296 istanze controllate come mesh
+  mesh con scheletro nella posa del momento (modificatori compresi): 9
+  4750 mesh visibili
+  nascoste all'inizio (non controllate): 93 parti, 1146 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@125099 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@125100 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@125101 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@125102 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@125103 · 1 mesh
+    NASCOSTA Atmosfera/GocceNellaPozza/@MeshInstance3D@125104 · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume · 1 mesh
+    NASCOSTA Gioco/EnigmaAcquari/Valvola/GocceValvola · 6 mesh
+    NASCOSTA Gioco/LeiSbuca/MedusaFossa · 12 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoCoda/Schiuma · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Corona · 1 mesh
+    NASCOSTA Gioco/LeiSbuca/SchizzoTesta/Schiuma · 1 mesh
+    NASCOSTA Interni/Ambienti/Corridoio/acqua_pozze_corridoio · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_lavapiedi · 1 mesh
+    NASCOSTA Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi · 1 mesh
+    NASCOSTA Interni/Ambienti/Stanzino/acqua_pozza_stanzino · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125159/@MeshInstance3D@125161 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125159/@MeshInstance3D@125163 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125165/@MeshInstance3D@125168 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125165/@MeshInstance3D@125169 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125171/@MeshInstance3D@125173 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125171/@MeshInstance3D@125174 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125171/@MeshInstance3D@125175 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125177/@MeshInstance3D@125180 · 1 mesh
+    NASCOSTA LuciSala/@Node3D@125177/@MeshInstance3D@125181 · 1 mesh
+    NASCOSTA Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad · 1 mesh
+    NASCOSTA Player/Head/Camera3D/ViewModel · 13 mesh
+    NASCOSTA Player/WaterPack/Aspirazione · 2 mesh
+    NASCOSTA Player/WaterPack/GettoPotente/@MeshInstance3D@125456 · 1 mesh
+    NASCOSTA Risalita/BambinoCorridoioFiume/BambinoCubo · 2 mesh
+    NASCOSTA Risalita/Fiume · 569 mesh
+    NASCOSTA Risalita/Infermeria · 234 mesh
+    NASCOSTA Risalita/ObloFiume/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloPersonale/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/ObloServizio/Lei/Lei · 12 mesh
+    NASCOSTA Risalita/StanzaPozze · 149 mesh
+    NASCOSTA SalaSottomarino/AcquaPresa/Surface · 1 mesh
+    NASCOSTA SalaSottomarino/BambinoGalleria/BambinoAgnello · 3 mesh
+    NASCOSTA SalaSottomarino/LeiTunnel/Lei · 12 mesh
+    NASCOSTA SalaTorre/BambinoBalconata0 · 2 mesh
+    NASCOSTA SalaTorre/BambinoBalconata1 · 3 mesh
+    NASCOSTA SalaTorre/BambinoBalconata2 · 2 mesh
+    NASCOSTA SalaTorre/BambinoBalconata3 · 3 mesh
+    NASCOSTA SalaTorre/ObloLei/Lei/Lei · 12 mesh
+    NASCOSTA SalaTorre/SalaInseguimento/Lei · 12 mesh
+    NASCOSTA Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122853/@MeshInstance3D@122854 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122853/@MeshInstance3D@122855 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122853/@MeshInstance3D@122856 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122853/@MeshInstance3D@122857 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122853/@MeshInstance3D@122858 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122853/@MeshInstance3D@122859 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122861/@MeshInstance3D@122862 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122861/@MeshInstance3D@122863 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122861/@MeshInstance3D@122864 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122861/@MeshInstance3D@122865 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122861/@MeshInstance3D@122866 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122861/@MeshInstance3D@122867 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122869/@MeshInstance3D@122870 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122869/@MeshInstance3D@122871 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122869/@MeshInstance3D@122872 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122869/@MeshInstance3D@122873 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122869/@MeshInstance3D@122874 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122869/@MeshInstance3D@122875 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122877/@MeshInstance3D@122878 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122877/@MeshInstance3D@122879 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122877/@MeshInstance3D@122880 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122877/@MeshInstance3D@122881 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122877/@MeshInstance3D@122882 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122877/@MeshInstance3D@122883 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122885/@MeshInstance3D@122887 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122885/@MeshInstance3D@122888 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122885/@MeshInstance3D@122889 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122885/@MeshInstance3D@122890 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122885/@MeshInstance3D@122891 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122893/@MeshInstance3D@122894 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122893/@MeshInstance3D@122895 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122893/@MeshInstance3D@122896 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122893/@MeshInstance3D@122897 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122893/@MeshInstance3D@122898 · 1 mesh
+    NASCOSTA Vasca/Medusa/@Node3D@122893/@MeshInstance3D@122899 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@122846 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@122847 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@122848 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@122849 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@122850 · 1 mesh
+    NASCOSTA Vasca/Medusa/Gocce/@MeshInstance3D@122851 · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola · 1 mesh
+    NASCOSTA Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo · 1 mesh
+ERROR: Failed to build Jolt Physics concave polygon shape with {vertex_count=11340}. It returned the following error: 'Need triangles to create a mesh shape!'. This shape belongs to '@StaticBody3D@130868:<StaticBody3D#245503635781347>' and 0 other object(s).
+   GDScript backtrace (most recent call first):
+       [0] _crea_corpi (res://tests/controllo_posizionamento.gd:784)
+       [1] _controlla_scena (res://tests/controllo_posizionamento.gd:252)
+       [2] _congela_scheletri (res://tests/controllo_posizionamento.gd:587)
+  4348 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  27608 celle raggiungibili a piedi
+  0 celle dove si sta accovacciati per forza (spazio libero fino a 1.05 m)
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (81 s)
+Scena res://scenes/sala/sottomarino/sala_sottomarino.tscn
+  stato: sottomarino_t0
+  MultiMesh: 45 istanze controllate come mesh
+  1062 mesh visibili
+  nascoste all'inizio (non controllate): 3 parti, 16 mesh
+    NASCOSTA AcquaPresa/Surface · 1 mesh
+    NASCOSTA BambinoGalleria/BambinoAgnello · 3 mesh
+    NASCOSTA LeiTunnel/Lei · 12 mesh
+  959 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  39225 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 20
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 1
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (13 s)
+Scena res://scenes/sala/sottomarino/sala_sottomarino.tscn
+  stato: sottomarino_t1
+  MultiMesh: 45 istanze controllate come mesh
+  1062 mesh visibili
+  nascoste all'inizio (non controllate): 3 parti, 16 mesh
+    NASCOSTA AcquaPresa/Surface · 1 mesh
+    NASCOSTA BambinoGalleria/BambinoAgnello · 3 mesh
+    NASCOSTA LeiTunnel/Lei · 12 mesh
+  959 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  39225 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (13 s)
+Scena res://scenes/sala/sottomarino/sala_sottomarino.tscn
+  stato: sottomarino_t2
+  MultiMesh: 45 istanze controllate come mesh
+  1062 mesh visibili
+  nascoste all'inizio (non controllate): 3 parti, 16 mesh
+    NASCOSTA AcquaPresa/Surface · 1 mesh
+    NASCOSTA BambinoGalleria/BambinoAgnello · 3 mesh
+    NASCOSTA LeiTunnel/Lei · 12 mesh
+  959 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  39225 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (13 s)
+  parti nascoste all'inizio mai controllate: 19 (vedi il rapporto, "Copertura")
+  MultiMesh non controllati: 12
+rapporto: /home/user/Gioco-3D/docs/tecnico/posizionamento/rapporto.md
+  ok    nessun caso nuovo di posizionamento (0 nuovi, 64 già noti, 0 eccezioni non più trovate)
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+
+RISULTATO: 2 controlli ok, 0 falliti
+WARNING: 1037 ObjectDB instances were leaked at exit (run with `--verbose` for details).

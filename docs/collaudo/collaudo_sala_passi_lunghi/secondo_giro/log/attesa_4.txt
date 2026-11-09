@@ -1,0 +1,166 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  ok  la scelta dell'utente: la porta aspetta la zona (MODO PORTA)
+Torre: il portone aspetta la sala della torre
+AttesaZone: torre non ancora pronta, si aspetta senza bloccare
+  ok  subito dopo l'enigma il portone resta chiuso, in attesa della torre
+triangoli delle luci: 88 mesh e forme nei thread, pronte in 228 ms e 28 fotogrammi (rimesse in 0.2 ms)
+  emergenza: fissa_al_muro 7.3 ms, 9 raggi 0.3 ms
+  emergenza: fissa_al_muro 5.3 ms, 9 raggi 0.2 ms
+  emergenza: fissa_al_muro 3.6 ms, 9 raggi 0.1 ms
+  emergenza: fissa_al_muro 3.5 ms, 9 raggi 0.1 ms
+-- fine fotogramma dopo il passo 629 (21 ms di passi)
+  emergenza: fissa_al_muro 3.5 ms, 9 raggi 0.1 ms
+  emergenza: fissa_al_muro 3.5 ms, 9 raggi 0.1 ms
+  emergenza: fissa_al_muro 3.5 ms, 9 raggi 0.2 ms
+-- fine fotogramma dopo il passo 657 (22 ms di passi)
+  _modello(struttura): load 0.0 ms, instantiate 1.0 ms (23 nodi)
+  _modello(struttura): acque 0.0 ms, varchi 0.1 ms (29 passi a parte)
+inseguimento passo 0 (_modello(struttura)): 1.2 ms
+inseguimento passo 1 (_varco_scalette): 0.1 ms
+inseguimento passo 2 (_varco_scalette): 0.0 ms
+inseguimento passo 3 (_varco_scalette): 4.2 ms
+inseguimento passo 4 (_varco_scalette): 5.2 ms
+inseguimento passo 5 (_varco_scalette): 0.2 ms
+inseguimento passo 6 (_varco_scalette): 4.5 ms
+inseguimento passo 7 (_varco_scalette): 3.9 ms
+inseguimento passo 8 (_varco_scalette): 0.0 ms
+inseguimento passo 9 (_varco_scalette): 4.1 ms
+inseguimento passo 10 (_varco_scalette): 4.0 ms
+inseguimento passo 11 (_varco_scalette): 0.0 ms
+inseguimento passo 12 (_varco_scalette): 4.3 ms
+inseguimento passo 13 (_varco_scalette): 3.8 ms
+inseguimento passo 14 (_varco_scalette): 0.0 ms
+inseguimento passo 15 (_varco_scalette): 4.1 ms
+inseguimento passo 16 (_varco_scalette): 3.9 ms
+inseguimento passo 17 (_varco_scalette): 0.0 ms
+inseguimento passo 18 (_varco_scalette): 4.2 ms
+inseguimento passo 19 (_varco_scalette): 4.0 ms
+inseguimento passo 20 (_varco_scalette): 0.0 ms
+inseguimento passo 21 (_varco_scalette): 4.2 ms
+inseguimento passo 22 (_varco_scalette): 3.9 ms
+inseguimento passo 23 (_varco_scalette): 0.0 ms
+inseguimento passo 24 (_varco_scalette): 4.3 ms
+inseguimento passo 25 (_varco_scalette): 4.0 ms
+inseguimento passo 26 (_varco_scalette): 0.0 ms
+inseguimento passo 27 (_varco_scalette): 4.2 ms
+inseguimento passo 28 (_varco_scalette): 4.0 ms
+inseguimento passo 29 (_varco_scalette): 0.0 ms
+inseguimento passo 30 (<anonymous lambda>): 0.0 ms
+inseguimento passo 31 (<anonymous lambda>): 0.0 ms
+inseguimento passo 32 (<anonymous lambda>): 0.0 ms
+inseguimento passo 33 (<anonymous lambda>): 0.0 ms
+inseguimento passo 34 (<anonymous lambda>): 0.0 ms
+inseguimento passo 35 (<anonymous lambda>): 0.0 ms
+inseguimento passo 36 (<anonymous lambda>): 0.0 ms
+inseguimento passo 37 (<anonymous lambda>): 0.0 ms
+inseguimento passo 38 (<anonymous lambda>): 0.0 ms
+inseguimento passo 39 (<anonymous lambda>): 0.0 ms
+inseguimento passo 40 (<anonymous lambda>): 0.0 ms
+  _modello(tubi): load 0.0 ms, instantiate 0.1 ms (7 nodi)
+  _modello(tubi): acque 0.0 ms, varchi 0.0 ms (0 passi a parte)
+inseguimento passo 41 (_modello(tubi)): 0.1 ms
+inseguimento passo 42 (<anonymous lambda>): 0.0 ms
+inseguimento passo 43 (<anonymous lambda>): 0.0 ms
+inseguimento passo 44 (<anonymous lambda>): 0.0 ms
+inseguimento passo 45 (<anonymous lambda>): 0.0 ms
+inseguimento passo 46 (<anonymous lambda>): 0.0 ms
+inseguimento passo 47 (<anonymous lambda>): 0.0 ms
+inseguimento passo 48 (<anonymous lambda>): 0.0 ms
+  _modello(prop): load 0.0 ms, instantiate 0.0 ms (15 nodi)
+  _modello(prop): acque 0.0 ms, varchi 0.0 ms (0 passi a parte)
+inseguimento passo 49 (_modello(prop)): 0.1 ms
+inseguimento passo 50 (<anonymous lambda>): 0.0 ms
+inseguimento passo 51 (<anonymous lambda>): 0.0 ms
+inseguimento passo 52 (<anonymous lambda>): 0.0 ms
+inseguimento passo 53 (<anonymous lambda>): 0.0 ms
+inseguimento passo 54 (<anonymous lambda>): 0.0 ms
+  _modello(mobili): load 0.0 ms, instantiate 0.0 ms (21 nodi)
+  _modello(mobili): acque 0.0 ms, varchi 0.0 ms (0 passi a parte)
+inseguimento passo 55 (_modello(mobili)): 0.1 ms
+inseguimento passo 56 (<anonymous lambda>): 0.0 ms
+inseguimento passo 57 (<anonymous lambda>): 0.0 ms
+inseguimento passo 58 (<anonymous lambda>): 0.0 ms
+inseguimento passo 59 (<anonymous lambda>): 0.0 ms
+inseguimento passo 60 (<anonymous lambda>): 0.0 ms
+inseguimento passo 61 (<anonymous lambda>): 0.0 ms
+inseguimento passo 62 (<anonymous lambda>): 0.0 ms
+inseguimento passo 63 (_tubi): 4.1 ms
+inseguimento passo 64 (_acque): 0.1 ms
+inseguimento passo 65 (_veli_bocche): 1.4 ms
+inseguimento passo 66 (_paratie): 0.2 ms
+inseguimento passo 67 (_grata): 0.0 ms
+inseguimento passo 68 (_scala): 0.1 ms
+inseguimento passo 69 (_fondo_porta): 0.4 ms
+inseguimento passo 70 (_checkpoint): 0.1 ms
+inseguimento passo 71 (_scolo_zone): 0.0 ms
+inseguimento passo 72 (_bacino): 0.0 ms
+inseguimento passo 73 (_lei_crea): 1.2 ms
+inseguimento passo 74 (_lei_parti): 0.1 ms
+inseguimento passo 75 (_lei_morbida): 4.4 ms
+inseguimento passo 76 (<anonymous lambda>): 2.4 ms
+inseguimento passo 77 (<anonymous lambda>): 1.2 ms
+inseguimento passo 78 (<anonymous lambda>): 1.0 ms
+inseguimento passo 79 (<anonymous lambda>): 0.9 ms
+inseguimento passo 80 (<anonymous lambda>): 0.9 ms
+inseguimento passo 81 (<anonymous lambda>): 1.5 ms
+inseguimento passo 82 (<anonymous lambda>): 1.1 ms
+inseguimento passo 83 (<anonymous lambda>): 1.1 ms
+inseguimento passo 84 (<anonymous lambda>): 1.1 ms
+inseguimento passo 85 (<anonymous lambda>): 1.2 ms
+inseguimento passo 86 (<anonymous lambda>): 1.6 ms
+inseguimento passo 87 (<anonymous lambda>): 1.1 ms
+inseguimento passo 88 (<anonymous lambda>): 1.1 ms
+inseguimento passo 89 (<anonymous lambda>): 4.5 ms
+inseguimento passo 90 (<anonymous lambda>): 0.4 ms
+inseguimento passo 91 (<anonymous lambda>): 0.1 ms
+inseguimento passo 92 (<anonymous lambda>): 0.1 ms
+inseguimento passo 93 (<anonymous lambda>): 0.1 ms
+inseguimento passo 94 (<anonymous lambda>): 0.1 ms
+inseguimento passo 95 (_luci): 7.6 ms
+inseguimento passo 96 (<anonymous lambda>): 1.2 ms
+inseguimento passo 97 (<anonymous lambda>): 0.2 ms
+inseguimento passo 98 (<anonymous lambda>): 0.3 ms
+inseguimento passo 99 (<anonymous lambda>): 0.2 ms
+inseguimento passo 100 (<anonymous lambda>): 0.1 ms
+inseguimento passo 101 (<anonymous lambda>): 0.1 ms
+inseguimento passo 102 (<anonymous lambda>): 0.1 ms
+inseguimento passo 103 (<anonymous lambda>): 0.0 ms
+inseguimento passo 104 (<anonymous lambda>): 0.1 ms
+inseguimento passo 105 (<anonymous lambda>): 0.1 ms
+inseguimento passo 106 (<anonymous lambda>): 0.1 ms
+inseguimento passo 107 (<anonymous lambda>): 0.1 ms
+inseguimento passo 108 (<anonymous lambda>): 0.1 ms
+inseguimento passo 109 (<anonymous lambda>): 0.1 ms
+inseguimento passo 110 (<anonymous lambda>): 0.0 ms
+inseguimento passo 111 (<anonymous lambda>): 0.1 ms
+inseguimento passo 112 (<anonymous lambda>): 0.0 ms
+inseguimento passo 113 (<anonymous lambda>): 0.1 ms
+inseguimento passo 114 (<anonymous lambda>): 0.0 ms
+inseguimento passo 115 (<anonymous lambda>): 0.0 ms
+inseguimento passo 116 (<anonymous lambda>): 0.0 ms
+inseguimento passo 117 (<anonymous lambda>): 0.0 ms
+inseguimento passo 118 (<anonymous lambda>): 0.0 ms
+inseguimento passo 119 (<anonymous lambda>): 0.1 ms
+inseguimento passo 120 (<anonymous lambda>): 0.0 ms
+inseguimento passo 121 (<anonymous lambda>): 0.0 ms
+inseguimento passo 122 (<anonymous lambda>): 0.0 ms
+inseguimento passo 123 (<anonymous lambda>): 0.1 ms
+inseguimento passo 124 (<anonymous lambda>): 0.0 ms
+inseguimento passo 125 (<anonymous lambda>): 0.0 ms
+inseguimento passo 126 (<anonymous lambda>): 0.1 ms
+inseguimento passo 127 (<anonymous lambda>): 0.0 ms
+inseguimento passo 128 (<anonymous lambda>): 0.0 ms
+AttesaZone: torre pronta dopo 6750 ms di attesa
+  completa torre, AttesaZone.pronta: 0.0 ms
+  completa torre, guscio: 0.1 ms
+  completa torre, soglia: 0.5 ms
+  completa torre, precarica tunnel: 4.1 ms
+mostra torre: process 6.4 ms, visible 0.2 ms, completa 4.8 ms
+  ok  poi il portone si apre da solo (dopo 6.8 s)
+  ok  e non prima che il thread (rallentato a 6 s) abbia finito (6.8 s)
+  ok  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (0 sopra, 0 noti; il peggiore 41 ms su 947)
+  ok  quando si apre, dietro c'è la sala della torre costruita e visibile
+RISULTATO: 6 controlli ok, 0 falliti
+Uscita: aspettati 18 caricamenti nel thread (1.0 s)
+WARNING: 826 ObjectDB instances were leaked at exit (run with `--verbose` for details).

@@ -1,0 +1,64 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.318 - Forward+ - Using Device #0: Unknown - llvmpipe (LLVM 20.1.2, 256 bits)
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+     at: initialize (servers/audio/audio_server.cpp:258)
+
+TORRE costruita a pezzi, nascosta
+LAMPADA 0 sotto: la cosa più vicina a oltre 600 mm ()
+LAMPADA 0 sopra: la cosa più vicina a 496.8 mm (TorreStruttura/torre_A)
+LAMPADA 0: fondo della scatola 1.91 m sopra la superficie sotto, 30 cm davanti (StaticBody3D:<StaticBody3D#139552885233>)
+LAMPADA 0 a (20.32, 6.00, -20.50), fuori (1.0, 0.0, 0.0): contatto 0.0 mm, raggi col muro dentro la scatola 0
+SCATTO lampada0_occhi
+SCATTO lampada0_sinistra
+SCATTO lampada0_destra
+SCATTO lampada0_sopra
+LAMPADA 1 sotto: la cosa più vicina a oltre 600 mm ()
+LAMPADA 1 sopra: la cosa più vicina a oltre 600 mm ()
+LAMPADA 1: fondo della scatola 8.10 m sopra la superficie sotto, 30 cm davanti (StaticBody3D:<StaticBody3D#139552885233>)
+LAMPADA 1 a (39.92, 1.50, -15.00), fuori (-1.0, 0.0, 0.0): contatto -0.0 mm, raggi col muro dentro la scatola 0
+SCATTO lampada1_occhi
+SCATTO lampada1_sinistra
+SCATTO lampada1_destra
+SCATTO lampada1_sopra
+LAMPADA 2 sotto: la cosa più vicina a 15.0 mm (TorreProp/torre_cartellone_1)
+LAMPADA 2 sopra: la cosa più vicina a oltre 600 mm ()
+LAMPADA 2: fondo della scatola 4.70 m sopra la superficie sotto, 30 cm davanti (StaticBody3D:<StaticBody3D#139552885233>)
+LAMPADA 2 a (31.00, -2.50, -4.08), fuori (0.0, 0.0, -1.0): contatto -0.0 mm, raggi col muro dentro la scatola 0
+SCATTO lampada2_occhi
+SCATTO lampada2_sinistra
+SCATTO lampada2_destra
+SCATTO lampada2_sopra
+LAMPADA 3 sotto: la cosa più vicina a oltre 600 mm ()
+LAMPADA 3 sopra: la cosa più vicina a oltre 600 mm ()
+LAMPADA 3: fondo della scatola 11.85 m sopra la superficie sotto, 30 cm davanti (StaticBody3D:<StaticBody3D#139552885233>)
+LAMPADA 3 a (31.00, -8.00, -25.92), fuori (0.0, 0.0, 1.0): contatto 0.0 mm, raggi col muro dentro la scatola 0
+SCATTO lampada3_occhi
+SCATTO lampada3_sinistra
+SCATTO lampada3_destra
+SCATTO lampada3_sopra
+LAMPADA 4 sotto: la cosa più vicina a oltre 600 mm ()
+LAMPADA 4 sopra: la cosa più vicina a oltre 600 mm ()
+LAMPADA 4: fondo della scatola 7.85 m sopra la superficie sotto, 30 cm davanti (StaticBody3D:<StaticBody3D#139552885233>)
+LAMPADA 4 a (20.32, -12.00, -10.00), fuori (1.0, 0.0, 0.0): contatto 0.0 mm, raggi col muro dentro la scatola 0
+SCATTO lampada4_occhi
+SCATTO lampada4_sinistra
+SCATTO lampada4_destra
+SCATTO lampada4_sopra
+LAMPADA 5 sotto: la cosa più vicina a 215.0 mm (TorreStruttura/torre_A)
+LAMPADA 5 sopra: la cosa più vicina a oltre 600 mm ()
+LAMPADA 5: fondo della scatola 0.10 m sopra la superficie sotto, 30 cm davanti (StaticBody3D:<StaticBody3D#139552885233>)
+LAMPADA 5 a (39.92, -16.00, -15.00), fuori (-1.0, 0.0, 0.0): contatto -0.0 mm, raggi col muro dentro la scatola 0
+SCATTO lampada5_occhi
+SCATTO lampada5_sinistra
+SCATTO lampada5_destra
+SCATTO lampada5_sopra
+LAMPADA 6 sotto: la cosa più vicina a oltre 600 mm ()
+LAMPADA 6 sopra: la cosa più vicina a oltre 600 mm ()
+LAMPADA 6: fondo della scatola 28.85 m sopra la superficie sotto, 30 cm davanti (StaticBody3D:<StaticBody3D#139552885233>)
+LAMPADA 6 a (27.00, 9.00, -25.92), fuori (0.0, 0.0, 1.0): contatto 0.0 mm, raggi col muro dentro la scatola 0
+SCATTO lampada6_occhi
+SCATTO lampada6_sinistra
+SCATTO lampada6_destra
+SCATTO lampada6_sopra
+FINE
+WARNING: 23 ObjectDB instances were leaked at exit (run with `--verbose` for details).

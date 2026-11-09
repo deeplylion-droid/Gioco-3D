@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+appoggia_a_terra
+  ok    il vaso scende sul pavimento (y 0.000)
+  ok    con lega diventa figlio del pavimento
+  ok    il pavimento si alza di 20 cm e il vaso lo segue
+  ok    con fondo 0,25 l'origine resta 25 cm sopra il pavimento; senza lega il genitore non cambia
+fissa_al_muro
+  ok    il quadro va contro il muro, col retro 2 cm dietro l'origine (x 4.980)
+  ok    con lega diventa figlio del muro
+  ok    un oggetto già un po' dentro il muro torna a filo (x 5.000)
+la superficie che si vede, non la collisione
+  ok    la targa va sulle piastrelle, non sulla collisione 3 cm più avanti (x -5.010)
+  ok    con lega diventa figlia della mesh che la regge
+  ok    un vaso va sul tappeto che si vede, anche se il tappeto non ha collisione (y 0.020)
+fissa_al_soffitto e appendi_a
+  ok    la plafoniera sale al soffitto, la cima 10 cm sopra l'origine (y 3.900)
+  ok    la lampada è appesa al gancio, l'attacco 30 cm sopra l'origine
+  ok    il gancio si sposta e la lampada lo segue
+senza sostegno
+WARNING: Posa: niente sotto @Node3D@48 ((30.0, 1.0, 30.0))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] appoggia_a_terra (res://scripts/posizionamento/posa.gd:29)
+         [1] _run (res://tests/test_posa.gd:115)
+  ok    fuori dal pavimento: false e l'oggetto resta dov'è
+
+RISULTATO: 14 controlli ok, 0 falliti

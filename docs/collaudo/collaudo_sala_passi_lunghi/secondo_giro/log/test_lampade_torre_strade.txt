@@ -1,0 +1,44 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+1. Dal portone: la torre preparata nascosta
+AttesaZone: torre non ancora pronta, si aspetta senza bloccare
+AttesaZone: torre pronta dopo 1141 ms di attesa
+  ok    dal portone la torre si mostra
+  ok    portone: le 7 lampade d'emergenza ci sono (7)
+    portone lampada 0 in (20.3199, 6.0, -20.5): dal muro 0.0 mm, dentro la scatola 0
+  ok    portone: lampada 0 a filo del muro (0.0 mm) e niente dentro (0)
+    portone lampada 1 in (39.92, 1.5, -15.0): dal muro -0.0 mm, dentro la scatola 0
+  ok    portone: lampada 1 a filo del muro (-0.0 mm) e niente dentro (0)
+    portone lampada 2 in (31.0, -2.5, -4.08): dal muro -0.0 mm, dentro la scatola 0
+  ok    portone: lampada 2 a filo del muro (-0.0 mm) e niente dentro (0)
+    portone lampada 3 in (31.0, -8.0, -25.92): dal muro 0.0 mm, dentro la scatola 0
+  ok    portone: lampada 3 a filo del muro (0.0 mm) e niente dentro (0)
+    portone lampada 4 in (20.3199, -12.0, -10.0): dal muro 0.0 mm, dentro la scatola 0
+  ok    portone: lampada 4 a filo del muro (0.0 mm) e niente dentro (0)
+    portone lampada 5 in (39.92, -16.0, -15.0): dal muro -0.0 mm, dentro la scatola 0
+  ok    portone: lampada 5 a filo del muro (-0.0 mm) e niente dentro (0)
+    portone lampada 6 in (27.0, 9.0, -25.92): dal muro 0.0 mm, dentro la scatola 0
+  ok    portone: lampada 6 a filo del muro (0.0 mm) e niente dentro (0)
+2. Da F9: la partenza della torre, costruita subito e visibile
+  ok    da F9 la torre c'è
+  ok    F9: le 7 lampade d'emergenza ci sono (7)
+    F9 lampada 0 in (20.3199, 6.0, -20.5): dal muro 0.0 mm, dentro la scatola 0
+  ok    F9: lampada 0 a filo del muro (0.0 mm) e niente dentro (0)
+    F9 lampada 1 in (39.92, 1.5, -15.0): dal muro -0.0 mm, dentro la scatola 0
+  ok    F9: lampada 1 a filo del muro (-0.0 mm) e niente dentro (0)
+    F9 lampada 2 in (31.0, -2.5, -4.08): dal muro -0.0 mm, dentro la scatola 0
+  ok    F9: lampada 2 a filo del muro (-0.0 mm) e niente dentro (0)
+    F9 lampada 3 in (31.0, -8.0, -25.92): dal muro 0.0 mm, dentro la scatola 0
+  ok    F9: lampada 3 a filo del muro (0.0 mm) e niente dentro (0)
+    F9 lampada 4 in (20.3199, -12.0, -10.0): dal muro 0.0 mm, dentro la scatola 0
+  ok    F9: lampada 4 a filo del muro (0.0 mm) e niente dentro (0)
+    F9 lampada 5 in (39.92, -16.0, -15.0): dal muro -0.0 mm, dentro la scatola 0
+  ok    F9: lampada 5 a filo del muro (-0.0 mm) e niente dentro (0)
+    F9 lampada 6 in (27.0, 9.0, -25.92): dal muro 0.0 mm, dentro la scatola 0
+  ok    F9: lampada 6 a filo del muro (0.0 mm) e niente dentro (0)
+  ok    le 7 lampade stanno negli stessi posti dal portone e da F9 (diverse: [])
+  ok    i 1129 nodi della torre negli stessi posti nelle due strade (spostati 0)
+  ok    gli stessi nodi nelle due strade (0 solo in una)
+  ok    le istanze dei 6 MultiMesh della torre (i led degli imbocchi...) uguali nelle due strade (diversi: [])
+RISULTATO: 22 controlli ok, 0 falliti
+WARNING: 958 ObjectDB instances were leaked at exit (run with `--verbose` for details).

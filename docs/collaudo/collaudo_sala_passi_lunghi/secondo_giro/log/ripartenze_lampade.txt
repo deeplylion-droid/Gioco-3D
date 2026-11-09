@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+== F9 torre
+  ok  F9 torre: parte
+  ok  F9 torre: la torre è costruita
+    20.3199 6.0000 -20.5000 | 39.9200 1.5000 -15.0000 | 31.0000 -2.5000 -4.0800 | 31.0000 -8.0000 -25.9200 | 20.3199 -12.0000 -10.0000 | 39.9200 -16.0000 -15.0000 | 27.0000 9.0000 -25.9200
+  ok  F9 torre: 7 lampade d'emergenza (7)
+  ok  F9 torre: le loro luci rosse ci sono (11)
+    passi lunghi della torre: []
+== morte in torre, cache piena
+Ripartenza: aspettati i caricamenti nel thread per 2.0 s
+  ok  morte, cache piena: la torre è costruita
+    20.3199 6.0000 -20.5000 | 39.9200 1.5000 -15.0000 | 31.0000 -2.5000 -4.0800 | 31.0000 -8.0000 -25.9200 | 20.3199 -12.0000 -10.0000 | 39.9200 -16.0000 -15.0000 | 27.0000 9.0000 -25.9200
+  ok  morte, cache piena: 7 lampade d'emergenza (7)
+  ok  morte, cache piena: le loro luci rosse ci sono (11)
+  ok  morte, cache piena: nelle stesse posizioni della prima costruzione
+    passi lunghi della torre: []
+== morte in torre, cache vuota
+Ripartenza: aspettati i caricamenti nel thread per 1.9 s
+  ok  morte, cache vuota: la torre è costruita
+    20.3199 6.0000 -20.5000 | 39.9200 1.5000 -15.0000 | 31.0000 -2.5000 -4.0800 | 31.0000 -8.0000 -25.9200 | 20.3199 -12.0000 -10.0000 | 39.9200 -16.0000 -15.0000 | 27.0000 9.0000 -25.9200
+  ok  morte, cache vuota: 7 lampade d'emergenza (7)
+  ok  morte, cache vuota: le loro luci rosse ci sono (11)
+  ok  morte, cache vuota: nelle stesse posizioni della prima costruzione
+    passi lunghi della torre: []
+== Continua dalla torre
+  ok  Continua: parte dal salvataggio della torre
+  ok  Continua: checkpoint della torre (SalaTorre/Checkpoint_portone)
+  ok  Continua: la torre è costruita
+    20.3199 6.0000 -20.5000 | 39.9200 1.5000 -15.0000 | 31.0000 -2.5000 -4.0800 | 31.0000 -8.0000 -25.9200 | 20.3199 -12.0000 -10.0000 | 39.9200 -16.0000 -15.0000 | 27.0000 9.0000 -25.9200
+  ok  Continua: 7 lampade d'emergenza (7)
+  ok  Continua: le loro luci rosse ci sono (11)
+  ok  Continua: nelle stesse posizioni della prima costruzione
+    passi lunghi della torre: []
+RISULTATO: 18 controlli ok, 0 falliti
+WARNING: 1107 ObjectDB instances were leaked at exit (run with `--verbose` for details).

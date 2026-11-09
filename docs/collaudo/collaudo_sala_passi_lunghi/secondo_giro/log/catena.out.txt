@@ -1,0 +1,24 @@
+dump_portone_nuovo exit 0  | lambda 0 script_err 0 crash 0
+dump_f9_nuovo exit 0  | lambda 0 script_err 0 crash 0
+dump_portone_vecchio exit 0  | lambda 0 script_err 0 crash 0
+dump_f9_vecchio exit 0  | lambda 0 script_err 0 crash 0
+codice: 0 file diversi da HEAD
+thread_titolo exit 0  | lambda 0 script_err 0 crash 0
+thread_esci exit 0  | lambda 0 script_err 0 crash 0
+thread_morte exit 0  | lambda 0 script_err 0 crash 0
+test_lampade_torre_strade exit 0 RISULTATO: 22 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_posa exit 0 RISULTATO: 14 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_sala exit 0 RISULTATO: 107 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_torre exit 0 RISULTATO: 95 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_torre_pezzi_uguali exit 0 RISULTATO: 10 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_partenze_prova exit 0 RISULTATO: 72 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_portone_torre exit 0 RISULTATO: 20 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_ripartenza_oltre_portone exit 0 RISULTATO: 53 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+test_continua exit 0 RISULTATO: 127 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+ripartenze_lampade exit 0 RISULTATO: 18 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+attesa_1 exit 0 RISULTATO: 6 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+attesa_2 exit 0 RISULTATO: 6 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+attesa_3 exit 0 RISULTATO: 6 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+attesa_4 exit 0 RISULTATO: 6 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+attesa_5 exit 0 RISULTATO: 6 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0
+controllo_posizionamento exit 0 RISULTATO: 2 controlli ok, 0 falliti | lambda 0 script_err 0 crash 0

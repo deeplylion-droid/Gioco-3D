@@ -1,0 +1,129 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+La riga dei comandi
+  ok    durante il risveglio non c'è la riga dei comandi sopra la scena
+  ok    compare quando il giocatore riprende i comandi
+La sala: architettura, collisioni e medusa
+  ok    l'architettura della sala è caricata
+  ok    i due teli di Jilly ai lati della statua sono rovinati, coi buchi (2 di 2)
+  ok    i due cartelloni del muro nord (delfino e balena) sono rovinati, il polpo e quello del muro sud no (["sala_cartellone_n0", "sala_cartellone_n1"])
+  ok    nella sala ci sono 10 Polaroid (P10 e P12 tornano con la sala della torre, P11, P13, P15 e P16 sono nella risalita): 10, in tutto 14
+  ok    nessuna Polaroid è coperta o compenetrata da un'altra mesh []
+  ok    le Polaroid sono appoggiate (da 0 a 1 cm sopra quello che hanno sotto) []
+  ok    la medusa è affacciata alla vasca
+  ok    lo strappo della fauce è nascosto, con la tinta della pelle bagnata
+  ok    con l'animazione affacciata in ciclo
+  ok    l'occhio è sopra il bordo, all'altezza dei tuoi occhi ((-0.057097, 1.627757, 11.73667))
+  ok    il bersaglio del getto è sulla sua faccia, anche dopo un caricamento lungo ((-0.057097, 1.477734, 11.73672))
+  ok    l'acqua della vasca è quasi al bordo e non si aspira
+  ok    i dettagli della sala sono montati (118 nodi)
+Le statue-mascotte e Jilly Jubilee
+  ok    c'è il nodo delle mascotte
+  ok    StatuaSqualo è al suo posto
+  ok    StatuaSqualo poggia sul pavimento (0.000 / 0.000)
+  ok    StatuaSqualo ha la collisione (Collisione:<StaticBody3D#479274742656>)
+  ok    StatuaPolpoA è al suo posto
+  ok    StatuaPolpoA poggia sul pavimento (0.000 / 0.000)
+  ok    StatuaPolpoA ha la collisione (Collisione:<StaticBody3D#480231043985>)
+  ok    StatuaPolpoB è al suo posto
+  ok    StatuaPolpoB poggia sul pavimento (0.000 / 0.000)
+  ok    StatuaPolpoB ha la collisione (Collisione:<StaticBody3D#481187345314>)
+  ok    TargaJilly è sul muro
+  ok    TargaJilly è a filo del muro (0.000 m)
+  ok    TargaJilly è appoggiato al muro (0.030 m)
+  ok    ManifestoJilly è sul muro
+  ok    ManifestoJilly è a filo del muro (0.000 m)
+  ok    ManifestoJilly è appoggiato al muro (0.000 m)
+  ok    InsegnaJilly è sul muro
+  ok    InsegnaJilly è a filo del muro (0.000 m)
+  ok    InsegnaJilly è appoggiato al muro (0.003 m)
+  ok    le due lampade a collo d'oca dell'insegna sono accese (2)
+  ok    camminando verso lo squalo ci si ferma davanti a lui (x 8.93)
+  ok    il muro sud ha la collisione
+  (il raggio nel vano tocca Pannello:<AnimatableBody3D#448002010945> in (0.0, 1.0, 20.25))
+  ok    il vano verso gli spogliatoi è libero
+  ok    niente muri invisibili in mezzo alla piscina
+  ok    il fondo della piscina ha la collisione
+  ok    la vasca è solida: il muro davanti ferma (z 12.25)
+Lo zaino sulla rastrelliera dei bagnini
+  ok    si parte senza zaino
+  ok    senza zaino non si spruzza
+  ok    con gli interni la rastrelliera della sala non c'è
+  ok    lo zaino è nello stanzino degli interni
+  ok    preso lo zaino: la pistola è in mano
+  ok    la pistola 3D con le mani è montata
+  ok    lo zaino sparisce dalla rastrelliera
+  ok    il serbatoio è vuoto
+Lampada della statua e sigla
+  ok    la lampada è spenta
+  ok    avvicinandosi la lampada si accende
+  ok    ripartendo oltre il lampione la lampada è già accesa
+  ok    ripartendo dall'ingresso la lampada è spenta (si accende entrando)
+Aspirare dalla vasca d'arrivo
+  ok    aspira dalla vasca d'arrivo (10.0 l)
+  ok    il livello della vasca d'arrivo scende
+  ok    il getto fa partire la sigla dal pulsante del piedistallo
+Aspirare l'acqua della piscina a onde
+  ok    il serbatoio si riempie dalla piscina (15.0 l)
+  ok    il livello della piscina scende davvero
+La piscina a onde: si svuota con lo zaino
+  ok    niente più turbina dello scarico né gonfiabile
+  ok    la turbina dello scarico non si vede più
+  ok    c'è l'acqua nella parte profonda (pelo a -1.64)
+  ok    con l'acqua il pulsante della botola è spento
+  ok    l'acqua della piscina è com'era (aspetto di serie)
+  ok    aspetto B: acqua più riflettente con la schiuma sul pelo, senza luci in più
+  ok    aspetto C: in più la lampada di servizio in alto, puntata in giù sulla parte profonda
+  ok    si torna all'aspetto di serie
+  ok    e la sua luce è spenta
+  ok    il getto sul pulsante spento non apre niente
+  ok    si sta sul bordo est della piscina ((7.35, 0.011367, 2.0))
+  ok    l'acqua sparata dentro la vasca (in (-0.19984, -0.105379, -12.36773)) ci ricola (+5.8 l)
+  ok    l'acqua sparata fuori dalla vasca (in (9.736709, 0.905623, 2.174418)) non torna
+  ok    taratura da 1 minuto: 180 litri
+  ok    nell'acqua nuotano le micro medusine (15)
+  (taratura da 1 minuto: 9 pieni di zaino, 60 secondi)
+  ok    la piscina si svuota tutta (fill 0.000)
+  ok    servono 9 pieni di zaino (9)
+  ok    circa 1 minuto di lavoro (60 s)
+  ok    a piscina vuota non resta nessuna medusina nell'acqua
+  ok    a piscina vuota il lampeggiante giallo del pulsante si accende; coi giocattoli fuori posto il pulsante non si preme
+  (scorciatoia: i giocattoli sui loro cerchi, i piatti scendono; lo prova test_enigma_giocattoli)
+  ok    coi tre piatti scesi il pulsante della botola si preme e il lampeggiante è verde
+  ok    checkpoint: piscina vuota
+Portello
+  ok    l'acqua sparata nella piscina vuota scola via (fill 0.0000)
+  ok    il pulsante del portello si accende
+  ok    il portello si apre
+  ok    aperto, sul buco del portellone non c'è un velo d'acqua (fill 0.0000)
+  ok    la demo non finisce al portello: sotto c'è il pozzo
+Area bimbi e spiaggia senza recinto (tappa 5 rifatta)
+  ok    il secchio gigante è solo scenografia: niente ruota a pale da far girare
+  ok    niente recinto, cancello, ruota, turbina e quadro sulla spiaggia []
+  ok    dalla sala si scende sulla spiaggia della piscina (libero)
+Dagli spogliatoi alla sala
+  ok    c'è la saracinesca tra gli spogliatoi e la sala
+  ok    la saracinesca combacia con il vano sud ((0.0, 0.0, 20.3))
+  ok    la saracinesca si alza
+  ok    dagli spogliatoi si entra nella sala (z 13.96)
+La medusa ti segue con l'occhio
+  ok    di fronte, l'occhio ti guarda (0.0 gradi)
+  ok    di lato, l'occhio si gira ma al massimo di 15 gradi (10.4)
+Easter egg: il getto in faccia le chiude l'occhio, anche da fuori dal cordone
+  ok    il muro invisibile del cordone (20 pezzi) è sul livello delle barriere: ferma il giocatore, non il getto
+  ok    il cordone ferma il giocatore (z 13.96)
+  ok    l'occhio è aperto
+  ok    dal cordone, da destra e da sinistra, il getto in faccia le chiude l'occhio (8 su 8)
+  ok    col getto in faccia l'occhio si chiude (dopo 0.38 s)
+  ok    e resta chiuso
+  ok    e si riapre da solo dopo circa 5 s, anche se intanto lo colpisci ancora
+B5: i bambini sulla balconata (spenti dal 16 ottobre), in un lampo
+  ok    nella sala i bambini sulla balconata sono spenti
+  ok    sulla torre non compare nessuno
+  ok    riacceso, sulla torre compaiono i bambini sulla balconata
+  ok    sono i bambini animati (ti seguono con la testa)
+  ok    e un lampo li illumina
+  ok    al lampo dopo non c'è più nessuno
+
+RISULTATO: 107 controlli ok, 0 falliti
+WARNING: 806 ObjectDB instances were leaked at exit (run with `--verbose` for details).

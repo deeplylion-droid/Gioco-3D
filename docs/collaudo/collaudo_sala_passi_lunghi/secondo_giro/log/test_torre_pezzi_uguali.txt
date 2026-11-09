@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+1. Varchi delle scalette
+  ok    a pezzi le 10 forme della struttura hanno le stesse facce di quando si costruisce tutta insieme (68750 facce)
+  ok    i varchi tolgono qualche faccia (le scalette): 69498 -> 68750
+  ok    alla ripartenza i varchi presi dalla cache sono gli stessi (inseguimento costruito in 37 ms)
+  ok    a pezzi nessun passo oltre 50 ms ([])
+2. Coordinate di texture della soglia della torre
+  ok    il pavimento della sala c'è
+WARNING: Polaroid 1: niente sotto su cui appoggiarsi ((11.2, 0.004, 40.35))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _snap (res://scripts/interaction/polaroid_photo.gd:171)
+WARNING: Polaroid 4: niente sotto su cui appoggiarsi ((-16.03, 1.2416, -15.3499))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _snap (res://scripts/interaction/polaroid_photo.gd:171)
+WARNING: Polaroid 6: niente sotto su cui appoggiarsi ((-1.75, -9.046, 10.56))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _snap (res://scripts/interaction/polaroid_photo.gd:171)
+WARNING: Polaroid 7: niente sotto su cui appoggiarsi ((-3.23, -8.26608, 43.36))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _snap (res://scripts/interaction/polaroid_photo.gd:171)
+WARNING: Polaroid 8: niente sotto su cui appoggiarsi ((-8.9, 0.016, 6.6))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _snap (res://scripts/interaction/polaroid_photo.gd:171)
+WARNING: Polaroid 9: niente sotto su cui appoggiarsi ((-9.9, 0.004, -9.4))
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _snap (res://scripts/interaction/polaroid_photo.gd:171)
+  ok    a pezzi (39 fotogrammi) la mappa è la stessa di tutta insieme (19.8 ms): [[X: (0.666671, 0.0), Y: (0.0, 0.667192), O: (0.0, 0.0)], (19.74975, -14.75016), (13.1665, -8.833372)]
+  ok    a pezzi il calcolo si divide davvero su più fotogrammi (39)
+  ok    dopo, presa dalla cache costa poco (0.01 ms)
+4. Le lampade d'emergenza della torre: i raggi con le mesh vicine
+  ok    i raggi delle lampade con le sole mesh vicine (Posa.mesh_vicine) colpiscono lo stesso punto (252 raggi, 0 diversi)
+  ok    la torre si costruisce a pezzi
+RISULTATO: 10 controlli ok, 0 falliti
+WARNING: 808 ObjectDB instances were leaked at exit (run with `--verbose` for details).
