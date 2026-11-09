@@ -1,0 +1,68 @@
+# fotogrammi senza grafica (headless) nelle quattro strade, due giri per versione: il più lungo e quelli sopra 100 ms
+## f2f810a2 giro 1
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 228, il più lungo 486.9 ms; sopra 100 ms 3
+LT: portone: lampade 7 (solo fotogrammi)
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 70, il più lungo 518.5 ms; sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 69, il più lungo 503.7 ms; sopra 100 ms 1
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 135, il più lungo 564.3 ms; sopra 100 ms 2
+LT: continua: lampade 7 (solo fotogrammi)
+## f2f810a2 giro 2
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 220, il più lungo 850.7 ms; sopra 100 ms 2
+LT: portone: lampade 7 (solo fotogrammi)
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 85, il più lungo 448.3 ms; sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 70, il più lungo 522.8 ms; sopra 100 ms 1
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 144, il più lungo 723.3 ms; sopra 100 ms 1
+LT: continua: lampade 7 (solo fotogrammi)
+## 3c446cfb giro 1
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 192, il più lungo 928.1 ms; sopra 100 ms 2
+LT: portone: lampade 7 (solo fotogrammi)
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 77, il più lungo 354.4 ms; sopra 100 ms 2
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 90, il più lungo 419.3 ms; sopra 100 ms 2
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 128, il più lungo 892.7 ms; sopra 100 ms 4
+LT: continua: lampade 7 (solo fotogrammi)
+## 3c446cfb giro 2
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 196, il più lungo 761.0 ms; sopra 100 ms 3
+LT: portone: lampade 7 (solo fotogrammi)
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 68, il più lungo 497.5 ms; sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 74, il più lungo 384.0 ms; sopra 100 ms 3
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 100, il più lungo 871.2 ms; sopra 100 ms 2
+LT: continua: lampade 7 (solo fotogrammi)
+## d01e5a95 giro 1
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 182, il più lungo 579.3 ms; sopra 100 ms 5
+LT: portone: lampade 7 (solo fotogrammi)
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 83, il più lungo 360.4 ms; sopra 100 ms 2
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 77, il più lungo 460.8 ms; sopra 100 ms 1
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 114, il più lungo 582.2 ms; sopra 100 ms 2
+LT: continua: lampade 7 (solo fotogrammi)
+## d01e5a95 giro 2
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 194, il più lungo 610.3 ms; sopra 100 ms 6
+LT: portone: lampade 7 (solo fotogrammi)
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 109, il più lungo 364.4 ms; sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 103, il più lungo 336.7 ms; sopra 100 ms 2
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 126, il più lungo 525.0 ms; sopra 100 ms 3
+LT: continua: lampade 7 (solo fotogrammi)
+## f2f810a2 giro delle strade con le lampade
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 251, il più lungo 453.6 ms; sopra 100 ms 2
+LT: portone: passi lunghi dell'inseguimento []
+LT: portone: fotogramma più carico della costruzione a pezzi 25.2 ms
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 91, il più lungo 352.8 ms; sopra 100 ms 1
+LT: f9: passi lunghi dell'inseguimento []
+LT: f9: fotogramma più carico della costruzione a pezzi 0.0 ms
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 95, il più lungo 420.2 ms; sopra 100 ms 2
+LT: morte: passi lunghi dell'inseguimento []
+LT: morte: fotogramma più carico della costruzione a pezzi 0.0 ms
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 170, il più lungo 617.7 ms; sopra 100 ms 1
+LT: continua: passi lunghi dell'inseguimento []
+LT: continua: fotogramma più carico della costruzione a pezzi 24.5 ms

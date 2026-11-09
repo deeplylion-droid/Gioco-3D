@@ -1,0 +1,31 @@
+GUANTO: zona prova, giocatore a (0.0, 0.0, 2.0)
+GUANTO: prova fov 62 giù 40: compilazioni 0, fotogramma più lungo 399 ms, fov camera 62.0
+GUANTO: prova fov 62 giù 65: compilazioni 0, fotogramma più lungo 413 ms, fov camera 62.0
+GUANTO: prova fov 62 giù 85: compilazioni 0, fotogramma più lungo 409 ms, fov camera 62.0
+GUANTO: prova fov 75 giù 40: compilazioni 0, fotogramma più lungo 447 ms, fov camera 75.0
+GUANTO: prova fov 75 giù 65: compilazioni 0, fotogramma più lungo 384 ms, fov camera 75.0
+GUANTO: prova fov 75 giù 85: compilazioni 0, fotogramma più lungo 435 ms, fov camera 75.0
+GUANTO: prova fov 90 giù 40: compilazioni 0, fotogramma più lungo 493 ms, fov camera 90.0
+GUANTO: prova fov 90 giù 65: compilazioni 2, fotogramma più lungo 1018 ms, fov camera 90.0
+GUANTO: prova fov 90 giù 85: compilazioni 0, fotogramma più lungo 426 ms, fov camera 90.0
+GUANTO: zona interni, giocatore a (4.8, 0.0, 39.6)
+GUANTO: interni fov 62 giù 40: compilazioni 0, fotogramma più lungo 1757 ms, fov camera 62.0
+GUANTO: interni fov 62 giù 65: compilazioni 0, fotogramma più lungo 1724 ms, fov camera 62.0
+GUANTO: interni fov 62 giù 85: compilazioni 0, fotogramma più lungo 1653 ms, fov camera 62.0
+GUANTO: interni fov 75 giù 40: compilazioni 0, fotogramma più lungo 1661 ms, fov camera 75.0
+GUANTO: interni fov 75 giù 65: compilazioni 0, fotogramma più lungo 1634 ms, fov camera 75.0
+GUANTO: interni fov 75 giù 85: compilazioni 0, fotogramma più lungo 1463 ms, fov camera 75.0
+GUANTO: interni fov 90 giù 40: compilazioni 0, fotogramma più lungo 1855 ms, fov camera 90.0
+GUANTO: interni fov 90 giù 65: compilazioni 0, fotogramma più lungo 1542 ms, fov camera 90.0
+GUANTO: interni fov 90 giù 85: compilazioni 0, fotogramma più lungo 1540 ms, fov camera 90.0
+GUANTO: zona fiume, giocatore a (-5.0, 0.0, -5.0)
+GUANTO: fiume fov 62 giù 40: compilazioni 0, fotogramma più lungo 1610 ms, fov camera 62.0
+GUANTO: fiume fov 62 giù 65: compilazioni 0, fotogramma più lungo 1511 ms, fov camera 62.0
+GUANTO: fiume fov 62 giù 85: compilazioni 0, fotogramma più lungo 1037 ms, fov camera 62.0
+GUANTO: fiume fov 75 giù 40: compilazioni 0, fotogramma più lungo 1696 ms, fov camera 75.0
+GUANTO: fiume fov 75 giù 65: compilazioni 0, fotogramma più lungo 1385 ms, fov camera 75.0
+GUANTO: fiume fov 75 giù 85: compilazioni 0, fotogramma più lungo 1140 ms, fov camera 75.0
+GUANTO: fiume fov 90 giù 40: compilazioni 0, fotogramma più lungo 2418 ms, fov camera 90.0
+GUANTO: fiume fov 90 giù 65: compilazioni 0, fotogramma più lungo 1349 ms, fov camera 90.0
+GUANTO: fiume fov 90 giù 85: compilazioni 2, fotogramma più lungo 1627 ms, fov camera 90.0
+GUANTO FINITO

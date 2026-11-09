@@ -1,0 +1,38 @@
+## c23/test_attesa_zone.log
+    fotogramma di 101 ms dopo 6.1 s di attesa
+AttesaZone: torre pronta dopo 7209 ms di attesa
+  KO  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (1 sopra, 0 noti; il peggiore 101 ms su 923)
+RISULTATO: 5 controlli ok, 1 falliti
+## c23/test_attesa_zone_2.log
+    fotogramma di 234 ms dopo 0.7 s di attesa
+    fotogramma di 403 ms dopo 1.1 s di attesa
+    fotogramma di 122 ms dopo 3.4 s di attesa
+    fotogramma di 650 ms dopo 6.5 s di attesa
+    fotogramma di 649 ms dopo 14.9 s di attesa
+    fotogramma di 166 ms dopo 19.8 s di attesa
+    fotogramma di 840 ms dopo 21.0 s di attesa
+    fotogramma di 315 ms dopo 26.6 s di attesa
+    fotogramma di 152 ms dopo 26.8 s di attesa
+    fotogramma di 130 ms dopo 26.9 s di attesa
+    fotogramma di 284 ms dopo 27.2 s di attesa
+    fotogramma di 163 ms dopo 27.3 s di attesa
+    fotogramma di 253 ms dopo 27.7 s di attesa
+AttesaZone: torre pronta dopo 28168 ms di attesa
+    fotogramma di 806 ms dopo 28.8 s di attesa
+  KO  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (14 sopra, 0 noti; il peggiore 840 ms su 3345)
+RISULTATO: 5 controlli ok, 1 falliti
+## c23/test_attesa_zone_3.log
+    fotogramma di 105 ms dopo 6.1 s di attesa
+    fotogramma di 101 ms dopo 6.6 s di attesa
+AttesaZone: torre pronta dopo 7358 ms di attesa
+  KO  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (2 sopra, 0 noti; il peggiore 105 ms su 929)
+RISULTATO: 5 controlli ok, 1 falliti
+## c23t/test_attesa_zone_1.log
+AttesaZone: torre pronta dopo 7120 ms di attesa
+RISULTATO: 6 controlli ok, 0 falliti
+## c23t/test_attesa_zone_2.log
+AttesaZone: torre pronta dopo 7140 ms di attesa
+RISULTATO: 6 controlli ok, 0 falliti
+## c23t/test_attesa_zone_3.log
+AttesaZone: torre pronta dopo 7175 ms di attesa
+RISULTATO: 6 controlli ok, 0 falliti

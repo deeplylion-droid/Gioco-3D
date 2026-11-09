@@ -1,0 +1,21 @@
+VIS: polaroid Polaroid:<Area3D#182066350688>, script res://scripts/interaction/polaroid_photo.gd, puoi usarla true, già raccolta false
+VIS: subito dopo E: visore true, pausa true
+VIS: raccolta nel mondo: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: A lo chiude: true
+VIS: dall'album: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: B la chiude e resta l'album: true
+VIS: finito
+VIS: polaroid Polaroid:<Area3D#187435059816>, script res://scripts/interaction/polaroid_photo.gd, puoi usarla true, già raccolta false
+VIS: subito dopo E: visore true, pausa true
+VIS: raccolta nel mondo: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: A lo chiude: true
+VIS: dall'album: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: B la chiude e resta l'album: true
+VIS: finito
+VIS: polaroid Polaroid:<Area3D#183593077489>, script res://scripts/interaction/polaroid_photo.gd, puoi usarla true, già raccolta false
+VIS: subito dopo E: visore true, pausa true
+VIS: raccolta nel mondo: visore true; E · Spazio · clic · A · B per continuare → «E · Space · click · A · B to continue», dentro lo schermo true
+VIS: A lo chiude: true
+VIS: dall'album: visore true; E · Spazio · clic · A · B per continuare → «E · Space · click · A · B to continue», dentro lo schermo true
+VIS: B la chiude e resta l'album: true
+VIS: finito

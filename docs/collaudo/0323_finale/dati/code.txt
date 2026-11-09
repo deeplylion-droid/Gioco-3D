@@ -1,0 +1,315 @@
+# Candidata 3c446cfb (c1, c1b, c2, c3) e f2f810a2 (c4-c7): righe di riepilogo delle code
+
+## c1.out
+== 3c446cfb Candidata 0.3.23: unione di lavoro/riga-fiume 812f1
+== import 0
+== check_scripts 0; CHECK: 0 errori 
+== SINTASSI: res://tests/cz/guanto_zone.gd ok SINTASSI: res://tests/cz/visore_scatti.gd ok SINTASSI: res://tests/cz/fiume_giro.gd ok 
+== test_partenze_prova 0; RISULTATO: 74 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_album_polaroid 0; RISULTATO: 29 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_torre_pezzi_uguali 0; RISULTATO: 8 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_attesa_zone 1; RISULTATO: 5 controlli ok, 1 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_portone_torre 0; RISULTATO: 20 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_ripartenza_oltre_portone 0; RISULTATO: 53 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_torre 0; RISULTATO: 95 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 14
+== test_inseguimento 0; RISULTATO: 43 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_scivoli 0; RISULTATO: 26 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_continua 0; RISULTATO: 127 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 16
+== test_menu 0; RISULTATO: 85 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_primo_ingresso 0; RISULTATO: 7 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_strada 0; RISULTATO: 36 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 1
+== test_fiume 0; RISULTATO: 35 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_fiume_gioco 0; RISULTATO: 35 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== controllo_cielo 0; RISULTATO: ok, il cielo non si vede da nessuna parte; BUG 0; SCRIPT ERROR 0; ERROR 13
+CIELO: posti controllati 686, con il cielo 0; quelli che vedono il cielo dalla cupola di vetro della sala (voluto): 18; fessure sottili 0
+== test_effetti_primo_uso 0; RISULTATO: 7 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 1
+== test_riscaldamento_pipeline 0; RISULTATO: 11 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 1
+== test_primo_uso 0; RISULTATO: 4 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 1
+== guanto_zone 0; GUANTO FINITO; BUG 0; SCRIPT ERROR 0; ERROR 1
+GUANTO FINITO
+== scatti_guanto 0; ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== visore_it 0; VIS: finito; BUG 0; SCRIPT ERROR 0; ERROR 1
+VIS: raccolta nel mondo: visore false; 
+VIS: A lo chiude: true
+VIS: dall'album: visore false; 
+VIS: B la chiude e resta l'album: false
+VIS: finito
+== visore_en 0; VIS: finito; BUG 0; SCRIPT ERROR 0; ERROR 1
+VIS: raccolta nel mondo: visore false; 
+VIS: A lo chiude: true
+VIS: dall'album: visore false; 
+VIS: B la chiude e resta l'album: false
+VIS: finito
+== fiume_giro 0; GIRO FINITO; BUG 0; SCRIPT ERROR 0; ERROR 1
+== controllo_posizionamento 0; RISULTATO: 2 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 129
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+C1 FINITO 07:37
+
+## c1b.out
+== test_attesa_zone giro 2: RISULTATO: 5 controlli ok, 1 falliti;     fotogramma di 234 ms dopo 0.7 s di attesa     fotogramma di 403 ms dopo 1.1 s di attesa     fotogramma di 122 ms dopo 3.4 s di attesa     fotogramma di 650 ms dopo 6.5 s di attesa     fotogramma d
+== test_attesa_zone giro 3: RISULTATO: 5 controlli ok, 1 falliti;     fotogramma di 105 ms dopo 6.1 s di attesa     fotogramma di 101 ms dopo 6.6 s di attesa   KO  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (2 sopra, 0 noti; il peggiore 105 ms s
+C1B FINITO
+
+## c2.out
+3c446cfb Candidata 0.3.23: unione di lav
+== squalo alto 0; BUG 0; SCRIPT ERROR 0; ERROR 1; GIRO: modo alto, preset alto, nebbia 1, in /home/user/collaudo_log/c23/squalo_alto GIRO: sala pronta, scena dello squalo in corso GIRO: controllo di nuovo al giocatore a 19.17 s GIRO FINITO 
+preset="alto" calibrato=true qualita_provata=true 
+== squalo basso 0; BUG 0; SCRIPT ERROR 0; ERROR 1; GIRO: modo basso, preset basso, nebbia 0, in /home/user/collaudo_log/c23/squalo_basso GIRO: sala pronta, scena dello squalo in corso GIRO: controllo di nuovo al giocatore a 19.17 s GIRO FINITO 
+preset="basso" calibrato=true qualita_provata=true 
+== squalo nuovo 0; BUG 0; SCRIPT ERROR 0; ERROR 1; GIRO: modo alto, preset alto, nebbia 1, in /home/user/collaudo_log/c23/squalo_nuovo GIRO: sala pronta, scena dello squalo in corso GIRO: controllo di nuovo al giocatore a 19.17 s GIRO FINITO 
+preset="alto" calibrato=false qualita_provata=false 
+C2 FINITO 09:35
+
+## c3.out
+== visore2_it 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+VIS: subito dopo E: visore false, pausa false
+VIS: il visore sparisce al fotogramma 0
+VIS: raccolta nel mondo: visore false; 
+VIS: A lo chiude: true
+VIS: dall'album: visore false; 
+VIS: B la chiude e resta l'album: false
+VIS: finito
+== visore2_en 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+VIS: subito dopo E: visore false, pausa false
+VIS: il visore sparisce al fotogramma 0
+VIS: raccolta nel mondo: visore false; 
+VIS: A lo chiude: true
+VIS: dall'album: visore false; 
+VIS: B la chiude e resta l'album: false
+VIS: finito
+== visore2_itf 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+VIS: polaroid Polaroid:<Area3D#182066350688>, script res://scripts/interaction/polaroid_photo.gd, puoi usarla true, già raccolta false
+VIS: subito dopo E: visore true, pausa true
+VIS: raccolta nel mondo: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: A lo chiude: true
+VIS: dall'album: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: B la chiude e resta l'album: true
+VIS: finito
+C3 FINITO 09:39
+
+## c4.out
+== f2f810a2 Candidata 0.3.23: note della Release complete (fium
+== import 0
+== check_scripts 0; CHECK: 0 errori 
+== SINTASSI: res://tests/cz/lampade_torre_giro.gd ok 
+== test_lampade_torre_strade 0; RISULTATO: 22 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_torre_pezzi_uguali 0; RISULTATO: 10 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_attesa_zone_1 0; RISULTATO: 6 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_attesa_zone_2 0; RISULTATO: 6 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_attesa_zone_3 0; RISULTATO: 6 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_portone_torre 0; RISULTATO: 20 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 11
+== test_ripartenza_oltre_portone 0; RISULTATO: 53 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 12
+== test_torre 0; RISULTATO: 95 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 14
+== test_inseguimento 0; RISULTATO: 43 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 0
+== test_continua 0; RISULTATO: 127 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 16
+Terminated
+== lampade_headless 143; ; BUG 0; SCRIPT ERROR 1; ERROR 0
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.7 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 223, il più lungo 496.5 ms, sopra 50 ms 19 [95.5, 67.0, 62.7, 54.3, 86.8, 496.5, 62.5, 66.7, 58.0, 58.5, 54.5, 54.8, 80.8, 99.4, 112.0, 110.0, 89.8, 124.9, 51.5], sopra 100 ms 4
+LT: portone: lampade 7
+LT: F9 torre: true
+== lampade_portone 137; ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== lampade_f9 143; ; BUG 0; SCRIPT ERROR 0; ERROR 1
+== controllo_posizionamento 0; RISULTATO: 2 controlli ok, 0 falliti; BUG 0; SCRIPT ERROR 0; ERROR 129
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+C4 FINITO 11:00
+
+## c5.out
+f2f810a2 Candidata 0.3.23: note della Re
+== visore3_it 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+VIS: polaroid Polaroid:<Area3D#187435059816>, script res://scripts/interaction/polaroid_photo.gd, puoi usarla true, già raccolta false
+VIS: subito dopo E: visore true, pausa true
+VIS: raccolta nel mondo: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: A lo chiude: true
+VIS: dall'album: visore true; E · Spazio · clic · A · B per continuare → «E · Spazio · clic · A · B per continuare», dentro lo schermo true
+VIS: B la chiude e resta l'album: true
+VIS: finito
+== visore3_en 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+VIS: polaroid Polaroid:<Area3D#183593077489>, script res://scripts/interaction/polaroid_photo.gd, puoi usarla true, già raccolta false
+VIS: subito dopo E: visore true, pausa true
+VIS: raccolta nel mondo: visore true; E · Spazio · clic · A · B per continuare → «E · Space · click · A · B to continue», dentro lo schermo true
+VIS: A lo chiude: true
+VIS: dall'album: visore true; E · Spazio · clic · A · B per continuare → «E · Space · click · A · B to continue», dentro lo schermo true
+VIS: B la chiude e resta l'album: true
+VIS: finito
+C5 FINITO 11:03
+
+## c6.out
+== import f2f810a2 0
+== lampade_h_f2f810a2_1 0; BUG 0; SCRIPT ERROR 0; ERROR 12
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.7 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 228, il più lungo 486.9 ms, sopra 50 ms 19 ["55 ms (n 86, 0.64 s)", "67 ms (n 90, 0.78 s)", "80 ms (n 177, 1.76 s)", "73 ms (n 199, 2.61 s)", "487 ms (n 200, 3.10 s)", "67 ms (n 203, 3.26 s)", "51 ms (n 210, 3.56 s)", "123 ms (n 215, 3.87 s)", "54 ms (n 216, 3.92 s)", "64 ms (n 217, 3.99 s)", "82 ms (n 219, 4.11 s)", "88 ms (n 220, 4.20 s)", "61 ms (n 221, 4.26 s)", "63 ms (n 222, 4.32 s)", "73 ms (n 223, 4.39 s)", "71 ms (n 224, 4.47 s)", "99 ms (n 225, 4.56 s)", "103 ms (n 226, 4.67 s)", "78 ms (n 227, 4.75 s)"], sopra 100 ms 3
+LT: portone: lampade 7 (solo fotogrammi)
+LT: F9 torre: true
+LT: f9: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 70, il più lungo 518.5 ms, sopra 50 ms 14 ["69 ms (n 1, 0.12 s)", "519 ms (n 24, 1.15 s)", "93 ms (n 39, 1.75 s)", "60 ms (n 41, 1.84 s)", "51 ms (n 42, 1.89 s)", "63 ms (n 43, 1.95 s)", "63 ms (n 44, 2.01 s)", "54 ms (n 45, 2.07 s)", "81 ms (n 46, 2.15 s)", "80 ms (n 47, 2.23 s)", "83 ms (n 48, 2.31 s)", "70 ms (n 49, 2.38 s)", "57 ms (n 50, 2.44 s)", "75 ms (n 51, 2.51 s)"], sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 69, il più lungo 503.7 ms, sopra 50 ms 14 ["91 ms (n 1, 0.17 s)", "60 ms (n 23, 0.83 s)", "504 ms (n 24, 1.33 s)", "64 ms (n 39, 1.74 s)", "74 ms (n 41, 1.85 s)", "76 ms (n 43, 1.97 s)", "64 ms (n 44, 2.04 s)", "54 ms (n 45, 2.09 s)", "62 ms (n 46, 2.15 s)", "74 ms (n 47, 2.23 s)", "77 ms (n 48, 2.30 s)", "84 ms (n 49, 2.39 s)", "72 ms (n 50, 2.46 s)", "87 ms (n 51, 2.55 s)"], sopra 100 ms 1
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua: salvataggio true
+LT: continua: arrivato true, giocatore a (4.3, 0.0, 39.6)
+LT: torre pronta dopo 1.1 s
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 135, il più lungo 564.3 ms, sopra 50 ms 23 ["72 ms (n 87, 1.11 s)", "50 ms (n 88, 1.16 s)", "50 ms (n 90, 1.26 s)", "87 ms (n 109, 1.99 s)", "564 ms (n 110, 2.55 s)", "76 ms (n 111, 2.63 s)", "71 ms (n 112, 2.70 s)", "74 ms (n 113, 2.77 s)", "75 ms (n 114, 2.85 s)", "60 ms (n 115, 2.91 s)", "57 ms (n 116, 2.96 s)", "58 ms (n 117, 3.02 s)", "115 ms (n 125, 3.42 s)", "66 ms (n 126, 3.48 s)", "78 ms (n 127, 3.56 s)", "58 ms (n 128, 3.62 s)", "58 ms (n 129, 3.68 s)", "77 ms (n 130, 3.75 s)", "62 ms (n 131, 3.82 s)", "65 ms (n 132, 3.88 s)", "62 ms (n 133, 3.94 s)", "60 ms (n 134, 4.00 s)", "84 ms (n 135, 4.09 s)"], sopra 100 ms 2
+LT: continua: lampade 7 (solo fotogrammi)
+LT: RSS finale 2103 MB
+LT: finito
+== lampade_h_f2f810a2_2 0; BUG 0; SCRIPT ERROR 0; ERROR 12
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.8 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 220, il più lungo 850.7 ms, sopra 50 ms 19 ["59 ms (n 75, 0.57 s)", "74 ms (n 79, 0.72 s)", "68 ms (n 171, 1.88 s)", "102 ms (n 193, 2.73 s)", "851 ms (n 194, 3.58 s)", "55 ms (n 195, 3.63 s)", "57 ms (n 196, 3.69 s)", "66 ms (n 197, 3.76 s)", "59 ms (n 198, 3.82 s)", "81 ms (n 209, 4.25 s)", "68 ms (n 211, 4.35 s)", "54 ms (n 213, 4.45 s)", "58 ms (n 214, 4.51 s)", "55 ms (n 215, 4.56 s)", "94 ms (n 216, 4.66 s)", "80 ms (n 217, 4.74 s)", "56 ms (n 218, 4.79 s)", "89 ms (n 219, 4.88 s)", "90 ms (n 220, 4.97 s)"], sopra 100 ms 2
+LT: portone: lampade 7 (solo fotogrammi)
+LT: F9 torre: true
+LT: f9: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 85, il più lungo 448.3 ms, sopra 50 ms 11 ["63 ms (n 1, 0.11 s)", "448 ms (n 24, 1.16 s)", "51 ms (n 43, 1.68 s)", "53 ms (n 44, 1.73 s)", "53 ms (n 45, 1.78 s)", "52 ms (n 46, 1.84 s)", "54 ms (n 47, 1.89 s)", "57 ms (n 48, 1.95 s)", "51 ms (n 50, 2.05 s)", "66 ms (n 51, 2.11 s)", "91 ms (n 74, 2.77 s)"], sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 70, il più lungo 522.8 ms, sopra 50 ms 14 ["69 ms (n 1, 0.12 s)", "523 ms (n 25, 1.23 s)", "54 ms (n 40, 1.66 s)", "67 ms (n 42, 1.75 s)", "72 ms (n 43, 1.83 s)", "86 ms (n 44, 1.91 s)", "63 ms (n 45, 1.97 s)", "68 ms (n 46, 2.04 s)", "67 ms (n 47, 2.11 s)", "62 ms (n 48, 2.17 s)", "60 ms (n 49, 2.23 s)", "81 ms (n 50, 2.31 s)", "84 ms (n 51, 2.40 s)", "94 ms (n 52, 2.49 s)"], sopra 100 ms 1
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua: salvataggio true
+LT: continua: arrivato true, giocatore a (4.3, 0.0, 39.6)
+LT: torre pronta dopo 1.3 s
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 144, il più lungo 723.3 ms, sopra 50 ms 22 ["55 ms (n 1, 0.18 s)", "68 ms (n 8, 0.30 s)", "55 ms (n 11, 0.40 s)", "59 ms (n 99, 1.32 s)", "54 ms (n 120, 2.21 s)", "65 ms (n 122, 2.30 s)", "723 ms (n 123, 3.03 s)", "77 ms (n 124, 3.10 s)", "75 ms (n 125, 3.18 s)", "57 ms (n 126, 3.24 s)", "52 ms (n 127, 3.29 s)", "72 ms (n 128, 3.36 s)", "74 ms (n 129, 3.43 s)", "74 ms (n 130, 3.51 s)", "62 ms (n 131, 3.57 s)", "57 ms (n 132, 3.63 s)", "51 ms (n 133, 3.68 s)", "50 ms (n 134, 3.73 s)", "66 ms (n 138, 3.90 s)", "89 ms (n 142, 4.12 s)", "92 ms (n 143, 4.21 s)", "94 ms (n 144, 4.30 s)"], sopra 100 ms 1
+LT: continua: lampade 7 (solo fotogrammi)
+LT: RSS finale 2103 MB
+LT: finito
+== import 3c446cfb 0
+== lampade_h_3c446cfb_1 0; BUG 0; SCRIPT ERROR 0; ERROR 12
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.7 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 192, il più lungo 928.1 ms, sopra 50 ms 19 ["66 ms (n 86, 0.65 s)", "71 ms (n 87, 0.72 s)", "59 ms (n 88, 0.78 s)", "60 ms (n 89, 0.84 s)", "87 ms (n 90, 0.93 s)", "59 ms (n 91, 0.99 s)", "94 ms (n 146, 1.83 s)", "91 ms (n 168, 2.66 s)", "928 ms (n 169, 3.59 s)", "57 ms (n 170, 3.65 s)", "54 ms (n 174, 3.85 s)", "113 ms (n 184, 4.29 s)", "92 ms (n 186, 4.43 s)", "58 ms (n 187, 4.49 s)", "76 ms (n 188, 4.56 s)", "59 ms (n 189, 4.62 s)", "83 ms (n 190, 4.71 s)", "88 ms (n 191, 4.79 s)", "94 ms (n 192, 4.89 s)"], sopra 100 ms 2
+LT: portone: lampade 7 (solo fotogrammi)
+LT: F9 torre: true
+LT: f9: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 77, il più lungo 354.4 ms, sopra 50 ms 15 ["93 ms (n 1, 0.17 s)", "354 ms (n 24, 1.14 s)", "52 ms (n 39, 1.49 s)", "71 ms (n 41, 1.59 s)", "52 ms (n 43, 1.68 s)", "66 ms (n 44, 1.75 s)", "54 ms (n 45, 1.80 s)", "54 ms (n 46, 1.85 s)", "66 ms (n 47, 1.92 s)", "66 ms (n 48, 1.99 s)", "56 ms (n 49, 2.04 s)", "92 ms (n 50, 2.13 s)", "118 ms (n 51, 2.25 s)", "60 ms (n 52, 2.31 s)", "95 ms (n 74, 2.92 s)"], sopra 100 ms 2
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 90, il più lungo 419.3 ms, sopra 50 ms 11 ["65 ms (n 1, 0.12 s)", "419 ms (n 24, 1.04 s)", "51 ms (n 39, 1.36 s)", "52 ms (n 43, 1.52 s)", "71 ms (n 44, 1.59 s)", "55 ms (n 45, 1.64 s)", "59 ms (n 46, 1.70 s)", "53 ms (n 47, 1.76 s)", "53 ms (n 48, 1.81 s)", "65 ms (n 51, 1.97 s)", "158 ms (n 74, 2.67 s)"], sopra 100 ms 2
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua: salvataggio true
+LT: continua: arrivato true, giocatore a (4.3, 0.0, 39.6)
+LT: torre pronta dopo 1.5 s
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 128, il più lungo 892.7 ms, sopra 50 ms 23 ["139 ms (n 31, 0.49 s)", "86 ms (n 32, 0.57 s)", "85 ms (n 33, 0.66 s)", "105 ms (n 34, 0.76 s)", "81 ms (n 35, 0.84 s)", "72 ms (n 36, 0.92 s)", "59 ms (n 37, 0.97 s)", "60 ms (n 42, 1.18 s)", "63 ms (n 83, 1.53 s)", "77 ms (n 105, 2.36 s)", "893 ms (n 106, 3.26 s)", "79 ms (n 107, 3.33 s)", "71 ms (n 108, 3.41 s)", "61 ms (n 109, 3.47 s)", "61 ms (n 120, 3.90 s)", "119 ms (n 121, 4.02 s)", "65 ms (n 122, 4.09 s)", "78 ms (n 123, 4.16 s)", "61 ms (n 124, 4.22 s)", "83 ms (n 125, 4.31 s)", "65 ms (n 126, 4.37 s)", "69 ms (n 127, 4.44 s)", "85 ms (n 128, 4.53 s)"], sopra 100 ms 4
+LT: continua: lampade 7 (solo fotogrammi)
+LT: RSS finale 2069 MB
+LT: finito
+== lampade_h_3c446cfb_2 0; BUG 0; SCRIPT ERROR 0; ERROR 12
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.9 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 196, il più lungo 761.0 ms, sopra 50 ms 28 ["141 ms (n 89, 0.75 s)", "81 ms (n 90, 0.83 s)", "60 ms (n 91, 0.89 s)", "86 ms (n 92, 0.97 s)", "81 ms (n 93, 1.05 s)", "58 ms (n 94, 1.11 s)", "89 ms (n 95, 1.20 s)", "100 ms (n 149, 1.98 s)", "77 ms (n 171, 2.87 s)", "761 ms (n 172, 3.64 s)", "85 ms (n 173, 3.72 s)", "81 ms (n 174, 3.80 s)", "73 ms (n 175, 3.87 s)", "54 ms (n 176, 3.93 s)", "55 ms (n 177, 3.98 s)", "51 ms (n 180, 4.12 s)", "52 ms (n 181, 4.17 s)", "53 ms (n 186, 4.42 s)", "127 ms (n 187, 4.55 s)", "51 ms (n 188, 4.60 s)", "67 ms (n 189, 4.66 s)", "59 ms (n 190, 4.72 s)", "64 ms (n 191, 4.79 s)", "62 ms (n 192, 4.85 s)", "55 ms (n 193, 4.90 s)", "53 ms (n 194, 4.96 s)", "64 ms (n 195, 5.02 s)", "88 ms (n 196, 5.11 s)"], sopra 100 ms 3
+LT: portone: lampade 7 (solo fotogrammi)
+LT: F9 torre: true
+LT: f9: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 68, il più lungo 497.5 ms, sopra 50 ms 14 ["77 ms (n 1, 0.13 s)", "497 ms (n 24, 1.21 s)", "94 ms (n 39, 1.79 s)", "55 ms (n 41, 1.89 s)", "68 ms (n 43, 2.00 s)", "56 ms (n 44, 2.05 s)", "56 ms (n 45, 2.11 s)", "61 ms (n 46, 2.17 s)", "81 ms (n 47, 2.25 s)", "80 ms (n 48, 2.33 s)", "57 ms (n 49, 2.39 s)", "86 ms (n 50, 2.48 s)", "75 ms (n 51, 2.55 s)", "55 ms (n 52, 2.61 s)"], sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 74, il più lungo 384.0 ms, sopra 50 ms 15 ["75 ms (n 1, 0.14 s)", "384 ms (n 24, 1.07 s)", "75 ms (n 39, 1.45 s)", "53 ms (n 41, 1.54 s)", "53 ms (n 42, 1.60 s)", "54 ms (n 43, 1.65 s)", "56 ms (n 44, 1.71 s)", "80 ms (n 45, 1.79 s)", "86 ms (n 46, 1.87 s)", "71 ms (n 47, 1.94 s)", "56 ms (n 48, 2.00 s)", "71 ms (n 49, 2.07 s)", "68 ms (n 50, 2.14 s)", "104 ms (n 51, 2.24 s)", "140 ms (n 74, 3.03 s)"], sopra 100 ms 3
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua: salvataggio true
+LT: continua: arrivato true, giocatore a (4.3, 0.0, 39.6)
+LT: torre pronta dopo 1.2 s
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 100, il più lungo 871.2 ms, sopra 50 ms 24 ["144 ms (n 4, 0.30 s)", "99 ms (n 5, 0.40 s)", "83 ms (n 6, 0.48 s)", "74 ms (n 7, 0.55 s)", "90 ms (n 8, 0.64 s)", "80 ms (n 9, 0.72 s)", "74 ms (n 10, 0.80 s)", "54 ms (n 11, 0.85 s)", "56 ms (n 55, 1.28 s)", "80 ms (n 78, 2.17 s)", "871 ms (n 79, 3.04 s)", "80 ms (n 80, 3.12 s)", "75 ms (n 81, 3.19 s)", "75 ms (n 82, 3.27 s)", "60 ms (n 83, 3.33 s)", "51 ms (n 84, 3.38 s)", "57 ms (n 85, 3.43 s)", "81 ms (n 94, 3.86 s)", "54 ms (n 95, 3.91 s)", "83 ms (n 96, 4.00 s)", "51 ms (n 97, 4.05 s)", "75 ms (n 98, 4.12 s)", "78 ms (n 99, 4.20 s)", "83 ms (n 100, 4.28 s)"], sopra 100 ms 2
+LT: continua: lampade 7 (solo fotogrammi)
+LT: RSS finale 2069 MB
+LT: finito
+== import d01e5a95 0
+== lampade_h_d01e5a95_1 0; BUG 0; SCRIPT ERROR 0; ERROR 12
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.7 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 182, il più lungo 579.3 ms, sopra 50 ms 30 ["103 ms (n 77, 0.63 s)", "61 ms (n 78, 0.69 s)", "59 ms (n 79, 0.75 s)", "56 ms (n 80, 0.81 s)", "54 ms (n 81, 0.86 s)", "60 ms (n 82, 0.92 s)", "58 ms (n 83, 0.98 s)", "157 ms (n 85, 1.18 s)", "65 ms (n 132, 1.72 s)", "75 ms (n 133, 1.79 s)", "86 ms (n 155, 2.69 s)", "579 ms (n 156, 3.27 s)", "65 ms (n 157, 3.33 s)", "53 ms (n 159, 3.43 s)", "64 ms (n 160, 3.49 s)", "69 ms (n 161, 3.56 s)", "61 ms (n 162, 3.62 s)", "51 ms (n 163, 3.67 s)", "114 ms (n 171, 4.00 s)", "63 ms (n 172, 4.06 s)", "104 ms (n 173, 4.16 s)", "62 ms (n 174, 4.23 s)", "93 ms (n 175, 4.32 s)", "98 ms (n 176, 4.42 s)", "74 ms (n 177, 4.49 s)", "64 ms (n 178, 4.55 s)", "73 ms (n 179, 4.63 s)", "80 ms (n 180, 4.71 s)", "78 ms (n 181, 4.79 s)", "87 ms (n 182, 4.87 s)"], sopra 100 ms 5
+LT: portone: lampade 7 (solo fotogrammi)
+LT: F9 torre: true
+LT: f9: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 83, il più lungo 360.4 ms, sopra 50 ms 14 ["79 ms (n 1, 0.13 s)", "360 ms (n 24, 1.03 s)", "55 ms (n 39, 1.38 s)", "62 ms (n 43, 1.55 s)", "55 ms (n 44, 1.61 s)", "79 ms (n 45, 1.69 s)", "66 ms (n 46, 1.75 s)", "74 ms (n 47, 1.83 s)", "66 ms (n 48, 1.90 s)", "52 ms (n 50, 2.00 s)", "73 ms (n 51, 2.07 s)", "52 ms (n 52, 2.12 s)", "103 ms (n 74, 2.74 s)", "51 ms (n 77, 2.85 s)"], sopra 100 ms 2
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 77, il più lungo 460.8 ms, sopra 50 ms 15 ["97 ms (n 1, 0.17 s)", "461 ms (n 24, 1.12 s)", "59 ms (n 39, 1.48 s)", "65 ms (n 41, 1.57 s)", "59 ms (n 42, 1.63 s)", "74 ms (n 43, 1.70 s)", "69 ms (n 44, 1.77 s)", "58 ms (n 45, 1.83 s)", "73 ms (n 46, 1.90 s)", "62 ms (n 47, 1.96 s)", "80 ms (n 48, 2.04 s)", "60 ms (n 49, 2.10 s)", "50 ms (n 50, 2.15 s)", "70 ms (n 51, 2.22 s)", "100 ms (n 74, 2.92 s)"], sopra 100 ms 1
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua: salvataggio true
+LT: continua: arrivato true, giocatore a (4.3, 0.0, 39.6)
+LT: torre pronta dopo 1.4 s
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 114, il più lungo 582.2 ms, sopra 50 ms 25 ["91 ms (n 5, 0.20 s)", "64 ms (n 6, 0.26 s)", "54 ms (n 7, 0.32 s)", "51 ms (n 8, 0.37 s)", "61 ms (n 9, 0.43 s)", "76 ms (n 10, 0.51 s)", "75 ms (n 11, 0.58 s)", "234 ms (n 13, 0.86 s)", "66 ms (n 58, 1.36 s)", "75 ms (n 59, 1.44 s)", "70 ms (n 81, 2.29 s)", "582 ms (n 82, 2.88 s)", "82 ms (n 83, 2.96 s)", "58 ms (n 84, 3.02 s)", "68 ms (n 97, 3.51 s)", "58 ms (n 99, 3.61 s)", "52 ms (n 101, 3.69 s)", "73 ms (n 102, 3.77 s)", "57 ms (n 103, 3.83 s)", "67 ms (n 104, 3.89 s)", "56 ms (n 105, 3.95 s)", "79 ms (n 106, 4.03 s)", "91 ms (n 107, 4.12 s)", "61 ms (n 108, 4.18 s)", "71 ms (n 109, 4.25 s)"], sopra 100 ms 2
+LT: continua: lampade 7 (solo fotogrammi)
+LT: RSS finale 2073 MB
+LT: finito
+== lampade_h_d01e5a95_2 0; BUG 0; SCRIPT ERROR 0; ERROR 12
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.7 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 194, il più lungo 610.3 ms, sopra 50 ms 31 ["51 ms (n 89, 0.66 s)", "63 ms (n 90, 0.72 s)", "50 ms (n 91, 0.77 s)", "51 ms (n 92, 0.82 s)", "53 ms (n 93, 0.87 s)", "50 ms (n 94, 0.92 s)", "53 ms (n 96, 1.03 s)", "164 ms (n 97, 1.19 s)", "113 ms (n 142, 1.70 s)", "110 ms (n 143, 1.81 s)", "57 ms (n 144, 1.86 s)", "53 ms (n 145, 1.92 s)", "52 ms (n 146, 1.97 s)", "54 ms (n 147, 2.02 s)", "54 ms (n 148, 2.08 s)", "53 ms (n 149, 2.13 s)", "53 ms (n 150, 2.18 s)", "78 ms (n 165, 2.81 s)", "610 ms (n 166, 3.42 s)", "68 ms (n 167, 3.49 s)", "73 ms (n 181, 3.97 s)", "70 ms (n 183, 4.08 s)", "59 ms (n 185, 4.18 s)", "57 ms (n 186, 4.24 s)", "60 ms (n 187, 4.30 s)", "89 ms (n 188, 4.39 s)", "70 ms (n 189, 4.46 s)", "70 ms (n 190, 4.53 s)", "110 ms (n 191, 4.64 s)", "106 ms (n 192, 4.74 s)", "80 ms (n 193, 4.82 s)"], sopra 100 ms 6
+LT: portone: lampade 7 (solo fotogrammi)
+LT: F9 torre: true
+LT: f9: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 109, il più lungo 364.4 ms, sopra 50 ms 12 ["72 ms (n 1, 0.14 s)", "364 ms (n 24, 0.95 s)", "81 ms (n 43, 1.43 s)", "55 ms (n 44, 1.49 s)", "57 ms (n 45, 1.55 s)", "53 ms (n 46, 1.60 s)", "71 ms (n 47, 1.67 s)", "77 ms (n 48, 1.75 s)", "67 ms (n 49, 1.82 s)", "61 ms (n 50, 1.88 s)", "73 ms (n 51, 1.95 s)", "91 ms (n 74, 2.48 s)"], sopra 100 ms 1
+LT: f9: lampade 7 (solo fotogrammi)
+LT: morte: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 103, il più lungo 336.7 ms, sopra 50 ms 11 ["73 ms (n 1, 0.12 s)", "337 ms (n 24, 0.91 s)", "57 ms (n 42, 1.33 s)", "52 ms (n 43, 1.38 s)", "52 ms (n 44, 1.43 s)", "50 ms (n 45, 1.48 s)", "52 ms (n 46, 1.53 s)", "68 ms (n 47, 1.60 s)", "55 ms (n 48, 1.66 s)", "66 ms (n 51, 1.82 s)", "113 ms (n 74, 2.49 s)"], sopra 100 ms 2
+LT: morte: lampade 7 (solo fotogrammi)
+LT: continua: salvataggio true
+LT: continua: arrivato true, giocatore a (4.3, 0.0, 39.6)
+LT: torre pronta dopo 1.2 s
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 126, il più lungo 525.0 ms, sopra 50 ms 23 ["111 ms (n 2, 0.21 s)", "63 ms (n 3, 0.27 s)", "61 ms (n 4, 0.33 s)", "60 ms (n 5, 0.39 s)", "79 ms (n 6, 0.47 s)", "55 ms (n 7, 0.53 s)", "51 ms (n 8, 0.58 s)", "147 ms (n 9, 0.73 s)", "62 ms (n 52, 1.16 s)", "65 ms (n 53, 1.23 s)", "59 ms (n 75, 2.00 s)", "525 ms (n 76, 2.52 s)", "55 ms (n 91, 3.00 s)", "61 ms (n 95, 3.18 s)", "56 ms (n 96, 3.24 s)", "59 ms (n 97, 3.30 s)", "56 ms (n 98, 3.35 s)", "77 ms (n 99, 3.43 s)", "59 ms (n 100, 3.49 s)", "64 ms (n 101, 3.55 s)", "62 ms (n 102, 3.62 s)", "72 ms (n 103, 3.69 s)", "97 ms (n 126, 4.29 s)"], sopra 100 ms 3
+LT: continua: lampade 7 (solo fotogrammi)
+LT: RSS finale 2077 MB
+LT: finito
+C6 FINITO 11:09
+
+## c7.out
+== f2f810a2 Candidata 0.3.23: note della Re
+== import 0
+== SINTASSI: res://tests/cz/lampade_scatti_torre.gd ok SINTASSI: res://tests/cz/lampade_torre_giro.gd ok 
+== lampade_strade 0; BUG 0; SCRIPT ERROR 0; ERROR 12
+LT: portone: sala arrivata true
+LT: torre pronta dopo 1.8 s
+LT: portone (dall'enigma a 3 s dopo la torre): fotogrammi 251, il più lungo 453.6 ms, sopra 50 ms 19 ["61 ms (n 86, 0.65 s)", "68 ms (n 90, 0.79 s)", "54 ms (n 136, 1.26 s)", "90 ms (n 187, 1.92 s)", "73 ms (n 209, 2.72 s)", "454 ms (n 210, 3.17 s)", "69 ms (n 225, 3.65 s)", "61 ms (n 227, 3.74 s)", "55 ms (n 228, 3.80 s)", "62 ms (n 229, 3.86 s)", "77 ms (n 230, 3.94 s)", "92 ms (n 231, 4.03 s)", "60 ms (n 232, 4.09 s)", "89 ms (n 233, 4.18 s)", "80 ms (n 234, 4.26 s)", "74 ms (n 235, 4.33 s)", "76 ms (n 236, 4.41 s)", "119 ms (n 237, 4.53 s)", "51 ms (n 238, 4.58 s)"], sopra 100 ms 2
+LT: portone: lampade 7
+LT: portone: passi lunghi dell'inseguimento []
+LT: portone: fotogramma più carico della costruzione a pezzi 25.2 ms
+LT: F9 torre: true
+LT: f9: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: f9 (dall'arrivo a 3 s dopo la torre): fotogrammi 91, il più lungo 352.8 ms, sopra 50 ms 13 ["70 ms (n 1, 0.13 s)", "353 ms (n 24, 1.18 s)", "55 ms (n 41, 1.57 s)", "54 ms (n 43, 1.67 s)", "64 ms (n 44, 1.74 s)", "72 ms (n 45, 1.81 s)", "67 ms (n 46, 1.87 s)", "66 ms (n 47, 1.94 s)", "68 ms (n 48, 2.01 s)", "61 ms (n 49, 2.07 s)", "54 ms (n 50, 2.12 s)", "72 ms (n 51, 2.20 s)", "92 ms (n 74, 2.74 s)"], sopra 100 ms 1
+LT: f9: lampade 7
+LT: f9: passi lunghi dell'inseguimento []
+LT: f9: fotogramma più carico della costruzione a pezzi 0.0 ms
+LT: morte: arrivato true, giocatore a (21.4, -0.01, -15.0)
+LT: torre pronta dopo 0.0 s
+LT: morte (dall'arrivo a 3 s dopo la torre): fotogrammi 95, il più lungo 420.2 ms, sopra 50 ms 9 ["63 ms (n 1, 0.11 s)", "420 ms (n 24, 1.04 s)", "70 ms (n 39, 1.39 s)", "59 ms (n 41, 1.48 s)", "81 ms (n 43, 1.60 s)", "83 ms (n 44, 1.68 s)", "54 ms (n 45, 1.74 s)", "64 ms (n 51, 2.04 s)", "122 ms (n 74, 2.58 s)"], sopra 100 ms 2
+LT: morte: lampade 7
+LT: morte: passi lunghi dell'inseguimento []
+LT: morte: fotogramma più carico della costruzione a pezzi 0.0 ms
+LT: continua: salvataggio true
+LT: continua: arrivato true, giocatore a (4.3, 0.0, 39.6)
+LT: torre pronta dopo 1.2 s
+LT: continua (dall'arrivo a 3 s dopo la torre): fotogrammi 170, il più lungo 617.7 ms, sopra 50 ms 19 ["52 ms (n 71, 0.83 s)", "70 ms (n 113, 1.22 s)", "73 ms (n 135, 2.10 s)", "618 ms (n 136, 2.71 s)", "60 ms (n 137, 2.77 s)", "58 ms (n 138, 2.83 s)", "51 ms (n 139, 2.88 s)", "55 ms (n 140, 2.94 s)", "52 ms (n 141, 2.99 s)", "61 ms (n 151, 3.33 s)", "58 ms (n 155, 3.50 s)", "60 ms (n 156, 3.56 s)", "55 ms (n 157, 3.62 s)", "52 ms (n 158, 3.67 s)", "55 ms (n 159, 3.72 s)", "58 ms (n 160, 3.78 s)", "87 ms (n 161, 3.87 s)", "64 ms (n 162, 3.93 s)", "82 ms (n 163, 4.02 s)"], sopra 100 ms 1
+LT: continua: lampade 7
+LT: continua: passi lunghi dell'inseguimento []
+LT: continua: fotogramma più carico della costruzione a pezzi 24.5 ms
+LT: RSS finale 2108 MB
+LT: finito
+== lampade_scatti 0; BUG 0; SCRIPT ERROR 0; ERROR 1
+LS: torre costruita true, lampade 7
+LS: lampada 0 in (20.3199, 6.0, -20.5), muro verso (-1.0, 0.0, 0.0), scatola (0.16, 0.3, 0.3)
+LS: lampada 1 in (39.92, 1.5, -15.0), muro verso (1.0, 0.0, 0.0), scatola (0.16, 0.3, 0.3)
+LS: lampada 2 in (31.0, -2.5, -4.08), muro verso (0.0, 0.0, 1.0), scatola (0.3, 0.3, 0.16)
+LS: lampada 3 in (31.0, -8.0, -25.92), muro verso (0.0, 0.0, -1.0), scatola (0.3, 0.3, 0.16)
+LS: lampada 4 in (20.3199, -12.0, -10.0), muro verso (-1.0, 0.0, 0.0), scatola (0.16, 0.3, 0.3)
+LS: lampada 5 in (39.92, -16.0, -15.0), muro verso (1.0, 0.0, 0.0), scatola (0.16, 0.3, 0.3)
+LS: lampada 6 in (27.0, 9.0, -25.92), muro verso (0.0, 0.0, -1.0), scatola (0.3, 0.3, 0.16)
+LS: finito
+C7 FINITO 11:19
