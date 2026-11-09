@@ -325,7 +325,7 @@ func _buco_volta() -> void:
 
 
 ## In quanti passi si fa un anello del buco nella volta.
-const BUCO_TRATTI := 4
+const BUCO_TRATTI := 7
 
 
 ## Gli spicchi da [param j0] a [param j1] (escluso) dell'anello [param k]; finito l'ultimo, l'anello è fatto.
@@ -654,7 +654,7 @@ func _passi_occupati(poi: Callable) -> Array:
 	return [_occupati_inizio.bind(stato, poi)]
 
 
-const OCCUPATI_PER_PASSO := 250
+const OCCUPATI_PER_PASSO := 125
 
 
 func _occupati_inizio(stato: Dictionary, poi: Callable) -> void:

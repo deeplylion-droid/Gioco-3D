@@ -68,8 +68,11 @@ static func prepara_a_pezzi(sala: SalaSottomarino, ms_per_fotogramma := 4.0) -> 
 				await sala.get_tree().process_frame
 				t0 = Time.get_ticks_usec()
 	if not _cache.has(id):
-		_unisci(ctx)
-		_cache[id] = ctx["forme"]
+		if not await _unisci_a_pezzi(ctx, sala, ms_per_fotogramma):
+			return 0
+		# (un'altra preparazione della stessa sala può aver finito durante l'attesa: vale la prima)
+		if not _cache.has(id):
+			_cache[id] = ctx["forme"]
 	return (_cache[id] as Array).size()
 
 
@@ -242,36 +245,84 @@ static func aggiungi(m: MorbidezzaLei, sala: SalaSottomarino) -> int:
 ## del portello, l'approdo) diventano poche forme grandi: meno forme per cella, il tentacolo ne guarda meno.
 static func _unisci(ctx: Dictionary) -> void:
 	var gruppi := {}
-	for t in ctx["tri"]:
+	_raggruppa(ctx, gruppi, 0, (ctx["tri"] as Array).size())
+	var forme: Array = ctx["forme"]
+	for k in gruppi:
+		var pol: Array = gruppi[k]
+		var i := 0
+		while i < pol.size():
+			i = _unisci_da(pol, i)
+		for p in pol:
+			forme.append(_prisma_poligono(p[0], p[2]))
+	(ctx["tri"] as Array).clear()
+
+
+## Come [method _unisci], al più [param ms] millisecondi per fotogramma, con le stesse operazioni nello stesso ordine
+## (tutto insieme erano 37-61 ms nel fotogramma in cui il tunnel è pronto; sonda del tunnel del 9 novembre). Falso se
+## nel frattempo il tunnel non c'è più.
+static func _unisci_a_pezzi(ctx: Dictionary, sala: SalaSottomarino, ms: float) -> bool:
+	var albero := sala.get_tree()
+	var t0 := Time.get_ticks_usec()
+	var gruppi := {}
+	var tri: Array = ctx["tri"]
+	var da := 0
+	while da < tri.size():
+		var a := mini(da + 256, tri.size())
+		_raggruppa(ctx, gruppi, da, a)
+		da = a
+		if (Time.get_ticks_usec() - t0) / 1000.0 > ms:
+			await albero.process_frame
+			if not is_instance_valid(sala) or not sala.is_inside_tree():
+				return false
+			t0 = Time.get_ticks_usec()
+	var forme: Array = ctx["forme"]
+	for k in gruppi:
+		var pol: Array = gruppi[k]
+		var i := 0
+		while i < pol.size():
+			i = _unisci_da(pol, i)
+			if (Time.get_ticks_usec() - t0) / 1000.0 > ms:
+				await albero.process_frame
+				if not is_instance_valid(sala) or not sala.is_inside_tree():
+					return false
+				t0 = Time.get_ticks_usec()
+		for p in pol:
+			forme.append(_prisma_poligono(p[0], p[2]))
+	tri.clear()
+	return true
+
+
+## I triangoli da [param da] ad [param a] (escluso) di ctx["tri"] nei gruppi dello stesso piano.
+static func _raggruppa(ctx: Dictionary, gruppi: Dictionary, da: int, a: int) -> void:
+	var tri: Array = ctx["tri"]
+	for it in range(da, a):
+		var t: Array = tri[it]
 		var n: Vector3 = t[3]
 		var k := "%d,%d,%d,%d" % [roundi(n.x * 500.0), roundi(n.y * 500.0), roundi(n.z * 500.0), roundi(n.dot(t[0]) * 200.0)]
 		if not gruppi.has(k):
 			gruppi[k] = []
 		var pts := PackedVector3Array([t[0], t[1], t[2]])
 		(gruppi[k] as Array).append([pts, _area(pts, n), n])
-	var forme: Array = ctx["forme"]
-	for k in gruppi:
-		var pol: Array = gruppi[k]
-		var i := 0
-		while i < pol.size():
-			var unito := true
-			while unito:
-				unito = false
-				for j in range(i + 1, pol.size()):
-					if not _lato_comune(pol[i][0], pol[j][0]):
-						continue
-					var n: Vector3 = pol[i][2]
-					var inv := _inviluppo(pol[i][0] + pol[j][0], n)
-					var ai := _area(inv, n)
-					if ai <= (float(pol[i][1]) + float(pol[j][1])) * 1.01 + 1e-4:
-						pol[i] = [inv, ai, n]
-						pol.remove_at(j)
-						unito = true
-						break
-			i += 1
-		for p in pol:
-			forme.append(_prisma_poligono(p[0], p[2]))
-	(ctx["tri"] as Array).clear()
+
+
+## Il poligono [param i] del gruppo [param pol] unito finché si può ai poligoni dopo di lui con un lato in comune;
+## restituisce il prossimo da guardare.
+static func _unisci_da(pol: Array, i: int) -> int:
+	var unito := true
+	while unito:
+		unito = false
+		for j in range(i + 1, pol.size()):
+			if not _lato_comune(pol[i][0], pol[j][0]):
+				continue
+			var n: Vector3 = pol[i][2]
+			var inv := _inviluppo(pol[i][0] + pol[j][0], n)
+			var ai := _area(inv, n)
+			if ai <= (float(pol[i][1]) + float(pol[j][1])) * 1.01 + 1e-4:
+				pol[i] = [inv, ai, n]
+				pol.remove_at(j)
+				unito = true
+				break
+	return i + 1
 
 
 ## Vero se i due poligoni hanno due vertici in comune (al millimetro).

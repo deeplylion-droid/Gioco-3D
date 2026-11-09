@@ -223,7 +223,9 @@ var _pool_3d: Array[AudioStreamPlayer3D] = []
 var _pool_2d: Array[AudioStreamPlayer] = []
 var _pool_ui: Array[AudioStreamPlayer] = []
 var _fondi := {}                 # nome -> AudioLoop (non posizionale, continua anche in pausa)
-var _da_esaminare: Array[Node] = []
+var _da_esaminare: Array = []   # (senza tipo: tiene anche i nodi liberati prima dell'esame, passati al fotogramma dopo)
+## Quanti millisecondi per fotogramma per esaminare i nodi arrivati (_da_esaminare).
+const ESAMINA_MS := 3.0
 var _attivi: Array = []          # oggetti con aggiorna(audio, delta) -> bool
 var _scena: Node = null
 var _tempo_scena := 0.0
@@ -815,11 +817,23 @@ func _process(delta: float) -> void:
 	if not _da_esaminare.is_empty():
 		var lista := _da_esaminare
 		_da_esaminare = []
+		# al più ESAMINA_MS per fotogramma: il resto al fotogramma dopo, nello stesso ordine (una zona appena entrata
+		# porta 7.000 nodi insieme, 15-23 ms in un fotogramma, sonda del tunnel del 9 novembre)
+		var t0 := Time.get_ticks_usec()
+		var k := 0
 		# (Variant: un nodo aggiunto e liberato nello stesso fotogramma, per esempio un menu aperto e chiuso subito, in una
 		# variabile Node poteva dare «previously freed» e saltare il resto della lista e del fotogramma)
-		for n: Variant in lista:
+		while k < lista.size():
+			var n: Variant = lista[k]
+			k += 1
 			if is_instance_valid(n) and (n as Node).is_inside_tree():
 				_esamina(n)
+			if k % 64 == 0 and Time.get_ticks_usec() - t0 > ESAMINA_MS * 1000.0:
+				break
+		if k < lista.size():
+			var resto := lista.slice(k)
+			resto.append_array(_da_esaminare)
+			_da_esaminare = resto
 	var i := 0
 	while i < _attivi.size():
 		var a = _attivi[i]
@@ -1612,8 +1626,9 @@ class Vasca:
 		var dove: Node3D = n as Node3D
 		var scena: Node = n.get_tree().current_scene
 		if scena:
-			for g in scena.find_children("*", "MeshInstance3D", true, false):
-				if g.get(&"tank") == n:
+			# (i gorghi stanno nel loro gruppo, DrainVortex.GRUPPO: non si scorrono tutte le mesh della scena)
+			for g in n.get_tree().get_nodes_in_group(&"gorghi"):
+				if g is Node3D and g.get(&"tank") == n and scena.is_ancestor_of(g):
 					dove = g
 					break
 		var holder := Node3D.new()

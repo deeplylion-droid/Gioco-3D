@@ -48,6 +48,8 @@ var _resume_button: Button
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().physics_frame.connect(_su_fisica)
+	get_tree().process_frame.connect(_su_process_frame)
 	# (il segno della sessione aperta: rimasto dalla volta prima vuol dire una chiusura di colpo, e il titolo propone
 	# l'avvio sicuro; si cancella all'uscita normale)
 	AvvioSicuro.all_avvio()
@@ -102,6 +104,30 @@ func stato_thread(percorso: String) -> ResourceLoader.ThreadLoadStatus:
 			and Time.get_ticks_msec() - int(_richiesto_ms.get(percorso, 0)) < ritardo_thread_test * 1000.0:
 		return ResourceLoader.THREAD_LOAD_IN_PROGRESS
 	return st
+
+
+## L'inizio del fotogramma in corso (µs): la prima fisica del fotogramma o, se non ce n'è, il process_frame. Per chi
+## lavora a pezzi e non vuole sommarsi a un fotogramma già pesante (il tunnel entrava nello stesso fotogramma della zona
+## degli acquari: 15-27 ms di fisica dei corpi nuovi prima del suo primo passo; sonda del tunnel del 9 novembre).
+var _inizio_fotogramma := 0
+var _in_fisica := false
+
+
+func _su_fisica() -> void:
+	if not _in_fisica:
+		_in_fisica = true
+		_inizio_fotogramma = Time.get_ticks_usec()
+
+
+func _su_process_frame() -> void:
+	if not _in_fisica:
+		_inizio_fotogramma = Time.get_ticks_usec()
+	_in_fisica = false
+
+
+## I millisecondi passati dall'inizio del fotogramma in corso (fisica compresa).
+func ms_nel_fotogramma() -> float:
+	return (Time.get_ticks_usec() - _inizio_fotogramma) / 1000.0
 
 
 func _process(_delta: float) -> void:

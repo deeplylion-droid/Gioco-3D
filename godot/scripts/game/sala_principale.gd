@@ -1071,6 +1071,9 @@ func _precarica_sottomarino() -> void:
 			Game.carica_in_thread(r)
 
 
+var _tunnel_rimandato := 0
+
+
 ## Il thread ha finito: il tunnel entra nel livello (fermo, senza lei in giro) e si costruisce a pezzi.
 func _aggiorna_sottomarino() -> void:
 	var stato := Game.stato_thread(sala_sottomarino_scena)
@@ -1079,6 +1082,13 @@ func _aggiorna_sottomarino() -> void:
 	# (e i materiali campione, chiesti al thread col tunnel: finché sono in corso si riguarda al fotogramma dopo)
 	if _campioni_tunnel.is_empty() and Game.stato_thread(CampioniTunnel.FILE) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		return
+	# (il tunnel non entra in un fotogramma già pieno d'altro, al più per qualche fotogramma di fila: vedi
+	# SalaSottomarino.FOTOGRAMMA_PIENO)
+	if stato == ResourceLoader.THREAD_LOAD_LOADED and sala_sottomarino == null \
+			and _tunnel_rimandato < SalaSottomarino.FOTOGRAMMA_PIENO_ATTESE and SalaSottomarino.fotogramma_pieno():
+		_tunnel_rimandato += 1
+		return
+	_tunnel_rimandato = 0
 	_sottomarino_in_caricamento = false
 	if _campioni_tunnel.is_empty():
 		_campioni_tunnel = CampioniTunnel.carica()
@@ -1095,6 +1105,7 @@ func _metti_sottomarino(scena: PackedScene, a_pezzi: bool) -> void:
 	sala_sottomarino = scena.instantiate() as Node3D
 	sala_sottomarino.name = "SalaSottomarino"
 	add_child(sala_sottomarino)
+	RiscaldamentoShader.segno("tunnel in scena")
 	sala_sottomarino.connect(&"prima_curva_passata", _libera_torre)
 	sala_sottomarino.connect(&"fine_demo", _on_fine_tunnel)
 	if a_pezzi:

@@ -206,6 +206,25 @@ func aggiungi_passi(altri: Array) -> void:
 signal passi_finiti
 var _costruendo := false
 var _ms_pezzo := 6.0
+## Quanto costa ogni passo (il più lungo visto per il suo metodo, in ms): per non cominciarne uno che non ci sta nel
+## fotogramma. Statica: vale anche per le costruzioni dopo una ripartenza.
+static var _stime := {}
+## Il primo passo di un fotogramma aspetta il fotogramma dopo, al più FOTOGRAMMA_PIENO_ATTESE volte di fila, se il
+## fotogramma è già pieno d'altro: [method fotogramma_pieno].
+const FOTOGRAMMA_PIENO := 10.0
+const FOTOGRAMMA_PIENO_ATTESE := 3
+## Quanto è passato di solito dall'inizio del fotogramma quando si guarda (media mobile).
+static var _nel_tipico := 0.0
+
+
+## Vero se dall'inizio del fotogramma (Game.ms_nel_fotogramma, fisica compresa) sono passati più di FOTOGRAMMA_PIENO
+## ms e più del doppio del solito: su una macchina lenta, dove ogni fotogramma ne ha già più di FOTOGRAMMA_PIENO,
+## aspetta solo per quelli fuori dal solito (una zona appena entrata), non sempre.
+static func fotogramma_pieno() -> bool:
+	var nel := Game.ms_nel_fotogramma()
+	var soglia := maxf(FOTOGRAMMA_PIENO, _nel_tipico * 2.0)
+	_nel_tipico = nel if _nel_tipico == 0.0 else lerpf(_nel_tipico, nel, 0.1)
+	return nel > soglia
 
 
 ## Costruisce un passo per volta, senza superare [param ms_per_fotogramma] millisecondi per fotogramma (mentre
@@ -221,25 +240,49 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 	_ms_pezzo = ms_per_fotogramma
 	_coda = _passi()
 	var t0 := Time.get_ticks_usec()
+	var fatti := 0
+	var saltati := 0
 	while not _coda.is_empty():
-		var passo: Callable = _coda.pop_front()
+		var passo: Callable = _coda[0]
 		if not is_inside_tree():
 			_costruendo = false
 			return
+		var nome := passo.get_method()
 		# (la prima lampada a gabbia aspetta l'involucro della sua mesh, calcolato nel thread: _avvia_involucri)
-		if not _involucri_lavori.is_empty() and passo.get_method() in [&"_lampada", &"_fine_luci"]:
+		if not _involucri_lavori.is_empty() and nome in [&"_lampada", &"_fine_luci"]:
 			await _finisci_involucri()
 			if not is_inside_tree():
 				_costruendo = false
 				return
 			t0 = Time.get_ticks_usec()
-		var tp := Time.get_ticks_usec()
-		passo.call()
-		if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 20000:
-			print("tunnel passo %s: %.1f ms" % [passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
-		if (Time.get_ticks_usec() - t0) / 1000.0 > _ms_pezzo:
+			fatti = 0
+		# un passo nuovo solo se ci sta: nel fotogramma con altri passi già fatti, se la stima del suo costo (il più
+		# lungo visto per quel metodo; per uno mai visto, tutto il tempo del fotogramma) supera quello che resta; e il
+		# primo passo non comincia in un fotogramma già pieno d'altro (una zona appena entrata, la sua fisica), al più per
+		# FOTOGRAMMA_PIENO_ATTESE fotogrammi di fila
+		var stima := float(_stime.get(nome, _ms_pezzo))
+		var aspetta := false
+		if fatti > 0:
+			aspetta = (Time.get_ticks_usec() - t0) / 1000.0 + stima > _ms_pezzo
+		elif saltati < FOTOGRAMMA_PIENO_ATTESE and fotogramma_pieno():
+			aspetta = true
+			saltati += 1
+		if aspetta:
 			await get_tree().process_frame
 			t0 = Time.get_ticks_usec()
+			fatti = 0
+			continue
+		_coda.pop_front()
+		saltati = 0
+		var tp := Time.get_ticks_usec()
+		passo.call()
+		var ms := (Time.get_ticks_usec() - tp) / 1000.0
+		_stime[nome] = maxf(float(_stime.get(nome, 0.0)), ms)
+		fatti += 1
+		if OS.has_environment("TORRE_TEMPI") and ms > 3.0:
+			RiscaldamentoShader.segno("tunnel passo %s %.1f ms" % [nome, ms])
+			if ms > 20.0:
+				print("tunnel passo %s: %.1f ms" % [nome, ms])
 	costruita = true
 	_costruendo = false
 	passi_finiti.emit()
@@ -633,7 +676,14 @@ func _gradino(out: Array, lato: float, f: float, vivo := false) -> void:
 			out.append([Vector2(-a.x, a.y), Vector2(-b.x, b.y), "mosaico", Vector2(-nr.x, nr.y), "gradino"])
 
 
-## Un pezzo di tunnel da [param s0] a [param s1]: mesh per materiale e collisione.
+## Quante sezioni di un pezzo per passo (vedi [method _pezzo]).
+const SEZIONI_PER_PASSO := 6
+
+
+## Un pezzo di tunnel da [param s0] a [param s1]: mesh per materiale e collisione. In più passi: le sezioni
+## [constant SEZIONI_PER_PASSO] alla volta, poi le teste dei crolli, la porta, le mesh, il corpo e l'acqua. Le sezioni si
+## aggiungono alle stesse SurfaceTool nello stesso ordine: il pezzo è identico a quello fatto in un passo solo (tutto
+## insieme erano 10-21 ms, fino a 29 ms nel gioco vero; sonda del tunnel del 9 novembre).
 func _pezzo(s0: float, s1: float) -> void:
 	var nodo := Node3D.new()
 	nodo.name = "Tunnel_%03d" % int(s0 + TESTA)
@@ -641,9 +691,24 @@ func _pezzo(s0: float, s1: float) -> void:
 	var st := {"mosaico": SurfaceTool.new(), "graniglia": SurfaceTool.new()}
 	for k in st:
 		(st[k] as SurfaceTool).begin(Mesh.PRIMITIVE_TRIANGLES)
-	var facce := PackedVector3Array()
 	var sez := _sezioni(s0, s1)
-	for j in sez.size() - 1:
+	var pezzo := {"nodo": nodo, "st": st, "facce": PackedVector3Array(), "sez": sez, "s0": s0, "s1": s1}
+	var passi: Array = []
+	var n := sez.size() - 1
+	var j := 0
+	while j < n:
+		passi.append(_pezzo_sezioni.bind(pezzo, j, mini(j + SEZIONI_PER_PASSO, n)))
+		j += SEZIONI_PER_PASSO
+	passi.append(_pezzo_fine.bind(pezzo))
+	aggiungi_passi(passi)
+
+
+## Le sezioni da [param j0] a [param j1] (esclusa) del pezzo [param pezzo].
+func _pezzo_sezioni(pezzo: Dictionary, j0: int, j1: int) -> void:
+	var st: Dictionary = pezzo["st"]
+	var facce: PackedVector3Array = pezzo["facce"]
+	var sez: PackedFloat32Array = pezzo["sez"]
+	for j in range(j0, j1):
 		var s: float = sez[j]
 		var t: float = sez[j + 1]
 		var m := (s + t) * 0.5
@@ -692,6 +757,16 @@ func _pezzo(s0: float, s1: float) -> void:
 			]
 			for pz in pezzi_bordo:
 				_quad(st["graniglia"], pz[0], pz[1])
+	pezzo["facce"] = facce
+
+
+## La fine del pezzo [param pezzo]: le teste dei crolli, la porta, le mesh, il corpo e l'acqua.
+func _pezzo_fine(pezzo: Dictionary) -> void:
+	var nodo: Node3D = pezzo["nodo"]
+	var st: Dictionary = pezzo["st"]
+	var facce: PackedVector3Array = pezzo["facce"]
+	var s0: float = pezzo["s0"]
+	var s1: float = pezzo["s1"]
 	# le teste della banchina dove comincia e finisce un crollo (la banchina tagliata, dal fondo al piano)
 	for o in ostacoli:
 		if not o["tipo"] in ["crollo", "galleria"]:
@@ -2255,14 +2330,24 @@ func _galleria(o: Dictionary) -> void:
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
 	_corpo(nodo, facce)
-	# la fascia gialla e nera sopra le bocche (sul muro, dal lato del tunnel) e una lampada a gabbia sopra ognuna
+	# la fascia gialla e nera sopra le bocche (sul muro, dal lato del tunnel) e una lampada a gabbia sopra ognuna, poi
+	# le plafoniere: ognuna nel suo passo (tutto insieme col resto erano 11-23 ms; sonda del tunnel del 9 novembre)
+	var dopo: Array = []
 	for sb: float in [float(o["s"]) - GALLERIA_BOCCA * 0.5, float(o["s"]) + float(o["lungo"]) + GALLERIA_BOCCA * 0.5]:
-		var p := punto(sb)
-		var r := destra(sb) * lato
-		_fascia_bocca(nodo, sb, lato, y1)
-		# (la lampada sopra la bocca, col fondo sopra i 2 m: sulla banchina si passa lì davanti)
-		_lampada(nodo, sb, lato, piano + 2.45, 3.0)
-	# dentro: due plafoniere a filo del soffitto
+		dopo.append(_galleria_bocca.bind(nodo, sb, lato, y1))
+	dopo.append(_galleria_plafoniere.bind(nodo, o, lato, u1, u2, y1))
+	aggiungi_passi(dopo)
+
+
+## La fascia sopra una bocca della galleria e la lampada a gabbia sopra.
+func _galleria_bocca(nodo: Node3D, sb: float, lato: float, y1: float) -> void:
+	_fascia_bocca(nodo, sb, lato, y1)
+	# (la lampada sopra la bocca, col fondo sopra i 2 m: sulla banchina si passa lì davanti)
+	_lampada(nodo, sb, lato, piano + 2.45, 3.0)
+
+
+## Dentro la galleria: due plafoniere a filo del soffitto.
+func _galleria_plafoniere(nodo: Node3D, o: Dictionary, lato: float, u1: float, u2: float, y1: float) -> void:
 	for f in [0.33, 0.66]:
 		var sp: float = lerpf(float(o["s"]), float(o["s"]) + float(o["lungo"]), f)
 		var p := punto(sp)
@@ -2449,6 +2534,7 @@ func _ostacolo(o: Dictionary) -> void:
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var facce := PackedVector3Array()
 	var mat: Material = mat_graniglia
+	var dopo: Array = []
 	match String(o["tipo"]):
 		"crollo":
 			# la banchina caduta nel canale: lastre spezzate di traverso, appoggiate al fondo, al muro e alle teste rotte
@@ -2482,7 +2568,8 @@ func _ostacolo(o: Dictionary) -> void:
 				mi_c.mesh = (coppia[0] as SurfaceTool).commit()
 				mi_c.material_override = coppia[1]
 				nodo.add_child(mi_c)
-			SottomarinoArrediA2._doppia_faccia(_modello(nodo, "forziere", _al(p + d * 0.2, r, Vector2(uc, piano + 1.55)), -d, 1.0))
+			# (il forziere nel passo dopo: tutto insieme erano 11-19 ms; sonda del tunnel del 9 novembre)
+			dopo.append(_ostacolo_forziere.bind(nodo, _al(p + d * 0.2, r, Vector2(uc, piano + 1.55)), -d))
 		"cancello":
 			_cancello(nodo, st, facce, s0, lato)
 			mat = _mat_ferro()
@@ -2589,6 +2676,18 @@ func _ostacolo(o: Dictionary) -> void:
 			_modello(nodo, "corallo", _al(p, r, Vector2(uc, piano + 0.24)), d, 1.0)
 			# (il vetro chiude la vetrina anche per chi la urta: la collisione è la scatola intera)
 			_scatola_solo_collisione(facce, _al(p, r, Vector2(uc, piano + h * 0.5)), r, d, Vector3(lw, h, 1.0))
+	# (la mesh, la collisione e la luce nel passo dopo, dopo quelli aggiunti qui sopra)
+	dopo.append(_ostacolo_fine.bind(nodo, st, facce, mat, sm, lato))
+	aggiungi_passi(dopo)
+
+
+## Il forziere sopra le casse del carico.
+func _ostacolo_forziere(nodo: Node3D, pos: Vector3, verso: Vector3) -> void:
+	SottomarinoArrediA2._doppia_faccia(_modello(nodo, "forziere", pos, verso, 1.0))
+
+
+## La fine di un ostacolo: la mesh, la collisione e la luce.
+func _ostacolo_fine(nodo: Node3D, st: SurfaceTool, facce: PackedVector3Array, mat: Material, sm: float, lato: float) -> void:
 	var mi := MeshInstance3D.new()
 	mi.mesh = st.commit()
 	mi.material_override = mat
