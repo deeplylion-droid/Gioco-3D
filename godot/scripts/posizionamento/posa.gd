@@ -221,6 +221,14 @@ static func _triangoli_di(mesh: Mesh) -> TriangleMesh:
 			_triangoli.erase(k)
 	if _triangoli.size() > 256:
 		_triangoli.clear()
+	var t0 := Time.get_ticks_usec()
 	var tm := mesh.generate_triangle_mesh()
 	_triangoli[id] = [weakref(mesh), tm]
+	# (coi tempi accesi: le TriangleMesh che costano, per spostarle in un thread prima che servano)
+	if _tempi and Time.get_ticks_usec() - t0 > 5000:
+		print("  Posa: la TriangleMesh di %s (%d superfici) in %.1f ms" % [mesh.resource_name if mesh.resource_name != "" else str(mesh),
+				mesh.get_surface_count(), (Time.get_ticks_usec() - t0) / 1000.0])
 	return tm
+
+
+static var _tempi := OS.has_environment("TORRE_TEMPI")

@@ -226,6 +226,13 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 		if not is_inside_tree():
 			_costruendo = false
 			return
+		# (la prima lampada a gabbia aspetta l'involucro della sua mesh, calcolato nel thread: _avvia_involucri)
+		if not _involucri_lavori.is_empty() and passo.get_method() in [&"_lampada", &"_fine_luci"]:
+			await _finisci_involucri()
+			if not is_inside_tree():
+				_costruendo = false
+				return
+			t0 = Time.get_ticks_usec()
 		var tp := Time.get_ticks_usec()
 		passo.call()
 		if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 20000:
@@ -346,7 +353,7 @@ func strati_riscaldamento() -> void:
 
 
 func _passi() -> Array:
-	var out: Array = []
+	var out: Array = [_avvia_involucri]
 	var lung := lunghezza()
 	var s0 := -TESTA
 	while s0 < lung - 0.01:
@@ -998,12 +1005,18 @@ func _fine() -> void:
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
 	_corpo(nodo, facce)
-	_portello(nodo, p, r, d, sg)
-	# le luci: la lampada sopra il portello dalla parte del tunnel, e una piccola nella camera sul volantino
-	# (sul muro destro, sotto l'imposta della volta: sul sinistro c'è la scala, e sopra la scala ci si passa)
-	_lampada(nodo, L - BALLATOIO - 2.0, 1.0, piano + 3.5, 4.0)
-	# una sul muro sinistro appena prima della scala, che la illumina dal basso (le lampade del tunnel lì finiscono)
-	_lampada(nodo, L - BALLATOIO - 12 * 0.32 - 1.2, -1.0, piano + 3.0, 3.5)
+	# il resto un passo per volta, nello stesso ordine (tutto insieme erano 33-39 ms, TORRE_TEMPI del 9 novembre)
+	aggiungi_passi([_portello.bind(nodo, p, r, d, sg),
+		# le luci: la lampada sopra il portello dalla parte del tunnel, e una piccola nella camera sul volantino
+		# (sul muro destro, sotto l'imposta della volta: sul sinistro c'è la scala, e sopra la scala ci si passa)
+		_lampada.bind(nodo, L - BALLATOIO - 2.0, 1.0, piano + 3.5, 4.0),
+		# una sul muro sinistro appena prima della scala, che la illumina dal basso (le lampade del tunnel lì finiscono)
+		_lampada.bind(nodo, L - BALLATOIO - 12 * 0.32 - 1.2, -1.0, piano + 3.0, 3.5),
+		_fine_luci.bind(nodo, p, r, d, sg)])
+
+
+## Le ultime luci della fine (dopo [method _fine]).
+func _fine_luci(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> void:
 	# e una sul muro di fondo sopra il pontile, dalla parte della scala (2,4 m sopra il pontile): la scala e il
 	# ballatoio si devono vedere senza torcia
 	var lf := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
@@ -3013,7 +3026,73 @@ func _lampada(nodo: Node3D, s: float, lato: float, y: float, energia: float) -> 
 	o.global_position = l.global_position - r * 0.4
 
 
+## L'involucro convesso della lampada a gabbia (SottomarinoArrediA2._involucro: la sua mesh ha 15 mila facce,
+## 14-23 ms la prima volta, nella prima lampada di [method _fine]), calcolato con la stessa funzione in un thread a
+## bassa priorità mentre si costruisce il resto; e il modello caricato qui, non nella prima lampada (8 ms). Solo a
+## pezzi: tutto subito le lampade lo calcolano da sole, con lo stesso risultato.
+const LAMPADA_GABBIA := "res://assets/enigma_acquari/lampada_gabbia.glb"
+var _involucri_lavori: Array[_LavoroInvolucro] = []
+
+
+class _LavoroInvolucro:
+	var mesh: Mesh
+	var punti := PackedVector3Array()
+	var compito := -1
+
+	func _init(m: Mesh) -> void:
+		mesh = m
+
+	## Nel thread: solo chiamate (nessun operatore senza tipo: crash_operatori_thread).
+	func esegui() -> void:
+		var forma: ConvexPolygonShape3D = mesh.create_convex_shape(true, false)
+		if is_instance_valid(forma):
+			punti = forma.points
+		else:
+			punti = mesh.get_faces()
+
+
+func _avvia_involucri() -> void:
+	if not _costruendo or senza_scorciatoie or not _involucri_lavori.is_empty():
+		return
+	var l := (load(LAMPADA_GABBIA) as PackedScene).instantiate()
+	for mi in l.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		if m == null or SottomarinoArrediA2._involucri.has(m):
+			continue
+		var lavoro := _LavoroInvolucro.new(m)
+		lavoro.compito = WorkerThreadPool.add_task(lavoro.esegui, false, "involucro lampada")
+		_involucri_lavori.append(lavoro)
+	l.free()
+
+
+func _finisci_involucri() -> void:
+	var t0 := Time.get_ticks_usec()
+	var fotogrammi := 0
+	for lavoro in _involucri_lavori:
+		while not WorkerThreadPool.is_task_completed(lavoro.compito):
+			await get_tree().process_frame
+			fotogrammi += 1
+			# (il tunnel è uscito a metà: i compiti li aspetta _exit_tree)
+			if not is_inside_tree():
+				return
+		WorkerThreadPool.wait_for_task_completion(lavoro.compito)
+		if not SottomarinoArrediA2._involucri.has(lavoro.mesh):
+			SottomarinoArrediA2._involucri[lavoro.mesh] = lavoro.punti
+	_involucri_lavori.clear()
+	if OS.has_environment("TORRE_TEMPI"):
+		print("tunnel involucri della lampada: pronti dopo %d fotogrammi di attesa (%.1f ms)" % [fotogrammi, (Time.get_ticks_usec() - t0) / 1000.0])
+
+
+func _exit_tree() -> void:
+	# (i compiti nel thread si aspettano sempre, anche se il tunnel esce a metà della costruzione)
+	for lavoro in _involucri_lavori:
+		WorkerThreadPool.wait_for_task_completion(lavoro.compito)
+	_involucri_lavori.clear()
+
+
 ## Mette [param n] col retro a contatto col muro dietro (con Posa): [param fuori] è la direzione fuori dal muro.
+## Il muro è del tunnel: Posa guarda solo le mesh del tunnel lungo il raggio (con tutte quelle dell'albero la prima
+## lampada costruiva la TriangleMesh della struttura dell'inseguimento, 42 ms, che il raggio attraversa solo nel riquadro).
 func _a_filo_del_muro(n: Node3D, fuori: Vector3) -> void:
 	var dietro := 0.0
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
@@ -3021,7 +3100,38 @@ func _a_filo_del_muro(n: Node3D, fuori: Vector3) -> void:
 		var xf := m.global_transform
 		for v in SottomarinoArrediA2._involucro(m.mesh):
 			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(-fuori))
-	Posa.fissa_al_muro(n, fuori.normalized(), dietro)
+	var v := fuori.normalized()
+	var p := n.global_position
+	Posa.fissa_al_muro(n, v, dietro, false, [], _mesh_lungo(p + v * 0.3, p - v * Posa.PORTATA))
+
+
+var _mesh_lista: Array = []
+var _mesh_sporca := true
+
+
+func _nodo_aggiunto(n: Node) -> void:
+	if n is MeshInstance3D:
+		_mesh_sporca = true
+
+
+## Le mesh del tunnel visibili (fino al tunnel) il cui riquadro tocca il segmento [param da]-[param a].
+func _mesh_lungo(da: Vector3, a: Vector3) -> Array:
+	var out: Array = []
+	# (l'elenco delle mesh del tunnel si rifà solo quando ne entra una nuova: cercarle a ogni lampada costava qualche ms)
+	if _mesh_sporca:
+		if not get_tree().node_added.is_connected(_nodo_aggiunto):
+			get_tree().node_added.connect(_nodo_aggiunto)
+		_mesh_lista = find_children("*", "MeshInstance3D", true, false)
+		_mesh_sporca = false
+	for n in _mesh_lista:
+		if not is_instance_valid(n):
+			continue
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or not mi.is_inside_tree() or not Posa._visibile(mi, self):
+			continue
+		if (mi.global_transform * mi.get_aabb()).grow(0.01).intersects_segment(da, a):
+			out.append(mi)
+	return out
 
 
 var _materiali := {}

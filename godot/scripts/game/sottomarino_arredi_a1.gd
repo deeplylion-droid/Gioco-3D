@@ -148,15 +148,22 @@ func _reti() -> void:
 	if not reti_accese:
 		return
 	var nodo := _nodo("Reti")
+	# (una rete per passo, nello stesso ordine: tutte insieme erano 26-28 ms)
+	var altre: Array = []
 	for q in RETI:
-		_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
-		# il faretto sopra la rete, puntato giù: al buio le lampade non ci arrivavano (collaudo del tunnel)
-		var s: float = q[0]
-		var alto := float(q[2]) + RETE_ALTA + 0.32
-		var p := sala.punto(s)
-		var centro := sala._al(p, sala.destra(s), Vector2(float(q[1]) * (sala.muro - 0.3), sala.piano + float(q[2]) + RETE_ALTA * 0.5))
-		_faretto(nodo, s, float(q[1]), alto, centro, Color(1.0, 0.9, 0.75), 14.0, 60.0, 5.0)
-		_cavo_faretto(nodo, s, float(q[1]), alto)
+		altre.append(_rete_col_faretto.bind(nodo, q))
+	sala.aggiungi_passi(altre)
+
+
+func _rete_col_faretto(nodo: Node3D, q: Array) -> void:
+	_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
+	# il faretto sopra la rete, puntato giù: al buio le lampade non ci arrivavano (collaudo del tunnel)
+	var s: float = q[0]
+	var alto := float(q[2]) + RETE_ALTA + 0.32
+	var p := sala.punto(s)
+	var centro := sala._al(p, sala.destra(s), Vector2(float(q[1]) * (sala.muro - 0.3), sala.piano + float(q[2]) + RETE_ALTA * 0.5))
+	_faretto(nodo, s, float(q[1]), alto, centro, Color(1.0, 0.9, 0.75), 14.0, 60.0, 5.0)
+	_cavo_faretto(nodo, s, float(q[1]), alto)
 
 
 ## Una rete da pesca tesa sul muro (il modello Meshy della rete è venuto male: quattro bastoni, la si fa qui): la
@@ -862,14 +869,17 @@ func _bocca_galleria(s: float, lato: float) -> bool:
 
 func _approdo() -> void:
 	var nodo := _nodo("Approdo")
+	# (un pezzo per passo, nello stesso ordine: tutto insieme erano 40 ms)
+	var altri: Array = []
 	for b in BITTE:
-		_bitta(nodo, float(b[0]), float(b[1]))
+		altri.append(_bitta.bind(nodo, float(b[0]), float(b[1])))
 	for c in CARTELLI:
-		_cartello(nodo, float(c[0]), float(c[1]))
-	_fanale(nodo, FANALI_S, -1.0, Color(1.0, 0.12, 0.08), "fanale_rosso")
-	_fanale(nodo, FANALI_S, 1.0, Color(0.15, 1.0, 0.3), "fanale_verde")
-	_salvagente(nodo)
-	_vetrina_vuota(nodo)
+		altri.append(_cartello.bind(nodo, float(c[0]), float(c[1])))
+	altri.append(_fanale.bind(nodo, FANALI_S, -1.0, Color(1.0, 0.12, 0.08), "fanale_rosso"))
+	altri.append(_fanale.bind(nodo, FANALI_S, 1.0, Color(0.15, 1.0, 0.3), "fanale_verde"))
+	altri.append(_salvagente.bind(nodo))
+	altri.append(_vetrina_vuota.bind(nodo))
+	sala.aggiungi_passi(altri)
 
 
 ## Una bitta d'ottone scuro sul bordo della banchina: base, collo e testa a fungo, alta 28 cm.
