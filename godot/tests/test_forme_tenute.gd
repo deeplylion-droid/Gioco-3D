@@ -4,7 +4,9 @@ extends Node
 ## calcolava le forme dei tentacoli (FormeTunnel.prepara) in un fotogramma da 1,2-1,5 s a schermo chiaro; ora si
 ## calcolano a schermo nero e, dalla seconda ripartenza, sono quelle tenute. Per ogni ripartenza:
 ## - nei 5 s dopo che lo schermo è libero (velo e scena di morte), nessun fotogramma sopra [constant MASSIMO_MS] ms (il
-##   fotogramma intero, fisica compresa: Game.ms_nel_fotogramma);
+##   fotogramma intero, fisica compresa: Game.ms_nel_fotogramma). Il difetto era di 1,3 s: la soglia che blocca è larga
+##   per il rumore delle macchine della CI (scelta del coordinatore); si stampano sempre i tre fotogrammi più lunghi,
+##   per vedere se il margine cala (in locale 16-26 ms);
 ## - lei riemerge (lei_riemersa) quando scatta il timer di 2 s di riparti_da, come prima: il test vede il tunnel
 ##   ripartito qualche fotogramma dopo, a 1,8 s; prima di questa correzione il segnale arrivava a 3,1-3,2 s, dopo il
 ##   fotogramma fermo da 1,3 s dentro riemergi;
@@ -12,7 +14,7 @@ extends Node
 ## E le forme tenute: riusate dopo una morte, lasciate con una partita nuova; quanta memoria costano.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_forme_tenute.gd
 
-const MASSIMO_MS := 50.0
+const MASSIMO_MS := 150.0
 const RIEMERGE_DA := 1.6
 const RIEMERGE_A := 2.25
 
@@ -20,7 +22,7 @@ var _ok := 0
 var _ko := 0
 var _t := 0
 var _misura := false
-var _lungo := 0.0
+var _lunghi: Array[float] = []
 var _riemersa_us := 0
 
 
@@ -44,7 +46,7 @@ func _process(_d: float) -> void:
 		return
 	if _misura and _t > 0:
 		var ms := (ora - _t) / 1000.0
-		_lungo = maxf(_lungo, ms)
+		_lunghi.append(ms)
 		# (quelli sopra 30 ms, coi segni: con TORRE_TEMPI dicono cosa c'era)
 		if ms > 30.0:
 			print("    fotogramma da %.1f ms | %s" % [ms, RiscaldamentoShader.segni_recenti(2)])
@@ -98,14 +100,19 @@ func _ripartenza(nome: String, vecchio: int) -> void:
 	var t1 := Time.get_ticks_msec()
 	while not _schermo_libero() and Time.get_ticks_msec() - t1 < 20000:
 		await get_tree().process_frame
-	_lungo = 0.0
+	_lunghi.clear()
 	_t = 0
 	_misura = true
 	var t2 := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t2 < 5000:
 		await get_tree().process_frame
 	_misura = false
-	check(_lungo <= MASSIMO_MS, "%s: nei 5 s dopo lo schermo libero il fotogramma più lungo è %.1f ms (al più %.0f)" % [nome, _lungo, MASSIMO_MS])
+	_lunghi.sort()
+	_lunghi.reverse()
+	var tre := _lunghi.slice(0, 3).map(func(x): return "%.1f" % x)
+	var lungo: float = _lunghi[0] if not _lunghi.is_empty() else 0.0
+	check(lungo <= MASSIMO_MS, "%s: nei 5 s dopo lo schermo libero il fotogramma più lungo è %.1f ms (al più %.0f; i tre più lunghi %s ms)" % [
+			nome, lungo, MASSIMO_MS, ", ".join(PackedStringArray(tre))])
 	while _riemersa_us == 0 and Time.get_ticks_usec() - t_riparte < 20e6:
 		await get_tree().process_frame
 	var dopo := (_riemersa_us - t_riparte) / 1e6
