@@ -1701,12 +1701,16 @@ func _raggio_fisica(da: Vector3, a: Vector3, maschera: int = Layers.WORLD) -> Di
 		return h
 	var meglio := INF if h.is_empty() else da.distance_to(h.position as Vector3)
 	var segmento := AABB(da, Vector3.ZERO).expand(a).grow(0.01)
-	# (le forme della torre una volta per fotogramma: i passi coi led ne fanno decine di raggi)
-	if _forme_fotogramma != Engine.get_process_frames():
-		_forme_fotogramma = Engine.get_process_frames()
+	# (l'elenco delle forme della torre si rifà solo quando ne entra una nuova: i passi coi led ne fanno decine di raggi.
+	# Prima si rifaceva una volta per fotogramma, e le forme messe da un passo dopo il primo raggio del fotogramma
+	# restavano fuori fino al fotogramma dopo)
+	if _forme_sporche:
+		if not get_tree().node_added.is_connected(_forma_aggiunta):
+			get_tree().node_added.connect(_forma_aggiunta)
 		_forme_lista = find_children("*", "CollisionShape3D", true, false)
+		_forme_sporche = false
 	for cs in _forme_lista:
-		if not is_instance_valid(cs):
+		if not is_instance_valid(cs) or not (cs as Node).is_inside_tree():
 			continue
 		var f := cs as CollisionShape3D
 		var corpo := f.get_parent() as CollisionObject3D
@@ -1733,7 +1737,12 @@ func _raggio_fisica(da: Vector3, a: Vector3, maschera: int = Layers.WORLD) -> Di
 ## [TriangleMesh, riquadro] delle facce di una forma di collisione (in cache per forma).
 var _forme_tm := {}
 var _forme_lista: Array = []
-var _forme_fotogramma := -1
+var _forme_sporche := true
+
+
+func _forma_aggiunta(n: Node) -> void:
+	if n is CollisionShape3D:
+		_forme_sporche = true
 
 
 func _forma_triangoli(forma: Shape3D) -> Array:
