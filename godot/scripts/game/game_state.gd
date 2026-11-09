@@ -500,6 +500,7 @@ func reset_progress() -> void:
 	snapshot = {}
 	_pacchetto_livello = null
 	_tenute.clear()
+	FormeTunnel.lascia_tenute()
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()

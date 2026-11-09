@@ -457,6 +457,12 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_memoria_morti.gd
 
+      - name: Test delle ripartenze dal primo checkpoint del tunnel (F9 Tunnel, due morti, Continua; niente fotogrammi sopra 50 ms a schermo chiaro, lei al timer di 2 s, le forme tenute uguali a quelle da capo)
+        if: steps.progetto.outputs.presente == 'si'
+        env:
+          TORRE_TEMPI: "1"
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_forme_tenute.gd
+
       - name: Test degli strati di disegno (nessuno condiviso senza volerlo; quello della preparazione non si vede)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_strati.gd

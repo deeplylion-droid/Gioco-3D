@@ -27,18 +27,59 @@ const CELLA := 2.0
 static var _cache := {}
 
 
-## Prepara (una volta per sala) le forme ferme, tutto subito (test, scene di prova). Restituisce quante sono.
+## Le forme dell'ultima preparazione tutta subito, tenute per le ripartenze dal tunnel (scelta del coordinatore del 9
+## novembre): [impronta, forme]. Ripartendo da un checkpoint del tunnel il tunnel si costruisce tutto subito, sempre
+## uguale, e le forme ricalcolate erano un fotogramma da 1,2-1,5 s due secondi dopo l'arrivo (quando lei riemerge). Si
+## riusano solo se l'impronta del tunnel nuovo è la stessa ([method impronta]); si lasciano tornando al titolo, con una
+## partita nuova e ripartendo fuori dal tunnel ([method lascia_tenute]).
+static var _tenute: Array = []
+
+
+## L'impronta (md5) di tutto quello da cui vengono le forme ferme di [param sala]: i dati di lei e dell'asse, e per
+## ogni forma della collisione presa (nello stesso ordine) la trasformazione nel mondo e i triangoli o i punti.
+static func impronta(sala: SalaSottomarino) -> PackedByteArray:
+	var h := HashingContext.new()
+	h.start(HashingContext.HASH_MD5)
+	h.update(var_to_bytes(sala.dati.get("lei", {})))
+	h.update(var_to_bytes(sala.dati.get("asse", [])))
+	for c3 in _forme_collisione(sala):
+		h.update(var_to_bytes(c3.global_transform))
+		if c3.shape is ConcavePolygonShape3D:
+			h.update((c3.shape as ConcavePolygonShape3D).get_faces().to_byte_array())
+		else:
+			h.update(var_to_bytes(_punti_convessi(c3.shape)))
+	return h.finish()
+
+
+## Lascia le forme tenute (vedi [member _tenute]).
+static func lascia_tenute() -> void:
+	_tenute = []
+
+
+## Vero se ci sono forme tenute.
+static func ha_tenute() -> bool:
+	return not _tenute.is_empty()
+
+
+## Prepara (una volta per sala) le forme ferme, tutto subito (test, scene di prova, ripartenze dal tunnel). Se le forme
+## tenute vengono da un tunnel con la stessa impronta, sono quelle. Restituisce quante sono.
 static func prepara(sala: SalaSottomarino) -> int:
 	var id := sala.get_instance_id()
 	if _cache.has(id):
 		return (_cache[id] as Array).size()
 	var t0 := Time.get_ticks_msec()
+	var imp := impronta(sala)
+	if _tenute.size() == 2 and _tenute[0] == imp:
+		_cache[id] = _tenute[1]
+		print_verbose("FormeTunnel: %d forme tenute (impronta in %d ms)" % [(_tenute[1] as Array).size(), Time.get_ticks_msec() - t0])
+		return (_tenute[1] as Array).size()
 	var ctx := _contesto(sala)
 	for c3 in _forme_collisione(sala):
 		var nt := _quanti(c3)
 		_forme_di(c3, ctx, 0, nt)
 	_unisci(ctx)
 	_cache[id] = ctx["forme"]
+	_tenute = [imp, ctx["forme"]]
 	print_verbose("FormeTunnel: %d forme in %d ms" % [(ctx["forme"] as Array).size(), Time.get_ticks_msec() - t0])
 	return (ctx["forme"] as Array).size()
 

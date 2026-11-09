@@ -489,6 +489,9 @@ func _setup_torre() -> void:
 		enigma.connect(&"comparso", _precarica_torre)
 		if bool(enigma.get(&"comparsi")):
 			_precarica_torre.call_deferred()
+	if not (GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaSottomarino")):
+		# (fuori dal tunnel le forme tenute per le sue ripartenze non servono più: FormeTunnel.prepara)
+		FormeTunnel.lascia_tenute()
 	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaSottomarino"):
 		# si riparte da un checkpoint del tunnel: torre e condotte non ci sono più, solo il tunnel (e niente torre
 		# preparata nascosta quando gli acquari risultano comparsi: vedi _precarica_torre)
@@ -1004,8 +1007,14 @@ func _libera_ambienti_subito() -> void:
 
 ## Interni e tecnici via, qualche frame dopo (chi ha chiamate in sospeso sulle loro luci le finisce prima).
 func _scarica_ambienti() -> void:
+	# (l'albero preso prima: se intanto la sala esce, per un cambio di scena, dopo l'attesa get_tree() è null)
+	var albero := get_tree()
+	if albero == null:
+		return
 	for i in 3:
-		await get_tree().process_frame
+		await albero.process_frame
+		if not is_inside_tree():
+			return
 	var via: Array = [tecnici, get_node_or_null(^"Interni")]
 	tecnici = null
 	risveglio = null
@@ -1178,6 +1187,9 @@ func _ripristina_sottomarino() -> void:
 	_scarica_ambienti()
 	_campioni_tunnel = CampioniTunnel.carica()
 	_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, false)
+	# le forme dei tentacoli di lei adesso, a schermo nero (prima riemergi le calcolava 2 s dopo l'arrivo, in un
+	# fotogramma da 1,2-1,5 s a schermo chiaro); dalla seconda ripartenza sono quelle tenute (FormeTunnel.prepara)
+	FormeTunnel.prepara(sala_sottomarino as SalaSottomarino)
 	sala_sottomarino.call(&"chiudi_porta_bacino")
 	var cp := String(GameState.snapshot.get("checkpoint", ""))
 	var s := float(cp.get_slice("Checkpoint_", 1)) if cp.contains("Checkpoint_") else 6.0
