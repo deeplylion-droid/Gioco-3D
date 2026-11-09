@@ -1307,8 +1307,10 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	corpo.material_override = _emissivo(ROSSO, 6.0)
 	radice.add_child(corpo)
 	corpo.global_position = p
+	var te := Time.get_ticks_usec()
 	# appoggiata al muro dietro (il retro della scatola, 8 cm dietro il centro): dai dati restava a 1-3 cm
 	Posa.fissa_al_muro(corpo, verso, 0.08)
+	var te1 := Time.get_ticks_usec()
 	# davanti a un tubo il raggio dal centro non trova il punto più sporgente sotto il retro: 9 raggi su tutto il retro e
 	# la scatola si appoggia al più sporgente (collaudo del 24 ottobre: una lampada a 8 mm dal tubo, senza niente sotto)
 	var v := verso.normalized()
@@ -1316,14 +1318,26 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	var a2 := v.cross(a1).normalized()
 	var p0 := corpo.global_position
 	var davanti := -INF
+	# (le mesh vicine una volta sola per i 9 raggi: tutte quelle che un raggio può toccare, nello stesso ordine)
+	var zona := AABB(p0, Vector3.ZERO)
+	for i in [-1, 1]:
+		for j in [-1, 1]:
+			var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
+			zona = zona.expand(p0 + o + v * 0.3).expand(p0 + o - v * Posa.PORTATA)
+	var vicine := Posa.mesh_vicine(corpo, zona)
 	for i in [-1, 0, 1]:
 		for j in [-1, 0, 1]:
 			var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
-			var h := Posa._raggio(corpo, p0 + o + v * 0.3, p0 + o - v * Posa.PORTATA, [])
+			var h := Posa._raggio(corpo, p0 + o + v * 0.3, p0 + o - v * Posa.PORTATA, [], vicine)
 			if not h.is_empty():
 				davanti = maxf(davanti, (h.position as Vector3).dot(v))
 	if davanti > -INF:
 		corpo.global_position = p0 + v * (davanti + 0.08 - p0.dot(v))
+	if OS.has_environment("TORRE_TEMPI"):
+		var tm := Time.get_ticks_usec()
+		var n := get_tree().root.find_children("*", "MeshInstance3D", true, false).size()
+		print("  emergenza: fissa_al_muro %.1f ms, 9 raggi %.1f ms; %d mesh nell'albero, contarle %.1f ms" % [(te1 - te) / 1000.0,
+				(tm - te1) / 1000.0, n, (Time.get_ticks_usec() - tm) / 1000.0])
 	p = corpo.global_position
 	var l := OmniLight3D.new()
 	l.light_color = ROSSO

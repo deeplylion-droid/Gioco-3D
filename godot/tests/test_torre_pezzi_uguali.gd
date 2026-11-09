@@ -7,6 +7,8 @@ extends Node
 ## 2. Le coordinate di texture del pavimento per la soglia della torre (SALA_GD._uv_pavimento): calcolate tutte
 ##    insieme o a pezzi (prepara_uv_pavimento, con pochissimi ms per fotogramma, quindi in più fotogrammi) sono uguali.
 ## 3. Alla ripartenza (tutta insieme) i varchi vengono dalla cache (SalaInseguimento._varco_cache) e sono gli stessi.
+## 4. I raggi delle lampade d'emergenza della torre con le sole mesh vicine (Posa.mesh_vicine, una volta per lampada)
+##    colpiscono lo stesso punto che guardando tutte le mesh dell'albero (passi da 40-70 ms, ora 4-8 ms).
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_torre_pezzi_uguali.gd
 
 const INSEGUIMENTO := "res://scenes/sala/inseguimento/sala_inseguimento.tscn"
@@ -127,6 +129,42 @@ func _run() -> void:
 		var ms_cache := (Time.get_ticks_usec() - t1) / 1000.0
 		check(ms_cache < 1.0, "dopo, presa dalla cache costa poco (%.2f ms)" % ms_cache)
 	sala.queue_free()
+	await get_tree().process_frame
+
+	print("4. Le lampade d'emergenza della torre: i raggi con le mesh vicine")
+	var torre := (load("res://scenes/sala/torre/sala_torre.tscn") as PackedScene).instantiate()
+	torre.set(&"costruzione_a_pezzi", true)
+	add_child(torre)
+	await torre.call(&"costruisci_a_pezzi", 50.0)
+	var raggi := 0
+	var diversi := 0
+	var luci := torre.get_node_or_null(^"Luci")
+	for figlio in (luci.get_children() if luci else []):
+		var corpo := figlio as MeshInstance3D
+		if corpo == null or not corpo.mesh is BoxMesh:
+			continue
+		# (gli stessi 9 raggi di SalaTorre._emergenza, nei quattro versi)
+		for v: Vector3 in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
+			var a1 := v.cross(Vector3.UP).normalized()
+			var a2 := v.cross(a1).normalized()
+			var p0 := corpo.global_position
+			var zona := AABB(p0, Vector3.ZERO)
+			for i in [-1, 1]:
+				for j in [-1, 1]:
+					var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
+					zona = zona.expand(p0 + o + v * 0.3).expand(p0 + o - v * Posa.PORTATA)
+			var vicine := Posa.mesh_vicine(corpo, zona)
+			for i in [-1, 0, 1]:
+				for j in [-1, 0, 1]:
+					var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
+					var tutte := Posa._raggio(corpo, p0 + o + v * 0.3, p0 + o - v * Posa.PORTATA, [])
+					var poche := Posa._raggio(corpo, p0 + o + v * 0.3, p0 + o - v * Posa.PORTATA, [], vicine)
+					raggi += 1
+					if str(tutte) != str(poche):
+						diversi += 1
+	check(raggi > 100 and diversi == 0, "i raggi delle lampade con le sole mesh vicine (Posa.mesh_vicine) colpiscono lo stesso punto (%d raggi, %d diversi)" % [raggi, diversi])
+	check(float(torre.get(&"fotogramma_piu_carico_ms")) >= 0.0, "la torre si costruisce a pezzi")
+	torre.queue_free()
 	await get_tree().process_frame
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)

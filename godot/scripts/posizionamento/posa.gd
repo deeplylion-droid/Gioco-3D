@@ -106,7 +106,8 @@ static func fissa_al_soffitto(nodo: Node3D, cima := 0.0, lega := false, escludi:
 ## quel punto, la prima faccia di una mesh visibile (il nodo stesso e i suoi figli esclusi). Se nessuna mesh è lì
 ## (un sostegno di sola collisione), vale la collisione. Restituisce {position, normal, collider}: collider è la
 ## mesh colpita (per lega) o il corpo della collisione.
-static func _raggio(nodo: Node3D, da: Vector3, a: Vector3, escludi: Array[RID]) -> Dictionary:
+## [param candidate]: se c'è, le mesh da guardare al posto di tutte quelle dell'albero (vedi [method mesh_vicine]).
+static func _raggio(nodo: Node3D, da: Vector3, a: Vector3, escludi: Array[RID], candidate: Variant = null) -> Dictionary:
 	if not nodo.is_inside_tree():
 		push_warning("Posa: %s non è ancora nella scena (serve la fisica)" % nodo.name)
 		return {}
@@ -118,15 +119,15 @@ static func _raggio(nodo: Node3D, da: Vector3, a: Vector3, escludi: Array[RID]) 
 	var fine := a if h.is_empty() else (h.position as Vector3) + dir * OLTRE
 	if da.distance_to(fine) > da.distance_to(a):
 		fine = a
-	var m := _raggio_mesh(nodo, da, fine)
+	var m := _raggio_mesh(nodo, da, fine, candidate)
 	return h if m.is_empty() else m
 
 
 ## La prima faccia di una mesh visibile sul segmento [param da]-[param a] ({} se nessuna).
-static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3) -> Dictionary:
+static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3, candidate: Variant = null) -> Dictionary:
 	var meglio := {}
 	var d_min := INF
-	for n in nodo.get_tree().root.find_children("*", "MeshInstance3D", true, false):
+	for n in (candidate as Array if candidate != null else nodo.get_tree().root.find_children("*", "MeshInstance3D", true, false)):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or mi == nodo or nodo.is_ancestor_of(mi) or not mi.is_visible_in_tree():
 			continue
@@ -148,6 +149,21 @@ static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3) -> Dictionary:
 			d_min = d
 			meglio = {"position": p, "normal": (gt.basis.inverse().transposed() * (r.normal as Vector3)).normalized(), "collider": mi}
 	return meglio
+
+
+## Le mesh dell'albero (nello stesso ordine di [method _raggio_mesh]) il cui riquadro tocca [param zona]: date a
+## [method _raggio] come [param candidate] per più raggi tutti dentro la zona, il risultato è lo stesso di guardarle
+## tutte (le altre non toccano nessun segmento), e l'albero si scorre una volta sola invece che a ogni raggio (2200 mesh
+## nella sala con la torre: 4 ms a raggio; le lampade d'emergenza della torre ne lanciano 9, passi da 40-70 ms).
+static func mesh_vicine(nodo: Node3D, zona: AABB) -> Array:
+	var out: Array = []
+	for n in nodo.get_tree().root.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		if (mi.global_transform * mi.get_aabb()).grow(0.01).intersects(zona):
+			out.append(mi)
+	return out
 
 
 ## L'oggetto diventa figlio del sostegno (il nodo del corpo colpito o, per i corpi importati, il suo genitore
