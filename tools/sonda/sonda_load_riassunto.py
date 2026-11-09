@@ -15,7 +15,7 @@ def dimensione(percorso):
         return 0
 
 
-voci = defaultdict(lambda: {"n": 0, "max": 0.0, "tot": 0.0, "freddi": 0, "nel_thread": 0, "scenari": set()})
+voci = defaultdict(lambda: {"n": 0, "max": 0.0, "tot": 0.0, "freddi": 0, "nel_thread": 0, "scenari": set(), "fasi": defaultdict(float)})
 for log in sys.argv[1:]:
     scenario = os.path.basename(log).replace("sl_", "").replace(".log", "")
     for riga in open(log, encoding="utf-8", errors="replace"):
@@ -25,6 +25,7 @@ for log in sys.argv[1:]:
         if len(parti) < 7:
             continue
         _, ms, thread, in_cache, nel_thread, percorso, dove = parti[:7]
+        fase = parti[7] if len(parti) > 7 else "?"
         if thread != "main":
             continue
         v = voci[(percorso, dove)]
@@ -35,14 +36,16 @@ for log in sys.argv[1:]:
         v["freddi"] += in_cache == "0"
         v["nel_thread"] += nel_thread == "1"
         v["scenari"].add(scenario)
+        v["fasi"][fase] = max(v["fasi"][fase], ms)
 
 righe = sorted(voci.items(), key=lambda kv: -kv[1]["max"])
-print("| ms max | volte | non in cache | il thread lo caricava | MB | percorso | dove | scenari |")
-print("|---|---|---|---|---|---|---|---|")
+print("| ms max | ms max a gioco avviato | volte | non in cache | il thread lo caricava | MB | percorso | dove | fasi (ms max) | scenari |")
+print("|---|---|---|---|---|---|---|---|---|---|")
 for (percorso, dove), v in righe:
     mb = dimensione(percorso) / 1048576
     rischio = percorso.lower().endswith(PESANTI) and v["freddi"] > 0
     if v["max"] < 5 and not v["nel_thread"] and not (rischio and mb > 0.2):
         continue
-    print("| %.1f | %d | %d | %d | %.2f | %s | %s | %s |" % (v["max"], v["n"], v["freddi"], v["nel_thread"], mb, percorso,
-            dove, ", ".join(sorted(v["scenari"]))))
+    fasi = ", ".join("%s %.0f" % (f, m) for f, m in sorted(v["fasi"].items(), key=lambda x: -x[1]))
+    print("| %.1f | %.1f | %d | %d | %d | %.2f | %s | %s | %s | %s |" % (v["max"], v["fasi"].get("gioco", 0.0), v["n"], v["freddi"],
+            v["nel_thread"], mb, percorso, dove, fasi, ", ".join(sorted(v["scenari"]))))
