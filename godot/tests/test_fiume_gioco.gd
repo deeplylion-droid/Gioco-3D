@@ -40,6 +40,11 @@ func _run() -> void:
 	var p3 := fiume.get_node(^"Paratia3") as ParatiaFiume
 	_zaino()
 
+	# le pareti dei canali e le barriere stanno solo sul bordo dell'acqua: niente pinne dentro il canale (#130)
+	var storti: Dictionary = level.get_node(^"Fiume").call(&"lati_storti")
+	check(int(storti["pareti"]) == 0 and int(storti["barriere"]) == 0,
+			"pareti e barriere solo sul bordo dell'acqua (storte: %d pareti, %d barriere %s)" % [storti["pareti"], storti["barriere"], str(storti["dove"])])
+
 	print("0. L'indizio e la strada a piedi")
 	var coerenti := true
 	for par in [p1, p2, p3]:
