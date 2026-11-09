@@ -1,0 +1,27 @@
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: torre costruita true
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: 8210 nodi, md5 616974b566b7c581630369d289855453
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: emergenza @MeshInstance3D@1843 20.3050 6.0000 -20.5000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: emergenza @MeshInstance3D@1845 39.9200 1.5000 -15.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: emergenza @MeshInstance3D@1847 31.0000 -2.5000 -4.0800
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: emergenza @MeshInstance3D@1849 31.0000 -8.0000 -25.9200
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: emergenza @MeshInstance3D@1851 20.2800 -12.0000 -10.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: emergenza @MeshInstance3D@1853 39.9200 -16.5000 -15.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo1.log:POSA: emergenza @MeshInstance3D@1855 27.0000 9.0000 -25.9200
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: torre costruita true
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: 8210 nodi, md5 13e373b5d2f71067589f9840c3fb6a06
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: emergenza @MeshInstance3D@1842 20.3050 6.0000 -20.5000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: emergenza @MeshInstance3D@1844 39.9200 1.5000 -15.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: emergenza @MeshInstance3D@1846 31.0000 -2.5000 -4.0800
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: emergenza @MeshInstance3D@1849 31.0000 -8.0000 -25.9200
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: emergenza @MeshInstance3D@1851 20.2800 -12.0000 -10.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: emergenza @MeshInstance3D@1853 39.9200 -16.5000 -15.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/dopo2.log:POSA: emergenza @MeshInstance3D@1855 27.0000 9.0000 -25.9200
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: torre costruita true
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: 8210 nodi, md5 5d4fc1f793f0c28b723aa34120f6869d
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: emergenza @MeshInstance3D@1842 20.3050 6.0000 -20.5000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: emergenza @MeshInstance3D@1844 39.9200 1.5000 -15.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: emergenza @MeshInstance3D@1847 31.0000 -2.5000 -4.0800
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: emergenza @MeshInstance3D@1849 31.0000 -8.0000 -25.9200
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: emergenza @MeshInstance3D@1851 20.2800 -12.0000 -10.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: emergenza @MeshInstance3D@1853 39.9200 -16.5000 -15.0000
+/tmp/claude-0/-home-user-Gioco-3D/6f0ecafc-db3e-5ca4-88b9-bca3618d34a3/scratchpad/sala/prima1.log:POSA: emergenza @MeshInstance3D@1855 27.0000 9.0000 -25.9200

@@ -1,0 +1,16 @@
+ripartenze_lampade exit 0 RISULTATO: 18 controlli ok, 0 falliti
+test_posa exit 0 RISULTATO: 14 controlli ok, 0 falliti
+test_sala exit 0 RISULTATO: 107 controlli ok, 0 falliti
+test_torre exit 0 RISULTATO: 95 controlli ok, 0 falliti
+test_torre_pezzi_uguali exit 0 RISULTATO: 10 controlli ok, 0 falliti
+test_portone_torre exit 0 RISULTATO: 20 controlli ok, 0 falliti
+test_ripartenza_oltre_portone exit 0 RISULTATO: 53 controlli ok, 0 falliti
+test_partenze_prova exit 0 RISULTATO: 72 controlli ok, 0 falliti
+test_continua exit 0 RISULTATO: 127 controlli ok, 0 falliti
+attesa_1 exit 0 RISULTATO: 6 controlli ok, 0 falliti
+attesa_2 exit 0 RISULTATO: 6 controlli ok, 0 falliti
+attesa_3 exit 0 RISULTATO: 6 controlli ok, 0 falliti
+attesa_4 exit 0 RISULTATO: 6 controlli ok, 0 falliti
+attesa_5 exit 0 RISULTATO: 6 controlli ok, 0 falliti
+controllo_posizionamento exit 0 RISULTATO: 2 controlli ok, 0 falliti
+FINE_CATENA
