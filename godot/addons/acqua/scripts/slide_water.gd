@@ -54,9 +54,9 @@ func _rebuild() -> void:
 	if material == null:
 		material = ShaderMaterial.new()
 		material.shader = FLOW_SHADER
-		material.set_shader_parameter("normal_a", load("res://addons/acqua/textures/water_normal_a.png"))
-		material.set_shader_parameter("normal_b", load("res://addons/acqua/textures/water_normal_b.png"))
-		material.set_shader_parameter("foam_tex", load("res://addons/acqua/textures/foam.png"))
+		material.set_shader_parameter("normal_a", preload("res://tests/sonda_load.gd").da("addons/acqua/scripts/slide_water.gd:57", "res://addons/acqua/textures/water_normal_a.png"))
+		material.set_shader_parameter("normal_b", preload("res://tests/sonda_load.gd").da("addons/acqua/scripts/slide_water.gd:58", "res://addons/acqua/textures/water_normal_b.png"))
+		material.set_shader_parameter("foam_tex", preload("res://tests/sonda_load.gd").da("addons/acqua/scripts/slide_water.gd:59", "res://addons/acqua/textures/foam.png"))
 	material.set_shader_parameter("flow_speed", flow_speed)
 	material.set_shader_parameter("ribbon_width", tube_radius * deg_to_rad(water_arc_degrees))
 	_mesh.mesh = _build_ribbon()

@@ -32,7 +32,7 @@ func _ready() -> void:
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mesh = _mesh
 	var m := ShaderMaterial.new()
-	m.shader = load("res://shaders/water_stream.gdshader")
+	m.shader = preload("res://tests/sonda_load.gd").da("scripts/player/suction_stream.gd:35", "res://shaders/water_stream.gdshader")
 	m.set_shader_parameter(&"flow_speed", flow_speed)
 	m.set_shader_parameter(&"streak_density", 2.2)
 	m.set_shader_parameter(&"opacity_center", 0.32)
@@ -45,7 +45,7 @@ func _ready() -> void:
 	q.orientation = PlaneMesh.FACE_Y
 	_swirl.mesh = q
 	_swirl_mat = ShaderMaterial.new()
-	_swirl_mat.shader = load("res://shaders/suction_swirl.gdshader")
+	_swirl_mat.shader = preload("res://tests/sonda_load.gd").da("scripts/player/suction_stream.gd:48", "res://shaders/suction_swirl.gdshader")
 	_swirl.material_override = _swirl_mat
 	_swirl.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_swirl.top_level = true

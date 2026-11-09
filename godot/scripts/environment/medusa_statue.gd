@@ -319,7 +319,7 @@ func _prepara_palpebre() -> void:
 
 ## Il materiale della palpebra quando nessun override lo sceglie (la statua: pelle asciutta).
 func _materiale_palpebre() -> Material:
-	return load(MATERIALE_PALPEBRE) as Material if ResourceLoader.exists(MATERIALE_PALPEBRE) else null
+	return preload("res://tests/sonda_load.gd").da("scripts/environment/medusa_statue.gd:322", MATERIALE_PALPEBRE) as Material if ResourceLoader.exists(MATERIALE_PALPEBRE) else null
 
 
 ## Mette le blend shape della palpebra alla chiusura [param c] (0 aperto, 1 chiuso): al massimo due tappe vicine

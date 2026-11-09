@@ -108,11 +108,11 @@ func _parete() -> void:
 	add_child(radice)
 	# il muro della sala (le texture di sala_architettura), più scuro: è lontano e non deve rubare la scena
 	var mat := ORMMaterial3D.new()
-	mat.albedo_texture = load(MURO_COL)
+	mat.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:111", MURO_COL)
 	mat.albedo_color = Color(0.3, 0.3, 0.32)
 	mat.normal_enabled = true
-	mat.normal_texture = load(MURO_NRM)
-	mat.orm_texture = load(MURO_ORM)
+	mat.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:114", MURO_NRM)
+	mat.orm_texture = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:115", MURO_ORM)
 	mat.uv1_triplanar = true
 	mat.uv1_scale = Vector3.ONE * 0.25
 	var spessore := 0.4
@@ -188,10 +188,10 @@ func _cupola() -> void:
 	radice.name = "Cupola"
 	add_child(radice)
 	# la cupola della sala (raggio 13, centro in z -5, base a 12,5) sopra la statua, sul tamburo di muro
-	var glb: Node3D = (load(CUPOLA_GLB) as PackedScene).instantiate()
+	var glb: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:191", CUPOLA_GLB) as PackedScene).instantiate()
 	radice.add_child(glb)
 	glb.position = Vector3(0.0, BASE_CUPOLA - 12.5, 0.0)
-	var vetro: ShaderMaterial = (load(VETRO_CUPOLA) as ShaderMaterial).duplicate()
+	var vetro: ShaderMaterial = (preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:194", VETRO_CUPOLA) as ShaderMaterial).duplicate()
 	for mi in glb.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		if String(m.name).contains("vetro"):
@@ -199,7 +199,7 @@ func _cupola() -> void:
 				m.set_surface_override_material(i, vetro)
 	# il cielo della tempesta, dietro il vetro
 	var cielo := ShaderMaterial.new()
-	cielo.shader = load(CIELO)
+	cielo.shader = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:202", CIELO)
 	# fra un lampo e l'altro il cielo è quasi nero (richiesta dell'utente del 23 ottobre: lo sfondo più buio);
 	# il lampo si somma sopra e resta forte
 	cielo.set_shader_parameter(&"colore_alto", Color(0.035, 0.045, 0.07))
@@ -224,7 +224,7 @@ func _cupola() -> void:
 	# del lampo (una mesh sola, senza texture: tools/sagoma_torre.gd la fa dai GLB della torre)
 	var torre := MeshInstance3D.new()
 	torre.name = "SagomaTorre"
-	torre.mesh = load(SAGOMA_TORRE)
+	torre.mesh = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:227", SAGOMA_TORRE)
 	var nero := StandardMaterial3D.new()
 	nero.albedo_color = Color(0.0, 0.0, 0.0)
 	nero.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -255,7 +255,7 @@ func _acqua() -> void:
 	pm.size = Vector2(X_PARETE.y - X_PARETE.x, 26.0)
 	piano.mesh = pm
 	var mat := ShaderMaterial.new()
-	mat.shader = load(ACQUA_SHADER)
+	mat.shader = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:258", ACQUA_SHADER)
 	mat.set_shader_parameter(&"shallow_color", Color(0.035, 0.045, 0.055))
 	mat.set_shader_parameter(&"deep_color", Color(0.004, 0.006, 0.009))
 	mat.set_shader_parameter(&"wave_strength", 0.035)
@@ -278,14 +278,14 @@ func _acqua() -> void:
 		g.goccia_caduta.connect(func(pos: Vector3): _cerchio(radice, Vector3(pos.x, LIVELLO + 0.004, pos.z)))
 	# la paperella e il pallone che galleggiano
 	for d in [[PAPERELLA, Vector3(2.3, 0, 2.6), 0.9, 40.0], [PALLONE, Vector3(4.6, 0, 0.6), 1.0, 0.0]]:
-		var o: Node3D = (load(d[0]) as PackedScene).instantiate()
+		var o: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:281", d[0]) as PackedScene).instantiate()
 		radice.add_child(o)
 		o.position = Vector3((d[1] as Vector3).x, LIVELLO, (d[1] as Vector3).z)
 		o.scale = Vector3.ONE * float(d[2])
 		o.rotation.y = deg_to_rad(float(d[3]))
 		_galleggianti.append(o)
 	# in fondo, sulla parete, l'insegna di Jilly Jubilee con le sue due lampade, guasta
-	var ins: Node3D = (load(INSEGNA) as PackedScene).instantiate()
+	var ins: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:288", INSEGNA) as PackedScene).instantiate()
 	radice.add_child(ins)
 	ins.global_transform = sul_muro(10.0 if cupola else 13.2, 3.4)
 	var lampadine: Array = ins.find_children("*lampadina*", "MeshInstance3D", true, false)
@@ -357,7 +357,7 @@ func _sala() -> void:
 	_ghirlanda(radice, bassi, 0.55, [1, 4, 5, 9, 14], [7])
 	# i manifesti di Jilly con il neon sopra (uno guasto)
 	for d in [[Vector3(15.6, 2.6, Z_PARETE), Neon.Modalita.SFARFALLA], [Vector3(20.6, 2.6, Z_PARETE), Neon.Modalita.GUASTO]]:
-		var man: Node3D = (load(MANIFESTO) as PackedScene).instantiate()
+		var man: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:360", MANIFESTO) as PackedScene).instantiate()
 		radice.add_child(man)
 		man.global_transform = sul_muro((d[0] as Vector3).x, (d[0] as Vector3).y)
 		var ne := Neon.new()
@@ -381,8 +381,8 @@ func _cornice_portone(radice: Node3D) -> void:
 	# nella sala la parete è in x 20,2 e il centro del portone in z -15; qui la parete guarda +z
 	var giro := Basis(Vector3.UP, PI * 0.5)
 	c.transform = Transform3D(giro, Vector3(PORTONE_X, 0, Z_PARETE) - giro * Vector3(20.2, 0, -15.0))
-	var giallo: Material = load(GIALLO)
-	var tiranti: Material = load(TIRANTI)
+	var giallo: Material = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:384", GIALLO)
+	var tiranti: Material = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:385", TIRANTI)
 	for z in [-18.45, -11.55]:
 		_scatola(c, Vector3(19.62, 0.0, z - 0.045), Vector3(19.67, 5.56, z + 0.045), giallo)
 	_scatola(c, Vector3(19.62, 5.455, -18.5), Vector3(19.67, 5.545, -11.5), giallo)
@@ -390,7 +390,7 @@ func _cornice_portone(radice: Node3D) -> void:
 		_scatola(c, Vector3(19.665, 5.475, z - 0.025), Vector3(20.2, 5.525, z + 0.025), tiranti)
 	for d in [[MM_PORTALAMPADE, false], [MM_SPENTE, false], [MM_ACCESE, true]]:
 		var mm := MultiMeshInstance3D.new()
-		mm.multimesh = load(d[0])
+		mm.multimesh = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_sfondo.gd:393", d[0])
 		mm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		c.add_child(mm)
 	for p in [Vector3(19.095, 3.0, -18.45), Vector3(19.095, 3.0, -11.55), Vector3(19.095, 5.3, -15.0)]:

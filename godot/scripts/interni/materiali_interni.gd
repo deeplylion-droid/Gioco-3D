@@ -56,21 +56,21 @@ static func materiale(nome: String) -> Material:
 		sm.set_shader_parameter("scrostatura", d["scrostatura"])
 		sm.set_shader_parameter("fascia_bassa", d.get("fascia", 0.45))
 		sm.set_shader_parameter("quota_tubi", d.get("tubi", 2.25))
-		sm.set_shader_parameter("scrostata_albedo", load(TEX + d["scrostata"] + "_col.jpg"))
-		sm.set_shader_parameter("scrostata_normal", load(TEX + d["scrostata"] + "_nrm.jpg"))
-		sm.set_shader_parameter("scrostata_rough", load(TEX + d["scrostata"] + "_met-" + d["scrostata"] + "_rgh.jpg"))
-		sm.set_shader_parameter("lamiera_normal", load(SHT + "lamiera_nrm.jpg"))
-		sm.set_shader_parameter("colature", load(SHT + "colature.png"))
-		sm.set_shader_parameter("rumore", load(SHT + "rumore.png"))
+		sm.set_shader_parameter("scrostata_albedo", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:59", TEX + d["scrostata"] + "_col.jpg"))
+		sm.set_shader_parameter("scrostata_normal", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:60", TEX + d["scrostata"] + "_nrm.jpg"))
+		sm.set_shader_parameter("scrostata_rough", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:61", TEX + d["scrostata"] + "_met-" + d["scrostata"] + "_rgh.jpg"))
+		sm.set_shader_parameter("lamiera_normal", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:62", SHT + "lamiera_nrm.jpg"))
+		sm.set_shader_parameter("colature", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:63", SHT + "colature.png"))
+		sm.set_shader_parameter("rumore", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:64", SHT + "rumore.png"))
 	elif PIASTRELLE_MAT.has(nome):
 		var d: Dictionary = PIASTRELLE_MAT[nome]
 		sm = ShaderMaterial.new()
 		sm.shader = PIASTRELLE
-		sm.set_shader_parameter("albedo_tex", load(TEX + nome + "_col.jpg"))
-		sm.set_shader_parameter("normal_tex", load(TEX + nome + "_nrm.jpg"))
-		sm.set_shader_parameter("rough_tex", load(TEX + nome + "_met-" + nome + "_rgh.jpg"))
-		sm.set_shader_parameter("altezza_tex", load(SHT + d["alt"] + "_alt.png"))
-		sm.set_shader_parameter("rumore", load(SHT + "rumore.png"))
+		sm.set_shader_parameter("albedo_tex", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:69", TEX + nome + "_col.jpg"))
+		sm.set_shader_parameter("normal_tex", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:70", TEX + nome + "_nrm.jpg"))
+		sm.set_shader_parameter("rough_tex", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:71", TEX + nome + "_met-" + nome + "_rgh.jpg"))
+		sm.set_shader_parameter("altezza_tex", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:72", SHT + d["alt"] + "_alt.png"))
+		sm.set_shader_parameter("rumore", preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:73", SHT + "rumore.png"))
 		sm.set_shader_parameter("piastrelle_per_lato", d["per_lato"])
 		sm.set_shader_parameter("bagnato", d["bagnato"])
 	_cache[nome] = sm
@@ -90,7 +90,7 @@ static func decal(radice: Node3D, tipo: String, pos: Vector3, normale: Vector3, 
 		if ruggine_contate % 2 == 0:
 			return null
 	var d := Decal.new()
-	d.texture_albedo = load(SHT + "decal_" + tipo + ".png")
+	d.texture_albedo = preload("res://tests/sonda_load.gd").da("scripts/interni/materiali_interni.gd:93", SHT + "decal_" + tipo + ".png")
 	d.size = Vector3(w, 0.3, h)
 	d.albedo_mix = alfa
 	d.cull_mask = 1

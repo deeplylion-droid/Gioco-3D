@@ -107,7 +107,7 @@ func _prepara_ambienti() -> void:
 	# finestra del gabbiotto sembrava vuota. Il bordo del buco e le crepe sono più chiari e quasi opachi.
 	var vetro := ShaderMaterial.new()
 	vetro.shader = preload("res://shaders/interni/vetro_sporco.gdshader")
-	vetro.set_shader_parameter("rumore", load("res://assets/ambienti_interni/shader_tex/rumore.png"))
+	vetro.set_shader_parameter("rumore", preload("res://tests/sonda_load.gd").da("scripts/interni/interni.gd:110", "res://assets/ambienti_interni/shader_tex/rumore.png"))
 	var bordo := StandardMaterial3D.new()
 	bordo.albedo_color = Color(0.8, 0.88, 0.86, 0.75)
 	bordo.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA

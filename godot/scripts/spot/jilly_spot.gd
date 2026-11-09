@@ -45,7 +45,7 @@ func _dopo_rebuild() -> void:
 	# la libreria prima di super: lì parte la posa (spot/ferma)
 	var ap := _player()
 	if ap and not ap.has_animation_library(&"spot") and ResourceLoader.exists(SPOT):
-		ap.add_animation_library(&"spot", load(SPOT) as AnimationLibrary)
+		ap.add_animation_library(&"spot", preload("res://tests/sonda_load.gd").da("scripts/spot/jilly_spot.gd:48", SPOT) as AnimationLibrary)
 	if ap and not ap.has_animation(animazione):
 		animazione = &"statua"
 	super._dopo_rebuild()
@@ -60,7 +60,7 @@ func _dopo_rebuild() -> void:
 	var o := occhio() as MeshInstance3D
 	if o and o.mesh and not o.get_active_material(0) is ShaderMaterial:
 		for i in o.mesh.get_surface_count():
-			o.set_surface_override_material(i, load(OCCHIO))
+			o.set_surface_override_material(i, preload("res://tests/sonda_load.gd").da("scripts/spot/jilly_spot.gd:63", OCCHIO))
 
 
 func _player() -> AnimationPlayer:

@@ -53,7 +53,7 @@ var _finito := false
 ## Mette il lettore sopra tutto e lo fa partire; alla fine passa a [param poi] (vuoto: resta lì, si ascolta
 ## [signal finito]).
 static func avvia(albero: SceneTree, poi := "") -> LettoreSpot:
-	var l := (load(SCENA) as PackedScene).instantiate() as LettoreSpot
+	var l := (preload("res://tests/sonda_load.gd").da("scripts/spot/lettore_spot.gd:56", SCENA) as PackedScene).instantiate() as LettoreSpot
 	l.scena_dopo = poi
 	albero.root.add_child(l)
 	return l
@@ -63,7 +63,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_dati = JSON.parse_string(FileAccess.get_file_as_string(INQUADRATURE))
 	if video == null and ResourceLoader.exists(VIDEO):
-		video = load(VIDEO)
+		video = preload("res://tests/sonda_load.gd").da("scripts/spot/lettore_spot.gd:66", VIDEO)
 	_video.stream = video
 	_vhs.visible = _effetto(_vhs, SHADER_VHS, "")
 	if _effetto(_occhio, SHADER_OCCHIO, SCRIPT_OCCHIO):
@@ -79,7 +79,7 @@ func _ready() -> void:
 			push_warning("spot: manca l'audio " + file)
 			continue
 		var p := AudioStreamPlayer.new()
-		p.stream = load(file)
+		p.stream = preload("res://tests/sonda_load.gd").da("scripts/spot/lettore_spot.gd:82", file)
 		p.bus = bus if AudioServer.get_bus_index(bus) >= 0 else &"Master"
 		p.volume_db = float(a.get("volume_db", 0.0))
 		add_child(p)
@@ -199,11 +199,11 @@ func _effetto(r: ColorRect, shader: String, script: String) -> bool:
 		push_warning("spot: manca l'effetto " + shader)
 		return false
 	var m := ShaderMaterial.new()
-	m.shader = load(shader)
+	m.shader = preload("res://tests/sonda_load.gd").da("scripts/spot/lettore_spot.gd:202", shader)
 	m.set_shader_parameter(&"dallo_schermo", true)
 	r.material = m
 	if script != "" and ResourceLoader.exists(script):
-		r.set_script(load(script))
+		r.set_script(preload("res://tests/sonda_load.gd").da("scripts/spot/lettore_spot.gd:206", script))
 	return true
 
 

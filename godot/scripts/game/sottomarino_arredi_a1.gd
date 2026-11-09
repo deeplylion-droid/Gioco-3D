@@ -645,7 +645,7 @@ func _abisso_oblo() -> void:
 	var nodo := _nodo("AbissoOblo")
 	var amb := _ambiente("abisso")
 	var occupati := _occupati_muri()
-	var shader := load(DIR + "oblo_abisso.gdshader") as Shader
+	var shader := preload("res://tests/sonda_load.gd").da("scripts/game/sottomarino_arredi_a1.gd:648", DIR + "oblo_abisso.gdshader") as Shader
 	var k := 0
 	for lato: float in [-1.0, 1.0]:
 		var messi := 0
@@ -812,7 +812,7 @@ func _cartello(nodo: Node3D, s: float, lato: float) -> void:
 	q.size = Vector2(0.48, 0.48)
 	faccia.mesh = q
 	var mf := StandardMaterial3D.new()
-	mf.albedo_texture = load(DIR + "cartello_portello.jpg")
+	mf.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/game/sottomarino_arredi_a1.gd:815", DIR + "cartello_portello.jpg")
 	mf.roughness = 0.6
 	faccia.material_override = mf
 	n.add_child(faccia)
@@ -1004,7 +1004,7 @@ func _ambiente(nome: String) -> Array:
 
 ## Un modello del fiume (come [method SalaSottomarino._modello], ma con le coordinate della sala).
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
-	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	var n := (preload("res://tests/sonda_load.gd").da("scripts/game/sottomarino_arredi_a1.gd:1007", DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
 	nodo.add_child(n)
 	var b := Basis.looking_at(verso, Vector3.UP) if verso.length_squared() > 0.0 else Basis()
 	n.transform = Transform3D(b.scaled(Vector3.ONE * scala), pos)

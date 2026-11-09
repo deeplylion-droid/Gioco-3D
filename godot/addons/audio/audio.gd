@@ -510,7 +510,7 @@ func stream_di(nome: StringName) -> AudioStream:
 		return null
 	var streams: Array[AudioStream] = []
 	for p in percorsi:
-		var s := load(p) as AudioStream
+		var s := preload("res://tests/sonda_load.gd").da("addons/audio/audio.gd:513", p) as AudioStream
 		if s:
 			if String(nome).ends_with("_loop") and s is AudioStreamOggVorbis:
 				(s as AudioStreamOggVorbis).loop = true

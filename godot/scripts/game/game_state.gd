@@ -112,7 +112,7 @@ func _on_level_ready() -> void:
 		_pacchetto_livello = null
 		_tenute.clear()
 	if _pacchetto_livello == null and scene != "" and ResourceLoader.has_cached(scene):
-		_pacchetto_livello = load(scene) as PackedScene
+		_pacchetto_livello = preload("res://tests/sonda_load.gd").da("scripts/game/game_state.gd:115", scene) as PackedScene
 	if _restore_pending and snapshot.get("scene", "") == scene:
 		_restore_pending = false
 		_apply_snapshot(snapshot)
@@ -292,7 +292,7 @@ func kill_player(cause: StringName = &"generico") -> void:
 	var dove := "%s|%s" % [snapshot.get("scene", _scene_path()), snapshot.get("checkpoint", "")]
 	morti_al_checkpoint = morti_al_checkpoint + 1 if dove == _morti_dove else 1
 	_morti_dove = dove
-	var seq: Node = load(DEATH_SEQUENCE_SCENE).instantiate()
+	var seq: Node = preload("res://tests/sonda_load.gd").da("scripts/game/game_state.gd:295", DEATH_SEQUENCE_SCENE).instantiate()
 	seq.set(&"cause", cause)
 	seq.set(&"breve", morti_al_checkpoint >= 2)
 	add_child(seq)
@@ -348,7 +348,7 @@ func respawn() -> void:
 ## in cache e la ripartenza non si allunga.
 func _cambia_in_due_tempi(scene: String) -> void:
 	if _pacchetto_livello == null or _pacchetto_livello.resource_path != scene:
-		_pacchetto_livello = load(scene) as PackedScene
+		_pacchetto_livello = preload("res://tests/sonda_load.gd").da("scripts/game/game_state.gd:351", scene) as PackedScene
 	if _pacchetto_livello == null:
 		get_tree().change_scene_to_file(scene)
 		return

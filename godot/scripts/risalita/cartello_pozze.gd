@@ -50,7 +50,7 @@ func _ready() -> void:
 	q.size = MISURA
 	faccia.mesh = q
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = load(TEXTURE)
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/cartello_pozze.gd:53", TEXTURE)
 	m.roughness = 0.7
 	faccia.material_override = m
 	faccia.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

@@ -55,7 +55,7 @@ func _dopo_rebuild() -> void:
 	var ap := _instance.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if ap and animazioni_inseguimento and not ap.has_animation_library(&"inseguimento") \
 			and ResourceLoader.exists(ANIMAZIONI_INSEGUIMENTO):
-		ap.add_animation_library(&"inseguimento", load(ANIMAZIONI_INSEGUIMENTO) as AnimationLibrary)
+		ap.add_animation_library(&"inseguimento", preload("res://tests/sonda_load.gd").da("scripts/environment/medusa_affacciata.gd:58", ANIMAZIONI_INSEGUIMENTO) as AnimationLibrary)
 	if ap and ap.has_animation(animazione):
 		ap.get_animation(animazione).loop_mode = Animation.LOOP_LINEAR
 		ap.play(animazione)
@@ -174,7 +174,7 @@ func segui_con_la_testa(quanto := 1.0, secondi := 0.4) -> void:
 ## Nella vasca la palpebra è bagnata come la pelle (se material_map non sceglie un altro "M_palpebre").
 func _materiale_palpebre() -> Material:
 	if ResourceLoader.exists(MATERIALE_PALPEBRE_BAGNATA):
-		return load(MATERIALE_PALPEBRE_BAGNATA) as Material
+		return preload("res://tests/sonda_load.gd").da("scripts/environment/medusa_affacciata.gd:177", MATERIALE_PALPEBRE_BAGNATA) as Material
 	return super._materiale_palpebre()
 
 

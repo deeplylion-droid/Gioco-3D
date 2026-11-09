@@ -287,7 +287,7 @@ func _disegno(xf: Transform3D) -> Node3D:
 	foglio.mesh = q
 	var m := StandardMaterial3D.new()
 	var vero := DIR + "disegno_piscina.png"
-	m.albedo_texture = load(vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/game/enigma_giocattoli.gd:290", vero) as Texture2D if ResourceLoader.exists(vero) else _disegno_segnaposto()
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	m.alpha_scissor_threshold = 0.2
 	m.roughness = 0.85
@@ -598,9 +598,9 @@ func _altezza_piatto(i: int, h: float) -> void:
 func _materiale_cerchio(i: int) -> Material:
 	var vero: String = DIR + FILE_CERCHI[i]
 	if ResourceLoader.exists(vero):
-		return (load(vero) as Material).duplicate() as Material
+		return (preload("res://tests/sonda_load.gd").da("scripts/game/enigma_giocattoli.gd:601", vero) as Material).duplicate() as Material
 	var m := ShaderMaterial.new()
-	m.shader = load("res://scripts/game/enigma_giocattoli_cerchio.gdshader") as Shader
+	m.shader = preload("res://tests/sonda_load.gd").da("scripts/game/enigma_giocattoli.gd:603", "res://scripts/game/enigma_giocattoli_cerchio.gdshader") as Shader
 	m.set_shader_parameter(&"colore", COLORI[i])
 	return m
 
@@ -616,7 +616,7 @@ func _giocattolo(i: int) -> AnimatableBody3D:
 	var vero: String = DIR + FILE_GIOCATTOLI[i]
 	var modello: Node3D
 	if ResourceLoader.exists(vero):
-		modello = (load(vero) as PackedScene).instantiate() as Node3D
+		modello = (preload("res://tests/sonda_load.gd").da("scripts/game/enigma_giocattoli.gd:619", vero) as PackedScene).instantiate() as Node3D
 	else:
 		modello = _segnaposto(i)
 	modello.name = "Modello"

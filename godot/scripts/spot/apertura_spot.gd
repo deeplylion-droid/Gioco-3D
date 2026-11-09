@@ -16,7 +16,7 @@ const LOGO_GIOCO := "res://assets/ui/logo/logo_jilly_jubilee.png"
 
 func _ready() -> void:
 	# il logo senza ruggine di mascotte (lavoro/spot-mascotte); finché il ramo non è unito, quello del gioco
-	_logo.texture = load(LOGO_NUOVO if ResourceLoader.exists(LOGO_NUOVO) else LOGO_GIOCO)
+	_logo.texture = preload("res://tests/sonda_load.gd").da("scripts/spot/apertura_spot.gd:19", LOGO_NUOVO if ResourceLoader.exists(LOGO_NUOVO) else LOGO_GIOCO)
 	a_tempo(0.0, 1)
 
 

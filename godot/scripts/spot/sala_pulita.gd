@@ -126,7 +126,7 @@ func _texture_pulita(t: Texture2D) -> Texture2D:
 			break
 	var nuova := t
 	if ResourceLoader.exists(TEXTURE_PULITE + resto):
-		nuova = load(TEXTURE_PULITE + resto) as Texture2D
+		nuova = preload("res://tests/sonda_load.gd").da("scripts/spot/sala_pulita.gd:129", TEXTURE_PULITE + resto) as Texture2D
 	_texture[file] = nuova
 	return nuova
 

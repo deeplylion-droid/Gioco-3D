@@ -499,7 +499,7 @@ func _setup_torre() -> void:
 	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaTorre"):
 		# si riparte da un checkpoint della torre: la si carica subito, si è già dentro; interni e tecnici prima via
 		_libera_ambienti_subito()
-		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
+		_aggiungi_torre(preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:502", sala_torre_scena) as PackedScene)
 		_entra_in_torre(false)
 	else:
 		# ripartendo da un checkpoint col portone già aperto (load_state non riapre) la torre va caricata
@@ -524,11 +524,11 @@ func _carica_torre() -> void:
 	elif _torre_pronta:
 		_prepara_torre()
 	elif _torre_fallita:
-		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
+		_aggiungi_torre(preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:527", sala_torre_scena) as PackedScene)
 	elif not _torre_in_caricamento:
 		_precarica_torre()
 		if not _torre_in_caricamento:
-			_aggiungi_torre(load(sala_torre_scena) as PackedScene)
+			_aggiungi_torre(preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:531", sala_torre_scena) as PackedScene)
 
 
 ## Comincia a caricare la torre in un thread, senza metterla ancora nella sala.
@@ -569,7 +569,7 @@ func _process(_delta: float) -> void:
 		GameState.tieni(sala_torre_scena, scena)
 		for r in SalaInseguimento.risorse() + SalaTorre.risorse():
 			if ResourceLoader.has_cached(r):
-				GameState.tieni(r, load(r))
+				GameState.tieni(r, preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:572", r))
 		# (con la riserva già in sala la copia del thread non serve: si lascia andare)
 		if sala_torre == null:
 			_torre_pronta = scena
@@ -587,7 +587,7 @@ func _process(_delta: float) -> void:
 		_torre_fallita = true
 		push_warning("Sala della torre: caricamento nel thread fallito (%s), la carico appena serve" % sala_torre_scena)
 		if _torre_voluta:
-			_aggiungi_torre(load(sala_torre_scena) as PackedScene)
+			_aggiungi_torre(preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:590", sala_torre_scena) as PackedScene)
 
 
 ## La torre caricata entra nella sala nascosta e ferma, si costruisce un pezzo per fotogramma e si
@@ -634,7 +634,7 @@ func _torre_attesa_dal_portone() -> void:
 		return
 	if _torre_fallita:
 		# il thread non ce l'ha fatta: l'unico caso che carica qui
-		_torre_pronta = load(sala_torre_scena) as PackedScene
+		_torre_pronta = preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:637", sala_torre_scena) as PackedScene
 		_prepara_torre()
 	elif not _torre_in_caricamento:
 		_precarica_torre()
@@ -1086,7 +1086,7 @@ func _attiva_sottomarino() -> void:
 	while sala_sottomarino == null:
 		if not _sottomarino_in_caricamento:
 			# il thread è finito senza il tunnel (fallito): l'unico caso che carica qui
-			_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, true)
+			_metti_sottomarino(preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:1089", sala_sottomarino_scena) as PackedScene, true)
 			break
 		await get_tree().process_frame
 		if not is_inside_tree():
@@ -1117,7 +1117,7 @@ func _ripristina_sottomarino() -> void:
 		portone.call(&"resta_chiuso")
 	_scarica_ambienti()
 	_campioni_tunnel = CampioniTunnel.carica()
-	_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, false)
+	_metti_sottomarino(preload("res://tests/sonda_load.gd").da("scripts/game/sala_principale.gd:1120", sala_sottomarino_scena) as PackedScene, false)
 	sala_sottomarino.call(&"chiudi_porta_bacino")
 	var cp := String(GameState.snapshot.get("checkpoint", ""))
 	var s := float(cp.get_slice("Checkpoint_", 1)) if cp.contains("Checkpoint_") else 6.0

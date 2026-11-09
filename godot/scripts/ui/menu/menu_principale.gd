@@ -395,7 +395,7 @@ func _audio(metodo: StringName, argomenti := []) -> void:
 func _apri(scena: String, controllo: NodePath, voce: Button) -> void:
 	if _avviato or is_instance_valid(_sottomenu):
 		return
-	_sottomenu = load(scena).instantiate()
+	_sottomenu = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/menu_principale.gd:398", scena).instantiate()
 	add_child(_sottomenu)
 	# Sotto opzioni e comandi restano solo la statua e la nebbia.
 	_menu.visible = false

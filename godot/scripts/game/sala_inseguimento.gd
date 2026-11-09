@@ -179,7 +179,7 @@ func _modello(i: int) -> void:
 	var nome: String = ["struttura", "tubi", "prop", "mobili"][i]
 	_nome_passo = "_modello(%s)" % nome
 	var tm := Time.get_ticks_usec()
-	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else load(DIR + "inseguimento_%s.glb" % nome)
+	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else preload("res://tests/sonda_load.gd").da("scripts/game/sala_inseguimento.gd:182", DIR + "inseguimento_%s.glb" % nome)
 	var tl := Time.get_ticks_usec()
 	var glb: Node3D = scena.instantiate()
 	if OS.has_environment("TORRE_TEMPI"):
@@ -189,8 +189,8 @@ func _modello(i: int) -> void:
 	glb.name = "Inseguimento" + nome.capitalize()
 	# nelle vasche (e negli scoli e nel bacino) l'acqua meno torbida, verde-azzurra, col fondo che si
 	# intravede (scelta dell'utente del 22 ottobre); il fondo allagato della sala resta torbido: da lì sale lei
-	var acqua: Material = load("res://assets/materials/inseguimento/acqua_inseguimento.tres")
-	var torbida: Material = load("res://assets/materials/sala/acqua_torbida.tres")
+	var acqua: Material = preload("res://tests/sonda_load.gd").da("scripts/game/sala_inseguimento.gd:192", "res://assets/materials/inseguimento/acqua_inseguimento.tres")
+	var torbida: Material = preload("res://tests/sonda_load.gd").da("scripts/game/sala_inseguimento.gd:193", "res://assets/materials/sala/acqua_torbida.tres")
 	for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = torbida if String(m.name).begins_with("acqua_allagata") else acqua
 	var tv := Time.get_ticks_usec()
@@ -464,8 +464,8 @@ func _veli_bocche() -> void:
 	acque.append(dati["bacino"])
 	# (l'acqua delle vasche, senza riflessi e piena com'è l'acqua che ha dietro: vedi water_inseguimento.gdshader; da
 	# dentro il tubo il fondo si intravede sfocato e mosso, come sott'acqua: water_inseguimento_velo.gdshader, solo qui)
-	var mat := (load("res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
-	mat.shader = load("res://shaders/water_inseguimento_velo.gdshader") as Shader
+	var mat := (preload("res://tests/sonda_load.gd").da("scripts/game/sala_inseguimento.gd:467", "res://assets/materials/inseguimento/acqua_inseguimento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
+	mat.shader = preload("res://tests/sonda_load.gd").da("scripts/game/sala_inseguimento.gd:468", "res://shaders/water_inseguimento_velo.gdshader") as Shader
 	mat.set_shader_parameter(&"lucido", 0.0)
 	mat.set_shader_parameter(&"pieno_fisso", 0.97)
 	# (e il colore dell'acqua anche dove la lampada vicina è la rossa guasta: vedi luce_propria nello shader)
@@ -1685,7 +1685,7 @@ static func risorse() -> Array:
 func _arredo(radice: Node3D, a: Dictionary) -> void:
 	var fonte: String = a["f"]
 	if not _fonti.has(fonte):
-		_fonti[fonte] = (load(_percorso_fonte(fonte)) as PackedScene).instantiate()
+		_fonti[fonte] = (preload("res://tests/sonda_load.gd").da("scripts/game/sala_inseguimento.gd:1688", _percorso_fonte(fonte)) as PackedScene).instantiate()
 	var src: Node3D = _fonti[fonte]
 	var nomi: Array = a["n"] if a["n"] is Array else [a["n"]]
 	var gruppo := Node3D.new()

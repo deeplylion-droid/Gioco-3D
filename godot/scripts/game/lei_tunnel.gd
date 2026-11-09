@@ -64,16 +64,16 @@ var _anim := &""
 func _ready() -> void:
 	lei = MedusaAffacciata.new()
 	lei.name = "Lei"
-	lei.model = load("res://assets/models/medusa/medusa.glb")
-	lei.bell_material = load("res://assets/models/medusa/medusa_campana.tres")
+	lei.model = preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:67", "res://assets/models/medusa/medusa.glb")
+	lei.bell_material = preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:68", "res://assets/models/medusa/medusa_campana.tres")
 	lei.material_map = {
-		"M_capelli": load("res://assets/models/medusa/medusa_capelli_bagnata.tres"),
-		"M_ciocche": load("res://assets/models/medusa/medusa_ciocche_bagnata.tres"),
-		"M_mani": load("res://assets/models/medusa/medusa_mani_bagnata.tres"),
-		"M_occhio_bulbo": load("res://assets/models/medusa/medusa_occhio.tres"),
-		"M_orbita": load("res://assets/models/medusa/medusa_orbita_bagnata.tres"),
-		"M_pelle": load("res://assets/models/medusa/medusa_pelle_bagnata.tres"),
-		"M_tentacoli": load("res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
+		"M_capelli": preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:70", "res://assets/models/medusa/medusa_capelli_bagnata.tres"),
+		"M_ciocche": preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:71", "res://assets/models/medusa/medusa_ciocche_bagnata.tres"),
+		"M_mani": preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:72", "res://assets/models/medusa/medusa_mani_bagnata.tres"),
+		"M_occhio_bulbo": preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:73", "res://assets/models/medusa/medusa_occhio.tres"),
+		"M_orbita": preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:74", "res://assets/models/medusa/medusa_orbita_bagnata.tres"),
+		"M_pelle": preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:75", "res://assets/models/medusa/medusa_pelle_bagnata.tres"),
+		"M_tentacoli": preload("res://tests/sonda_load.gd").da("scripts/game/lei_tunnel.gd:76", "res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
 	}
 	lei.animazioni_inseguimento = true
 	lei.animazione = StringName(ANIM + "insegue_aperta")

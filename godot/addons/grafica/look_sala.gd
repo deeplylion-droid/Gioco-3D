@@ -587,7 +587,7 @@ func _crea_voxel_gi() -> void:
 	gi.size = sala_dimensioni
 	gi.subdiv = VoxelGI.SUBDIV_256
 	if dati_gi != "" and ResourceLoader.exists(dati_gi):
-		gi.data = load(dati_gi)
+		gi.data = preload("res://tests/sonda_load.gd").da("addons/grafica/look_sala.gd:590", dati_gi)
 	# Il bake generico di Grafica cercherebbe la geometria tra i figli di questo nodo.
 	gi.set_meta("grafica_bake_automatico", _sala == self)
 	add_child(gi)

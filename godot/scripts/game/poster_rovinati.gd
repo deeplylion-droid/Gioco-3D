@@ -25,7 +25,7 @@ static func metti(radice: Node, voci: Dictionary) -> int:
 			var m := mi.mesh.surface_get_material(i) as StandardMaterial3D
 			if m == null or m.resource_name != voce[0]:
 				continue
-			mi.set_surface_override_material(i, _rovinato(m.duplicate() as StandardMaterial3D, load(voce[1]) as Texture2D))
+			mi.set_surface_override_material(i, _rovinato(m.duplicate() as StandardMaterial3D, preload("res://tests/sonda_load.gd").da("scripts/game/poster_rovinati.gd:28", voce[1]) as Texture2D))
 			fatti += 1
 	return fatti
 
@@ -39,7 +39,7 @@ static func campione_torre() -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	m.roughness = 0.55
-	return _rovinato(m, load(DELFINO) as Texture2D)
+	return _rovinato(m, preload("res://tests/sonda_load.gd").da("scripts/game/poster_rovinati.gd:42", DELFINO) as Texture2D)
 
 
 ## [param m] con la texture rovinata [param tex] e l'alpha scissor.

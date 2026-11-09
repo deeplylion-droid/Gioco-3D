@@ -116,7 +116,7 @@ func _sagoma(i: int) -> void:
 	mi.name = "Sagoma_" + String(d["nome"])
 	mi.mesh = mesh
 	var faccia := StandardMaterial3D.new()
-	var tex := load(DIR + String(d["nome"]) + ".png") as Texture2D
+	var tex := preload("res://tests/sonda_load.gd").da("scripts/game/sagome_club.gd:119", DIR + String(d["nome"]) + ".png") as Texture2D
 	faccia.albedo_texture = tex
 	faccia.roughness = 0.95
 	faccia.emission_enabled = true

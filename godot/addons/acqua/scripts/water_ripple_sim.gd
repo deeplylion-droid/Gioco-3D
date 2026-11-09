@@ -45,7 +45,7 @@ func setup(world_rect: Rect2, resolution: int) -> void:
 	else:
 		size = Vector2i(maxi(8, int(round(resolution / aspect))), resolution)
 	# il file dello shader si carica sul thread principale; sul thread di rendering solo chiamate RD
-	var shader_file: RDShaderFile = load(SHADER_PATH)
+	var shader_file: RDShaderFile = preload("res://tests/sonda_load.gd").da("addons/acqua/scripts/water_ripple_sim.gd:48", SHADER_PATH)
 	var spirv := shader_file.get_spirv()
 	if spirv.compile_error_compute != "":
 		push_error("WaterRippleSim: " + spirv.compile_error_compute)

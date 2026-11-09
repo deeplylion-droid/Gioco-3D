@@ -14,7 +14,7 @@ func _ready() -> void:
 	m.size = Vector2(radius * 2.0, radius * 2.0)
 	mesh = m
 	_material = ShaderMaterial.new()
-	_material.shader = load("res://shaders/vortex.gdshader")
+	_material.shader = preload("res://tests/sonda_load.gd").da("scripts/environment/drain_vortex.gd:17", "res://shaders/vortex.gdshader")
 	material_override = _material
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF

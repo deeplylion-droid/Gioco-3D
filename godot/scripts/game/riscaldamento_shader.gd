@@ -39,7 +39,7 @@ static func materiali() -> Array[Material]:
 	var out: Array[Material] = []
 	out.append_array(SalaTorre.materiali_campione(false))
 	if ResourceLoader.exists(RISALITA):
-		for m in load(RISALITA).get_meta(&"materiali", []):
+		for m in preload("res://tests/sonda_load.gd").da("scripts/game/riscaldamento_shader.gd:42", RISALITA).get_meta(&"materiali", []):
 			out.append(m as Material)
 	for m in CampioniTunnel.carica(false):
 		out.append(m as Material)
@@ -60,7 +60,7 @@ static func _nebbia_viola() -> NebbiaViola:
 static func ambiente() -> Environment:
 	if not ResourceLoader.exists(AMBIENTE):
 		return null
-	var env := (load(AMBIENTE) as Environment).duplicate() as Environment
+	var env := (preload("res://tests/sonda_load.gd").da("scripts/game/riscaldamento_shader.gd:63", AMBIENTE) as Environment).duplicate() as Environment
 	var g: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null(^"Grafica") if Engine.get_main_loop() is SceneTree else null
 	if g:
 		env.sdfgi_enabled = int(g.call(&"valore", "gi")) == 2
@@ -229,7 +229,7 @@ static func effetti_campione() -> Array[Node3D]:
 	pm.size = Vector2(1.2, 1.2)
 	g.mesh = pm
 	var gm := ShaderMaterial.new()
-	gm.shader = load("res://shaders/vortex.gdshader")
+	gm.shader = preload("res://tests/sonda_load.gd").da("scripts/game/riscaldamento_shader.gd:232", "res://shaders/vortex.gdshader")
 	gm.set_shader_parameter(&"strength", 1.0)
 	g.material_override = gm
 	g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -274,7 +274,7 @@ static func effetti_campione() -> Array[Node3D]:
 		mi.name = "Medusine_" + String(parte[1]).get_file().get_basename()
 		mi.multimesh = mm
 		var mat := ShaderMaterial.new()
-		mat.shader = load(parte[1])
+		mat.shader = preload("res://tests/sonda_load.gd").da("scripts/game/riscaldamento_shader.gd:277", parte[1])
 		mat.render_priority = parte[2]
 		mi.material_override = mat
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -350,13 +350,13 @@ const MATERIALI_LEI := "res://assets/models/medusa/"
 
 
 func _disegna_modello_lei(sv: SubViewport) -> void:
-	var scena := load(MODELLO_LEI) as PackedScene
+	var scena := preload("res://tests/sonda_load.gd").da("scripts/game/riscaldamento_shader.gd:353", MODELLO_LEI) as PackedScene
 	if scena == null:
 		return
 	var tres: Array[Material] = []
 	for f in ResourceLoader.list_directory(MATERIALI_LEI):
 		if f.ends_with(".tres") and f.begins_with("medusa_"):
-			var m := load(MATERIALI_LEI + f) as Material
+			var m := preload("res://tests/sonda_load.gd").da("scripts/game/riscaldamento_shader.gd:359", MATERIALI_LEI + f) as Material
 			if m:
 				tres.append(m)
 	var modello := scena.instantiate() as Node3D

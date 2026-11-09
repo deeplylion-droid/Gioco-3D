@@ -49,7 +49,7 @@ func _ready() -> void:
 	for s in STATUE:
 		_metti_statua(s)
 	for j in JILLY:
-		var ob := (load(j.modello) as PackedScene).instantiate() as Node3D
+		var ob := (preload("res://tests/sonda_load.gd").da("scripts/environment/mascotte_sala.gd:52", j.modello) as PackedScene).instantiate() as Node3D
 		ob.name = j.nome
 		add_child(ob)
 		ob.transform = Transform3D(Basis.looking_at(-j.normale, Vector3.UP), j.pos)
@@ -60,7 +60,7 @@ func _ready() -> void:
 
 
 func _metti_statua(s: Dictionary) -> void:
-	var st := (load(s.modello) as PackedScene).instantiate() as Node3D
+	var st := (preload("res://tests/sonda_load.gd").da("scripts/environment/mascotte_sala.gd:63", s.modello) as PackedScene).instantiate() as Node3D
 	st.name = s.nome
 	add_child(st)
 	st.position = s.pos

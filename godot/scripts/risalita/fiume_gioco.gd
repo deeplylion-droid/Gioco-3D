@@ -132,10 +132,10 @@ func _costruisci() -> void:
 	_t_pezzo = Time.get_ticks_usec()
 	seed(1021)
 	_tiri.clear()
-	mat_vasca = load(DIR + "mat_mosaico_blu.tres")
-	mat_banca = load(DIR + "mat_cemento.tres")
-	mat_acqua = load(DIR + "acqua_fiume.tres")
-	mat_roccia = load(DIR + "mat_roccia_ocra.tres")
+	mat_vasca = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:135", DIR + "mat_mosaico_blu.tres")
+	mat_banca = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:136", DIR + "mat_cemento.tres")
+	mat_acqua = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:137", DIR + "acqua_fiume.tres")
+	mat_roccia = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:138", DIR + "mat_roccia_ocra.tres")
 	_mat_globo = StandardMaterial3D.new()
 	_mat_globo.albedo_color = Color(1.0, 0.85, 0.55)
 	_mat_globo.emission_enabled = true
@@ -502,11 +502,11 @@ func _vetroresina(c: Color) -> StandardMaterial3D:
 	m.albedo_color = c
 	m.roughness = 0.35
 	m.normal_enabled = true
-	m.normal_texture = load("res://assets/ambiente/torre/torre_scivoli_vetroresina_nrm.jpg")
+	m.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:505", "res://assets/ambiente/torre/torre_scivoli_vetroresina_nrm.jpg")
 	m.normal_scale = 0.5
 	# la vetroresina vecchia: lucida a chiazze (la rugosità della torre degli scivoli)
 	m.roughness = 1.0
-	m.roughness_texture = load("res://assets/ambiente/torre/torre_scivoli_vetroresina_orm.jpg")
+	m.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:509", "res://assets/ambiente/torre/torre_scivoli_vetroresina_orm.jpg")
 	m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true
@@ -890,7 +890,7 @@ func _glb(nome: String) -> Node3D:
 	if not ResourceLoader.exists(p):
 		push_warning("manca " + p)
 		return Node3D.new()
-	return (load(p) as PackedScene).instantiate()
+	return (preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:893", p) as PackedScene).instantiate()
 
 
 func _metti(nome: String, pos: Vector3, rot_y := 0.0, scala := 1.0) -> Node3D:
@@ -959,7 +959,7 @@ func _luce(pos: Vector3, colore: Color, energia: float, raggio: float, ombre := 
 ## Lampada di servizio a gabbia (la stessa del portone della torre) con la lampadina calda accesa,
 ## sul muro o sulla roccia: dà la luce neutra che serve a leggere l'ambiente senza torcia.
 func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0, roccia: Node3D = null) -> void:
-	var l := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
+	var l := (preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:962", "res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 	l.position = pos
 	l.rotation_degrees.y = rot_y
 	add_child(l)
@@ -1368,7 +1368,7 @@ func _logica() -> void:
 	fiume.imbarco = tratti["Imbarco"]
 	# all'approdo si scende sulla banchina, oltre la conca
 	fiume.discesa = global_basis * Vector3(-2.6, 0.0, 0.0) + Vector3(0.0, -GALLA + 0.05, 0.0)
-	fiume.modello_ciambella = load(DIR + "ciambella.glb")
+	fiume.modello_ciambella = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:1371", DIR + "ciambella.glb")
 	# (il fiume entra coi suoi tratti, poi le paratie una per pezzo, al loro posto fra i figli: dopo i tratti, prima
 	# della ciambella. Tutto insieme era il pezzo più lungo della costruzione a pezzi, 70 ms)
 	add_child(fiume)
@@ -1396,7 +1396,7 @@ func _paratia(nome: String, gradi: float, sx: TrattoFiume, dx: TrattoFiume, a_de
 	par.raggio_bersaglio = 0.4
 	par.mostra_segnaposto = false
 	par.materiale_disco = _mat_disco()
-	par.modello_lampada = load(DIR + "lampada_emergenza.glb")
+	par.modello_lampada = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:1399", DIR + "lampada_emergenza.glb")
 	# il disco guarda chi arriva: un punto del canale 8 m a monte (al bivio 3, a valle: ci si gira)
 	var da := gradi_bersaglio + (14.0 if interno else -22.0)
 	par.guarda_da = global_transform * (anello(da) + Vector3(0, 1.0, 0))
@@ -1455,7 +1455,7 @@ const CHIUSA_ARRIVATA := 0.03
 
 
 func _bivi() -> void:
-	var faccia: Texture2D = load(DIR + "texture/uscita_faccia.jpg")
+	var faccia: Texture2D = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:1458", DIR + "texture/uscita_faccia.jpg")
 	var mferro := StandardMaterial3D.new()
 	mferro.albedo_color = Color(0.2, 0.2, 0.21)
 	mferro.metallic = 0.7
@@ -2020,7 +2020,7 @@ func _pile() -> void:
 	# le pile salvate già pronte (scelta A dell'utente del 4 novembre, "pile nel file"): identiche a quelle costruite qui
 	# sotto, senza rifarle a ogni caricamento. Si rifanno con tools/salva_pile_fiume.gd (che mette costruisci_pile)
 	if not costruisci_pile and not Engine.has_meta(&"costruisci_pile") and ResourceLoader.exists(PILE_FILE):
-		var salvate := load(PILE_FILE) as Resource
+		var salvate := preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:2023", PILE_FILE) as Resource
 		if salvate and salvate.has_meta(&"dati"):
 			pile_salvate = salvate
 			dati_pile = salvate.get_meta(&"dati")
@@ -2774,10 +2774,10 @@ func _scatola_pila(colorata: bool, di_casse := false) -> ArrayMesh:
 func _mat_scatole(di_casse: bool, colorata: bool) -> StandardMaterial3D:
 	var mb := StandardMaterial3D.new()
 	if di_casse:
-		mb.albedo_texture = load(DIR + "texture/cassa_pile.jpg")
+		mb.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:2777", DIR + "texture/cassa_pile.jpg")
 		mb.roughness = 0.55
 	else:
-		mb.albedo_texture = load(DIR + ("texture/scatolone_colorato_pile.jpg" if colorata else "texture/scatolone_pile.jpg"))
+		mb.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:2780", DIR + ("texture/scatolone_colorato_pile.jpg" if colorata else "texture/scatolone_pile.jpg"))
 		mb.roughness = 0.75 if colorata else 0.85
 		mb.vertex_color_use_as_albedo = true   # la tinta di ogni scatola (MultiMesh)
 	return mb
@@ -3027,7 +3027,7 @@ func _cartello_palo(pos: Vector3, rot_y: float, tex: String) -> void:
 	q.size = Vector2(0.5, 0.5)
 	f.mesh = q
 	var mf := StandardMaterial3D.new()
-	mf.albedo_texture = load(DIR + "texture/" + tex + ".jpg")
+	mf.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:3030", DIR + "texture/" + tex + ".jpg")
 	mf.roughness = 0.6
 	f.material_override = mf
 	f.position = Vector3(0, 1.85, 0.03 + 0.015 + 0.002)
@@ -3081,5 +3081,5 @@ func _approdo() -> void:
 
 func _mat_disco() -> ShaderMaterial:
 	var md := ShaderMaterial.new()
-	md.shader = load(DIR + "disco_strisce.gdshader")
+	md.shader = preload("res://tests/sonda_load.gd").da("scripts/risalita/fiume_gioco.gd:3084", DIR + "disco_strisce.gdshader")
 	return md

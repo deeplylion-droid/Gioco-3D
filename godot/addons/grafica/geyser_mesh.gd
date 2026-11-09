@@ -69,7 +69,7 @@ func _ready() -> void:
 
 static func sequenza() -> Array[Mesh]:
 	if _sequenza.is_empty():
-		var s := (load(SEQUENZA) as PackedScene).instantiate()
+		var s := (preload("res://tests/sonda_load.gd").da("addons/grafica/geyser_mesh.gd:72", SEQUENZA) as PackedScene).instantiate()
 		var figli := s.find_children("f*", "MeshInstance3D", true, false)
 		figli.sort_custom(func(x, y): return String(x.name) < String(y.name))
 		for mi in figli:

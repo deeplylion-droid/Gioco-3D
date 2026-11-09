@@ -19,7 +19,7 @@ var _luce: OmniLight3D
 
 
 func _ready() -> void:
-	var m := (load("res://assets/tessera/lettore_1.glb") as PackedScene).instantiate() as Node3D
+	var m := (preload("res://tests/sonda_load.gd").da("scripts/risalita/lettore_vero.gd:22", "res://assets/tessera/lettore_1.glb") as PackedScene).instantiate() as Node3D
 	m.scale = Vector3.ONE * 1.3   # 13 cm: si legge meglio da lontano
 	add_child(m)
 	_mat = StandardMaterial3D.new()

@@ -58,7 +58,7 @@ func _ready() -> void:
 		if not scene.has(glb):
 			var ps: PackedScene = pronti.get(glb.get_file().get_basename(), null)
 			if ps == null:
-				ps = load(cartella.path_join(glb)) as PackedScene
+				ps = preload("res://tests/sonda_load.gd").da("scripts/environment/dettagli_sala.gd:61", cartella.path_join(glb)) as PackedScene
 			scene[glb] = ps.instantiate() if ps else null
 			if scene[glb]:
 				# I materiali del kit sullo stesso shader dove si può (stesso aspetto, meno pipeline).

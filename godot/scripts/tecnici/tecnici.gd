@@ -114,7 +114,7 @@ func _chiudi_fessura_onde() -> void:
 # --- Materiali --------------------------------------------------------------------------------
 
 func _applica_materiali(radice: Node) -> void:
-	var rumore: Texture2D = load(SHT + "rumore.png")
+	var rumore: Texture2D = preload("res://tests/sonda_load.gd").da("scripts/tecnici/tecnici.gd:117", SHT + "rumore.png")
 	for mi in radice.find_children("*", "MeshInstance3D", true, false):
 		var m3 := mi as MeshInstance3D
 		if m3.mesh == null:
@@ -140,11 +140,11 @@ func _applica_materiali(radice: Node) -> void:
 				# variante "scrostata": ruggine degli interni (solo dove serve)
 				sm.set_shader_parameter("scrostatura", d["scrostatura"])
 				sm.set_shader_parameter("soglia_alto", d["soglia_alto"])
-				sm.set_shader_parameter("scrostata_albedo", load(TEXI + "ruggine_col.jpg"))
-				sm.set_shader_parameter("scrostata_normal", load(TEXI + "ruggine_nrm.jpg"))
-				sm.set_shader_parameter("scrostata_rough", load(TEXI + "ruggine_met-ruggine_rgh.jpg"))
-				sm.set_shader_parameter("lamiera_normal", load(SHT + "lamiera_nrm.jpg"))
-				sm.set_shader_parameter("colature", load(SHT + "colature.png"))
+				sm.set_shader_parameter("scrostata_albedo", preload("res://tests/sonda_load.gd").da("scripts/tecnici/tecnici.gd:143", TEXI + "ruggine_col.jpg"))
+				sm.set_shader_parameter("scrostata_normal", preload("res://tests/sonda_load.gd").da("scripts/tecnici/tecnici.gd:144", TEXI + "ruggine_nrm.jpg"))
+				sm.set_shader_parameter("scrostata_rough", preload("res://tests/sonda_load.gd").da("scripts/tecnici/tecnici.gd:145", TEXI + "ruggine_met-ruggine_rgh.jpg"))
+				sm.set_shader_parameter("lamiera_normal", preload("res://tests/sonda_load.gd").da("scripts/tecnici/tecnici.gd:146", SHT + "lamiera_nrm.jpg"))
+				sm.set_shader_parameter("colature", preload("res://tests/sonda_load.gd").da("scripts/tecnici/tecnici.gd:147", SHT + "colature.png"))
 				sm.set_shader_parameter("rumore", rumore)
 				sm.set_shader_parameter("quota_tubi", 3.2)
 				nuovo = sm
@@ -232,7 +232,7 @@ func _fogli() -> void:
 	var sala := ambienti.get_node_or_null(^"SalaPompe") as Node3D
 	if sala == null or not ResourceLoader.exists("res://assets/ambiente/dettagli/gltf/detriti.gltf"):
 		return
-	var kit: Node3D = (load("res://assets/ambiente/dettagli/gltf/detriti.gltf") as PackedScene).instantiate()
+	var kit: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/tecnici/tecnici.gd:235", "res://assets/ambiente/dettagli/gltf/detriti.gltf") as PackedScene).instantiate()
 	for f in FOGLI:
 		var n := kit.find_child(f[0], true, false) as Node3D
 		if n == null:

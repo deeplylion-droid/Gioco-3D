@@ -51,7 +51,7 @@ func _ready() -> void:
 ## sola con uno strumento (la P12 sul grigliato della torre, tests/posa_polaroid12.gd): niente raggi a gioco avviato.
 ## L'id nella collezione è "pNN".
 static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float, posata := false) -> PolaroidPhoto:
-	var p := (load(SCENA) as PackedScene).instantiate() as PolaroidPhoto
+	var p := (preload("res://tests/sonda_load.gd").da("scripts/interaction/polaroid_photo.gd:54", SCENA) as PackedScene).instantiate() as PolaroidPhoto
 	p.name = "Polaroid%02d" % foto
 	p.photo = foto
 	p.entry_id = StringName("p%02d" % foto)
@@ -95,7 +95,7 @@ func get_texture() -> Texture2D:
 
 ## La foto [param n] (1-16).
 static func texture_di(n: int) -> Texture2D:
-	return load(TEX_DIR + "P%02d.jpg" % n) as Texture2D
+	return preload("res://tests/sonda_load.gd").da("scripts/interaction/polaroid_photo.gd:98", TEX_DIR + "P%02d.jpg" % n) as Texture2D
 
 
 ## Vero se la foto [param n] (1-16) è già stata raccolta.
@@ -131,11 +131,11 @@ static func _front_material(i: int) -> StandardMaterial3D:
 	if _materials.has(key):
 		return _materials[key]
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = load(TEX_DIR + key + ".jpg")
-	m.roughness_texture = load(TEX_DIR + key + "_rugosita.jpg")
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/interaction/polaroid_photo.gd:134", TEX_DIR + key + ".jpg")
+	m.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/interaction/polaroid_photo.gd:135", TEX_DIR + key + "_rugosita.jpg")
 	m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 	m.normal_enabled = true
-	m.normal_texture = load(TEX_DIR + "normale.png")
+	m.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/interaction/polaroid_photo.gd:138", TEX_DIR + "normale.png")
 	m.normal_scale = 0.6
 	# Un filo di luce propria, così si nota anche nel buio (senza sembrare una lampada).
 	m.emission_enabled = true
@@ -150,8 +150,8 @@ static func _back_material() -> StandardMaterial3D:
 	if _materials.has("retro"):
 		return _materials["retro"]
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = load(TEX_DIR + "retro.jpg")
-	m.roughness_texture = load(TEX_DIR + "retro_rugosita.jpg")
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/interaction/polaroid_photo.gd:153", TEX_DIR + "retro.jpg")
+	m.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/interaction/polaroid_photo.gd:154", TEX_DIR + "retro_rugosita.jpg")
 	m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 	_materials["retro"] = m
 	return m

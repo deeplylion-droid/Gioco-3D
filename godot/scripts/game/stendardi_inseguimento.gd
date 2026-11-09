@@ -35,7 +35,7 @@ static func materiale(nome: String) -> StandardMaterial3D:
 		return _materiali[nome]
 	var m := StandardMaterial3D.new()
 	m.resource_name = nome
-	m.albedo_texture = load(DIR + nome + ".png")
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/game/stendardi_inseguimento.gd:38", DIR + nome + ".png")
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	m.alpha_scissor_threshold = 0.5
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED
@@ -44,7 +44,7 @@ static func materiale(nome: String) -> StandardMaterial3D:
 	m.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
 	if luce > 0.0:
 		m.emission_enabled = true
-		m.emission_texture = load(DIR + nome + "_luce.png")
+		m.emission_texture = preload("res://tests/sonda_load.gd").da("scripts/game/stendardi_inseguimento.gd:47", DIR + nome + "_luce.png")
 		m.emission_energy_multiplier = luce
 	_materiali[nome] = m
 	return m
@@ -95,7 +95,7 @@ func _ready() -> void:
 
 
 func _prepara() -> void:
-	var scena := load(GLB) as PackedScene
+	var scena := preload("res://tests/sonda_load.gd").da("scripts/game/stendardi_inseguimento.gd:98", GLB) as PackedScene
 	if scena == null:
 		return
 	_glb = scena.instantiate() as Node3D

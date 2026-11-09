@@ -124,7 +124,7 @@ func _process(delta: float) -> void:
 ## (la barra si ferma un attimo). Solo se non riesce neanche così si mostra l'errore.
 func _riserva() -> void:
 	push_warning("Caricamento: il thread non ce la fa (%s), carico la sala subito" % scena)
-	_pacchetto = load(scena) as PackedScene
+	_pacchetto = preload("res://tests/sonda_load.gd").da("scripts/ui/menu/caricamento.gd:127", scena) as PackedScene
 	if _pacchetto == null:
 		_errore("Il caricamento della sala non è riuscito.")
 	else:
@@ -190,7 +190,7 @@ func _costruisci() -> void:
 func _metti_video() -> bool:
 	if not ResourceLoader.exists(VIDEO_JILLY):
 		return false
-	var stream := load(VIDEO_JILLY) as VideoStream
+	var stream := preload("res://tests/sonda_load.gd").da("scripts/ui/menu/caricamento.gd:193", VIDEO_JILLY) as VideoStream
 	if stream == null:
 		return false
 	var cornice := AspectRatioContainer.new()

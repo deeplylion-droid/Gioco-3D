@@ -143,11 +143,11 @@ func _nebbia_viola() -> void:
 
 func _mat(nome: String, tinta: Color, scala: float) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = load(TEX + nome + "_col.jpg")
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:146", TEX + nome + "_col.jpg")
 	m.albedo_color = tinta
 	m.normal_enabled = true
-	m.normal_texture = load(TEX + nome + "_nrm.jpg")
-	m.roughness_texture = load(TEX + nome + "_rgh.jpg")
+	m.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:149", TEX + nome + "_nrm.jpg")
+	m.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:150", TEX + nome + "_rgh.jpg")
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true
 	m.uv1_scale = Vector3.ONE * scala
@@ -260,7 +260,7 @@ func _metti(nome: String, pos: Vector3, rot_y := 0.0) -> Node3D:
 		p = DIR + nome + "_N.glb"
 	if not ResourceLoader.exists(p):
 		p = DIR + nome + ".glb"
-	var n: Node3D = (load(p) as PackedScene).instantiate()
+	var n: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:263", p) as PackedScene).instantiate()
 	n.position = pos
 	n.rotation_degrees.y = rot_y
 	add_child(n)
@@ -429,7 +429,7 @@ func _arredi() -> void:
 	# la Polaroid del medico davanti allo schedario (l'indizio del cassetto)
 	var foto := StandardMaterial3D.new()
 	foto.albedo_color = Color(0.82, 0.82, 0.82)
-	foto.albedo_texture = load(TEX + "polaroid_medico_B.jpg")
+	foto.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:432", TEX + "polaroid_medico_B.jpg")
 	foto.roughness = 0.6
 	var pq := _quad(Vector2(0.088, 0.104), Vector3(0.5, 0.812, -2.62), Vector3(-90, -14, 0), foto)
 	pq.name = "PolaroidMedico"
@@ -485,8 +485,8 @@ func _negatoscopio() -> void:
 	negatoscopio.alimentazione = interruttore
 	negatoscopio.mostra_segnaposto = false
 	negatoscopio.sfarfalla = false   # versione A: spento finché non colpisci l'interruttore
-	negatoscopio.lastra_tex = load(TEX + "radiografia.jpg")
-	negatoscopio.puntini_tex = load(TEX + "radiografia_emi.jpg")
+	negatoscopio.lastra_tex = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:488", TEX + "radiografia.jpg")
+	negatoscopio.puntini_tex = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:489", TEX + "radiografia_emi.jpg")
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
 	b.size = Vector3(0.9, 0.5, 0.1)
@@ -519,7 +519,7 @@ var _luce_negatoscopio: SpotLight3D
 ## Il pulsante della botola preso dal GLB della sala (cassetta, fungo e vetro del lampeggiante), girato
 ## verso +Z con il retro sul muro; il bersaglio del getto è il WaterButton sul fungo.
 func _pulsante_parco(muro: Vector3) -> void:
-	var glb := (load("res://assets/ambiente/sala/sala_interattivi.glb") as PackedScene).instantiate()
+	var glb := (preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:522", "res://assets/ambiente/sala/sala_interattivi.glb") as PackedScene).instantiate()
 	var rif := Vector3(2.25, -1.12, 4.72)   # il perno del fungo nel GLB (guarda verso -Z)
 	var tieni := Node3D.new()
 	tieni.name = "PulsanteParco"
@@ -797,7 +797,7 @@ func _cassaforte() -> void:
 	keycard.rotation_degrees.y = 18.0
 	# la Polaroid della pecora che brilla (P11, scelta dell'utente del 21 ottobre): la stessa delle altre,
 	# appoggiata sul fondo accanto alla keycard; si raccoglie e va nella collezione
-	var polaroid := (load("res://scenes/props/polaroid.tscn") as PackedScene).instantiate() as PolaroidPhoto
+	var polaroid := (preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:800", "res://scenes/props/polaroid.tscn") as PackedScene).instantiate() as PolaroidPhoto
 	polaroid.name = "PolaroidPecora"
 	polaroid.photo = 11
 	polaroid.snap_to_surface = false
@@ -807,9 +807,9 @@ func _cassaforte() -> void:
 	cassaforte = CassaforteRotelle.new()
 	cassaforte.name = "Cassaforte"
 	cassaforte.mostra_segnaposto = false
-	cassaforte.modello_sportello = load(DIR + "sportello_cassaforte_N.glb")
-	cassaforte.cifre_tex = load(TEX + "rotella_cifre.jpg")
-	cassaforte.simboli = [load(TEX + "simbolo_testa.png"), load(TEX + "simbolo_corpo.png"), load(TEX + "simbolo_coda.png")]
+	cassaforte.modello_sportello = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:810", DIR + "sportello_cassaforte_N.glb")
+	cassaforte.cifre_tex = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:811", TEX + "rotella_cifre.jpg")
+	cassaforte.simboli = [preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:812", TEX + "simbolo_testa.png"), preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:812", TEX + "simbolo_corpo.png"), preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:812", TEX + "simbolo_coda.png")]
 	# (custodie delle rotelle larghe 11 cm, 2,5 cm fra l'una e l'altra: con lo sportello aperto e girato di 19° gli ingombri
 	# non arrivano alla custodia accanto; il gruppo spostato di 4 cm verso i cardini, così la custodia della terza rotella
 	# non entra nella manopola dello sportello, che va da 16,3 a 21 cm dal centro)
@@ -860,7 +860,7 @@ func _faretto_soffitto(nome: String, attacco: Vector3, bersaglio: Vector3, scato
 func _tessera(padre: Node3D) -> void:
 	_box(Vector3(0.084, 0.0008, 0.052), Vector3.ZERO, _colore(Color(0.9, 0.9, 0.88), 0.0, 0.4), padre)
 	var f := StandardMaterial3D.new()
-	f.albedo_texture = load("res://assets/tessera/texture/tessera_1.png")
+	f.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:863", "res://assets/tessera/texture/tessera_1.png")
 	f.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	f.roughness = 0.3
 	_quad(Vector2(0.0856, 0.054), Vector3(0, 0.0005, 0), Vector3(-90, 0, 0), f, padre)
@@ -880,7 +880,7 @@ func _luci() -> void:
 		luce.shadow_caster_mask = 0xFFFFF & ~STRATO_LAMPADA
 	# il cartello d'uscita verde sopra la porta della scala, acceso (luce d'emergenza a batteria)
 	var mf := StandardMaterial3D.new()
-	mf.albedo_texture = load("res://assets/fiume_lento/texture/uscita_faccia.jpg")
+	mf.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:883", "res://assets/fiume_lento/texture/uscita_faccia.jpg")
 	mf.emission_enabled = true
 	mf.emission_texture = mf.albedo_texture
 	mf.emission_energy_multiplier = 2.5
@@ -898,7 +898,7 @@ func _bambini() -> void:
 	var mp := StandardMaterial3D.new()
 	# il cartellone rovinato a pastelli a cera (24 ottobre, assets_src/ambienti_interni/poster/rovina.py): dove è
 	# strappato o bruciato si vede il pannello rosa sotto
-	mp.albedo_texture = load("res://assets/ambienti_interni/texture/cartellone_medusa_infermeria.png")
+	mp.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:901", "res://assets/ambienti_interni/texture/cartellone_medusa_infermeria.png")
 	mp.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	mp.roughness = 0.7
 	_box(Vector3(0.02, 1.04, 0.79), Vector3(-L + 0.01, 1.85, 1.45), _colore(Color(0.95, 0.75, 0.85)))
@@ -910,7 +910,7 @@ func _bambini() -> void:
 			[Vector3(-1.2, 2.55, -L + 0.003), 0.0, 0.6], [Vector3(L - 0.003, 0.9, 0.55), -90.0, 0.5],
 			[Vector3(-L + 0.003, 0.75, 0.6), 90.0, 0.45]]
 	for i in posti.size():
-		var t := load(TEX + "adesivo_%d.png" % (i % 5)) as Texture2D
+		var t := preload("res://tests/sonda_load.gd").da("scripts/risalita/infermeria_gioco.gd:913", TEX + "adesivo_%d.png" % (i % 5)) as Texture2D
 		var m := StandardMaterial3D.new()
 		m.albedo_texture = t
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR

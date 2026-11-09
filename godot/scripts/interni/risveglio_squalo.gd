@@ -167,7 +167,7 @@ var _bava: Node
 func _crea_squalo() -> void:
 	if squalo:
 		squalo.queue_free()
-	squalo = (load(MODELLO) as PackedScene).instantiate() as Node3D
+	squalo = (preload("res://tests/sonda_load.gd").da("scripts/interni/risveglio_squalo.gd:170", MODELLO) as PackedScene).instantiate() as Node3D
 	squalo.name = "MostroSqualo"
 	add_child(squalo)
 	_anim = squalo.find_child("AnimationPlayer", true, false) as AnimationPlayer

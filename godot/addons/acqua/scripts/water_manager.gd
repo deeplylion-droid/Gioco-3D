@@ -81,7 +81,7 @@ static func register_globals() -> void:
 			continue
 		var value = g[2]
 		if value is String:
-			value = load(value)
+			value = preload("res://tests/sonda_load.gd").da("addons/acqua/scripts/water_manager.gd:84", value)
 		RenderingServer.global_shader_parameter_add(gname, g[1], value)
 
 

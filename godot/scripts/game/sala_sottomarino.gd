@@ -181,9 +181,9 @@ func _ready() -> void:
 	muro = se["asse_muro"]
 	spessore = se["spessore_muri"]
 	_disponi_gommoni()
-	mat_mosaico = load(DIR_FIUME + "mat_mosaico_blu.tres")
-	mat_graniglia = load(DIR_FIUME + "mat_graniglia.tres")
-	mat_acqua = load(DIR_FIUME + "acqua_fiume.tres")
+	mat_mosaico = preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:184", DIR_FIUME + "mat_mosaico_blu.tres")
+	mat_graniglia = preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:185", DIR_FIUME + "mat_graniglia.tres")
+	mat_acqua = preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:186", DIR_FIUME + "acqua_fiume.tres")
 
 
 ## Costruisce tutto subito (scene di prova, test).
@@ -421,7 +421,7 @@ func _acqua_presa() -> void:
 	wb.simulate_ripples = false
 	wb.capture_env_cubemap = false
 	wb.planar_reflection_on_high = false
-	wb.style = load("res://addons/acqua/presets/stile_2_torbida.tres")
+	wb.style = preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:424", "res://addons/acqua/presets/stile_2_torbida.tres")
 	# (il primo ramo corre lungo z: il rettangolo dritto della WaterBody ci sta)
 	wb.size = Vector2(canale * 2.0, absf(b.z - a.z))
 	add_child(wb)
@@ -1006,7 +1006,7 @@ func _fine() -> void:
 	_lampada(nodo, L - BALLATOIO - 12 * 0.32 - 1.2, -1.0, piano + 3.0, 3.5)
 	# e una sul muro di fondo sopra il pontile, dalla parte della scala (2,4 m sopra il pontile): la scala e il
 	# ballatoio si devono vedere senza torcia
-	var lf := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
+	var lf := (preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:1009", "res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 	nodo.add_child(lf)
 	lf.global_position = _al(p, r, Vector2(-3.2, sg + 2.4)) - d * 0.05
 	lf.look_at(lf.global_position - d * 2.0, Vector3.UP)
@@ -1501,7 +1501,7 @@ func _luci() -> void:
 		var p := punto(s)
 		var r := destra(s)
 		var muro_p := p + r * lato * (muro - 0.02)
-		var l := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
+		var l := (preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:1504", "res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 		nodo.add_child(l)
 		l.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z)
 		l.look_at(l.global_position - r * lato * 2.0, Vector3.UP)
@@ -2898,7 +2898,7 @@ func _corda(mi: MeshInstance3D, pts: PackedVector3Array) -> void:
 
 ## Un modello Meshy del fiume (assets/fiume_lento) a [param pos], girato verso [param verso], scalato.
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
-	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	var n := (preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:2901", DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
 	usa_forme_salvate(nome, n)
 	nodo.add_child(n)
 	n.global_transform = Transform3D(Basis.looking_at(verso, Vector3.UP).scaled(Vector3.ONE * scala), pos)
@@ -2918,7 +2918,7 @@ static func usa_forme_salvate(nome: String, n: Node3D) -> void:
 	var f := DIR_FIUME + nome + FORME
 	if senza_scorciatoie or not ResourceLoader.exists(f):
 		return
-	var r := load(f)
+	var r := preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:2921", f)
 	var d: Dictionary = r.get_meta(&"forme", {}) if r else {}
 	for x in n.find_children("*", "MeshInstance3D", true, false):
 		var mi := x as MeshInstance3D
@@ -2987,7 +2987,7 @@ func _lampada(nodo: Node3D, s: float, lato: float, y: float, energia: float) -> 
 	var p := punto(s)
 	var r := destra(s) * lato
 	var muro_p := _al(p, r, Vector2(muro - 0.02, y))
-	var l := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
+	var l := (preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:2990", "res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 	nodo.add_child(l)
 	l.global_position = muro_p
 	l.look_at(muro_p - r * 2.0, Vector3.UP)
@@ -3038,7 +3038,7 @@ func _mat(nome: String, colore: Color, ruvido := 0.7, metallo := 0.0, emissione 
 ## tunnel: niente campioni nuovi.
 func _mat_cemento(nome: String, tinta: Color) -> Material:
 	if not _materiali.has(nome):
-		var m := (load(DIR_FIUME + "mat_cemento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
+		var m := (preload("res://tests/sonda_load.gd").da("scripts/game/sala_sottomarino.gd:3041", DIR_FIUME + "mat_cemento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
 		m.set_shader_parameter(&"albedo_tint", tinta)
 		m.set_shader_parameter(&"uv_scale", 0.6)
 		_materiali[nome] = m

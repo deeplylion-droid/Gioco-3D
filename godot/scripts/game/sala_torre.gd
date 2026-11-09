@@ -200,7 +200,7 @@ func _chiedi_precarica() -> void:
 		if _precarica.has(percorso):
 			continue
 		if ResourceLoader.has_cached(percorso):
-			_precaricate.append(load(percorso))
+			_precaricate.append(preload("res://tests/sonda_load.gd").da("scripts/game/sala_torre.gd:203", percorso))
 		elif Game.stato_thread(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS or Game.carica_in_thread(percorso) == OK:
 			_precarica[percorso] = true
 
@@ -221,7 +221,7 @@ func _aspetta_precarica() -> void:
 			if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 				continue
 			if stato == ResourceLoader.THREAD_LOAD_LOADED:
-				_precaricate.append(load(percorso))
+				_precaricate.append(preload("res://tests/sonda_load.gd").da("scripts/game/sala_torre.gd:224", percorso))
 			_precarica.erase(percorso)
 		if _precarica.is_empty() or not is_inside_tree():
 			return
@@ -360,7 +360,7 @@ func _modello(i: int) -> void:
 	var nodo: String = nome.capitalize().replace(" ", "")
 	if get_node_or_null(nodo) != null:
 		return
-	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else load(DIR + nome + ".glb")
+	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else preload("res://tests/sonda_load.gd").da("scripts/game/sala_torre.gd:363", DIR + nome + ".glb")
 	var glb: Node3D = scena.instantiate()
 	glb.name = nodo
 	if not _a_pezzi:
@@ -412,7 +412,7 @@ func _passi_figli(padre: Node, figli: Array) -> Array:
 
 func _prepara_dati() -> void:
 	dati = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
-	var acqua: Material = load(ACQUA)
+	var acqua: Material = preload("res://tests/sonda_load.gd").da("scripts/game/sala_torre.gd:415", ACQUA)
 	for m in find_children("acqua*", "MeshInstance3D", true, false):
 		# (non le pareti d'acqua nelle bocche dei tubi dell'inseguimento, che hanno la loro: SalaInseguimento._veli_bocche)
 		if not String(m.name).begins_with(SalaInseguimento.NOME_VELO):
@@ -717,7 +717,7 @@ func checkpoint_raggiunto() -> int:
 
 
 func _polaroid() -> void:
-	var foto: Node3D = (load(PolaroidPhoto.SCENA) as PackedScene).instantiate()
+	var foto: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/game/sala_torre.gd:720", PolaroidPhoto.SCENA) as PackedScene).instantiate()
 	foto.name = "Polaroid10"
 	if &"photo" in foto:
 		foto.set(&"photo", 10)
@@ -761,7 +761,7 @@ func _passi_balconata() -> Array:
 func _bambino_balconata(i: int) -> void:
 	var c := b(dati["balconata"]["centro"])
 	var salto := b(dati["balconata"]["primo_salto"])
-	var bimbo: Node3D = (load(BAMBINI[i % 2]) as PackedScene).instantiate()
+	var bimbo: Node3D = (preload("res://tests/sonda_load.gd").da("scripts/game/sala_torre.gd:764", BAMBINI[i % 2]) as PackedScene).instantiate()
 	bimbo.name = "BambinoBalconata%d" % i
 	add_child(bimbo)
 	bimbo.global_position = c + Vector3(-1.8 + 1.2 * i, 0.0, -0.3)
@@ -1549,7 +1549,7 @@ const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 ## ritrovano gli shader pronti. Chi li chiama deve tenere l'array (gli shader vivono finché c'è un materiale).
 static func materiali_campione(crea := true) -> Array[Material]:
 	var out: Array[Material] = [_emissivo(Color.WHITE, 1.0), _metallo_scuro(), _materiale_gabbia(),
-			_materiale_gocce(), _materiale_fondo_pozzo(), load(ACQUA) as Material]
+			_materiale_gocce(), _materiale_fondo_pozzo(), preload("res://tests/sonda_load.gd").da("scripts/game/sala_torre.gd:1552", ACQUA) as Material]
 	# (l'oblò con lei sul muro est: piastra, vasca, ottone, vetro e veli d'acqua)
 	for m in ObloLei.materiali():
 		out.append(m as Material)

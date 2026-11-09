@@ -41,7 +41,7 @@ var _schizzi_camera: GPUParticles3D
 func _ready() -> void:
 	var struttura: Node
 	for nome in ["torre_struttura", "torre_scivoli"]:
-		var glb := (load(DIR + nome + ".glb") as PackedScene).instantiate()
+		var glb := (preload("res://tests/sonda_load.gd").da("scripts/spot/torre_pulita.gd:44", DIR + nome + ".glb") as PackedScene).instantiate()
 		add_child(glb)
 		if nome == "torre_struttura":
 			struttura = glb
@@ -270,7 +270,7 @@ func _texture_pulita(t: Texture2D) -> Texture2D:
 			resto = file.substr(g.length())
 	var nuova := t
 	if ResourceLoader.exists(TEXTURE_PULITE + resto):
-		nuova = load(TEXTURE_PULITE + resto) as Texture2D
+		nuova = preload("res://tests/sonda_load.gd").da("scripts/spot/torre_pulita.gd:273", TEXTURE_PULITE + resto) as Texture2D
 	_texture[file] = nuova
 	return nuova
 

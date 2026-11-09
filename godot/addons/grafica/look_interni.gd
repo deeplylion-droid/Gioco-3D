@@ -239,7 +239,7 @@ func _crea_gi(stanza: Node3D, box: AABB) -> void:
 	gi.subdiv = VoxelGI.SUBDIV_128
 	var file := cartella_gi.path_join(String(stanza.name) + ".res")
 	if cartella_gi != "" and ResourceLoader.exists(file):
-		gi.data = load(file)
+		gi.data = preload("res://tests/sonda_load.gd").da("addons/grafica/look_interni.gd:242", file)
 		gi.set_meta("grafica_bake_automatico", false)
 	gi.set_meta("stanza", stanza)
 	if gi.data == null:

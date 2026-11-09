@@ -14,7 +14,7 @@ const FILE := "res://assets/ambiente/sottomarino/materiali_campione.tres"
 static func carica(crea := true) -> Array:
 	if not ResourceLoader.exists(FILE):
 		return []
-	var out: Array = load(FILE).get_meta(&"materiali", [])
+	var out: Array = preload("res://tests/sonda_load.gd").da("scripts/game/campioni_tunnel.gd:17", FILE).get_meta(&"materiali", [])
 	if crea:
 		for m in out:
 			(m as Material).get_rid()   # lo shader si crea adesso, non al primo uso

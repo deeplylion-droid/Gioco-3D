@@ -71,10 +71,10 @@ func _costruisci() -> void:
 	mat_intonaco = _mat(TI + "intonaco", Color(0.78, 0.8, 0.8), 0.5)
 	mat_soffitto = _mat(TI + "intonaco", Color(0.62, 0.63, 0.62), 0.4)
 	mat_grata = StandardMaterial3D.new()
-	mat_grata.albedo_texture = load(TA + "lamiera_grata_col.jpg")
+	mat_grata.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:74", TA + "lamiera_grata_col.jpg")
 	mat_grata.normal_enabled = true
-	mat_grata.normal_texture = load(TA + "lamiera_grata_nrm.jpg")
-	mat_grata.roughness_texture = load(TA + "lamiera_grata_met-lamiera_grata_rgh.jpg")
+	mat_grata.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:76", TA + "lamiera_grata_nrm.jpg")
+	mat_grata.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:77", TA + "lamiera_grata_met-lamiera_grata_rgh.jpg")
 	mat_grata.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 	mat_grata.metallic_texture = mat_grata.roughness_texture
 	mat_grata.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE
@@ -111,11 +111,11 @@ func _costruisci() -> void:
 
 func _mat(base: String, tinta: Color, scala: float) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = load(base + "_col.jpg")
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:114", base + "_col.jpg")
 	m.albedo_color = tinta
 	m.normal_enabled = true
-	m.normal_texture = load(base + "_nrm.jpg")
-	m.roughness_texture = load(base + "_rgh.jpg")
+	m.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:117", base + "_nrm.jpg")
+	m.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:118", base + "_rgh.jpg")
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true
 	m.uv1_scale = Vector3.ONE * scala
@@ -210,7 +210,7 @@ func _pozze() -> void:
 
 
 func _arredo() -> void:
-	var a := (load(ARREDO) as PackedScene).instantiate() as Node3D
+	var a := (preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:213", ARREDO) as PackedScene).instantiate() as Node3D
 	a.name = "ArredoPozze"
 	add_child(a)
 
@@ -313,7 +313,7 @@ func _lampeggiante() -> void:
 func _enigma() -> void:
 	var e: Node3D
 	if ResourceLoader.exists(SALA):
-		e = (load(SALA) as Script).new() as Node3D
+		e = (preload("res://tests/sonda_load.gd").da("scripts/risalita/stanza_pozze.gd:316", SALA) as Script).new() as Node3D
 	else:
 		e = Node3D.new()
 	e.name = "EnigmaPozze"

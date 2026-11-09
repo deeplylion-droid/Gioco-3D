@@ -30,7 +30,7 @@ func _ready() -> void:
 	plastic.rim = 0.4
 	_add_cylinder(radius, length, rot, plastic)
 	_water_mat = ShaderMaterial.new()
-	_water_mat.shader = load("res://shaders/liquid_fill.gdshader")
+	_water_mat.shader = preload("res://tests/sonda_load.gd").da("scripts/player/reservoir_gauge.gd:33", "res://shaders/liquid_fill.gdshader")
 	_water_mat.set_shader_parameter(&"color", water_color)
 	_add_cylinder(radius * 0.82, length * 0.94, rot, _water_mat)
 	# Tappi colorati alle estremità, come sui giocattoli.

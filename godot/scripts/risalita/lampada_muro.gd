@@ -18,7 +18,7 @@ static var _vertici := PackedVector3Array()
 static func monta(padre: Node3D, muro: Vector3, verso: Vector3, piastra := true, raggio_palo := 0.0) -> Node3D:
 	var n := Vector3(verso.x, 0.0, verso.z).normalized()   # dal muro verso la stanza
 	var b := Basis.looking_at(verso.normalized(), Vector3.UP)
-	var l := (load(MODELLO) as PackedScene).instantiate() as Node3D
+	var l := (preload("res://tests/sonda_load.gd").da("scripts/risalita/lampada_muro.gd:21", MODELLO) as PackedScene).instantiate() as Node3D
 	if _vertici.is_empty():
 		for mi in l.find_children("*", "MeshInstance3D", true, false):
 			_vertici.append_array((mi as MeshInstance3D).mesh.get_faces())

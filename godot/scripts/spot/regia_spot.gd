@@ -42,7 +42,7 @@ func _ready() -> void:
 	var inq: Array = _segmento["inquadrature"]
 	_inizio = float(inq[0]["inizio"])
 	_fine = float(inq[-1]["inizio"]) + float(inq[-1]["durata"])
-	_scena = (load(String(_segmento["scena"])) as PackedScene).instantiate()
+	_scena = (preload("res://tests/sonda_load.gd").da("scripts/spot/regia_spot.gd:45", String(_segmento["scena"])) as PackedScene).instantiate()
 	add_child(_scena)
 	_cam = _scena.get_node_or_null(^"Camera") as Camera3D
 	if _cam == null and _scena is Node3D:
@@ -55,7 +55,7 @@ func _ready() -> void:
 		# progresso (chiave "occhio" del filtro), così il battito del video e quello dell'effetto restano in passo
 		_occhio = ColorRect.new()
 		_occhio.name = "OcchioIpnotico"
-		_occhio.set_script(load(SCRIPT_OCCHIO))
+		_occhio.set_script(preload("res://tests/sonda_load.gd").da("scripts/spot/regia_spot.gd:58", SCRIPT_OCCHIO))
 		_occhio.set(&"solo_occhio", true)
 		_scena.add_child(_occhio)
 	_t = -preparazione

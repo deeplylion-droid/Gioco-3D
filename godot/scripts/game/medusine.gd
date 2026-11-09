@@ -834,11 +834,11 @@ func _process(_delta: float) -> void:
 
 func _prepara_grafica() -> void:
 	var n := maxi(numero, 1)
-	_corpi = _multimesh("Corpi", mesh_medusina(), load("res://shaders/medusine.gdshader"), n, 2)
+	_corpi = _multimesh("Corpi", mesh_medusina(), preload("res://tests/sonda_load.gd").da("scripts/game/medusine.gd:837", "res://shaders/medusine.gdshader"), n, 2)
 	(_corpi.material_override as ShaderMaterial).set_shader_parameter(&"luminosita", luminosita)
 	var quad := QuadMesh.new()
 	quad.size = Vector2.ONE
-	_aloni = _multimesh("Aloni", quad, load("res://shaders/medusine_alone.gdshader"), n, 1)
+	_aloni = _multimesh("Aloni", quad, preload("res://tests/sonda_load.gd").da("scripts/game/medusine.gd:841", "res://shaders/medusine_alone.gdshader"), n, 1)
 	(_aloni.material_override as ShaderMaterial).set_shader_parameter(&"luminosita", luminosita_alone)
 
 

@@ -51,7 +51,7 @@ func _ready() -> void:
 	mesh = _mesh
 	if material_override == null:
 		var m := ShaderMaterial.new()
-		m.shader = load("res://shaders/water_stream.gdshader")
+		m.shader = preload("res://tests/sonda_load.gd").da("scripts/player/water_stream.gd:54", "res://shaders/water_stream.gdshader")
 		material_override = m
 
 

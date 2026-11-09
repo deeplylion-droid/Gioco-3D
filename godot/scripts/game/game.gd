@@ -61,7 +61,7 @@ func _ready() -> void:
 		# (al primo avvio la qualità la sceglie la prova automatica, entrando nella sala: QualitaAutomatica)
 		Grafica.valori["qualita_provata"] = false
 	# Contatore delle prestazioni (F3), spento all'avvio.
-	add_child(load("res://scripts/ui/fps_counter.gd").new())
+	add_child(preload("res://tests/sonda_load.gd").da("scripts/game/game.gd:64", "res://scripts/ui/fps_counter.gd").new())
 	# Aberrazione cromatica più leggera di quella dell'addon (frange colorate ai bordi).
 	var post := Grafica.get_node_or_null(^"PostProcessing")
 	if post and post.get_child_count() > 0 and post.get_child(0) is CanvasItem:
@@ -300,7 +300,7 @@ func open_options() -> void:
 	if is_instance_valid(_menu_layer):
 		return
 	_overlay.visible = false
-	_menu_layer = load("res://addons/grafica/menu_opzioni.tscn").instantiate()
+	_menu_layer = preload("res://tests/sonda_load.gd").da("scripts/game/game.gd:303", "res://addons/grafica/menu_opzioni.tscn").instantiate()
 	add_child(_menu_layer)
 	var menu := _menu_layer.get_node(^"Menu")
 	menu.chiuso.connect(func():
@@ -315,7 +315,7 @@ func open_album() -> void:
 	if is_instance_valid(_menu_layer):
 		return
 	_overlay.visible = false
-	_menu_layer = load(SCENE_ALBUM).instantiate()
+	_menu_layer = preload("res://tests/sonda_load.gd").da("scripts/game/game.gd:318", SCENE_ALBUM).instantiate()
 	add_child(_menu_layer)
 	_menu_layer.get_node(^"Album").connect(&"chiuso", func():
 		_menu_layer = null
@@ -329,7 +329,7 @@ func open_controls() -> void:
 	if is_instance_valid(_menu_layer):
 		return
 	_overlay.visible = false
-	_menu_layer = load(SCENE_CONTROLS).instantiate()
+	_menu_layer = preload("res://tests/sonda_load.gd").da("scripts/game/game.gd:332", SCENE_CONTROLS).instantiate()
 	add_child(_menu_layer)
 	_menu_layer.get_node(^"Comandi").connect(&"chiuso", func():
 		_menu_layer = null
@@ -356,7 +356,7 @@ func return_to_title() -> void:
 	Dissolvenza.di(get_tree()).nero()
 	set_paused(false)
 	GameState.reset_progress()
-	await cambia_scena_in_due_tempi(load(SCENE_TITLE) as PackedScene)
+	await cambia_scena_in_due_tempi(preload("res://tests/sonda_load.gd").da("scripts/game/game.gd:359", SCENE_TITLE) as PackedScene)
 	# (fino al cambio di scena fatto: una ripartenza che finisce di aspettare adesso non ricarica il livello)
 	await get_tree().process_frame
 	await get_tree().process_frame

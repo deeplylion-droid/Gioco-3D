@@ -63,7 +63,7 @@ func _ready() -> void:
 	if ResourceLoader.exists(PROVA):
 		_prova = TextureRect.new()
 		_prova.name = "Prova"
-		_prova.texture = load(PROVA)
+		_prova.texture = preload("res://tests/sonda_load.gd").da("addons/grafica/calibrazione_luminosita.gd:66", PROVA)
 		_prova.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		_prova.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		_prova.size_flags_vertical = Control.SIZE_EXPAND_FILL

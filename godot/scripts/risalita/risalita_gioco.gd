@@ -129,8 +129,8 @@ func _ready() -> void:
 	_mat_lamiere = _materiale("MetalPlates013", 2.0)
 	_mat_pericolo = _materiale("PaintedMetal016", 0.6)
 	_mat_giallo = _materiale("PaintedMetal006", 1.0)
-	_mat_giallo.albedo_texture = load("res://assets/ambienti_tecnici/texture/vernice_giallo_Color.jpg")
-	_mat_pav = load("res://assets/fiume_lento/mat_cemento.tres")
+	_mat_giallo.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:132", "res://assets/ambienti_tecnici/texture/vernice_giallo_Color.jpg")
+	_mat_pav = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:133", "res://assets/fiume_lento/mat_cemento.tres")
 	_materiali_strisce()
 	_corpo = StaticBody3D.new()
 	_corpo.name = "Corridoi"
@@ -138,7 +138,7 @@ func _ready() -> void:
 	for c in COLLEZIONABILI:
 		GameState.register_collectible(c[0], c[1])
 	if a_richiesta and not Engine.has_meta(&"risalita_subito") and ResourceLoader.exists(CAMPIONI):
-		_campioni = (load(CAMPIONI).get_meta(&"materiali", []) as Array).duplicate()
+		_campioni = (preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:141", CAMPIONI).get_meta(&"materiali", []) as Array).duplicate()
 		for m in _campioni:
 			(m as Material).get_rid()   # lo shader si crea adesso, non al primo uso
 	# (anche quelli del nastro e della fascia fosforescenti: nella sala all'avvio non c'è un materiale come loro)
@@ -165,7 +165,7 @@ func _ready() -> void:
 		var pos: Array = (GameState.snapshot.get("player", {}) as Dictionary).get("position", [])
 		subito = pos.size() == 3 and _vicino(Vector3(pos[0], pos[1], pos[2]))
 	if subito:
-		_metti_stanze(load(SCENA_FIUME) as PackedScene, load(SCENA_INFERMERIA) as PackedScene, false)
+		_metti_stanze(preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:168", SCENA_FIUME) as PackedScene, preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:168", SCENA_INFERMERIA) as PackedScene, false)
 
 
 # --- pezzi di corridoio --------------------------------------------------------------------------------
@@ -173,10 +173,10 @@ func _ready() -> void:
 func _materiale(nome: String, metri: float) -> StandardMaterial3D:
 	const T := "res://assets/ambienti_tecnici/texture/"
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = load(T + nome + "_Color.jpg")
+	m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:176", T + nome + "_Color.jpg")
 	m.normal_enabled = true
-	m.normal_texture = load(T + nome + "_NormalGL.jpg")
-	m.roughness_texture = load(T + nome + "_Metalness-" + nome + "_Roughness.jpg")
+	m.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:178", T + nome + "_NormalGL.jpg")
+	m.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:179", T + nome + "_Metalness-" + nome + "_Roughness.jpg")
 	m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 	m.metallic_texture = m.roughness_texture
 	m.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE
@@ -503,8 +503,8 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 	var est := xc + 2.0
 	# (le macchie: assets_src/corridoio_fiume/genera_macchie.py; sotto la luce rossa si leggono per luminosità, scure e
 	# bagnate col bordo chiaro di calcare: il verde scuro della muffa da solo non si vedeva)
-	var colature := load("res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_colature.png") as Texture2D
-	var muffa := load("res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_muffa.png") as Texture2D
+	var colature := preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:506", "res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_colature.png") as Texture2D
+	var muffa := preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:507", "res://assets/ambienti_tecnici/corridoio_fiume/texture/macchie_muffa.png") as Texture2D
 	# sotto l'oblò, dal bordo della flangia al pavimento, a sud della Polaroid 13 (che resta fuori dal decal)
 	_decal("ColatureOblo", colature, Vector3(est, Y + 0.7, OBLO_FIUME.z - 0.3), Vector3.LEFT, 0.9, 1.4, Color.WHITE, 1.0)
 	# la muffa accanto all'oblò, verso la scala, e sul muro di fronte, sopra la griglia (sotto i tubi)
@@ -547,8 +547,8 @@ func _arredo_corridoio_fiume(xc: float) -> void:
 				Strati.metti(mi, mi.layers | STRATO_POZZA)
 	var alone := Decal.new()
 	alone.name = "PozzaCorridoioFiumeAlone"
-	alone.texture_albedo = load("res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone.png")
-	alone.texture_orm = load("res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone_orm.png")
+	alone.texture_albedo = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:550", "res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone.png")
+	alone.texture_orm = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:551", "res://assets/ambienti_tecnici/corridoio_fiume/texture/pozza_alone_orm.png")
 	alone.size = Vector3(p.size.x + 0.7, 0.3, p.size.y + 0.45)
 	alone.cull_mask = STRATO_POZZA
 	add_child(alone)
@@ -828,7 +828,7 @@ func _scena_tenuta(percorso: String) -> PackedScene:
 	for r in _tenuti:
 		if r is PackedScene and (r as PackedScene).resource_path == percorso:
 			return r as PackedScene
-	return load(percorso) as PackedScene
+	return preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:831", percorso) as PackedScene
 
 
 ## Le stanze a gioco avviato, coi file già caricati dal thread: il capannone si costruisce a pezzi (nascosto e
@@ -1084,9 +1084,9 @@ func _carica_subito() -> void:
 				_tenuti.append(r)
 		_richiesti.clear()
 	if f == null:
-		f = load(SCENA_FIUME) as PackedScene
+		f = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:1087", SCENA_FIUME) as PackedScene
 	if i == null:
-		i = load(SCENA_INFERMERIA) as PackedScene
+		i = preload("res://tests/sonda_load.gd").da("scripts/risalita/risalita_gioco.gd:1089", SCENA_INFERMERIA) as PackedScene
 	_metti_stanze(f, i, true)
 
 

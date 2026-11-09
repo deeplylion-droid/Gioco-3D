@@ -506,7 +506,7 @@ func _crea_gi(stanza: Node3D) -> void:
 	gi.set_meta(&"stanza", stanza)
 	var percorso := cartella_gi.path_join(String(stanza.name) + ".res")
 	if ResourceLoader.exists(percorso):
-		gi.data = load(percorso)
+		gi.data = preload("res://tests/sonda_load.gd").da("addons/grafica/look_tecnici.gd:509", percorso)
 
 
 ## Cuoce il GI di ogni stanza e lo salva in [member cartella_gi]. Le emissioni si spengono

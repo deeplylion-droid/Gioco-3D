@@ -39,7 +39,7 @@ static func crea(s: Dictionary) -> Decal:
 	var z := x.cross(n).normalized()
 	d.transform = Transform3D(Basis(x, n, z), c)
 	d.size = Vector3(float(s["largo"]), SPESSORE * 2.0, float(s["alto"]))
-	d.texture_albedo = load(String(s["texture"])) as Texture2D
+	d.texture_albedo = preload("res://tests/sonda_load.gd").da("scripts/environment/scarabocchi.gd:42", String(s["texture"])) as Texture2D
 	d.modulate = Color(1, 1, 1, 1.0 - float(s.get("sbiadito", 0.0)))
 	d.albedo_mix = 1.0
 	# niente sfumature in alto e in basso: il disegno si ferma dove finisce la sua scatola

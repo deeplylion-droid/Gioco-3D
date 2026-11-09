@@ -505,11 +505,11 @@ static func _mat_lamiera(tinta: Color, metri: float) -> StandardMaterial3D:
 	if not _materiali.has(chiave):
 		const T := "res://assets/ambienti_tecnici/texture/"
 		var m := StandardMaterial3D.new()
-		m.albedo_texture = load(T + "MetalPlates013_Color.jpg")
+		m.albedo_texture = preload("res://tests/sonda_load.gd").da("scripts/game/oblo_lei.gd:508", T + "MetalPlates013_Color.jpg")
 		m.albedo_color = tinta
 		m.normal_enabled = true
-		m.normal_texture = load(T + "MetalPlates013_NormalGL.jpg")
-		m.roughness_texture = load(T + "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg")
+		m.normal_texture = preload("res://tests/sonda_load.gd").da("scripts/game/oblo_lei.gd:511", T + "MetalPlates013_NormalGL.jpg")
+		m.roughness_texture = preload("res://tests/sonda_load.gd").da("scripts/game/oblo_lei.gd:512", T + "MetalPlates013_Metalness-MetalPlates013_Roughness.jpg")
 		m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 		m.metallic_texture = m.roughness_texture
 		m.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE

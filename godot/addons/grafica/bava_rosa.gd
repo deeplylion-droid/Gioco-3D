@@ -150,7 +150,7 @@ static func _liscio(p: PackedVector3Array, chiuso: bool) -> PackedVector3Array:
 func _materiale() -> ShaderMaterial:
 	if _shader == null:
 		# in un file, così il campione della Risalita (materiali_campione.tres) usa lo stesso shader
-		_shader = load("res://addons/grafica/bava_rosa.gdshader")
+		_shader = preload("res://tests/sonda_load.gd").da("addons/grafica/bava_rosa.gd:153", "res://addons/grafica/bava_rosa.gdshader")
 	var m := ShaderMaterial.new()
 	m.shader = _shader
 	m.set_shader_parameter(&"colore", colore)
