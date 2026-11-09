@@ -3068,17 +3068,20 @@ func _avvia_involucri() -> void:
 func _finisci_involucri() -> void:
 	var t0 := Time.get_ticks_usec()
 	var fotogrammi := 0
-	for lavoro in _involucri_lavori:
+	# (ogni compito aspettato esce subito dall'elenco: se il tunnel esce a metà, _exit_tree aspetta solo gli altri; prima
+	# li riaspettava tutti e un'uscita durante l'attesa scriveva «Invalid Task ID», ricontrollo di enigmi del 9 novembre)
+	while not _involucri_lavori.is_empty():
+		var lavoro: _LavoroInvolucro = _involucri_lavori[0]
 		while not WorkerThreadPool.is_task_completed(lavoro.compito):
 			await get_tree().process_frame
 			fotogrammi += 1
-			# (il tunnel è uscito a metà: i compiti li aspetta _exit_tree)
+			# (il tunnel è uscito a metà: i compiti rimasti li aspetta _exit_tree)
 			if not is_inside_tree():
 				return
 		WorkerThreadPool.wait_for_task_completion(lavoro.compito)
+		_involucri_lavori.pop_front()
 		if not SottomarinoArrediA2._involucri.has(lavoro.mesh):
 			SottomarinoArrediA2._involucri[lavoro.mesh] = lavoro.punti
-	_involucri_lavori.clear()
 	if OS.has_environment("TORRE_TEMPI"):
 		print("tunnel involucri della lampada: pronti dopo %d fotogrammi di attesa (%.1f ms)" % [fotogrammi, (Time.get_ticks_usec() - t0) / 1000.0])
 
