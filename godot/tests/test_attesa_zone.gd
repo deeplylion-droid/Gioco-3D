@@ -76,8 +76,8 @@ func _run() -> void:
 			print("    fotogramma di %.0f ms dopo %.1f s di attesa" % [ms, (Time.get_ticks_msec() - t0) / 1000.0])
 			# (coi tempi accesi: dove cadeva, il process e la fisica del fotogramma)
 			if OS.has_environment("TORRE_TEMPI"):
-				print("      fotogramma %d; ultimo segno: %s; process %.1f ms, fisica %.1f ms, oggetti %d, nodi %d" % [
-						Engine.get_process_frames(), str(Engine.get_meta(&"segno", "nessuno")),
+				print("      fotogramma %d; segni: %s; process %.1f ms, fisica %.1f ms, oggetti %d, nodi %d" % [
+						Engine.get_process_frames(), RiscaldamentoShader.segni_recenti(2) + " (l'ultimo: %s)" % str(Engine.get_meta(&"segno", "nessuno")),
 						Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
 						Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
 						Performance.get_monitor(Performance.OBJECT_COUNT), Performance.get_monitor(Performance.OBJECT_NODE_COUNT)])

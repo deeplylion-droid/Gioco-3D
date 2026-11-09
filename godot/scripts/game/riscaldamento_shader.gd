@@ -461,6 +461,22 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 static func segno(cosa: String) -> void:
 	if _tempi:
 		Engine.set_meta(&"segno", "%d %s" % [Engine.get_process_frames(), cosa])
+		_segni.append([Engine.get_process_frames(), cosa])
+		if _segni.size() > 30:
+			_segni.pop_front()
+
+
+## Gli ultimi segni (al più 30), [fotogramma, cosa], per i fotogrammi lunghi di test_attesa_zone.
+static var _segni: Array = []
+
+
+## I segni degli ultimi [param fotogrammi] fotogrammi, uno per riga.
+static func segni_recenti(fotogrammi := 2) -> String:
+	var out: PackedStringArray = []
+	for s in _segni:
+		if int(s[0]) >= Engine.get_process_frames() - fotogrammi:
+			out.append("%d %s" % [s[0], s[1]])
+	return "; ".join(out) if not out.is_empty() else "nessuno"
 
 
 static var _tempi := OS.has_environment("TORRE_TEMPI")
