@@ -1796,6 +1796,9 @@ func _prepara_triangoli_luci() -> void:
 				var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
 				zona = zona.expand(p + o + v * 0.3).expand(p + o - v * Posa.PORTATA * 2.0)
 		for mi in Posa.mesh_vicine(self, zona, self):
+			# (la lista è presa prima delle attese qui sotto: una mesh liberata nel frattempo si salta)
+			if not is_instance_valid(mi):
+				continue
 			var m: Mesh = (mi as MeshInstance3D).mesh
 			if viste.has(m) or Posa.ha_triangoli(m):
 				continue
