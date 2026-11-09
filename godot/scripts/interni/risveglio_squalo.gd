@@ -598,8 +598,16 @@ func _nascondi_goccia_dopo() -> void:
 		if not is_inside_tree():
 			return
 		await get_tree().process_frame
-	if not _attivo and _goccia:
-		_goccia.visible = false
+	_goccia_disegnata = true
+	if _goccia:
+		_muovi_goccia()
+
+
+## Vero quando la goccia trasparente dell'inizio si è disegnata per [constant FOTOGRAMMI_GOCCIA] fotogrammi: prima
+## [method _muovi_goccia] non la nasconde (la scena parte subito dopo il livello: la nascondeva al primo fotogramma, prima
+## che si disegnasse, e la pipeline si compilava quando compariva; sonda di grafica-2 della 0.3.24, giro senza la
+## schermata di caricamento)
+var _goccia_disegnata := false
 
 
 ## Per quanto si vede la goccia (s), dalla GOCCIA.
@@ -616,7 +624,7 @@ func _muovi_goccia() -> void:
 		return
 	var x := _t - float(tempi.get("goccia", INF))
 	var dentro := _attivo and x >= 0.0 and x < DURATA_GOCCIA
-	_goccia.visible = dentro
+	_goccia.visible = dentro or not _goccia_disegnata
 	var mat := _goccia.material as ShaderMaterial
 	if not dentro:
 		mat.set_shader_parameter(&"forza", 0.0)
