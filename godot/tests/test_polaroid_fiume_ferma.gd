@@ -65,8 +65,8 @@ func _run() -> void:
 	var a := await _fiume(false)
 	await _secondi(3.0)
 	var ra := _p16(a)
-	check(ra.size() == 2, "la P16 c'è")
-	if ra.size() == 2:
+	check(ra.size() == 3, "la P16 c'è")
+	if ra.size() == 3:
 		print("    P16 in %s, fondo a %.2f mm dal pavimento" % [(ra[0] as Vector3).snappedf(0.0001), ra[1] * 1000.0])
 		check(ra[1] >= -0.0001 and ra[1] <= 0.001 and ra[2] == 0, "appoggiata: il fondo a %.2f mm dal pavimento, %d punti dentro" % [ra[1] * 1000.0, ra[2]])
 	a.get_parent().queue_free()
@@ -83,8 +83,8 @@ func _run() -> void:
 	b.visible = true
 	await _secondi(3.0)
 	var rb := _p16(b)
-	check(rb.size() == 2, "la P16 c'è")
-	if rb.size() == 2 and ra.size() == 2:
+	check(rb.size() == 3, "la P16 c'è")
+	if rb.size() == 3 and ra.size() == 3:
 		print("    P16 in %s, fondo a %.2f mm dal pavimento" % [(rb[0] as Vector3).snappedf(0.0001), rb[1] * 1000.0])
 		check(rb[1] >= -0.0001 and rb[1] <= 0.001 and rb[2] == 0, "appoggiata: il fondo a %.2f mm dal pavimento, %d punti dentro" % [rb[1] * 1000.0, rb[2]])
 		check((ra[0] as Vector3).distance_to(rb[0]) < 0.0001, "nello stesso posto di quando il fiume si costruisce acceso (%.2f mm)" % ((ra[0] as Vector3).distance_to(rb[0]) * 1000.0))
