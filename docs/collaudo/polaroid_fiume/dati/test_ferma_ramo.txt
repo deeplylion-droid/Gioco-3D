@@ -1,0 +1,11 @@
+1. Il fiume costruito visibile e acceso
+  ok    la P16 c'è
+    P16 in (-40.55, 0.004, 2.55), a 4.0 mm dal pavimento
+  ok    appoggiata: 4 mm sopra il pavimento (4.0 mm)
+2. Il fiume costruito nascosto e fermo, lasciato così 30 s, poi riacceso
+  ok    da ferma la P16 non si è mossa (aspetta la stanza accesa)
+  ok    la P16 c'è
+    P16 in (-40.55, 0.004, 2.55), a 4.0 mm dal pavimento
+  ok    appoggiata: 4 mm sopra il pavimento (4.0 mm)
+  ok    nello stesso posto di quando il fiume si costruisce acceso (0.00 mm)
+RISULTATO: 6 controlli ok, 0 falliti
