@@ -1486,7 +1486,9 @@ func _luci() -> void:
 	add_child(nodo)
 	# la testa del tunnel e la presa: una lampada sul muro sinistro, prima della porta del bacino (da lì il
 	# giocatore guarda la presa, dove riemerge lei: scelta 1A); luce debole come le altre
-	_lampada(nodo, -2.2, -1.0, piano + 3.0, 3.0)
+	var passi: Array = [_lampada.bind(nodo, -2.2, -1.0, piano + 3.0, 3.0)]
+	# (una lampada a gabbia per passo e un oblò per passo, nello stesso ordine: tutte insieme erano 180-420 ms di gioco
+	# fermo nella costruzione a pezzi, mentre si è nelle condotte; quasi tutto Posa.fissa_al_muro di _a_filo_del_muro)
 	var s := 3.0
 	var lato := 1.0
 	while s < lunghezza():
@@ -1498,33 +1500,39 @@ func _luci() -> void:
 			s += 9.0
 			lato = -lato
 			continue
-		var p := punto(s)
-		var r := destra(s)
-		var muro_p := p + r * lato * (muro - 0.02)
-		var l := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
-		nodo.add_child(l)
-		l.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z)
-		l.look_at(l.global_position - r * lato * 2.0, Vector3.UP)
-		l.rotate_object_local(Vector3.UP, PI)
-		_a_filo_del_muro(l, -r * lato)
-		# (nel giardino dei coralli la luce è verde-azzurra, come nel piano degli ambienti)
-		var coralli := ambiente(s) == 1
-		var g := l.find_child("globo", true, false) as MeshInstance3D
-		if g:
-			g.material_override = _mat_globo_coralli() if coralli else _mat_globo_luci()
-		var o := OmniLight3D.new()
-		o.light_color = Color(0.55, 0.95, 0.85) if coralli else Color(1.0, 0.76, 0.5)
-		o.light_energy = 4.0 * LAMPADE_TONDE
-		o.omni_range = 12.0
-		o.omni_attenuation = 1.3
-		o.shadow_enabled = false
-		nodo.add_child(o)
-		o.global_position = l.global_position - r * lato * 0.4
+		passi.append(_lampada_gabbia.bind(nodo, s, lato))
 		# fra una lampada e l'altra, sull'altro muro, un oblò col mare finto illuminato dietro
 		if not SottomarinoArrediA1.senza_luci_normali(self, s + 4.5):
-			_oblo(nodo, s + 4.5, -lato)
+			passi.append(_oblo.bind(nodo, s + 4.5, -lato))
 		s += 9.0
 		lato = -lato
+	aggiungi_passi(passi)
+
+
+## Una lampada a gabbia di _luci sul muro dal lato [param lato] a [param s], con la sua luce.
+func _lampada_gabbia(nodo: Node3D, s: float, lato: float) -> void:
+	var p := punto(s)
+	var r := destra(s)
+	var muro_p := p + r * lato * (muro - 0.02)
+	var l := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
+	nodo.add_child(l)
+	l.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z)
+	l.look_at(l.global_position - r * lato * 2.0, Vector3.UP)
+	l.rotate_object_local(Vector3.UP, PI)
+	_a_filo_del_muro(l, -r * lato)
+	# (nel giardino dei coralli la luce è verde-azzurra, come nel piano degli ambienti)
+	var coralli := ambiente(s) == 1
+	var g := l.find_child("globo", true, false) as MeshInstance3D
+	if g:
+		g.material_override = _mat_globo_coralli() if coralli else _mat_globo_luci()
+	var o := OmniLight3D.new()
+	o.light_color = Color(0.55, 0.95, 0.85) if coralli else Color(1.0, 0.76, 0.5)
+	o.light_energy = 4.0 * LAMPADE_TONDE
+	o.omni_range = 12.0
+	o.omni_attenuation = 1.3
+	o.shadow_enabled = false
+	nodo.add_child(o)
+	o.global_position = l.global_position - r * lato * 0.4
 
 
 ## Un oblò sul muro (dal lato [param lato]) a [param s]: anello d'ottone e vetro col mare finto illuminato dietro,
