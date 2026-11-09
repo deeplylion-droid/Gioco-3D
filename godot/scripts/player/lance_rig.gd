@@ -62,7 +62,19 @@ extends Node3D
 		left_hand_mirror = value
 		_rebuild()
 
+## Le mani col materiale del modello della lancia (la sua prima superficie: colore, normali, ruvidezza e metallo da
+## texture), con texture uniformi che rifanno il colore e la ruvidezza dei loro materiali. Lo shader e quindi le
+## pipeline sono quelli della canna, che è sempre in vista e si compilano con ogni luce del gioco: il guanto sta sotto il
+## bordo dello schermo ed entra in vista solo guardando in basso, e col materiale suo compilava lì, a gioco fermo
+## (test_riscaldamento_pipeline, casi 2 e 4, 7-8 novembre). La mano vecchia a sinistra, sempre in vista, lo faceva per
+## caso per tutte e due.
+@export var mani_col_materiale_del_modello := false:
+	set(value):
+		mani_col_materiale_del_modello = value
+		_rebuild()
+
 var _vis: Node3D
+var _modello: Node3D
 
 
 func _ready() -> void:
@@ -90,6 +102,7 @@ func _rebuild() -> void:
 		var m := model_scene.instantiate() as Node3D
 		m.transform = get_alignment()
 		_vis.add_child(m)
+		_modello = m
 	_add_hand(right_hand_scene, right_hand_position, right_hand_rotation, right_hand_mirror)
 	_add_hand(left_hand_scene, left_hand_position, left_hand_rotation, left_hand_mirror)
 	_set_layers(_vis)
@@ -104,6 +117,42 @@ func _add_hand(scene: PackedScene, pos: Vector3, rot_deg: Vector3, mirror: bool)
 		b = Basis.from_scale(Vector3(-1, 1, 1)) * b
 	h.transform = Transform3D(b, pos)
 	_vis.add_child(h)
+	if mani_col_materiale_del_modello:
+		_materiale_del_modello(h)
+
+
+func _materiale_del_modello(mano: Node3D) -> void:
+	var base: StandardMaterial3D = null
+	if is_instance_valid(_modello):
+		for n in _modello.find_children("*", "MeshInstance3D", true, false):
+			var mm := (n as MeshInstance3D).mesh
+			if mm and mm.get_surface_count() > 0 and mm.surface_get_material(0) is StandardMaterial3D:
+				base = mm.surface_get_material(0) as StandardMaterial3D
+				break
+	if base == null:
+		return
+	for n in mano.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for k in mi.mesh.get_surface_count():
+			var suo := mi.mesh.surface_get_material(k) as BaseMaterial3D
+			var nuovo := base.duplicate() as StandardMaterial3D
+			var colore := suo.albedo_color if suo else Color.WHITE
+			nuovo.albedo_color = Color.WHITE
+			nuovo.albedo_texture = _tinta(colore)
+			# canali come nel modello: ruvidezza nel verde, metallo nel blu (fattori a 1: valgono le texture)
+			nuovo.roughness = 1.0
+			nuovo.metallic = 1.0
+			var tex_rm := _tinta(Color(0.0, suo.roughness if suo else 0.6, suo.metallic if suo else 0.0))
+			nuovo.roughness_texture = tex_rm
+			nuovo.metallic_texture = tex_rm
+			nuovo.normal_texture = _tinta(Color(0.5, 0.5, 1.0))
+			mi.set_surface_override_material(k, nuovo)
+
+
+static func _tinta(c: Color) -> ImageTexture:
+	var img := Image.create(4, 4, false, Image.FORMAT_RGBA8)
+	img.fill(c)
+	return ImageTexture.create_from_image(img)
 
 
 ## Il viewmodel sta sul livello di rendering 2 ("viewmodel") e non fa ombre strane.
