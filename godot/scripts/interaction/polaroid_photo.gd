@@ -58,12 +58,22 @@ func _adagia_dopo() -> void:
 	var radice := await _aspetta_zona()
 	if not is_inside_tree():
 		return
-	for i in 4:
-		await get_tree().physics_frame
-	for i in photo:
-		await get_tree().process_frame
-	if is_inside_tree():
-		adagia(radice)
+	if not await _aspetta(4, true) or not await _aspetta(photo):
+		return
+	adagia(radice)
+
+
+## Aspetta [param quanti] fotogrammi (di fisica con [param fisica]); falso se intanto la foto è uscita dalla scena (la
+## sua zona tolta a metà della preparazione).
+func _aspetta(quanti: int, fisica := false) -> bool:
+	for i in quanti:
+		if not is_inside_tree():
+			return false
+		if fisica:
+			await get_tree().physics_frame
+		else:
+			await get_tree().process_frame
+	return is_inside_tree()
 
 
 ## Aspetta che le zone che la contengono siano costruite; torna la più vicina (null se nessuna).
@@ -103,10 +113,8 @@ static func metti(padre: Node3D, foto: int, pos: Vector3, gradi: float, posata :
 func _appoggia() -> void:
 	# (nelle stanze costruite a pezzi mentre si gioca, come il fiume, il pavimento può arrivare dopo: si aspetta la fine)
 	var radice := await _aspetta_zona()
-	if not is_inside_tree():
+	if not await _aspetta(2, true):
 		return
-	await get_tree().physics_frame
-	await get_tree().physics_frame
 	# (il fiume caricato a gioco avviato entra nella scena prima del suo pavimento: si riprova finché c'è, al massimo
 	# 20 secondi, poi Posa dice che non c'è niente sotto. I 20 secondi contano solo con la stanza accesa: costruita
 	# nascosta e ferma, come il fiume, i suoi corpi sono fuori dalla fisica e le sue mesh nascoste, quindi si aspetta
@@ -125,9 +133,7 @@ func _appoggia() -> void:
 			break
 		await get_tree().create_timer(0.17, false, true).timeout
 	if is_inside_tree() and Posa.appoggia_a_terra(self, 0.004):
-		for k in photo:
-			await get_tree().process_frame
-		if is_inside_tree():
+		if await _aspetta(photo):
 			adagia(radice)
 
 
@@ -331,9 +337,7 @@ static func _back_material() -> StandardMaterial3D:
 
 
 func _snap() -> void:
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	if not is_inside_tree():
+	if not await _aspetta(2, true):
 		return
 	var space := get_world_3d().direct_space_state
 	var from := global_position + Vector3(0, 0.6, 0)
@@ -354,9 +358,7 @@ func _snap() -> void:
 	# Polaroid05, controllo di posizionamento del 22 ottobre) la pendenza del centro non basta e tocca coi bordi. Prima si
 	# guardavano 4 punti a 7 cm dal centro, fuori dalla foto, e la P05 e la P08 restavano a 7-8 mm. (Una foto per
 	# fotogramma: Posa.mesh_vicine guarda tutto l'albero, qualche ms.)
-	for k in photo:
-		await get_tree().process_frame
-	if is_inside_tree():
+	if await _aspetta(photo):
 		adagia()
 
 
