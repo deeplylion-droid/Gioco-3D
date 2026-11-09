@@ -80,6 +80,14 @@ func _visore() -> CanvasLayer:
 	return null
 
 
+## Il suggerimento sotto la foto nel visore [param v], come si legge a schermo (tradotto nella lingua del gioco).
+func _suggerimento(v: CanvasLayer) -> String:
+	for n in v.find_children("*", "Label", true, false):
+		var l := n as Label
+		return l.atr(l.text) if l.auto_translate_mode != Node.AUTO_TRANSLATE_MODE_DISABLED else l.text
+	return ""
+
+
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	GameState.save_to_disk = false
@@ -171,6 +179,9 @@ func _run() -> void:
 	await _joy(JOY_BUTTON_A)
 	await _frames(3)
 	check(_visore() != null, "il bottone A del joypad riapre la foto")
+	# (#128, scelta A dell'utente) il suggerimento elenca anche i bottoni del joypad, come i consigli del caricamento
+	var sugg := _suggerimento(_visore()) if _visore() else ""
+	check(sugg == "E · Spazio · clic · A · B per continuare", "sotto la foto \"E · Spazio · clic · A · B per continuare\" (%s)" % sugg)
 	await _frames(30)
 	await _joy(JOY_BUTTON_START)
 	await _frames(3)
@@ -203,6 +214,19 @@ func _run() -> void:
 	check(conteggio != null and conteggio.text == "5 of 16", "in inglese il contatore è \"5 of 16\" (%s)" % (conteggio.text if conteggio else "-"))
 	var indietro := album.find_child("Indietro", true, false) as Button if album else null
 	check(indietro != null and indietro.text == "BACK", "e \"Indietro\" è \"BACK\"")
+	# la foto riaperta dall'album in inglese: il suggerimento coi bottoni del joypad, tradotto
+	if album:
+		(album.cornici()[0] as Control).grab_focus()
+	await _frames(2)
+	await _joy(JOY_BUTTON_A)
+	await _frames(3)
+	var v_en := _visore()
+	var sugg_en := _suggerimento(v_en) if v_en else ""
+	check(sugg_en == "E · Space · click · A · B to continue", "in inglese \"E · Space · click · A · B to continue\" (%s)" % sugg_en)
+	if v_en:
+		await _frames(30)
+		await _joy(JOY_BUTTON_B)
+		await _frames(3)
 	if album:
 		album.chiudi()
 	await _frames(3)
