@@ -1,0 +1,59 @@
+extends Node
+## Sonda temporanea (ricontrollo torre-fotogrammi): dalle partenze torre e inseguimento del menu di prova, 5 morti di
+## fila; a ogni ripartenza memoria, oggetti, cache dei varchi e della soglia, e il fotogramma più lungo dalla morte.
+const MORTI := 5
+
+func _ready() -> void:
+	_run.call_deferred()
+
+func _aspetta() -> float:
+	var peggiore := 0.0
+	var t0 := Time.get_ticks_msec()
+	var prima := Time.get_ticks_usec()
+	while Time.get_ticks_msec() - t0 < 900000:
+		await get_tree().process_frame
+		var ora := Time.get_ticks_usec()
+		peggiore = maxf(peggiore, (ora - prima) / 1000.0)
+		prima = ora
+		var s := get_tree().current_scene
+		if s and s.scene_file_path != "res://scenes/ui/caricamento.tscn" and GameState.player \
+				and is_instance_valid(GameState.player) and not GameState.is_restoring() and not GameState.is_dying:
+			break
+	await Game.aspetta_caricamenti(get_tree().current_scene, 120.0)
+	var t1 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t1 < 3000:
+		await get_tree().process_frame
+	return peggiore
+
+func _run() -> void:
+	Game.pause_on_focus_loss = false
+	GameState.save_to_disk = false
+	var sala_gd := load("res://scripts/game/sala_principale.gd")
+	for id in ["torre", "inseguimento"]:
+		print("== ", id, " (cache vuote)")
+		SalaInseguimento._varco_cache.clear()
+		sala_gd._uv_cache.clear()
+		MenuProva.parti(get_tree(), id)
+		await _aspetta()
+		var base := 0.0
+		var base_ogg := 0
+		for i in MORTI:
+			if i == 0:
+				# la prima morte a cache vuote
+				SalaInseguimento._varco_cache.clear()
+				sala_gd._uv_cache.clear()
+			var t := Time.get_ticks_msec()
+			GameState.kill_player()
+			var pegg := await _aspetta()
+			var mb := Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0
+			var ogg := int(Performance.get_monitor(Performance.OBJECT_COUNT))
+			if i == 1:
+				base = mb
+				base_ogg = ogg
+			print("SONDA %s morte %d (%s): %.2f MB, %d oggetti, cache varchi %d, cache soglia %d, fotogramma più lungo %.0f ms, ripresa in %.1f s" % [
+				id, i + 1, "cache vuote" if i == 0 else "cache piene", mb, ogg, SalaInseguimento._varco_cache.size(),
+				sala_gd._uv_cache.size(), pegg, (Time.get_ticks_msec() - t) / 1000.0])
+		var mb_fine := Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0
+		print("SONDA %s crescita dalla 2a alla %da morte: %+.2f MB per morte, %+.1f oggetti per morte" % [id, MORTI,
+				(mb_fine - base) / (MORTI - 2), (int(Performance.get_monitor(Performance.OBJECT_COUNT)) - base_ogg) / float(MORTI - 2)])
+	Game.esci(0)

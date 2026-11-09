@@ -1,0 +1,10 @@
+attesa1: uscita 1 in 30 s; RISULTATO: 5 controlli ok, 1 falliti
+attesa2: uscita 0 in 13 s; RISULTATO: 6 controlli ok, 0 falliti
+attesa3: uscita 1 in 293 s; RISULTATO: 5 controlli ok, 1 falliti
+confronto 6aaa8373 1: 1 KO  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (1 sopra, 0 noti; il peggiore 108 ms su 924) | mostra torre: process 6.5 ms, visible 0.2 ms, completa 4.8 ms
+confronto 6aaa8373 2: 0 ok  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (0 sopra, 0 noti; il peggiore 66 ms su 924) | mostra torre: process 6.5 ms, visible 0.2 ms, completa 4.7 ms
+confronto 6aaa8373 3: 0 ok  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (0 sopra, 0 noti; il peggiore 91 ms su 923) | mostra torre: process 6.3 ms, visible 0.3 ms, completa 5.1 ms
+confronto e3104cd2 1: 0 ok  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (1 sopra, 1 noti; il peggiore 103 ms su 921) | mostra torre: process 6.3 ms, visible 0.3 ms, completa 23.6 ms
+confronto e3104cd2 2: 0 ok  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (0 sopra, 1 noti; il peggiore 92 ms su 922) | mostra torre: process 6.4 ms, visible 0.3 ms, completa 34.7 ms
+confronto e3104cd2 3: 0 ok  mentre aspetta nessun fotogramma sopra 100 ms oltre i casi noti (0 sopra, 1 noti; il peggiore 98 ms su 920) | mostra torre: process 6.4 ms, visible 0.3 ms, completa 30.9 ms
+confronto FINE

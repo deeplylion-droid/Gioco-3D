@@ -1,0 +1,52 @@
+extends Node
+## Sonda temporanea (ricontrollo torre-fotogrammi): impronta delle facce della struttura dell'inseguimento e mappa uv
+## della soglia, da confrontare fra main e il branch.
+func _ready() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	Game.pause_on_focus_loss = false
+	GameState.save_to_disk = false
+	var scena := load("res://scenes/sala/inseguimento/sala_inseguimento.tscn") as PackedScene
+	for modo in ["tutta", "pezzi"]:
+		var ins := scena.instantiate()
+		ins.set(&"crea_luci", false)
+		if modo == "pezzi":
+			if not (&"costruzione_a_pezzi" in ins):
+				continue
+			ins.set(&"costruzione_a_pezzi", true)
+		add_child(ins)
+		if modo == "pezzi":
+			await ins.call(&"costruisci_a_pezzi", 4.0)
+		else:
+			await get_tree().process_frame
+		var glb := ins.get_node_or_null(^"InseguimentoStruttura")
+		var ctx := HashingContext.new()
+		ctx.start(HashingContext.HASH_MD5)
+		var nf := 0
+		var nforme := 0
+		for sb in glb.find_children("*", "StaticBody3D", true, false):
+			for cs in sb.get_children():
+				if cs is CollisionShape3D and (cs as CollisionShape3D).shape is ConcavePolygonShape3D:
+					var f := ((cs as CollisionShape3D).shape as ConcavePolygonShape3D).get_faces()
+					ctx.update(str(glb.get_path_to(cs)).to_utf8_buffer())
+					ctx.update(f.to_byte_array())
+					nf += f.size() / 3
+					nforme += 1
+		print("SONDA facce %s: %d forme, %d facce, md5 %s" % [modo, nforme, nf, ctx.finish().hex_encode()])
+		ins.queue_free()
+		await get_tree().process_frame
+	var sala := (load("res://scenes/sala_principale.tscn") as PackedScene).instantiate()
+	sala.process_mode = Node.PROCESS_MODE_DISABLED
+	add_child(sala)
+	var pav := sala.find_child("sala_pavimento", true, false) as MeshInstance3D
+	var m: Array = sala.get_script().call(&"_uv_pavimento", pav, Vector2(19.9, -15.0))
+	print("SONDA uv: %s | %s | %s" % [str(m.slice(0, 3)), str(m[3]), str(m[4])])
+	var lastra: MeshInstance3D = sala.get_script().call(&"chiudi_soglia_torre", Node3D.new(), pav)
+	var ar := lastra.mesh.surface_get_arrays(0)
+	var c2 := HashingContext.new()
+	c2.start(HashingContext.HASH_MD5)
+	c2.update((ar[Mesh.ARRAY_VERTEX] as PackedVector3Array).to_byte_array())
+	c2.update((ar[Mesh.ARRAY_TEX_UV] as PackedVector2Array).to_byte_array())
+	print("SONDA soglia: %d vertici, md5 %s, materiale %s" % [(ar[Mesh.ARRAY_VERTEX] as PackedVector3Array).size(), c2.finish().hex_encode(), str(lastra.material_override.resource_path if lastra.material_override else "nessuno")])
+	get_tree().quit(0)

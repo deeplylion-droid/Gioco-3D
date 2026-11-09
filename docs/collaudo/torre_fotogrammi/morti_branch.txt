@@ -1,0 +1,12 @@
+SONDA torre morte 1 (cache vuote): 1974.67 MB, 15448 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1431 ms, ripresa in 5.1 s
+SONDA torre morte 2 (cache piene): 1974.68 MB, 15449 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1574 ms, ripresa in 4.7 s
+SONDA torre morte 3 (cache piene): 1974.68 MB, 15450 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1595 ms, ripresa in 4.8 s
+SONDA torre morte 4 (cache piene): 1974.69 MB, 15451 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1614 ms, ripresa in 4.8 s
+SONDA torre morte 5 (cache piene): 1974.69 MB, 15452 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1652 ms, ripresa in 4.8 s
+SONDA torre crescita dalla 2a alla 5a morte: +0.00 MB per morte, +1.0 oggetti per morte
+SONDA inseguimento morte 1 (cache vuote): 1974.73 MB, 15459 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1681 ms, ripresa in 5.3 s
+SONDA inseguimento morte 2 (cache piene): 1974.73 MB, 15460 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1527 ms, ripresa in 4.7 s
+SONDA inseguimento morte 3 (cache piene): 1974.73 MB, 15461 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1652 ms, ripresa in 4.9 s
+SONDA inseguimento morte 4 (cache piene): 1974.73 MB, 15462 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1291 ms, ripresa in 4.4 s
+SONDA inseguimento morte 5 (cache piene): 1974.73 MB, 15463 oggetti, cache varchi 10, cache soglia 1, fotogramma più lungo 1291 ms, ripresa in 4.4 s
+SONDA inseguimento crescita dalla 2a alla 5a morte: +0.00 MB per morte, +1.0 oggetti per morte

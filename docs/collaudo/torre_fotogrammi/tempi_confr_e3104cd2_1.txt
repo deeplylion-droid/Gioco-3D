@@ -1,0 +1,105 @@
+-- fine fotogramma dopo il passo 626 (71 ms di passi)
+-- fine fotogramma dopo il passo 627 (37 ms di passi)
+inseguimento passo 0 (_modello(struttura)): 77.5 ms
+    fotogramma di 103 ms dopo 6.5 s di attesa
+inseguimento passo 1 (<anonymous lambda>): 0.0 ms
+inseguimento passo 2 (<anonymous lambda>): 0.0 ms
+inseguimento passo 3 (<anonymous lambda>): 0.0 ms
+inseguimento passo 4 (<anonymous lambda>): 0.0 ms
+inseguimento passo 5 (<anonymous lambda>): 0.0 ms
+inseguimento passo 6 (<anonymous lambda>): 0.0 ms
+inseguimento passo 7 (<anonymous lambda>): 0.0 ms
+inseguimento passo 8 (<anonymous lambda>): 0.0 ms
+inseguimento passo 9 (<anonymous lambda>): 0.0 ms
+inseguimento passo 10 (<anonymous lambda>): 0.0 ms
+inseguimento passo 11 (<anonymous lambda>): 0.0 ms
+inseguimento passo 12 (_modello(tubi)): 0.1 ms
+inseguimento passo 13 (<anonymous lambda>): 0.0 ms
+inseguimento passo 14 (<anonymous lambda>): 0.0 ms
+inseguimento passo 15 (<anonymous lambda>): 0.0 ms
+inseguimento passo 16 (<anonymous lambda>): 0.0 ms
+inseguimento passo 17 (<anonymous lambda>): 0.0 ms
+inseguimento passo 18 (<anonymous lambda>): 0.0 ms
+inseguimento passo 19 (<anonymous lambda>): 0.0 ms
+inseguimento passo 20 (_modello(prop)): 0.2 ms
+inseguimento passo 21 (<anonymous lambda>): 0.0 ms
+inseguimento passo 22 (<anonymous lambda>): 0.0 ms
+inseguimento passo 23 (<anonymous lambda>): 0.0 ms
+inseguimento passo 24 (<anonymous lambda>): 0.0 ms
+inseguimento passo 25 (<anonymous lambda>): 0.0 ms
+inseguimento passo 26 (_modello(mobili)): 0.1 ms
+inseguimento passo 27 (<anonymous lambda>): 0.0 ms
+inseguimento passo 28 (<anonymous lambda>): 0.0 ms
+inseguimento passo 29 (<anonymous lambda>): 0.0 ms
+inseguimento passo 30 (<anonymous lambda>): 0.0 ms
+inseguimento passo 31 (<anonymous lambda>): 0.0 ms
+inseguimento passo 32 (<anonymous lambda>): 0.0 ms
+inseguimento passo 33 (<anonymous lambda>): 0.0 ms
+inseguimento passo 34 (_tubi): 4.2 ms
+inseguimento passo 35 (_acque): 0.2 ms
+inseguimento passo 36 (_veli_bocche): 1.2 ms
+inseguimento passo 37 (_paratie): 0.2 ms
+inseguimento passo 38 (_grata): 0.0 ms
+inseguimento passo 39 (_scala): 0.1 ms
+inseguimento passo 40 (_fondo_porta): 0.4 ms
+inseguimento passo 41 (_checkpoint): 0.1 ms
+inseguimento passo 42 (_scolo_zone): 0.1 ms
+inseguimento passo 43 (_bacino): 0.0 ms
+inseguimento passo 44 (_lei_crea): 1.4 ms
+inseguimento passo 45 (_lei_parti): 0.1 ms
+inseguimento passo 46 (_lei_morbida): 4.2 ms
+inseguimento passo 47 (<anonymous lambda>): 2.7 ms
+inseguimento passo 48 (<anonymous lambda>): 1.3 ms
+inseguimento passo 49 (<anonymous lambda>): 1.1 ms
+inseguimento passo 50 (<anonymous lambda>): 0.9 ms
+inseguimento passo 51 (<anonymous lambda>): 1.0 ms
+inseguimento passo 52 (<anonymous lambda>): 1.3 ms
+inseguimento passo 53 (<anonymous lambda>): 1.1 ms
+inseguimento passo 54 (<anonymous lambda>): 1.1 ms
+inseguimento passo 55 (<anonymous lambda>): 1.2 ms
+inseguimento passo 56 (<anonymous lambda>): 1.2 ms
+inseguimento passo 57 (<anonymous lambda>): 1.4 ms
+inseguimento passo 58 (<anonymous lambda>): 1.1 ms
+inseguimento passo 59 (<anonymous lambda>): 1.3 ms
+inseguimento passo 60 (<anonymous lambda>): 4.6 ms
+inseguimento passo 61 (<anonymous lambda>): 0.5 ms
+inseguimento passo 62 (<anonymous lambda>): 0.1 ms
+inseguimento passo 63 (<anonymous lambda>): 0.1 ms
+inseguimento passo 64 (<anonymous lambda>): 0.1 ms
+inseguimento passo 65 (<anonymous lambda>): 0.1 ms
+inseguimento passo 66 (_luci): 7.2 ms
+inseguimento passo 67 (<anonymous lambda>): 1.3 ms
+inseguimento passo 68 (<anonymous lambda>): 0.2 ms
+inseguimento passo 69 (<anonymous lambda>): 0.2 ms
+inseguimento passo 70 (<anonymous lambda>): 0.2 ms
+inseguimento passo 71 (<anonymous lambda>): 0.1 ms
+inseguimento passo 72 (<anonymous lambda>): 0.1 ms
+inseguimento passo 73 (<anonymous lambda>): 0.1 ms
+inseguimento passo 74 (<anonymous lambda>): 0.1 ms
+inseguimento passo 75 (<anonymous lambda>): 0.1 ms
+inseguimento passo 76 (<anonymous lambda>): 0.1 ms
+inseguimento passo 77 (<anonymous lambda>): 0.1 ms
+inseguimento passo 78 (<anonymous lambda>): 0.1 ms
+inseguimento passo 79 (<anonymous lambda>): 0.0 ms
+inseguimento passo 80 (<anonymous lambda>): 0.0 ms
+inseguimento passo 81 (<anonymous lambda>): 0.0 ms
+inseguimento passo 82 (<anonymous lambda>): 0.1 ms
+inseguimento passo 83 (<anonymous lambda>): 0.1 ms
+inseguimento passo 84 (<anonymous lambda>): 0.1 ms
+inseguimento passo 85 (<anonymous lambda>): 0.0 ms
+inseguimento passo 86 (<anonymous lambda>): 0.1 ms
+inseguimento passo 87 (<anonymous lambda>): 0.0 ms
+inseguimento passo 88 (<anonymous lambda>): 0.0 ms
+inseguimento passo 89 (<anonymous lambda>): 0.0 ms
+inseguimento passo 90 (<anonymous lambda>): 0.1 ms
+inseguimento passo 91 (<anonymous lambda>): 0.1 ms
+inseguimento passo 92 (<anonymous lambda>): 0.0 ms
+inseguimento passo 93 (<anonymous lambda>): 0.0 ms
+inseguimento passo 94 (<anonymous lambda>): 0.1 ms
+inseguimento passo 95 (<anonymous lambda>): 0.0 ms
+inseguimento passo 96 (<anonymous lambda>): 0.1 ms
+inseguimento passo 97 (<anonymous lambda>): 0.1 ms
+inseguimento passo 98 (<anonymous lambda>): 0.0 ms
+inseguimento passo 99 (<anonymous lambda>): 0.1 ms
+mostra torre: process 6.3 ms, visible 0.3 ms, completa 23.6 ms
+  noto  _modello(struttura): 77 ms (instantiate di inseguimento_struttura.glb in un passo: da dividere il GLB, con ambienti, 25 ottobre)
