@@ -1,0 +1,178 @@
+Ricontrollo di lavoro/tunnel-fotogrammi-33 90504558 (0.3.26, enigmi, 10 novembre): le righe dei log. Vedi LEGGIMI.md.
+
+--- fot_ins_1
+FOTOGRAMMA: inseguimento, si gioca a 105.18 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 1, carica: 35853.4 ms a 105.19 s; segni: [fotogramma 9835: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 9835 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 9835 disegna_fuori_vista EnigmaGiocattoli: _came
+FOTOGRAMMA costruzione 1, carica: 124.2 ms a 105.31 s; segni: [fotogramma 9836: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 9835 disegna_fuor
+FOTOGRAMMA costruzione 1: tunnel pronto a 112.37 s (0 fotogrammi per fase: { "1 carica": 237, "1 entra": 1, "1 passi": 346, "1 dopo i passi": 259, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 125.85 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 2, carica: 1122.7 ms a 125.86 s; segni: [fotogramma 12139: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 12139 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 12139 disegna_fuori_vista EnigmaGiocattoli: _ca
+FOTOGRAMMA costruzione 2, carica: 42.0 ms a 125.90 s; segni: [fotogramma 12140: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 12139 disegna_fuo
+FOTOGRAMMA costruzione 2, passi: 34.1 ms a 128.55 s; segni: [fotogramma 12484: tunnel segnato 31.1 ms (tunnel dopo i triangoli _pesce_mensola_piede 15.5 ms, tunnel passo _triangoli_poi 15.6 ms); fotogramma prima: 0.0 ms (niente)] | 12482 tunnel dopo i triangoli _pesce_mensola_gap 3.3 ms; 12482 tunnel passo _triangoli_poi 3.3 ms; 12484 tunnel dopo i triangoli _pesce_mensola_piede 15.5 ms; 12484 tunnel passo _triangoli
+FOTOGRAMMA costruzione 2: tunnel pronto a 131.61 s (0 fotogrammi per fase: { "1 carica": 237, "1 entra": 1, "1 passi": 346, "1 dopo i passi": 259, "1 pronto": 1452, "2 carica": 2, "2 entra": 1, "2 passi": 407, "2 dopo i passi": 251, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO inseguimento: fotogrammi sopra 33 ms 5; il più lungo per costruzione e fase { "1 carica": 35853.392, "2 carica": 1122.712, "2 passi": 34.133 }; fotogrammi per fase { "1 carica": 237, "1 entra": 1, "1 passi": 346, "1 dopo i passi": 259, "1 pronto": 1452, "2 carica": 2, "2 entra": 1, "2 passi": 407, "2 dopo i passi": 251, "2 pronto": 1443 }
+FOTOGRAMMA: MASSIMI inseguimento (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 124.2, "1 entra": 7.4, "1 passi": 20.2, "1 dopo i passi": 16.9, "1 pronto": 14.6, "2 carica": 42.0, "2 entra": 15.5, "2 passi": 34.1, "2 dopo i passi": 24.0, "2 pronto": 27.5 }
+--- fot_ins_2
+FOTOGRAMMA: inseguimento, si gioca a 7.61 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 1, carica: 3429.2 ms a 7.62 s; segni: [fotogramma 574: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 574 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 574 disegna_fuori_vista EnigmaGiocattoli: _camera 0.1
+FOTOGRAMMA costruzione 1, carica: 40.8 ms a 7.66 s; segni: [fotogramma 575: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 574 disegna_fuori_vis
+FOTOGRAMMA costruzione 1: tunnel pronto a 13.02 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 353, "1 dopo i passi": 244, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 26.24 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 2, carica: 957.6 ms a 26.25 s; segni: [fotogramma 2634: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2634 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2634 disegna_fuori_vista EnigmaGiocattoli: _camera 
+FOTOGRAMMA costruzione 2, carica: 34.4 ms a 26.28 s; segni: [fotogramma 2635: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 2634 disegna_fuori_
+FOTOGRAMMA costruzione 2: tunnel pronto a 31.45 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 353, "1 dopo i passi": 244, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 382, "2 dopo i passi": 233, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO inseguimento: fotogrammi sopra 33 ms 4; il più lungo per costruzione e fase { "1 carica": 3429.203, "2 carica": 957.585 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 353, "1 dopo i passi": 244, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 382, "2 dopo i passi": 233, "2 pronto": 1442 }
+FOTOGRAMMA: MASSIMI inseguimento (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 40.8, "1 entra": 12.9, "1 passi": 18.4, "1 dopo i passi": 18.1, "1 pronto": 15.5, "2 carica": 34.4, "2 entra": 14.8, "2 passi": 21.2, "2 dopo i passi": 19.3, "2 pronto": 15.4 }
+--- fot_ins_3
+FOTOGRAMMA: inseguimento, si gioca a 7.52 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 1, carica: 3448.5 ms a 7.53 s; segni: [fotogramma 566: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 566 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 566 disegna_fuori_vista EnigmaGiocattoli: _camera 0.1
+FOTOGRAMMA costruzione 1, carica: 43.4 ms a 7.57 s; segni: [fotogramma 567: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 566 disegna_fuori_vis
+FOTOGRAMMA costruzione 1: tunnel pronto a 13.55 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 400, "1 dopo i passi": 260, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 26.51 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 2, carica: 923.8 ms a 26.51 s; segni: [fotogramma 2688: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2688 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2688 disegna_fuori_vista EnigmaGiocattoli: _camera 
+FOTOGRAMMA costruzione 2, carica: 38.9 ms a 26.55 s; segni: [fotogramma 2689: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 2688 disegna_fuori_
+FOTOGRAMMA costruzione 2: tunnel pronto a 32.56 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 400, "1 dopo i passi": 260, "1 pronto": 1450, "2 carica": 2, "2 entra": 1, "2 passi": 430, "2 dopo i passi": 254, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO inseguimento: fotogrammi sopra 33 ms 4; il più lungo per costruzione e fase { "1 carica": 3448.462, "2 carica": 923.795 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 400, "1 dopo i passi": 260, "1 pronto": 1450, "2 carica": 2, "2 entra": 1, "2 passi": 430, "2 dopo i passi": 254, "2 pronto": 1438 }
+FOTOGRAMMA: MASSIMI inseguimento (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 43.4, "1 entra": 12.8, "1 passi": 21.3, "1 dopo i passi": 19.8, "1 pronto": 15.3, "2 carica": 38.9, "2 entra": 16.1, "2 passi": 17.3, "2 dopo i passi": 26.3, "2 pronto": 16.2 }
+--- fot_ins_4
+FOTOGRAMMA: inseguimento, si gioca a 6.87 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 1, carica: 3305.6 ms a 6.88 s; segni: [fotogramma 494: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 494 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 494 disegna_fuori_vista EnigmaGiocattoli: _camera 0.1
+FOTOGRAMMA costruzione 1, carica: 49.8 ms a 6.93 s; segni: [fotogramma 495: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 494 disegna_fuori_vis
+FOTOGRAMMA costruzione 1: tunnel pronto a 12.61 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 404, "1 dopo i passi": 249, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 25.85 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 2, carica: 1001.3 ms a 25.86 s; segni: [fotogramma 2597: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2597 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2597 disegna_fuori_vista EnigmaGiocattoli: _camera
+FOTOGRAMMA costruzione 2, carica: 34.6 ms a 25.90 s; segni: [fotogramma 2598: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 2597 disegna_fuori_
+FOTOGRAMMA costruzione 2: tunnel pronto a 31.92 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 404, "1 dopo i passi": 249, "1 pronto": 1438, "2 carica": 2, "2 entra": 1, "2 passi": 419, "2 dopo i passi": 261, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO inseguimento: fotogrammi sopra 33 ms 4; il più lungo per costruzione e fase { "1 carica": 3305.565, "2 carica": 1001.272 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 404, "1 dopo i passi": 249, "1 pronto": 1438, "2 carica": 2, "2 entra": 1, "2 passi": 419, "2 dopo i passi": 261, "2 pronto": 1446 }
+FOTOGRAMMA: MASSIMI inseguimento (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 49.8, "1 entra": 15.8, "1 passi": 17.5, "1 dopo i passi": 26.1, "1 pronto": 17.1, "2 carica": 34.6, "2 entra": 15.4, "2 passi": 24.6, "2 dopo i passi": 23.5, "2 pronto": 17.2 }
+--- fot_ins_5
+FOTOGRAMMA: inseguimento, si gioca a 7.48 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 1, carica: 3551.7 ms a 7.48 s; segni: [fotogramma 543: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 543 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 543 disegna_fuori_vista EnigmaGiocattoli: _camera 0.2
+FOTOGRAMMA costruzione 1: tunnel pronto a 12.75 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 325, "1 dopo i passi": 249, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1, pronto: 39.3 ms a 18.25 s; segni: [fotogramma 1909: tunnel segnato 0.0 ms (niente); fotogramma prima: 0.0 ms (niente)] | nessuno
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 25.58 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 2, carica: 988.3 ms a 25.59 s; segni: [fotogramma 2560: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2560 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2560 disegna_fuori_vista EnigmaGiocattoli: _camera 
+FOTOGRAMMA costruzione 2, carica: 36.0 ms a 25.62 s; segni: [fotogramma 2561: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 2560 disegna_fuori_
+FOTOGRAMMA costruzione 2: tunnel pronto a 31.46 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 325, "1 dopo i passi": 249, "1 pronto": 1431, "2 carica": 2, "2 entra": 1, "2 passi": 377, "2 dopo i passi": 255, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO inseguimento: fotogrammi sopra 33 ms 4; il più lungo per costruzione e fase { "1 carica": 3551.662, "1 pronto": 39.324, "2 carica": 988.273 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 325, "1 dopo i passi": 249, "1 pronto": 1431, "2 carica": 2, "2 entra": 1, "2 passi": 377, "2 dopo i passi": 255, "2 pronto": 1445 }
+FOTOGRAMMA: MASSIMI inseguimento (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 30.3, "1 entra": 10.9, "1 passi": 20.9, "1 dopo i passi": 20.9, "1 pronto": 39.3, "2 carica": 36.0, "2 entra": 18.0, "2 passi": 16.7, "2 dopo i passi": 22.4, "2 pronto": 18.2 }
+--- fot_ins_6
+FOTOGRAMMA: inseguimento, si gioca a 7.27 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 1, carica: 3215.9 ms a 7.28 s; segni: [fotogramma 560: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 560 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 560 disegna_fuori_vista EnigmaGiocattoli: _camera 0.2
+FOTOGRAMMA costruzione 1, carica: 37.4 ms a 7.32 s; segni: [fotogramma 561: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 560 disegna_fuori_vis
+FOTOGRAMMA costruzione 1: tunnel pronto a 12.46 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 317, "1 dopo i passi": 249, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 25.24 s (checkpoint SalaTorre/Checkpoint_fondo)
+FOTOGRAMMA costruzione 2, carica: 875.6 ms a 25.25 s; segni: [fotogramma 2590: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2590 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2590 disegna_fuori_vista EnigmaGiocattoli: _camera 
+FOTOGRAMMA costruzione 2: tunnel pronto a 30.67 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 317, "1 dopo i passi": 249, "1 pronto": 1452, "2 carica": 2, "2 entra": 1, "2 passi": 327, "2 dopo i passi": 252, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO inseguimento: fotogrammi sopra 33 ms 3; il più lungo per costruzione e fase { "1 carica": 3215.865, "2 carica": 875.619 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 317, "1 dopo i passi": 249, "1 pronto": 1452, "2 carica": 2, "2 entra": 1, "2 passi": 327, "2 dopo i passi": 252, "2 pronto": 1433 }
+FOTOGRAMMA: MASSIMI inseguimento (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 37.4, "1 entra": 12.9, "1 passi": 16.8, "1 dopo i passi": 22.7, "1 pronto": 15.3, "2 carica": 29.3, "2 entra": 18.5, "2 passi": 21.3, "2 dopo i passi": 23.9, "2 pronto": 16.3 }
+--- fot_torre_1
+FOTOGRAMMA: torre, si gioca a 7.07 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 1, carica: 3252.5 ms a 7.08 s; segni: [fotogramma 526: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 526 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 526 disegna_fuori_vista EnigmaGiocattoli: _camera 0.2
+FOTOGRAMMA costruzione 1: tunnel pronto a 12.38 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 427, "1 dopo i passi": 257, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 25.60 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 2, carica: 1048.5 ms a 25.61 s; segni: [fotogramma 2673: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2673 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2673 disegna_fuori_vista EnigmaGiocattoli: _camera
+FOTOGRAMMA costruzione 2: tunnel pronto a 30.98 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 427, "1 dopo i passi": 257, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 450, "2 dopo i passi": 253, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO torre: fotogrammi sopra 33 ms 2; il più lungo per costruzione e fase { "1 carica": 3252.53, "2 carica": 1048.519 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 427, "1 dopo i passi": 257, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 450, "2 dopo i passi": 253, "2 pronto": 1451 }
+FOTOGRAMMA: MASSIMI torre (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 24.9, "1 entra": 9.6, "1 passi": 20.3, "1 dopo i passi": 12.9, "1 pronto": 15.9, "2 carica": 24.0, "2 entra": 18.1, "2 passi": 18.8, "2 dopo i passi": 15.6, "2 pronto": 15.2 }
+--- fot_torre_2
+FOTOGRAMMA: torre, si gioca a 7.37 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 1, carica: 3193.0 ms a 7.38 s; segni: [fotogramma 577: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 577 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 577 disegna_fuori_vista EnigmaGiocattoli: _camera 0.1
+FOTOGRAMMA costruzione 1: tunnel pronto a 12.34 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 382, "1 dopo i passi": 260, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 25.31 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 2, carica: 946.2 ms a 25.32 s; segni: [fotogramma 2682: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2682 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2682 disegna_fuori_vista EnigmaGiocattoli: _camera 
+FOTOGRAMMA costruzione 2: tunnel pronto a 30.94 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 382, "1 dopo i passi": 260, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 453, "2 dopo i passi": 261, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO torre: fotogrammi sopra 33 ms 2; il più lungo per costruzione e fase { "1 carica": 3192.955, "2 carica": 946.22 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 382, "1 dopo i passi": 260, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 453, "2 dopo i passi": 261, "2 pronto": 1452 }
+FOTOGRAMMA: MASSIMI torre (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 29.3, "1 entra": 9.1, "1 passi": 21.5, "1 dopo i passi": 16.7, "1 pronto": 14.8, "2 carica": 32.3, "2 entra": 17.6, "2 passi": 19.9, "2 dopo i passi": 17.2, "2 pronto": 18.4 }
+--- fot_torre_3
+FOTOGRAMMA: torre, si gioca a 7.66 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 1, carica: 3607.1 ms a 7.67 s; segni: [fotogramma 553: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 553 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 553 disegna_fuori_vista EnigmaGiocattoli: _camera 0.2
+FOTOGRAMMA costruzione 1, carica: 34.3 ms a 7.71 s; segni: [fotogramma 554: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.2 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 553 disegna_fuori_vis
+FOTOGRAMMA costruzione 1: tunnel pronto a 12.75 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 380, "1 dopo i passi": 259, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 25.76 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 2, carica: 1001.3 ms a 25.77 s; segni: [fotogramma 2655: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2655 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2655 disegna_fuori_vista EnigmaGiocattoli: _camera
+FOTOGRAMMA costruzione 2: tunnel pronto a 31.10 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 380, "1 dopo i passi": 259, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 416, "2 dopo i passi": 262, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO torre: fotogrammi sopra 33 ms 3; il più lungo per costruzione e fase { "1 carica": 3607.077, "2 carica": 1001.342 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 380, "1 dopo i passi": 259, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 416, "2 dopo i passi": 262, "2 pronto": 1450 }
+FOTOGRAMMA: MASSIMI torre (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 34.3, "1 entra": 9.9, "1 passi": 18.7, "1 dopo i passi": 17.7, "1 pronto": 19.7, "2 carica": 21.1, "2 entra": 12.9, "2 passi": 19.0, "2 dopo i passi": 23.1, "2 pronto": 26.1 }
+--- fot_torre_4
+FOTOGRAMMA: torre, si gioca a 7.22 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 1, carica: 3098.3 ms a 7.23 s; segni: [fotogramma 570: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 570 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 570 disegna_fuori_vista EnigmaGiocattoli: _camera 0.1
+FOTOGRAMMA costruzione 1, carica: 33.6 ms a 7.26 s; segni: [fotogramma 571: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: fotogramma 1, disegna_fuori_vista EnigmaGiocattoli: a_meta 0.0 ms); fotogramma prima: 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0)] | 570 disegna_fuori_vis
+FOTOGRAMMA costruzione 1: tunnel pronto a 12.64 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 421, "1 dopo i passi": 267, "1 pronto": 1 })
+FOTOGRAMMA costruzione 1: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: dopo la morte si gioca a 26.04 s (checkpoint SalaTorre/Checkpoint_portone)
+FOTOGRAMMA costruzione 2, carica: 1103.5 ms a 26.05 s; segni: [fotogramma 2721: tunnel segnato 0.0 ms (disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: _camera 0.1 ms, disegna_fuori_vista EnigmaGiocattoli: fotogramma 0); fotogramma prima: 0.0 ms (niente)] | 2721 disegna_fuori_vista EnigmaGiocattoli: _fuori_vista 0.1 ms; 2721 disegna_fuori_vista EnigmaGiocattoli: _camera
+FOTOGRAMMA costruzione 2: tunnel pronto a 31.96 s (0 fotogrammi per fase: { "1 carica": 2, "1 entra": 1, "1 passi": 421, "1 dopo i passi": 267, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 443, "2 dopo i passi": 284, "2 pronto": 1 })
+FOTOGRAMMA costruzione 2: forme a pezzi 613 (impronta 425c3e1fcdbd), da capo 613 (impronta 425c3e1fcdbd): UGUALI
+FOTOGRAMMA: RISULTATO torre: fotogrammi sopra 33 ms 3; il più lungo per costruzione e fase { "1 carica": 3098.319, "2 carica": 1103.522 }; fotogrammi per fase { "1 carica": 2, "1 entra": 1, "1 passi": 421, "1 dopo i passi": 267, "1 pronto": 1451, "2 carica": 2, "2 entra": 1, "2 passi": 443, "2 dopo i passi": 284, "2 pronto": 1450 }
+FOTOGRAMMA: MASSIMI torre (tutti i fotogrammi, senza il primo dopo il caricamento o la morte): { "1 carica": 33.6, "1 entra": 11.0, "1 passi": 19.0, "1 dopo i passi": 14.6, "1 pronto": 16.1, "2 carica": 23.7, "2 entra": 15.5, "2 passi": 23.6, "2 dopo i passi": 27.0, "2 pronto": 26.0 }
+--- rip_f9
+RIPARTENZA 1 (F9 Tunnel): checkpoint SalaSottomarino/Checkpoint_6; schermo libero 1.68 s dopo l'entrata del tunnel; lei comincia a riemergere 1.80 s, lei_riemersa 1.78 s (dall'entrata)
+RIPARTENZA 1 (F9 Tunnel): nei 5 s a schermo libero 718 fotogrammi, sopra 50 ms 0, i più lunghi [23.2, 15.6, 14.2] ms
+RIPARTENZA 1 (F9 Tunnel): finestra misurata da 1.68 s dall'entrata; i fotogrammi sopra 50 ms (inizio dall'entrata): []
+RIPARTENZA 1 (F9 Tunnel): forme del tunnel 613 (impronta 425c3e1fcdbd; forme tenute nel codice: true, presenti: true), da capo 613 (impronta 425c3e1fcdbd, in 1149 ms): UGUALI
+RIPARTENZA: FINE f9
+--- rip_due_morti
+RIPARTENZA 1 (F9 Tunnel): checkpoint SalaSottomarino/Checkpoint_6; schermo libero 1.70 s dopo l'entrata del tunnel; lei comincia a riemergere 1.79 s, lei_riemersa 1.78 s (dall'entrata)
+RIPARTENZA 1 (F9 Tunnel): nei 5 s a schermo libero 699 fotogrammi, sopra 50 ms 0, i più lunghi [23.9, 18.2, 18.1] ms
+RIPARTENZA 1 (F9 Tunnel): finestra misurata da 1.70 s dall'entrata; i fotogrammi sopra 50 ms (inizio dall'entrata): []
+RIPARTENZA 1 (F9 Tunnel): forme del tunnel 613 (impronta 425c3e1fcdbd; forme tenute nel codice: true, presenti: true), da capo 613 (impronta 425c3e1fcdbd, in 1168 ms): UGUALI
+RIPARTENZA 2 (prima morte): checkpoint SalaSottomarino/Checkpoint_6; schermo libero 0.38 s dopo l'entrata del tunnel; lei comincia a riemergere 1.79 s, lei_riemersa 1.77 s (dall'entrata)
+RIPARTENZA 2 (prima morte): nei 5 s a schermo libero 707 fotogrammi, sopra 50 ms 0, i più lunghi [27.5, 21.0, 15.2] ms
+RIPARTENZA 2 (prima morte): finestra misurata da 0.40 s dall'entrata; i fotogrammi sopra 50 ms (inizio dall'entrata): []
+RIPARTENZA 2 (prima morte): forme del tunnel 613 (impronta 425c3e1fcdbd; forme tenute nel codice: true, presenti: true), da capo 613 (impronta 425c3e1fcdbd, in 1185 ms): UGUALI
+RIPARTENZA 3 (seconda morte): checkpoint SalaSottomarino/Checkpoint_6; schermo libero 0.37 s dopo l'entrata del tunnel; lei comincia a riemergere 1.78 s, lei_riemersa 1.77 s (dall'entrata)
+RIPARTENZA 3 (seconda morte): nei 5 s a schermo libero 705 fotogrammi, sopra 50 ms 0, i più lunghi [25.4, 22.8, 21.1] ms
+RIPARTENZA 3 (seconda morte): finestra misurata da 0.38 s dall'entrata; i fotogrammi sopra 50 ms (inizio dall'entrata): []
+RIPARTENZA 3 (seconda morte): forme del tunnel 613 (impronta 425c3e1fcdbd; forme tenute nel codice: true, presenti: true), da capo 613 (impronta 425c3e1fcdbd, in 1010 ms): UGUALI
+RIPARTENZA: FINE due_morti
+--- rip_continua
+RIPARTENZA: dal titolo, CONTINUA (SalaSottomarino/Checkpoint_6)
+RIPARTENZA 1 (Continua dopo la chiusura): checkpoint SalaSottomarino/Checkpoint_6; schermo libero 1.67 s dopo l'entrata del tunnel; lei comincia a riemergere 1.80 s, lei_riemersa 1.79 s (dall'entrata)
+RIPARTENZA 1 (Continua dopo la chiusura): nei 5 s a schermo libero 717 fotogrammi, sopra 50 ms 0, i più lunghi [18.5, 15.8, 12.8] ms
+RIPARTENZA 1 (Continua dopo la chiusura): finestra misurata da 1.68 s dall'entrata; i fotogrammi sopra 50 ms (inizio dall'entrata): []
+RIPARTENZA 1 (Continua dopo la chiusura): forme del tunnel 613 (impronta 425c3e1fcdbd; forme tenute nel codice: true, presenti: true), da capo 613 (impronta 425c3e1fcdbd, in 1152 ms): UGUALI
+RIPARTENZA: FINE continua
+--- md5 e nodi
+TUNNEL pezzi: 2812 nodi, md5 a7dadeed771dd533fe2e35dfbdcbded0
+TUNNEL subito: 2812 nodi, md5 279953bab6be06bb8342d8dd8adb22a7
+NODI SalaSottomarino: 2844 nodi, md5 1bf754c2793a8e77aab99d1d19ebb241 (ordine e43fc815af471132ec108ce7be44424d) -> t33/nodi_gioco_a_tunnel.txt
+NODI SalaTorre: 1132 nodi, md5 4c6e0f096815817090f607f6aa31f1e4 (ordine cbdfaa47d076be26ee86604529dac55a) -> t33/nodi_gioco_a_torre.txt
+NODI SalaSottomarino: 2844 nodi, md5 49442cf3f28662bc248841da4d91c4dc (ordine e43fc815af471132ec108ce7be44424d) -> t33/nodi_gioco_torre_tunnel.txt
+NODI SalaTorre: 1140 nodi, md5 153553bef3b1291f6dc3bf9997064588 (ordine 6846fca8df9b8cc7c42379da96193000) -> t33/nodi_gioco_torre_torre.txt
+NODI SalaSottomarino: 2844 nodi, md5 0ae83d2e3f5b793225f3c9d1934b6aa9 (ordine e43fc815af471132ec108ce7be44424d) -> t33/nodi_prova_pezzi.txt
+--- test
+RISULTATO: 18 controlli ok, 0 falliti
+SONDA_FORME: a pezzi 613, subito 613, uguali: true, md5 73fbc5fa173e39a9bc19704533b54537
+--- scatti ravvicinati (90504558, poi 774e9c46)
+scatto nodo: tartaruga a s 366.1, centro (-31.99553, -23.32883, 57.31936), misura (1.915588, 1.506218, 2.56752)
+scatto nodo: pesce_0 a s 243.5, centro (-3.01177, -27.0576, 29.40601), misura (0.516425, 0.993872, 1.400002)
+scatto nodo: pesce_7 a s 292.1, centro (-12.91687, -27.0576, -2.936132), misura (1.445405, 0.993872, 0.656646)
+scatto nodo: pesce_10 a s 309.9, centro (-20.66126, -27.0576, 3.617233), misura (0.86932, 0.993872, 1.486838)
+scatto nodo: pesce_15 a s 270.4, centro (8.409904, -27.0576, 1.004175), misura (0.833902, 0.993872, 1.48256)
+scatto nodo: pesce_21 a s 307.0, centro (-30.73691, -27.0576, -3.48212), misura (1.092945, 0.993872, 1.482336)
+scatto nodo: tartaruga a s 366.1, centro (-31.99553, -23.32883, 57.31936), misura (1.915588, 1.506218, 2.56752)
+scatto nodo: pesce_0 a s 243.5, centro (-3.01177, -27.0576, 29.40601), misura (0.516425, 0.993872, 1.400002)
+scatto nodo: pesce_7 a s 292.1, centro (-12.91687, -27.0576, -2.936132), misura (1.445405, 0.993872, 0.656646)
+scatto nodo: pesce_10 a s 309.9, centro (-20.66126, -27.0576, 3.617233), misura (0.86932, 0.993872, 1.486838)
+scatto nodo: pesce_15 a s 270.4, centro (8.409904, -27.0576, 1.004175), misura (0.833902, 0.993872, 1.48256)
+scatto nodo: pesce_21 a s 307.0, centro (-30.73691, -27.0576, -3.48212), misura (1.092945, 0.993872, 1.482336)
+log con «Invalid Task ID»: 0
