@@ -349,7 +349,10 @@ func _ravvicinati() -> void:
 			var h := perno.global_position
 			var box := AABB()
 			var primo := true
-			for vi in s.porta.find_children("*", "MeshInstance3D", true, false):
+			var mesh_porta: Array = s.porta.find_children("*", "MeshInstance3D", true, false)
+			if s.porta is MeshInstance3D:
+				mesh_porta.append(s.porta)
+			for vi in mesh_porta:
 				var mi := vi as MeshInstance3D
 				var bb := mi.global_transform * mi.get_aabb()
 				box = bb if primo else box.merge(bb)
