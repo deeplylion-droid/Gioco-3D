@@ -470,18 +470,20 @@ func _disegna_lancia(sv: SubViewport) -> void:
 	var scena := ResourceLoader.load_threaded_get(LANCIA) as PackedScene
 	if scena == null:
 		return
+	# (nascosta mentre entra: il modello e il guanto li costruisce LanceRig nel suo _ready, e accesi tutti insieme
+	# erano 14 pipeline in un fotogramma)
+	pezzo = "lancia"
 	var lancia := scena.instantiate() as Node3D
 	lancia.position = Vector3(0.0, 0.0, 1.6)
+	lancia.visible = false
 	sv.add_child(lancia)
-	await get_tree().process_frame
-	if not is_inside_tree():
-		return
 	var pezzi: Array[GeometryInstance3D] = []
 	for g in lancia.find_children("*", "MeshInstance3D", true, false):
 		var gi := g as GeometryInstance3D
 		if gi.visible:
 			pezzi.append(gi)
 			gi.visible = false
+	lancia.visible = true
 	await get_tree().process_frame
 	for gi in pezzi:
 		if not is_inside_tree():
