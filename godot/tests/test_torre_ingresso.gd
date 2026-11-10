@@ -53,6 +53,9 @@ func _frames(n: int) -> void:
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
+	# (con RITARDO_THREAD_TEST=<s> il thread rallentato apposta, come in test_attesa_zone: Game.ritardo_thread_test)
+	if OS.has_environment("RITARDO_THREAD_TEST"):
+		Game.ritardo_thread_test = float(OS.get_environment("RITARDO_THREAD_TEST"))
 	print("Il renderer")
 	var vero := RenderingServer.get_rendering_device() != null
 	check(vero, "c'è il renderer vero (%s)" % RenderingServer.get_video_adapter_name())
@@ -104,7 +107,8 @@ func _run() -> void:
 	var d := _durate.duplicate()
 	d.sort()
 	check(torre.costruita and torre.checkpoint.size() > 2 and not torre.corpi_scivolo().is_empty(), "la torre è costruita (%d checkpoint, %d scivoli)" % [torre.checkpoint.size(), torre.corpi_scivolo().size()])
-	check(torre.fotogramma_piu_carico_ms < CARICO_MASSIMO, "in %d fotogrammi, al più %.0f ms di costruzione in uno (al massimo %.0f; fotogramma solito %.0f ms, il più lungo %.0f ms)" % [d.size(), torre.fotogramma_piu_carico_ms, CARICO_MASSIMO, base, d[-1]])
+	check(torre.fotogramma_piu_carico_ms < CARICO_MASSIMO, "in %d fotogrammi, al più %.0f ms di costruzione in uno (al massimo %.0f; fotogramma solito %.0f ms, il più lungo %.0f ms; il passo più lungo: %s)" % [
+			d.size(), torre.fotogramma_piu_carico_ms, CARICO_MASSIMO, base, d[-1], torre.passo_piu_lungo])
 
 	print("2. Disegnata una volta fuori vista")
 	if not OS.get_cmdline_user_args().has("senza_preparazione"):

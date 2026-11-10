@@ -22,9 +22,11 @@ static var _triangoli := {}
 
 ## Appoggia [param nodo] sul primo sostegno sotto: il punto più basso dell'oggetto ([param fondo], metri sotto
 ## l'origine del nodo) va sul sostegno. [param lega]: diventa figlio di quello che c'è sotto.
-static func appoggia_a_terra(nodo: Node3D, fondo := 0.0, lega := false, escludi: Array[RID] = []) -> bool:
+## [param candidate]: le mesh da guardare (vedi [method mesh_vicine]); senza, tutte quelle visibili dell'albero.
+static func appoggia_a_terra(nodo: Node3D, fondo := 0.0, lega := false, escludi: Array[RID] = [],
+		candidate: Variant = null) -> bool:
 	var p := nodo.global_position
-	var h := _raggio(nodo, p + Vector3.UP * 0.05, p + Vector3.DOWN * PORTATA, escludi)
+	var h := _raggio(nodo, p + Vector3.UP * 0.05, p + Vector3.DOWN * PORTATA, escludi, candidate)
 	if h.is_empty():
 		push_warning("Posa: niente sotto %s (%s)" % [nodo.name, p])
 		return false

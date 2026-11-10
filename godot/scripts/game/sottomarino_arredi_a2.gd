@@ -75,8 +75,14 @@ static func _relitto(sala: SalaSottomarino) -> void:
 
 
 static func _relitto_staffe(sala: SalaSottomarino, ancora: Node3D, alta: float) -> void:
+	# i triangoli dell'ancora trasformati una volta per le due staffe (la staffa fatta prima si chiama "Staffa" e non
+	# entra: sono gli stessi), e ogni staffa nel suo passo: prima ognuna li rifaceva, tutto in un passo da 20-32 ms
+	# (ricontrollo di enigmi del 10 novembre); così 9 ms, poi 5-6 ms per staffa
+	var tri := _triangoli_ancora(ancora)
+	var passi: Array = []
 	for f: float in [0.62, 0.7]:
-		_staffa(sala, ancora, alta * f)
+		passi.append(_staffa.bind(sala, ancora, alta * f, tri))
+	sala.aggiungi_passi(passi)
 
 
 ## Il salvagente del relitto, col suo asse di legno (gancio e cima compresi nel modello) fissato al muro.
@@ -129,7 +135,7 @@ static func _mensola(sala: SalaSottomarino, nodo: Node3D, s: float, lato: float,
 	# (la z della scatola lungo la normale del muro: il retro, mezza profondità dietro il centro, sul muro)
 	corpo.global_transform = Transform3D(Basis.looking_at(-r, Vector3.UP),
 			sala._al(p, sala.destra(s), Vector2(lato * (sala.muro - profondo * 0.5 - 0.2), sala.piano + MENSOLA_SU + MENSOLA_SPESSA * 0.5)))
-	if not Posa.fissa_al_muro(corpo, -r, profondo * 0.5):
+	if not Posa.fissa_al_muro(corpo, -r, profondo * 0.5, false, [], _sul_muro(sala, corpo, -r)):
 		push_warning("arredi sottomarino: mensola a %.1f senza muro" % s)
 	# in curva il muro non è un piano: si misura quanto restano staccati gli angoli del retro (raggi sul muro vero) e
 	# la mensola entra quanto basta perché tocchino, almeno MENSOLA_DENTRO
@@ -167,15 +173,31 @@ static func _contro_il_muro(sala: SalaSottomarino, nodo: Node3D, nome: String, s
 		for v in _involucro(mm.mesh):
 			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(r))
 	var t2 := Time.get_ticks_usec()
-	if not Posa.fissa_al_muro(n, -r, dietro + DAL_MURO if sulla_mensola else dietro, false):
+	if not Posa.fissa_al_muro(n, -r, dietro + DAL_MURO if sulla_mensola else dietro, false, [], _sul_muro(sala, n, -r)):
 		push_warning("arredi sottomarino: %s a %.1f senza muro" % [nome, s])
-	if sulla_mensola and not Posa.appoggia_a_terra(n, 0.0, false):
+	if sulla_mensola and not Posa.appoggia_a_terra(n, 0.0, false, [], _sotto(sala, n)):
 		push_warning("arredi sottomarino: %s a %.1f senza mensola" % [nome, s])
 	var t3 := Time.get_ticks_usec()
 	sala._collisione_modello(n)
 	if OS.has_environment("TORRE_TEMPI"):
 		print("  %s: modello %.0f, sporgenza %.0f, posa %.0f, collisione %.0f ms" % [nome, (t1 - t0) / 1000.0, (t2 - t1) / 1000.0, (t3 - t2) / 1000.0, (Time.get_ticks_usec() - t3) / 1000.0])
 	return n
+
+
+## Le mesh del tunnel lungo il raggio di Posa.fissa_al_muro per [param n] che guarda verso [param verso] (lo stesso
+## segmento): Posa guarda solo quelle. Con tutte quelle visibili dell'albero, nel gioco vero (sala, torre e condotte
+## intorno) ogni raggio costava 4-5 ms e i coralli 23-30 ms (ricontrollo di enigmi del 10 novembre); come
+## SalaSottomarino._a_filo_del_muro.
+static func _sul_muro(sala: SalaSottomarino, n: Node3D, verso: Vector3) -> Array:
+	var v := verso.normalized()
+	var p := n.global_position
+	return sala._mesh_lungo(p + v * 0.3, p - v * Posa.PORTATA)
+
+
+## Le mesh del tunnel lungo il raggio di Posa.appoggia_a_terra per [param n] (lo stesso segmento).
+static func _sotto(sala: SalaSottomarino, n: Node3D) -> Array:
+	var p := n.global_position
+	return sala._mesh_lungo(p + Vector3.UP * 0.05, p + Vector3.DOWN * Posa.PORTATA)
 
 
 ## Il forziere è aperto, e dentro il modello ha solo le facce di fuori: guardandoci dentro dalla banchina si vedevano
@@ -194,13 +216,12 @@ static func _doppia_faccia(n: Node3D) -> void:
 
 ## Una staffa attorno al fusto di [param ancora] a [param h] sopra la sua base: misura il fusto lì (i vertici della
 ## mesh entro 4 cm di quota e 15 cm dall'asse), poi piastre, bulloni, bracci e collare, a 3 mm dal fusto.
-static func _staffa(sala: SalaSottomarino, ancora: Node3D, h: float) -> void:
+## I triangoli delle mesh di [param ancora] (non le staffe) nel suo sistema (base ortonormale, origine): tre punti per
+## triangolo, nell'ordine delle facce.
+static func _triangoli_ancora(ancora: Node3D) -> PackedVector3Array:
 	var b := ancora.global_basis.orthonormalized()
 	var o := ancora.global_position
-	# la sezione vera a quota h: i triangoli della mesh tagliati dal piano (il modello ha pochi vertici: i vertici soli
-	# non dicono dov'è il fusto fra un anello e l'altro)
-	var sezione := PackedVector3Array()
-	var zm := -INF           # il retro dell'ancora (sul muro: +z)
+	var out := PackedVector3Array()
 	for m in ancora.find_children("*", "MeshInstance3D", true, false):
 		var mi := m as MeshInstance3D
 		if mi.name == "Staffa":
@@ -208,13 +229,26 @@ static func _staffa(sala: SalaSottomarino, ancora: Node3D, h: float) -> void:
 		var xf := mi.global_transform
 		var fv := mi.mesh.get_faces()
 		for k in range(0, fv.size(), 3):
-			var tri := [b.inverse() * ((xf * fv[k]) - o), b.inverse() * ((xf * fv[k + 1]) - o), b.inverse() * ((xf * fv[k + 2]) - o)]
-			for i in 3:
-				var p1: Vector3 = tri[i]
-				var p2: Vector3 = tri[(i + 1) % 3]
-				zm = maxf(zm, p1.z)
-				if (p1.y - h) * (p2.y - h) < 0.0:
-					sezione.append(p1.lerp(p2, (h - p1.y) / (p2.y - p1.y)))
+			out.append(b.inverse() * ((xf * fv[k]) - o))
+			out.append(b.inverse() * ((xf * fv[k + 1]) - o))
+			out.append(b.inverse() * ((xf * fv[k + 2]) - o))
+	return out
+
+
+static func _staffa(sala: SalaSottomarino, ancora: Node3D, h: float, tri: PackedVector3Array) -> void:
+	var b := ancora.global_basis.orthonormalized()
+	var o := ancora.global_position
+	# la sezione vera a quota h: i triangoli della mesh tagliati dal piano (il modello ha pochi vertici: i vertici soli
+	# non dicono dov'è il fusto fra un anello e l'altro)
+	var sezione := PackedVector3Array()
+	var zm := -INF           # il retro dell'ancora (sul muro: +z)
+	for k in range(0, tri.size(), 3):
+		for i in 3:
+			var p1: Vector3 = tri[k + i]
+			var p2: Vector3 = tri[k + (i + 1) % 3]
+			zm = maxf(zm, p1.z)
+			if (p1.y - h) * (p2.y - h) < 0.0:
+				sezione.append(p1.lerp(p2, (h - p1.y) / (p2.y - p1.y)))
 	# il fusto è il pezzo della sezione contro il muro (la catena gli passa davanti)
 	var x0 := INF
 	var x1 := -INF

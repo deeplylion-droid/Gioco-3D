@@ -56,6 +56,18 @@ static func passi(sala: Node3D) -> Array:
 	return out
 
 
+## I disegni delle sagome (12 png da 0,4-0,7 MB): la sala li chiede al thread con la torre (SalaInseguimento.risorse),
+## così _sagoma non li carica sul thread principale mentre si gioca (sonda dei load del 9 novembre, per il disco freddo).
+static func risorse() -> Array:
+	var out: Array = []
+	var f := FileAccess.open(DIR + "posa.json", FileAccess.READ)
+	var dati = JSON.parse_string(f.get_as_text()) if f else {}
+	if dati is Dictionary:
+		for d in dati.get("sagome", []):
+			out.append(DIR + String(d["nome"]) + ".png")
+	return out
+
+
 func _prepara() -> void:
 	var f := FileAccess.open(DIR + "posa.json", FileAccess.READ)
 	posa = JSON.parse_string(f.get_as_text()) if f else {}

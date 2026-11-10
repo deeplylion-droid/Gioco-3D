@@ -104,6 +104,9 @@ var costruzione_a_pezzi := false
 var _a_pezzi := false
 ## Il fotogramma più carico della costruzione a pezzi: quanti ms di passi ci sono finiti dentro (per i test).
 var fotogramma_piu_carico_ms := 0.0
+## Il passo più lungo della costruzione a pezzi: "nome (ms)" (per i test: lo stampano sempre).
+var passo_piu_lungo := ""
+var _passo_piu_lungo_ms := 0.0
 var _coda: Array = []
 ## Le risorse dei passi chieste al thread all'inizio della costruzione a pezzi (percorso -> vero finché non è pronta) e,
 ## pronte, tenute qui fino alla fine della costruzione: i load() dei passi le trovano già in memoria.
@@ -144,8 +147,12 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 			t0 = Time.get_ticks_usec()
 		var tp := Time.get_ticks_usec()
 		passo.call()
+		var ms_passo := (Time.get_ticks_usec() - tp) / 1000.0
+		if ms_passo > _passo_piu_lungo_ms:
+			_passo_piu_lungo_ms = ms_passo
+			passo_piu_lungo = "%s, il %d° (%.1f ms)" % [passo.get_method(), k, ms_passo]
 		if OS.has_environment("TORRE_TEMPI"):
-			print("passo %d (%s): %.1f ms" % [k, passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
+			print("passo %d (%s): %.1f ms" % [k, passo.get_method(), ms_passo])
 		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
@@ -1799,6 +1806,9 @@ func _prepara_triangoli_luci() -> void:
 				var o: Vector3 = a1 * (i * 0.14) + a2 * (j * 0.14)
 				zona = zona.expand(p + o + v * 0.3).expand(p + o - v * Posa.PORTATA * 2.0)
 		for mi in Posa.mesh_vicine(self, zona, self):
+			# (la lista è presa prima delle attese qui sotto: una mesh liberata nel frattempo si salta)
+			if not is_instance_valid(mi):
+				continue
 			var m: Mesh = (mi as MeshInstance3D).mesh
 			if viste.has(m) or Posa.ha_triangoli(m):
 				continue
