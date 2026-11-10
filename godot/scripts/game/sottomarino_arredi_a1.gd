@@ -497,21 +497,15 @@ func _pesce_mensola_gap(tri: PackedVector3Array, nodo: Node3D, p: Node3D, pm: Ve
 		p.position += nrm * (0.03 - gap)
 	# (il piede e il faretto nei passi dopo, coi triangoli del pesce spostato: i due giri sui triangoli del pesce
 	# insieme erano 35-58 ms)
-	_triangoli_a_passi(p, _pesce_mensola_piede.bind(nodo, p, pm, nrm, lungo, largo, fuori, k))
+	_triangoli_a_passi(p, _pesce_mensola_piede.bind(nodo, p, pm, nrm, lungo, largo, fuori, k), [pm, lungo, nrm, largo, fuori])
 
 
-## Il piede del palo del pesce [param p] sulla mensola, dai suoi triangoli [param tri], e il faretto sotto (ultima parte
-## di [method _pesce_mensola]).
-func _pesce_mensola_piede(tri: PackedVector3Array, nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3, lungo: Vector3,
-		largo: float, fuori: float, k: int) -> void:
-	# il piede del palo sulla mensola: il punto più basso fra quelli sopra la mensola (le pinne fuori possono
-	# scendere oltre il bordo)
-	var basso := INF
-	for v in tri:
-		var lu := (v - pm).dot(lungo)
-		var fu := (v - pm).dot(nrm)
-		if absf(lu) < largo * 0.5 - 0.01 and fu > 0.0 and fu < fuori - 0.01:
-			basso = minf(basso, v.y)
+## Il piede del palo del pesce [param p] sulla mensola e il faretto sotto (ultima parte di [method _pesce_mensola]).
+## [param basso] è il punto più basso fra i vertici sopra la mensola (le pinne fuori possono scendere oltre il bordo),
+## calcolato insieme ai triangoli (_triangoli_a_passi con il piede).
+func _pesce_mensola_piede(_tri: PackedVector3Array, basso: float, nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3,
+		lungo: Vector3, _largo: float, fuori: float, k: int) -> void:
+	# il piede del palo sulla mensola
 	if basso < INF:
 		p.position.y += pm.y + 0.0005 - basso
 	# il faretto sotto il pesce: in punta alla mensola, puntato in su sulla pancia
@@ -1240,8 +1234,10 @@ const VERTICI_PER_PASSO := 30000
 ## I triangoli di [param n] come [method _triangoli], con gli stessi conti nello stesso ordine, ma nei passi della
 ## costruzione (al più [constant VERTICI_PER_PASSO] vertici per passo); poi il passo [param poi] con i triangoli come
 ## primo argomento. Fra un passo e l'altro [param n] non si deve muovere.
-func _triangoli_a_passi(n: Node3D, poi: Callable) -> void:
-	var st := {"out": PackedVector3Array()}
+## Con [param piede] ([pm, lungo, nrm, largo, fuori] di [method _pesce_mensola_piede]) nello stesso giro anche il punto
+## più basso fra i vertici sopra la mensola, passato a [param poi] come secondo argomento.
+func _triangoli_a_passi(n: Node3D, poi: Callable, piede: Array = []) -> void:
+	var st := {"out": PackedVector3Array(), "piede": piede, "basso": INF}
 	var mis: Array = n.find_children("*", "MeshInstance3D", true, false)
 	if n is MeshInstance3D:
 		mis.append(n)
@@ -1256,7 +1252,10 @@ func _triangoli_a_passi(n: Node3D, poi: Callable) -> void:
 
 func _triangoli_poi(st: Dictionary, poi: Callable) -> void:
 	var t0 := Time.get_ticks_usec()
-	poi.call(st["out"])
+	if (st["piede"] as Array).is_empty():
+		poi.call(st["out"])
+	else:
+		poi.call(st["out"], float(st["basso"]))
 	if OS.has_environment("TORRE_TEMPI"):
 		var ms := (Time.get_ticks_usec() - t0) / 1000.0
 		if ms > 3.0:
@@ -1274,8 +1273,26 @@ func _triangoli_mesh(mi: MeshInstance3D, st: Dictionary, da: int) -> void:
 	# (solo qui: senza copie dell'array a ogni aggiunta)
 	st["out"] = PackedVector3Array()
 	var a := mini(da + VERTICI_PER_PASSO, facce.size())
-	for i in range(da, a):
-		out.append(xf * facce[i])
+	var piede: Array = st["piede"]
+	if piede.is_empty():
+		for i in range(da, a):
+			out.append(xf * facce[i])
+	else:
+		# (il punto più basso del piede qui, nello stesso giro: in un passo a parte erano 15,5 ms, collaudo di enigmi)
+		var pm: Vector3 = piede[0]
+		var lungo: Vector3 = piede[1]
+		var nrm: Vector3 = piede[2]
+		var mezzo: float = float(piede[3]) * 0.5 - 0.01
+		var fino: float = float(piede[4]) - 0.01
+		var basso: float = st["basso"]
+		for i in range(da, a):
+			var v := xf * facce[i]
+			out.append(v)
+			var lu := (v - pm).dot(lungo)
+			var fu := (v - pm).dot(nrm)
+			if absf(lu) < mezzo and fu > 0.0 and fu < fino:
+				basso = minf(basso, v.y)
+		st["basso"] = basso
 	st["out"] = out
 	if a < facce.size():
 		sala.aggiungi_passi([_triangoli_mesh.bind(mi, st, a)])
