@@ -6,10 +6,17 @@ extends Node
 ## - la memoria del processo (RSS da /proc/self/status) all'inizio, al massimo e alla fine, e la memoria statica di
 ##   Godot, mentre la schermata è aperta.
 ## Con SCATTI=<cartella> salva anche tre scatti della schermata (a 2; 4,6 e 6,4 s).
-## Esce prima che la sala entri in scena (la sala intera sul renderer software non entra in memoria).
+## Esce prima che la sala entri in scena (la sala intera sul renderer software non entra in memoria). Anche solo
+## aspettando la sala nel thread, col riscaldamento, il renderer software arrivava a 12,3 GB e il processo veniva ucciso
+## (#139): se la memoria libera della macchina (MemAvailable) scende sotto [constant MEMORIA_MINIMA_MB] MB la misura si
+## ferma lì e stampa quello che ha («interrotta per la memoria»). Con FINO=<s> si ferma dopo tanti secondi.
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##       --script res://tests/run.gd -- res://tests/misura_caricamento_jilly.gd
+
+
+## Sotto tanta memoria libera della macchina (MB) la misura si ferma (#139).
+const MEMORIA_MINIMA_MB := 2048
 
 
 func _ready() -> void:
@@ -40,7 +47,9 @@ func _run() -> void:
 	var tempi := PackedFloat32Array()
 	var arrivata := -1.0
 	var rss_max := rss0
-	while Time.get_ticks_msec() - t0 < 600000:
+	var fino := float(OS.get_environment("FINO")) if OS.get_environment("FINO").is_valid_float() else 600.0
+	var interrotta := ""
+	while Time.get_ticks_msec() - t0 < fino * 1000.0:
 		await get_tree().process_frame
 		var ora := Time.get_ticks_usec()
 		tempi.append((ora - prima) / 1000.0)
@@ -52,11 +61,20 @@ func _run() -> void:
 				_salva(OS.get_environment("SCATTI").path_join("caricamento_%d.png" % k))
 		if tempi.size() % 10 == 0:
 			rss_max = maxi(rss_max, _rss())
+			var libera := _libera()
+			if libera >= 0 and libera < MEMORIA_MINIMA_MB * 1024:
+				interrotta = "interrotta per la memoria a %.1f s (libera %.0f MB, RSS %.0f MB)" % [dt, libera / 1024.0, _rss() / 1024.0]
+				break
 		if arrivata < 0.0 and ResourceLoader.load_threaded_get_status(scena) == ResourceLoader.THREAD_LOAD_LOADED:
 			arrivata = (Time.get_ticks_msec() - t0) / 1000.0
 		if arrivata >= 0.0 and (r == null or r.concluso):
 			break
 	var fine := (Time.get_ticks_msec() - t0) / 1000.0
+	if interrotta == "" and (arrivata < 0.0 or (r != null and not r.concluso)):
+		interrotta = "interrotta dopo %.0f s" % fine
+	if interrotta != "":
+		print("MISURA %s: la sala %s, il riscaldamento %s" % [interrotta, "arrivata a %.2f s" % arrivata if arrivata >= 0.0 else "non arrivata",
+			"finito" if r == null or r.concluso else "non finito (%d su %d)" % [r.fatti, r.totale]])
 	var rss1 := _rss()
 	var t := tempi.slice(3)
 	var somma := 0.0
@@ -83,10 +101,25 @@ func _salva(file: String) -> void:
 
 ## La memoria del processo (kB).
 static func _rss() -> int:
-	var f := FileAccess.open("/proc/self/status", FileAccess.READ)
+	return _campo("/proc/self/status", "VmRSS:")
+
+
+## La memoria libera della macchina (kB; -1 se non si legge).
+static func _libera() -> int:
+	var v := _campo("/proc/meminfo", "MemAvailable:")
+	return v if v > 0 else -1
+
+
+## Un campo in kB di un file di /proc. (Riga per riga: i file di /proc hanno lunghezza 0, e get_as_text() li
+## leggeva vuoti, #139.)
+static func _campo(file: String, chiave: String) -> int:
+	var f := FileAccess.open(file, FileAccess.READ)
 	if f == null:
 		return 0
-	for riga in f.get_as_text().split("\n"):
-		if riga.begins_with("VmRSS:"):
+	while not f.eof_reached():
+		var riga := f.get_line()
+		if riga.begins_with(chiave):
 			return int(riga.split(":")[1].strip_edges().split(" ")[0])
+		if riga == "" and f.eof_reached():
+			break
 	return 0

@@ -10,6 +10,8 @@ extends Node
 ## 3. il tunnel del viaggio sottomarino costruito come nel gioco (a pezzi, col suo riscaldamento) e poi visto lungo
 ##    tutta la strada: nessuna compilazione "surface" né "draw".
 ## 5. nel tunnel la nebbia viola (NebbiaViola) che sale entrando: nessuna compilazione "surface" né "draw".
+## 6. col giocatore vero, la lancia guardando in basso a FOV 70, 90 e 110: nessuna compilazione "surface" né "draw"
+##    (#146: il tubo della lancia verso lo zaino).
 ## (la torre al primo fotogramma visibile la prova test_torre_ingresso.gd)
 ## Uso: xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 \
 ##        --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
@@ -219,6 +221,34 @@ func _run() -> void:
 	check(nv.in_zona() and vista > 0.5, "nel tunnel la nebbia viola c'è (%.2f)" % vista)
 	check(int(c[0] - prima[0]) == 0 and int(c[1] - prima[1]) == 0,
 		"accendendo la nebbia viola nessuna compilazione che blocca (surface %d, draw %d; in sottofondo %d)" % [c[0] - prima[0], c[1] - prima[1], c[2] - prima[2]])
+
+	print("6. La lancia guardando in basso col FOV largo (#146)")
+	# (il tubo della lancia verso lo zaino entra in vista solo col FOV largo guardando in basso: compilava 2 "draw" a
+	# FOV 90 giù 65, collaudo di enigmi del guanto; ora è nel riscaldamento, RiscaldamentoShader._disegna_lancia)
+	var fov_prima: float = Grafica.valore("fov")
+	var pose := 0
+	var dove6 := []
+	var sotto := 0
+	prima = _conta()
+	for fov in [70.0, 90.0, 110.0]:
+		Grafica.imposta("fov", fov)
+		g.teleport(piedi, atan2(-avanti.x, -avanti.z), 0.0)
+		for i in 4:
+			await get_tree().process_frame
+		prima = _conta()
+		for giu in [-40.0, -65.0, -85.0]:
+			g.teleport(piedi, atan2(-avanti.x, -avanti.z), deg_to_rad(giu))
+			for i in 8:
+				await get_tree().process_frame
+			var ora := _conta()
+			if ora[0] != prima[0] or ora[1] != prima[1]:
+				dove6.append("FOV %d giù %d: surface %d, draw %d" % [fov, -giu, ora[0] - prima[0], ora[1] - prima[1]])
+			sotto += int(ora[2] - prima[2])
+			prima = ora
+			pose += 1
+	Grafica.imposta("fov", fov_prima)
+	check(dove6.is_empty(), "guardando in basso a FOV 70, 90 e 110 (%d pose) nessuna compilazione che blocca%s (in sottofondo %d)" % [
+		pose, "" if dove6.is_empty() else ": " + ", ".join(dove6), sotto])
 	g.queue_free()
 	_fine()
 
