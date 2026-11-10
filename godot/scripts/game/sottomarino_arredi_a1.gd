@@ -1161,6 +1161,8 @@ func _ambiente(nome: String) -> Array:
 ## Un modello del fiume (come [method SalaSottomarino._modello], ma con le coordinate della sala).
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
 	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	# (la prima get_faces() delle sue mesh, se è nel thread: SalaSottomarino.FACCE_NEL_THREAD)
+	sala.aspetta_facce(n)
 	nodo.add_child(n)
 	var b := Basis.looking_at(verso, Vector3.UP) if verso.length_squared() > 0.0 else Basis()
 	n.transform = Transform3D(b.scaled(Vector3.ONE * scala), pos)
