@@ -72,7 +72,7 @@ func _process(_d: float) -> void:
 		if st == "dopo i passi":
 			var tun := _tunnel()
 			var forme_pronte: bool = FormeTunnel._cache.has(tun.get_instance_id()) if tun else false
-			segni = "(%.2f s dopo la fine dei passi; forme del tunnel pronte: %s) " % [_ora() - _t_passi, forme_pronte]
+			segni += "(%.2f s dopo la fine dei passi; forme del tunnel pronte: %s) " % [_ora() - _t_passi, forme_pronte]
 		if OS.has_environment("TORRE_TEMPI"):
 			segni += "| " + RiscaldamentoShader.segni_recenti(2)
 		_lunghi.append([_giro, st, ms])

@@ -97,3 +97,39 @@ Le sonde sono in `godot/tests/collaudo/`. Le uso come nel ricontrollo precedente
   - `FERMO_S=10`: i secondi a tunnel fermo dopo il tunnel pronto;
   - `CONFRONTA_FORME=1`: dopo ogni costruzione, le forme fatte a pezzi confrontate con quelle calcolate da capo, fuori dalla misura.
 - `scatti_tunnel_pezzi.gd`: gli scatti `nodo:<nome>`, ravvicinati di un nodo del tunnel per nome.
+
+## Ricontrollo della correzione del pesce: 268a13b4
+
+`lavoro/tunnel-fotogrammi-33` 268a13b4 ha tre correzioni nuove:
+
+- il punto più basso del piede del pesce si calcola nello stesso giro dei triangoli (c6d2071b), e così sparisce il passo `_pesce_mensola_piede` da 15,5 ms;
+- la porta tagliafuoco del Risveglio (a13e3ea6);
+- `sonda_tunnel_entrata` (268a13b4).
+
+Come chiesto, ho rifatto le costruzioni da F9 Inseguimento: 6 partite, 12 costruzioni, con la stessa sonda, 10 s a tunnel fermo e le forme confrontate. In più ho controllato md5, nodi e gli scatti ravvicinati di pesci e tartaruga.
+
+**Esito: superato.**
+
+- **Nei passi nessun fotogramma supera i 33 ms.**
+  - Il più lungo per costruzione va da 18,8 a 32,8 ms.
+  - `_pesce_mensola_piede` non compare più.
+  - C'è un solo passo sopra i 20 ms, `_buco_anello` da 27,6 ms, una volta (partita 4, seconda costruzione). Il suo fotogramma resta sotto i 33 ms, ma di poco: il fotogramma più lungo dei passi di quella costruzione è 32,8 ms. Il margine qui è stretto.
+- **Un fotogramma da 33,3 ms dopo i passi, ed è rumore dimostrato.**
+  - Cade 2,72 s dopo la fine dei passi, mentre si fanno le forme a pezzi (seconda costruzione della partita 3).
+  - Nei segni di quel fotogramma e dei due prima non c'è niente: nessun pezzo delle forme sopra 3 ms.
+  - Il tunnel quindi ci ha lavorato al più il suo budget di 4 ms più un pezzo sotto i 3 ms. Il resto, almeno 26 ms, è il gioco.
+  - Lo stesso succede a tunnel fermo: in 17 278 fotogrammi a tunnel fermo ce n'è uno da 52,5 ms senza nessun segno del tunnel, e gli altri arrivano fino a 19,9 ms.
+  - Altrove la fase dopo i passi resta fra 17,1 e 25,4 ms.
+- **Entrata:** al più 22,3 ms.
+- **Subito dopo il caricamento o la morte:** il secondo fotogramma, quando il tunnel non c'è ancora, fa 30,7-55,1 ms (104,9 ms nella prima partita, a disco freddo). Ci sono solo segni della torre.
+- **Forme:** in tutte le 12 costruzioni sono 613 e uguali a quelle calcolate da capo (`425c3e1fcdbd`).
+- **md5 del tunnel:** uguali (`a7dadeed…`, `279953ba…`).
+- **Nodi:** uguali a 90504558, con 0 differenze.
+  - Scena di prova: 2844 nodi. Le 585 righe di arredi, pesci e tartaruga sono uguali byte per byte, quindi i pesci stanno esattamente dove stavano.
+  - Gioco vero da F9 Inseguimento: tunnel 2844 nodi, torre 1132.
+- **Scatti ravvicinati:** i 5 pesci sono uguali a 90504558. Anche la tartaruga è identica: tutte le differenze sono nelle prime 160 righe dell'immagine, cioè nel cielo che si muove (`fogli/tartaruga_268a13b4.jpg`).
+- In nessun log c'è «Invalid Task ID».
+
+Le righe dei log sono in `risultati_268a13b4.txt`.
+
+Una correzione alla sonda: nella prima serie di questa versione, per i fotogrammi lunghi dopo i passi, la riga del lavoro segnato veniva sovrascritta. I segni grezzi sulla stessa riga erano però completi, e per il 33,3 ms dicono «nessuno». Dalla partita 4 la riga è completa.
