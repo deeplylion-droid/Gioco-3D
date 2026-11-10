@@ -344,15 +344,27 @@ func _ravvicinati() -> void:
 			continue
 		var punti := []
 		if x[0] == "porta":
+			# (il verso dalla porta vera: dal perno al centro delle sue mesh, e la normale orizzontale)
 			var perno := s.get(&"_perno") as Node3D
-			var b := s.porta.global_transform.basis.orthonormalized()
 			var h := perno.global_position
+			var box := AABB()
+			var primo := true
+			for vi in s.porta.find_children("*", "MeshInstance3D", true, false):
+				var mi := vi as MeshInstance3D
+				var bb := mi.global_transform * mi.get_aabb()
+				box = bb if primo else box.merge(bb)
+				primo = false
+			var centro := box.get_center()
+			var verso := Vector3(centro.x - h.x, 0.0, centro.z - h.z).normalized()
+			var normale := verso.cross(Vector3.UP).normalized()
+			print("SONDA: porta a %.2f s: cardine %s, centro %s, larga %.2f m" % [float(s.get(&"_t")), h, centro,
+				Vector2(centro.x - h.x, centro.z - h.z).length() * 2.0])
 			for q in [["basso", 0.15], ["meta", 1.0], ["alto", 1.95]]:
-				var c: Vector3 = h + Vector3.UP * float(q[1])
-				punti.append(["cardine_%s_davanti" % q[0], c + b.x * 0.55 - b.z * 0.2, c])
-				punti.append(["cardine_%s_dietro" % q[0], c - b.x * 0.55 - b.z * 0.2, c])
-			var mezzo: Vector3 = h + Vector3.UP * 1.05 - b.z * 0.58
-			punti.append(["intera", mezzo + b.x * 2.6, mezzo])
+				var c: Vector3 = Vector3(h.x, box.position.y + float(q[1]), h.z) + verso * 0.03
+				punti.append(["cardine_%s_davanti" % q[0], c + normale * 0.5 + verso * 0.2, c])
+				punti.append(["cardine_%s_dietro" % q[0], c - normale * 0.5 + verso * 0.2, c])
+			punti.append(["intera_davanti", centro + normale * 2.4, centro])
+			punti.append(["intera_dietro", centro - normale * 2.4, centro])
 		elif x[0] == "bocca":
 			var c: Vector3 = s.call(&"_punto_bocca")
 			var avanti := (p.camera.global_position - c)
@@ -369,6 +381,9 @@ func _ravvicinati() -> void:
 				dir = dir.normalized()
 				punti.append(["%s_%d" % [sk.get_bone_name(piedi[k]), k], pos + dir.rotated(Vector3.UP, 0.8) * 0.7 + Vector3.UP * 0.12, pos + Vector3.UP * 0.03])
 		var prima_luce := luce.visible
+		var squalo_visibile: bool = s.squalo.visible if s.squalo and is_instance_valid(s.squalo) else false
+		if x[0] == "porta" and squalo_visibile:
+			s.squalo.visible = false
 		get_tree().paused = true
 		s.process_mode = Node.PROCESS_MODE_PAUSABLE
 		for q in punti:
@@ -380,6 +395,8 @@ func _ravvicinati() -> void:
 				await RenderingServer.frame_post_draw
 			get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s_%s.jpg" % [x[1], q[0]]), 0.9)
 		luce.visible = prima_luce
+		if x[0] == "porta" and squalo_visibile:
+			s.squalo.visible = true
 		p.camera.make_current()
 		get_tree().paused = false
 	print("SONDA FINE")
