@@ -461,6 +461,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_oggetti_morti.gd
 
+      - name: Test del bambino agnello liberato (istanziato e liberato 3 volte, nessun errore del renderer)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_agnello_liberato.gd
+
       - name: Test delle ripartenze dal primo checkpoint del tunnel (F9 Tunnel, due morti, Continua; niente fotogrammi sopra 150 ms a schermo chiaro, stampati i tre più lunghi, lei al timer di 2 s, le forme tenute uguali a quelle da capo)
         if: steps.progetto.outputs.presente == 'si'
         env:
