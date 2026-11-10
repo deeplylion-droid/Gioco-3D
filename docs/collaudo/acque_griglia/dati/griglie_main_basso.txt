@@ -1,0 +1,141 @@
+ACQUE: WaterManager quality 0, preset basso
+ACQUA sala Gioco/EnigmaAcquari/AcquarioBlu/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala Gioco/EnigmaAcquari/AcquarioGiallo/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala Gioco/EnigmaAcquari/AcquarioMisto/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala Interni/Acqua/AcquaLavapiedi: qualità 0, griglia (2.2, 2.0) x 8 x 8, 100 vertici, impronta 773970626, superficie (0.0, -0.05, 27.5), ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala Piscina/AcquaPozza: qualità 0, griglia (14.0, 9.3) x 56 x 37, 2262 vertici, impronta 2564624441, superficie (0.0, -1.5, 0.35), ssr 12, riflessi 0, increspature 139, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_0_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_0_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_0_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_0_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_0_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_1_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_1_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_1_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_1_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_1_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_2_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_2_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_2_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_2_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_2_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_3_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_3_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_3_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_3_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_3_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_4_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_4_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_4_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_4_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Risalita/StanzaPozze/EnigmaPozze/Pozza_4_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala Tecnici/Acqua/AcquaVascaRaccolta: qualità 0, griglia (4.8, 3.0) x 19 x 12, 294 vertici, impronta 3543949359, superficie (-0.9, -9.200001, 37.86), ssr 12, riflessi 0, increspature 48, visibile true
+ACQUA sala Vasca/AcquaVascaCentrale: qualità 0, griglia (5.4, 3.9) x 21 x 15, 391 vertici, impronta 1741716886, superficie (0.0, 0.88, 10.0), ssr 12, riflessi 0, increspature 54, visibile true
+ACQUA sala Vasche/AcquaVascaArrivo: qualità 0, griglia (7.0, 10.0) x 28 x 40, 1260 vertici, impronta 302680078, superficie (-12.5, -0.22, 2.0), ssr 12, riflessi 0, increspature 99, visibile true
+ACQUA sala Vasche/AcquaVascaBimbi1: qualità 0, griglia (4.4, 3.2) x 17 x 12, 266 vertici, impronta 2839291005, superficie (-12.6, 0.3, -9.6), ssr 12, riflessi 0, increspature 44, visibile true
+ACQUA sala Vasche/AcquaVascaBimbi2: qualità 0, griglia (2.8, 2.8) x 11 x 11, 169 vertici, impronta 3051817363, superficie (-9.6, 0.22, -18.2), ssr 12, riflessi 0, increspature 32, visibile true
+ACQUE sala: 35
+ACQUE: cambio a alto, WaterManager quality 2
+ACQUA sala_cambio Gioco/EnigmaAcquari/AcquarioBlu/Acqua: qualità 2, niente superficie, ssr 40, riflessi 1, increspature 88, visibile true
+ACQUA sala_cambio Gioco/EnigmaAcquari/AcquarioGiallo/Acqua: qualità 2, niente superficie, ssr 40, riflessi 1, increspature 88, visibile true
+ACQUA sala_cambio Gioco/EnigmaAcquari/AcquarioMisto/Acqua: qualità 2, niente superficie, ssr 40, riflessi 1, increspature 127, visibile true
+ACQUA sala_cambio Interni/Acqua/AcquaLavapiedi: qualità 2, griglia (2.2, 2.0) x 44 x 40, 1932 vertici, impronta 2929348945, superficie (0.0, -0.05, 27.5), ssr 40, riflessi 1, increspature 88, visibile true
+ACQUA sala_cambio Piscina/AcquaPozza: qualità 2, griglia (14.0, 9.3) x 280 x 186, 53016 vertici, impronta 1404962530, superficie (0.0, -1.5, 0.35), ssr 40, riflessi 1, increspature 512, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_0_0/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-41.0, -5.453, 35.3), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_0_1/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-41.0, -5.453, 36.4), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_0_2/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-41.0, -5.453, 37.5), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_0_3/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-41.0, -5.453, 38.6), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_0_4/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-41.0, -5.453, 39.7), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_1_0/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-39.9, -5.453, 35.3), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_1_1/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-39.9, -5.453, 36.4), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_1_2/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-39.9, -5.453, 37.5), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_1_3/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-39.9, -5.453, 38.6), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_1_4/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-39.9, -5.453, 39.7), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_2_0/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-38.8, -5.453, 35.3), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_2_1/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-38.8, -5.453, 36.4), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_2_2/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-38.8, -5.453, 37.5), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_2_3/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-38.8, -5.453, 38.6), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_2_4/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-38.8, -5.453, 39.7), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_3_0/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-37.7, -5.453, 35.3), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_3_1/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-37.7, -5.453, 36.4), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_3_2/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-37.7, -5.453, 37.5), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_3_3/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-37.7, -5.453, 38.6), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_3_4/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-37.7, -5.453, 39.7), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_4_0/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-36.6, -5.453, 35.3), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_4_1/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-36.6, -5.453, 36.4), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_4_2/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-36.6, -5.453, 37.5), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_4_3/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-36.6, -5.453, 38.6), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Risalita/StanzaPozze/EnigmaPozze/Pozza_4_4/Acqua: qualità 2, griglia (1.0, 1.0) x 20 x 20, 484 vertici, impronta 3870868944, superficie (-36.6, -5.453, 39.7), ssr 40, riflessi 1, increspature 0, visibile true
+ACQUA sala_cambio Tecnici/Acqua/AcquaVascaRaccolta: qualità 2, griglia (4.8, 3.0) x 96 x 60, 6076 vertici, impronta 2780802314, superficie (-0.9, -9.200001, 37.86), ssr 40, riflessi 1, increspature 192, visibile true
+ACQUA sala_cambio Vasca/AcquaVascaCentrale: qualità 2, griglia (5.4, 3.9) x 108 x 78, 8800 vertici, impronta 3985028953, superficie (0.0, 0.88, 10.0), ssr 40, riflessi 1, increspature 216, visibile true
+ACQUA sala_cambio Vasche/AcquaVascaArrivo: qualità 2, griglia (7.0, 10.0) x 140 x 200, 28684 vertici, impronta 3150843908, superficie (-12.5, -0.22, 2.0), ssr 40, riflessi 1, increspature 399, visibile true
+ACQUA sala_cambio Vasche/AcquaVascaBimbi1: qualità 2, griglia (4.4, 3.2) x 88 x 64, 5940 vertici, impronta 3761314350, superficie (-12.6, 0.3, -9.6), ssr 40, riflessi 1, increspature 176, visibile true
+ACQUA sala_cambio Vasche/AcquaVascaBimbi2: qualità 2, griglia (2.8, 2.8) x 55 x 55, 3249 vertici, impronta 4294919929, superficie (-9.6, 0.22, -18.2), ssr 40, riflessi 1, increspature 111, visibile true
+ACQUE sala_cambio: 35
+ACQUA sala_ritorno Gioco/EnigmaAcquari/AcquarioBlu/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala_ritorno Gioco/EnigmaAcquari/AcquarioGiallo/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala_ritorno Gioco/EnigmaAcquari/AcquarioMisto/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala_ritorno Interni/Acqua/AcquaLavapiedi: qualità 0, griglia (2.2, 2.0) x 8 x 8, 100 vertici, impronta 773970626, superficie (0.0, -0.05, 27.5), ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA sala_ritorno Piscina/AcquaPozza: qualità 0, griglia (14.0, 9.3) x 56 x 37, 2262 vertici, impronta 2564624441, superficie (0.0, -1.5, 0.35), ssr 12, riflessi 0, increspature 139, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_0_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_0_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_0_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_0_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_0_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-41.0, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_1_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_1_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_1_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_1_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_1_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-39.9, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_2_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_2_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_2_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_2_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_2_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-38.8, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_3_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_3_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_3_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_3_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_3_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-37.7, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_4_0/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 35.3), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_4_1/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 36.4), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_4_2/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 37.5), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_4_3/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 38.6), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Risalita/StanzaPozze/EnigmaPozze/Pozza_4_4/Acqua: qualità 0, griglia (1.0, 1.0) x 4 x 4, 36 vertici, impronta 1231088226, superficie (-36.6, -5.453, 39.7), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA sala_ritorno Tecnici/Acqua/AcquaVascaRaccolta: qualità 0, griglia (4.8, 3.0) x 19 x 12, 294 vertici, impronta 3543949359, superficie (-0.9, -9.200001, 37.86), ssr 12, riflessi 0, increspature 48, visibile true
+ACQUA sala_ritorno Vasca/AcquaVascaCentrale: qualità 0, griglia (5.4, 3.9) x 21 x 15, 391 vertici, impronta 1741716886, superficie (0.0, 0.88, 10.0), ssr 12, riflessi 0, increspature 54, visibile true
+ACQUA sala_ritorno Vasche/AcquaVascaArrivo: qualità 0, griglia (7.0, 10.0) x 28 x 40, 1260 vertici, impronta 302680078, superficie (-12.5, -0.22, 2.0), ssr 12, riflessi 0, increspature 99, visibile true
+ACQUA sala_ritorno Vasche/AcquaVascaBimbi1: qualità 0, griglia (4.4, 3.2) x 17 x 12, 266 vertici, impronta 2839291005, superficie (-12.6, 0.3, -9.6), ssr 12, riflessi 0, increspature 44, visibile true
+ACQUA sala_ritorno Vasche/AcquaVascaBimbi2: qualità 0, griglia (2.8, 2.8) x 11 x 11, 169 vertici, impronta 3051817363, superficie (-9.6, 0.22, -18.2), ssr 12, riflessi 0, increspature 32, visibile true
+ACQUE sala_ritorno: 35
+ACQUA torre Gioco/EnigmaAcquari/AcquarioBlu/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA torre Gioco/EnigmaAcquari/AcquarioGiallo/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA torre Gioco/EnigmaAcquari/AcquarioMisto/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA torre Piscina/AcquaPozza: qualità 0, griglia (14.0, 9.3) x 56 x 37, 2262 vertici, impronta 2564624441, superficie (0.0, -2.26, 0.35), ssr 12, riflessi 0, increspature 139, visibile true
+ACQUA torre SalaSottomarino/AcquaPresa: qualità 0, griglia (7.4, 10.5) x 29 x 42, 1364 vertici, impronta 3261086939, superficie (33.0, -30.42, -6.25), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA torre Vasca/AcquaVascaCentrale: qualità 0, griglia (5.4, 3.9) x 21 x 15, 391 vertici, impronta 1741716886, superficie (0.0, 0.88, 10.0), ssr 12, riflessi 0, increspature 54, visibile true
+ACQUA torre Vasche/AcquaVascaArrivo: qualità 0, griglia (7.0, 10.0) x 28 x 40, 1260 vertici, impronta 302680078, superficie (-12.5, -0.22, 2.0), ssr 12, riflessi 0, increspature 99, visibile true
+ACQUA torre Vasche/AcquaVascaBimbi1: qualità 0, griglia (4.4, 3.2) x 17 x 12, 266 vertici, impronta 2839291005, superficie (-12.6, 0.32, -9.6), ssr 12, riflessi 0, increspature 44, visibile true
+ACQUA torre Vasche/AcquaVascaBimbi2: qualità 0, griglia (2.8, 2.8) x 11 x 11, 169 vertici, impronta 3051817363, superficie (-9.6, 0.24, -18.2), ssr 12, riflessi 0, increspature 32, visibile true
+ACQUE torre: 9
+ACQUA inseguimento Gioco/EnigmaAcquari/AcquarioBlu/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA inseguimento Gioco/EnigmaAcquari/AcquarioGiallo/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA inseguimento Gioco/EnigmaAcquari/AcquarioMisto/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA inseguimento Piscina/AcquaPozza: qualità 0, griglia (14.0, 9.3) x 56 x 37, 2262 vertici, impronta 2564624441, superficie (0.0, -2.26, 0.35), ssr 12, riflessi 0, increspature 139, visibile true
+ACQUA inseguimento SalaSottomarino/AcquaPresa: qualità 0, griglia (7.4, 10.5) x 29 x 42, 1364 vertici, impronta 3261086939, superficie (33.0, -30.42, -6.25), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA inseguimento Vasca/AcquaVascaCentrale: qualità 0, griglia (5.4, 3.9) x 21 x 15, 391 vertici, impronta 1741716886, superficie (0.0, 0.88, 10.0), ssr 12, riflessi 0, increspature 54, visibile true
+ACQUA inseguimento Vasche/AcquaVascaArrivo: qualità 0, griglia (7.0, 10.0) x 28 x 40, 1260 vertici, impronta 302680078, superficie (-12.5, -0.22, 2.0), ssr 12, riflessi 0, increspature 99, visibile true
+ACQUA inseguimento Vasche/AcquaVascaBimbi1: qualità 0, griglia (4.4, 3.2) x 17 x 12, 266 vertici, impronta 2839291005, superficie (-12.6, 0.316, -9.6), ssr 12, riflessi 0, increspature 44, visibile true
+ACQUA inseguimento Vasche/AcquaVascaBimbi2: qualità 0, griglia (2.8, 2.8) x 11 x 11, 169 vertici, impronta 3051817363, superficie (-9.6, 0.236, -18.2), ssr 12, riflessi 0, increspature 32, visibile true
+ACQUE inseguimento: 9
+ACQUA tunnel Gioco/EnigmaAcquari/AcquarioBlu/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA tunnel Gioco/EnigmaAcquari/AcquarioGiallo/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA tunnel Gioco/EnigmaAcquari/AcquarioMisto/Acqua: qualità 0, niente superficie, ssr 12, riflessi 0, increspature 32, visibile true
+ACQUA tunnel Piscina/AcquaPozza: qualità 0, griglia (14.0, 9.3) x 56 x 37, 2262 vertici, impronta 2564624441, superficie (0.0, -2.26, 0.35), ssr 12, riflessi 0, increspature 139, visibile true
+ACQUA tunnel SalaSottomarino/AcquaPresa: qualità 0, griglia (7.4, 10.5) x 29 x 42, 1364 vertici, impronta 3261086939, superficie (33.0, -30.42, -6.25), ssr 12, riflessi 0, increspature 0, visibile true
+ACQUA tunnel Vasca/AcquaVascaCentrale: qualità 0, griglia (5.4, 3.9) x 21 x 15, 391 vertici, impronta 1741716886, superficie (0.0, 0.88, 10.0), ssr 12, riflessi 0, increspature 54, visibile true
+ACQUA tunnel Vasche/AcquaVascaArrivo: qualità 0, griglia (7.0, 10.0) x 28 x 40, 1260 vertici, impronta 302680078, superficie (-12.5, -0.22, 2.0), ssr 12, riflessi 0, increspature 99, visibile true
+ACQUA tunnel Vasche/AcquaVascaBimbi1: qualità 0, griglia (4.4, 3.2) x 17 x 12, 266 vertici, impronta 2839291005, superficie (-12.6, 0.308, -9.6), ssr 12, riflessi 0, increspature 44, visibile true
+ACQUA tunnel Vasche/AcquaVascaBimbi2: qualità 0, griglia (2.8, 2.8) x 11 x 11, 169 vertici, impronta 3051817363, superficie (-9.6, 0.228, -18.2), ssr 12, riflessi 0, increspature 32, visibile true
+ACQUE tunnel: 9
+ACQUE FINITO
