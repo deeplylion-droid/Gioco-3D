@@ -601,8 +601,16 @@ func _nascondi_goccia_dopo() -> void:
 		if not is_inside_tree():
 			return
 		await get_tree().process_frame
-	if not _attivo and _goccia:
-		_goccia.visible = false
+	_goccia_disegnata = true
+	if _goccia:
+		_muovi_goccia()
+
+
+## Vero quando la goccia trasparente dell'inizio si è disegnata per [constant FOTOGRAMMI_GOCCIA] fotogrammi: prima
+## [method _muovi_goccia] non la nasconde (la scena parte subito dopo il livello: la nascondeva al primo fotogramma, prima
+## che si disegnasse, e la pipeline si compilava quando compariva; sonda di grafica-2 della 0.3.24, giro senza la
+## schermata di caricamento)
+var _goccia_disegnata := false
 
 
 ## Per quanto si vede la goccia (s), dalla GOCCIA.
@@ -619,22 +627,51 @@ func _muovi_goccia() -> void:
 		return
 	var x := _t - float(tempi.get("goccia", INF))
 	var dentro := _attivo and x >= 0.0 and x < DURATA_GOCCIA
-	_goccia.visible = dentro
+	_goccia.visible = dentro or not _goccia_disegnata
 	var mat := _goccia.material as ShaderMaterial
 	if not dentro:
 		mat.set_shader_parameter(&"forza", 0.0)
 		return
 	var vp := get_viewport().get_visible_rect().size
 	mat.set_shader_parameter(&"aspetto", vp.x / maxf(vp.y, 1.0))
-	# cade e si schiaccia (0,06 s), resta ferma un attimo, poi scivola giù sempre più svelta lasciando la scia, e alla
-	# fine si assottiglia e sparisce
+	# (goccia B dalla 0.3.23, scelta dell'utente) cade e si schiaccia (0,06 s) e resta appesa al muso con un filo di bava
+	# per FILO_GOCCIA s, tirata in su; poi il filo si spezza, i due capi si ritirano col rimbalzo (0,3 s), la goccia ricade un poco
+	# e scivola giù sempre più svelta, lasciando la scia spessa; alla fine si assottiglia e sparisce. Tutto a tempo di
+	# scena: uguale a 30 e a 60 fps
 	var arrivo := clampf(x / 0.06, 0.0, 1.0)
-	var scivola := maxf(x - 0.45, 0.0)
+	var spezzato := clampf((x - FILO_GOCCIA) / 0.3, 0.0, 1.0)
+	var tirata := arrivo * (1.0 - spezzato) * (0.7 + 0.3 * sin(x * 9.0))
+	var scivola := maxf(x - FILO_GOCCIA - 0.1, 0.0)
 	var giu := 0.12 * scivola * scivola + 0.03 * scivola
-	mat.set_shader_parameter(&"centro", Vector2(0.37 + 0.015 * sin(scivola * 2.3), 0.28 + giu))
-	mat.set_shader_parameter(&"raggio", lerpf(0.04, 0.095, arrivo) * (1.0 - 0.3 * clampf(scivola / 2.0, 0.0, 1.0)))
+	var centro := Vector2(0.37 + 0.015 * sin(scivola * 2.3), 0.28 - 0.012 * tirata + 0.01 * spezzato + giu)
+	mat.set_shader_parameter(&"centro", centro)
+	mat.set_shader_parameter(&"raggio", lerpf(0.035, 0.08, arrivo) * (1.0 - 0.3 * clampf(scivola / 2.0, 0.0, 1.0)))
 	mat.set_shader_parameter(&"scia", clampf(giu / 0.05, 0.0, 9.0))
+	mat.set_shader_parameter(&"tirata", tirata)
+	# (spezzato i due capi si ritirano in 0,3 s col rimbalzo, poi il filo sparisce)
+	mat.set_shader_parameter(&"rottura", spezzato)
+	mat.set_shader_parameter(&"filo", arrivo * (1.0 - smoothstep(0.75, 1.0, spezzato)))
+	mat.set_shader_parameter(&"tempo", x)
+	mat.set_shader_parameter(&"aggancio", _muso_sullo_schermo(centro))
 	mat.set_shader_parameter(&"forza", arrivo * (1.0 - clampf((x - (DURATA_GOCCIA - 0.7)) / 0.7, 0.0, 1.0)))
+
+
+## Per quanto la goccia resta appesa al muso col filo di bava (s), prima che il filo si spezzi.
+const FILO_GOCCIA := 0.55
+
+
+## Dove sta il muso (la punta del mento) sullo schermo, in UV: lì si attacca il filo della goccia. Se è dietro la
+## camera o fuori dallo schermo, sopra la goccia, al bordo.
+func _muso_sullo_schermo(centro: Vector2) -> Vector2:
+	var cam := _p.camera if _p else null
+	if cam == null or squalo == null:
+		return Vector2(centro.x, -0.02)
+	var m := _bone_mondo("mento_punta")
+	if cam.is_position_behind(m):
+		return Vector2(centro.x, -0.02)
+	var vp := get_viewport().get_visible_rect().size
+	var uv := cam.unproject_position(m) / Vector2(maxf(vp.x, 1.0), maxf(vp.y, 1.0))
+	return Vector2(clampf(uv.x, -0.05, 1.05), clampf(uv.y, -0.05, 1.05))
 
 
 ## La luce della corsa: dietro e sopra di lui, dalla parte del giocatore; si accende quando si gira verso la

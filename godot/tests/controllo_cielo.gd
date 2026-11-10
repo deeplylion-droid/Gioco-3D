@@ -111,6 +111,11 @@ func _run() -> void:
 					cielo_qui += 1
 		print("CIELO:   posti da dove si vede il cielo: %d" % cielo_qui)
 		await get_tree().process_frame
+	# il fiume lento dalla ciambella (#130: il buco a pelo d'acqua all'estremità est del capannone, x 26,3-27 del fiume,
+	# si vedeva solo dall'acqua, e la strada qui sopra passa sulla banchina)
+	if solo == "" or "risalita: il fiume dalla ciambella".contains(solo):
+		await _fiume_dalla_ciambella(level, spazio, p)
+		posti += _posti_fiume
 	# la torre, caricata come nel gioco, e gli occhi dei suoi checkpoint
 	if solo == "" or "torre".contains(solo):
 		var torre: Node3D = null
@@ -150,6 +155,39 @@ func _run() -> void:
 		printerr("    " + c)
 	print("RISULTATO: %s" % ("ok, il cielo non si vede da nessuna parte" if _casi.is_empty() else "FALLITO, %d posti da correggere" % _casi.size()))
 	Game.esci(1 if not _casi.is_empty() else 0)
+
+
+var _posti_fiume := 0
+
+
+## Gli occhi sulla ciambella lungo tutti i tratti del fiume lento, ogni [constant PASSO] m, in piedi e accovacciati (1,65
+## e 0,97 m sopra il punto del tratto, come gli scatti del collaudo della riga del fiume).
+func _fiume_dalla_ciambella(level: Node3D, spazio: PhysicsDirectSpaceState3D, p: Node) -> void:
+	var ris := level.get_node_or_null(^"Risalita")
+	var fiume: Node3D = ris.get(&"fiume") as Node3D if ris else null
+	if fiume == null:
+		_casi.append("risalita: il fiume lento non è nel livello (da correggere)")
+		return
+	var tratti := fiume.find_children("*", "TrattoFiume", true, false)
+	(p as Player).teleport(fiume.global_position + Vector3.UP * 0.5)
+	for i in 40:
+		await get_tree().physics_frame
+	print("CIELO: risalita: il fiume dalla ciambella, %d tratti (corpi dalle mesh nuovi %d)" % [tratti.size(),
+			CorpiMesh.crea(level, AABB(fiume.global_position, Vector3.ZERO).grow(60.0), p)])
+	for i in 3:
+		await get_tree().physics_frame
+	var scatole := _scatole(level)
+	var cielo_qui := 0
+	for t: TrattoFiume in tratti:
+		var n := maxi(1, int(ceil(t.lunghezza() / PASSO)))
+		for j in n + 1:
+			for alto: float in [1.65, 0.97]:
+				var occhio: Vector3 = t.punto(t.lunghezza() * j / n) + Vector3.UP * alto
+				_posti_fiume += 1
+				if not _posto("risalita: il fiume dalla ciambella, %s a %.0f m, occhi a %.2f" % [t.name, t.lunghezza() * j / n, alto],
+						occhio, spazio, scatole, p):
+					cielo_qui += 1
+	print("CIELO:   posti da dove si vede il cielo: %d" % cielo_qui)
 
 
 ## La porta di servizio in cima alla scaletta del bacino delle condotte (6 novembre, cubo magenta di varchi-cielo): dagli

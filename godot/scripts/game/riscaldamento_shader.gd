@@ -176,6 +176,11 @@ func _disegna() -> void:
 		await nv.riscalda(sv, 3)
 		if not is_inside_tree():
 			return
+	# la goccia di bava sullo schermo della scena dello squalo (goccia B dalla 0.3.23): il ColorRect vero col suo shader,
+	# acceso (legge lo schermo: anche la copia dello schermo ha le sue pipeline)
+	await riscalda_goccia(sv, 3)
+	if not is_inside_tree():
+		return
 	# gli effetti che compaiono solo con un evento a metà partita (ritocco "scatti" dell'utente del 4 novembre, scelta A;
 	# tests/sonda_primo_uso_effetti.gd): il gorgo dello scarico, il vapore e le medusine, coi loro nodi veri
 	await _disegna_effetti(sv)
@@ -186,6 +191,30 @@ func _disegna() -> void:
 	await _disegna_oblo(sv)
 	await get_tree().process_frame
 	sv.queue_free()
+
+
+## La goccia di bava sullo schermo (RisveglioSqualo, shader goccia_schermo) accesa, col filo e la scia, sopra il
+## SubViewport [param sv], per [param fotogrammi] fotogrammi.
+static func riscalda_goccia(sv: Viewport, fotogrammi := 2) -> void:
+	var c := CanvasLayer.new()
+	c.layer = 2
+	var r := ColorRect.new()
+	r.set_anchors_preset(Control.PRESET_FULL_RECT)
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var m := ShaderMaterial.new()
+	m.shader = RisveglioSqualo.SHADER_GOCCIA
+	m.set_shader_parameter(&"forza", 1.0)
+	m.set_shader_parameter(&"centro", Vector2(0.5, 0.5))
+	m.set_shader_parameter(&"raggio", 0.2)
+	m.set_shader_parameter(&"scia", 2.0)
+	m.set_shader_parameter(&"filo", 1.0)
+	m.set_shader_parameter(&"aggancio", Vector2(0.5, 0.0))
+	r.material = m
+	c.add_child(r)
+	sv.add_child(c)
+	for i in fotogrammi:
+		await RenderingServer.frame_post_draw
+	c.queue_free()
 
 
 var _luci: Array[Light3D] = []

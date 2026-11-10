@@ -45,6 +45,11 @@ func _ready() -> void:
 		_registra.call_deferred()
 		return
 	var a := OS.get_cmdline_user_args()
+	if OS.get_environment("GIRO_SPIA") == "1":
+		var spia := Node.new()
+		spia.set_script(load("res://tests/collaudo/spia_canvas_g2.gd"))
+		spia.name = "SpiaCanvas"
+		get_tree().root.add_child.call_deferred(spia)
 	var r := Node.new()
 	r.set_script(get_script())
 	r.name = "GiroSqualo"
@@ -68,6 +73,35 @@ func _ready() -> void:
 func _monta_interni() -> void:
 	var velo := Dissolvenza.di(get_tree())
 	await velo.scurisci(0.0)
+	# GIRO_RISCALDA=goccia (ricontrollo della goccia B, grafica-2): prima degli interni la goccia disegnata come la disegna il
+	# riscaldamento della schermata di caricamento (RiscaldamentoShader._disegna: SubViewport 64x64 come la finestra), che
+	# questo giro salta
+	# GIRO_RISCALDA=tutto: il riscaldamento intero della schermata di caricamento (RiscaldamentoShader, col post-processing
+	# nascosto come nella schermata), poi gli interni
+	if OS.get_environment("GIRO_RISCALDA") == "tutto":
+		Grafica.post_processing_visibile(false)
+		var rs := RiscaldamentoShader.new()
+		var c0 := int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS))
+		get_tree().root.add_child(rs)
+		if not rs.concluso:
+			await rs.finito
+		print("GIRO: riscaldamento intero fatto, pipeline 2D compilate %d" % (int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS)) - c0))
+		rs.queue_free()
+		# (i materiali delle zone tenuti dal riscaldamento non servono qui e con gli interni non ci starebbero in memoria;
+		# lo shader della goccia resta, è un preload di RisveglioSqualo)
+		RiscaldamentoShader._tenuti.clear()
+		Grafica.post_processing_visibile(true)
+	if OS.get_environment("GIRO_RISCALDA") == "goccia":
+		var sv := SubViewport.new()
+		sv.size = Vector2i(64, 64)
+		sv.own_world_3d = true
+		sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		RiscaldamentoShader.copia_viewport(sv, get_viewport())
+		get_tree().root.add_child(sv)
+		var c0 := int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS))
+		await RiscaldamentoShader.riscalda_goccia(sv, 3)
+		print("GIRO: riscaldamento della goccia fatto, pipeline 2D compilate %d" % (int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_CANVAS)) - c0))
+		sv.queue_free()
 	var radice := Node3D.new()
 	radice.name = "SalaSoloInterni"
 	var look := LookSala.new()
@@ -156,6 +190,8 @@ func _registra() -> void:
 		for f in s.tempi.get("fiuti", []):
 			istanti.append(float(f) + 0.15)
 		istanti.append_array([G + 0.08, G + 0.6, G + 1.4, G + 2.1, float(s.tempi.get("apre", M - 0.4)) + 0.15, M])
+		# (goccia B, 0.3.23) appesa al filo, il filo che si spezza, e i momenti della pagina per l'utente (4,5, 4,8, 6,4 s)
+		istanti.append_array([G + 0.25, G + 0.45, G + 0.62, 4.5, 4.8, 6.4])
 		for m in s.tempi.get("morsi", []):
 			istanti.append(float(m[0]) + 0.1)
 		var pausa: Array = s.tempi.get("pausa", [M + 1.25, M + 2.05])
@@ -163,6 +199,14 @@ func _registra() -> void:
 		var ultimo: Array = (s.tempi.get("morsi", [[M + 2.2, 0.3]]) as Array).back()
 		istanti.append_array([float(ultimo[0]) + 0.3, R + 0.4, E, P - 0.5, P + 0.8])
 		istanti.sort()
+	# GIRO_ISTANTI=goccia (ricontrollo della goccia B, grafica-2): ogni 0,02 s da G-0,05 a G+1,1 s, poi ogni 0,1 s fino
+	# a quando sparisce
+	elif OS.get_environment("GIRO_ISTANTI") == "goccia":
+		var G := float(s.tempi.get("goccia", 4.4))
+		for k in 58:
+			istanti.append(G - 0.05 + 0.02 * k)
+		for k in 18:
+			istanti.append(G + 1.2 + 0.1 * k)
 	var n := 0
 	var t_controllo := -1.0
 	var t := 0.0
@@ -185,7 +229,7 @@ func _registra() -> void:
 		elif scatti and t >= t_scatto:
 			await _scatto("%03d_%s_%05.2fs" % [n, fase, t])
 			n += 1
-			t_scatto += PASSO
+			t_scatto += float(OS.get_environment("GIRO_PASSO")) if OS.has_environment("GIRO_PASSO") else PASSO
 		if t_controllo >= 0.0 and t >= t_controllo + DOPO:
 			break
 		if fino > 0.0 and t >= fino:

@@ -88,6 +88,13 @@ var _conche: Array = []
 var _collisioni: StaticBody3D
 var _barriere: StaticBody3D
 var _poligoni_acqua_cache: Array = []
+## Le toppe d'acqua delle conche come le vede il pavimento: cominciano qualche cm dentro la striscia (#130, le pinne).
+var _toppe_pavimento: Array = []
+## Le pareti dei canali e le barriere lungo l'acqua (per [method lati_storti]).
+var _pareti_mesh: MeshInstance3D
+var _barriere_forma: ConcavePolygonShape3D
+## I pezzi di pavimento 2D con il loro rettangolo (per [method lati_storti]).
+var _pezzi_pavimento: Array = []
 var _mat_globo: StandardMaterial3D
 var _mat_faro: StandardMaterial3D
 ## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un po' per fotogramma.
@@ -241,9 +248,40 @@ func _tracciato() -> void:
 		_striscia(_punti2([Vector3(dentro.x, 0, dentro.y), Vector3(fine.x, 0, fine.y)]))
 		# la conca del bivio: un quadrato allineato al raggio
 		_conche.append(_quadrato(Vector2(c.x, c.z), CONCA, atan2(verso.y, verso.x)))
+	_toppe_conche()
 	_conche.append(_quadrato(Vector2.ZERO, VASCA, 0.0))
 	# l'approdo
 	_conche.append(PackedVector2Array([APPRODO + Vector2(-2.2, -2.4), APPRODO + Vector2(2.2, -2.4), APPRODO + Vector2(2.2, 2.4), APPRODO + Vector2(-2.2, 2.4)]))
+
+
+## Le punte squadrate dei canali dell'anello escono di qualche centimetro dal lato della conca del bivio dove entrano:
+## fra la punta e la conca restava una lama di pavimento larga 5-15 cm con l'acqua dai due lati (#130). La toppa è il
+## canale prolungato dritto di 1 m dentro la conca, meno la conca: proprio la lama, che diventa acqua. Non tocca le
+## strisce, quindi i bordi dell'anello restano dov'erano.
+func _toppe_conche() -> void:
+	for i in 3:
+		var pts: PackedVector2Array = _strisce[i]
+		for fine in ([pts.size() - 1] if i == 0 else [0, pts.size() - 1]):
+			var p: Vector2 = pts[fine]
+			var d: Vector2 = (p - pts[fine - 1 if fine > 0 else 1]).normalized()
+			var o := d.orthogonal() * W * 0.5
+			var ext := PackedVector2Array([p - o, p + o, p + o + d, p - o + d])
+			# Il pavimento si taglia con la toppa allungata di 3 cm dentro la striscia: la fine della striscia di
+			# offset_polyline e l'inizio della toppa non coincidono al decimo di mm, e fra le due restava una lama di
+			# pavimento larga meno di 1 cm con due pareti schiena contro schiena dentro l'acqua (#130, le pinne).
+			var dentro := d * 0.03
+			var ext_pav := PackedVector2Array([p - o - dentro, p + o - dentro, p + o + d, p - o + d])
+			var tocca := false
+			for c: PackedVector2Array in _conche.duplicate():
+				if Geometry2D.intersect_polygons(ext, c).is_empty():
+					continue
+				tocca = true
+				for t: PackedVector2Array in Geometry2D.clip_polygons(ext, c):
+					if Geometry2D.is_polygon_clockwise(t) != Geometry2D.is_polygon_clockwise(c):
+						t.reverse()
+					_conche.append(t)
+			if tocca:
+				_toppe_pavimento.append(ext_pav)
 
 
 func _punti2(punti: Array) -> PackedVector2Array:
@@ -289,6 +327,7 @@ func _poligoni_acqua() -> Array:
 		for p in Geometry2D.offset_polyline(s, W * 0.5, Geometry2D.JOIN_ROUND, Geometry2D.END_BUTT):
 			polys.append(p)
 	polys.append_array(_conche)
+	polys.append_array(_toppe_pavimento)
 	return polys
 
 
@@ -317,6 +356,7 @@ func _acqua_e_banchine() -> void:
 					dopo.append_array(Geometry2D.clip_polygons(pz, w))
 				pezzi = dopo
 			for pz in pezzi:
+				_pezzi_pavimento.append([Rect2(Vector2(x, z), Vector2(xa - x, za - z)), pz])
 				var tri := Geometry2D.triangulate_polygon(pz)
 				for k in range(0, tri.size(), 3):
 					var t := [pz[tri[k]], pz[tri[k + 1]], pz[tri[k + 2]]]
@@ -330,27 +370,49 @@ func _acqua_e_banchine() -> void:
 				for i in pz.size():
 					var a: Vector2 = pz[i]
 					var b: Vector2 = pz[(i + 1) % pz.size()]
-					if _sulla_griglia(a, b, x, xa, z, za) or a.distance_to(b) < 0.001:
+					if a.distance_to(b) < 0.001:
 						continue
 					# la normale verso l'acqua (fuori dal pezzo di pavimento)
 					var m := (a + b) * 0.5
 					var n := (b - a).orthogonal().normalized()
 					if Geometry2D.is_point_in_polygon(m + n * 0.01, pz):
 						n = -n
-					_parete(pareti, a, b, Vector3(n.x, 0, n.y))
-					for q in [Vector3(a.x, 0, a.y), Vector3(b.x, 0, b.y), Vector3(b.x, 2.0, b.y),
-							Vector3(a.x, 0, a.y), Vector3(b.x, 2.0, b.y), Vector3(a.x, 2.0, a.y)]:
-						barriere.append(q)
+					var tratti_lato: Array = [[a, b]]
+					# un lato sul bordo del quadrotto è bordo d'acqua solo dove di là c'è l'acqua: i lati delle conche dei
+					# bivi a x ±3 e a x 21, 27, -21, -27 stanno proprio sulla griglia (#130, la riga e il buco all'est)
+					if _sulla_griglia(a, b, x, xa, z, za):
+						tratti_lato = _tratti_in_acqua(a, b, n * 0.01, polys)
+					for ab: Array in tratti_lato:
+						var a2: Vector2 = ab[0]
+						var b2: Vector2 = ab[1]
+						_parete(pareti, a2, b2, Vector3(n.x, 0, n.y))
+						for q in [Vector3(a2.x, 0, a2.y), Vector3(b2.x, 0, b2.y), Vector3(b2.x, 2.0, b2.y),
+								Vector3(a2.x, 0, a2.y), Vector3(b2.x, 2.0, b2.y), Vector3(a2.x, 2.0, a2.y)]:
+							barriere.append(q)
 			z += 2.0
 		x += 2.0
 	_mesh(pav, mat_banca, true, true)
-	_mesh(pareti, mat_vasca, true, true)
+	# Le pareti si vedono dalla parte dell'acqua, ma la loro collisione resta quella di prima (#130): una faccia sola,
+	# verso la banchina, così i raggi dall'acqua (il getto, chi cerca il fondo o il pelo) passano fino al fondo.
+	var mp := _mesh(pareti, mat_vasca, true, false)
+	_pareti_mesh = mp
+	var facce := mp.mesh.get_faces()
+	for k in range(0, facce.size(), 3):
+		var t := facce[k + 1]
+		facce[k + 1] = facce[k + 2]
+		facce[k + 2] = t
+	var fp := CollisionShape3D.new()
+	var sp := ConcavePolygonShape3D.new()
+	sp.set_faces(facce)
+	fp.shape = sp
+	_collisioni.add_child(fp)
 	# Muro invisibile lungo il bordo dell'acqua (livello "barriere": ferma il giocatore, non il getto né
 	# il raggio del tasto E): nel canale non si cade, e sulla ciambella si sale dalla banchina.
 	var fb := CollisionShape3D.new()
 	var cs := ConcavePolygonShape3D.new()
 	cs.set_faces(barriere)
 	cs.backface_collision = true
+	_barriere_forma = cs
 	fb.shape = cs
 	_barriere.add_child(fb)
 	# il fondo: un piano sotto tutto il capannone
@@ -466,6 +528,31 @@ func _faccia(st: SurfaceTool, q: Array, verso: Vector3) -> void:
 		st.add_vertex(q[k])
 
 
+## I pezzi del lato a-b che hanno l'acqua dalla parte di [param fuori] (i poligoni dell'acqua si sovrappongono: i pezzi
+## si uniscono lungo il lato).
+static func _tratti_in_acqua(a: Vector2, b: Vector2, fuori: Vector2, polys: Array) -> Array:
+	var lung := a.distance_to(b)
+	var dir := (b - a) / lung
+	var pezzi: Array = []
+	for w in polys:
+		for pl in Geometry2D.intersect_polyline_with_polygon(PackedVector2Array([a + fuori, b + fuori]), w):
+			var t0 := clampf((pl[0] - fuori - a).dot(dir), 0.0, lung)
+			var t1 := clampf((pl[pl.size() - 1] - fuori - a).dot(dir), 0.0, lung)
+			pezzi.append(Vector2(minf(t0, t1), maxf(t0, t1)))
+	pezzi.sort_custom(func(p, q): return p.x < q.x)
+	var uniti: Array = []
+	for p: Vector2 in pezzi:
+		if not uniti.is_empty() and p.x <= (uniti[-1] as Vector2).y + 0.001:
+			uniti[-1] = Vector2((uniti[-1] as Vector2).x, maxf((uniti[-1] as Vector2).y, p.y))
+		else:
+			uniti.append(p)
+	var out: Array = []
+	for p: Vector2 in uniti:
+		if p.y - p.x > 0.001:
+			out.append([a + dir * p.x, a + dir * p.y])
+	return out
+
+
 ## Vero se il lato a-b sta su un bordo del quadrotto (non è bordo d'acqua).
 static func _sulla_griglia(a: Vector2, b: Vector2, x0: float, x1: float, z0: float, z1: float) -> bool:
 	for gx in [x0, x1]:
@@ -480,8 +567,12 @@ static func _sulla_griglia(a: Vector2, b: Vector2, x0: float, x1: float, z0: flo
 ## Una parete del canale dal bordo a-b giù fino al fondo, con la faccia verso [param n] (l'acqua).
 func _parete(st: SurfaceTool, a: Vector2, b: Vector2, n: Vector3) -> void:
 	var q := [Vector3(a.x, 0, a.y), Vector3(b.x, 0, b.y), Vector3(b.x, FONDO, b.y), Vector3(a.x, FONDO, a.y)]
+	# i triangoli (0, 2, 1) e (0, 3, 2) hanno la faccia davanti (in Godot gira in senso orario) dalla parte di nq: deve
+	# guardare l'acqua. (Prima guardava dalla parte opposta: dall'acqua le pareti dei canali non si vedevano, e dietro
+	# si vedeva il fondo, dello stesso mosaico; in fondo alla conca del bivio di Giusto1, dove dietro non c'è il fondo,
+	# restava una riga di cielo a pelo d'acqua, #130)
 	var nq: Vector3 = (q[1] - q[0]).cross(q[3] - q[0])
-	if (-nq).dot(n) < 0.0:
+	if nq.dot(n) < 0.0:
 		q = [q[1], q[0], q[3], q[2]]
 	var d := (b - a).normalized()
 	for idx in [0, 2, 1, 0, 3, 2]:
@@ -1203,6 +1294,38 @@ static func in_piazza(p: Vector3) -> bool:
 	if p.x < MURO_APPRODO or p.z > -W * 0.5:
 		return false
 	return p.x < -W * 0.5 or (p.z < Z_PIAZZA_NORD and p.x < MURO_PIAZZA)
+
+
+## I triangoli delle pareti dei canali e delle barriere che non stanno sul bordo del pavimento: a 5 cm dai due lati
+## manca il pavimento (una pinna dentro il canale) o c'è da tutti e due (un muro in mezzo alla banchina). Devono essere
+## 0 (#130). Si guardano i pezzi di pavimento veri, non i poligoni dell'acqua: quelli si sovrappongono fra loro.
+## Ritorna {"pareti": n, "barriere": n, "dove": [punti, al massimo 20]}.
+func lati_storti() -> Dictionary:
+	var out := {"pareti": 0, "barriere": 0, "dove": []}
+	var gruppi := {"pareti": _pareti_mesh.mesh.get_faces() if _pareti_mesh else PackedVector3Array(),
+			"barriere": _barriere_forma.get_faces() if _barriere_forma else PackedVector3Array()}
+	for chi: String in gruppi:
+		var fc: PackedVector3Array = gruppi[chi]
+		for k in range(0, fc.size(), 3):
+			var g := (fc[k + 1] - fc[k]).cross(fc[k + 2] - fc[k])
+			var n := Vector2(g.x, g.z)
+			if n.length() < 1e-6:
+				continue
+			n = n.normalized()
+			var m := (fc[k] + fc[k + 1] + fc[k + 2]) / 3.0
+			var c := Vector2(m.x, m.z)
+			if _sul_pavimento(c + n * 0.05) == _sul_pavimento(c - n * 0.05):
+				out[chi] += 1
+				if (out["dove"] as Array).size() < 20:
+					(out["dove"] as Array).append(m.snappedf(0.01))
+	return out
+
+
+func _sul_pavimento(v: Vector2) -> bool:
+	for pr: Array in _pezzi_pavimento:
+		if (pr[0] as Rect2).grow(0.001).has_point(v) and Geometry2D.is_point_in_polygon(v, pr[1]):
+			return true
+	return false
 
 
 ## Vero se il punto (a quota 0) è sulla banchina libera: non nell'acqua, né troppo vicino al bordo.
