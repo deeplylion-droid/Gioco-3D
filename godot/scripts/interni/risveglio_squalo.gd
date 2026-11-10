@@ -331,6 +331,9 @@ func _prepara_porta() -> void:
 
 
 func _aggancia_porta() -> void:
+	# (gli interni liberati prima di questa chiamata differita: niente porta da agganciare)
+	if not is_instance_valid(porta) or not is_instance_valid(_perno) or not _perno.is_inside_tree():
+		return
 	var r := _perno.rotation.y      # la porta si aggancia chiusa, poi il perno torna dov'era
 	_perno.rotation.y = 0.0
 	porta.reparent(_perno, true)
@@ -726,6 +729,14 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	_spinta = _spinta.move_toward(morbida, VEL_SPINTA * delta) if delta > 0.0 else morbida
 	_spinta += _fuori_dalla_pelle(base + _spinta)
 	cam.global_position = base + _spinta
+
+
+## Il perno della porta entra nell'albero con una chiamata differita (_prepara_porta): se gli interni si liberano prima
+## (una ripartenza nella torre o nelle condotte, che li toglie subito) il perno resta fuori, senza genitore, e nessuno
+## lo libera: era un nodo orfano in più a ogni ripartenza (test_oggetti_morti, 10 novembre). Si libera con il risveglio.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE and is_instance_valid(_perno) and _perno.get_parent() == null:
+		_perno.free()
 
 
 func _exit_tree() -> void:

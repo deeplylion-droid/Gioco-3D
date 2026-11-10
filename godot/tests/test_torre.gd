@@ -28,14 +28,16 @@ var _failed := 0
 var _errori := RaccoltaErrori.new()
 
 
-## Gli errori degli script (un Logger li raccoglie tutti).
+## Gli errori degli script e del motore (un Logger li raccoglie tutti, dall'inizio del test): anche quelli del
+## renderer, come «Initializing already initialized RID» e «m is null» di MeshStorage, visti dal collaudo in un giro su
+## tre con stendardi.glb ancora in caricamento per la torre tolta a metà. Non gli avvisi.
 class RaccoltaErrori extends Logger:
 	var errori: Array = []
 	var _mutex := Mutex.new()
 
 	func _log_error(_function: String, file: String, line: int, _code: String, rationale: String,
 			_editor_notify: bool, error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
-		if error_type != Logger.ERROR_TYPE_SCRIPT:
+		if error_type == Logger.ERROR_TYPE_WARNING:
 			return
 		_mutex.lock()
 		errori.append("%s:%d %s" % [file, line, rationale])
@@ -65,7 +67,6 @@ func _run() -> void:
 		tp.costruzione_a_pezzi = true
 		tp.visible = false
 		genitore.add_child(tp)
-		var prima := _errori.copia().size()
 		var finita := [false]
 		var prepara := func():
 			await tp.costruisci_a_pezzi(1.0)
@@ -82,12 +83,19 @@ func _run() -> void:
 		var a_meta: bool = not finita[0]
 		get_tree().root.remove_child(genitore)
 		await _frames(10)
-		var errori := _errori.copia().slice(prima)
-		check(a_meta and errori.is_empty(), "tolta a metà della %s: nessun errore (%s)" % [quando, "; ".join(errori)])
+		# (gli errori dall'inizio del test, non da qui: uno di prima che arriva tardi conta lo stesso)
+		var errori := _errori.copia()
+		check(a_meta and errori.is_empty(), "tolta a metà della %s: nessun errore dall'inizio (%s)" % [quando, "; ".join(errori)])
 		check(quando == "costruzione" or tp.find_children("*", "VisualInstance3D", true, false).all(
 				func(v): return (v as VisualInstance3D).layers != SalaTorre.STRATO_PREPARA),
 			"   e la torre torna sui suoi strati")
 		genitore.free()
+	# la precarica della torre tolta a metà (Game.carica_in_thread, per esempio stendardi.glb) finisce prima della
+	# torre dopo: un load() dello stesso file mentre il thread lo carica dava, una volta su tre, errori del renderer
+	var t_carica := Time.get_ticks_msec()
+	while Game.caricamenti_in_corso() and Time.get_ticks_msec() - t_carica < 120000:
+		await _frames(1)
+	check(not Game.caricamenti_in_corso(), "i caricamenti nel thread della torre tolta a metà finiti prima della torre dopo (%.1f s)" % [(Time.get_ticks_msec() - t_carica) / 1000.0])
 
 	print("1. La sala da sola")
 	var torre: SalaTorre = (load(TORRE) as PackedScene).instantiate()
@@ -430,7 +438,7 @@ func _run() -> void:
 			await _frames(5)
 			check(bool(level.get(&"demo_finished")), "alla fine dell'inseguimento finisce il capitolo (la demo)")
 	var errori_script := _errori.copia()
-	check(errori_script.is_empty(), "nessun errore degli script (%s)" % "; ".join(errori_script))
+	check(errori_script.is_empty(), "nessun errore degli script né del motore dall'inizio (%s)" % "; ".join(errori_script))
 	_fine()
 
 
