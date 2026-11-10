@@ -120,7 +120,7 @@ func _ripartenza(nome: String, vecchio: int) -> void:
 			"%s: lei riemerge %.2f s dopo la ripartenza nel tunnel, al timer di 2 s (fra %.2f e %.2f)" % [nome, dopo, RIEMERGE_DA, RIEMERGE_A])
 	# le forme del tunnel uguali a quelle calcolate da capo (un tunnel nuovo costruito subito accanto, senza le tenute)
 	var date: Array = FormeTunnel._cache.get(tun.get_instance_id(), [])
-	var tenute := FormeTunnel._tenute.duplicate()
+	var tenute := FormeTunnel._TENUTE.dati.duplicate()
 	FormeTunnel.lascia_tenute()
 	var nuovo := (load("res://scenes/sala/sottomarino/sala_sottomarino.tscn") as PackedScene).instantiate() as SalaSottomarino
 	tun.get_parent().add_child(nuovo)
@@ -134,7 +134,7 @@ func _ripartenza(nome: String, vecchio: int) -> void:
 			"%s: le forme del tunnel (%d) uguali a quelle calcolate da capo (%d), le forme calcolate %.1f MB" % [nome, date.size(), da_capo.size(), costo])
 	FormeTunnel._cache.erase(nuovo.get_instance_id())
 	nuovo.free()
-	FormeTunnel._tenute = tenute
+	FormeTunnel._TENUTE.dati = tenute
 
 
 var _vecchio_tunnel := 0
@@ -149,7 +149,7 @@ func _run() -> void:
 	MenuProva.parti(get_tree(), "tunnel")
 	await _ripartenza("F9 Tunnel", 0)
 	check(FormeTunnel.ha_tenute(), "F9 Tunnel: le forme tenute per le ripartenze")
-	var tenute: Array = FormeTunnel._tenute[1]
+	var tenute: Array = FormeTunnel._TENUTE.dati[1]
 	# due morti di fila: le forme sono quelle tenute
 	for k in 2:
 		var vecchio := GameState.player.get_instance_id()
@@ -166,6 +166,6 @@ func _run() -> void:
 	GameState.prepara_ripresa(d)
 	get_tree().change_scene_to_file(GameState.SCENA_CARICAMENTO)
 	await _ripartenza("Continua", vecchio2)
-	check(FormeTunnel.ha_tenute() and not is_same(FormeTunnel._tenute[1], tenute), "Continua: le forme di nuovo tenute, ricalcolate")
+	check(FormeTunnel.ha_tenute() and not is_same(FormeTunnel._TENUTE.dati[1], tenute), "Continua: le forme di nuovo tenute, ricalcolate")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	Game.esci(1 if _ko > 0 else 0)

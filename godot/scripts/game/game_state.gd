@@ -500,7 +500,8 @@ func reset_progress() -> void:
 	snapshot = {}
 	_pacchetto_livello = null
 	_tenute.clear()
-	FormeTunnel.lascia_tenute()
+	# (senza nominare FormeTunnel: vedi forme_tenute.gd)
+	preload("res://scripts/environment/forme_tenute.gd").lascia()
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()

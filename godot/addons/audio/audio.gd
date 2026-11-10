@@ -502,7 +502,8 @@ func salva_impostazioni() -> void:
 	cfg.save(percorso_impostazioni)
 
 
-## Tutti i suoni del Catalogo chiesti al thread all'avvio (250 file, 9 MB in memoria): stream_di li trova già caricati e
+## Tutti i suoni del Catalogo chiesti al thread all'avvio (250 file; misure di mascotte del 10 novembre: +45,7 MB al
+## titolo, 353 contro 307 MB, e circa +8 MB in gioco, dove molti si caricavano comunque): stream_di li trova già caricati e
 ## non li carica sul thread principale mentre si gioca (sonda dei load del 9 novembre: 35 ogg al primo uso, piccoli a
 ## disco caldo ma da disco freddo possono fare uno scatto). Coi caricamenti del gioco (Game.carica_in_thread), così
 ## all'uscita si aspettano anche loro.
