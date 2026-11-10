@@ -32,3 +32,10 @@ partenze 8231ba89 giro 3: 0 RISULTATO: 74 controlli ok, 0 falliti | material nul
 partenze 26f399fe giro 2: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
 partenze 26f399fe giro 3: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
 FINE4
+fix partenze 1: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+fix partenze 2: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+fix partenze 3: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+fix partenze 4: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+fix bambini_passi 1: 0 RISULTATO: 24 controlli ok, 0 falliti | material null 0
+fix bambini_passi 2: 0 RISULTATO: 24 controlli ok, 0 falliti | material null 0
+FINE5

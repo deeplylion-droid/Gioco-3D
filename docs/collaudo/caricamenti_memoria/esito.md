@@ -49,3 +49,13 @@ Fatto da mascotte il 10 novembre. Il branch parte da 7bf1ed69 ed è 55 commit in
 - **Quanto spesso:** sull'unione **1 lancio su 4**, su main 0 su 3.
 - **Le copie in scena sono a posto:** dopo F9 inseguimento, una morte e F9 tunnel, le 213 superfici dei dettagli della sala hanno tutte un materiale valido. L'errore viene dai nodi sorgente che si liberano.
 - **Cosa manca:** quando arriva la correzione, rifaccio test_partenze_prova sull'unione più volte, con 0 righe. Lo scatto ravvicinato dei dettagli col renderer vero dipende dalla memoria: la sala col Vulkan qui non ci sta.
+
+## Correzione 0ee1311d (con 6b4a165b): rifatto
+
+La correzione di ambienti-2 mette le forme tenute in `forme_tenute.gd`, senza dipendenze: GameState non compila più SalaSottomarino e il bambino agnello all'avvio. L'ho unita in locale a main 26f399fe (57953b61, nessun conflitto) e ho rifatto le due prove:
+- test_partenze_prova 4 volte di fila: 74/74 ogni volta, **0 righe «material is null»** (prima 1 volta su 4);
+- test_bambini_passi 2 volte: 24/24 ogni volta, **0 righe** (ambienti-2 le vedeva 4 volte su 4 prima della correzione).
+
+Nel commento dei suoni ora c'è il numero vero (+45,7 MB al titolo, circa +8 MB in gioco).
+
+**Esito finale: SUPERATO.**
