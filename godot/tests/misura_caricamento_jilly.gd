@@ -94,7 +94,11 @@ func _run() -> void:
 	print("MISURA video %s: RSS all'inizio %.0f MB, massimo %.0f MB, alla fine %.0f MB; statica di Godot %.0f MB" % [
 			"SI" if video else "NO", rss0 / 1024.0, rss_max / 1024.0, rss1 / 1024.0,
 			Performance.get_monitor(Performance.MEMORY_STATIC) / 1e6])
-	Game.esci()
+	# (Game.esci prende la sala dal thread con load_threaded_get e lascia girare il gioco altri 30 fotogrammi: col
+	# renderer software, a 12,4 GB, lì il processo veniva ucciso. Qui la sala è arrivata da un pezzo o non serve più:
+	# si esce subito, #139)
+	print("MISURA uscita: RSS %.0f MB, memoria libera %.0f MB" % [_rss() / 1024.0, _libera() / 1024.0])
+	get_tree().quit()
 
 
 func _salva(file: String) -> void:
