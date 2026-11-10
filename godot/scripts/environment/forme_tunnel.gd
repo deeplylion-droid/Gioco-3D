@@ -27,18 +27,61 @@ const CELLA := 2.0
 static var _cache := {}
 
 
-## Prepara (una volta per sala) le forme ferme, tutto subito (test, scene di prova). Restituisce quante sono.
+## Le forme dell'ultima preparazione tutta subito, tenute per le ripartenze dal tunnel (scelta del coordinatore del 9
+## novembre): [impronta, forme]. Ripartendo da un checkpoint del tunnel il tunnel si costruisce tutto subito, sempre
+## uguale, e le forme ricalcolate erano un fotogramma da 1,2-1,5 s due secondi dopo l'arrivo (quando lei riemerge). Si
+## riusano solo se l'impronta del tunnel nuovo è la stessa ([method impronta]); si lasciano tornando al titolo, con una
+## partita nuova e ripartendo fuori dal tunnel ([method lascia_tenute]).
+## (in forme_tenute.gd, senza dipendenze: vedi lì)
+const _TENUTE := preload("res://scripts/environment/forme_tenute.gd")
+
+
+## L'impronta (md5) di tutto quello da cui vengono le forme ferme di [param sala]: i dati di lei e dell'asse, e per
+## ogni forma della collisione presa (nello stesso ordine) la trasformazione nel mondo e i triangoli o i punti.
+static func impronta(sala: SalaSottomarino) -> PackedByteArray:
+	var h := HashingContext.new()
+	h.start(HashingContext.HASH_MD5)
+	h.update(var_to_bytes(sala.dati.get("lei", {})))
+	h.update(var_to_bytes(sala.dati.get("asse", [])))
+	for c3 in _forme_collisione(sala):
+		h.update(var_to_bytes(c3.global_transform))
+		if c3.shape is ConcavePolygonShape3D:
+			h.update((c3.shape as ConcavePolygonShape3D).get_faces().to_byte_array())
+		else:
+			h.update(var_to_bytes(_punti_convessi(c3.shape)))
+	return h.finish()
+
+
+## Lascia le forme tenute (forme_tenute.gd).
+static func lascia_tenute() -> void:
+	_TENUTE.lascia()
+
+
+## Vero se ci sono forme tenute.
+static func ha_tenute() -> bool:
+	return not _TENUTE.dati.is_empty()
+
+
+## Prepara (una volta per sala) le forme ferme, tutto subito (test, scene di prova, ripartenze dal tunnel). Se le forme
+## tenute vengono da un tunnel con la stessa impronta, sono quelle. Restituisce quante sono.
 static func prepara(sala: SalaSottomarino) -> int:
 	var id := sala.get_instance_id()
 	if _cache.has(id):
 		return (_cache[id] as Array).size()
 	var t0 := Time.get_ticks_msec()
+	var imp := impronta(sala)
+	var tenute: Array = _TENUTE.dati
+	if tenute.size() == 2 and tenute[0] == imp:
+		_cache[id] = tenute[1]
+		print_verbose("FormeTunnel: %d forme tenute (impronta in %d ms)" % [(tenute[1] as Array).size(), Time.get_ticks_msec() - t0])
+		return (tenute[1] as Array).size()
 	var ctx := _contesto(sala)
 	for c3 in _forme_collisione(sala):
 		var nt := _quanti(c3)
 		_forme_di(c3, ctx, 0, nt)
 	_unisci(ctx)
 	_cache[id] = ctx["forme"]
+	_TENUTE.dati = [imp, ctx["forme"]]
 	print_verbose("FormeTunnel: %d forme in %d ms" % [(ctx["forme"] as Array).size(), Time.get_ticks_msec() - t0])
 	return (ctx["forme"] as Array).size()
 
@@ -68,8 +111,11 @@ static func prepara_a_pezzi(sala: SalaSottomarino, ms_per_fotogramma := 4.0) -> 
 				await sala.get_tree().process_frame
 				t0 = Time.get_ticks_usec()
 	if not _cache.has(id):
-		_unisci(ctx)
-		_cache[id] = ctx["forme"]
+		if not await _unisci_a_pezzi(ctx, sala, ms_per_fotogramma):
+			return 0
+		# (un'altra preparazione della stessa sala può aver finito durante l'attesa: vale la prima)
+		if not _cache.has(id):
+			_cache[id] = ctx["forme"]
 	return (_cache[id] as Array).size()
 
 
@@ -242,36 +288,84 @@ static func aggiungi(m: MorbidezzaLei, sala: SalaSottomarino) -> int:
 ## del portello, l'approdo) diventano poche forme grandi: meno forme per cella, il tentacolo ne guarda meno.
 static func _unisci(ctx: Dictionary) -> void:
 	var gruppi := {}
-	for t in ctx["tri"]:
+	_raggruppa(ctx, gruppi, 0, (ctx["tri"] as Array).size())
+	var forme: Array = ctx["forme"]
+	for k in gruppi:
+		var pol: Array = gruppi[k]
+		var i := 0
+		while i < pol.size():
+			i = _unisci_da(pol, i)
+		for p in pol:
+			forme.append(_prisma_poligono(p[0], p[2]))
+	(ctx["tri"] as Array).clear()
+
+
+## Come [method _unisci], al più [param ms] millisecondi per fotogramma, con le stesse operazioni nello stesso ordine
+## (tutto insieme erano 37-61 ms nel fotogramma in cui il tunnel è pronto; sonda del tunnel del 9 novembre). Falso se
+## nel frattempo il tunnel non c'è più.
+static func _unisci_a_pezzi(ctx: Dictionary, sala: SalaSottomarino, ms: float) -> bool:
+	var albero := sala.get_tree()
+	var t0 := Time.get_ticks_usec()
+	var gruppi := {}
+	var tri: Array = ctx["tri"]
+	var da := 0
+	while da < tri.size():
+		var a := mini(da + 256, tri.size())
+		_raggruppa(ctx, gruppi, da, a)
+		da = a
+		if (Time.get_ticks_usec() - t0) / 1000.0 > ms:
+			await albero.process_frame
+			if not is_instance_valid(sala) or not sala.is_inside_tree():
+				return false
+			t0 = Time.get_ticks_usec()
+	var forme: Array = ctx["forme"]
+	for k in gruppi:
+		var pol: Array = gruppi[k]
+		var i := 0
+		while i < pol.size():
+			i = _unisci_da(pol, i)
+			if (Time.get_ticks_usec() - t0) / 1000.0 > ms:
+				await albero.process_frame
+				if not is_instance_valid(sala) or not sala.is_inside_tree():
+					return false
+				t0 = Time.get_ticks_usec()
+		for p in pol:
+			forme.append(_prisma_poligono(p[0], p[2]))
+	tri.clear()
+	return true
+
+
+## I triangoli da [param da] ad [param a] (escluso) di ctx["tri"] nei gruppi dello stesso piano.
+static func _raggruppa(ctx: Dictionary, gruppi: Dictionary, da: int, a: int) -> void:
+	var tri: Array = ctx["tri"]
+	for it in range(da, a):
+		var t: Array = tri[it]
 		var n: Vector3 = t[3]
 		var k := "%d,%d,%d,%d" % [roundi(n.x * 500.0), roundi(n.y * 500.0), roundi(n.z * 500.0), roundi(n.dot(t[0]) * 200.0)]
 		if not gruppi.has(k):
 			gruppi[k] = []
 		var pts := PackedVector3Array([t[0], t[1], t[2]])
 		(gruppi[k] as Array).append([pts, _area(pts, n), n])
-	var forme: Array = ctx["forme"]
-	for k in gruppi:
-		var pol: Array = gruppi[k]
-		var i := 0
-		while i < pol.size():
-			var unito := true
-			while unito:
-				unito = false
-				for j in range(i + 1, pol.size()):
-					if not _lato_comune(pol[i][0], pol[j][0]):
-						continue
-					var n: Vector3 = pol[i][2]
-					var inv := _inviluppo(pol[i][0] + pol[j][0], n)
-					var ai := _area(inv, n)
-					if ai <= (float(pol[i][1]) + float(pol[j][1])) * 1.01 + 1e-4:
-						pol[i] = [inv, ai, n]
-						pol.remove_at(j)
-						unito = true
-						break
-			i += 1
-		for p in pol:
-			forme.append(_prisma_poligono(p[0], p[2]))
-	(ctx["tri"] as Array).clear()
+
+
+## Il poligono [param i] del gruppo [param pol] unito finché si può ai poligoni dopo di lui con un lato in comune;
+## restituisce il prossimo da guardare.
+static func _unisci_da(pol: Array, i: int) -> int:
+	var unito := true
+	while unito:
+		unito = false
+		for j in range(i + 1, pol.size()):
+			if not _lato_comune(pol[i][0], pol[j][0]):
+				continue
+			var n: Vector3 = pol[i][2]
+			var inv := _inviluppo(pol[i][0] + pol[j][0], n)
+			var ai := _area(inv, n)
+			if ai <= (float(pol[i][1]) + float(pol[j][1])) * 1.01 + 1e-4:
+				pol[i] = [inv, ai, n]
+				pol.remove_at(j)
+				unito = true
+				break
+	return i + 1
 
 
 ## Vero se i due poligoni hanno due vertici in comune (al millimetro).

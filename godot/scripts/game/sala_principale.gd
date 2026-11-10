@@ -489,6 +489,9 @@ func _setup_torre() -> void:
 		enigma.connect(&"comparso", _precarica_torre)
 		if bool(enigma.get(&"comparsi")):
 			_precarica_torre.call_deferred()
+	if not (GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaSottomarino")):
+		# (fuori dal tunnel le forme tenute per le sue ripartenze non servono più: FormeTunnel.prepara)
+		FormeTunnel.lascia_tenute()
 	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaSottomarino"):
 		# si riparte da un checkpoint del tunnel: torre e condotte non ci sono più, solo il tunnel (e niente torre
 		# preparata nascosta quando gli acquari risultano comparsi: vedi _precarica_torre)
@@ -529,6 +532,32 @@ func _carica_torre() -> void:
 		_precarica_torre()
 		if not _torre_in_caricamento:
 			_aggiungi_torre(load(sala_torre_scena) as PackedScene)
+
+
+## La scena della torre e i file che la torre e l'inseguimento caricano costruendosi.
+func _percorsi_torre() -> Array:
+	return [sala_torre_scena] + SalaInseguimento.risorse() + SalaTorre.risorse()
+
+
+## Proposta D della sonda dei load (scelta del coordinatore del 9 novembre): uscendo dalla sala con la torre ancora
+## dentro (una morte o una ripartenza nella torre o nelle condotte), la torre e i file dell'inseguimento già in memoria
+## restano tenuti (GameState.tieni) anche se sono arrivati senza il thread (partenze F9, ripartenze da un checkpoint
+## della torre): la sala nuova li trova in cache, ripartenze più corte, la stessa memoria (picco 2042 MB).
+## Entrando nel tunnel si lasciano (_libera_torre, _ripristina_sottomarino): lì tenuti costavano 473 MB.
+func _tieni_torre() -> void:
+	if _torre_liberata or sala_torre == null or sala_torre_scena == "":
+		return
+	# (anche quelli già usciti dalla cache, come il GLB degli stendardi o la scena della Polaroid, che non restano
+	# legati ai nodi: la sala nuova li caricherebbe comunque costruendo la torre, qui costano lo stesso tempo)
+	for r in _percorsi_torre():
+		if GameState.tenuta(r) == null and ResourceLoader.exists(r):
+			GameState.tieni(r, load(r))
+
+
+func _exit_tree() -> void:
+	# (non tornando al titolo, che le ha appena lasciate con GameState.reset_progress, e non uscendo dal gioco)
+	if not Game.tornando_al_titolo and not Game.uscendo:
+		_tieni_torre()
 
 
 ## Comincia a caricare la torre in un thread, senza metterla ancora nella sala.
@@ -684,6 +713,8 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 	if _torre_nascosta and is_instance_valid(_torre_nascosta):
 		_torre_nascosta.queue_free()
 		_torre_nascosta = null
+	if not _torre_liberata:
+		GameState.tieni(sala_torre_scena, scena)
 	sala_torre = scena.instantiate()
 	sala_torre.set(&"inseguimento_continua", sala_sottomarino_scena != "")
 	add_child(sala_torre)
@@ -976,8 +1007,14 @@ func _libera_ambienti_subito() -> void:
 
 ## Interni e tecnici via, qualche frame dopo (chi ha chiamate in sospeso sulle loro luci le finisce prima).
 func _scarica_ambienti() -> void:
+	# (l'albero preso prima: se intanto la sala esce, per un cambio di scena, dopo l'attesa get_tree() è null)
+	var albero := get_tree()
+	if albero == null:
+		return
 	for i in 3:
-		await get_tree().process_frame
+		await albero.process_frame
+		if not is_inside_tree():
+			return
 	var via: Array = [tecnici, get_node_or_null(^"Interni")]
 	tecnici = null
 	risveglio = null
@@ -1032,7 +1069,9 @@ func _torna_al_titolo() -> void:
 func _precarica_sottomarino() -> void:
 	if sala_sottomarino or _sottomarino_in_caricamento or Game.uscendo:
 		return
-	if _campioni_tunnel.is_empty():
+	# (i materiali campione dal thread, col tunnel: caricati qui, sul thread principale, erano 4 ms mentre si gioca e da
+	# disco freddo di più, sonda dei load del 9 novembre; si preparano quando il thread ha finito, _aggiorna_sottomarino)
+	if _campioni_tunnel.is_empty() and ResourceLoader.has_cached(CampioniTunnel.FILE):
 		_campioni_tunnel = CampioniTunnel.carica()
 	if Game.carica_in_thread(sala_sottomarino_scena, "PackedScene") == OK:
 		_sottomarino_in_caricamento = true
@@ -1041,12 +1080,27 @@ func _precarica_sottomarino() -> void:
 			Game.carica_in_thread(r)
 
 
+var _tunnel_rimandato := 0
+
+
 ## Il thread ha finito: il tunnel entra nel livello (fermo, senza lei in giro) e si costruisce a pezzi.
 func _aggiorna_sottomarino() -> void:
 	var stato := Game.stato_thread(sala_sottomarino_scena)
 	if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		return
+	# (e i materiali campione, chiesti al thread col tunnel: finché sono in corso si riguarda al fotogramma dopo)
+	if _campioni_tunnel.is_empty() and Game.stato_thread(CampioniTunnel.FILE) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		return
+	# (il tunnel non entra in un fotogramma già pieno d'altro, al più per qualche fotogramma di fila: vedi
+	# SalaSottomarino.FOTOGRAMMA_PIENO)
+	if stato == ResourceLoader.THREAD_LOAD_LOADED and sala_sottomarino == null \
+			and _tunnel_rimandato < SalaSottomarino.FOTOGRAMMA_PIENO_ATTESE and SalaSottomarino.fotogramma_pieno():
+		_tunnel_rimandato += 1
+		return
+	_tunnel_rimandato = 0
 	_sottomarino_in_caricamento = false
+	if _campioni_tunnel.is_empty():
+		_campioni_tunnel = CampioniTunnel.carica()
 	if stato == ResourceLoader.THREAD_LOAD_LOADED and sala_sottomarino == null:
 		var tg := Time.get_ticks_usec()
 		var scena := ResourceLoader.load_threaded_get(sala_sottomarino_scena) as PackedScene
@@ -1060,6 +1114,7 @@ func _metti_sottomarino(scena: PackedScene, a_pezzi: bool) -> void:
 	sala_sottomarino = scena.instantiate() as Node3D
 	sala_sottomarino.name = "SalaSottomarino"
 	add_child(sala_sottomarino)
+	RiscaldamentoShader.segno("tunnel in scena")
 	sala_sottomarino.connect(&"prima_curva_passata", _libera_torre)
 	sala_sottomarino.connect(&"fine_demo", _on_fine_tunnel)
 	if a_pezzi:
@@ -1114,6 +1169,7 @@ func _libera_torre() -> void:
 	if _torre_liberata:
 		return
 	_torre_liberata = true
+	GameState.lascia(_percorsi_torre())
 	if sala_sottomarino:
 		sala_sottomarino.call(&"chiudi_porta_bacino")
 	if sala_torre and is_instance_valid(sala_torre):
@@ -1124,12 +1180,16 @@ func _libera_torre() -> void:
 ## Ripartenza da un checkpoint del tunnel: solo il tunnel (costruito tutto), lei dietro, gli ambienti di prima via.
 func _ripristina_sottomarino() -> void:
 	_torre_liberata = true
+	GameState.lascia(_percorsi_torre())
 	_dentro_torre = true
 	if portone and portone.has_method(&"resta_chiuso"):
 		portone.call(&"resta_chiuso")
 	_scarica_ambienti()
 	_campioni_tunnel = CampioniTunnel.carica()
 	_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, false)
+	# le forme dei tentacoli di lei adesso, a schermo nero (prima riemergi le calcolava 2 s dopo l'arrivo, in un
+	# fotogramma da 1,2-1,5 s a schermo chiaro); dalla seconda ripartenza sono quelle tenute (FormeTunnel.prepara)
+	FormeTunnel.prepara(sala_sottomarino as SalaSottomarino)
 	sala_sottomarino.call(&"chiudi_porta_bacino")
 	var cp := String(GameState.snapshot.get("checkpoint", ""))
 	var s := float(cp.get_slice("Checkpoint_", 1)) if cp.contains("Checkpoint_") else 6.0

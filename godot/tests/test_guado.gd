@@ -39,6 +39,8 @@ func _run() -> void:
 	sala = SalaSottomarino.new()
 	sala.name = "SalaSottomarino"
 	get_tree().root.add_child(sala)
+	# (la scena corrente, come nel gioco: gli spruzzi dell'acqua si aggiungono lì, e senza davano SCRIPT ERROR)
+	get_tree().current_scene = sala
 	sala.costruisci()
 	p = (load(PLAYER) as PackedScene).instantiate() as Player
 	get_tree().root.add_child(p)

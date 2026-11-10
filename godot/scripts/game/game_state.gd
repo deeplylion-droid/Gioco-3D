@@ -89,6 +89,12 @@ func tieni(percorso: String, risorsa: Resource) -> void:
 		_tenute[percorso] = risorsa
 
 
+## Lascia andare le risorse tenute per [param percorsi] (la torre e l'inseguimento, entrando nel tunnel).
+func lascia(percorsi: Array) -> void:
+	for p in percorsi:
+		_tenute.erase(String(p))
+
+
 ## La risorsa tenuta per [param percorso], o null.
 func tenuta(percorso: String) -> Resource:
 	return _tenute.get(percorso)
@@ -494,6 +500,8 @@ func reset_progress() -> void:
 	snapshot = {}
 	_pacchetto_livello = null
 	_tenute.clear()
+	# (senza nominare FormeTunnel: vedi forme_tenute.gd)
+	preload("res://scripts/environment/forme_tenute.gd").lascia()
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()

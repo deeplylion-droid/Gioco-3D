@@ -325,7 +325,7 @@ func _buco_volta() -> void:
 
 
 ## In quanti passi si fa un anello del buco nella volta.
-const BUCO_TRATTI := 4
+const BUCO_TRATTI := 7
 
 
 ## Gli spicchi da [param j0] a [param j1] (escluso) dell'anello [param k]; finito l'ultimo, l'anello è fatto.
@@ -654,7 +654,7 @@ func _passi_occupati(poi: Callable) -> Array:
 	return [_occupati_inizio.bind(stato, poi)]
 
 
-const OCCUPATI_PER_PASSO := 250
+const OCCUPATI_PER_PASSO := 125
 
 
 func _occupati_inizio(stato: Dictionary, poi: Callable) -> void:
@@ -1161,6 +1161,8 @@ func _ambiente(nome: String) -> Array:
 ## Un modello del fiume (come [method SalaSottomarino._modello], ma con le coordinate della sala).
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
 	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	# (la prima get_faces() delle sue mesh, se è nel thread: SalaSottomarino.FACCE_NEL_THREAD)
+	sala.aspetta_facce(n)
 	nodo.add_child(n)
 	var b := Basis.looking_at(verso, Vector3.UP) if verso.length_squared() > 0.0 else Basis()
 	n.transform = Transform3D(b.scaled(Vector3.ONE * scala), pos)
@@ -1178,7 +1180,8 @@ func _a_muro(n: Node3D, pm: Vector3, nrm: Vector3, basso: float) -> void:
 		dietro = maxf(dietro, (n.position - v).dot(nrm))
 		sotto = minf(sotto, v.y)
 	n.position.y += basso - sotto
-	if not Posa.fissa_al_muro(n, nrm, dietro + 0.001, false):
+	# (solo le mesh del tunnel lungo il raggio: SottomarinoArrediA2._sul_muro)
+	if not Posa.fissa_al_muro(n, nrm, dietro + 0.001, false, [], SottomarinoArrediA2._sul_muro(sala, n, nrm)):
 		n.position = Vector3(pm.x, n.position.y, pm.z) + nrm * (dietro + 0.001)
 
 

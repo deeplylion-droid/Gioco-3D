@@ -1673,6 +1673,7 @@ static func risorse() -> Array:
 	var out: Array = RISORSE_LEI.duplicate()
 	out.append_array(RISORSE_ACQUE)
 	out.append_array(StendardiInseguimento.risorse())
+	out.append_array(SagomeClub.risorse())
 	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
 	if dati_luci is Dictionary:
 		for a in dati_luci.get("arredi", []):

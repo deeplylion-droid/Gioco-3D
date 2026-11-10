@@ -23,6 +23,8 @@ extends Node
 @export var luce := 0.0
 
 var _materiali: Array[BaseMaterial3D] = []
+## Le superfici con le copie dei materiali: [MeshInstance3D, indice] (vedi _notification).
+var _superfici: Array = []
 var _luce: OmniLight3D
 var _t := 0.0
 
@@ -61,6 +63,21 @@ func _prepara(radice: Node, maschera: Texture2D) -> void:
 			mat.set_meta(&"piena", energia * (0.6 if occhio else 1.0))
 			m3.set_surface_override_material(i, mat)
 			_materiali.append(mat)
+			_superfici.append([m3, i])
+
+
+## Liberando il bambino, prima si tolgono le copie dalle superfici e poi si lasciano i materiali: le copie le tengono
+## solo le superfici e questo nodo, e se la superficie le rilasciava per prima (nel distruttore, prima di liberare la
+## sua istanza del renderer) l'istanza restava un attimo col materiale già liberato. Il renderer dei test lo
+## segnalava («Parameter "material" is null», una volta per bambino liberato: test_presa_vera, test_strada,
+## test_tappa7). A schermo non cambia niente: succede solo mentre il bambino se ne va.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		for s in _superfici:
+			var m3 = s[0]
+			if is_instance_valid(m3):
+				(m3 as MeshInstance3D).set_surface_override_material(int(s[1]), null)
+		_superfici.clear()
 
 
 func _process(delta: float) -> void:

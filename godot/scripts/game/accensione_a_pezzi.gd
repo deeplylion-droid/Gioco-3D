@@ -46,7 +46,7 @@ static func accendi(radice: Node, modo := Node.PROCESS_MODE_INHERIT, ms := 6.0) 
 			var tn := Time.get_ticks_usec()
 			n.process_mode = originale
 			if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tn > 10000:
-				print("  accensione di %s (%s, %d figli, sotto %s): %.1f ms" % [n.name, n.get_class(), n.get_child_count(), n.get_parent().name, (Time.get_ticks_usec() - tn) / 1000.0])
+				print("  accensione di %s (%s, %d figli, sotto %s): %.1f ms" % [n.name, n.get_class(), n.get_child_count(), n.get_parent().name if n.get_parent() else "fuori dall'albero", (Time.get_ticks_usec() - tn) / 1000.0])
 			pila.append_array(fermati)
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms:
 			await albero.process_frame

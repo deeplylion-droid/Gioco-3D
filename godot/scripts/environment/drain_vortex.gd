@@ -8,6 +8,14 @@ extends MeshInstance3D
 
 var _material: ShaderMaterial
 
+## Il gruppo dei gorghi: l'audio delle vasche cerca qui il suo scarico (prima scorreva tutte le MeshInstance3D della
+## scena per ogni vasca: 15 vasche, 2-3 ms l'una nello stesso fotogramma, sonda del tunnel del 9 novembre).
+const GRUPPO := &"gorghi"
+
+
+func _init() -> void:
+	add_to_group(GRUPPO)
+
 
 func _ready() -> void:
 	var m := PlaneMesh.new()
