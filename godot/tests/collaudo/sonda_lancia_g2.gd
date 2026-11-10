@@ -140,5 +140,10 @@ func _giro() -> void:
 				p.set_look(p.yaw, deg_to_rad(g))
 				await _frames(12)
 				print("LANCIA: %s fov %d giù %d: %s" % [stato, fov, -g, _diff(c0, _comp())])
+				# SCATTI=<cartella>: uno scatto per posa (lancia ferma: col getto le particelle cambiano a ogni giro)
+				if OS.get_environment("SCATTI") != "" and stato == "ferma":
+					DirAccess.make_dir_recursive_absolute(OS.get_environment("SCATTI"))
+					await RenderingServer.frame_post_draw
+					get_viewport().get_texture().get_image().save_png(OS.get_environment("SCATTI").path_join("fov%d_giu%d.png" % [fov, -g]))
 	Input.action_release(&"spray")
 	Input.action_release(&"suck")
