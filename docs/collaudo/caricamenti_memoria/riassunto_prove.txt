@@ -1,0 +1,34 @@
+26f399fe avvio: 0 2 righe, ERROR 0, SCRIPT ERROR 0
+26f399fe suoni: 0 4 righe, ERROR 12, SCRIPT ERROR 0
+26f399fe sagome: 0 13 righe, ERROR 12, SCRIPT ERROR 0
+26f399fe morti: 0 15 righe, ERROR 12, SCRIPT ERROR 0
+26f399fe tunnel_titolo: 0 8 righe, ERROR 12, SCRIPT ERROR 0
+26f399fe test_partenze_prova: 0 RISULTATO: 74 controlli ok, 0 falliti | ERROR 12, SCRIPT ERROR 0
+26f399fe test_ripartenza_oltre_portone: 0 RISULTATO: 53 controlli ok, 0 falliti | ERROR 12, SCRIPT ERROR 0
+26f399fe test_memoria_morti: 0 RISULTATO: 2 controlli ok, 0 falliti | ERROR 11, SCRIPT ERROR 0
+26f399fe test_continua: 0 RISULTATO: 127 controlli ok, 0 falliti | ERROR 16, SCRIPT ERROR 0
+26f399fe test_guado: 0 RISULTATO: 11 controlli ok, 0 falliti | ERROR 1, SCRIPT ERROR 4
+8231ba89 avvio: 0 2 righe, ERROR 0, SCRIPT ERROR 0
+8231ba89 suoni: 0 4 righe, ERROR 12, SCRIPT ERROR 0
+8231ba89 sagome: 0 13 righe, ERROR 12, SCRIPT ERROR 0
+8231ba89 morti: 0 15 righe, ERROR 12, SCRIPT ERROR 0
+8231ba89 tunnel_titolo: 0 8 righe, ERROR 12, SCRIPT ERROR 0
+8231ba89 test_partenze_prova: 0 RISULTATO: 74 controlli ok, 0 falliti | ERROR 107, SCRIPT ERROR 0
+8231ba89 test_ripartenza_oltre_portone: 0 RISULTATO: 53 controlli ok, 0 falliti | ERROR 12, SCRIPT ERROR 0
+8231ba89 test_memoria_morti: 0 RISULTATO: 2 controlli ok, 0 falliti | ERROR 11, SCRIPT ERROR 0
+8231ba89 test_continua: 0 RISULTATO: 127 controlli ok, 0 falliti | ERROR 16, SCRIPT ERROR 0
+8231ba89 test_guado: 0 RISULTATO: 11 controlli ok, 0 falliti | ERROR 0, SCRIPT ERROR 0
+8231ba89 test_forme_tenute: 0 RISULTATO: 18 controlli ok, 0 falliti | ERROR 12, SCRIPT ERROR 0
+sonda load: attesa 0, partenze 0, controllo 0: load() sul thread principale a gioco avviato: 133, sopra 5 ms: 0 
+FINE
+stream 8231ba89: 0 140 suoni | SONDA_STREAM_TEMPI 140 suoni, primo uso in tutto 2.0 ms sul thread principale, il più lento 0.13 ms
+stream 26f399fe: 0 140 suoni | SONDA_STREAM_TEMPI 140 suoni, primo uso in tutto 57.4 ms sul thread principale, il più lento 3.20 ms
+FINE2
+mat 8231ba89: 0 | material null: 0 | SONDA_MAT inseguimento: 213 superfici dei dettagli della sala, senza materiale valido 0 [] SONDA_MAT inseguimento dopo una morte: 213 superfici dei dettagli della sala, senza materiale valido 0 [] SONDA_MAT -- F9 tunnel SONDA_MAT tunnel: 213 superfici dei dettagli della sala, senza materiale valido 0 [] SONDA_MAT fine 
+mat 26f399fe: 0 | material null: 0 | SONDA_MAT inseguimento: 213 superfici dei dettagli della sala, senza materiale valido 0 [] SONDA_MAT inseguimento dopo una morte: 213 superfici dei dettagli della sala, senza materiale valido 0 [] SONDA_MAT -- F9 tunnel SONDA_MAT tunnel: 213 superfici dei dettagli della sala, senza materiale valido 0 [] SONDA_MAT fine 
+FINE3
+partenze 8231ba89 giro 2: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+partenze 8231ba89 giro 3: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+partenze 26f399fe giro 2: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+partenze 26f399fe giro 3: 0 RISULTATO: 74 controlli ok, 0 falliti | material null 0
+FINE4

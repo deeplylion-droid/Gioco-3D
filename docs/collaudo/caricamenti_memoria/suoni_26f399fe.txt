@@ -1,0 +1,141 @@
+SONDA_STREAM squalo_annusa | AudioStreamOggVorbis res://audio/squalo/squalo_annusa.ogg 6.3020 s ciclo false
+SONDA_STREAM squalo_minaccia | AudioStreamOggVorbis res://audio/squalo/squalo_minaccia.ogg 4.8020 s ciclo false
+SONDA_STREAM jilly_richiamo | AudioStreamOggVorbis res://audio/squalo/jilly_richiamo.ogg 10.7600 s ciclo false
+SONDA_STREAM squalo_sbuffo | AudioStreamOggVorbis res://audio/squalo/squalo_sbuffo.ogg 1.9020 s ciclo false
+SONDA_STREAM squalo_passo | casuale[AudioStreamOggVorbis res://audio/squalo/squalo_passo_01.ogg 0.8000 s ciclo false, AudioStreamOggVorbis res://audio/squalo/squalo_passo_02.ogg 0.8000 s ciclo false, AudioStreamOggVorbis res://audio/squalo/squalo_passo_03.ogg 0.8000 s ciclo false, AudioStreamOggVorbis res://audio/squalo/squalo_passo_04.ogg 0.8000 s ciclo false]
+SONDA_STREAM squalo_denti | casuale[AudioStreamOggVorbis res://audio/squalo/squalo_denti_01.ogg 1.3520 s ciclo false, AudioStreamOggVorbis res://audio/squalo/squalo_denti_02.ogg 1.3520 s ciclo false, AudioStreamOggVorbis res://audio/squalo/squalo_denti_03.ogg 1.3520 s ciclo false]
+SONDA_STREAM squalo_ringhio | AudioStreamOggVorbis res://audio/squalo/squalo_ringhio.ogg 2.2520 s ciclo false
+SONDA_STREAM neon_clic | casuale[AudioStreamOggVorbis res://audio/effetti/neon_clic_01.ogg 0.1041 s ciclo false, AudioStreamOggVorbis res://audio/effetti/neon_clic_02.ogg 0.0737 s ciclo false, AudioStreamOggVorbis res://audio/effetti/neon_clic_03.ogg 0.0934 s ciclo false]
+SONDA_STREAM goccia_acqua | casuale[AudioStreamOggVorbis res://audio/ambiente/goccia_acqua_01.ogg 0.4500 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_acqua_02.ogg 0.4500 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_acqua_03.ogg 0.4500 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_acqua_04.ogg 0.4500 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_acqua_05.ogg 0.4500 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_acqua_06.ogg 0.4500 s ciclo false]
+SONDA_STREAM porta_chiusa | AudioStreamOggVorbis res://audio/effetti/porta_chiusa.ogg 0.8727 s ciclo false
+SONDA_STREAM stinger_bambini | AudioStreamOggVorbis res://audio/musica/stinger_bambini.ogg 6.0000 s ciclo false
+SONDA_STREAM lei_tunnel_canto | casuale[AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_01.ogg 6.2716 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_02.ogg 7.8453 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_03.ogg 7.7616 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_04.ogg 9.1611 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_05.ogg 6.6438 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_06.ogg 5.9685 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_07.ogg 6.3638 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_08.ogg 5.8696 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_09.ogg 7.0923 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_canto_10.ogg 6.7966 s ciclo false]
+SONDA_STREAM inseguimento_colpo | casuale[AudioStreamOggVorbis res://audio/ambiente/inseguimento_colpo_01.ogg 1.6000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/inseguimento_colpo_02.ogg 1.6000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/inseguimento_colpo_03.ogg 1.6000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/inseguimento_colpo_04.ogg 1.6000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/inseguimento_colpo_05.ogg 1.6000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/inseguimento_colpo_06.ogg 1.6000 s ciclo false]
+SONDA_STREAM cuore_battito | casuale[AudioStreamOggVorbis res://audio/giocatore/cuore_battito_01.ogg 0.7500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/cuore_battito_02.ogg 0.7500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/cuore_battito_03.ogg 0.7500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/cuore_battito_04.ogg 0.7500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/cuore_battito_05.ogg 0.7500 s ciclo false]
+SONDA_STREAM passo_acqua | casuale[AudioStreamOggVorbis res://audio/giocatore/passo_acqua_01.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_acqua_02.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_acqua_03.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_acqua_04.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_acqua_05.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_acqua_06.ogg 0.8500 s ciclo false]
+SONDA_STREAM passo_bagnato | casuale[AudioStreamOggVorbis res://audio/giocatore/passo_bagnato_01.ogg 0.3200 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_bagnato_02.ogg 0.3200 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_bagnato_03.ogg 0.3200 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_bagnato_04.ogg 0.3200 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_bagnato_05.ogg 0.3200 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_bagnato_06.ogg 0.3200 s ciclo false]
+SONDA_STREAM passo_piastrelle | casuale[AudioStreamOggVorbis res://audio/giocatore/passo_piastrelle_01.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_piastrelle_02.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_piastrelle_03.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_piastrelle_04.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_piastrelle_05.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_piastrelle_06.ogg 0.3000 s ciclo false]
+SONDA_STREAM passo_metallo | casuale[AudioStreamOggVorbis res://audio/giocatore/passo_metallo_01.ogg 0.4000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_metallo_02.ogg 0.4000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_metallo_03.ogg 0.4000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_metallo_04.ogg 0.4000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_metallo_05.ogg 0.4000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_metallo_06.ogg 0.4000 s ciclo false]
+SONDA_STREAM tuono_vicino | casuale[AudioStreamOggVorbis res://audio/ambiente/tuono_vicino_01.ogg 8.7839 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/tuono_vicino_02.ogg 8.5437 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/tuono_vicino_03.ogg 7.5289 s ciclo false]
+SONDA_STREAM zaino_sciabordio | casuale[AudioStreamOggVorbis res://audio/giocatore/zaino_sciabordio_01.ogg 0.8000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/zaino_sciabordio_02.ogg 0.8000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/zaino_sciabordio_03.ogg 0.8000 s ciclo false]
+SONDA_STREAM passo_scala | casuale[AudioStreamOggVorbis res://audio/giocatore/passo_scala_01.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_scala_02.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_scala_03.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/passo_scala_04.ogg 0.3000 s ciclo false]
+SONDA_STREAM sirena_lontana | casuale[AudioStreamOggVorbis res://audio/ambiente/sirena_lontana_01.ogg 10.8000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/sirena_lontana_02.ogg 9.8000 s ciclo false]
+SONDA_STREAM tuono_lontano | casuale[AudioStreamOggVorbis res://audio/ambiente/tuono_lontano_01.ogg 9.2973 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/tuono_lontano_02.ogg 10.5542 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/tuono_lontano_03.ogg 11.8389 s ciclo false]
+SONDA_STREAM goccia_pavimento | casuale[AudioStreamOggVorbis res://audio/ambiente/goccia_pavimento_01.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_pavimento_02.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_pavimento_03.ogg 0.3000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/goccia_pavimento_04.ogg 0.3000 s ciclo false]
+SONDA_STREAM nave_gemito | casuale[AudioStreamOggVorbis res://audio/ambiente/nave_gemito_01.ogg 8.6607 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_gemito_02.ogg 8.3666 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_gemito_03.ogg 7.8436 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_gemito_04.ogg 6.7908 s ciclo false]
+SONDA_STREAM nave_scricchiolio | casuale[AudioStreamOggVorbis res://audio/ambiente/nave_scricchiolio_01.ogg 3.8090 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_scricchiolio_02.ogg 3.9538 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_scricchiolio_03.ogg 2.9779 s ciclo false]
+SONDA_STREAM neon_scintilla | casuale[AudioStreamOggVorbis res://audio/effetti/neon_scintilla_01.ogg 0.3621 s ciclo false, AudioStreamOggVorbis res://audio/effetti/neon_scintilla_02.ogg 0.5200 s ciclo false, AudioStreamOggVorbis res://audio/effetti/neon_scintilla_03.ogg 0.5183 s ciclo false]
+SONDA_STREAM turbina_bloccata | AudioStreamOggVorbis res://audio/effetti/turbina_bloccata.ogg 0.6000 s ciclo false
+SONDA_STREAM pulsante_rilasciato | AudioStreamOggVorbis res://audio/effetti/pulsante_rilasciato.ogg 0.2000 s ciclo false
+SONDA_STREAM pulsante_premuto | AudioStreamOggVorbis res://audio/effetti/pulsante_premuto.ogg 1.0000 s ciclo false
+SONDA_STREAM faro_acceso | AudioStreamOggVorbis res://audio/effetti/faro_acceso.ogg 3.0000 s ciclo false
+SONDA_STREAM nave_colpo_lontano | casuale[AudioStreamOggVorbis res://audio/ambiente/nave_colpo_lontano_01.ogg 5.5000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_colpo_lontano_02.ogg 5.5000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_colpo_lontano_03.ogg 5.5000 s ciclo false]
+SONDA_STREAM nave_tic | casuale[AudioStreamOggVorbis res://audio/ambiente/nave_tic_01.ogg 2.6000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_tic_02.ogg 2.6000 s ciclo false, AudioStreamOggVorbis res://audio/ambiente/nave_tic_03.ogg 2.6000 s ciclo false]
+SONDA_STREAM gonfiabile_colpito | AudioStreamOggVorbis res://audio/effetti/gonfiabile_colpito.ogg 0.3500 s ciclo false
+SONDA_STREAM portello_apre | AudioStreamOggVorbis res://audio/effetti/portello_apre.ogg 3.2000 s ciclo false
+SONDA_STREAM secchio_ritorno | AudioStreamOggVorbis res://audio/effetti/secchio_ritorno.ogg 3.0000 s ciclo false
+SONDA_STREAM secchio_ribalta | AudioStreamOggVorbis res://audio/effetti/secchio_ribalta.ogg 4.5000 s ciclo false
+SONDA_STREAM cancello_ruota | AudioStreamOggVorbis res://audio/effetti/cancello_ruota.ogg 5.0000 s ciclo false
+SONDA_STREAM quadro_scintille | AudioStreamOggVorbis res://audio/effetti/quadro_scintille.ogg 2.2000 s ciclo false
+SONDA_STREAM vasca_svuotata | AudioStreamOggVorbis res://audio/effetti/vasca_svuotata.ogg 2.8000 s ciclo false
+SONDA_STREAM medusa_risveglio | AudioStreamOggVorbis res://audio/effetti/medusa_risveglio.ogg 4.5000 s ciclo false
+SONDA_STREAM riemersione | AudioStreamOggVorbis res://audio/giocatore/riemersione.ogg 1.4000 s ciclo false
+SONDA_STREAM polaroid_raccolta | AudioStreamOggVorbis res://audio/musica/polaroid_raccolta.ogg 2.6000 s ciclo false
+SONDA_STREAM polaroid_chiudi | AudioStreamOggVorbis res://audio/musica/polaroid_chiudi.ogg 0.3000 s ciclo false
+SONDA_STREAM cassaforte_clic_a | AudioStreamOggVorbis res://audio/enigmi/cassaforte_clic_a.ogg 0.2200 s ciclo false
+SONDA_STREAM stinger_morte | AudioStreamOggVorbis res://audio/musica/stinger_morte.ogg 7.5000 s ciclo false
+SONDA_STREAM pompa_avvio | AudioStreamOggVorbis res://audio/tecnici/pompa_avvio.ogg 3.4000 s ciclo false
+SONDA_STREAM porta_ponte_apre | AudioStreamOggVorbis res://audio/tecnici/porta_ponte_apre.ogg 3.4000 s ciclo false
+SONDA_STREAM cancello_stagno_apre | casuale[AudioStreamOggVorbis res://audio/tecnici/cancello_stagno_apre_01.ogg 3.7000 s ciclo false, AudioStreamOggVorbis res://audio/tecnici/cancello_stagno_apre_02.ogg 3.7000 s ciclo false]
+SONDA_STREAM tonfo_acqua_lontano | AudioStreamOggVorbis res://audio/tecnici/tonfo_acqua_lontano.ogg 6.0000 s ciclo false
+SONDA_STREAM maniglione_bloccato | AudioStreamOggVorbis res://audio/tecnici/maniglione_bloccato.ogg 0.9000 s ciclo false
+SONDA_STREAM zampette_condotto | AudioStreamOggVorbis res://audio/tecnici/zampette_condotto.ogg 7.9600 s ciclo false
+SONDA_STREAM plastica_piega_lontano | AudioStreamOggVorbis res://audio/tecnici/plastica_piega_lontano.ogg 12.0000 s ciclo false
+SONDA_STREAM corrente_salta | AudioStreamOggVorbis res://audio/tecnici/corrente_salta.ogg 5.5000 s ciclo false
+SONDA_STREAM morso | AudioStreamOggVorbis res://audio/lei/morso.ogg 1.8000 s ciclo false
+SONDA_STREAM zaino_strattone | casuale[AudioStreamOggVorbis res://audio/giocatore/zaino_strattone_01.ogg 0.6000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/zaino_strattone_02.ogg 0.6000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/zaino_strattone_03.ogg 0.6000 s ciclo false]
+SONDA_STREAM zaino_serbatoio_loop | AudioStreamOggVorbis res://audio/giocatore/zaino_serbatoio_loop.ogg 2.0000 s ciclo true
+SONDA_STREAM zaino_risucchio_loop | AudioStreamOggVorbis res://audio/giocatore/zaino_risucchio_loop.ogg 2.4000 s ciclo true
+SONDA_STREAM zaino_gocce | AudioStreamOggVorbis res://audio/giocatore/zaino_gocce.ogg 1.2000 s ciclo false
+SONDA_STREAM zaino_carica | AudioStreamOggVorbis res://audio/giocatore/zaino_carica.ogg 0.3500 s ciclo false
+SONDA_STREAM ui_apri | AudioStreamOggVorbis res://audio/interfaccia/ui_apri.ogg 0.4189 s ciclo false
+SONDA_STREAM passo_bambino_muta | casuale[AudioStreamOggVorbis res://audio/bambini/passo_bambino_muta_01.ogg 0.1927 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_bambino_muta_02.ogg 0.1993 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_bambino_muta_03.ogg 0.1774 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_bambino_muta_04.ogg 0.1551 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_bambino_muta_05.ogg 0.1616 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_bambino_muta_06.ogg 0.1696 s ciclo false]
+SONDA_STREAM passo_agnellino | casuale[AudioStreamOggVorbis res://audio/bambini/passo_agnellino_01.ogg 0.1818 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_agnellino_02.ogg 0.1398 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_agnellino_03.ogg 0.1666 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_agnellino_04.ogg 0.1655 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_agnellino_05.ogg 0.1623 s ciclo false, AudioStreamOggVorbis res://audio/bambini/passo_agnellino_06.ogg 0.1393 s ciclo false]
+SONDA_STREAM lei_scivola_sotto | AudioStreamOggVorbis res://audio/lei/lei_scivola_sotto.ogg 4.5000 s ciclo false
+SONDA_STREAM lei_esplosione | AudioStreamOggVorbis res://audio/lei/lei_esplosione.ogg 3.5000 s ciclo false
+SONDA_STREAM gonfiabile_libero | AudioStreamOggVorbis res://audio/effetti/gonfiabile_libero.ogg 2.2000 s ciclo false
+SONDA_STREAM atterraggio_scivolo | casuale[AudioStreamOggVorbis res://audio/torre/atterraggio_scivolo_01.ogg 0.9000 s ciclo false, AudioStreamOggVorbis res://audio/torre/atterraggio_scivolo_02.ogg 0.9000 s ciclo false]
+SONDA_STREAM atterraggio_piastrelle | casuale[AudioStreamOggVorbis res://audio/giocatore/atterraggio_piastrelle_01.ogg 0.4500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/atterraggio_piastrelle_02.ogg 0.4500 s ciclo false]
+SONDA_STREAM atterraggio_bagnato | casuale[AudioStreamOggVorbis res://audio/giocatore/atterraggio_bagnato_01.ogg 0.5000 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/atterraggio_bagnato_02.ogg 0.5000 s ciclo false]
+SONDA_STREAM atterraggio_metallo | casuale[AudioStreamOggVorbis res://audio/giocatore/atterraggio_metallo_01.ogg 0.5500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/atterraggio_metallo_02.ogg 0.5500 s ciclo false]
+SONDA_STREAM lei_sbuca | AudioStreamOggVorbis res://audio/lei/lei_sbuca.ogg 7.6000 s ciclo false
+SONDA_STREAM lei_tunnel_verso | casuale[AudioStreamOggVorbis res://audio/lei/lei_tunnel_verso_01.ogg 1.3158 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_verso_02.ogg 1.4208 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_verso_03.ogg 1.1600 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_tunnel_verso_04.ogg 1.4203 s ciclo false]
+SONDA_STREAM lei_insegue_grata | casuale[AudioStreamOggVorbis res://audio/lei/lei_insegue_grata_01.ogg 0.6000 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_insegue_grata_02.ogg 0.6000 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_insegue_grata_03.ogg 0.6000 s ciclo false]
+SONDA_STREAM lei_insegue_sb1 | AudioStreamOggVorbis res://audio/lei/lei_insegue_sb1.ogg 5.4000 s ciclo false
+SONDA_STREAM lei_insegue_respinta | casuale[AudioStreamOggVorbis res://audio/lei/lei_insegue_respinta_01.ogg 1.4000 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_insegue_respinta_02.ogg 1.4000 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_insegue_respinta_03.ogg 1.4000 s ciclo false]
+SONDA_STREAM lei_insegue_presa | casuale[AudioStreamOggVorbis res://audio/lei/lei_insegue_presa_01.ogg 1.6000 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_insegue_presa_02.ogg 1.6000 s ciclo false]
+SONDA_STREAM lei_insegue_sale | casuale[AudioStreamOggVorbis res://audio/lei/lei_insegue_sale_01.ogg 3.4000 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_insegue_sale_02.ogg 3.4000 s ciclo false, AudioStreamOggVorbis res://audio/lei/lei_insegue_sale_03.ogg 3.4000 s ciclo false]
+SONDA_STREAM porta_aperta | AudioStreamOggVorbis res://audio/effetti/porta_aperta.ogg 0.8475 s ciclo false
+SONDA_STREAM saracinesca_fine | AudioStreamOggVorbis res://audio/effetti/saracinesca_fine.ogg 0.9657 s ciclo false
+SONDA_STREAM zaino_vuoto | AudioStreamOggVorbis res://audio/giocatore/zaino_vuoto.ogg 0.9000 s ciclo false
+SONDA_STREAM zaino_pieno | AudioStreamOggVorbis res://audio/giocatore/zaino_pieno.ogg 0.8000 s ciclo false
+SONDA_STREAM zaino_pompata | AudioStreamOggVorbis res://audio/giocatore/zaino_pompata.ogg 0.6500 s ciclo false
+SONDA_STREAM zaino_aspira_fine | AudioStreamOggVorbis res://audio/giocatore/zaino_aspira_fine.ogg 0.9000 s ciclo false
+SONDA_STREAM zaino_aspira_inizio | AudioStreamOggVorbis res://audio/giocatore/zaino_aspira_inizio.ogg 0.9000 s ciclo false
+SONDA_STREAM zaino_getto_fine | AudioStreamOggVorbis res://audio/giocatore/zaino_getto_fine.ogg 1.1000 s ciclo false
+SONDA_STREAM zaino_getto_inizio | AudioStreamOggVorbis res://audio/giocatore/zaino_getto_inizio.ogg 0.8000 s ciclo false
+SONDA_STREAM zaino_ricarica_loop | AudioStreamOggVorbis res://audio/giocatore/zaino_ricarica_loop.ogg 2.5000 s ciclo true
+SONDA_STREAM zaino_aspira_loop | AudioStreamOggVorbis res://audio/giocatore/zaino_aspira_loop.ogg 2.4000 s ciclo true
+SONDA_STREAM zaino_getto_loop | AudioStreamOggVorbis res://audio/giocatore/zaino_getto_loop.ogg 2.5000 s ciclo true
+SONDA_STREAM ui_chiudi | AudioStreamOggVorbis res://audio/interfaccia/ui_chiudi.ogg 0.4189 s ciclo false
+SONDA_STREAM ui_pausa | AudioStreamOggVorbis res://audio/interfaccia/ui_pausa.ogg 0.4000 s ciclo false
+SONDA_STREAM zaino_preso | AudioStreamOggVorbis res://audio/giocatore/zaino_preso.ogg 1.6593 s ciclo false
+SONDA_STREAM torcia_spenta | AudioStreamOggVorbis res://audio/giocatore/torcia_spenta.ogg 0.1600 s ciclo false
+SONDA_STREAM torcia_accesa | AudioStreamOggVorbis res://audio/giocatore/torcia_accesa.ogg 0.1600 s ciclo false
+SONDA_STREAM ui_cursore | AudioStreamOggVorbis res://audio/interfaccia/ui_cursore.ogg 0.0256 s ciclo false
+SONDA_STREAM ui_scatto | AudioStreamOggVorbis res://audio/interfaccia/ui_scatto.ogg 0.1402 s ciclo false
+SONDA_STREAM ui_clic | AudioStreamOggVorbis res://audio/interfaccia/ui_clic.ogg 0.1090 s ciclo false
+SONDA_STREAM sigla_pulita | AudioStreamOggVorbis res://audio/musica/sigla_pulita.ogg 37.6268 s ciclo false
+SONDA_STREAM sigla_rovinata | AudioStreamOggVorbis res://audio/musica/sigla_rovinata.ogg 30.9830 s ciclo false
+SONDA_STREAM sottacqua_loop | AudioStreamOggVorbis res://audio/ambiente/sottacqua_loop.ogg 16.0000 s ciclo true
+SONDA_STREAM nave_loop | AudioStreamOggVorbis res://audio/ambiente/nave_loop.ogg 40.0000 s ciclo true
+SONDA_STREAM vento_loop | AudioStreamOggVorbis res://audio/ambiente/vento_loop.ogg 45.0000 s ciclo true
+SONDA_STREAM pioggia_cupola_loop | AudioStreamOggVorbis res://audio/ambiente/pioggia_cupola_loop.ogg 40.0000 s ciclo true
+SONDA_STREAM pulsante_botola_lampeggiante_loop | AudioStreamOggVorbis res://audio/piscina/pulsante_botola_lampeggiante_loop.ogg 3.2000 s ciclo true
+SONDA_STREAM piscina_svuota_loop | AudioStreamOggVorbis res://audio/piscina/piscina_svuota_loop.ogg 6.0000 s ciclo true
+SONDA_STREAM fossa_ribolle_loop | AudioStreamOggVorbis res://audio/lei/fossa_ribolle_loop.ogg 5.0000 s ciclo true
+SONDA_STREAM crt_neve_loop | AudioStreamOggVorbis res://audio/tecnici/crt_neve_loop.ogg 3.0000 s ciclo true
+SONDA_STREAM paratia_scende_loop | AudioStreamOggVorbis res://audio/tecnici/paratia_scende_loop.ogg 3.0000 s ciclo true
+SONDA_STREAM pompe_ruggito_loop | AudioStreamOggVorbis res://audio/tecnici/pompe_ruggito_loop.ogg 4.0000 s ciclo true
+SONDA_STREAM zaino_impatto_acqua_loop | AudioStreamOggVorbis res://audio/giocatore/zaino_impatto_acqua_loop.ogg 2.0000 s ciclo true
+SONDA_STREAM zaino_impatto_loop | AudioStreamOggVorbis res://audio/giocatore/zaino_impatto_loop.ogg 2.5000 s ciclo true
+SONDA_STREAM lei_tunnel_fiato_loop | AudioStreamOggVorbis res://audio/lei/lei_tunnel_fiato_loop.ogg 8.0000 s ciclo true
+SONDA_STREAM medusa_presenza_loop | AudioStreamOggVorbis res://audio/effetti/medusa_presenza_loop.ogg 8.0000 s ciclo true
+SONDA_STREAM scivolo_loop | casuale[AudioStreamOggVorbis res://audio/effetti/scivolo_loop.ogg 3.0000 s ciclo true, AudioStreamOggVorbis res://audio/torre/scivolo_loop.ogg 3.0000 s ciclo true]
+SONDA_STREAM riempie_loop | AudioStreamOggVorbis res://audio/effetti/riempie_loop.ogg 3.0000 s ciclo true
+SONDA_STREAM scarico_loop | AudioStreamOggVorbis res://audio/effetti/scarico_loop.ogg 4.0000 s ciclo true
+SONDA_STREAM ruota_pale_loop | AudioStreamOggVorbis res://audio/effetti/ruota_pale_loop.ogg 2.4000 s ciclo true
+SONDA_STREAM saracinesca_loop | AudioStreamOggVorbis res://audio/effetti/saracinesca_loop.ogg 2.0000 s ciclo true
+SONDA_STREAM porta_motore_loop | AudioStreamOggVorbis res://audio/effetti/porta_motore_loop.ogg 2.0000 s ciclo true
+SONDA_STREAM turbina_loop | AudioStreamOggVorbis res://audio/effetti/turbina_loop.ogg 2.0000 s ciclo true
+SONDA_STREAM faro_ronzio_loop | AudioStreamOggVorbis res://audio/effetti/faro_ronzio_loop.ogg 3.0000 s ciclo true
+SONDA_STREAM emergenza_rotante_loop | AudioStreamOggVorbis res://audio/effetti/emergenza_rotante_loop.ogg 3.6364 s ciclo true
+SONDA_STREAM emergenza_ronzio_loop | AudioStreamOggVorbis res://audio/effetti/emergenza_ronzio_loop.ogg 4.0000 s ciclo true
+SONDA_STREAM neon_ronzio_loop | AudioStreamOggVorbis res://audio/effetti/neon_ronzio_loop.ogg 3.0000 s ciclo true
+SONDA_STREAM giusto | AudioStreamOggVorbis res://audio/enigmi/giusto.ogg 0.7500 s ciclo false
+SONDA_STREAM disco_lamiera_colpo | AudioStreamOggVorbis res://audio/enigmi/disco_lamiera_colpo.ogg 2.6000 s ciclo false
+SONDA_STREAM cassaforte_apre | AudioStreamOggVorbis res://audio/enigmi/cassaforte_apre.ogg 2.1817 s ciclo false
+SONDA_STREAM cassaforte_clic_b | AudioStreamOggVorbis res://audio/enigmi/cassaforte_clic_b.ogg 0.2200 s ciclo false
+SONDA_STREAM cassaforte_clic_c | AudioStreamOggVorbis res://audio/enigmi/cassaforte_clic_c.ogg 0.2200 s ciclo false
+SONDA_STREAM lei_urlo | AudioStreamOggVorbis res://audio/lei/lei_urlo.ogg 2.0000 s ciclo false
+SONDA_STREAM medusine_sparate | casuale[AudioStreamOggVorbis res://audio/piscina/medusine_sparate_01.ogg 1.8000 s ciclo false, AudioStreamOggVorbis res://audio/piscina/medusine_sparate_02.ogg 1.8000 s ciclo false]
+SONDA_STREAM pulsante_botola_bibu | AudioStreamOggVorbis res://audio/piscina/pulsante_botola_bibu.ogg 0.4400 s ciclo false
+SONDA_STREAM medusina_aspirata | casuale[AudioStreamOggVorbis res://audio/piscina/medusina_aspirata_01.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/piscina/medusina_aspirata_02.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/piscina/medusina_aspirata_03.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/piscina/medusina_aspirata_04.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/piscina/medusina_aspirata_05.ogg 0.8500 s ciclo false, AudioStreamOggVorbis res://audio/piscina/medusina_aspirata_06.ogg 0.8500 s ciclo false]
+SONDA_STREAM portone_torre_apre | AudioStreamOggVorbis res://audio/torre/portone_torre_apre.ogg 8.5000 s ciclo false
+SONDA_STREAM pulsante_botola_attiva | AudioStreamOggVorbis res://audio/piscina/pulsante_botola_attiva.ogg 1.4000 s ciclo false
+SONDA_STREAM piscina_vuota | AudioStreamOggVorbis res://audio/piscina/piscina_vuota.ogg 6.5000 s ciclo false
+SONDA_STREAM cancello_fine | AudioStreamOggVorbis res://audio/effetti/cancello_fine.ogg 0.8492 s ciclo false
+SONDA_STREAM atterraggio_acqua | casuale[AudioStreamOggVorbis res://audio/giocatore/atterraggio_acqua_01.ogg 0.6734 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/atterraggio_acqua_02.ogg 0.5715 s ciclo false]
+SONDA_STREAM tuffo | AudioStreamOggVorbis res://audio/giocatore/tuffo.ogg 1.6000 s ciclo false
+SONDA_STREAM salto | casuale[AudioStreamOggVorbis res://audio/giocatore/salto_01.ogg 0.3500 s ciclo false, AudioStreamOggVorbis res://audio/giocatore/salto_02.ogg 0.3500 s ciclo false]
+SONDA_STREAM_TEMPI 140 suoni, primo uso in tutto 57.4 ms sul thread principale, il più lento 3.20 ms

@@ -1,0 +1,25 @@
+SONDA_CM avvio: al titolo dopo 10 s, memoria statica 352.9 MB, picco 353.0 MB, suoni pronti true, file dei suoni in cache 250
+SONDA_CM fine
+SONDA_CM torre partenza (6.2 s): memoria statica 1662.9 MB, risorse 3862, oggetti 14332, tenute 1, torre in cache true, file dell'inseguimento in cache 35/37
+SONDA_CM torre ripartenza 1: giocatore in 2.5 s, caricamenti finiti 0.1 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16067, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM torre ripartenza 2: giocatore in 2.0 s, caricamenti finiti 0.1 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16064, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM torre ripartenza 3: giocatore in 2.0 s, caricamenti finiti 0.1 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16065, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM torre ripartenza 4: giocatore in 2.0 s, caricamenti finiti 0.1 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16066, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM torre ripartenza 5: giocatore in 2.0 s, caricamenti finiti 0.0 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16067, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM torre ripartenza 6: giocatore in 2.0 s, caricamenti finiti 0.0 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16068, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM inseguimento partenza (2.2 s): memoria statica 1672.0 MB, risorse 3866, oggetti 14351, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM inseguimento ripartenza 1: giocatore in 2.3 s, caricamenti finiti 0.1 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16075, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM inseguimento ripartenza 2: giocatore in 2.1 s, caricamenti finiti 0.1 s dopo: memoria statica 1981.9 MB, risorse 5319, oggetti 16076, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM inseguimento ripartenza 3: giocatore in 2.0 s, caricamenti finiti 0.1 s dopo: memoria statica 1982.0 MB, risorse 5319, oggetti 16077, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM inseguimento ripartenza 4: giocatore in 2.0 s, caricamenti finiti 0.1 s dopo: memoria statica 1982.0 MB, risorse 5319, oggetti 16078, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM inseguimento ripartenza 5: giocatore in 2.0 s, caricamenti finiti 0.1 s dopo: memoria statica 1982.0 MB, risorse 5319, oggetti 16079, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM inseguimento ripartenza 6: giocatore in 2.0 s, caricamenti finiti 0.1 s dopo: memoria statica 1982.0 MB, risorse 5319, oggetti 16080, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM fine
+SONDA_CM torre dopo una ripartenza: memoria statica 1981.9 MB, risorse 5319, oggetti 16067, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM tunnel (F9 dopo la torre): memoria statica 1217.6 MB, risorse 2849, oggetti 15941, tenute 0, torre in cache false, file dell'inseguimento in cache 21/37
+SONDA_CM tunnel ripartenza 1: memoria statica 1608.9 MB, risorse 4552, oggetti 17979, tenute 0, torre in cache false, file dell'inseguimento in cache 22/37
+SONDA_CM tunnel ripartenza 2: memoria statica 1608.9 MB, risorse 4552, oggetti 17980, tenute 0, torre in cache false, file dell'inseguimento in cache 22/37
+SONDA_CM torre di nuovo: memoria statica 1993.3 MB, risorse 5319, oggetti 16095, tenute 53, torre in cache true, file dell'inseguimento in cache 37/37
+SONDA_CM titolo: memoria statica 756.0 MB, risorse 1391, oggetti 4323, tenute 0, torre in cache false, file dell'inseguimento in cache 14/37
+SONDA_CM partita nuova (inizio): memoria statica 756.0 MB, risorse 1391, oggetti 4306, tenute 0, torre in cache false, file dell'inseguimento in cache 14/37
+SONDA_CM fine

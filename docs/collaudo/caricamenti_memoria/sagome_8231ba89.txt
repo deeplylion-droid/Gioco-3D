@@ -1,0 +1,12 @@
+SONDA_SAGOMA Sagoma_balena | (51.65, -21.5, -12.15) | (0.0, 3.142, 0.0) | res://assets/sagome_club/balena.png | (1092.0, 692.0) 632cb77282d002eb5f0472e7e78c446b | mesh 006342a322371f8f89f36478bd1e4981
+SONDA_SAGOMA Sagoma_cavalluccio | (71.86, -27.5, -7.85) | (0.0, 0.0, 0.0) | res://assets/sagome_club/cavalluccio.png | (468.0, 996.0) 791cc47683e0f289f9c67c4a990b480e | mesh ef722591d3d45feaec99ec22881e4ff3
+SONDA_SAGOMA Sagoma_delfino | (66.35001, -24.01, -30.227) | (0.0, 0.0, 0.0) | res://assets/sagome_club/delfino.png | (1012.0, 548.0) e959628f94e6db54e7a00d0caabfa650 | mesh d31f7fd324818c49fac63e3dc338c78a
+SONDA_SAGOMA Sagoma_foca | (67.60001, -27.5, -7.85) | (0.0, 0.0, 0.0) | res://assets/sagome_club/foca.png | (892.0, 652.0) d340ee21e88e300db2088d0880dc6547 | mesh ad8b0e1357b743037666a75d649c713d
+SONDA_SAGOMA Sagoma_granchio | (53.75, -21.5, -12.15) | (0.0, 3.142, 0.0) | res://assets/sagome_club/granchio.png | (692.0, 548.0) 771c7ec383b73b10541279250613b19c | mesh fe56179a31c2fd0860a250abd0165e3f
+SONDA_SAGOMA Sagoma_pesce | (66.65, -27.5, -6.3) | (0.0, 1.571, 0.0) | res://assets/sagome_club/pesce.png | (892.0, 628.0) ffb6095bce15cc20358d38427dc663db | mesh 662091c8138c0c0c0b78f4f03151e56a
+SONDA_SAGOMA Sagoma_pesce_palla | (63.85, -24.01, -30.227) | (0.0, 0.0, 0.0) | res://assets/sagome_club/pesce_palla.png | (852.0, 812.0) a6b60fc611384818565aad69a1fe10e8 | mesh b21164147524ba6c33effc3a8732fb7c
+SONDA_SAGOMA Sagoma_polpo | (65.05, -24.01, -30.227) | (0.0, 0.0, 0.0) | res://assets/sagome_club/polpo.png | (892.0, 756.0) 7d8d55ba6b1da41b71109acf617caa81 | mesh d6cfe606b1928abdd07f1ea5626c24c9
+SONDA_SAGOMA Sagoma_razza | (72.35001, -27.5, -4.4) | (0.0, -1.571, 0.0) | res://assets/sagome_club/razza.png | (892.0, 772.0) 5e413b009d5cfc8342830e9289cf6f14 | mesh 1a5fd41a7cdc6928dd76bf87dd334eb5
+SONDA_SAGOMA Sagoma_squalo | (67.65, -24.01, -30.227) | (0.0, 0.0, 0.0) | res://assets/sagome_club/squalo.png | (1012.0, 548.0) 0f2094a62ed587ffad2a629b0785672f | mesh 5959e195b22933a90c1aa959e2764c56
+SONDA_SAGOMA Sagoma_stella | (54.15, -21.5, -17.85) | (0.0, 0.0, 0.0) | res://assets/sagome_club/stella.png | (612.0, 612.0) 6409164765e41f4e61f51bae61a9dd33 | mesh 681d529cacb00afb9894ae17e00cf7fd
+SONDA_SAGOMA Sagoma_tartaruga | (50.15, -21.5, -13.3) | (0.0, 1.571, 0.0) | res://assets/sagome_club/tartaruga.png | (852.0, 596.0) f5441c97e26423b0cef17516ee1a21d5 | mesh 9eb1237f013fcd17276e820d91bf52ea

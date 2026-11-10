@@ -1,0 +1,159 @@
+extends Node
+const Catalogo := preload("res://addons/audio/catalogo.gd")
+## Sonda temporanea (ricontrollo caricamenti-thread, 0.3.25): uguale su main e sul branch unito.
+## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/_sonda_cm_tmp.gd <parte>
+## parti: avvio | suoni | sagome | morti | tunnel_titolo
+
+func _ready() -> void:
+	_run.call_deferred()
+
+func _mb() -> float:
+	return OS.get_static_memory_usage() / 1048576.0
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame
+
+func _aspetta_ripresa() -> float:
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 900000:
+		await get_tree().process_frame
+		var s := get_tree().current_scene
+		if s and s.scene_file_path != "res://scenes/ui/caricamento.tscn" and GameState.player \
+				and is_instance_valid(GameState.player) and not GameState.is_restoring() and not GameState.is_dying:
+			break
+	return (Time.get_ticks_msec() - t0) / 1000.0
+
+func _tenute() -> int:
+	var t = GameState.get(&"_tenute")
+	return (t as Dictionary).size() if t is Dictionary else -1
+
+func _torre_in_cache() -> String:
+	var sala := get_tree().current_scene
+	var p := String(sala.get(&"sala_torre_scena")) if sala and &"sala_torre_scena" in sala else "res://scenes/sala/torre/sala_torre.tscn"
+	var n := 0
+	for r in SalaInseguimento.risorse():
+		if ResourceLoader.has_cached(r):
+			n += 1
+	return "torre in cache %s, file dell'inseguimento in cache %d/%d" % [ResourceLoader.has_cached(p), n, SalaInseguimento.risorse().size()]
+
+func _stato(cosa: String) -> void:
+	await _frames(120)
+	print("SONDA_CM %s: memoria statica %.1f MB, risorse %d, oggetti %d, tenute %d, %s" % [cosa, _mb(),
+			int(Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT)), int(Performance.get_monitor(Performance.OBJECT_COUNT)),
+			_tenute(), _torre_in_cache()])
+
+## I suoni che partono (Audio.conteggio), fotogramma per fotogramma, per [param n] fotogrammi.
+func _suoni(cosa: String, n: int) -> void:
+	var audio := get_node(^"/root/Audio")
+	var prima: Dictionary = (audio.get(&"conteggio") as Dictionary).duplicate()
+	var righe: Array = []
+	for f in n:
+		await get_tree().process_frame
+		var ora: Dictionary = audio.get(&"conteggio")
+		for k in ora:
+			var d := int(ora[k]) - int(prima.get(k, 0))
+			if d > 0:
+				righe.append("%d:%s%s" % [f, k, "x%d" % d if d > 1 else ""])
+		prima = ora.duplicate()
+	print("SONDA_SUONI %s (%d): %s" % [cosa, righe.size(), " ".join(righe)])
+
+func _run() -> void:
+	Game.pause_on_focus_loss = false
+	GameState.save_to_disk = false
+	var parte := OS.get_cmdline_user_args()[1]
+	if parte == "avvio":
+		# la memoria al titolo, con i suoni caricati (o no)
+		get_tree().change_scene_to_file("res://scenes/ui/menu_principale.tscn")
+		await _frames(600)
+		var audio := get_node(^"/root/Audio")
+		var pronti = audio.call(&"suoni_pronti") if audio.has_method(&"suoni_pronti") else "-"
+		var ogg := 0
+		for nome in Catalogo.SUONI:
+			for p in Catalogo.SUONI[nome]:
+				if ResourceLoader.has_cached(String(p)):
+					ogg += 1
+		print("SONDA_CM avvio: al titolo dopo 10 s, memoria statica %.1f MB, picco %.1f MB, suoni pronti %s, file dei suoni in cache %d" % [_mb(),
+				OS.get_static_memory_peak_usage() / 1048576.0, str(pronti), ogg])
+	elif parte == "suoni":
+		for id in ["inizio", "inseguimento", "tunnel"]:
+			MenuProva.parti(get_tree(), id)
+			await _aspetta_ripresa()
+			await _suoni(id, 900)
+	elif parte == "sagome":
+		MenuProva.parti(get_tree(), "inseguimento")
+		await _aspetta_ripresa()
+		await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+		await _frames(300)
+		var righe: Array = []
+		for n in get_tree().current_scene.find_children("Sagoma_*", "MeshInstance3D", true, false):
+			var mi := n as MeshInstance3D
+			var mat := mi.get_surface_override_material(0) as StandardMaterial3D
+			var tex := mat.albedo_texture if mat else null
+			var ar := mi.mesh.surface_get_arrays(0)
+			var ctx := HashingContext.new()
+			ctx.start(HashingContext.HASH_MD5)
+			ctx.update((ar[Mesh.ARRAY_VERTEX] as PackedVector3Array).to_byte_array())
+			ctx.update((ar[Mesh.ARRAY_TEX_UV] as PackedVector2Array).to_byte_array())
+			var img_md5 := ""
+			if tex:
+				var img := tex.get_image()
+				if img:
+					img_md5 = img.get_data().hex_encode().md5_text() if img.get_data().size() < 50000000 else "grande"
+			righe.append("%s | %s | %s | %s | %s %s | mesh %s" % [mi.name, str(mi.global_transform.origin.snapped(Vector3.ONE * 0.001)),
+					str(mi.global_basis.get_euler().snapped(Vector3.ONE * 0.001)), tex.resource_path if tex else "-",
+					str(tex.get_size()) if tex else "-", img_md5, ctx.finish().hex_encode()])
+		righe.sort()
+		for r in righe:
+			print("SONDA_SAGOMA ", r)
+	elif parte == "morti":
+		for id in ["torre", "inseguimento"]:
+			MenuProva.parti(get_tree(), id)
+			var tp := await _aspetta_ripresa()
+			await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+			await _stato("%s partenza (%.1f s)" % [id, tp])
+			for k in 6:
+				GameState.respawn()
+				var t := await _aspetta_ripresa()
+				var t2 := Time.get_ticks_msec()
+				await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+				await _stato("%s ripartenza %d: giocatore in %.1f s, caricamenti finiti %.1f s dopo" % [id, k + 1, t, (Time.get_ticks_msec() - t2) / 1000.0])
+	elif parte == "tunnel_titolo":
+		# torre, poi il tunnel, poi il titolo, poi una partita nuova
+		MenuProva.parti(get_tree(), "torre")
+		await _aspetta_ripresa()
+		await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+		GameState.respawn()
+		await _aspetta_ripresa()
+		await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+		await _stato("torre dopo una ripartenza")
+		MenuProva.parti(get_tree(), "tunnel")
+		await _aspetta_ripresa()
+		await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+		await _stato("tunnel (F9 dopo la torre)")
+		for k in 2:
+			GameState.respawn()
+			await _aspetta_ripresa()
+			await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+			await _stato("tunnel ripartenza %d" % (k + 1))
+		# di nuovo nella torre, poi al titolo
+		MenuProva.parti(get_tree(), "torre")
+		await _aspetta_ripresa()
+		await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+		GameState.respawn()
+		await _aspetta_ripresa()
+		await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+		await _stato("torre di nuovo")
+		Game.return_to_title()
+		await _frames(30)
+		while Game.tornando_al_titolo:
+			await get_tree().process_frame
+		await _frames(300)
+		await _stato("titolo")
+		# partita nuova
+		MenuProva.parti(get_tree(), "inizio")
+		await _aspetta_ripresa()
+		await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+		await _stato("partita nuova (inizio)")
+	print("SONDA_CM fine")
+	Game.esci(0)

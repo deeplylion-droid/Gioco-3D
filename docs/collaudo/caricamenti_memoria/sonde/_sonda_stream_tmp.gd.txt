@@ -1,0 +1,37 @@
+extends Node
+const Catalogo := preload("res://addons/audio/catalogo.gd")
+## Sonda temporanea (ricontrollo caricamenti-thread): ogni suono del Catalogo com'è dato da Audio.stream_di (file,
+## durata, ciclo) e quanto costa sul thread principale al primo uso.
+
+func _ready() -> void:
+	_run.call_deferred()
+
+func _descrivi(s: AudioStream) -> String:
+	if s == null:
+		return "null"
+	if s is AudioStreamRandomizer:
+		var parti: Array = []
+		for i in (s as AudioStreamRandomizer).streams_count:
+			parti.append(_descrivi((s as AudioStreamRandomizer).get_stream(i)))
+		return "casuale[%s]" % ", ".join(parti)
+	var loop = s.get(&"loop")
+	return "%s %s %.4f s ciclo %s" % [s.get_class(), s.resource_path, s.get_length(), str(loop)]
+
+func _run() -> void:
+	get_tree().change_scene_to_file("res://scenes/ui/menu_principale.tscn")
+	for i in 600:
+		await get_tree().process_frame
+	var audio := get_node(^"/root/Audio")
+	var nomi: Array = Catalogo.SUONI.keys()
+	nomi.sort()
+	var tot := 0.0
+	var peggiore := 0.0
+	for n in nomi:
+		var t := Time.get_ticks_usec()
+		var s: AudioStream = audio.call(&"stream_di", StringName(n))
+		var ms := (Time.get_ticks_usec() - t) / 1000.0
+		tot += ms
+		peggiore = maxf(peggiore, ms)
+		print("SONDA_STREAM %s | %s" % [n, _descrivi(s)])
+	print("SONDA_STREAM_TEMPI %d suoni, primo uso in tutto %.1f ms sul thread principale, il più lento %.2f ms" % [nomi.size(), tot, peggiore])
+	Game.esci(0)

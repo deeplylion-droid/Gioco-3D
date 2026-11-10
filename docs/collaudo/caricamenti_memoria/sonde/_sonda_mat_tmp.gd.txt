@@ -1,0 +1,56 @@
+extends Node
+## Sonda temporanea (ricontrollo caricamenti-thread): la sequenza che dà «material is null» (F9 inseguimento, una morte,
+## F9 tunnel) e, nel tunnel, i materiali delle mesh dei dettagli della sala (DettagliSala).
+
+func _ready() -> void:
+	_run.call_deferred()
+
+func _aspetta() -> void:
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 900000:
+		await get_tree().process_frame
+		var s := get_tree().current_scene
+		if s and s.scene_file_path != "res://scenes/ui/caricamento.tscn" and GameState.player \
+				and is_instance_valid(GameState.player) and not GameState.is_restoring() and not GameState.is_dying:
+			break
+	await Game.aspetta_caricamenti(get_tree().current_scene, 300.0)
+	for i in 120:
+		await get_tree().process_frame
+
+func _controlla(cosa: String) -> void:
+	var sala := get_tree().current_scene
+	var tot := 0
+	var cattivi: Array = []
+	for d in sala.find_children("*", "Node3D", true, false):
+		if d.get_script() == null or not String((d.get_script() as Script).resource_path).ends_with("dettagli_sala.gd"):
+			continue
+		for g in d.find_children("*", "GeometryInstance3D", true, false):
+			var mesh: Mesh = (g as MeshInstance3D).mesh if g is MeshInstance3D else ((g as MultiMeshInstance3D).multimesh.mesh if g is MultiMeshInstance3D and (g as MultiMeshInstance3D).multimesh else null)
+			if mesh == null:
+				continue
+			for s in mesh.get_surface_count():
+				tot += 1
+				var m: Material = (g as GeometryInstance3D).material_override
+				if m == null and g is MeshInstance3D:
+					m = (g as MeshInstance3D).get_active_material(s)
+				if m == null:
+					m = mesh.surface_get_material(s)
+				if m == null or not is_instance_valid(m) or not m.get_rid().is_valid():
+					cattivi.append("%s sup %d" % [g.name, s])
+	print("SONDA_MAT %s: %d superfici dei dettagli della sala, senza materiale valido %d %s" % [cosa, tot, cattivi.size(), str(cattivi.slice(0, 12))])
+
+func _run() -> void:
+	Game.pause_on_focus_loss = false
+	GameState.save_to_disk = false
+	MenuProva.parti(get_tree(), "inseguimento")
+	await _aspetta()
+	await _controlla("inseguimento")
+	GameState.respawn()
+	await _aspetta()
+	await _controlla("inseguimento dopo una morte")
+	print("SONDA_MAT -- F9 tunnel")
+	MenuProva.parti(get_tree(), "tunnel")
+	await _aspetta()
+	await _controlla("tunnel")
+	print("SONDA_MAT fine")
+	Game.esci(0)

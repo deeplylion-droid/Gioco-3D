@@ -1,0 +1,1 @@
+load() sul thread principale a gioco avviato: 133, sopra 5 ms: 0
