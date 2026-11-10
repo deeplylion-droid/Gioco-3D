@@ -93,28 +93,33 @@ func _run() -> void:
 	_cam.position = Vector3(0, 2, 0)
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 
-	print("1. La risalita da sola: i suoi tre oblò")
-	if _senza:
-		Engine.set_meta(&"oblo_senza_preparazione", true)
-	var ris := (load(RISALITA) as PackedScene).instantiate() as Node3D
-	add_child(ris)
-	await _frames(40)   # (la preparazione delle lei, a schermo nero nel gioco)
-	var obli := ris.find_children("*", "ObloLei", true, false)
-	# prima un giro dal corridoio davanti a ogni vetro, senza lei: le pipeline dei muri, dei vetri e dell'acqua sono della
-	# zona, non di lei (qui si stampano e basta)
-	var giro := _conta()
-	for o: ObloLei in obli:
-		_cam.global_position = o.global_transform * Vector3(0.2, 0.1, 2.6)
-		_cam.look_at(o.global_transform * Vector3(0, -0.3, 0), Vector3.UP)
-		await _frames(4)
-		_cam.look_at(_cam.global_position + o.normale(), Vector3.UP)
-		await _frames(4)
-	var cg := _diff(giro)
-	print("  (il giro della zona senza lei: surface %d, draw %d, in sottofondo %d)" % [cg.surface, cg.draw, cg.spec])
-	for o: ObloLei in obli:
-		await _prova(o)
-	ris.queue_free()
-	await _frames(5)
+	# (con OBLO_SOLO_TORRE=1 solo la parte 2; con RITARDO_THREAD_TEST=<s> il thread rallentato apposta come in
+	# test_attesa_zone, Game.ritardo_thread_test: un passo che aspettasse il thread si vedrebbe nel passo più lungo)
+	if OS.has_environment("RITARDO_THREAD_TEST"):
+		Game.ritardo_thread_test = float(OS.get_environment("RITARDO_THREAD_TEST"))
+	if not OS.has_environment("OBLO_SOLO_TORRE"):
+		print("1. La risalita da sola: i suoi tre oblò")
+		if _senza:
+			Engine.set_meta(&"oblo_senza_preparazione", true)
+		var ris := (load(RISALITA) as PackedScene).instantiate() as Node3D
+		add_child(ris)
+		await _frames(40)   # (la preparazione delle lei, a schermo nero nel gioco)
+		var obli := ris.find_children("*", "ObloLei", true, false)
+		# prima un giro dal corridoio davanti a ogni vetro, senza lei: le pipeline dei muri, dei vetri e dell'acqua sono della
+		# zona, non di lei (qui si stampano e basta)
+		var giro := _conta()
+		for o: ObloLei in obli:
+			_cam.global_position = o.global_transform * Vector3(0.2, 0.1, 2.6)
+			_cam.look_at(o.global_transform * Vector3(0, -0.3, 0), Vector3.UP)
+			await _frames(4)
+			_cam.look_at(_cam.global_position + o.normale(), Vector3.UP)
+			await _frames(4)
+		var cg := _diff(giro)
+		print("  (il giro della zona senza lei: surface %d, draw %d, in sottofondo %d)" % [cg.surface, cg.draw, cg.spec])
+		for o: ObloLei in obli:
+			await _prova(o)
+		ris.queue_free()
+		await _frames(5)
 
 	print("2. La torre da sola, costruita a pezzi e preparata come nella sala")
 	# come in test_torre_ingresso: quello che la sala ha già in scena (i bambini, la Polaroid) e gli shader dei materiali
@@ -135,7 +140,8 @@ func _run() -> void:
 	torre.process_mode = Node.PROCESS_MODE_DISABLED
 	add_child(torre)
 	await torre.costruisci_a_pezzi()
-	check(torre.fotogramma_piu_carico_ms < 100.0, "la torre si costruisce a pezzi con lei dentro: al più %.0f ms in un fotogramma" % torre.fotogramma_piu_carico_ms)
+	check(torre.fotogramma_piu_carico_ms < 100.0, "la torre si costruisce a pezzi con lei dentro: al più %.0f ms in un fotogramma (il passo più lungo: %s)" % [
+			torre.fotogramma_piu_carico_ms, torre.passo_piu_lungo])
 	await torre.prepara_materiali(get_viewport())
 	torre.visible = true
 	torre.process_mode = Node.PROCESS_MODE_INHERIT
