@@ -189,6 +189,11 @@ func _disegna() -> void:
 	# lei dietro gli oblò (mascotte, 25 ottobre) con l'oblò vero: le sue mesh con lo scheletro (le ossa cambiano il
 	# formato dei vertici: la sfera non basta) e quelle dell'oblò (piastra, vetro, vasca), un pezzo per volta
 	await _disegna_oblo(sv)
+	if not is_inside_tree():
+		return
+	await _disegna_lancia(sv)
+	if not is_inside_tree():
+		return
 	await get_tree().process_frame
 	sv.queue_free()
 
@@ -442,6 +447,53 @@ func _disegna_oblo(sv: SubViewport) -> void:
 		if is_instance_valid(gi):
 			gi.visible = false
 	o.queue_free()
+
+
+## La lancia del giocatore (#146, 0.3.26): la canna e il guanto sono sempre in vista e si compilano con ogni luce del
+## gioco, ma il tubo verso lo zaino (TuboZaino: un formato dei vertici suo, senza UV, e un materiale senza texture) sta
+## sotto il bordo dello schermo ed entra in vista solo col FOV largo guardando in basso: lì compilava 2 pipeline "draw"
+## a gioco fermo (collaudo di enigmi del guanto, FOV 90 giù 65 e 85). Qui la lancia vera, la scena del giocatore, un
+## pezzo per volta coi passi delle ombre. La scena è quella che la sala carica comunque: si chiede al caricamento nel
+## thread (lo stesso della sala, se è già partito), non con un load() mentre il thread la carica.
+const LANCIA := "res://scenes/player/lance/lancia_c1.tscn"
+
+
+func _disegna_lancia(sv: SubViewport) -> void:
+	if not ResourceLoader.exists(LANCIA):
+		return
+	if ResourceLoader.load_threaded_request(LANCIA, "PackedScene") != OK:
+		return
+	while ResourceLoader.load_threaded_get_status(LANCIA) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	var scena := ResourceLoader.load_threaded_get(LANCIA) as PackedScene
+	if scena == null:
+		return
+	var lancia := scena.instantiate() as Node3D
+	lancia.position = Vector3(0.0, 0.0, 1.6)
+	sv.add_child(lancia)
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	var pezzi: Array[GeometryInstance3D] = []
+	for g in lancia.find_children("*", "MeshInstance3D", true, false):
+		var gi := g as GeometryInstance3D
+		if gi.visible:
+			pezzi.append(gi)
+			gi.visible = false
+	await get_tree().process_frame
+	for gi in pezzi:
+		if not is_inside_tree():
+			return
+		if not is_instance_valid(gi):
+			continue
+		gi.visible = true
+		pezzo = "lancia: %s" % gi.name
+		await _passi_ombre()
+		if is_instance_valid(gi):
+			gi.visible = false
+	lancia.queue_free()
 
 
 ## Disegna una zona appena costruita una volta fuori vista (una camera sua in un SubViewport con le stesse
