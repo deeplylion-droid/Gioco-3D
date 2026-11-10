@@ -15,8 +15,8 @@ func _ready() -> void:
 	process_priority = -1000
 	get_tree().process_frame.connect(func(): RiscaldamentoShader.segno("process_frame"))
 	get_tree().physics_frame.connect(func(): RiscaldamentoShader.segno("physics_frame"))
-	RenderingServer.frame_pre_draw.connect(func(): RiscaldamentoShader.segno("pre_draw"))
-	RenderingServer.frame_post_draw.connect(func(): RiscaldamentoShader.segno("post_draw"))
+	RenderingServer.frame_pre_draw.connect(_pre_draw)
+	RenderingServer.frame_post_draw.connect(_post_draw)
 	var fine := Node.new()
 	fine.process_priority = 1 << 30
 	fine.set_script(_FINE)
@@ -25,6 +25,23 @@ func _ready() -> void:
 
 
 const _FINE := preload("res://tests/sonda_tunnel_fine.gd")
+
+
+## (metodi, non lambda, e scollegati uscendo: con due lambda collegate al RenderingServer e mai scollegate la sonda
+## usciva con il codice 134, Aborted, dopo FINITO_SONDA; collaudo della 0.3.25)
+func _pre_draw() -> void:
+	RiscaldamentoShader.segno("pre_draw")
+
+
+func _post_draw() -> void:
+	RiscaldamentoShader.segno("post_draw")
+
+
+func _exit_tree() -> void:
+	if RenderingServer.frame_pre_draw.is_connected(_pre_draw):
+		RenderingServer.frame_pre_draw.disconnect(_pre_draw)
+	if RenderingServer.frame_post_draw.is_connected(_post_draw):
+		RenderingServer.frame_post_draw.disconnect(_post_draw)
 
 
 func _process(_d: float) -> void:
