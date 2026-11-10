@@ -97,20 +97,27 @@ func _tartaruga() -> void:
 	t.name = "tartaruga"
 	# appena girata, come se nuotasse verso chi arriva salendo
 	t.rotate_object_local(Vector3.RIGHT, deg_to_rad(-8.0))
-	var tri_t := _triangoli(t)
+	# (i triangoli, la quota, le catene e i faretti nei passi dopo: tutto insieme erano 45-56 ms in un passo, quasi
+	# tutti nei due giri sui triangoli della tartaruga e nei raggi delle catene; poi il modello e il primo giro erano
+	# ancora 24,5 ms: i triangoli a passi, _triangoli_a_passi)
+	_triangoli_a_passi(t, _tartaruga_quota.bind(nodo, t))
+
+
+## La tartaruga alla sua quota, dai suoi triangoli [param tri_t]; poi le catene e i faretti.
+func _tartaruga_quota(tri_t: PackedVector3Array, nodo: Node3D, t: Node3D) -> void:
 	var basso := INF
 	for v in tri_t:
 		basso = minf(basso, v.y)
 	t.position.y += SOPRA_LEI + 0.06 - basso
-	# (le catene e i faretti nei passi dopo: tutto insieme erano 45-56 ms in un passo, quasi tutti nei due giri sui
-	# triangoli della tartaruga e nei raggi delle catene)
-	sala.aggiungi_passi([_tartaruga_catene.bind(nodo, t), _tartaruga_faretti.bind(nodo)])
+	sala.aggiungi_passi([_tartaruga_faretti.bind(nodo)])
+	# (i triangoli della tartaruga alla sua quota, a passi, per le catene)
+	_triangoli_a_passi(t, _tartaruga_catene.bind(nodo))
 
 
 ## Le catene della tartaruga: dal guscio (davanti, dietro a sinistra, dietro a destra) dritte su fino alla volta.
-func _tartaruga_catene(nodo: Node3D, t: Node3D) -> void:
-	# (i triangoli della tartaruga qui, una catena per passo)
-	var st := {"tri_t": _triangoli(t), "k": 0}
+func _tartaruga_catene(tri_t: PackedVector3Array, nodo: Node3D) -> void:
+	# (una catena per passo)
+	var st := {"tri_t": tri_t, "k": 0}
 	var passi: Array = []
 	for off: Vector2 in [Vector2(0.0, -0.55), Vector2(-0.45, 0.45), Vector2(0.45, 0.45)]:
 		passi.append(_tartaruga_catena.bind(nodo, st, off))
@@ -474,29 +481,33 @@ func _pesce_mensola(nodo: Node3D, s: float, lato: float, k: int) -> void:
 	var p := _modello(nodo, "pesce_vetroresina", Vector3.ZERO, Vector3.ZERO, PESCE_SCALA)
 	p.name = "pesce_%d" % k
 	p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), pm + nrm * (fuori * 0.5))
-	sala.aggiungi_passi([_pesce_mensola_gap.bind(nodo, p, pm, nrm, lungo, largo, fuori, k)])
+	# (i triangoli del pesce a passi: un giro solo erano 20-22 ms in un passo)
+	_triangoli_a_passi(p, _pesce_mensola_gap.bind(nodo, p, pm, nrm, lungo, largo, fuori, k))
 
 
-## Il pesce [param p] lontano dal muro almeno 3 cm (seconda parte di [method _pesce_mensola]).
-func _pesce_mensola_gap(nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3, lungo: Vector3, largo: float, fuori: float,
-		k: int) -> void:
+## Il pesce [param p] lontano dal muro almeno 3 cm, dai suoi triangoli [param tri] (seconda parte di
+## [method _pesce_mensola]).
+func _pesce_mensola_gap(tri: PackedVector3Array, nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3, lungo: Vector3,
+		largo: float, fuori: float, k: int) -> void:
 	# lontano dal muro almeno 3 cm (le pinne)
 	var gap := INF
-	for v in _triangoli(p):
+	for v in tri:
 		gap = minf(gap, (v - pm).dot(nrm))
 	if gap < 0.03:
 		p.position += nrm * (0.03 - gap)
-	# (il piede e il faretto nel passo dopo: i due giri sui triangoli del pesce insieme erano 35-58 ms)
-	sala.aggiungi_passi([_pesce_mensola_piede.bind(nodo, p, pm, nrm, lungo, largo, fuori, k)])
+	# (il piede e il faretto nei passi dopo, coi triangoli del pesce spostato: i due giri sui triangoli del pesce
+	# insieme erano 35-58 ms)
+	_triangoli_a_passi(p, _pesce_mensola_piede.bind(nodo, p, pm, nrm, lungo, largo, fuori, k))
 
 
-## Il piede del palo del pesce [param p] sulla mensola e il faretto sotto (ultima parte di [method _pesce_mensola]).
-func _pesce_mensola_piede(nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3, lungo: Vector3, largo: float, fuori: float,
-		k: int) -> void:
+## Il piede del palo del pesce [param p] sulla mensola, dai suoi triangoli [param tri], e il faretto sotto (ultima parte
+## di [method _pesce_mensola]).
+func _pesce_mensola_piede(tri: PackedVector3Array, nodo: Node3D, p: Node3D, pm: Vector3, nrm: Vector3, lungo: Vector3,
+		largo: float, fuori: float, k: int) -> void:
 	# il piede del palo sulla mensola: il punto più basso fra quelli sopra la mensola (le pinne fuori possono
 	# scendere oltre il bordo)
 	var basso := INF
-	for v in _triangoli(p):
+	for v in tri:
 		var lu := (v - pm).dot(lungo)
 		var fu := (v - pm).dot(nrm)
 		if absf(lu) < largo * 0.5 - 0.01 and fu > 0.0 and fu < fuori - 0.01:
@@ -1161,6 +1172,8 @@ func _ambiente(nome: String) -> Array:
 ## Un modello del fiume (come [method SalaSottomarino._modello], ma con le coordinate della sala).
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
 	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	# (la prima get_faces() delle sue mesh, se è nel thread: SalaSottomarino.FACCE_NEL_THREAD)
+	sala.aspetta_facce(n)
 	nodo.add_child(n)
 	var b := Basis.looking_at(verso, Vector3.UP) if verso.length_squared() > 0.0 else Basis()
 	n.transform = Transform3D(b.scaled(Vector3.ONE * scala), pos)
@@ -1220,6 +1233,49 @@ func _tri_tunnel(s: float) -> PackedVector3Array:
 
 
 ## I triangoli delle mesh sotto [param n], nelle coordinate della sala.
+## Quanti vertici al più per passo in [method _triangoli_a_passi] (0,5 ms ogni 12000 nella sonda del tunnel).
+const VERTICI_PER_PASSO := 30000
+
+
+## I triangoli di [param n] come [method _triangoli], con gli stessi conti nello stesso ordine, ma nei passi della
+## costruzione (al più [constant VERTICI_PER_PASSO] vertici per passo); poi il passo [param poi] con i triangoli come
+## primo argomento. Fra un passo e l'altro [param n] non si deve muovere.
+func _triangoli_a_passi(n: Node3D, poi: Callable) -> void:
+	var st := {"out": PackedVector3Array()}
+	var mis: Array = n.find_children("*", "MeshInstance3D", true, false)
+	if n is MeshInstance3D:
+		mis.append(n)
+	var passi: Array = []
+	for x in mis:
+		var mi := x as MeshInstance3D
+		if mi.mesh != null:
+			passi.append(_triangoli_mesh.bind(mi, st, 0))
+	passi.append(_triangoli_poi.bind(st, poi))
+	sala.aggiungi_passi(passi)
+
+
+func _triangoli_poi(st: Dictionary, poi: Callable) -> void:
+	poi.call(st["out"])
+
+
+## I vertici di [param mi] da [param da] in poi, al più [constant VERTICI_PER_PASSO] (il resto nel passo dopo).
+func _triangoli_mesh(mi: MeshInstance3D, st: Dictionary, da: int) -> void:
+	if da == 0:
+		st["facce"] = mi.mesh.get_faces()
+		st["xf"] = _xf(mi)
+	var facce: PackedVector3Array = st["facce"]
+	var xf: Transform3D = st["xf"]
+	var out: PackedVector3Array = st["out"]
+	# (solo qui: senza copie dell'array a ogni aggiunta)
+	st["out"] = PackedVector3Array()
+	var a := mini(da + VERTICI_PER_PASSO, facce.size())
+	for i in range(da, a):
+		out.append(xf * facce[i])
+	st["out"] = out
+	if a < facce.size():
+		sala.aggiungi_passi([_triangoli_mesh.bind(mi, st, a)])
+
+
 func _triangoli(n: Node3D) -> PackedVector3Array:
 	var out := PackedVector3Array()
 	var mis: Array = n.find_children("*", "MeshInstance3D", true, false)

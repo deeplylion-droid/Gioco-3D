@@ -330,6 +330,11 @@ const VISTE_RISCALDA := [[0.0, -1.0], [6.0, 1.0], [70.0, 1.0], [90.0, -1.0], [12
 func _riscalda() -> void:
 	if not is_inside_tree():
 		return
+	# (gli strati in un fotogramma loro: con la fine dei passi e il contesto delle forme il fotogramma arrivava a 40 ms;
+	# collaudo di enigmi del 10 novembre)
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
 	strati_riscaldamento()
 	if DisplayServer.get_name() == "headless":
 		return
@@ -3152,9 +3157,50 @@ class _LavoroInvolucro:
 			punti = mesh.get_faces()
 
 
+## I modelli degli arredi di cui la prima Mesh.get_faces() si fa nel thread, all'inizio della costruzione a pezzi:
+## costruisce anche l'albero dei triangoli della mesh (TriangleMesh, poi tenuto nella mesh), 28 ms per il pesce di
+## vetroresina in un passo (collaudo di enigmi del 10 novembre). Le stesse facce: è la stessa chiamata.
+const FACCE_NEL_THREAD := ["res://assets/fiume_lento/tartaruga.glb", "res://assets/fiume_lento/pesce_vetroresina.glb"]
+## Mesh -> _LavoroFacce, il compito nel thread della sua prima get_faces() (il lavoro tenuto qui: il Callable non lo tiene).
+var _facce_lavori := {}
+
+
+class _LavoroFacce:
+	var mesh: Mesh
+	var compito := -1
+
+	func _init(m: Mesh) -> void:
+		mesh = m
+
+	## Nel thread: solo la chiamata.
+	func esegui() -> void:
+		mesh.get_faces()
+
+
+## Aspetta i compiti nel thread delle mesh di [param n] ([constant FACCE_NEL_THREAD]): prima di usare le sue mesh.
+func aspetta_facce(n: Node) -> void:
+	if _facce_lavori.is_empty():
+		return
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		if _facce_lavori.has(m):
+			WorkerThreadPool.wait_for_task_completion((_facce_lavori[m] as _LavoroFacce).compito)
+			_facce_lavori.erase(m)
+
+
 func _avvia_involucri() -> void:
 	if not _costruendo or senza_scorciatoie or not _involucri_lavori.is_empty():
 		return
+	if _facce_lavori.is_empty():
+		for percorso: String in FACCE_NEL_THREAD:
+			var modello := (load(percorso) as PackedScene).instantiate()
+			for mi in modello.find_children("*", "MeshInstance3D", true, false):
+				var m := (mi as MeshInstance3D).mesh
+				if m != null and not _facce_lavori.has(m):
+					var lavoro := _LavoroFacce.new(m)
+					lavoro.compito = WorkerThreadPool.add_task(lavoro.esegui, false, "facce di un arredo")
+					_facce_lavori[m] = lavoro
+			modello.free()
 	var l := (load(LAMPADA_GABBIA) as PackedScene).instantiate()
 	for mi in l.find_children("*", "MeshInstance3D", true, false):
 		var m := (mi as MeshInstance3D).mesh
@@ -3192,6 +3238,9 @@ func _exit_tree() -> void:
 	for lavoro in _involucri_lavori:
 		WorkerThreadPool.wait_for_task_completion(lavoro.compito)
 	_involucri_lavori.clear()
+	for m in _facce_lavori:
+		WorkerThreadPool.wait_for_task_completion((_facce_lavori[m] as _LavoroFacce).compito)
+	_facce_lavori.clear()
 
 
 ## Mette [param n] col retro a contatto col muro dietro (con Posa): [param fuori] è la direzione fuori dal muro.
