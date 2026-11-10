@@ -32,7 +32,8 @@ static var _cache := {}
 ## uguale, e le forme ricalcolate erano un fotogramma da 1,2-1,5 s due secondi dopo l'arrivo (quando lei riemerge). Si
 ## riusano solo se l'impronta del tunnel nuovo è la stessa ([method impronta]); si lasciano tornando al titolo, con una
 ## partita nuova e ripartendo fuori dal tunnel ([method lascia_tenute]).
-static var _tenute: Array = []
+## (in forme_tenute.gd, senza dipendenze: vedi lì)
+const _TENUTE := preload("res://scripts/environment/forme_tenute.gd")
 
 
 ## L'impronta (md5) di tutto quello da cui vengono le forme ferme di [param sala]: i dati di lei e dell'asse, e per
@@ -51,14 +52,14 @@ static func impronta(sala: SalaSottomarino) -> PackedByteArray:
 	return h.finish()
 
 
-## Lascia le forme tenute (vedi [member _tenute]).
+## Lascia le forme tenute (forme_tenute.gd).
 static func lascia_tenute() -> void:
-	_tenute = []
+	_TENUTE.lascia()
 
 
 ## Vero se ci sono forme tenute.
 static func ha_tenute() -> bool:
-	return not _tenute.is_empty()
+	return not _TENUTE.dati.is_empty()
 
 
 ## Prepara (una volta per sala) le forme ferme, tutto subito (test, scene di prova, ripartenze dal tunnel). Se le forme
@@ -69,17 +70,18 @@ static func prepara(sala: SalaSottomarino) -> int:
 		return (_cache[id] as Array).size()
 	var t0 := Time.get_ticks_msec()
 	var imp := impronta(sala)
-	if _tenute.size() == 2 and _tenute[0] == imp:
-		_cache[id] = _tenute[1]
-		print_verbose("FormeTunnel: %d forme tenute (impronta in %d ms)" % [(_tenute[1] as Array).size(), Time.get_ticks_msec() - t0])
-		return (_tenute[1] as Array).size()
+	var tenute: Array = _TENUTE.dati
+	if tenute.size() == 2 and tenute[0] == imp:
+		_cache[id] = tenute[1]
+		print_verbose("FormeTunnel: %d forme tenute (impronta in %d ms)" % [(tenute[1] as Array).size(), Time.get_ticks_msec() - t0])
+		return (tenute[1] as Array).size()
 	var ctx := _contesto(sala)
 	for c3 in _forme_collisione(sala):
 		var nt := _quanti(c3)
 		_forme_di(c3, ctx, 0, nt)
 	_unisci(ctx)
 	_cache[id] = ctx["forme"]
-	_tenute = [imp, ctx["forme"]]
+	_TENUTE.dati = [imp, ctx["forme"]]
 	print_verbose("FormeTunnel: %d forme in %d ms" % [(ctx["forme"] as Array).size(), Time.get_ticks_msec() - t0])
 	return (ctx["forme"] as Array).size()
 
