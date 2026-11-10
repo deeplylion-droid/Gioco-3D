@@ -129,7 +129,7 @@ static func _mensola(sala: SalaSottomarino, nodo: Node3D, s: float, lato: float,
 	# (la z della scatola lungo la normale del muro: il retro, mezza profondità dietro il centro, sul muro)
 	corpo.global_transform = Transform3D(Basis.looking_at(-r, Vector3.UP),
 			sala._al(p, sala.destra(s), Vector2(lato * (sala.muro - profondo * 0.5 - 0.2), sala.piano + MENSOLA_SU + MENSOLA_SPESSA * 0.5)))
-	if not Posa.fissa_al_muro(corpo, -r, profondo * 0.5):
+	if not Posa.fissa_al_muro(corpo, -r, profondo * 0.5, false, [], _sul_muro(sala, corpo, -r)):
 		push_warning("arredi sottomarino: mensola a %.1f senza muro" % s)
 	# in curva il muro non è un piano: si misura quanto restano staccati gli angoli del retro (raggi sul muro vero) e
 	# la mensola entra quanto basta perché tocchino, almeno MENSOLA_DENTRO
@@ -167,15 +167,31 @@ static func _contro_il_muro(sala: SalaSottomarino, nodo: Node3D, nome: String, s
 		for v in _involucro(mm.mesh):
 			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(r))
 	var t2 := Time.get_ticks_usec()
-	if not Posa.fissa_al_muro(n, -r, dietro + DAL_MURO if sulla_mensola else dietro, false):
+	if not Posa.fissa_al_muro(n, -r, dietro + DAL_MURO if sulla_mensola else dietro, false, [], _sul_muro(sala, n, -r)):
 		push_warning("arredi sottomarino: %s a %.1f senza muro" % [nome, s])
-	if sulla_mensola and not Posa.appoggia_a_terra(n, 0.0, false):
+	if sulla_mensola and not Posa.appoggia_a_terra(n, 0.0, false, [], _sotto(sala, n)):
 		push_warning("arredi sottomarino: %s a %.1f senza mensola" % [nome, s])
 	var t3 := Time.get_ticks_usec()
 	sala._collisione_modello(n)
 	if OS.has_environment("TORRE_TEMPI"):
 		print("  %s: modello %.0f, sporgenza %.0f, posa %.0f, collisione %.0f ms" % [nome, (t1 - t0) / 1000.0, (t2 - t1) / 1000.0, (t3 - t2) / 1000.0, (Time.get_ticks_usec() - t3) / 1000.0])
 	return n
+
+
+## Le mesh del tunnel lungo il raggio di Posa.fissa_al_muro per [param n] che guarda verso [param verso] (lo stesso
+## segmento): Posa guarda solo quelle. Con tutte quelle visibili dell'albero, nel gioco vero (sala, torre e condotte
+## intorno) ogni raggio costava 4-5 ms e i coralli 23-30 ms (ricontrollo di enigmi del 10 novembre); come
+## SalaSottomarino._a_filo_del_muro.
+static func _sul_muro(sala: SalaSottomarino, n: Node3D, verso: Vector3) -> Array:
+	var v := verso.normalized()
+	var p := n.global_position
+	return sala._mesh_lungo(p + v * 0.3, p - v * Posa.PORTATA)
+
+
+## Le mesh del tunnel lungo il raggio di Posa.appoggia_a_terra per [param n] (lo stesso segmento).
+static func _sotto(sala: SalaSottomarino, n: Node3D) -> Array:
+	var p := n.global_position
+	return sala._mesh_lungo(p + Vector3.UP * 0.05, p + Vector3.DOWN * Posa.PORTATA)
 
 
 ## Il forziere è aperto, e dentro il modello ha solo le facce di fuori: guardandoci dentro dalla banchina si vedevano
