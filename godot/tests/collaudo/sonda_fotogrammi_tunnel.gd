@@ -76,7 +76,18 @@ func _process(_d: float) -> void:
 		if OS.has_environment("TORRE_TEMPI"):
 			segni += RiscaldamentoShader.segni_recenti(2)
 		_lunghi.append([_giro, st, ms])
+		# (i tempi del motore del fotogramma: process e fisica, e gli oggetti in più)
+		var oggetti := int(Performance.get_monitor(Performance.OBJECT_COUNT))
+		segni = "[process %.1f ms, fisica %.1f ms, passi di fisica %d, oggetti %+d] %s" % [
+				Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
+				Engine.get_physics_frames() - _fisica, oggetti - _oggetti, segni]
 		print("FOTOGRAMMA costruzione %d, %s: %.1f ms a %.2f s; segni: %s" % [_giro, st, ms, _ora(), segni])
+	_fisica = Engine.get_physics_frames()
+	_oggetti = int(Performance.get_monitor(Performance.OBJECT_COUNT))
+
+
+var _fisica := 0
+var _oggetti := 0
 
 
 func _in_gioco() -> bool:

@@ -423,6 +423,7 @@ func _passi() -> Array:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
 	out.append(_bambino_galleria)
 	out.append(_parapetto_presa)
+	out.append(_acqua_presa_griglia)
 	out.append(_acqua_presa)
 	out.append(_checkpoint)
 	out.append(_lei_crea)
@@ -468,6 +469,14 @@ func _nebbia_viola() -> void:
 ## subacquea di chi ci cade (con la testa sotto il pelo), senza la sua superficie (il pelo è la striscia del canale) e
 ## senza increspature né riflessi; nel resto del canale, al ginocchio, niente WaterBody (la vista resta normale).
 ## Torbida come le vasche: lei sale da lì e non si deve vedere sotto (grafica, 24 ottobre).
+## La griglia del pelo dell'acqua della presa, prima dell'acqua (WaterBody.prepara_griglia): l'acqua intera in un
+## passo erano 18-24 ms alla prima costruzione.
+func _acqua_presa_griglia() -> void:
+	var a := punto(-TESTA)
+	var b := punto(PRESA_FINO)
+	WaterBody.prepara_griglia(get_tree(), Vector2(canale * 2.0, absf(b.z - a.z)))
+
+
 func _acqua_presa() -> void:
 	var a := punto(-TESTA)
 	var b := punto(PRESA_FINO)
@@ -3026,6 +3035,8 @@ func _corda(mi: MeshInstance3D, pts: PackedVector3Array) -> void:
 ## Un modello Meshy del fiume (assets/fiume_lento) a [param pos], girato verso [param verso], scalato.
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
 	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	# (la prima get_faces() delle sue mesh, se è nel thread: FACCE_NEL_THREAD)
+	aspetta_facce(n)
 	usa_forme_salvate(nome, n)
 	nodo.add_child(n)
 	n.global_transform = Transform3D(Basis.looking_at(verso, Vector3.UP).scaled(Vector3.ONE * scala), pos)
@@ -3160,7 +3171,9 @@ class _LavoroInvolucro:
 ## I modelli degli arredi di cui la prima Mesh.get_faces() si fa nel thread, all'inizio della costruzione a pezzi:
 ## costruisce anche l'albero dei triangoli della mesh (TriangleMesh, poi tenuto nella mesh), 28 ms per il pesce di
 ## vetroresina in un passo (collaudo di enigmi del 10 novembre). Le stesse facce: è la stessa chiamata.
-const FACCE_NEL_THREAD := ["res://assets/fiume_lento/tartaruga.glb", "res://assets/fiume_lento/pesce_vetroresina.glb"]
+## Poi anche l'ancora (le staffe) e il salvagente (SottomarinoArrediA1._salvagente): 29-33 ms nei loro passi.
+const FACCE_NEL_THREAD := ["res://assets/fiume_lento/tartaruga.glb", "res://assets/fiume_lento/pesce_vetroresina.glb",
+		"res://assets/fiume_lento/ancora.glb", "res://assets/fiume_lento/salvagente.glb"]
 ## Mesh -> _LavoroFacce, il compito nel thread della sua prima get_faces() (il lavoro tenuto qui: il Callable non lo tiene).
 var _facce_lavori := {}
 

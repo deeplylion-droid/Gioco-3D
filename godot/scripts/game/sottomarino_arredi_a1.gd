@@ -1255,7 +1255,12 @@ func _triangoli_a_passi(n: Node3D, poi: Callable) -> void:
 
 
 func _triangoli_poi(st: Dictionary, poi: Callable) -> void:
+	var t0 := Time.get_ticks_usec()
 	poi.call(st["out"])
+	if OS.has_environment("TORRE_TEMPI"):
+		var ms := (Time.get_ticks_usec() - t0) / 1000.0
+		if ms > 3.0:
+			RiscaldamentoShader.segno("tunnel dopo i triangoli %s %.1f ms" % [poi.get_method(), ms])
 
 
 ## I vertici di [param mi] da [param da] in poi, al più [constant VERTICI_PER_PASSO] (il resto nel passo dopo).
