@@ -36,6 +36,12 @@ func _run() -> void:
 	print("PORTA: via %s, titolo %s" % [via, titolo.name if titolo else "-"])
 	if via == "f9":
 		titolo.call(&"_parti_prova", "inizio")
+		# (c'è già un salvataggio: il titolo chiede «Ricominciare da capo?»; si risponde sì, come il giocatore)
+		await _frames(5)
+		var domanda := titolo.find_child("DomandaNuovaPartita", true, false)
+		print("PORTA: domanda «Ricominciare da capo?» %s" % (domanda != null))
+		if domanda:
+			domanda.emit_signal(&"risposta", true)
 	else:
 		titolo.call(&"_avvia_nuova_partita")
 	var s: RisveglioSqualo = null

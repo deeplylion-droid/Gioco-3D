@@ -324,6 +324,13 @@ func _ravvicinati() -> void:
 				tempi_mani.append(0.3 + 0.5 * k)
 		for t in tempi_mani:
 			lista.append(["piedi", "mani_%05.2f" % t, t])
+	# RAVV_PORTA=1 (ricontrollo di lavoro/torre-robusta): la porta tagliafuoco sul suo perno, chiusa, mentre si apre e
+	# aperta: il cardine in basso, a metà e in alto dai due lati, e la porta intera
+	if OS.get_environment("RAVV_PORTA") != "":
+		bocca.clear()
+		momenti_piedi.clear()
+		for t in [0.5, 13.5, 14.37, 14.43, 16.0]:
+			lista.append(["porta", "porta_%05.2f" % t, t])
 	for b in bocca:
 		lista.append(["bocca", b[0], b[1]])
 	for t in momenti_piedi:
@@ -331,10 +338,22 @@ func _ravvicinati() -> void:
 	lista.sort_custom(func(a, b): return a[2] < b[2])
 	for x in lista:
 		await _fino_a(s, float(x[2]))
-		if not s.in_corso() or s.squalo == null or not is_instance_valid(s.squalo) or not s.squalo.visible:
+		if not s.in_corso():
+			continue
+		if x[0] != "porta" and (s.squalo == null or not is_instance_valid(s.squalo) or not s.squalo.visible):
 			continue
 		var punti := []
-		if x[0] == "bocca":
+		if x[0] == "porta":
+			var perno := s.get(&"_perno") as Node3D
+			var b := s.porta.global_transform.basis.orthonormalized()
+			var h := perno.global_position
+			for q in [["basso", 0.15], ["meta", 1.0], ["alto", 1.95]]:
+				var c: Vector3 = h + Vector3.UP * float(q[1])
+				punti.append(["cardine_%s_davanti" % q[0], c + b.x * 0.55 - b.z * 0.2, c])
+				punti.append(["cardine_%s_dietro" % q[0], c - b.x * 0.55 - b.z * 0.2, c])
+			var mezzo: Vector3 = h + Vector3.UP * 1.05 - b.z * 0.58
+			punti.append(["intera", mezzo + b.x * 2.6, mezzo])
+		elif x[0] == "bocca":
 			var c: Vector3 = s.call(&"_punto_bocca")
 			var avanti := (p.camera.global_position - c)
 			avanti.y = 0.0
