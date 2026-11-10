@@ -70,6 +70,9 @@ func _run() -> void:
 		if arrivata >= 0.0 and (r == null or r.concluso):
 			break
 	var fine := (Time.get_ticks_msec() - t0) / 1000.0
+	# (la schermata ferma subito: con la sala arrivata e il riscaldamento finito entrerebbe nella sala mentre si esce, e
+	# il processo veniva ucciso per la memoria dopo aver stampato, #139)
+	s.process_mode = Node.PROCESS_MODE_DISABLED
 	if interrotta == "" and (arrivata < 0.0 or (r != null and not r.concluso)):
 		interrotta = "interrotta dopo %.0f s" % fine
 	if interrotta != "":
