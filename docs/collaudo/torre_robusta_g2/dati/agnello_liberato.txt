@@ -1,0 +1,5 @@
+  ok  giro 1: il bambino agnello ha le sue copie dei materiali luminosi (2)
+  ok  giro 2: il bambino agnello ha le sue copie dei materiali luminosi (2)
+  ok  giro 3: il bambino agnello ha le sue copie dei materiali luminosi (2)
+  ok  istanziato e liberato 3 volte: nessun errore ()
+RISULTATO: 4 controlli ok, 0 falliti

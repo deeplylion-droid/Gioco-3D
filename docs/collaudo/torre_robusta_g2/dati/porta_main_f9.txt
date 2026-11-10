@@ -1,0 +1,14 @@
+PORTA: via f9, titolo MenuPrincipale
+PORTA: domanda «Ricominciare da capo?» true
+PORTA: perno true, nell'albero true, genitore Corridoio, posizione (12.265, 0.0, 40.18)
+PORTA: porta attaccata a PernoPortaTagliafuoco; collisione true (strato 1); perni nell'albero 1
+PORTA: a 0.00 s perno a 120.0 gradi
+PORTA: a 14.30 s perno a 105.6 gradi
+PORTA: a 14.33 s perno a 94.0 gradi
+PORTA: a 14.37 s perno a 79.0 gradi
+PORTA: a 14.40 s perno a 60.6 gradi
+PORTA: a 14.43 s perno a 38.8 gradi
+PORTA: a 14.47 s perno a 13.6 gradi
+PORTA: a 14.50 s perno a 0.0 gradi
+PORTA: alla fine della scena perno a 0.0 gradi (massimo 120.0), porta attaccata a PernoPortaTagliafuoco, la porta si è staccata dal perno al più di 0.0000 m
+PORTA: perni nell'albero 1, nodi orfani 0

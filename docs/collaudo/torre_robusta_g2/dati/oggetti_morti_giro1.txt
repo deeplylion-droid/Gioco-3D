@@ -1,0 +1,8 @@
+  ok  torre: oggetti dalla seconda alla 6 ripartenza +0 (0 in più)
+  ok  torre: nodi dalla seconda alla 6 ripartenza +0 (0 in più)
+  ok  torre: orfani dalla seconda alla 6 ripartenza +0 (0 in più)
+  ok  torre: risorse dalla seconda alla 6 ripartenza +0 (0 in più)
+  ok  inseguimento: oggetti dalla seconda alla 6 ripartenza +0 (0 in più)
+  ok  inseguimento: nodi dalla seconda alla 6 ripartenza +0 (0 in più)
+  ok  inseguimento: orfani dalla seconda alla 6 ripartenza +0 (0 in più)
+  ok  inseguimento: risorse dalla seconda alla 6 ripartenza +0 (0 in più)

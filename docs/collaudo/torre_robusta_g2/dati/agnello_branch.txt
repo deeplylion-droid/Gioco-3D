@@ -1,0 +1,2 @@
+PIEDI: fermo LeftFoot 0.082, RightFoot 0.082, LeftToeBase 0.007, RightToeBase 0.007
+CORSA: piede più basso sul pavimento fra -0.579 e 0.271 m (94 fotogrammi)

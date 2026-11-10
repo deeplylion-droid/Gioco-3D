@@ -1,0 +1,13 @@
+giro 1: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 2: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 3: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 4: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 5: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 6: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 7: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 8: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 9: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+giro 10: oggetti_morti 8 controlli ok, 0 falliti; torre 96 controlli ok, 0 falliti
+0.3.24 giro 1: torre 95 controlli ok, 0 falliti
+0.3.24 giro 2: torre 95 controlli ok, 0 falliti
+0.3.24 giro 3: torre 95 controlli ok, 0 falliti
