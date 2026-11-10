@@ -1,0 +1,8 @@
+misura4.log:MISURA video SI: sala arrivata in 45.44 s, riscaldamento finito in 134.85 s
+misura4.log:MISURA video SI: 660 fotogrammi, media 203.5 ms, 95% 1265.9 ms, peggiore 2624 ms, 660 oltre 50 ms
+misura4.log:MISURA video SI: RSS all'inizio 1517 MB, massimo 12438 MB, alla fine 12438 MB; statica di Godot 234 MB
+misura4.log:MISURA uscita: RSS 12438 MB, memoria libera 2755 MB
+misura3.log:MISURA interrotta dopo 8 s: la sala non arrivata, il riscaldamento non finito (77 su 150)
+misura3.log:MISURA video SI: sala arrivata in -1.00 s, riscaldamento finito in 8.39 s
+misura3.log:MISURA video SI: 27 fotogrammi, media 283.8 ms, 95% 1110.6 ms, peggiore 1475 ms, 26 oltre 50 ms
+misura3.log:MISURA video SI: RSS all'inizio 1513 MB, massimo 3145 MB, alla fine 3145 MB; statica di Godot 191 MB

@@ -1,0 +1,33 @@
+LANCIA: 30 mesh del giocatore accese, nascoste tutte
+LANCIA: fov 90 giù 65 senza le mesh del giocatore: [0, 0, 0, 0, 0]
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/EffettoSottacqua/Bubbles (GPUParticles3D) ombre 1 strati 1
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Modelli/lancia_c1_antincendio/Lancia (MeshInstance3D) mesh res://assets/models/zaino/proposte_lance/lancia_c1_antincendio/lancia_c1_antincendio.gltf::ArrayMesh_iv0gu | sup 0: StandardMaterial3D trasp 0 formato 34896613399 ombre 0 strati 2
+LANCIA: [0, 2, 2, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Modelli/lancia_c1_antincendio/TuboZaino (MeshInstance3D) mesh res://assets/models/zaino/proposte_lance/lancia_c1_antincendio/lancia_c1_antincendio.gltf::ArrayMesh_u1yfd | sup 0: StandardMaterial3D trasp 0 formato 34896613383 ombre 0 strati 2
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Modelli/guanto_destro/GuantoDestro (MeshInstance3D) mesh res://assets/models/zaino/guanto/guanto_destro.glb::ArrayMesh_c1taj | sup 0: StandardMaterial3D trasp 0 formato 34896613399 | sup 1: StandardMaterial3D trasp 0 formato 34896613399 ombre 0 strati 2
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Muzzle/JetParticles (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Indicatore/@MeshInstance3D@90 (MeshInstance3D) mesh CylinderMesh | sup 0: StandardMaterial3D trasp 1 formato 0 ombre 0 strati 2
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Indicatore/@MeshInstance3D@91 (MeshInstance3D) mesh CylinderMesh | sup 0: ShaderMaterial res://shaders/liquid_fill.gdshader formato 0 ombre 0 strati 2
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Indicatore/@MeshInstance3D@92 (MeshInstance3D) mesh CylinderMesh | sup 0: StandardMaterial3D trasp 0 formato 0 ombre 0 strati 2
+LANCIA: [0, 0, 0, 0, 0] Head/Camera3D/ViewModel/LanciaC1/Indicatore/@MeshInstance3D@93 (MeshInstance3D) mesh CylinderMesh | sup 0: StandardMaterial3D trasp 0 formato 0 ombre 0 strati 2
+LANCIA: [0, 0, 0, 0, 0] WaterPack/SplashParticles (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/SuctionParticles (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@145 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@146 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@147 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@148 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@149 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@150 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@151 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@152 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@153 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@154 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@155 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/GettoPotente/@GPUParticles3D@156 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] WaterPack/Getto (MeshInstance3D) mesh ArrayMesh ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] EffettiZaino/@GPUParticles3D@80 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] EffettiZaino/@GPUParticles3D@81 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] SlideFx/@GPUParticles3D@94 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] SlideFx/@GPUParticles3D@95 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] SlideFx/@GPUParticles3D@96 (GPUParticles3D) ombre 0 strati 1
+LANCIA: [0, 0, 0, 0, 0] SlideFx/@GPUParticles3D@97 (GPUParticles3D) ombre 0 strati 1
+LANCIA FINITO
