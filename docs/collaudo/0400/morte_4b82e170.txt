@@ -1,0 +1,107 @@
+PM: camera near 0.030, fov 75
+PM: sud: chiamata dalla pozza Pozza_2_4, uscita Uscita_Pozza_2_4 (0.0, 0.0, 2.8), giocatore a (0.0, 0.0, 3.35) (0.55 m dall'uscita)
+PM: sud: presa, scena breve false, durata 5.00, meta camera_morte [(0.35, 0.6, 3.6), (0.12, 0.22, 2.68), (0.0, -0.3025, 2.05)]
+PM: T sud 0.15 (0.150) cam (0.11, 1.227, 3.412); sopra il pelo 1.279; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T sud 0.30 (0.300) cam (0.326, 0.648, 3.603); sopra il pelo 0.701; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: con lo strato 20 già acceso: ["Surface", "Surface", "Surface", "Surface", "Surface", "Surface", "Surface", "Surface", "Surface", "Surface", "Surface", "Surface"]
+PM: S sud 0.30: schermo preso da lei 37 % (Medusa 13 %, Medusa_Ciocche 6 %, Medusa_Interno 1 %, Medusa_Mani 5 %, Medusa_Occhio 1 %, Medusa_Tentacoli 25 %); la mesh vicina che ne prende di più Grigliato2 77 % (su 13 entro 1,5 m, senza il liquido)
+PM: T sud 0.40 (0.400) cam (0.285, 0.645, 3.549); sopra il pelo 0.697; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T sud 0.50 (0.500) cam (0.264, 0.762, 3.384); sopra il pelo 0.814; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S sud 0.50: schermo preso da lei 34 % (Medusa 13 %, Medusa_Ciocche 5 %, Medusa_Interno 2 %, Medusa_Mani 5 %, Medusa_Occhio 1 %, Medusa_Tentacoli 28 %); la mesh vicina che ne prende di più Grigliato2 64 % (su 13 entro 1,5 m, senza il liquido)
+PM: T sud 0.60 (0.600) cam (0.25, 0.766, 3.193); sopra il pelo 0.818; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T sud 0.70 (0.700) cam (0.193, 0.656, 2.984); sopra il pelo 0.709; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S sud 0.70: schermo preso da lei 34 % (Medusa 17 %, Medusa_Ciocche 9 %, Medusa_Interno 1 %, Medusa_Occhio 1 %, Medusa_Tentacoli 26 %); la mesh vicina che ne prende di più @MeshInstance3D@83 73 % (su 15 entro 1,5 m, senza il liquido)
+PM: T sud 0.80 (0.800) cam (0.144, 0.417, 2.804); sopra il pelo 0.470; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T sud 0.90 (0.900) cam (0.12, 0.243, 2.695); sopra il pelo 0.295; faccia più vicina 0.305 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T sud 0.95 (0.950) cam (0.121, 0.227, 2.68); sopra il pelo 0.280; faccia più vicina 0.290 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S sud 0.95: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 16 %, Medusa_Tentacoli 29 %); la mesh vicina che ne prende di più @MeshInstance3D@83 79 % (su 14 entro 1,5 m, senza il liquido)
+PM: DIFETTO sud: a 0.95 s @MeshInstance3D@83 prende più di metà schermo (79 %)
+PM: T sud 1.00 (1.000) cam (0.123, 0.213, 2.68); sopra il pelo 0.265; faccia più vicina 0.266 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T sud 1.10 (1.100) cam (0.128, 0.223, 2.68); sopra il pelo 0.276; faccia più vicina 0.274 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S sud 1.10: schermo preso da lei 56 % (Medusa 34 %, Medusa_Ciocche 17 %, Medusa_Tentacoli 30 %); la mesh vicina che ne prende di più @MeshInstance3D@83 80 % (su 14 entro 1,5 m, senza il liquido)
+PM: DIFETTO sud: a 1.10 s @MeshInstance3D@83 prende più di metà schermo (80 %)
+PM: T sud 1.30 (1.300) cam (0.118, 0.217, 2.68); sopra il pelo 0.269; faccia più vicina 0.260 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T sud 1.60 (1.600) cam (0.12, 0.227, 2.68); sopra il pelo 0.280; faccia più vicina 0.273 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S sud 1.60: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 16 %, Medusa_Tentacoli 29 %); la mesh vicina che ne prende di più @MeshInstance3D@83 79 % (su 14 entro 1,5 m, senza il liquido)
+PM: DIFETTO sud: a 1.60 s @MeshInstance3D@83 prende più di metà schermo (79 %)
+PM: T sud 1.90 (1.900) cam (0.121, 0.224, 2.68); sopra il pelo 0.276; faccia più vicina 0.286 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: sud: fotogrammi con la camera dentro il liquido 0
+PM: camera near 0.030, fov 75
+PM: sud_breve: chiamata dalla pozza Pozza_2_4, uscita Uscita_Pozza_2_4 (0.0, 0.0, 2.8), giocatore a (0.0, 0.0, 3.35) (0.55 m dall'uscita)
+PM: sud_breve: presa, scena breve true, durata 1.10, meta camera_morte [(0.35, 0.6, 3.6), (0.12, 0.22, 2.68), (0.0, -0.3025, 2.05)]
+PM: T sud_breve 0.15 (0.150) cam (0.11, 1.227, 3.412); sopra il pelo 1.279; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T sud_breve 0.30 (0.300) cam (0.326, 0.648, 3.603); sopra il pelo 0.701; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T sud_breve 0.50 (0.500) cam (0.261, 0.682, 3.458); sopra il pelo 0.734; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S sud_breve 0.50: schermo preso da lei 32 % (Medusa 12 %, Medusa_Ciocche 6 %, Medusa_Interno 1 %, Medusa_Mani 6 %, Medusa_Occhio 1 %, Medusa_Tentacoli 22 %); la mesh vicina che ne prende di più Grigliato2 69 % (su 14 entro 1,5 m, senza il liquido)
+PM: T sud_breve 0.70 (0.700) cam (0.201, 0.677, 2.961); sopra il pelo 0.730; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T sud_breve 0.90 (0.900) cam (0.128, 0.278, 2.664); sopra il pelo 0.331; faccia più vicina 0.321 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T sud_breve 0.95 (0.950) cam (0.118, 0.218, 2.688); sopra il pelo 0.270; faccia più vicina 0.261 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S sud_breve 0.95: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 17 %, Medusa_Tentacoli 28 %); la mesh vicina che ne prende di più @MeshInstance3D@349 80 % (su 14 entro 1,5 m, senza il liquido)
+PM: DIFETTO sud_breve: a 0.95 s @MeshInstance3D@349 prende più di metà schermo (80 %)
+PM: T sud_breve 1.00 (1.000) cam (0.123, 0.213, 2.68); sopra il pelo 0.265; faccia più vicina 0.268 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T sud_breve 1.05 (1.050) cam (0.114, 0.223, 2.68); sopra il pelo 0.276; faccia più vicina 0.280 m (EnigmaPozze/Pozza_2_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_2_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S sud_breve 1.05: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 17 %, Medusa_Tentacoli 28 %); la mesh vicina che ne prende di più @MeshInstance3D@349 79 % (su 14 entro 1,5 m, senza il liquido)
+PM: DIFETTO sud_breve: a 1.05 s @MeshInstance3D@349 prende più di metà schermo (79 %)
+PM: sud_breve: fotogrammi con la camera dentro il liquido 0
+PM: camera near 0.030, fov 75
+PM: angolo_4_4_lato_sud: chiamata dalla pozza Pozza_4_4, uscita Uscita_Pozza_4_4_1 (2.2, 0.0, 2.8), giocatore a (2.2, 0.0, 3.35) (0.55 m dall'uscita)
+PM: angolo_4_4_lato_sud: presa, scena breve false, durata 5.00, meta camera_morte [(2.55, 0.6, 3.6), (2.32, 0.22, 2.68), (2.2, -0.3025, 2.05)]
+PM: T angolo_4_4_lato_sud 0.15 (0.150) cam (2.31, 1.227, 3.412); sopra il pelo 1.279; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_4_4_lato_sud 0.30 (0.300) cam (2.526, 0.648, 3.603); sopra il pelo 0.701; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S angolo_4_4_lato_sud 0.30: schermo preso da lei 37 % (Medusa 13 %, Medusa_Ciocche 6 %, Medusa_Interno 1 %, Medusa_Mani 5 %, Medusa_Occhio 1 %, Medusa_Tentacoli 25 %); la mesh vicina che ne prende di più Grigliato2 76 % (su 14 entro 1,5 m, senza il liquido)
+PM: T angolo_4_4_lato_sud 0.40 (0.400) cam (2.584, 0.614, 3.576); sopra il pelo 0.666; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_4_4_lato_sud 0.50 (0.500) cam (2.531, 0.733, 3.399); sopra il pelo 0.786; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S angolo_4_4_lato_sud 0.50: schermo preso da lei 35 % (Medusa 13 %, Medusa_Ciocche 5 %, Medusa_Interno 2 %, Medusa_Mani 6 %, Medusa_Occhio 1 %, Medusa_Tentacoli 27 %); la mesh vicina che ne prende di più @MeshInstance3D@604 50 % (su 14 entro 1,5 m, senza il liquido)
+PM: T angolo_4_4_lato_sud 0.60 (0.600) cam (2.45, 0.766, 3.193); sopra il pelo 0.818; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_4_4_lato_sud 0.70 (0.700) cam (2.393, 0.656, 2.984); sopra il pelo 0.709; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S angolo_4_4_lato_sud 0.70: schermo preso da lei 34 % (Medusa 17 %, Medusa_Ciocche 9 %, Medusa_Interno 1 %, Medusa_Occhio 1 %, Medusa_Tentacoli 26 %); la mesh vicina che ne prende di più @MeshInstance3D@613 51 % (su 13 entro 1,5 m, senza il liquido)
+PM: T angolo_4_4_lato_sud 0.80 (0.800) cam (2.344, 0.417, 2.804); sopra il pelo 0.470; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_4_4_lato_sud 0.90 (0.900) cam (2.32, 0.243, 2.695); sopra il pelo 0.295; faccia più vicina 0.305 m (EnigmaPozze/Pozza_4_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_4_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T angolo_4_4_lato_sud 0.95 (0.950) cam (2.321, 0.227, 2.68); sopra il pelo 0.280; faccia più vicina 0.290 m (EnigmaPozze/Pozza_4_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_4_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S angolo_4_4_lato_sud 0.95: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 16 %, Medusa_Tentacoli 29 %); la mesh vicina che ne prende di più @MeshInstance3D@613 58 % (su 13 entro 1,5 m, senza il liquido)
+PM: DIFETTO angolo_4_4_lato_sud: a 0.95 s @MeshInstance3D@613 prende più di metà schermo (58 %)
+PM: T angolo_4_4_lato_sud 1.00 (1.000) cam (2.323, 0.213, 2.68); sopra il pelo 0.265; faccia più vicina 0.266 m (EnigmaPozze/Pozza_4_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_4_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T angolo_4_4_lato_sud 1.10 (1.100) cam (2.328, 0.223, 2.68); sopra il pelo 0.276; faccia più vicina 0.274 m (EnigmaPozze/Pozza_4_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_4_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S angolo_4_4_lato_sud 1.10: schermo preso da lei 56 % (Medusa 34 %, Medusa_Ciocche 17 %, Medusa_Tentacoli 30 %); la mesh vicina che ne prende di più @MeshInstance3D@613 58 % (su 13 entro 1,5 m, senza il liquido)
+PM: DIFETTO angolo_4_4_lato_sud: a 1.10 s @MeshInstance3D@613 prende più di metà schermo (58 %)
+PM: T angolo_4_4_lato_sud 1.30 (1.300) cam (2.318, 0.217, 2.68); sopra il pelo 0.269; faccia più vicina 0.259 m (EnigmaPozze/Pozza_4_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_4_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T angolo_4_4_lato_sud 1.60 (1.600) cam (2.32, 0.227, 2.68); sopra il pelo 0.280; faccia più vicina 0.273 m (EnigmaPozze/Pozza_4_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_4_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S angolo_4_4_lato_sud 1.60: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 16 %, Medusa_Tentacoli 29 %); la mesh vicina che ne prende di più @MeshInstance3D@613 58 % (su 13 entro 1,5 m, senza il liquido)
+PM: DIFETTO angolo_4_4_lato_sud: a 1.60 s @MeshInstance3D@613 prende più di metà schermo (58 %)
+PM: T angolo_4_4_lato_sud 1.90 (1.900) cam (2.321, 0.224, 2.68); sopra il pelo 0.276; faccia più vicina 0.285 m (EnigmaPozze/Pozza_4_4/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_4_4/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: angolo_4_4_lato_sud: fotogrammi con la camera dentro il liquido 0
+PM: camera near 0.030, fov 75
+PM: angolo_0_0_lato_ovest: chiamata dalla pozza Pozza_0_0, uscita Uscita_Pozza_0_0 (-2.8, 0.0, -2.2), giocatore a (-3.35, 0.0, -2.2) (0.55 m dall'uscita)
+PM: angolo_0_0_lato_ovest: presa, scena breve false, durata 5.00, meta camera_morte [(-3.6, 0.6, -1.85), (-2.68, 0.22, -2.08), (-2.05, -0.3025, -2.2)]
+PM: T angolo_0_0_lato_ovest 0.15 (0.150) cam (-3.412, 1.227, -2.09); sopra il pelo 1.279; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_0_0_lato_ovest 0.30 (0.300) cam (-3.603, 0.648, -1.874); sopra il pelo 0.701; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S angolo_0_0_lato_ovest 0.30: schermo preso da lei 40 % (Medusa 12 %, Medusa_Ciocche 6 %, Medusa_Interno 1 %, Medusa_Mani 5 %, Medusa_Occhio 1 %, Medusa_Tentacoli 25 %); la mesh vicina che ne prende di più Grigliato3 44 % (su 12 entro 1,5 m, senza il liquido)
+PM: T angolo_0_0_lato_ovest 0.40 (0.400) cam (-3.53, 0.657, -1.915); sopra il pelo 0.709; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_0_0_lato_ovest 0.50 (0.500) cam (-3.362, 0.786, -1.946); sopra il pelo 0.838; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S angolo_0_0_lato_ovest 0.50: schermo preso da lei 30 % (Medusa 12 %, Medusa_Ciocche 5 %, Medusa_Interno 1 %, Medusa_Mani 5 %, Medusa_Occhio 1 %, Medusa_Tentacoli 28 %); la mesh vicina che ne prende di più Grigliato3 67 % (su 11 entro 1,5 m, senza il liquido)
+PM: T angolo_0_0_lato_ovest 0.60 (0.600) cam (-3.163, 0.805, -1.99); sopra il pelo 0.857; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_0_0_lato_ovest 0.70 (0.700) cam (-2.987, 0.656, -2.004); sopra il pelo 0.709; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S angolo_0_0_lato_ovest 0.70: schermo preso da lei 34 % (Medusa 17 %, Medusa_Ciocche 9 %, Medusa_Interno 1 %, Medusa_Occhio 1 %, Medusa_Tentacoli 26 %); la mesh vicina che ne prende di più @MeshInstance3D@877 53 % (su 13 entro 1,5 m, senza il liquido)
+PM: T angolo_0_0_lato_ovest 0.80 (0.800) cam (-2.811, 0.417, -2.049); sopra il pelo 0.470; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T angolo_0_0_lato_ovest 0.90 (0.900) cam (-2.7, 0.243, -2.076); sopra il pelo 0.295; faccia più vicina 0.305 m (EnigmaPozze/Pozza_0_0/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_0_0/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T angolo_0_0_lato_ovest 0.95 (0.950) cam (-2.679, 0.227, -2.08); sopra il pelo 0.280; faccia più vicina 0.290 m (EnigmaPozze/Pozza_0_0/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_0_0/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S angolo_0_0_lato_ovest 0.95: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 16 %, Medusa_Tentacoli 28 %); la mesh vicina che ne prende di più @MeshInstance3D@877 55 % (su 13 entro 1,5 m, senza il liquido)
+PM: DIFETTO angolo_0_0_lato_ovest: a 0.95 s @MeshInstance3D@877 prende più di metà schermo (55 %)
+PM: T angolo_0_0_lato_ovest 1.00 (1.000) cam (-2.677, 0.213, -2.08); sopra il pelo 0.265; faccia più vicina 0.269 m (EnigmaPozze/Pozza_0_0/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_0_0/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T angolo_0_0_lato_ovest 1.10 (1.100) cam (-2.672, 0.223, -2.08); sopra il pelo 0.276; faccia più vicina 0.277 m (EnigmaPozze/Pozza_0_0/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_0_0/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S angolo_0_0_lato_ovest 1.10: schermo preso da lei 55 % (Medusa 36 %, Medusa_Ciocche 16 %, Medusa_Tentacoli 27 %); la mesh vicina che ne prende di più @MeshInstance3D@877 55 % (su 13 entro 1,5 m, senza il liquido)
+PM: DIFETTO angolo_0_0_lato_ovest: a 1.10 s @MeshInstance3D@877 prende più di metà schermo (55 %)
+PM: T angolo_0_0_lato_ovest 1.30 (1.300) cam (-2.682, 0.217, -2.08); sopra il pelo 0.269; faccia più vicina 0.259 m (EnigmaPozze/Pozza_0_0/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_0_0/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: T angolo_0_0_lato_ovest 1.60 (1.600) cam (-2.68, 0.227, -2.08); sopra il pelo 0.280; faccia più vicina 0.271 m (EnigmaPozze/Pozza_0_0/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_0_0/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: S angolo_0_0_lato_ovest 1.60: schermo preso da lei 56 % (Medusa 36 %, Medusa_Ciocche 16 %, Medusa_Tentacoli 28 %); la mesh vicina che ne prende di più @MeshInstance3D@877 55 % (su 13 entro 1,5 m, senza il liquido)
+PM: DIFETTO angolo_0_0_lato_ovest: a 1.60 s @MeshInstance3D@877 prende più di metà schermo (55 %)
+PM: T angolo_0_0_lato_ovest 1.90 (1.900) cam (-2.679, 0.224, -2.08); sopra il pelo 0.276; faccia più vicina 0.284 m (EnigmaPozze/Pozza_0_0/Graybox/Superficie); mesh entro 0,6 m: EnigmaPozze/Pozza_0_0/Graybox/Superficie: 3/14 raggi la colpiscono, 3 dal retro
+PM: angolo_0_0_lato_ovest: fotogrammi con la camera dentro il liquido 0
+PM: camera near 0.030, fov 75
+PM: bordo_ovest_0_2: chiamata dalla pozza Pozza_0_2, uscita Uscita_Pozza_0_2 (-2.8, 0.0, 0.0), giocatore a (-3.35, 0.0, 0.0) (0.55 m dall'uscita)
+PM: bordo_ovest_0_2: presa, scena breve false, durata 5.00, meta camera_morte [(-3.6, 0.6, 0.35), (-2.68, 0.22, 0.12), (-2.05, -0.3025, 0.0)]
+PM: T bordo_ovest_0_2 0.15 (0.150) cam (-3.412, 1.227, 0.11); sopra il pelo 1.279; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T bordo_ovest_0_2 0.30 (0.300) cam (-3.603, 0.648, 0.326); sopra il pelo 0.701; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: S bordo_ovest_0_2 0.30: schermo preso da lei 40 % (Medusa 12 %, Medusa_Ciocche 6 %, Medusa_Interno 1 %, Medusa_Mani 5 %, Medusa_Occhio 1 %, Medusa_Tentacoli 25 %); la mesh vicina che ne prende di più Grigliato3 71 % (su 11 entro 1,5 m, senza il liquido)
+PM: T bordo_ovest_0_2 0.40 (0.400) cam (-3.552, 0.64, 0.3); sopra il pelo 0.692; faccia più vicina inf m (); mesh entro 0,6 m: nessuna
+PM: T bordo_ovest_0_2 0.50 (0.500) cam (-3.39, 0.743, 0.311); sopra il pelo 0.796; faccia più vicina inf m (); mesh entro 0,6 m: nessuna

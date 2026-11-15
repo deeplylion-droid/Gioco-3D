@@ -174,7 +174,7 @@ func _cammina(tappe: Array, corre: bool, tag: String) -> void:
 			if pelo_prima > -INF:
 				if absf(py - pelo_prima) > absf(salto_max):
 					salto_max = py - pelo_prima
-					if absf(salto_max) > 0.01:
+					if absf(salto_max) > 0.004:
 						print("BF: %s %.2f s il pelo della fossa salta di %.3f m in un fotogramma (LeiSbuca %s, giocatore a %.2f m)" % [tag, _t(), salto_max, LeiSbuca.Fase.keys()[ls.fase], d])
 			if ls.fase == LeiSbuca.Fase.SBUCA:
 				pelo_sbuca.append(py)
@@ -225,7 +225,8 @@ func _cammina(tappe: Array, corre: bool, tag: String) -> void:
 		await _cammina([_p().global_position, _fossa()], false, tag + "_dopo")
 		return
 	if not pelo_sbuca.is_empty():
-		print("BF: %s pelo della fossa durante la salita: da %.3f a %.3f" % [tag, pelo_sbuca[0], pelo_sbuca[-1]])
+		print("BF: %s pelo della fossa durante la salita: da %.3f a %.3f (%d fotogrammi)" % [tag, pelo_sbuca[0], pelo_sbuca[-1], pelo_sbuca.size()])
+	print("BF: %s il salto più grande del pelo in un fotogramma: %.4f m" % [tag, salto_max])
 	print("BF: %s fine in %s: giro finito a %.2f m, LeiSbuca %s, morendo %s (causa %s), in vista %.2f s; luce/canto: %s" % [tag, _p().global_position.snappedf(0.01), fine_giro, LeiSbuca.Fase.keys()[ls.fase],
 			GameState.is_dying, GameState.last_death_cause, ls.in_vista_t, avviso_fasi])
 
