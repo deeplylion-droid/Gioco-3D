@@ -406,7 +406,7 @@ def calibra():
 
 
 # ---------------------------------------------------------------- guarda il disegno (agli acquari, scelta A del coordinatore)
-GUARDA = {'testa_su': 34.0, 'polso': (-0.10, -0.12, 0.50)}
+GUARDA = {'testa_su': 62.0, 'polso': (-0.10, -0.12, 0.50)}
 
 
 def posa_guarda_su(t, k=1.0):
