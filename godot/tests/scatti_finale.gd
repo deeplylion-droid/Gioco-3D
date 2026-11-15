@@ -140,15 +140,14 @@ static func _pipeline() -> Array:
 
 ## Dagli occhi del giocatore, una camera stretta (28 gradi) sul busto del bambino [param b]: lo scatto 04.
 func _stretto(b: Node3D) -> void:
-	var cam := Camera3D.new()
-	add_child(cam)
-	var vista := get_viewport().get_camera_3d()
-	cam.environment = vista.environment
-	cam.attributes = vista.attributes
+	# (la camera del giocatore, col giocatore fermo per lo scatto: lui la rimette a ogni fotogramma)
+	var cam := _pl.camera
+	var fov := cam.fov
+	_pl.look_at_point(b.global_position + Vector3.UP * 0.65)
+	await _fotogrammi(2)
+	_pl.process_mode = Node.PROCESS_MODE_DISABLED
 	cam.fov = 28.0
-	cam.look_at_from_position(_pl.get_eye_position(), b.global_position + Vector3.UP * 0.65)
-	cam.make_current()
 	await _fotogrammi(12)
 	_scatta("04_stretto_sul_braccio")
-	vista.make_current()
-	cam.queue_free()
+	cam.fov = fov
+	_pl.process_mode = Node.PROCESS_MODE_INHERIT

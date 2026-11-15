@@ -143,6 +143,10 @@ func _prova(bambini: bool, tutto: bool) -> void:
 			var mani := _mani(bb[0])
 			if mani != Vector3.INF:
 				foglio_mani.append(bb[0].global_transform.affine_inverse() * sott._foglio.global_position - mani)
+				if foglio_mani.size() % 15 == 1:
+					var ap := bb[0].find_children("*", "AnimationPlayer", true, false)
+					print("  (foglio-mani %d: %s, animazione %s %.2f)" % [foglio_mani.size(), foglio_mani.back().snapped(Vector3.ONE * 0.001),
+							ap[0].current_animation if ap else "", ap[0].current_animation_position if ap else 0.0])
 		var lei := sott.lei_tunnel.lei
 		var bambini_visti := bb.any(func(b): return b.is_visible_in_tree())
 		if bambini_visti:
