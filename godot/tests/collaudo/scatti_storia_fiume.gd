@@ -6,8 +6,9 @@ extends Node
 ## - "df": il foglio DF nel corridoio del fiume (la Risalita da sola, coi suoi corridoi): arrivando dalla scala, a metà
 ##   corridoio, davanti al foglio, e da vicino gli angoli col nastro, il pastello e le impronte;
 ## - "squalo_fermo" (per mascotte e il coordinatore: si vede il fondo, o il corpo tagliato dal fondo?): con la ciambella
-##   ferma e lo squalo tenuto fermo, a 3 m e a 6 m mentre nuota e nell'attacco con la testa fuori, nel tratto più
-##   illuminato (davanti alla paratia 1, coi cartelli verdi) e a 3 m al buio (a metà del tratto dopo).
+##   ferma e lo squalo tenuto fermo, a 3, 6 e 10 m mentre nuota (pinna e scia) e nell'attacco con la testa fuori, nel
+##   tratto più illuminato (davanti alla paratia 1, coi cartelli verdi), e a 3, 6 e 10 m al buio (a metà del tratto
+##   dopo); gli stessi punti per il prima e dopo della pinna e della scia.
 ## Uso (scena col renderer vero: llvmpipe, sotto il render.lock, con almeno 13,5 GB liberi):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##     --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/scatti_storia_fiume.gd <cartella> squalo|df|squalo_fermo
@@ -55,6 +56,8 @@ func _run() -> void:
 		await _df()
 	elif cosa == "squalo_fermo":
 		await _squalo_fermo()
+	elif cosa == "df_sonda":
+		await _df(true)
 	else:
 		await _squalo()
 	print("SCATTI FINITI")
@@ -169,7 +172,7 @@ func _squalo_fermo() -> void:
 		if fiume.tratto != fiume.imbarco and fiume.tratto.paratia != null and fiume.s > fiume.tratto.lunghezza() - 12.0:
 			break
 	print("  (chiaro: %s a %.0f/%.0f m, squalo %s)" % [fiume.tratto.name, fiume.s, fiume.tratto.lunghezza(), S.find_key(squalo.stato)])
-	await _fermo(fiume, squalo, p, "chiaro", [3.0, 6.0], true)
+	await _fermo(fiume, squalo, p, "chiaro", [3.0, 6.0, 10.0], true)
 	# al buio: a metà del tratto dopo
 	var prima := fiume.tratto
 	RenderingServer.render_loop_enabled = false
@@ -178,7 +181,7 @@ func _squalo_fermo() -> void:
 		if fiume.tratto != prima and fiume.s > fiume.tratto.lunghezza() * 0.5:
 			break
 	print("  (buio: %s a %.0f/%.0f m, squalo %s)" % [fiume.tratto.name, fiume.s, fiume.tratto.lunghezza(), S.find_key(squalo.stato)])
-	await _fermo(fiume, squalo, p, "buio", [3.0], false)
+	await _fermo(fiume, squalo, p, "buio", [3.0, 6.0, 10.0], false)
 
 
 ## Ciambella ferma, lo squalo tenuto a [param distanze] m dietro mentre nuota (girandosi a guardarlo), e se
@@ -206,7 +209,8 @@ func _fermo(fiume: FiumeLento, squalo: SqualoFiume, p: Player, dove: String, dis
 		squalo.set_physics_process(true)
 		squalo.dietro = squalo.distanza_attacco
 		squalo._cambia(S.ATTACCO)
-		await _fisica(50)
+		# (la testa appena fuori, a circa 5 m: dopo, il muso arriva sotto la camera)
+		await _fisica(20)
 		squalo.set_physics_process(false)
 		var muso := squalo.get(&"_muso") as Node3D
 		p.look_at_point(muso.global_position if muso else squalo.squalo.global_position + Vector3.UP * 0.4)
@@ -222,7 +226,7 @@ func _fermo(fiume: FiumeLento, squalo: SqualoFiume, p: Player, dove: String, dis
 
 # --- Il foglio DF nel corridoio del fiume --------------------------------------------------
 
-func _df() -> void:
+func _df(sonda := false) -> void:
 	var radice := Node3D.new()
 	radice.name = "Radice"
 	add_child(radice)
@@ -255,6 +259,9 @@ func _df() -> void:
 	var c := df.global_position
 	var verso := df.global_basis.z.normalized()
 	var piedi := c - Vector3.UP * df.altezza
+	if sonda:
+		await _sonda_pannello(ris, p, piedi + verso * 3.0, atan2(verso.x, verso.z), c)
+		return
 	for v in [["df_1_dalla_scala", 16.0], ["df_2_meta_corridoio", 8.0], ["df_3_davanti", 3.0], ["df_4_vicino", 1.3]]:
 		p.teleport(piedi + verso * float(v[1]), atan2(verso.x, verso.z), 0.0)
 		await _fisica(20)
@@ -289,3 +296,51 @@ func _df() -> void:
 	cam.look_at(df.to_global(Vector3(0.45, -df.altezza, 0.7)), Vector3.UP)
 	await _fisica(6)
 	await _scatta("df_7_impronte")
+
+
+## Dal punto di df_3: le sonde di riflesso che ci sono, poi il pannello a destra (la sua luminosità media) nascondendo un
+## pezzo per volta della Risalita e delle sue stanze: quello che lo fa sparire è la sorgente.
+func _sonda_pannello(ris: Node3D, p: Player, piedi: Vector3, yaw: float, guarda: Vector3) -> void:
+	for pr in get_tree().root.find_children("*", "ReflectionProbe", true, false):
+		var r := pr as ReflectionProbe
+		var box := AABB(r.global_position - r.size * 0.5, r.size)
+		print("SONDA riflesso %s centro %s misura %s contiene la camera %s" % [r.get_path(), r.global_position, r.size, box.has_point(piedi + Vector3.UP * 1.6)])
+	p.teleport(piedi, yaw, 0.0)
+	await _fisica(20)
+	p.look_at_point(guarda)
+	await _fisica(8)
+	var base := await _luce_pannello()
+	print("SONDA pannello con tutto: %.3f" % base)
+	var pezzi: Array[Node] = []
+	for n in ris.get_children():
+		pezzi.append(n)
+	for st in [ris.get(&"fiume"), ris.get(&"infermeria")]:
+		if st is Node:
+			for n in (st as Node).get_children():
+				pezzi.append(n)
+	for n in pezzi:
+		if not (n is Node3D) or not (n as Node3D).visible:
+			continue
+		(n as Node3D).visible = false
+		var l := await _luce_pannello()
+		(n as Node3D).visible = true
+		if absf(l - base) > 0.01:
+			print("SONDA nascondendo %s il pannello va da %.3f a %.3f" % [ris.get_path_to(n), base, l])
+	print("SONDA finita")
+
+
+## La luminosità media del pannello a destra in df_3 (x 900-1200, y 60-640 su 1280x720).
+func _luce_pannello() -> float:
+	RenderingServer.render_loop_enabled = true
+	for i in 4:
+		await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	var somma := 0.0
+	var n := 0
+	for y in range(60, 640, 20):
+		for x in range(900, 1200, 20):
+			var c := img.get_pixel(x, y)
+			somma += c.get_luminance()
+			n += 1
+	return somma / maxf(n, 1)
