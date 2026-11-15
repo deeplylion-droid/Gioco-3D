@@ -5,7 +5,8 @@ extends Node
 ##    scala del bacino; lei non c'è.
 ## 2. Il primo tubo: ci si accovaccia, si scivola e si arriva nella vasca 1 (checkpoint).
 ## 3. Le paratie chiuse non si passano; tenendo il getto sul bersaglio quella giusta si alza, l'altra no.
-## 4. Lei sale nella vasca: un getto in faccia la ricaccia sotto, poi torna; se la lasci, ti prende e si
+## 4. Lei sale nella vasca (ed è in scena: un'acqua di lei vicina non canta da lontano): un getto in faccia la
+##    ricaccia sotto, poi torna; se la lasci, ti prende e si
 ##    riparte dalla vasca.
 ## 5. La paratia sbagliata: il tubo porta nella vasca di scolo e lì lei ti prende.
 ## 6. La strada giusta fino in fondo: vasca 2 (la paratia sale piano), vasca 3, la spirale, il bacino
@@ -144,6 +145,22 @@ func _entra_paratia(k: int, max_s := 40.0, finche_non_parte := 0.0) -> Dictionar
 	return await _scivola(max_s, finche_non_parte)
 
 
+## Un'acqua di lei «lontana» a 10 m dal giocatore [param g] (nella sua zona, senza uscite da sola): per vedere che
+## mentre lei è in scena qui il canto lontano tace (fase_canto «ferma»). Le luci in blackout: rimettile dopo.
+func _acqua_lontana(g: Node3D) -> AcquaDiLei:
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	var a := AcquaDiLei.new()
+	a.name = "AcquaLontanaDiProva"
+	a.pelo = g.global_position.y
+	var m := Marker3D.new()
+	a.add_child(m)
+	m.position = Vector3(10, 0, 0)
+	a.punti_uscita = [m] as Array[Node3D]
+	add_child(a)
+	a.global_position = g.global_position
+	return a
+
+
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	get_tree().change_scene_to_file(LEVEL)
@@ -192,6 +209,11 @@ func _run() -> void:
 	await _frames(100)
 	check(sala.lei.visible and sala.lei_stato == SalaInseguimento.Lei.SU, "dopo un po' lei sale dall'acqua")
 	check(sala.lei.animazione == &"inseguimento/incombe", "e incombe (%s)" % sala.lei.animazione)
+	var luci_prima := GameState.luci
+	var acqua := _acqua_lontana(p)
+	await _frames(1)
+	check(sala.lei.is_in_group(&"lei_in_scena") and acqua.fase_canto == &"ferma",
+			"lei su è in scena: un'acqua di lei vicina non canta da lontano (%s)" % acqua.fase_canto)
 	var viso := sala.lei.get_eye_position()
 	p.look_at_point(viso)
 	p.water_pack.set_tank_amount(20.0)
@@ -202,6 +224,10 @@ func _run() -> void:
 	check(sala.lei.animazione == &"inseguimento/respinta", "si copre il viso e torna sotto (%s)" % sala.lei.animazione)
 	await _frames(120)
 	check(not sala.lei.visible, "torna sott'acqua")
+	check(not sala.lei.is_in_group(&"lei_in_scena") and acqua.fase_canto == &"lontana",
+			"sott'acqua esce dalla scena e l'acqua di lei vicina canta da lontano (%s)" % acqua.fase_canto)
+	acqua.queue_free()
+	GameState.imposta_luci(luci_prima)
 	t0 = Time.get_ticks_msec()
 	while not sala.lei.visible and Time.get_ticks_msec() - t0 < 15000:
 		await _frames(1)

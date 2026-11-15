@@ -917,6 +917,7 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	_lei_giu = su + Vector3.DOWN * 5.0
 	lei.global_position = su
 	lei.visible = true
+	lei.add_to_group(&"lei_in_scena")
 	if _lei_luce_tw:
 		_lei_luce_tw.kill()
 	if _lei_luce:
@@ -1161,6 +1162,7 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 			if _lei_t >= float(get_meta(&"durata_discesa", 1.0)):
 				lei_stato = Lei.VIA
 				lei.visible = false
+				_fuori_scena()
 
 
 ## Il battito del cuore nelle condotte (scelta A dell'utente, 4 novembre: "cuore nelle condotte solo quando lei è
@@ -1770,7 +1772,15 @@ static func _rispetto_a(src: Node3D, n: Node3D) -> Transform3D:
 	return t
 
 
+## Lei esce dal gruppo [code]lei_in_scena[/code] (AcquaDiLei.LEI_IN_SCENA, scritto per esteso), in cui entra quando sale
+## da una vasca o da uno scolo: mentre è su, le acque di lei vicine non la chiamano e non cantano da lontano.
+func _fuori_scena() -> void:
+	if lei and lei.is_in_group(&"lei_in_scena"):
+		lei.remove_from_group(&"lei_in_scena")
+
+
 func _exit_tree() -> void:
+	_fuori_scena()
 	var p := GameState.player
 	if p != null and is_instance_valid(p):
 		p.occhi_pelo = -INF
