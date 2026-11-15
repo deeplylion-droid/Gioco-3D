@@ -90,6 +90,8 @@ var _t_errore := 0.0
 var _caricando := false
 var _luci_errore: Array[Light3D] = []
 var _accesi_errore: Array[Node3D] = []
+## Lei sotto il pavimento (0.4.0, LeiPozze): dopo il primo colore tolto esce dalle pozze piene del bordo.
+var lei: LeiPozze
 
 
 ## Il colore della pozza nella colonna [param colonna] e nella riga [param riga] (0..4).
@@ -129,6 +131,9 @@ func _ready() -> void:
 		for colonna in N:
 			_pozza(colonna, riga)
 	_lampeggiante(false)
+	lei = LeiPozze.new()
+	lei.name = "Lei"
+	add_child(lei)
 
 
 func _cerca(nome: StringName) -> Node:
