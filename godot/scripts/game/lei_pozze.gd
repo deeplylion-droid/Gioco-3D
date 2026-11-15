@@ -81,6 +81,19 @@ const NOMI := [&"dorme", &"gira", &"viene", &"finita"]
 ## Quanto oltre la portata deve poter arrivare (m).
 @export var margine_fuga := 0.5
 
+@export_group("Liquido opaco")
+## Quando lei c'è (dal silenzio prima che esca a quando è tornata sotto) il liquido della sua pozza e delle pozze piene
+## accanto diventa opaco come una vernice: colore pieno fino ai bordi, niente pareti, niente fondo, niente capelli
+## (decisione del coordinatore del 15 novembre). Solo i parametri del materiale di quelle pozze, niente materiali nuovi:
+## l'estinzione più bassa dei tre canali sale fino a [member opaco_estinzione] (1/m: 7 cm d'acqua lasciano passare il
+## 4 %), in [member opaco_tempo] secondi, e torna com'era allo stesso modo. Dalla presa in poi torna trasparente (la
+## scena di morte, col viso).
+@export var opaco_estinzione := 45.0
+@export var opaco_tempo := 0.4
+## Mentre il liquido è opaco la luce rosa sta sopra il pelo, al centro della pozza, così si vede su quello che sta
+## sopra (il bordino, il grigliato, il braccio, i tentacoli): quanto sopra (m).
+@export var luce_sopra_il_pelo := 0.25
+
 ## Il motore di lei.
 var acqua: AcquaDiLei
 ## Il punto d'uscita dove sta venendo (o null).
@@ -98,6 +111,10 @@ var cacciate := 0
 
 var _enigma: EnigmaPozze
 var _t := 0.0
+## Il liquido opaco: quanto è opaca ogni pozza toccata (0..1), la pozza di lei adesso e la quota della luce sotto.
+var _opache := {}
+var _pozza_di_lei: WaterTank
+var _luce_y_sotto := 0.0
 ## Il punto d'uscita di ogni pozza del bordo.
 var _uscite := {}
 ## La luce sta facendo un tratto (o se ne sta andando): si aspetta che finisca.
@@ -126,6 +143,8 @@ func _metti_motore() -> void:
 	acqua.name = "AcquaDiLei"
 	acqua.automatica = false
 	acqua.prima_volta_dimostrativa = true
+	# (la prima volta dimostrativa, una per partita: con un nome stabile, StatoLei)
+	acqua.chiave_zona = &"pozze"
 	acqua.letale = letale
 	acqua.portata = portata
 	acqua.modo = modo
@@ -148,6 +167,12 @@ func _metti_motore() -> void:
 			lista.append(m)
 		_uscite[t] = ms
 	acqua.punti_uscita = lista
+	# la luce rosa passa solo dove c'è acqua vera: nelle pozze (sotto i bordini e la passerella è spenta; in una pozza
+	# svuotata anche)
+	var acque: Array[Node3D] = []
+	for t in _enigma.pozze():
+		acque.append(t)
+	acqua.acque = acque
 	acqua.fase_cambiata.connect(_su_fase_motore)
 	acqua.uscita.connect(func(): uscite += 1)
 	acqua.presa.connect(func(): prese += 1)
@@ -302,6 +327,97 @@ func _su_fase_motore(f: AcquaDiLei.Fase) -> void:
 	elif fase == Fase.FINITA and (f == AcquaDiLei.Fase.CALMA or f == AcquaDiLei.Fase.LONTANA):
 		# (risolto mentre era fuori: tornata sotto, se ne va del tutto, senza la luce che riprenderebbe a girare)
 		acqua.lascia()
+
+
+func _process(delta: float) -> void:
+	_liquido_opaco(delta)
+
+
+# --- Il liquido opaco quando lei c'è -------------------------------------------------------------------------------
+
+## Vero nelle fasi del motore in cui lei c'è o sta per esserci: dal silenzio prima che esca a quando è tornata sotto
+## (la presa no: la scena di morte vede dentro).
+func _lei_presente() -> bool:
+	if acqua == null:
+		return false
+	match acqua.fase:
+		AcquaDiLei.Fase.SILENZIO, AcquaDiLei.Fase.ESCE, AcquaDiLei.Fase.SU, AcquaDiLei.Fase.SCENDE:
+			return true
+	return false
+
+
+## Porta verso opache la pozza di lei e le pozze piene accanto mentre lei c'è, e le altre verso com'erano, in
+## [member opaco_tempo]; e alza la luce rosa sopra il pelo della sua pozza insieme al liquido.
+func _liquido_opaco(delta: float) -> void:
+	if acqua == null or _enigma == null:
+		return
+	var c := acqua.fase
+	var presente := _lei_presente()
+	if presente and _pozza_di_lei == null:
+		_pozza_di_lei = _pozza_sotto(acqua.punto_luce)
+		_luce_y_sotto = AcquaDiLei._luce.global_position.y if AcquaDiLei._luce else 0.0
+	var voluta := {}
+	if presente and _pozza_di_lei:
+		voluta[_pozza_di_lei] = true
+		for u in _vicine(_pozza_di_lei):
+			if _piena(u):
+				voluta[u] = true
+	for u in voluta:
+		if not _opache.has(u):
+			_opache[u] = 0.0
+	var passo := delta / maxf(opaco_tempo, 0.01)
+	for u: WaterTank in _opache.keys():
+		var k: float = _opache[u]
+		var nuovo := move_toward(k, 1.0 if voluta.has(u) else 0.0, passo)
+		if not is_instance_valid(u):
+			_opache.erase(u)
+			continue
+		_metti_opacita(u, nuovo)
+		if nuovo <= 0.0:
+			_opache.erase(u)
+		else:
+			_opache[u] = nuovo
+	# la luce: sale sopra il pelo con la sua pozza, e torna giù con lei (nella presa, per la scena di morte); quando
+	# lei è tornata sotto la luce è spenta e torna dov'era
+	var l := AcquaDiLei._luce
+	if _pozza_di_lei and l and is_instance_valid(l) and AcquaDiLei.chi_la_usa() == acqua:
+		var k: float = _opache.get(_pozza_di_lei, 0.0)
+		k = k * k * (3.0 - 2.0 * k)
+		if presente or c == AcquaDiLei.Fase.PRESA:
+			var su := _pozza_di_lei.get_surface_global_y() + luce_sopra_il_pelo
+			l.global_position.y = lerpf(_luce_y_sotto, su, k)
+		elif c == AcquaDiLei.Fase.CALMA or not l.visible:
+			l.global_position.y = _luce_y_sotto
+	if not presente and c != AcquaDiLei.Fase.PRESA and not _opache.has(_pozza_di_lei):
+		_pozza_di_lei = null
+
+
+## Il liquido della pozza [param t] opaco quanto [param k] (0: com'è il suo stile; 1: l'estinzione più bassa a
+## [member opaco_estinzione]): assorbimento e torbidità moltiplicati insieme (il colore resta quello della pozza).
+func _metti_opacita(t: WaterTank, k: float) -> void:
+	var b := t.get_node_or_null(^"Acqua") as WaterBody
+	if b == null or b.material == null or b.style == null:
+		return
+	var st: WaterStyle = b.style
+	var piu_basso := minf(minf(st.absorption.x, st.absorption.y), st.absorption.z) + st.turbidity
+	var f := maxf(opaco_estinzione / maxf(piu_basso, 0.01), 1.0)
+	# (a passi uguali per l'occhio: il fattore cresce in proporzione, non in linea)
+	var m := pow(f, k * k * (3.0 - 2.0 * k))
+	b.material.set_shader_parameter(&"absorption", st.absorption * m)
+	b.material.set_shader_parameter(&"turbidity", st.turbidity * m)
+
+
+## La pozza sotto il punto [param q] (in pianta, la più vicina), o null.
+func _pozza_sotto(q: Vector3) -> WaterTank:
+	var meglio: WaterTank = null
+	for u in _enigma.pozze():
+		if meglio == null or _in_pianta_tra(u.global_position, q) < _in_pianta_tra(meglio.global_position, q):
+			meglio = u
+	return meglio
+
+
+static func _in_pianta_tra(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()
 
 
 func _physics_process(delta: float) -> void:

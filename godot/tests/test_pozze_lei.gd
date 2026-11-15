@@ -151,7 +151,7 @@ func _run() -> void:
 
 	print("2. Il primo colore: la prima uscita, dimostrativa")
 	await _nuova_stanza()
-	AcquaDiLei._dimostrate.clear()
+	preload("res://scripts/game/stato_lei.gd").azzera()
 	await _togli(WaterMix.ROSA)
 	await _frames(2)
 	check(lei.fase == LeiPozze.Fase.GIRA and lei.prossima_dimostrativa(), "tolto il primo colore si sveglia, e la prossima uscita è quella dimostrativa")
@@ -164,8 +164,11 @@ func _run() -> void:
 	check(viste.all(func(u): return String(u.fill_pigment) != WaterMix.ROSA), "solo sotto pozze piene")
 	check(giro["di_fila"], "da una pozza a una accanto, senza salti")
 	check(giro["vicinanza"] > 0.05, "e il canto sale da sotto (vicinanza fino a %.2f)" % giro["vicinanza"])
-	check(giro["energia_min"] >= 0.9 and giro["salti"] == 0,
-		"la luce non salta e non pulsa da un tratto all'altro (energia minima %.2f, salti %d)" % [giro["energia_min"], giro["salti"]])
+	check(giro["energia_centro_min"] >= 0.5 and giro["salti"] == 0,
+		"la luce non salta, ed è accesa al centro di ogni pozza dove passa (energia minima lì %.2f, salti %d)" % [giro["energia_centro_min"], giro["salti"]])
+	# (sotto i bordini il motore la abbassa in 0,25 s: com'è, per decisione del coordinatore la luce che gira resta
+	# così; qui solo la misura)
+	print("  (sotto i bordini l'energia arriva al più a %.2f, al centro delle pozze almeno %.2f)" % [giro["fuori_max"], giro["energia_centro_min"]])
 	check(not a.is_empty(), "dopo qualche secondo arriva la prima volta")
 	if a.is_empty():
 		return _fine()
@@ -177,15 +180,34 @@ func _run() -> void:
 	var da := acqua.punto_luce
 	check(_sotto_pozza_piena(da), "la luce parte sotto una pozza piena")
 	var si := await _aspetta(F.SILENZIO, acqua.avviso + 1.0)
-	check(not si.is_empty() and lei.uscita_scelta != null and _in_pianta(acqua.punto_luce, lei.uscita_scelta.global_position) < 0.05,
-		"nel silenzio la luce è sotto il punto dove sbatterà la mano (%.2f m)" % (_in_pianta(acqua.punto_luce, lei.uscita_scelta.global_position) if lei.uscita_scelta else -1.0))
+	check(not si.is_empty() and _in_pianta(acqua.punto_luce, t.global_position) < 0.05,
+		"nel silenzio la luce è nella pozza, al centro (%.2f m)" % _in_pianta(acqua.punto_luce, t.global_position))
+	# il liquido opaco (decisione del coordinatore del 15 novembre): comincia nel silenzio, piano
+	var op_inizio := _estinzione(t)
+	await _frames(int(0.15 * 60))
+	var op_mezzo := _estinzione(t)
+	check(op_inizio < 0.5 * lei.opaco_estinzione and op_mezzo > op_inizio and op_mezzo < 0.95 * lei.opaco_estinzione,
+		"nel silenzio il liquido della sua pozza comincia a farsi opaco, piano (%.1f, dopo 0,15 s %.1f, opaco %.0f)" % [op_inizio, op_mezzo, lei.opaco_estinzione])
 	var es := await _aspetta(F.ESCE, acqua.silenzio + 1.0)
 	var dt: float = (es[1] - a[1]) / 60.0 if not es.is_empty() else -1.0
 	check(not es.is_empty() and absf(dt - acqua.avviso) < 0.05, "esce %.2f s dopo l'arrivo della luce (avviso del motore %.1f s)" % [dt, acqua.avviso])
+	check(_estinzione(t) >= 0.95 * lei.opaco_estinzione, "quando esce il liquido è già opaco (%.1f)" % _estinzione(t))
 	var su := await _aspetta(F.SU, 5.0)
 	var salita: float = (su[1] - es[1]) / 60.0 if not su.is_empty() and not es.is_empty() else -1.0
 	print("        (salita %.2f s)" % salita)
-	await _aspetta(F.CALMA, 6.0)
+	var accanto := lei._vicine(t).filter(func(u): return lei._piena(u))
+	check(not accanto.is_empty() and accanto.all(func(u): return _estinzione(u) >= 0.95 * lei.opaco_estinzione),
+		"anche le %d pozze piene accanto sono opache" % accanto.size())
+	var lontane := e.pozze().filter(func(u): return u != t and not (u in accanto))
+	check(lontane.all(func(u): return is_equal_approx(_estinzione(u), _estinzione_stile(u))), "le altre pozze restano come sono")
+	var lr := AcquaDiLei._luce
+	check(lr.visible and lr.global_position.y > t.get_surface_global_y() + 0.1 and _in_pianta(lr.global_position, t.global_position) < 0.05,
+		"mentre è su la luce rosa sta sopra il pelo, al centro della sua pozza (%.2f m sopra)" % (lr.global_position.y - t.get_surface_global_y()))
+	var ca2 := await _aspetta(F.CALMA, 6.0)
+	check(not ca2.is_empty() and _estinzione(t) >= 0.95 * lei.opaco_estinzione, "tornata sotto, il liquido è ancora opaco")
+	await _frames(int((lei.opaco_tempo + 0.1) * 60))
+	check(([t] + accanto).all(func(u): return is_equal_approx(_estinzione(u), _estinzione_stile(u))),
+		"poi si schiarisce, e torna com'era (%.2f, stile %.2f)" % [_estinzione(t), _estinzione_stile(t)])
 	check(lei.prese == 0 and lei.uscite == 1 and not GameState.is_dying and not lei.prossima_dimostrativa(), "e non prende")
 
 	print("3. Poi la pozza piena del bordo più vicina: chi resta lì è preso")
@@ -201,6 +223,8 @@ func _run() -> void:
 	var pr := await _aspetta(F.PRESA, acqua.avviso + 5.0)
 	check(not pr.is_empty() and lei.prese == 1 and GameState.is_dying and GameState.last_death_cause == &"medusa",
 		"resta lì: esce e lo prende, si muore (%s)" % GameState.last_death_cause)
+	await _frames(int((lei.opaco_tempo + 0.1) * 60))
+	check(is_equal_approx(_estinzione(t), _estinzione_stile(t)), "dalla presa il liquido torna trasparente, per la scena di morte (%.2f)" % _estinzione(t))
 	_rianima()
 
 	print("4. Allontanandosi lungo la passerella si è salvi, anche vicino a un angolo")
@@ -564,7 +588,8 @@ func _aspetta(f: F, secondi: float) -> Array:
 ## ordine), se sono una accanto all'altra, la vicinanza più alta, l'energia più bassa dopo il primo secondo e quante volte
 ## salta (più di 0,5 m in un fotogramma).
 func _segui_luce(f: F, secondi: float) -> Dictionary:
-	var out := {"arrivo": [], "pozze": [], "di_fila": true, "vicinanza": 0.0, "energia_min": INF, "salti": 0, "in_giro": false}
+	var out := {"arrivo": [], "pozze": [], "di_fila": true, "vicinanza": 0.0, "energia_min": INF, "energia_centro_min": INF,
+			"salti": 0, "in_giro": false, "fuori_max": 0.0}
 	var da := fasi.size()
 	var prima := Vector3.INF
 	var t0 := Engine.get_physics_frames()
@@ -576,6 +601,8 @@ func _segui_luce(f: F, secondi: float) -> Dictionary:
 			break
 		await get_tree().physics_frame
 		if not acqua.in_giro() or not _luce_accesa():
+			# (spenta fra due pozze: il salto si misura solo fra due istanti accesi di fila)
+			prima = Vector3.INF
 			continue
 		out["in_giro"] = true
 		var q := acqua.punto_luce
@@ -583,9 +610,20 @@ func _segui_luce(f: F, secondi: float) -> Dictionary:
 			out["salti"] += 1
 		prima = q
 		out["vicinanza"] = maxf(out["vicinanza"], acqua.vicinanza)
+		var en: float = AcquaDiLei._luce.light_energy / AcquaDiLei.LUCE_SOTTO
 		if Engine.get_physics_frames() - t0 > 90:
-			out["energia_min"] = minf(out["energia_min"], AcquaDiLei._luce.light_energy / AcquaDiLei.LUCE_SOTTO)
+			out["energia_min"] = minf(out["energia_min"], en)
+		# sotto un bordino (la striscia di 10 cm fra due pozze): quanto è accesa lì
+		var dentro := false
 		for u in e.pozze():
+			var dq := e.global_basis.inverse() * (q - u.global_position)
+			if absf(dq.x) < 0.5 and absf(dq.z) < 0.5:
+				dentro = true
+		if not dentro:
+			out["fuori_max"] = maxf(out["fuori_max"], en)
+		for u in e.pozze():
+			if _in_pianta(u.global_position, q) < 0.15 and Engine.get_physics_frames() - t0 > 90:
+				out["energia_centro_min"] = minf(out["energia_centro_min"], en)
 			if _in_pianta(u.global_position, q) < 0.15:
 				var viste: Array = out["pozze"]
 				if viste.is_empty() or viste.back() != u:
@@ -593,6 +631,20 @@ func _segui_luce(f: F, secondi: float) -> Dictionary:
 						out["di_fila"] = false
 					viste.append(u)
 	return out
+
+
+## L'estinzione più bassa dei tre canali (1/m) del liquido della pozza [param t] adesso (dal materiale), e quella del
+## suo stile.
+func _estinzione(t: WaterTank) -> float:
+	var b := t.get_node(^"Acqua") as WaterBody
+	var ab: Vector3 = b.material.get_shader_parameter(&"absorption")
+	var tu: float = b.material.get_shader_parameter(&"turbidity")
+	return minf(minf(ab.x, ab.y), ab.z) + tu
+
+
+func _estinzione_stile(t: WaterTank) -> float:
+	var st: WaterStyle = (t.get_node(^"Acqua") as WaterBody).style
+	return minf(minf(st.absorption.x, st.absorption.y), st.absorption.z) + st.turbidity
 
 
 ## In pianta, dal giocatore al punto d'uscita dove sta venendo lei (o, senza, a quello più vicino della pozza [param t]).

@@ -6,7 +6,9 @@ extends Node
 ## 2. tolto un colore lei si sveglia, fa l'uscita dimostrativa e poi, col giocatore fermo sulla passerella, lo prende
 ##    (medusa): la scena della morte vera, poi la ripartenza;
 ## 3. si riparte dal checkpoint d'ingresso con le pozze tutte piene, la porta chiusa e lei che dorme di nuovo finché non
-##    si toglie un colore.
+##    si toglie un colore (la prima volta dimostrativa non torna: una volta per partita);
+## 4. partita nuova nello stesso avvio (GameState.reset_progress, come il menu): di nuovo fino alle pozze, e la prima
+##    uscita è di nuovo quella dimostrativa (lontana, non prende).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_pozze_lei_strada.gd
 
 var p: Player
@@ -97,10 +99,35 @@ func _run() -> void:
 	await _togli(WaterMix.VIOLA)
 	await _frames(2)
 	check(e.lei.fase == LeiPozze.Fase.GIRA, "tolto il viola si sveglia di nuovo")
+	check(not e.lei.prossima_dimostrativa(), "(e la prima volta dimostrativa non torna: una volta per partita)")
 	e.lei.prima_attesa = 0.0
 	e.lei._t = 0.0
 	var ar := await _aspetta(AcquaDiLei.Fase.ARRIVA, 6.0)
 	check(not ar.is_empty(), "e torna a venire")
+	if GameState.is_dying:
+		# (se l'ha preso: la scena della morte si salta, la partita nuova riparte comunque dal menu)
+		var seq2: Node = GameState.get(&"_death_sequence")
+		if is_instance_valid(seq2):
+			seq2.free()
+		GameState.is_dying = false
+
+	print("4. Partita nuova nello stesso avvio: la prima uscita è di nuovo dimostrativa")
+	GameState.reset_progress()
+	_cancella_salvataggio()
+	MenuProva.parti(get_tree(), "fiume")
+	await _aspetta_ripresa()
+	if e == null:
+		check(false, "nella Risalita c'è la stanza delle pozze")
+		return _fine()
+	await _fino_alle_pozze()
+	_registra()
+	check(e.lei.fase == LeiPozze.Fase.DORME and e.lei.prossima_dimostrativa(), "lei dorme, e la prossima uscita è di nuovo quella dimostrativa")
+	e.lei.prima_attesa = 2.0
+	await _togli(WaterMix.TURCHESE)
+	var es2 := await _aspetta(AcquaDiLei.Fase.ESCE, 12.0)
+	check(not es2.is_empty() and e.lei.uscite == 1, "esce la prima volta della partita nuova")
+	await _aspetta(AcquaDiLei.Fase.CALMA, 10.0)
+	check(e.lei.prese == 0 and not GameState.is_dying and not e.lei.prossima_dimostrativa(), "dimostrativa: lontana, non prende")
 	_fine()
 
 

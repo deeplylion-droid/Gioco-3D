@@ -815,12 +815,35 @@ func _metti_infermeria(scena_infermeria: PackedScene, f: Node3D, dopo: bool) -> 
 	fiume = f
 	_tenuti.clear()
 	AttesaZone.pronta(&"risalita")
+	_riscalda_lei_delle_pozze.call_deferred(pozze)
 	if dopo:
 		for n in [fiume, infermeria, pozze]:
 			UnificaMateriali.unifica(n)
 		for n in [fiume, infermeria, pozze]:
 			GameState.ripristina.call_deferred(n)
 		_aggiorna_visibilita()
+
+
+## Le stanze costruite subito (ripartendo vicino, o arrivati prima che il thread finisse): la stanza si disegna già
+## davanti al giocatore, lei no (non si vede finché non esce). Lei fuori dall'acqua con la sua luce, e a metà la presa,
+## disegnata una volta fuori vista (solo il suo motore, sullo strato fuori vista: la stanza resta com'è), così anche
+## ripartendo la sua prima uscita non compila niente (0.4.0).
+func _riscalda_lei_delle_pozze(n: Node3D) -> void:
+	var lp := _lei_delle_pozze(n)
+	if lp == null or not lp.is_inside_tree() or Engine.is_editor_hint():
+		return
+	lp.posa_per_il_riscaldamento(true)
+	await RiscaldamentoShader.disegna_fuori_vista(lp, get_viewport(), 4, func():
+		if is_instance_valid(lp):
+			lp.posa_per_il_riscaldamento(true, "pozza_presa"))
+	if is_instance_valid(lp):
+		lp.posa_per_il_riscaldamento(false)
+
+
+## Il motore di lei sotto le pozze (AcquaDiLei di LeiPozze) nella stanza [param n], o null.
+func _lei_delle_pozze(n: Node) -> AcquaDiLei:
+	var en := n.find_child("EnigmaPozze", true, false) as EnigmaPozze if n else null
+	return en.lei.acqua if en and en.lei else null
 
 
 ## La scena della stanza delle pozze: quella arrivata dal thread (tenuta), o caricata adesso.
@@ -894,7 +917,15 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 		UnificaMateriali.unifica(n)
 	# disegnate una volta fuori vista: le pipeline dei loro materiali si compilano adesso, non al primo sguardo
 	for n in [f, inf, poz]:
-		await RiscaldamentoShader.disegna_fuori_vista(n, get_viewport())
+		# (nella stanza delle pozze anche lei, fuori dall'acqua con la sua luce, e a metà la presa: la sua prima uscita
+		# non compila niente, 0.4.0; AcquaDiLei.posa_per_il_riscaldamento)
+		var lei_pozze := _lei_delle_pozze(n) if n == poz else null
+		if lei_pozze:
+			lei_pozze.posa_per_il_riscaldamento(true)
+		await RiscaldamentoShader.disegna_fuori_vista(n, get_viewport(), 4,
+				(func(): lei_pozze.posa_per_il_riscaldamento(true, "pozza_presa")) if lei_pozze else Callable())
+		if lei_pozze and is_instance_valid(lei_pozze):
+			lei_pozze.posa_per_il_riscaldamento(false)
 		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
 			_libera(nuove)
 			return
