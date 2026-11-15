@@ -1762,6 +1762,7 @@ func mostra_finale_per_controllo(porge: bool) -> void:
 	if _foglio == null:
 		_foglio = _crea_foglio()
 		b.add_child(_foglio)
+	_foglio.visible = false
 	if b.has_method(&"porge"):
 		var porto := [false]
 		b.connect(&"porge_il_foglio", func(): porto[0] = true, CONNECT_ONE_SHOT)
@@ -1855,6 +1856,8 @@ func _dopo_lo_schianto() -> void:
 	if _foglio == null:
 		_foglio = _crea_foglio()
 		porge.add_child(_foglio)
+	# (nascosto finché non è nelle sue mani: senza il riscaldamento, che lo nasconde, si vedeva ai suoi piedi)
+	_foglio.visible = false
 	if porge.has_method(&"porge"):
 		# il movimento «porge» di mascotte (lavoro/storia-mascotte, Bambino.porge): cammina fin lì, porge il foglio con
 		# le due mani (segnale porge_il_foglio) e lo tiene; il foglio va su punto_foglio(), al centro, faccia avanti

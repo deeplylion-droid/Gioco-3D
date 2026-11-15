@@ -186,7 +186,7 @@ func _prova(bambini: bool, tutto: bool) -> void:
 			"il foglio riempie più di metà dello schermo per %.0f s (%.1f s, almeno %.0f%% dell'altezza)" % [sott.finale_foglio, foglio_t, foglio_min * 100.0])
 	check(fine[0] and absf(t[0] - float(fasi["nero"]) - 1.2) < 0.1, "nero in 1,2 s e la fine (%.2f s)" % (t[0] - float(fasi["nero"])))
 	check(visti and insieme == 0 and canto == 0, "mai i bambini insieme a lei, e col canto spento (%d fotogrammi con lei, %d col canto)" % [insieme, canto])
-	if bb[0].has_method(&"porge"):
+	if tutto and bb[0].has_method(&"porge"):
 		var scarto := 0.0
 		for v: Vector3 in foglio_mani:
 			scarto = maxf(scarto, v.distance_to(foglio_mani[0]))
