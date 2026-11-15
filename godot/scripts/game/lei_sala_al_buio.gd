@@ -181,8 +181,14 @@ func _annuncia_la_fossa() -> bool:
 				lei_sbuca.vai_alla_fossa())
 
 
-## Vero se il giocatore è lontano da tutti i punti d'uscita della vasca grande (oltre [member lontano_dal_bordo] m).
+## Vero se il giocatore è lontano dalla vasca grande: oltre [member lontano_dal_bordo] m da tutti i punti d'uscita e fuori
+## dalla sua fascia (la striscia larga quanto la vasca più [member lontano_dal_bordo] m per parte, per tutta la sala lungo
+## la vasca): chi arriva dalla serranda, che è dritta davanti alla vasca, ci va incontro e resta nel giro, con le uscite
+## dal bordo (riscontro del coordinatore: le uscite dalla vasca contano più della sbucata alla fossa).
 func _lontano_dal_bordo(p: Node3D) -> bool:
+	var l := vasca_grande.to_local(p.global_position)
+	if absf(l.x) <= vasca_grande.inner_size.x * 0.5 + lontano_dal_bordo:
+		return false
 	for q in _punti:
 		if AcquaDiLei._in_pianta(p.global_position, q.global_position) <= lontano_dal_bordo:
 			return false
