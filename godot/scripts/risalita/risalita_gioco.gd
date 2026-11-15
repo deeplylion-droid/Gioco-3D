@@ -99,6 +99,8 @@ const ARREDO_CORRIDOIO := preload("res://assets/ambienti_tecnici/corridoio_fiume
 var fiume: Node3D
 var infermeria: Node3D
 var pozze: Node3D
+## Vero mentre la stanza delle pozze, costruita subito, si disegna fuori vista con lei in posa.
+var riscaldo_pozze := false
 var _in_caricamento := false
 # i file chiesti al thread, e quelli già arrivati (tenuti finché le stanze non sono costruite)
 var _richiesti: PackedStringArray = []
@@ -824,24 +826,35 @@ func _metti_infermeria(scena_infermeria: PackedScene, f: Node3D, dopo: bool) -> 
 		_aggiorna_visibilita()
 
 
-## Le stanze costruite subito (ripartendo vicino, o arrivati prima che il thread finisse): la stanza si disegna già
-## davanti al giocatore, lei no (non si vede finché non esce). Lei fuori dall'acqua con la sua luce, e a metà la presa,
-## disegnata una volta fuori vista (solo il suo motore, sullo strato fuori vista: la stanza resta com'è), così anche
-## ripartendo la sua prima uscita non compila niente (0.4.0).
+## Le stanze costruite subito (ripartendo vicino alle pozze, da F9 o da Continua, o arrivati prima che il thread
+## finisse): la stanza delle pozze intera, con lei fuori dall'acqua con la sua luce e a metà la presa, disegnata una
+## volta fuori vista come nella costruzione a pezzi, così anche ripartendo la sua prima uscita non compila niente
+## (0.4.0; disegnata solo lei restavano 6 pipeline nel fotogramma in cui esce). La stanza resta nascosta 4-5
+## fotogrammi subito dopo il caricamento: sotto il nero della schermata di caricamento (8 fotogrammi di assestamento)
+## o della ripartenza. [member riscaldo_pozze] è vero intanto (per i test).
 func _riscalda_lei_delle_pozze(n: Node3D) -> void:
-	var lp := _lei_delle_pozze(n)
-	if lp == null or not lp.is_inside_tree() or Engine.is_editor_hint():
+	if Engine.is_editor_hint() or n == null or not n.is_inside_tree():
 		return
-	lp.posa_per_il_riscaldamento(true)
-	await RiscaldamentoShader.disegna_fuori_vista(lp, get_viewport(), 4, func():
-		if is_instance_valid(lp):
+	riscaldo_pozze = true
+	await riscalda_stanza_pozze(n, get_viewport())
+	riscaldo_pozze = false
+
+
+## La stanza delle pozze [param n] disegnata fuori vista con lei in posa (vedi [method _riscalda_lei_delle_pozze]);
+## anche per le sonde.
+static func riscalda_stanza_pozze(n: Node3D, vp: Viewport) -> void:
+	var lp := _lei_delle_pozze(n)
+	if lp and lp.is_inside_tree():
+		lp.posa_per_il_riscaldamento(true)
+	await RiscaldamentoShader.disegna_fuori_vista(n, vp, 4, func():
+		if lp and is_instance_valid(lp):
 			lp.posa_per_il_riscaldamento(true, "pozza_presa"))
-	if is_instance_valid(lp):
+	if lp and is_instance_valid(lp):
 		lp.posa_per_il_riscaldamento(false)
 
 
 ## Il motore di lei sotto le pozze (AcquaDiLei di LeiPozze) nella stanza [param n], o null.
-func _lei_delle_pozze(n: Node) -> AcquaDiLei:
+static func _lei_delle_pozze(n: Node) -> AcquaDiLei:
 	var en := n.find_child("EnigmaPozze", true, false) as EnigmaPozze if n else null
 	return en.lei.acqua if en and en.lei else null
 
