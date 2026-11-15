@@ -21,8 +21,9 @@ Scrive i tre esempi da far sentire all'utente (in mp3 per il telefono, e in ogg)
 - canto_prima_vicino: due frasi vicine;
 - canto_prima_avvicinamento: lontana, a metà, vicina, poi il canto si ferma a metà frase e resta il silenzio (lei sta
   per uscire).
-Con "gioco", solo dopo il sì dell'utente: le frasi del gioco in godot/audio/lei/ (lei_canto_prima_NN, asciutte e mono:
-la distanza la fa il gioco), registrate per catalogo.py e licenze.py.
+Con "gioco", solo dopo il sì dell'utente: le frasi del gioco in godot/audio/lei/, a coppie della stessa lunghezza
+(lei_canto_prima_lontano_NN e lei_canto_prima_vicino_NN, mono), registrate per catalogo.py e licenze.py; poi
+catalogo.py e licenze.py. Nel gioco le sfuma addons/audio/audio.gd (CantoPrima).
 """
 import os
 import sys
@@ -143,15 +144,27 @@ FRASI_GIOCO = 10
 
 
 def gioco():
-    """Nel gioco, dopo il sì dell'utente: FRASI_GIOCO frasi asciutte e mono a VICINO_LUFS (la distanza, il filtro dei
-    tubi e il riverbero li fa il gioco), in godot/audio/lei/ come lei_canto_prima_NN."""
+    """Nel gioco, dopo il sì dell'utente: FRASI_GIOCO frasi, ognuna in due file mono della stessa lunghezza, lontana nei
+    tubi (lei_canto_prima_lontano_NN, a LONTANO_LUFS) e vicina (lei_canto_prima_vicino_NN, a VICINO_LUFS), in
+    godot/audio/lei/. Il gioco le fa partire insieme e le sfuma con la vicinanza di lei (addons/audio, CantoPrima)."""
     from comune import salva
     rng = np.random.default_rng(4000)
     for k in range(FRASI_GIOCO):
-        y = limiter(normalize_lufs(frase(rng), VICINO_LUFS, -6.0), -6.0)
-        picco = 20.0 * np.log10(float(np.abs(y).max()) + 1e-12) + 0.01
-        salva('lei', 'lei_canto_prima_%02d' % (k + 1), y, loudness=None, picco=picco, qualita=5,
-              nota='prima del tunnel, la sigla lenta e storpiata con la gola di lei (0.4.0, scelta A del 15 novembre)')
+        x = frase(rng)
+        lon = nei_tubi(x, rng)
+        vic = vicina(x)
+        lon = lon.mean(axis=1) if lon.ndim == 2 else lon
+        vic = vic.mean(axis=1) if vic.ndim == 2 else vic
+        n = max(len(lon), len(vic))
+        coppia = []
+        for y, livello in [(lon, LONTANO_LUFS), (vic, VICINO_LUFS)]:
+            y = fade(np.pad(y, (0, n - len(y))), 0.0, 0.5)
+            coppia.append(limiter(y * 10 ** ((livello - lufs(y)) / 20), -6.0))
+        for nome, y in [('lontano', coppia[0]), ('vicino', coppia[1])]:
+            picco = 20.0 * np.log10(float(np.abs(y).max()) + 1e-12) + 0.01
+            salva('lei', 'lei_canto_prima_%s_%02d' % (nome, k + 1), y, loudness=None, picco=picco, qualita=5,
+                  nota='prima del tunnel, la sigla lenta e storpiata con la gola di lei, %s (0.4.0, scelta A del 15 '
+                       'novembre)' % ('lontana nei tubi' if nome == 'lontano' else 'vicina'))
 
 
 def main():

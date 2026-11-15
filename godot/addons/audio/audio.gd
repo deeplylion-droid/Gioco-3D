@@ -247,6 +247,8 @@ var _offset := {BUS_AMBIENTE: 0.0, BUS_EFFETTI: 0.0, BUS_MUSICA: 0.0}
 var _ui_cursore_t := 0.0
 var _neon_vicini: SorgentiVicine
 var _emergenza_vicine: SorgentiVicine
+## Il canto di lei prima del tunnel (0.4.0): vedi [CantoPrima].
+var canto_prima: CantoPrima
 var _loop: Array[AudioLoop] = []     # tutti i loop creati (per ferma_tutto)
 var _ultimo_ascoltatore := Vector3.ZERO
 
@@ -264,6 +266,8 @@ func _ready() -> void:
 	_emergenza_vicine = SorgentiVicine.new(self, &"emergenza_ronzio_loop", 3)
 	_attivi.append(_neon_vicini)
 	_attivi.append(_emergenza_vicine)
+	canto_prima = CantoPrima.new(self)
+	_attivi.append(canto_prima)
 	get_tree().node_added.connect(_su_nodo_aggiunto)
 	_collega_autoload.call_deferred()
 	_precarica_suoni.call_deferred()
@@ -1981,6 +1985,150 @@ class Statua:
 
 
 ## Gocciolatoio dell'addon acqua: niente segnale, si guarda quando una goccia sparisce.
+## Il canto di lei prima del tunnel (0.4.0, «L'acqua è sua», scelta A del 15 novembre): da quando si riaccendono le
+## pompe, ogni volta che lei è nell'acqua vicina, la sigla lenta e storpiata con la sua gola
+## (assets_src/audio/genera_canto_sigla.py). Lei la comanda il motore della regola di mascotte: i nodi del gruppo
+## [constant GRUPPO] con [code]vicinanza[/code] (0-1), [code]punto_luce[/code] (Vector3), [code]fase[/code] (StringName) e
+## [code]dietro_vetro[/code] (bool). Si segue la lei più vicina: canta nelle fasi di [constant FASI_CANTO], sfumando fra
+## la frase lontana nei tubi (non posizionale) e la stessa frase vicina (dalla luce rosa); nella fase di silenzio, poco
+## prima che esca, tace di colpo. Agli oblò (dietro il vetro) si sente appena, solo lontana. Ogni frase è una coppia di
+## file con lo stesso numero (lei_canto_prima_lontano_NN, lei_canto_prima_vicino_NN), mai la stessa due volte di fila.
+## Parte solo quando le frasi sono nel catalogo, dopo il sì dell'utente agli esempi. Nel tunnel resta il canto del 25
+## ottobre (Statua).
+class CantoPrima:
+	const GRUPPO := &"lei_nell_acqua"
+	const FASI_CANTO := [&"lontana", &"arriva", &"va_via"]
+	const LONTANO := &"lei_canto_prima_lontano"
+	const VICINO := &"lei_canto_prima_vicino"
+	## Prima frase dopo che lei arriva e pausa fra una frase e l'altra (s).
+	const PRIMA := Vector2(0.5, 2.0)
+	const PAUSA := Vector2(2.0, 5.0)
+	## Dietro il vetro di un oblò: solo la frase lontana, così più bassa (dB).
+	const VETRO_DB := -12.0
+	## Quanto in fretta il canto segue la vicinanza (per secondo) e quanto dura il taglio del silenzio (s).
+	const SEGUE := 3.0
+	const TAGLIO := 0.06
+	## Il vicino dalla luce rosa: unit_size e max_distance (m).
+	const UNIT := 4.0
+	const MAX_DIST := 35.0
+	## Per i test, finché le frasi vere non sono nel catalogo: [lontane, vicine], percorsi di file che ci sono.
+	static var prova: Array = []
+
+	var audio
+	var lon: AudioStreamPlayer
+	var vic: AudioStreamPlayer3D
+	var partito := -1.0
+	var t := -1.0
+	var ultima := -1
+	var mix := 0.0
+	## La lei che si segue adesso (per i test).
+	var lei: Node
+
+	func _init(a) -> void:
+		audio = a
+
+	## Le frasi nel catalogo: [lontane, vicine], della stessa lunghezza (vuote se mancano).
+	static func frasi() -> Array:
+		if not prova.is_empty():
+			return prova
+		var l: Array = Catalogo.SUONI.get(LONTANO, [])
+		var v: Array = Catalogo.SUONI.get(VICINO, [])
+		if l.is_empty() or l.size() != v.size():
+			return [[], []]
+		return [l, v]
+
+	## Vero se una frase partita da qui suona ancora (i lettori sono della riserva e si riprendono).
+	func canta() -> bool:
+		for p: Node in [lon, vic]:
+			if is_instance_valid(p) and float(p.get_meta(&"partito", -2.0)) == partito \
+					and (p.get(&"playing") or audio._finto(p)):
+				return true
+		return false
+
+	func _zitto(secondi: float) -> void:
+		if canta():
+			for p: Node in [lon, vic]:
+				if is_instance_valid(p) and float(p.get_meta(&"partito", -2.0)) == partito:
+					audio.dissolvi(p, secondi)
+		lon = null
+		vic = null
+		partito = -1.0
+
+	## La lei da seguire: quella del gruppo con la vicinanza più alta fra quelle che non sono ferme.
+	func _scegli() -> Node:
+		var meglio: Node = null
+		var v_meglio := -1.0
+		for n in audio.get_tree().get_nodes_in_group(GRUPPO):
+			if not is_instance_valid(n) or not n.is_inside_tree() or StringName(n.get(&"fase")) == &"ferma":
+				continue
+			var v := float(n.get(&"vicinanza"))
+			if v > v_meglio:
+				v_meglio = v
+				meglio = n
+		return meglio
+
+	func aggiorna(a, delta: float) -> bool:
+		var f := frasi()
+		# (da quando si riaccendono le pompe: GameState.luci non più PRIMA_DEL_RISVEGLIO, che è 0; l'addon non usa gli
+		# autoload per nome)
+		var gs: Node = audio.get_node_or_null(^"/root/GameState")
+		lei = _scegli() if gs and int(gs.get(&"luci")) != 0 else null
+		var fase: StringName = StringName(lei.get(&"fase")) if lei else &"ferma"
+		if (f[0] as Array).is_empty() or lei == null or not (fase in FASI_CANTO):
+			# il silenzio prima che esca (e quando esce, prende o è respinta): di colpo; se se ne va o sparisce, piano
+			_zitto(TAGLIO if fase in [&"silenzio", &"fuori", &"respinta"] else 0.5)
+			t = -1.0
+			return true
+		var vetro := bool(lei.get(&"dietro_vetro"))
+		var obiettivo := 0.0 if vetro else clampf(float(lei.get(&"vicinanza")), 0.0, 1.0)
+		mix = move_toward(mix, obiettivo, SEGUE * delta)
+		if canta():
+			_volumi(vetro)
+			return true
+		if t < 0.0:
+			t = randf_range(PRIMA.x, PRIMA.y)
+		t -= delta
+		if t > 0.0:
+			return true
+		t = randf_range(PAUSA.x, PAUSA.y)
+		var k := randi() % (f[0] as Array).size()
+		if k == ultima and (f[0] as Array).size() > 1:
+			k = (k + 1) % (f[0] as Array).size()
+		ultima = k
+		_parti(a, f[0][k], f[1][k])
+		_volumi(vetro)
+		return true
+
+	func _parti(a, file_lontano: String, file_vicino: String) -> void:
+		lon = a._prendi_2d(false)
+		lon.stream = a._prendi(file_lontano) as AudioStream
+		lon.bus = BUS_EFFETTI
+		lon.pitch_scale = 1.0
+		vic = a._prendi_3d()
+		vic.stream = a._prendi(file_vicino) as AudioStream
+		vic.bus = BUS_EFFETTI
+		vic.pitch_scale = 1.0
+		vic.unit_size = UNIT
+		vic.max_distance = MAX_DIST
+		vic.global_position = lei.get(&"punto_luce") as Vector3
+		# (le due metà della stessa frase partono insieme, con lo stesso segno nella riserva)
+		partito = float(lon.get_meta(&"partito", 0.0))
+		vic.set_meta(&"partito", partito)
+		lon.volume_db = -80.0
+		vic.volume_db = -80.0
+		a._avvia(lon)
+		a._avvia(vic)
+		a.conteggio[LONTANO] = int(a.conteggio.get(LONTANO, 0)) + 1
+
+	func _volumi(vetro: bool) -> void:
+		if is_instance_valid(lon) and float(lon.get_meta(&"partito", -2.0)) == partito:
+			lon.volume_db = linear_to_db(maxf(1.0 - mix, 0.001)) + (VETRO_DB if vetro else 0.0)
+		if is_instance_valid(vic) and float(vic.get_meta(&"partito", -2.0)) == partito:
+			vic.volume_db = linear_to_db(maxf(mix, 0.001))
+			if lei:
+				vic.global_position = lei.get(&"punto_luce") as Vector3
+
+
 class Gocciolatoio:
 	var audio
 	var n: Node
