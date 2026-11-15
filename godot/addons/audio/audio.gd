@@ -2050,8 +2050,11 @@ class CantoPrima:
 	## Dall'enum Fase di AcquaDiLei, quando manca fase_canto.
 	const DA_ENUM := {"LONTANA": &"lontana", "ARRIVA": &"arriva", "SPEGNE": &"spegne", "SILENZIO": &"silenzio",
 		"ESCE": &"fuori", "SU": &"fuori", "PRESA": &"presa", "SCENDE": &"va_via", "CALMA": &"ferma"}
-	## In «lontana» si sente nei tubi col giocatore entro questi metri (in pianta) da un punto d'uscita.
+	## In «lontana» si sente nei tubi col giocatore entro questi metri (in pianta) da un punto d'uscita, e sullo stesso
+	## piano: entro [constant DISLIVELLO_TUBI] m di quota. I piani del parco si sovrappongono (l'infermeria e i corridoi
+	## della risalita sopra o sotto la sala e le pozze): l'infermeria è una pausa asciutta, senza canto.
 	const RAGGIO_TUBI := 15.0
+	const DISLIVELLO_TUBI := 5.0
 	## La vicinanza a cui il canto è tutto vicino: mentre arriva (AcquaDiLei: fino a 0,9) e nel giro della luce (0,8).
 	const VICINANZA_PIENA := 0.9
 	const VICINANZA_PIENA_GIRO := 0.8
@@ -2149,7 +2152,8 @@ class CantoPrima:
 		partito = -1.0
 		morente = false
 
-	## Il giocatore vicino (in pianta, entro [constant RAGGIO_TUBI] m) a un punto d'uscita di [param n].
+	## Il giocatore vicino (in pianta, entro [constant RAGGIO_TUBI] m, e sullo stesso piano) a un punto d'uscita di
+	## [param n].
 	static func _vicino_ai_punti(n: Node, g: Node3D) -> bool:
 		if g == null:
 			return false
@@ -2157,7 +2161,7 @@ class CantoPrima:
 		for q in (punti if punti is Array else []):
 			if q is Node3D and is_instance_valid(q):
 				var d: Vector3 = (q as Node3D).global_position - g.global_position
-				if Vector2(d.x, d.z).length() <= RAGGIO_TUBI:
+				if Vector2(d.x, d.z).length() <= RAGGIO_TUBI and absf(d.y) <= DISLIVELLO_TUBI:
 					return true
 		return false
 

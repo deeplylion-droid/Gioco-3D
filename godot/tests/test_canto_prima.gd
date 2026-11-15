@@ -6,7 +6,8 @@ extends Node
 ## giocatore finto (CantoPrima.giocatore_prova) e un oblò finto (come ObloLei: stato e _dentro):
 ## - le 10 coppie vere ci sono, e senza frasi non suona niente;
 ## - prima che si riaccendano le pompe (GameState.luci = PRIMA_DEL_RISVEGLIO) non canta;
-## - in LONTANA canta solo col giocatore vicino a un punto d'uscita (15 m), e lontano: la frase dei tubi piena, la
+## - in LONTANA canta solo col giocatore vicino a un punto d'uscita (15 m in pianta, sullo stesso piano: 8 m sopra o
+##   sotto no), e lontano: la frase dei tubi piena, la
 ##   vicina giù; la lontana non posizionale, la vicina in 3D;
 ## - in «arriva», con la vicinanza a 0,9, la vicina sale e la lontana scende, e la vicina sta alla luce rosa; se non
 ##   sta cantando parte subito;
@@ -133,6 +134,10 @@ func _run() -> void:
 	gioc.global_position = Vector3(40, 0, 0)
 	await _secondi(3.0)
 	check(not canto.canta(), "col giocatore a 35 m dall'acqua non canta")
+	for dy in [8.0, -8.0]:
+		gioc.global_position = Vector3(10, dy, 0)
+		await _secondi(3.0)
+		check(not canto.canta(), "a 5 m in pianta ma %+.0f m di quota (un altro piano) non canta" % dy)
 	gioc.global_position = Vector3(14, 0, 3)
 	var t0 := 0.0
 	while t0 < 2.6 and not canto.canta():
