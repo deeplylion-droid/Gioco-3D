@@ -80,6 +80,11 @@ func _process(delta: float) -> void:
 			if x is Node and is_instance_valid(x) and not lettori.has(x) and float(x.get_meta(&"partito", -2.0)) == float(at.get(&"canto_partito")):
 				x.set_meta(&"_spia_tunnel", true)
 				lettori.append(x)
+	# i lettori già seguiti restano seguiti finché suona la stessa frase (dopo lo spegnimento chi la comanda li lascia)
+	for id in voci.keys():
+		var o := instance_from_id(id)
+		if o is Node and is_instance_valid(o) and not lettori.has(o):
+			lettori.append(o)
 	var visti := {}
 	for p in lettori:
 		if not is_instance_valid(p):
