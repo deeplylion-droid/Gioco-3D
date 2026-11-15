@@ -14,8 +14,10 @@ extends Node3D
 ##            l'occhio, spostando le UV); ogni tanto inclina la testa. Gira piano il corpo.
 ##   CAMMINA  cammina piano lungo "percorso", poi osserva (o sparisce, se richiesto).
 ##   SCAPPA   corre lungo "punti_fuga" (l'ultimo dietro un angolo) e sparisce.
-##   DISEGNA  (il bambino col cubo, build 0.5.0) in ginocchio che disegna con la matita; quando il giocatore lo guarda o
+##   DISEGNA  (il bambino col cubo, build 0.5.0) in ginocchio che disegna col pastello; quando il giocatore lo guarda o
 ##            si avvicina alza la testa verso di lui per un secondo ("alza_testa"), si tira su ("si_alza") e scappa.
+##            Con [member guarda_il_disegno] invece è in piedi e guarda in su il disegno ("guarda_su", agli acquari): gira
+##            la testa verso il giocatore per un secondo e scappa, lasciando cadere il pastello ([signal lascia_il_pastello]).
 ##   PORGE    (il finale, build 0.5.0) fa due passi lungo "percorso" e porge il foglio con le due mani ("porge", poi
 ##            "porge_tiene"); il foglio si attacca a [method punto_foglio]. Non scappa.
 ## Dalla statua, dall'osservazione e dalla camminata scappa se il giocatore si avvicina troppo
@@ -32,16 +34,19 @@ signal passo(dove: Vector3)
 signal alza_la_testa
 ## Comincia a porgere il foglio (PORGE, alla fine dei passi).
 signal porge_il_foglio
+## Scappando lascia cadere il pastello (DISEGNA con [member guarda_il_disegno]): [param dove] è il punto del pavimento sotto
+## la sua mano, dove chi fa la scena mette il pastello appoggiato.
+signal lascia_il_pastello(dove: Vector3)
 
 enum Modalita { STATUA, OSSERVA, CAMMINA, SCAPPA, SPARITO, DISEGNA, PORGE }
 enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
 
 const ANIMAZIONI: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"si_gira"]
 const CICLICHE: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"fermo_vivo", &"inclina_testa_viva",
-		&"disegna", &"porge_tiene"]
+		&"disegna", &"porge_tiene", &"guarda_su"]
 ## Le animazioni della build 0.5.0 (bambini_animazioni.py --storia; solo il bambino col cubo): in ginocchio che disegna, alza
 ## la testa (1 s), si tira su (0,6 s, finisce nella posa da cui parte "parte"); porge il foglio (1,2 s) e lo tiene.
-const STORIA: Array[StringName] = [&"disegna", &"alza_testa", &"si_alza", &"porge", &"porge_tiene"]
+const STORIA: Array[StringName] = [&"disegna", &"alza_testa", &"si_alza", &"porge", &"porge_tiene", &"guarda_su"]
 ## Le pose da fermo vive (il peso da un piede all'altro, il respiro più ampio: bambini_animazioni.py --vivo), al posto di
 ## quelle di prima, con [member fermo_vivo].
 const VIVE := {&"fermo": &"fermo_vivo", &"inclina_testa": &"inclina_testa_viva"}
@@ -110,6 +115,9 @@ const CORSA_PRIMO_PASSO := 6.4 / 24.0
 @export var distanza_alza_testa := 6.0
 ## Quanto resta con la testa alzata a guardare il giocatore prima di tirarsi su e scappare (s).
 @export var tempo_testa_alzata := 1.0
+## In piedi davanti al disegno a guardarlo in su ("guarda_su"), invece che in ginocchio a disegnare: agli acquari, dove il
+## disegno è sul vetro del cilindro giallo, troppo in alto per lui (scelta A del coordinatore). Scappando lascia il pastello.
+@export var guarda_il_disegno := false
 
 @export_group("Cammina")
 @export var percorso: Array[Node3D] = []
@@ -264,7 +272,7 @@ func _prepara_modello(m: Node3D) -> void:
 		_piedi.append([m, sk, ossa])
 	# la matita (attaccata alla mano destra nel GLB) e il punto dove sta il foglio che porge (l'osso 'foglio', orientato
 	# come il bambino: il foglio guarda avanti, il lato lungo in su)
-	for c in m.find_children("matita*", "", true, false):
+	for c in m.find_children("pastello*", "", true, false) + m.find_children("matita*", "", true, false):
 		if c is Node3D:
 			_matite.append(c as Node3D)
 			(c as Node3D).visible = false
@@ -382,7 +390,7 @@ func disegna() -> void:
 	_visto_da = 0.0
 	_reazione_in_corso = false
 	_mostra_matita(true)
-	_anima(&"disegna", 0.0)
+	_anima(&"guarda_su" if guarda_il_disegno else &"disegna", 0.0)
 
 
 ## Alza subito la testa (DISEGNA): un secondo a guardarti, poi si tira su e scappa.
@@ -392,7 +400,8 @@ func alza_testa_ora() -> void:
 	_fase = 1
 	_t_fase = 0.0
 	_bersaglio.global_position = punto_testa() + global_basis.z * 2.0
-	_anima(&"alza_testa", 0.15)
+	if not guarda_il_disegno:
+		_anima(&"alza_testa", 0.15)
 	alza_la_testa.emit()
 
 
@@ -429,6 +438,16 @@ func _porgi() -> void:
 		ap.speed_scale = 1.0
 	_anima(&"porge", 0.35)
 	porge_il_foglio.emit()
+
+
+func _lascia_il_pastello() -> void:
+	var dove := global_position
+	for m in _matite:
+		if m.is_visible_in_tree():
+			dove = Vector3(m.global_position.x, global_position.y, m.global_position.z)
+			break
+	_mostra_matita(false)
+	lascia_il_pastello.emit(dove)
 
 
 func _mostra_matita(si: bool) -> void:
@@ -555,7 +574,11 @@ func _process(delta: float) -> void:
 					if vicino or _visto_da >= tempo_per_vederlo:
 						alza_testa_ora()
 				1:
-					if _t_fase >= tempo_testa_alzata:
+					if _t_fase >= tempo_testa_alzata and guarda_il_disegno:
+						# (in piedi: scappa subito, e il pastello gli cade)
+						_lascia_il_pastello()
+						scappa_ora()
+					elif _t_fase >= tempo_testa_alzata:
 						_fase = 2
 						_t_fase = 0.0
 						_anima(&"si_alza", 0.1)

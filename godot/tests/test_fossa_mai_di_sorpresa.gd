@@ -70,6 +70,8 @@ func _ricarica(nome := "CheckpointSerranda") -> void:
 			break
 	await _fisica(20)
 	_prendi_riferimenti()
+	# (il fischio dal buio lo prova test_fischio_sala: qui solo la fossa)
+	buio.fischio = false
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 
 

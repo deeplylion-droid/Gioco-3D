@@ -51,8 +51,30 @@ extends Node3D
 ## lì lei deve poter venire.
 @export var zona := AABB(Vector3(-32.0, -3.0, -32.0), Vector3(64.0, 7.0, 51.0))
 
+@export_group("Fischio")
+## (build 0.5.0, l'agnellino che la chiama) Una volta per attraversamento della sala, dal buio, lontano dal giocatore, un
+## fischio corto (Audio &"fischietto"); poi la luce rosa va alla vasca vicina al giocatore (il punto d'uscita più vicino) con
+## l'avviso intero e lei esce come sempre. Mai durante un'uscita già in corso, mai dopo la fossa.
+@export var fischio := true
+## Il fischio arriva solo dopo tanti secondi di giro (s)...
+@export var fischio_dopo := 1.5
+## ...col giocatore più lontano di [member distanza_bordo] e più vicino di così (m, in pianta) al punto d'uscita più vicino.
+@export var fischio_entro := 14.0
+## Da quanto lontano dal giocatore (m, in pianta), dalla parte opposta alla vasca grande.
+@export var fischio_lontano := 13.0
+## Dal fischio a quando la luce parte verso il giocatore (s).
+@export var fischio_luce := 0.7
+@export_group("")
+
+## Il fischio dal buio (per l'audio e i test): [param dove] nel mondo.
+signal fischiato(dove: Vector3)
+
 enum Stato { ATTESA, GIRO, FINITO }
 var stato := Stato.ATTESA
+## Il fischio c'è già stato in questo attraversamento (si azzera quando il giocatore esce dalla sala).
+var fischio_fatto := false
+var _t_giro := 0.0
+var _t_fischio := -1.0
 ## Da quanto (s) la sala è caricata e pronta: nei primi istanti lo schermo è ancora nero.
 var _appena_caricata := 0.0
 var acqua: AcquaDiLei
@@ -131,17 +153,25 @@ func _physics_process(_delta: float) -> void:
 					_finisci(false)
 			elif acqua.gira(_giro(), velocita):
 				stato = Stato.GIRO
+				_t_giro = 0.0
 		Stato.GIRO:
 			if not in_sala:
 				# uscito dalla sala prima della fossa: lei se ne va, il giro ripartirà quando torna
 				if acqua.fase == AcquaDiLei.Fase.LONTANA or acqua.fase == AcquaDiLei.Fase.CALMA:
 					acqua.lascia()
 					stato = Stato.ATTESA
+					fischio_fatto = false
+					_t_fischio = -1.0
 				return
-			if vicino_fossa and acqua.fase == AcquaDiLei.Fase.LONTANA and not _sul_bordo(p):
+			# (non mentre il fischio sta chiamando la luce verso il giocatore)
+			if vicino_fossa and acqua.fase == AcquaDiLei.Fase.LONTANA and not _sul_bordo(p) and _t_fischio < 0.0:
 				_finisci(true)
 				return
 			if acqua.fase != AcquaDiLei.Fase.LONTANA:
+				_t_fischio = -1.0
+				return
+			_t_giro += _delta
+			if _fischio(p, _delta):
 				return
 			var q := acqua.punto_vicino_alla_luce(raggio_luce)
 			if q and AcquaDiLei._in_pianta(p.global_position, q.global_position) <= distanza_bordo:
@@ -168,6 +198,62 @@ func _finisci(_con_la_luce: bool) -> void:
 	if acqua.fase != AcquaDiLei.Fase.LONTANA:
 		acqua.lascia()
 	_annuncia_la_fossa()
+
+
+## Il fischio dal buio: una volta per attraversamento, poi la luce va al punto d'uscita più vicino al giocatore. Vero mentre
+## è in corso (il giro non chiama altre uscite).
+func _fischio(p: Node3D, delta: float) -> bool:
+	if _t_fischio >= 0.0:
+		_t_fischio += delta
+		if _t_fischio >= fischio_luce:
+			_t_fischio = -1.0
+			var q := _uscita_vicina(p)
+			if q:
+				acqua.chiama(q)
+		return true
+	if not fischio or fischio_fatto or _t_giro < fischio_dopo:
+		return false
+	var q := _uscita_vicina(p)
+	if q == null:
+		return false
+	var d := AcquaDiLei._in_pianta(p.global_position, q.global_position)
+	if d <= distanza_bordo or d > fischio_entro:
+		return false
+	fischio_fatto = true
+	_t_fischio = 0.0
+	# il più possibile dalla parte opposta alla vasca grande, a [member fischio_lontano] m, dentro la sala
+	var via := p.global_position - vasca_grande.global_position
+	via.y = 0.0
+	via = via.normalized() if via.length() > 0.1 else Vector3.FORWARD
+	var dove := Vector3.INF
+	var meglio := -INF
+	for k in 16:
+		var dir := via.rotated(Vector3.UP, TAU * k / 16.0)
+		var c := p.global_position + dir * fischio_lontano
+		if c.x < zona.position.x + 1.0 or c.x > zona.end.x - 1.0 or c.z < zona.position.z + 1.0 or c.z > zona.end.z - 1.0:
+			continue
+		if dir.dot(via) > meglio:
+			meglio = dir.dot(via)
+			dove = c
+	if dove == Vector3.INF:
+		dove = p.global_position + via * fischio_lontano
+	dove.y = p.global_position.y + 1.0
+	var audio := get_node_or_null(^"/root/Audio")
+	if audio:
+		audio.call(&"suona", &"fischietto", dove)
+	fischiato.emit(dove)
+	return true
+
+
+func _uscita_vicina(p: Node3D) -> Node3D:
+	var meglio: Node3D = null
+	var d_meglio := INF
+	for q in _punti:
+		var d := AcquaDiLei._in_pianta(p.global_position, q.global_position)
+		if d < d_meglio:
+			d_meglio = d
+			meglio = q
+	return meglio
 
 
 ## L'avviso della fossa: la luce va sotto la fossa, il canto arriva e si spegne, il silenzio; poi lei viene alla fossa

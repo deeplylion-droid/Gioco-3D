@@ -353,6 +353,27 @@ func _rimetti_camera() -> void:
 
 # --- Il modello ------------------------------------------------------------------------------------------------
 
+## Il modello col rig, da cui prendere i materiali (le texture della pelle).
+const MODELLO_RIG := "res://assets/models/mascotte/mostro_squalo_A_rig.glb"
+
+
+## I materiali del modello col rig, per nome.
+static func _materiali_del_rig() -> Dictionary:
+	var out := {}
+	var ps := load(MODELLO_RIG) as PackedScene
+	if ps == null:
+		return out
+	var r := ps.instantiate()
+	for mi in r.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		for i in m.get_surface_count():
+			var sm := m.surface_get_material(i)
+			if sm and not out.has(sm.resource_name):
+				out[sm.resource_name] = sm
+	r.free()
+	return out
+
+
 func _crea() -> void:
 	squalo = (load(MODELLO) as PackedScene).instantiate() as Node3D
 	squalo.name = "SqualoFiume"
@@ -366,10 +387,14 @@ func _crea() -> void:
 	mat.shader = SHADER_BOCCA
 	var mat_denti := ShaderMaterial.new()
 	mat_denti.shader = SHADER_DENTI
+	# (il GLB del fiume non porta le texture: la pelle prende i materiali del modello col rig, una copia sola delle texture)
+	var della_pelle := _materiali_del_rig()
 	for mi in squalo.find_children("*", "MeshInstance3D", true, false):
 		var m := (mi as MeshInstance3D).mesh
 		for i in m.get_surface_count():
 			var sm := m.surface_get_material(i)
+			if sm and della_pelle.has(sm.resource_name):
+				(mi as MeshInstance3D).set_surface_override_material(i, della_pelle[sm.resource_name])
 			if sm and (sm.resource_name.begins_with("bocca_interno") or sm.resource_name.begins_with("gengiva")):
 				(mi as MeshInstance3D).set_surface_override_material(i, mat)
 			elif sm and sm.resource_name.begins_with("denti"):
