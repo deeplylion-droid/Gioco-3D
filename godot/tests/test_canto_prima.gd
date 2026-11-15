@@ -19,6 +19,7 @@ extends Node
 ##   punti: 15 m in pianta, stesso piano) anche se è lontano dai punti; a 40 m no; a vicinanza 0,8 è tutto vicino;
 ## - fra due acque si segue quella dove lei è adesso, anche se l'altra è più vicina;
 ## - all'oblò, con lei dietro il vetro e il giocatore nella sua zona, si sente appena: solo la lontana, 12 dB sotto;
+##   con lei di persona in una scena (gruppo lei_in_scena) l'oblò tace;
 ## - se lei sparisce (nodo liberato) il canto si spegne;
 ## - col motore vero e il giocatore vero, con lei da un'altra parte (gruppo lei_in_scena: la fossa, le condotte, il
 ##   tunnel) l'acqua vicina in «lontana» non canta, e riprende quando la scena finisce.
@@ -279,6 +280,16 @@ func _run() -> void:
 	if canto.canta():
 		check(float(canto.lon.volume_db) <= -11.5 and float(canto.vic.volume_db) < -40.0,
 				"si sente appena: solo la lontana, sotto di 12 dB (%.1f e %.1f dB)" % [canto.lon.volume_db, canto.vic.volume_db])
+	# lei di persona in una scena (la fossa, le condotte, il tunnel): l'oblò tace
+	var scena := Node3D.new()
+	add_child(scena)
+	scena.global_position = Vector3(-60, 0, 0)
+	scena.add_to_group(&"lei_in_scena")
+	await _secondi(0.7)
+	check(not canto.canta(), "con lei in una scena (gruppo lei_in_scena) l'oblò non canta")
+	scena.queue_free()
+	await _aspetta_canto()
+	check(canto.canta() and canto.fase == &"oblo", "finita la scena, l'oblò canta di nuovo")
 	oblo.stato = 3
 	await _secondi(0.7)
 	check(not canto.canta(), "lei se ne va dal vetro: il canto si spegne")

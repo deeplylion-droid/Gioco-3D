@@ -2054,6 +2054,8 @@ class CantoPrima:
 	## piano: entro [constant DISLIVELLO_TUBI] m di quota. I piani del parco si sovrappongono (l'infermeria e i corridoi
 	## della risalita sopra o sotto la sala e le pozze): l'infermeria è una pausa asciutta, senza canto.
 	const RAGGIO_TUBI := 15.0
+	## Il gruppo delle lei che una scena sta usando (AcquaDiLei.LEI_IN_SCENA; l'addon non nomina la classe).
+	const LEI_IN_SCENA := &"lei_in_scena"
 	const DISLIVELLO_TUBI := 5.0
 	## La vicinanza a cui il canto è tutto vicino: mentre arriva (AcquaDiLei: fino a 0,9) e nel giro della luce (0,8).
 	const VICINANZA_PIENA := 0.9
@@ -2181,6 +2183,13 @@ class CantoPrima:
 		var d: Vector3 = luce - g.global_position
 		return Vector2(d.x, d.z).length() <= RAGGIO_TUBI and absf(d.y) <= DISLIVELLO_TUBI
 
+	## Vero se una scena sta usando lei adesso (un nodo visibile del gruppo lei_in_scena, AcquaDiLei.LEI_IN_SCENA).
+	func _lei_in_scena() -> bool:
+		for n in audio.get_tree().get_nodes_in_group(LEI_IN_SCENA):
+			if n is Node3D and is_instance_valid(n) and (n as Node3D).is_visible_in_tree():
+				return true
+		return false
+
 	## La lei da seguire: [nodo, fase del canto]. Prima quella che è in un'acqua adesso (arriva, si spegne, è fuori, va
 	## via, o la sua luce fa un giro col giocatore vicino), poi un'acqua vicina al giocatore dove lei è nei tubi, poi un oblò con lei dietro il
 	## vetro (fase &"oblo").
@@ -2204,6 +2213,9 @@ class CantoPrima:
 				vicina = n
 		if vicina:
 			return [vicina, &"lontana"]
+		# (lei di persona in una scena, la fossa, le condotte, il tunnel: niente canto piano da un oblò)
+		if _lei_in_scena():
+			return [null, &""]
 		var i := 0
 		while i < obli.size():
 			var o: Variant = obli[i]
