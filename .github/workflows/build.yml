@@ -553,6 +553,14 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fine_titolo.gd
 
+      - name: I contatori della partita e il riepilogo di fine capitolo (tempo, morti, Polaroid; morte, Continua, partita nuova, ritorno al titolo)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_contatori.gd
+
+      - name: I disegni del bambino con la scatola (il foglio sul muro, il centro a misura di bambino, pastello e impronte appoggiati)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_disegni_bambino.gd
+
       - name: Le ante degli armadietti, anche quella che sbatte in tutta la corsa, senza niente dentro
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_ante_armadietti.gd
