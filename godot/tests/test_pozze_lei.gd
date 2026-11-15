@@ -425,6 +425,20 @@ func _run() -> void:
 				dove = lei._giro[0]
 				break
 		check(riparte and dove != null and lei._piena(dove), "poi riprende a girare da una pozza piena (%s)" % (dove.name if dove else "?"))
+
+	print("12. Col liquido che alla presa non torna trasparente (piano B): resta opaco anche nella presa")
+	await _nuova_stanza(false)
+	lei.liquido_trasparente_alla_presa = false
+	await _togli(WaterMix.ROSA)
+	_metti(Vector3(0, 0, r))
+	var pr2 := await _aspetta(F.PRESA, lei.prima_attesa + acqua.avviso + 10.0)
+	check(not pr2.is_empty(), "esce vicino e lo prende")
+	if not pr2.is_empty():
+		var t2: WaterTank = lei.bersaglio
+		await _frames(int((lei.opaco_tempo + 0.2) * 60))
+		check(t2 != null and _estinzione(t2) >= 0.95 * lei.opaco_estinzione,
+			"nella presa il liquido resta opaco (%.1f)" % (_estinzione(t2) if t2 else -1.0))
+		_rianima()
 	_fine()
 
 

@@ -93,6 +93,9 @@ const NOMI := [&"dorme", &"gira", &"viene", &"finita"]
 ## Mentre il liquido è opaco la luce rosa sta sopra il pelo, al centro della pozza, così si vede su quello che sta
 ## sopra (il bordino, il grigliato, il braccio, i tentacoli): quanto sopra (m).
 @export var luce_sopra_il_pelo := 0.25
+## Dalla presa il liquido torna trasparente (la scena di morte guarda dentro la pozza). Spento (il piano B del
+## coordinatore, se il viso nella scena di morte non c'è): resta opaco anche nella presa, e la luce resta sopra il pelo.
+@export var liquido_trasparente_alla_presa := true
 
 ## Il motore di lei.
 var acqua: AcquaDiLei
@@ -343,6 +346,8 @@ func _lei_presente() -> bool:
 	match acqua.fase:
 		AcquaDiLei.Fase.SILENZIO, AcquaDiLei.Fase.ESCE, AcquaDiLei.Fase.SU, AcquaDiLei.Fase.SCENDE:
 			return true
+		AcquaDiLei.Fase.PRESA:
+			return not liquido_trasparente_alla_presa
 	return false
 
 

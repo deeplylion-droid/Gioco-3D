@@ -53,3 +53,12 @@ python3 tools/collaudo/vedute.py <uscita> <uscita>_distanze.json <uscita>_celle.
 - `tools/collaudo/testa.py <uscita> [prefissi]`: mesh che passano a meno di 30 cm in pianta da una cella dove si cammina, fra 0,5 e 1,95 m sopra di lei (lo spazio per la testa).
 - `tools/collaudo/sotto.py <uscita> /Nodo`: per ogni vertice di un nastro o di una scia, che cosa c'è sotto e a che distanza.
 - `sonda.gd`: raggi e mesh vicine attorno a dei punti; `memoria.gd`: quanta memoria prende una scena.
+
+## Lei nelle pozze dagli occhi del giocatore (`scatti_pozze_lei.gd`)
+
+```
+flock /home/user/tools/render.lock xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan \
+    --resolution 1280x720 --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/scatti_pozze_lei.gd <cartella> [resto|morte|viso]
+```
+
+La stanza delle pozze vera (a pezzi, come nella Risalita) con le uscite di lei chiamate sul motore: il liquido opaco nel silenzio e mentre è fuori, in piedi a 1,5 e 3 m, i cinque colori, la luce che gira da sola, la scena di morte. Con `viso` fa solo il controllo della scena di morte senza gli strati del nero e del glitch (a 0,45 / 0,7 / 0,95 s) e stampa camera, occhi di lei ed estinzione del liquido. Circa 30 minuti per il giro intero, 15 per `viso`.
