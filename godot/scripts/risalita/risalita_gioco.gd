@@ -827,29 +827,43 @@ func _metti_infermeria(scena_infermeria: PackedScene, f: Node3D, dopo: bool) -> 
 
 
 ## Le stanze costruite subito (ripartendo vicino alle pozze, da F9 o da Continua, o arrivati prima che il thread
-## finisse): la stanza delle pozze intera, con lei fuori dall'acqua con la sua luce e a metà la presa, disegnata una
-## volta fuori vista come nella costruzione a pezzi, così anche ripartendo la sua prima uscita non compila niente
-## (0.4.0; disegnata solo lei restavano 6 pipeline nel fotogramma in cui esce). La stanza resta nascosta 4-5
-## fotogrammi subito dopo il caricamento: sotto il nero della schermata di caricamento (8 fotogrammi di assestamento)
-## o della ripartenza. [member riscaldo_pozze] è vero intanto (per i test).
+## finisse): lei fuori dall'acqua con la sua luce, e a metà la presa, disegnata una volta fuori vista INSIEME alla
+## stanza, così anche ripartendo la sua prima uscita non compila niente (0.4.0; disegnata da sola restavano 6
+## pipeline nel fotogramma in cui esce). Solo lei e la sua luce vanno sullo strato fuori vista (la camera del gioco
+## non le vede); la camera fuori vista vede anche gli strati della stanza, che resta dov'è e come si vede: niente
+## sparisce, anche se la ripartenza sta già schiarendo. [member riscaldo_pozze] è vero intanto (per i test).
 func _riscalda_lei_delle_pozze(n: Node3D) -> void:
 	if Engine.is_editor_hint() or n == null or not n.is_inside_tree():
 		return
 	riscaldo_pozze = true
 	await riscalda_stanza_pozze(n, get_viewport())
-	riscaldo_pozze = false
+	if is_instance_valid(self):
+		riscaldo_pozze = false
 
 
-## La stanza delle pozze [param n] disegnata fuori vista con lei in posa (vedi [method _riscalda_lei_delle_pozze]);
-## anche per le sonde.
-static func riscalda_stanza_pozze(n: Node3D, vp: Viewport) -> void:
+## Vedi [method _riscalda_lei_delle_pozze]; anche per le sonde.
+static func riscalda_stanza_pozze(n: Node3D, vp: Viewport, fotogrammi := 4) -> void:
 	var lp := _lei_delle_pozze(n)
-	if lp and lp.is_inside_tree():
-		lp.posa_per_il_riscaldamento(true)
-	await RiscaldamentoShader.disegna_fuori_vista(n, vp, 4, func():
-		if lp and is_instance_valid(lp):
-			lp.posa_per_il_riscaldamento(true, "pozza_presa"))
-	if lp and is_instance_valid(lp):
+	if lp == null or not lp.is_inside_tree() or vp == null:
+		return
+	lp.posa_per_il_riscaldamento(true)
+	var stato := RiscaldamentoShader._fuori_vista(lp)
+	var en := n.find_child("EnigmaPozze", true, false) as Node3D
+	var centro := en.global_position if en else n.global_position
+	var sv := RiscaldamentoShader._camera(lp, vp, AABB(centro - Vector3(4.5, 1.5, 4.5), Vector3(9.0, 3.0, 9.0)))
+	# (lo strato fuori vista e tutti quelli del gioco: lei con la stanza intorno, com'è quando esce)
+	sv.get_camera_3d().cull_mask = 0xFFFFF
+	var albero := n.get_tree()
+	for i in fotogrammi + 1:
+		if i == fotogrammi / 2 and is_instance_valid(lp):
+			lp.posa_per_il_riscaldamento(true, "pozza_presa")
+		await albero.process_frame
+		if not is_instance_valid(lp) or not lp.is_inside_tree():
+			break
+	if is_instance_valid(sv):
+		sv.queue_free()
+	RiscaldamentoShader._rimetti(lp, stato)
+	if is_instance_valid(lp):
 		lp.posa_per_il_riscaldamento(false)
 
 

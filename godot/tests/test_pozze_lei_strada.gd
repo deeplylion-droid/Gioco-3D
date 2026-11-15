@@ -26,7 +26,8 @@ func _ready() -> void:
 
 
 ## Il riscaldamento della stanza delle pozze ripartendo vicino (RisalitaGioco.riscaldo_pozze): in quanti fotogrammi
-## c'è stato, e in quanti di questi lo schermo non era tutto nero (la stanza nascosta si sarebbe vista).
+## c'è stato, e in quanti la camera del gioco avrebbe visto qualcosa di diverso (un pezzo della stanza tolto dalla
+## vista, o lei e la sua luce in posa visibili).
 var riscaldo_visti := 0
 var riscaldo_scoperti := 0
 
@@ -36,21 +37,27 @@ func _process(_d: float) -> void:
 	var r := s.get_node_or_null(^"Risalita") if s else null
 	if r and r.get(&"riscaldo_pozze") == true:
 		riscaldo_visti += 1
-		if not _schermo_nero():
+		if not _vista_com_era(r.get(&"pozze") as Node3D):
 			riscaldo_scoperti += 1
 
 
-## Lo schermo tutto nero: il velo della schermata di caricamento, o il nero della scena di morte e della ripartenza.
-func _schermo_nero() -> bool:
-	var d := get_tree().root.get_node_or_null(NodePath(Dissolvenza.NOME)) as Dissolvenza
-	if d and not d.is_queued_for_deletion() and d.opacita() >= 0.99:
+## Vero se nella stanza delle pozze [param poz] nessuna mesh o luce è solo sullo strato fuori vista, tranne quelle di
+## lei (il suo motore), che lì devono stare tutte (la camera del gioco non le vede).
+func _vista_com_era(poz: Node3D) -> bool:
+	if poz == null or not is_instance_valid(poz):
 		return true
-	var seq: Variant = GameState.get(&"_death_sequence")
-	if seq is Node and is_instance_valid(seq):
-		var b: Variant = (seq as Node).get(&"_black")
-		if b is ColorRect and (b as ColorRect).color.a >= 0.99:
-			return true
-	return false
+	var en := poz.find_child("EnigmaPozze", true, false) as EnigmaPozze
+	var aq: Node = en.lei.acqua if en and en.lei else null
+	for v in poz.find_children("*", "VisualInstance3D", true, false):
+		var vi := v as VisualInstance3D
+		if not vi.is_visible_in_tree():
+			continue
+		var di_lei := aq != null and aq.is_ancestor_of(vi)
+		if di_lei and vi.layers != SalaTorre.STRATO_PREPARA:
+			return false
+		if not di_lei and vi.layers == SalaTorre.STRATO_PREPARA:
+			return false
+	return true
 
 
 func check(cond: bool, what: String) -> void:
@@ -117,7 +124,7 @@ func _run() -> void:
 
 	print("3. Si riparte dall'ingresso con le pozze piene e lei che dorme")
 	check(riscaldo_visti > 0 and riscaldo_scoperti == 0,
-		"ripartendo la stanza delle pozze si disegna fuori vista con lei in posa, sotto lo schermo nero (%d fotogrammi, %d scoperti)" % [riscaldo_visti, riscaldo_scoperti])
+		"ripartendo lei in posa si disegna fuori vista con la stanza, e la camera del gioco non vede niente di diverso (%d fotogrammi, %d diversi)" % [riscaldo_visti, riscaldo_scoperti])
 	check(String(GameState.snapshot.get("checkpoint", "")) == ingresso, "si riparte dal checkpoint d'ingresso (%s)" % GameState.snapshot.get("checkpoint", ""))
 	check(e != null and _tutte_piene() and e.tolti.is_empty() and e.stato == EnigmaPozze.Stato.APERTO and not _porta_aperta(),
 		"con le pozze tutte piene e la porta chiusa")
