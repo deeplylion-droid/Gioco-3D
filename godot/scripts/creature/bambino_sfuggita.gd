@@ -21,6 +21,7 @@ extends Node3D
 signal comparso
 signal scappato
 signal finito
+signal pastello_caduto(dove: Vector3)
 
 enum Stato { ATTESA, GUARDA, SCAPPA, FINITO }
 
@@ -59,6 +60,23 @@ enum Stato { ATTESA, GUARDA, SCAPPA, FINITO }
 @export var inclinazione_testa := 0.0
 ## Vedi [member Bambino.fermo_vivo].
 @export var fermo_vivo := false
+@export_group("Guarda il disegno")
+## (build 0.5.0, agli acquari) Invece di fermarsi a guardarti, è in piedi davanti a un disegno e lo guarda in su col
+## pastello in mano (Bambino, DISEGNA con guarda_il_disegno): quando lo vedi o arrivi a [member distanza_alza_testa] m
+## gira la testa, aspetta un secondo e scappa, e il pastello gli cade: resta per terra ([member pastello_a_terra],
+## appoggiato con Posa dove gli cade di mano), anche ripartendo dai checkpoint.
+@export var guarda_il_disegno := false
+@export var distanza_alza_testa := 6.0
+## Il pastello che resta per terra (una scena con l'origine sul fondo).
+@export var pastello_a_terra: PackedScene
+## Dove non deve cadere il pastello (per esempio una Polaroid per terra lì vicino): a meno di [member pastello_lontano] m
+## da questi punti (coordinate del mondo) lo si sposta più in là.
+@export var pastello_evita: PackedVector3Array = []
+@export var pastello_lontano := 0.25
+## Non compare mentre lei è fuori dall'acqua (AcquaDiLei in uso, non LONTANA né CALMA): mai insieme a lei.
+@export var aspetta_lei := false
+## Condizione in più per comparire (vero: può comparire), per esempio «gli acquari ci sono e non sono risolti».
+var pronto_se := Callable()
 
 var stato := Stato.ATTESA
 var bambino: Bambino
@@ -66,6 +84,10 @@ var _t := 0.0
 var _visto := 0.0
 var _fuga_tra := -1.0
 var _punti: Array[Node3D] = []
+## Il pastello per terra, dopo che è scappato (guarda_il_disegno): posizione e giro, salvati coi checkpoint.
+var pastello: Node3D
+var _pastello_dove := Vector3.INF
+var _pastello_giro := 0.0
 
 
 func _ready() -> void:
@@ -101,6 +123,11 @@ func _ready() -> void:
 		_punti.append(m)
 	bambino.punti_fuga = _punti
 	bambino.sparito.connect(_sparito)
+	if guarda_il_disegno:
+		bambino.guarda_il_disegno = true
+		bambino.distanza_alza_testa = distanza_alza_testa
+		bambino.scappa.connect(_su_scappa)
+		bambino.lascia_il_pastello.connect(_su_pastello)
 	_riscalda.call_deferred()
 
 
@@ -118,6 +145,11 @@ func _process(delta: float) -> void:
 			_mostra()
 		Stato.GUARDA:
 			_t += delta
+			if guarda_il_disegno:
+				# (la fuga la decide Bambino: lo vedi o arrivi a distanza_alza_testa, gira la testa, un secondo, scappa)
+				if tempo_max > 0.0 and _t > tempo_max and not bambino.visibile_da(p):
+					_fine()
+				return
 			if _guardato(p):
 				_visto += delta
 			var vicino := global_position.distance_to(p.global_position) < distanza_fuga
@@ -130,7 +162,7 @@ func _process(delta: float) -> void:
 					bambino.guarda_qui = _punti[mini(1, _punti.size() - 1)].global_position + Vector3.UP * 0.9
 				if _fuga_tra <= 0.0:
 					_scappa()
-			elif _t > tempo_max and not bambino.visibile_da(p):
+			elif tempo_max > 0.0 and _t > tempo_max and not bambino.visibile_da(p):
 				_fine()
 
 
@@ -142,10 +174,20 @@ func _pronto(p: Player) -> bool:
 			return false
 	# (lei dietro l'oblò dello stesso posto: mai insieme a lei, solo dopo che è stata vista ed è andata via; se lei non
 	# c'è stata, perché il giocatore non l'ha vista, il bambino non compare: ritornando lei ricompare per prima)
+	if pronto_se.is_valid() and not bool(pronto_se.call()):
+		return false
+	if aspetta_lei and _lei_fuori():
+		return false
 	if aspetta and is_instance_valid(aspetta) and aspetta is ObloLei:
 		var o := aspetta as ObloLei
 		return o.stato == ObloLei.Stato.FINITA or not o.attivo
 	return true
+
+
+## Lei è fuori dall'acqua da qualche parte (il motore AcquaDiLei in uso, non lontana né calma).
+static func _lei_fuori() -> bool:
+	var a := AcquaDiLei.chi_la_usa()
+	return a != null and not (a.fase in [AcquaDiLei.Fase.LONTANA, AcquaDiLei.Fase.CALMA])
 
 
 ## Il giocatore vede il posto dove starà (una qualsiasi parte del corpo): allora non compare ancora.
@@ -164,7 +206,10 @@ func _mostra() -> void:
 	bambino.global_transform = global_transform
 	bambino.visible = true
 	bambino.process_mode = Node.PROCESS_MODE_INHERIT
-	bambino.osserva()
+	if guarda_il_disegno:
+		bambino.disegna()
+	else:
+		bambino.osserva()
 	comparso.emit()
 
 
@@ -181,6 +226,43 @@ func _scappa() -> void:
 	scappato.emit()
 
 
+func _su_scappa() -> void:
+	if stato == Stato.GUARDA:
+		stato = Stato.SCAPPA
+		scappato.emit()
+
+
+func _su_pastello(dove: Vector3) -> void:
+	_pastello_giro = randf_range(0.0, 360.0)
+	_metti_pastello(dove)
+	pastello_caduto.emit(_pastello_dove)
+
+
+## Il pastello per terra in [param dove] (lontano da [member pastello_evita]), appoggiato con Posa.
+func _metti_pastello(dove: Vector3) -> void:
+	if pastello_a_terra == null or not is_inside_tree():
+		return
+	for i in 8:
+		var vicino := false
+		for q in pastello_evita:
+			var d := Vector2(dove.x - q.x, dove.z - q.z)
+			if d.length() < pastello_lontano:
+				vicino = true
+				var via := d.normalized() if d.length() > 0.001 else Vector2(global_basis.z.x, global_basis.z.z).normalized()
+				dove += Vector3(via.x, 0.0, via.y) * (pastello_lontano - d.length() + 0.02)
+		if not vicino:
+			break
+	if pastello == null or not is_instance_valid(pastello):
+		pastello = pastello_a_terra.instantiate() as Node3D
+		pastello.name = "PastelloCaduto"
+		pastello.top_level = true
+		add_child(pastello)
+	pastello.global_position = dove + Vector3.UP * 0.05
+	pastello.global_rotation = Vector3(0.0, deg_to_rad(_pastello_giro), 0.0)
+	Posa.appoggia_a_terra(pastello)
+	_pastello_dove = pastello.global_position
+
+
 func _sparito() -> void:
 	_fine()
 
@@ -194,10 +276,21 @@ func _fine() -> void:
 
 
 func save_state() -> Dictionary:
-	return {"finito": stato == Stato.FINITO}
+	var d := {"finito": stato == Stato.FINITO}
+	if _pastello_dove != Vector3.INF:
+		d["pastello"] = [_pastello_dove.x, _pastello_dove.y, _pastello_dove.z, _pastello_giro]
+	return d
 
 
 func load_state(s: Dictionary) -> void:
+	var pp: Array = s.get("pastello", [])
+	if pp.size() == 4:
+		_pastello_giro = float(pp[3])
+		_metti_pastello(Vector3(float(pp[0]), float(pp[1]), float(pp[2])))
+	elif pastello and is_instance_valid(pastello):
+		pastello.queue_free()
+		pastello = null
+		_pastello_dove = Vector3.INF
 	if bool(s.get("finito", false)):
 		_fine()
 	else:

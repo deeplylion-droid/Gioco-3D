@@ -26,6 +26,11 @@ signal ripristinato
 
 enum Stato { APERTO, TORBIDO, GORGO, RISOLTO }
 
+const BAMBINO_CUBO := preload("res://scenes/creature/bambino_cubo.tscn")
+const PASTELLO := preload("res://assets/storia_disegni/pastello.glb")
+## Il bambino col cubo sta a tanti metri dal vetro, sotto il disegno (mascotte: 52-62 gradi in su col cubo in testa).
+const BAMBINO_DAL_VETRO := 1.2
+
 ## Il portone della sala della torre: lo apre solo l'enigma.
 @export var portone: Node
 ## La tappa 8 (LeiSbuca): gli acquari funzionano solo quando è FINITA.
@@ -52,6 +57,9 @@ enum Stato { APERTO, TORBIDO, GORGO, RISOLTO }
 
 var stato := Stato.APERTO
 var comparsi := false
+## Il bambino col cubo che guarda in su il disegno sul vetro dell'acquario giallo (build 0.5.0, «La storia»: l'aiuto del
+## bambino con la scatola, l'apparizione agli acquari del GDD). Vedi [method _bambino_col_cubo].
+var bambino_disegno: BambinoSfuggita
 var attivi := false
 
 var _giallo: WaterTank
@@ -106,6 +114,46 @@ func _ready() -> void:
 	# la Polaroid 14 (la prima notte dopo il naufragio, la statua che si accende, proposta del 25 ottobre notte): per terra
 	# davanti all'acquario giallo, sotto il disegno a pastello dei bambini, come se l'avessero lasciata lì con lui
 	PolaroidPhoto.metti(self, 14, Vector3(17.25, 0.03, -20.5), -25.0)
+	_bambino_col_cubo()
+
+
+## Il bambino col cubo davanti al disegno (build 0.5.0, GDD «l'apparizione agli acquari», posa di mascotte: Bambino in
+## DISEGNA con guarda_il_disegno). In piedi a 1,2 m dal vetro del cilindro giallo, sotto il disegno (2,45-3,35 m),
+## girato verso il vetro, col pastello in mano. Compare una volta sola, quando gli acquari ci sono e funzionano (lei se
+## n'è andata, tappa 8 finita) e non sono ancora risolti: aiuta, guardando l'indizio. Mai sotto gli occhi del giocatore
+## (BambinoSfuggita), mai con lei fuori dall'acqua. Quando lo vedi o arrivi a 6 m gira la testa, resta un secondo e
+## scappa nel varco fra il cilindro e il muro est fino all'angolo dietro il cilindro (percorso libero e nascosto dalla
+## sala, provato coi raggi), dove sparisce fuori vista; il pastello gli cade e resta per terra, lontano dalla Polaroid 14.
+func _bambino_col_cubo() -> void:
+	var dis := get_node_or_null(^"Disegno/Modello") as MeshInstance3D
+	if dis == null or _giallo == null:
+		return
+	var ab := dis.global_transform * dis.get_aabb()
+	var c := to_local(ab.get_center())
+	var g := _giallo.position
+	var dir := Vector3(c.x - g.x, 0.0, c.z - g.z).normalized()
+	var b := BambinoSfuggita.new()
+	b.name = "BambinoAcquari"
+	b.scena = BAMBINO_CUBO
+	b.position = Vector3(c.x, 0.0, c.z) + dir * BAMBINO_DAL_VETRO
+	# guarda il vetro (il bambino guarda verso +Z del nodo)
+	b.rotation.y = atan2(-dir.x, -dir.z)
+	b.guarda_il_disegno = true
+	b.distanza_alza_testa = 6.0
+	b.zona = AABB(Vector3(3.0, -1.0, -25.0), Vector3(20.0, 7.0, 18.0))
+	b.da_dove = Vector3(17.9, 1.6, -15.0)
+	b.via = PackedVector3Array([Vector3(19.3, 0.0, -21.2), Vector3(19.45, 0.0, -22.6), Vector3(19.3, 0.0, -23.5)])
+	b.sparisce_dopo = 2
+	b.fuori_vista_minimo = 0.4
+	b.tempo_max = 0.0
+	b.partenza_continua = true
+	b.fermo_vivo = true
+	b.aspetta_lei = true
+	b.pastello_a_terra = PASTELLO
+	b.pastello_evita = PackedVector3Array([to_global(Vector3(17.25, 0.0, -20.5))])
+	b.pronto_se = func() -> bool: return comparsi and tappa8_finita() and stato != Stato.RISOLTO
+	add_child(b)
+	bambino_disegno = b
 
 
 ## Vero se lei è andata via (tappa 8 finita) o se non c'è la tappa 8.

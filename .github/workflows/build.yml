@@ -418,6 +418,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acquari.gd
 
+      - name: Test del bambino col cubo agli acquari (build 0.5.0; a 1,2 m dal vetro sotto il disegno, solo con gli acquari che funzionano e non risolti, mai sotto gli occhi, a 6 m gira la testa e dopo un secondo scappa, il pastello resta per terra, una volta sola)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambino_acquari.gd
+
       - name: Test della stanza delle pozze colorate (col giocatore vero, risolta nei due ordini, sbagliata e poi giusta, un quarto colore no, stato salvato a metà e risolto, si esce saltando da una pozza)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_pozze.gd
