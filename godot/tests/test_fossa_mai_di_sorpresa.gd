@@ -254,7 +254,8 @@ func _percorso(nome: String, punti: Array[Vector3], v: float, guarda_la_fossa: b
 				t_su = t
 				if dist <= 8.0:
 					errori.append("compare affacciata col giocatore a %.1f m" % dist)
-				if ls.fossa_in_vista(p) and Dissolvenza.schermo_libero(get_tree()):
+				# (ripartendo vicino alla fossa, appena caricata la sala a schermo nero, lei è già affacciata)
+				if ls.fossa_in_vista(p) and Dissolvenza.schermo_libero(get_tree()) and not (gia_li and t < 0.6):
 					errori.append("compare affacciata con la fossa in vista")
 			fase_prima = ls.fase
 		if GameState.is_dying:

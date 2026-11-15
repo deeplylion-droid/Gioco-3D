@@ -448,11 +448,7 @@ func puo_prendere() -> bool:
 func _affaccia() -> void:
 	in_vista_t = 0.0
 	sbucata_in_vista = false
-	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
-	if tank:
-		var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
-		if tank.fill < minimo:
-			tank.fill = minimo
+	_acqua_al_minimo()
 	fase = Fase.GUARDA
 	_t = 0.0
 	vista_t = 0.0
@@ -467,9 +463,32 @@ func _affaccia() -> void:
 	_accendi_morbidezza()
 
 
+## La fossa almeno a [member pelo_minimo]: l'acqua le copre il seno (affacciata o appena sbucata).
+func _acqua_al_minimo() -> void:
+	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
+	if tank:
+		var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
+		if tank.fill < minimo:
+			tank.fill = minimo
+
+
+## Ripartendo dal checkpoint vicino alla fossa (dopo una presa, F9, Continua), a schermo ancora nero: lei è già affacciata,
+## come prima che la scena ricominci (col giocatore oltre [member distanza_affaccia]); vero se l'ha fatto.
+func affaccia_alla_ripartenza() -> bool:
+	aspetta_il_giro = false
+	var p := GameState.player
+	if fase != Fase.ATTESA or punto_sbuca == null or p == null or not is_instance_valid(p) \
+			or _in_pianta(p.global_position, punto_sbuca.global_position) <= distanza_affaccia:
+		return false
+	_vuole_venire = false
+	_affaccia()
+	return true
+
+
 func _sbuca() -> void:
 	in_vista_t = 0.0
 	sbucata_in_vista = true
+	_acqua_al_minimo()
 	fase = Fase.SBUCA
 	_t = 0.0
 	vista_t = 0.0
