@@ -93,6 +93,12 @@ func _physics_process(_delta: float) -> void:
 	var in_sala := zona.has_point(p.global_position)
 	match stato:
 		Stato.ATTESA:
+			# la fossa c'è già stata (ripartendo da un checkpoint dopo, o con Continua): lei se n'è andata, niente giro
+			if lei_sbuca and (lei_sbuca.fase == LeiSbuca.Fase.FUGA or lei_sbuca.fase == LeiSbuca.Fase.FINITA):
+				stato = Stato.FINITO
+				acqua.lascia()
+				acqua.abilitata = false
+				return
 			if not in_sala:
 				return
 			if vicino_fossa:

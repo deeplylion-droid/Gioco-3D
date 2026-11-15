@@ -174,6 +174,26 @@ func _run() -> void:
 	check(lei_sbuca.medusa.visible and (lei_sbuca.fase == LeiSbuca.Fase.GUARDA or lei_sbuca.fase == LeiSbuca.Fase.SBUCA),
 			"e lei è alla fossa, come oggi")
 	check(AcquaDiLei.chi_la_usa() == null, "il motore l'ha lasciata")
+
+	print("5. Ripartendo dopo la fossa (CheckpointSpiaggiaBuio), con lei già andata via")
+	GameState.respawn()
+	for i in 60 * 30:
+		await get_tree().process_frame
+		if not GameState.is_dying and GameState.player and is_instance_valid(GameState.player) and get_tree().current_scene != level:
+			break
+	await _fisica(30)
+	level = get_tree().current_scene
+	buio = level.find_child("LeiSalaAlBuio", true, false) as LeiSalaAlBuio
+	lei_sbuca = level.find_child("LeiSbuca", true, false) as LeiSbuca
+	p = GameState.player as Player
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	lei_sbuca.call(&"_finita")      # (come la restituisce il checkpoint dopo la fossa: FINITA)
+	var spiaggia := (level.find_child("CheckpointSpiaggiaBuio", true, false) as Checkpoint).spawn_point.global_position
+	for i in 120:
+		p.teleport(spiaggia + Vector3(0, 0.05, 0))
+		await get_tree().physics_frame
+	check(buio.stato == LeiSalaAlBuio.Stato.FINITO and not buio.acqua.in_giro() and not buio.acqua.abilitata \
+			and AcquaDiLei.chi_la_usa() == null, "il giro non riparte: la sala al buio è finita e spenta (stato %d)" % buio.stato)
 	_fine()
 
 
