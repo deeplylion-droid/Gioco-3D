@@ -1,4 +1,4 @@
-Versione 0.4.0 «L'acqua è sua»: unione di lavoro/candidata-0400c (4b82e170)
+Versione 0.4.0 «L'acqua è sua»: unione di lavoro/quarta-candidata-0400 (5c46d3f0)
 
 Prima delle tre build decise il 15 novembre. Da quando si riaccendono le pompe, dove c'è acqua vera può arrivare
 lei: la luce rosa sotto il pelo e il canto avvisano 3,5 secondi prima (motore AcquaDiLei). Sala pompe: la lezione
@@ -8,12 +8,24 @@ trascina al bordo della pozza (niente viso). Sala al buio: il giro nella vasca g
 la fossa, che non sorprende mai. Tunnel: lo spruzzo (carica a 8 m, 2,5 secondi per respingerla, 4 finché non la si
 è respinta una volta). Canto: la sigla del parco lenta e storpiata prima del tunnel e nel tunnel, mai tagliata di
 colpo. Menu F9: tre partenze nuove.
+
 Pezzi: lavoro/acqua-di-lei 82f171c2 (mascotte), lavoro/pozze-lei f342d44a (enigmi), lavoro/canto-prima
 422c5221 e lavoro/pompe-lezione 243eaf76 (ambienti-1), lavoro/tunnel-spruzzo 6fd9fdef (mascotte),
-lavoro/lancia-fov 1e123eec, partenze F9 7e66df28 + dd38cef2 + a117e574 (ambienti-1).
+lavoro/lancia-fov 1e123eec, partenze F9 7e66df28 + dd38cef2 + a117e574 (ambienti-1), test_presa_vera
+8fb3b69e + c4c7c325 (enigmi: si ferma a guardarla prima della fossa, non può più restare appeso), controlli
+dei tempi della torre ripetuti e6a1cb96 (ambienti-1: test_oblo_leggeri e test_torre_ingresso rifanno la zona e
+rimisurano fino a tre volte; sui runner lenti cadevano a caso).
 Fuori dalla 0.4.0: la torre (lavoro/torre-vasche-lei, non unito: serve rigenerarla con gli scarichi).
-Ricontrolli: ambienti-2 (pozze: morte, Continua, partita nuova, bordi), ambienti-1 (tunnel e sala al buio).
-[DA COMPLETARE: CI Build e Prova su Vulkan sulla candidata; collaudo coi fogli guardati dal coordinatore.]
+
+Candidate: la prima (d9a801c7) rossa su test_tappa8, adeguato alla regola nuova della fossa; la seconda
+(0c177214) appesa su test_presa_vera, corretto; la terza (4b82e170) con la Build verde (run 43755696383);
+la quarta è la terza più i due test della torre (stessi file di gioco).
+[DA COMPLETARE: Build della quarta, run 43761258575]
+[DA COMPLETARE: Prova su Vulkan della terza, run 43755696401: verdetto]
+[DA COMPLETARE: collaudo sulla terza, lavoro/collaudo-0400: punti e fogli guardati dal coordinatore]
+Noti e lasciati: test_pozze_lei dà poco tempo a lei per arrivare e cade circa 1 volta su 20 (il gioco è giusto;
+correzione pronta su lavoro/test-pozze-attese fbe7df86); test_attesa_zone può cadere per un fotogramma lento del
+runner; primo_avvio nella Prova su Vulkan scade col gioco ancora vivo (limite del renderer software).
 
 Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01Ub9Z8mJaiFbdfRfYi8QhGz
