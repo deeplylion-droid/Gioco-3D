@@ -21,7 +21,9 @@ Candidate: la prima (d9a801c7) rossa su test_tappa8, adeguato alla regola nuova 
 (0c177214) appesa su test_presa_vera, corretto; la terza (4b82e170) con la Build verde (run 43755696383);
 la quarta è la terza più i due test della torre (stessi file di gioco).
 [DA COMPLETARE: Build della quarta, run 43761258575]
-[DA COMPLETARE: Prova su Vulkan della terza, run 43755696401: verdetto]
+Prova su Vulkan della terza (run 43755696401, stessi file di gioco della quarta): fiume, inseguimento, torre e
+tunnel arrivano, ripartono dopo la morte e restano (picco video del fiume 4248 MB, limite 4672); strati e luci ok,
+0 ERROR: BUG; rosso solo primo_avvio, scaduto col gioco ancora vivo (limite noto, come sulle prime due candidate).
 [DA COMPLETARE: collaudo sulla terza, lavoro/collaudo-0400: punti e fogli guardati dal coordinatore]
 Noti e lasciati: test_pozze_lei dà poco tempo a lei per arrivare e cade circa 1 volta su 20 (il gioco è giusto;
 correzione pronta su lavoro/test-pozze-attese fbe7df86); test_attesa_zone può cadere per un fotogramma lento del
