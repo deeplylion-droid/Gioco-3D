@@ -8,7 +8,8 @@ extends Node
 ## - la memoria resta sotto [constant MEMORIA_MAX] (statica, quella che si misura senza scheda video);
 ## - morendo si riparte dallo stesso checkpoint;
 ## - le partenze della 0.4.0 nel loro stato: sala pompe con le pompe da riavviare, stanza delle pozze con l'enigma da
-##   fare, sala al buio con lei non ancora sbucata dalla fossa.
+##   fare, sala al buio con lei non ancora sbucata dalla fossa e il giro della luce che parte solo uscendo dalla
+##   serranda.
 ## E il titolo: F9 apre il menu di prova con le partenze, Esc lo chiude, fra le voci del titolo non c'è.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_partenze_prova.gd [id,id]
 
@@ -162,7 +163,7 @@ func _partenza(id: String) -> void:
 		if objects.has(key) and n.has_method(&"save_state") and not _uguali(n.call(&"save_state"), objects[key]):
 			diversi.append(key)
 	_check(diversi.is_empty(), "%s: gli oggetti persist come nell'istantanea (diversi: %s)" % [id, diversi])
-	_controlli_0400(id, level)
+	await _controlli_0400(id, level)
 	if String(d["checkpoint"]).begins_with("SalaTorre"):
 		_check(level.get(&"sala_torre") is Node, "%s: la torre c'è" % id)
 	if String(d["checkpoint"]).begins_with("SalaSottomarino"):
@@ -198,6 +199,21 @@ func _controlli_0400(id: String, level: Node) -> void:
 					"%s: lei non è ancora sbucata dalla fossa" % id)
 			var serranda := level.get_node_or_null(^"Tecnici/Logica/SerrandaMagazzino")
 			_check(serranda != null and bool(serranda.get(&"aperta")), "%s: la serranda del magazzino è aperta" % id)
+			# il giro della luce parte solo uscendo dalla serranda (dentro la sala al buio), non al checkpoint
+			var giro := level.get_node_or_null(^"Gioco/LeiSalaAlBuio")
+			_check(giro != null and int(giro.get(&"stato")) == 0, "%s: al checkpoint il giro della luce non è partito (stato %s)"
+					% [id, giro.get(&"stato") if giro else "-"])
+			var pl := GameState.player as Node3D
+			if giro and pl:
+				var da := pl.global_position
+				pl.global_position = da + Vector3(0, 0, -4)
+				for i in 20:
+					await get_tree().physics_frame
+				_check(int(giro.get(&"stato")) == 1, "%s: uscendo dalla serranda (4 m dentro la sala) il giro parte (stato %d)"
+						% [id, giro.get(&"stato")])
+				pl.global_position = da
+				for i in 20:
+					await get_tree().physics_frame
 
 
 func _aspetta_ripresa() -> void:
