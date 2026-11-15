@@ -20,7 +20,8 @@ Fuori dalla 0.4.0: la torre (lavoro/torre-vasche-lei, non unito: serve rigenerar
 Candidate: la prima (d9a801c7) rossa su test_tappa8, adeguato alla regola nuova della fossa; la seconda
 (0c177214) appesa su test_presa_vera, corretto; la terza (4b82e170) con la Build verde (run 43755696383);
 la quarta è la terza più i due test della torre (stessi file di gioco).
-[DA COMPLETARE: Build della quarta, run 43761258575]
+Build della quarta VERDE (run 43761258575, 143 minuti: i 133 passi di controllo e di test, l'esportazione Windows e
+Linux e i caricamenti; i due test della torre passati alla prima misura).
 Prova su Vulkan della terza (run 43755696401, stessi file di gioco della quarta): fiume, inseguimento, torre e
 tunnel arrivano, ripartono dopo la morte e restano (picco video del fiume 4248 MB, limite 4672); strati e luci ok,
 0 ERROR: BUG; rosso solo primo_avvio, scaduto col gioco ancora vivo (limite noto, come sulle prime due candidate).
