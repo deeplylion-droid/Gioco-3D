@@ -1709,6 +1709,206 @@
   "lufs": -19.0,
   "lufs_max": -14.8
  },
+ "lei/lei_canto_prima_lontano_01": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_01.ogg",
+  "canali": 1,
+  "durata": 14.018,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.9,
+  "lufs_max": -26.8
+ },
+ "lei/lei_canto_prima_lontano_02": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_02.ogg",
+  "canali": 1,
+  "durata": 10.648,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -34.0,
+  "lufs_max": -27.8
+ },
+ "lei/lei_canto_prima_lontano_03": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_03.ogg",
+  "canali": 1,
+  "durata": 12.881,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.8,
+  "lufs_max": -24.2
+ },
+ "lei/lei_canto_prima_lontano_04": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_04.ogg",
+  "canali": 1,
+  "durata": 10.784,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.9,
+  "lufs_max": -29.0
+ },
+ "lei/lei_canto_prima_lontano_05": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_05.ogg",
+  "canali": 1,
+  "durata": 12.24,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.9,
+  "lufs_max": -22.3
+ },
+ "lei/lei_canto_prima_lontano_06": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_06.ogg",
+  "canali": 1,
+  "durata": 11.108,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -34.0,
+  "lufs_max": -28.3
+ },
+ "lei/lei_canto_prima_lontano_07": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_07.ogg",
+  "canali": 1,
+  "durata": 11.144,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.9,
+  "lufs_max": -25.3
+ },
+ "lei/lei_canto_prima_lontano_08": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_08.ogg",
+  "canali": 1,
+  "durata": 10.778,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.9,
+  "lufs_max": -27.7
+ },
+ "lei/lei_canto_prima_lontano_09": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_09.ogg",
+  "canali": 1,
+  "durata": 12.414,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.9,
+  "lufs_max": -27.7
+ },
+ "lei/lei_canto_prima_lontano_10": {
+  "file": "res://audio/lei/lei_canto_prima_lontano_10.ogg",
+  "canali": 1,
+  "durata": 10.165,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre)",
+  "lufs": -33.9,
+  "lufs_max": -26.9
+ },
+ "lei/lei_canto_prima_vicino_01": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_01.ogg",
+  "canali": 1,
+  "durata": 14.018,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -22.0
+ },
+ "lei/lei_canto_prima_vicino_02": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_02.ogg",
+  "canali": 1,
+  "durata": 10.648,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -19.5
+ },
+ "lei/lei_canto_prima_vicino_03": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_03.ogg",
+  "canali": 1,
+  "durata": 12.881,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -19.5
+ },
+ "lei/lei_canto_prima_vicino_04": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_04.ogg",
+  "canali": 1,
+  "durata": 10.784,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -21.4
+ },
+ "lei/lei_canto_prima_vicino_05": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_05.ogg",
+  "canali": 1,
+  "durata": 12.24,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -19.4
+ },
+ "lei/lei_canto_prima_vicino_06": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_06.ogg",
+  "canali": 1,
+  "durata": 11.108,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -22.7
+ },
+ "lei/lei_canto_prima_vicino_07": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_07.ogg",
+  "canali": 1,
+  "durata": 11.144,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -20.7
+ },
+ "lei/lei_canto_prima_vicino_08": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_08.ogg",
+  "canali": 1,
+  "durata": 10.778,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -21.7
+ },
+ "lei/lei_canto_prima_vicino_09": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_09.ogg",
+  "canali": 1,
+  "durata": 12.414,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -20.7
+ },
+ "lei/lei_canto_prima_vicino_10": {
+  "file": "res://audio/lei/lei_canto_prima_vicino_10.ogg",
+  "canali": 1,
+  "durata": 10.165,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre)",
+  "lufs": -27.0,
+  "lufs_max": -22.2
+ },
  "lei/lei_esplosione": {
   "file": "res://audio/lei/lei_esplosione.ogg",
   "canali": 2,
@@ -1862,102 +2062,102 @@
  "lei/lei_tunnel_canto_01": {
   "file": "res://audio/lei/lei_tunnel_canto_01.ogg",
   "canali": 1,
-  "durata": 6.272,
+  "durata": 9.431,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -17.2
+  "lufs_max": -16.0
  },
  "lei/lei_tunnel_canto_02": {
   "file": "res://audio/lei/lei_tunnel_canto_02.ogg",
   "canali": 1,
-  "durata": 7.845,
+  "durata": 5.201,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -17.0
+  "lufs_max": -13.8
  },
  "lei/lei_tunnel_canto_03": {
   "file": "res://audio/lei/lei_tunnel_canto_03.ogg",
   "canali": 1,
-  "durata": 7.762,
+  "durata": 6.277,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -15.7
+  "lufs_max": -17.1
  },
  "lei/lei_tunnel_canto_04": {
   "file": "res://audio/lei/lei_tunnel_canto_04.ogg",
   "canali": 1,
-  "durata": 9.161,
+  "durata": 7.252,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -16.3
+  "lufs_max": -16.7
  },
  "lei/lei_tunnel_canto_05": {
   "file": "res://audio/lei/lei_tunnel_canto_05.ogg",
   "canali": 1,
-  "durata": 6.644,
+  "durata": 6.487,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
-  "lufs": -21.7,
-  "lufs_max": -15.5
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.6,
+  "lufs_max": -16.7
  },
  "lei/lei_tunnel_canto_06": {
   "file": "res://audio/lei/lei_tunnel_canto_06.ogg",
   "canali": 1,
-  "durata": 5.969,
+  "durata": 6.111,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -18.3
+  "lufs_max": -16.7
  },
  "lei/lei_tunnel_canto_07": {
   "file": "res://audio/lei/lei_tunnel_canto_07.ogg",
   "canali": 1,
-  "durata": 6.364,
+  "durata": 7.766,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -17.1
+  "lufs_max": -15.8
  },
  "lei/lei_tunnel_canto_08": {
   "file": "res://audio/lei/lei_tunnel_canto_08.ogg",
   "canali": 1,
-  "durata": 5.87,
+  "durata": 8.204,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -17.7
+  "lufs_max": -16.5
  },
  "lei/lei_tunnel_canto_09": {
   "file": "res://audio/lei/lei_tunnel_canto_09.ogg",
   "canali": 1,
-  "durata": 7.092,
+  "durata": 7.341,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
   "lufs": -21.7,
-  "lufs_max": -15.4
+  "lufs_max": -14.2
  },
  "lei/lei_tunnel_canto_10": {
   "file": "res://audio/lei/lei_tunnel_canto_10.ogg",
   "canali": 1,
-  "durata": 6.797,
+  "durata": 6.543,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue",
-  "lufs": -21.6,
-  "lufs_max": -17.7
+  "nota": "tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue",
+  "lufs": -21.7,
+  "lufs_max": -16.8
  },
  "lei/lei_tunnel_fiato_loop": {
   "file": "res://audio/lei/lei_tunnel_fiato_loop.ogg",
