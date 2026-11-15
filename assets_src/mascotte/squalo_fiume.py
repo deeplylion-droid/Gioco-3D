@@ -367,7 +367,7 @@ def main():
         o.select_set(o in (mesh, arm))
     bpy.context.view_layer.objects.active = arm
     bpy.ops.export_scene.gltf(filepath=USCITA, export_format='GLB', use_selection=True,
-                              export_image_format='JPEG', export_jpeg_quality=90, export_yup=True,
+                              export_image_format='NONE', export_yup=True,
                               export_animations=True, export_animation_mode='ACTIONS',
                               export_force_sampling=True, export_skins=True, export_def_bones=True)
     with open(USCITA.replace('.glb', '.json'), 'w') as f:

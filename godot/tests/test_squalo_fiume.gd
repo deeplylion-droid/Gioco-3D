@@ -87,6 +87,19 @@ func _run() -> void:
 		_sq.connect(nome, func(): _segnali[nome] += 1)
 	await get_tree().physics_frame
 
+	print("0. Una copia sola delle texture")
+	var con_tex := 0
+	var superfici := 0
+	for mi in _sq.squalo.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		for i in m.get_surface_count():
+			superfici += 1
+			var o := (mi as MeshInstance3D).get_surface_override_material(i)
+			if o is BaseMaterial3D and (o as BaseMaterial3D).albedo_texture != null \
+					and (o as BaseMaterial3D).albedo_texture.resource_path.begins_with("res://assets/models/mascotte/mostro_squalo_A_rig"):
+				con_tex += 1
+	check(con_tex >= 1, "la pelle usa le texture del modello col rig (%d superfici su %d)" % [con_tex, superfici])
+
 	print("1. Segue la ciambella")
 	_g.attacca = false
 	_sq.comincia()
