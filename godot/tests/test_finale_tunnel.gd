@@ -133,9 +133,16 @@ func _prova(bambini: bool, tutto: bool) -> void:
 	var foglio_t := 0.0
 	var visti := false
 	var alto := float(get_viewport().get_visible_rect().size.y)
+	# il foglio in mano: la sua posizione rispetto al punto fra le due mani, nel sistema del bambino, fotogramma per
+	# fotogramma da quando si vede (porge e porge_tiene): deve restare la stessa (niente distacco quando parte il gesto)
+	var foglio_mani: Array = []
 	while not fine[0] and t[0] < 40.0:
 		await get_tree().process_frame
 		t[0] += get_process_delta_time()
+		if tutto and sott._foglio and sott._foglio.is_visible_in_tree() and sott.fase_finale in ["porge", "foglio"]:
+			var mani := _mani(bb[0])
+			if mani != Vector3.INF:
+				foglio_mani.append(bb[0].global_transform.affine_inverse() * sott._foglio.global_position - mani)
 		var lei := sott.lei_tunnel.lei
 		var bambini_visti := bb.any(func(b): return b.is_visible_in_tree())
 		if bambini_visti:
@@ -179,7 +186,34 @@ func _prova(bambini: bool, tutto: bool) -> void:
 			"il foglio riempie più di metà dello schermo per %.0f s (%.1f s, almeno %.0f%% dell'altezza)" % [sott.finale_foglio, foglio_t, foglio_min * 100.0])
 	check(fine[0] and absf(t[0] - float(fasi["nero"]) - 1.2) < 0.1, "nero in 1,2 s e la fine (%.2f s)" % (t[0] - float(fasi["nero"])))
 	check(visti and insieme == 0 and canto == 0, "mai i bambini insieme a lei, e col canto spento (%d fotogrammi con lei, %d col canto)" % [insieme, canto])
+	if bb[0].has_method(&"porge"):
+		var scarto := 0.0
+		for v: Vector3 in foglio_mani:
+			scarto = maxf(scarto, v.distance_to(foglio_mani[0]))
+		check(foglio_mani.size() > 30 and scarto < 0.03,
+			"il foglio segue le mani in tutti i fotogrammi del gesto (%d fotogrammi, si sposta al più di %.3f m rispetto alle mani)" % [foglio_mani.size(), scarto])
 	var porge := bb[0] as Bambino
 	var occhi_p := p.global_position
 	check(Vector2(porge.global_position.x - occhi_p.x, porge.global_position.z - occhi_p.z).length() < 3.0 - sott.porge_passi + 0.4,
 			"il bambino col cubo è venuto avanti di due passi (a %.2f m)" % Vector2(porge.global_position.x - occhi_p.x, porge.global_position.z - occhi_p.z).length())
+
+
+## Il punto fra le due mani del bambino [param b] (le ossa LeftHand e RightHand del modello che si vede), nel suo
+## sistema; INF se non ci sono.
+func _mani(b: Node3D) -> Vector3:
+	for m in ["Calmo", "Rivelato"]:
+		var mod := b.get_node_or_null(NodePath(m)) as Node3D
+		if mod == null or not mod.is_visible_in_tree():
+			continue
+		var sk := mod.find_children("*", "Skeleton3D", true, false)
+		if sk.is_empty():
+			continue
+		var s := sk[0] as Skeleton3D
+		var l := s.find_bone("LeftHand")
+		var r := s.find_bone("RightHand")
+		if l < 0 or r < 0:
+			continue
+		var gl := s.global_transform * s.get_bone_global_pose(l).origin
+		var gr := s.global_transform * s.get_bone_global_pose(r).origin
+		return b.global_transform.affine_inverse() * ((gl + gr) * 0.5)
+	return Vector3.INF

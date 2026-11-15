@@ -93,6 +93,21 @@ func _run() -> void:
 	while not fatte.has("foglio") and Time.get_ticks_msec() - t0 < 900000:
 		await get_tree().process_frame
 	_scatta("02_due_passi")
+	# dagli stessi occhi (durante il finale il giocatore non si muove: i comandi sono spenti), stretto sul bambino col
+	# cubo per vedere gli stracci dell'avambraccio; e quanto è di lato: l'angolo fra dove guarda lui e il giocatore
+	var b0: Node3D = sala._bambini_finale[0]
+	var occhio := _pl.get_eye_position()
+	var verso := occhio - b0.global_position
+	verso.y = 0.0
+	var avanti := b0.global_basis.z
+	avanti.y = 0.0
+	print("DI LATO: a %.2f m in pianta, %.1f gradi dal davanti del bambino col cubo" % [verso.length(), rad_to_deg(avanti.normalized().angle_to(verso.normalized()))])
+	var cam := get_viewport().get_camera_3d()
+	var fov := cam.fov
+	cam.fov = 28.0
+	await _fotogrammi(3)
+	_scatta("04_stretto_sul_braccio")
+	cam.fov = fov
 	while sala.fase_finale == "foglio" and Time.get_ticks_msec() - t0 < 900000:
 		await get_tree().process_frame
 		if Engine.get_process_frames() - int(fatte["foglio"]) == int(30 * (sala.finale_abbassa + 1.5)):
