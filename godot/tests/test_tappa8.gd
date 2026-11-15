@@ -107,9 +107,20 @@ func _run() -> void:
 	print("Al buio: lei è già affacciata alla fossa (riscontro sulla v0.3.1)")
 	# Come nel gioco: dal risveglio si arriva in fretta, l'acqua delle vasche basse è ancora quella di
 	# prima (nella v0.3.1 lei restava sotto finché non le eri addosso).
+	# (0.4.0, la fossa che non sorprende: dal blackout la luce va sotto la fossa con l'avviso intero, 3,5 s, e lei sbuca in
+	# vista se il giocatore è oltre 3,4 m dal suo occhio, poi è sul bordo; qui il giocatore è nell'area bimbi e guarda la
+	# fossa)
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	var t_su := 0
+	for i in 60 * 10:
+		p.look_at_point(lei.punto_sbuca.global_position + Vector3.UP * 1.2)
+		await get_tree().physics_frame
+		t_su += 1
+		if lei.fase == LeiSbuca.Fase.GUARDA:
+			break
 	await _frames(5)
-	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible, "appena c'è il blackout è già sul bordo, prima che tu arrivi (fase %d)" % lei.fase)
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible and t_su > 60 * 5,
+			"dal blackout l'avviso e la salita, poi è sul bordo prima che tu arrivi (fase %d, dopo %.1f s)" % [lei.fase, t_su / 60.0])
 	var vasca: WaterTank = level.get_node("Vasche/VascaBimbi1")
 	check(vasca.get_surface_global_y() >= minf(lei.pelo_minimo, lei.livello_pieno) - 0.002,
 		"e l'acqua della fossa le copre il seno (pelo %.3f)" % vasca.get_surface_global_y())

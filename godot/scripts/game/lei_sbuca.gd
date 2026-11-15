@@ -76,8 +76,28 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var distanza_vista := 14.0
 ## Uno sguardo interrotto per meno di così (s) non fa ripartire il conto.
 @export var tolleranza_vista := 0.3
+@export_group("Mai di sorpresa")
+## (collaudo della 0.4.0, decisione del coordinatore: «la fossa non deve mai sorprendere») Quando viene alla fossa (dopo
+## l'avviso intero della sala al buio) con la fossa in vista sbuca, la salita dal fondo, solo col giocatore più lontano di
+## così dal punto dove sarà il suo occhio (m, in pianta): la portata della presa ([member distanza_presa], 2,4 m: l'area
+## Tocco sta tutta dentro) più un metro. Più vicino aspetta sotto, con la luce che pulsa. (Prima 8 m dal bordo: chi
+## andava dritto alla fossa guardandola a fine avviso era a 5-7 m e lei non usciva quasi mai; riscontro del collaudo.)
+@export var distanza_sbuca := 3.4
+## Fuori dall'inquadratura (o a schermo nero) si mette già affacciata, ma solo col giocatore più lontano di così (m, in
+## pianta): non ce la si trova addosso girandosi.
+@export var distanza_affaccia := 8.0
+## Prende (avvicinandosi, toccandola, o subito dopo il getto) solo dopo che il giocatore l'ha avuta in vista, affacciata e
+## ferma, per tanti secondi in tutto (nell'inquadratura, entro [member vista_lontano] m e senza muri in mezzo): se è
+## comparsa già affacciata (fuori vista, a schermo nero) [member vista_per_prendere]; se l'ha vista sbucare
+## [member vista_dopo_sbucata], come la presa delle altre acque (AcquaDiLei.tempo_presa). Mentre sale non prende mai.
+@export var vista_per_prendere := 3.0
+@export var vista_dopo_sbucata := 1.6
+@export var vista_lontano := 40.0
 @export_group("")
 @export var durata_sbuca := 1.8
+## La sala al buio (0.4.0, LeiSalaAlBuio): lei prima gira nelle vasche della sala e si affaccia alla fossa solo quando
+## il giro finisce ([method vai_alla_fossa]).
+var aspetta_il_giro := false
 @export var durata_scivola := 1.6
 ## Scivolando sotto: quanto si alza e quanto arretra (m) per staccarsi dal bordo prima di scendere,
 ## in che parte della discesa (0..1) lo fa, e in che parte della discesa vera e propria svanisce.
@@ -127,6 +147,12 @@ var _schizzo_testa: SchizzoTuffo
 var _schizzo_coda: SchizzoTuffo
 var _entrata := Vector3.ZERO
 var _colpibile: WaterHitbox
+## Secondi in tutto in cui il giocatore l'ha avuta in vista affacciata e ferma (da [member vista_per_prendere] può prendere).
+var in_vista_t := 0.0
+## È sbucata (la salita in vista) invece di comparire già affacciata.
+var sbucata_in_vista := false
+## Deve venire alla fossa (il giro è finito, o non c'è): aspetta il momento in cui può ([method _prova_a_venire]).
+var _vuole_venire := false
 
 
 func _ready() -> void:
@@ -163,18 +189,34 @@ func _ready() -> void:
 		cs.position = Vector3(0.0, 1.35, 1.75)
 		_tocco.add_child(cs)
 		medusa.add_child(_tocco)
+		# (mentre sale non prende: solo affacciata e ferma, e dopo che l'hai vista; collaudo della 0.4.0)
 		_tocco.body_entered.connect(func(b: Node3D):
-			if b is Player and (fase == Fase.GUARDA or fase == Fase.SBUCA):
+			if b is Player and fase == Fase.GUARDA and puo_prendere():
 				_prendi())
 		_crea_colpibile()
 
 
 func _process(_delta: float) -> void:
+	_segna_in_scena()
 	if superficie_fossa == null or vasche.is_empty() or not vasche[0] is WaterTank:
 		return
 	if superficie_fossa.material_override == null and acque.size() > 0 and acque[0] and "material" in acque[0]:
 		superficie_fossa.material_override = acque[0].get(&"material")
 	superficie_fossa.global_position.y = (vasche[0] as WaterTank).get_surface_global_y()
+
+
+## Mentre la scena della fossa è in corso (lei visibile, affacciata, che scivola, fugge o prende) la sua lei sta nel
+## gruppo AcquaDiLei.LEI_IN_SCENA: lei è qui, gli specchi d'acqua non la chiamano e il loro canto lontano tace.
+func _segna_in_scena() -> void:
+	if medusa == null:
+		return
+	var attiva := medusa.visible and (fase == Fase.SBUCA or fase == Fase.GUARDA or fase == Fase.SCIVOLA
+			or fase == Fase.FUGA or fase == Fase.PRESA)
+	if attiva != medusa.is_in_group(AcquaDiLei.LEI_IN_SCENA):
+		if attiva:
+			medusa.add_to_group(AcquaDiLei.LEI_IN_SCENA)
+		else:
+			medusa.remove_from_group(AcquaDiLei.LEI_IN_SCENA)
 
 
 func _on_luci(f: GameState.Luci) -> void:
@@ -187,19 +229,22 @@ func _physics_process(delta: float) -> void:
 	if not abilitata or GameState.luci != GameState.Luci.BLACKOUT:
 		return
 	var p := GameState.player
-	if p == null or not is_instance_valid(p) or GameState.is_dying:
+	if p == null or not is_instance_valid(p) or GameState.is_dying or GameState.is_restoring():
 		return
 	_riempi(delta, p)
 	_t += delta
 	match fase:
 		Fase.ATTESA:
-			# Già affacciata quando arrivi: dal blackout (o ripartendo al buio) è sul bordo.
-			if punto_sbuca:
-				_affaccia()
+			# Già affacciata quando arrivi: dal blackout (o ripartendo al buio) è sul bordo. Con la sala al buio della
+			# 0.4.0 (LeiSalaAlBuio) prima gira nelle vasche, e viene qui quando il giro finisce (vai_alla_fossa).
+			if punto_sbuca and not aspetta_il_giro:
+				_vuole_venire = true
+			if _vuole_venire:
+				_prova_a_venire(p)
 		Fase.SBUCA:
 			var k := clampf(_t / durata_sbuca, 0.0, 1.0)
 			_metti_a(1.0 - _ease_out(k))
-			_controlla_presa(p)
+			# (mentre sale non prende)
 			_conta_vista(p, delta)
 			if k >= 1.0:
 				fase = Fase.GUARDA
@@ -207,7 +252,11 @@ func _physics_process(delta: float) -> void:
 				if _morbidezza and is_instance_valid(_morbidezza):
 					_morbidezza.trattieni = false
 		Fase.GUARDA:
+			if not puo_prendere() and in_vista(p):
+				in_vista_t += delta
 			_controlla_presa(p)
+			if fase == Fase.GUARDA and puo_prendere() and _tocco and _tocco.overlaps_body(p):
+				_prendi()
 			if fase != Fase.GUARDA:
 				return
 			# Resta lì finché non la spruzzi (_on_spruzzata); quanto la guardi si conta ancora.
@@ -317,12 +366,89 @@ func la_stai_guardando(p: Player) -> bool:
 
 ## Lei è già sul bordo della fossa, affacciata, senza la salita né il suono di quando sbuca: la fossa
 ## arriva subito almeno a [member pelo_minimo]. Ti segue con l'occhio e aspetta che la guardi bene.
+## Il giro della sala al buio è finito: lei viene alla fossa. Se il giocatore la sta guardando sbuca (sale dal fondo),
+## se no è già affacciata.
+func vai_alla_fossa() -> void:
+	aspetta_il_giro = false
+	if fase != Fase.ATTESA or punto_sbuca == null or GameState.luci != GameState.Luci.BLACKOUT:
+		return
+	_vuole_venire = true
+	var p := GameState.player
+	if p and is_instance_valid(p):
+		_prova_a_venire(p)
+
+
+## Viene alla fossa se adesso può senza sorprendere (collaudo della 0.4.0): con la fossa in vista sbuca solo col
+## giocatore ad almeno [member distanza_sbuca] m; fuori vista (o a schermo nero) si mette già affacciata, col giocatore
+## ad almeno [member distanza_affaccia] m. Se no aspetta (ci riprova a ogni fotogramma).
+func _prova_a_venire(p: Player) -> void:
+	if fase != Fase.ATTESA or punto_sbuca == null:
+		return
+	var d := _in_pianta(p.global_position, punto_sbuca.global_position)
+	var nero := not Dissolvenza.schermo_libero(get_tree())
+	if not nero and fossa_in_vista(p):
+		if _in_pianta(p.global_position, _testa_prevista()) > distanza_sbuca:
+			_vuole_venire = false
+			_sbuca()
+	elif d > distanza_affaccia:
+		_vuole_venire = false
+		_affaccia()
+
+
+## Vero se il giocatore vede il posto dove sbuca (la sua testa sopra il bordo o il bordo della fossa): nell'inquadratura,
+## entro [member vista_lontano] m e senza muri in mezzo.
+func fossa_in_vista(p: Player) -> bool:
+	for q in [_testa_prevista(), punto_sbuca.global_position + Vector3.UP * 0.3]:
+		if _punto_in_vista(p, q):
+			return true
+	return false
+
+
+## Vero se il giocatore la vede adesso (il suo occhio): nell'inquadratura, entro [member vista_lontano] m, niente in mezzo.
+func in_vista(p: Player) -> bool:
+	if medusa == null or not medusa.visible:
+		return false
+	var occhio: Vector3 = medusa.call(&"get_eye_position") if medusa.has_method(&"get_eye_position") else medusa.global_position
+	return _punto_in_vista(p, occhio)
+
+
+func _punto_in_vista(p: Player, q: Vector3) -> bool:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null or p == null or not is_instance_valid(p):
+		return false
+	if cam.global_position.distance_to(q) > vista_lontano or not cam.is_position_in_frustum(q):
+		return false
+	return _vista_libera(cam.global_position, q, p)
+
+
+## Niente in mezzo fra [param da] e [param q] (raggi a [param q] e 12 cm ai lati: ne basta uno libero su tre).
+func _vista_libera(da: Vector3, q: Vector3, p: Player) -> bool:
+	var space := p.get_world_3d().direct_space_state
+	var verso := q - da
+	var lato := verso.cross(Vector3.UP).normalized() * 0.12
+	for dx in [Vector3.ZERO, lato, -lato]:
+		var punto: Vector3 = q + dx
+		var r := PhysicsRayQueryParameters3D.create(da, punto - (punto - da).normalized() * 0.15, Layers.WORLD | Layers.PROPS, [p.get_rid()])
+		if space.intersect_ray(r).is_empty():
+			return true
+	return false
+
+
+## Vero mentre deve venire alla fossa ma aspetta (la fossa in vista col giocatore entro 8 m, o lui troppo vicino).
+func sta_aspettando() -> bool:
+	return fase == Fase.ATTESA and _vuole_venire
+
+
+## Può prendere: l'hai avuta in vista, affacciata e ferma, per [member vista_per_prendere] s ([member vista_dopo_sbucata]
+## se l'hai vista sbucare).
+func puo_prendere() -> bool:
+	return in_vista_t >= (vista_dopo_sbucata if sbucata_in_vista else vista_per_prendere)
+
+
 func _affaccia() -> void:
-	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
-	if tank:
-		var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
-		if tank.fill < minimo:
-			tank.fill = minimo
+	in_vista_t = 0.0
+	sbucata_in_vista = false
+	_acqua_al_minimo()
 	fase = Fase.GUARDA
 	_t = 0.0
 	vista_t = 0.0
@@ -337,7 +463,32 @@ func _affaccia() -> void:
 	_accendi_morbidezza()
 
 
+## La fossa almeno a [member pelo_minimo]: l'acqua le copre il seno (affacciata o appena sbucata).
+func _acqua_al_minimo() -> void:
+	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
+	if tank:
+		var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
+		if tank.fill < minimo:
+			tank.fill = minimo
+
+
+## Ripartendo dal checkpoint vicino alla fossa (dopo una presa, F9, Continua), a schermo ancora nero: lei è già affacciata,
+## come prima che la scena ricominci (col giocatore oltre [member distanza_affaccia]); vero se l'ha fatto.
+func affaccia_alla_ripartenza() -> bool:
+	aspetta_il_giro = false
+	var p := GameState.player
+	if fase != Fase.ATTESA or punto_sbuca == null or p == null or not is_instance_valid(p) \
+			or _in_pianta(p.global_position, punto_sbuca.global_position) <= distanza_affaccia:
+		return false
+	_vuole_venire = false
+	_affaccia()
+	return true
+
+
 func _sbuca() -> void:
+	in_vista_t = 0.0
+	sbucata_in_vista = true
+	_acqua_al_minimo()
 	fase = Fase.SBUCA
 	_t = 0.0
 	vista_t = 0.0
@@ -545,11 +696,16 @@ func _prendi() -> void:
 
 
 func _controlla_presa(p: Player) -> void:
-	if medusa == null or not medusa.visible:
+	if medusa == null or not medusa.visible or not puo_prendere():
 		return
 	var occhio: Vector3 = medusa.call(&"get_eye_position") if medusa.has_method(&"get_eye_position") else medusa.global_position
 	if _in_pianta(p.global_position, occhio) < distanza_presa:
 		_prendi()
+
+
+## Il pelo dell'acqua della fossa (per la luce di lei che ci arriva).
+func pelo_fossa() -> float:
+	return _pelo()
 
 
 ## Il pelo dell'acqua dove sbuca (la prima vasca: la fossa).
@@ -772,6 +928,8 @@ func _nascondi() -> void:
 
 func _ricomincia() -> void:
 	fase = Fase.ATTESA
+	_vuole_venire = false
+	in_vista_t = 0.0
 	_t = 0.0
 	vista_t = 0.0
 	vista_bene = false
