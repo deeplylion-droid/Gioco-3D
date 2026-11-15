@@ -1151,6 +1151,27 @@ func _fine_luci(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> 
 	lc.omni_range = 4.0
 	nodo.add_child(lc)
 	lc.global_position = _al(p + d * 1.6, r, Vector2(0.0, sg + 2.2))
+	# la lampada della stanza dei bambini (build 0.5.0): sul muro che chiude la stanza accanto al primo tratto, dalla
+	# parte del bambino col cubo, a 2,1 m; guarda nella stanza
+	var ls := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
+	ls.name = "LampadaStanza"
+	nodo.add_child(ls)
+	ls.global_position = _al(p + d * CAMERA_TRATTO, r, Vector2(-(CAMERA_MEZZA + stanza_mezza) * 0.5, sg + 2.1)) + d * 0.05
+	ls.look_at(ls.global_position + d * 2.0, Vector3.UP)
+	ls.rotate_object_local(Vector3.UP, PI)
+	_a_filo_del_muro(ls, d)
+	var gs := ls.find_child("globo", true, false) as MeshInstance3D
+	if gs:
+		gs.material_override = _mat_globo()
+	var os := OmniLight3D.new()
+	os.name = "LuceStanza"
+	os.light_color = Color(1.0, 0.76, 0.5)
+	os.light_energy = stanza_luce
+	os.omni_range = stanza_luce_raggio
+	os.omni_attenuation = 1.6
+	os.shadow_enabled = true
+	nodo.add_child(os)
+	os.global_position = ls.global_position + d * 0.4
 
 
 ## Un palo (o un tubo) di ferro da [param a] a [param b].
@@ -1609,11 +1630,15 @@ func _finale() -> void:
 ## La camera si abbassa sul foglio in tanti secondi, e il foglio resta davanti per [member finale_foglio] s.
 @export var finale_abbassa := 1.6
 @export var finale_foglio := 5.0
-## Da dove guardano: gli occhi del giocatore (sopra la soglia) mentre si abbassa sul foglio, e quanto viene avanti.
-@export var abbassa_occhi := 1.0
-@export var abbassa_avanti := 0.85
-## Il campo visivo della camera sul foglio (gradi).
+## Il campo visivo della camera sul foglio (gradi), e quanta altezza dello schermo prende il foglio.
 @export var foglio_fov := 55.0
+@export var foglio_schermo := 0.62
+## Quanto brillano gli agnellini delle sagome rispetto a quello davanti (si vede appena il viso).
+@export var sagoma_bagliore := 0.12
+## La lampada a gabbia nella stanza dei bambini, sul muro accanto al primo tratto (dalla parte del bambino col cubo):
+## quanto fa luce (energia) e fin dove arriva (m). Debole: i due davanti si riconoscono, le sagome dietro no.
+@export var stanza_luce := 0.35
+@export var stanza_luce_raggio := 4.5
 ## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
 ## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
 ## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
@@ -1640,6 +1665,7 @@ var fase_finale := ""
 signal fase_finale_cambiata(fase: String)
 var _bambini_finale: Array[Bambino] = []
 var _foglio: MeshInstance3D
+var _cam_finale: Camera3D
 
 
 ## Uno dei bambini del finale ([member bambini_finale]), nascosto e fermo finché la camera non si gira.
@@ -1661,6 +1687,11 @@ func _bambino_finale(i: int) -> void:
 	b.visible = false
 	b.process_mode = Node.PROCESS_MODE_DISABLED
 	b.set_meta(&"sagoma", bool(c[5]))
+	# (le sagome quasi nere: l'agnellino brilla al buio, dietro solo un filo)
+	if bool(c[5]):
+		for f in b.get_children():
+			if f is AgnelloFluorescente:
+				(f as AgnelloFluorescente).energia *= sagoma_bagliore
 	add_child(b)
 	_bambini_finale.append(b)
 
@@ -1779,44 +1810,50 @@ func _dopo_lo_schianto() -> void:
 	await get_tree().create_timer(0.6, false).timeout
 	if not is_inside_tree() or not is_instance_valid(pl):
 		return
-	# la camera si abbassa sul foglio
+	# la camera si abbassa sul foglio: una camera del finale, partita da dove guarda il giocatore, scende davanti al
+	# foglio finché lo riempie per [member foglio_schermo] dell'altezza dello schermo (il corpo del giocatore resta lì)
 	_fase("foglio")
-	var cam := pl.get_node_or_null(^"Head/Camera3D") as Camera3D
-	var fov0 := cam.fov if cam else 75.0
-	var cam_da := cam.position if cam else Vector3.ZERO
-	var eye0 := pl.get_eye_position()
-	var sg := piano + SOGLIA
-	var al_foglio := _foglio.global_position - eye0
-	al_foglio.y = 0.0
-	var eye1 := Vector3(eye0.x, sg + abbassa_occhi, eye0.z) + al_foglio.normalized() * abbassa_avanti
-	var yaw_a := pl.yaw
-	var pitch_a := pl.pitch
+	var cam_g := get_viewport().get_camera_3d()
+	_cam_finale = Camera3D.new()
+	_cam_finale.name = "CameraFinale"
+	add_child(_cam_finale)
+	if cam_g:
+		_cam_finale.global_transform = cam_g.global_transform
+		_cam_finale.fov = cam_g.fov
+		_cam_finale.environment = cam_g.environment
+		_cam_finale.attributes = cam_g.attributes
+		_cam_finale.near = cam_g.near
+		_cam_finale.cull_mask = cam_g.cull_mask
+	_cam_finale.make_current()
+	var da_xf := _cam_finale.global_transform
+	var fov0 := _cam_finale.fov
 	var tf := create_tween()
 	tf.tween_method(func(k: float):
-		if not is_instance_valid(pl) or not is_instance_valid(_foglio):
+		if not is_instance_valid(_foglio) or not is_instance_valid(_cam_finale):
 			return
-		var e := eye0.lerp(eye1, k)
-		var df := _foglio.global_position - e
-		var yaw_f := atan2(-df.x, -df.z)
-		var pitch_f := atan2(df.y, Vector2(df.x, df.z).length())
-		pl.set_look(lerp_angle(yaw_a, yaw_f, k), lerpf(pitch_a, pitch_f, k))
-		if cam:
-			# (la camera scende e va avanti dentro la testa, che resta dov'è: il corpo non si muove)
-			cam.global_position = e
-			cam.fov = lerpf(fov0, foglio_fov, k), 0.0, 1.0, finale_abbassa).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		var a := _sul_foglio()
+		var pos := da_xf.origin.lerp(a.origin, k)
+		_cam_finale.global_transform = Transform3D(da_xf.basis.slerp(a.basis, k), pos)
+		_cam_finale.fov = lerpf(fov0, foglio_fov, k), 0.0, 1.0, finale_abbassa).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await tf.finished
-	# (poi resta sul foglio: la testa del giocatore torna a guardarlo se il foglio si muove con la mano)
+	# (poi resta sul foglio, anche se la mano lo muove)
 	var fermo := create_tween()
 	fermo.tween_method(func(_k: float):
-		if is_instance_valid(pl) and is_instance_valid(_foglio) and cam:
-			var df := _foglio.global_position - cam.global_position
-			pl.set_look(atan2(-df.x, -df.z), atan2(df.y, Vector2(df.x, df.z).length()))
-			cam.global_position = eye1, 0.0, 1.0, finale_foglio)
+		if is_instance_valid(_foglio) and is_instance_valid(_cam_finale):
+			_cam_finale.global_transform = _sul_foglio(), 0.0, 1.0, finale_foglio)
 	await fermo.finished
-	if cam and is_instance_valid(cam):
-		cam.fov = fov0
-		cam.position = cam_da
 	_nero()
+
+
+## Dove sta la camera del finale sul foglio: davanti al disegno, alla distanza a cui il foglio riempie
+## [member foglio_schermo] dell'altezza dello schermo col campo visivo [member foglio_fov], e lo guarda.
+func _sul_foglio() -> Transform3D:
+	var c := _foglio.global_position
+	var n := _foglio.global_basis.z.normalized()
+	var alto := FOGLIO.y * _foglio.global_basis.y.length()
+	var dist := alto / foglio_schermo / (2.0 * tan(deg_to_rad(foglio_fov) * 0.5))
+	var pos := c + n * dist
+	return Transform3D(Basis.looking_at(c - pos, _foglio.global_basis.y.normalized()), pos)
 
 
 ## Il foglio del finale: il disegno DZ (o un foglio bianco finché non c'è) su un foglio di carta A4, il disegno verso +Z.
@@ -1849,7 +1886,14 @@ func _nero() -> void:
 	add_child(cl)
 	var tw := create_tween()
 	tw.tween_property(fade, "color:a", 1.0, 1.2)
-	tw.tween_callback(func(): fine_demo.emit())
+	tw.tween_callback(func():
+		# (la camera del finale lascia il posto a quella del giocatore, sotto il nero)
+		if is_instance_valid(_cam_finale):
+			var pl := GameState.player
+			if pl and is_instance_valid(pl) and pl.camera:
+				pl.camera.make_current()
+			_cam_finale.queue_free()
+		fine_demo.emit())
 
 
 ## Le luci del tunnel: lampade a gabbia sui muri ogni 9 m, alternate, e oblò illuminati.

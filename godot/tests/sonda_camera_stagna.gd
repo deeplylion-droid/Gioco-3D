@@ -9,8 +9,8 @@ func _run() -> void:
 	sala.costruisci()
 	var L := sala.lunghezza()
 	print("L=", L, " p=", sala.punto(L), " d=", sala.direzione(L), " r=", sala.destra(L), " piano=", sala.piano, " muro=", sala.muro)
-	for s in [L - 40.0, L - 20.0, L - 10.0, L]:
-		print("  s=", s, " p=", sala.punto(s), " d=", sala.direzione(s))
+	for s in [-4.5, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0, L - 40.0, L - 20.0, L - 10.0, L]:
+		print("  s=", s, " p=", sala.punto(s), " d=", sala.direzione(s), " r=", sala.destra(s), " canale=", sala.canale, " banchina=", sala.banchina, " acqua=", sala.acqua)
 	var aabb := AABB()
 	var primo := true
 	for mi in sala.find_children("*", "VisualInstance3D", true, false):

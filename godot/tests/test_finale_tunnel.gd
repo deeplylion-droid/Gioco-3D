@@ -115,7 +115,6 @@ func _prova(bambini: bool, tutto: bool) -> void:
 	var foglio_min := 2.0
 	var foglio_t := 0.0
 	var visti := false
-	var cam := p.camera
 	var alto := float(get_viewport().get_visible_rect().size.y)
 	while not fine[0] and t[0] < 40.0:
 		await get_tree().process_frame
@@ -128,6 +127,7 @@ func _prova(bambini: bool, tutto: bool) -> void:
 				insieme += 1
 			if not lei.has_meta(LeiTunnel.CANTO_ZITTO) and lei.is_visible_in_tree():
 				canto += 1
+		var cam := get_viewport().get_camera_3d()
 		if sott.fase_finale == "fermi" and girato < -1.5:
 			girato = (-cam.global_basis.z).dot(d)
 		if sott.fase_finale == "foglio" and t[0] - float(fasi["foglio"]) > sott.finale_abbassa + 0.05 and sott._foglio:
@@ -157,7 +157,7 @@ func _prova(bambini: bool, tutto: bool) -> void:
 			"la camera si gira di 180 gradi in %.1f s (%.2f s, guarda nella stanza %.2f)" % [sott.finale_girata, dura.call("girata", "fermi"), girato])
 	check(absf(dura.call("fermi", "porge") - sott.finale_fermi) < 0.1, "i bambini fermi %.1f s (%.2f)" % [sott.finale_fermi, dura.call("fermi", "porge")])
 	check(dura.call("porge", "foglio") > 0.8 and dura.call("porge", "foglio") < 4.5, "due passi e porge il foglio (%.2f s)" % dura.call("porge", "foglio"))
-	var sul_foglio := dura.call("foglio", "nero") - sott.finale_abbassa
+	var sul_foglio: float = dura.call("foglio", "nero") - sott.finale_abbassa
 	check(absf(sul_foglio - sott.finale_foglio) < 0.15 and foglio_min > 0.5 and foglio_t > sott.finale_foglio - 0.2,
 			"il foglio riempie più di metà dello schermo per %.0f s (%.1f s, almeno %.0f%% dell'altezza)" % [sott.finale_foglio, foglio_t, foglio_min * 100.0])
 	check(fine[0] and absf(t[0] - float(fasi["nero"]) - 1.2) < 0.1, "nero in 1,2 s e la fine (%.2f s)" % (t[0] - float(fasi["nero"])))
