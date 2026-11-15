@@ -1938,6 +1938,8 @@ func _crea_foglio() -> Node3D:
 	var f := DisegnoBambino.new()
 	f.name = "FoglioFinale"
 	f.formato = DisegnoBambino.Formato.A4
+	# (tenuto in mano: niente nastri sugli angoli)
+	f.nastri = false
 	if ResourceLoader.exists(DISEGNO_FINALE):
 		f.disegno = load(DISEGNO_FINALE)
 	return f

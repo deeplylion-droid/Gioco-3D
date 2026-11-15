@@ -20,5 +20,3 @@ formato = 2
 altezza = 1.11
 pastello = true
 pastello_dove = Vector2(0.18, 0.07)
-impronte = true
-impronte_da = Vector2(-0.1, 2.0)

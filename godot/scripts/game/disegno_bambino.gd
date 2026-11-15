@@ -37,6 +37,12 @@ enum Formato { A3, A4, A3_ORIZZONTALE }
 	set(v):
 		emissione = v
 		_rifai()
+## I quattro pezzi di nastro di carta sugli angoli (i fogli attaccati al muro). Spento solo per il foglio tenuto in mano
+## (DZ, quello che porge il bambino col cubo nel finale del tunnel).
+@export var nastri := true:
+	set(v):
+		nastri = v
+		_rifai()
 @export_group("Pastello")
 ## Un pastello a cera lasciato per terra sotto il foglio.
 @export var pastello := false:
@@ -134,24 +140,25 @@ func _costruisci() -> void:
 	foglio.material_override = mat
 	foglio.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_aggiungi(foglio)
-	# i quattro pezzi di nastro, di sbieco sugli angoli, a cavallo fra il foglio e il muro
-	var mn := StandardMaterial3D.new()
-	mn.albedo_color = COLORE_NASTRO
-	mn.roughness = 0.85
-	var i := 0
-	for sx in [-1.0, 1.0]:
-		for sy in [1.0, -1.0]:
-			var n := MeshInstance3D.new()
-			n.name = "Nastro%d" % i
-			var nb := BoxMesh.new()
-			nb.size = NASTRO
-			n.mesh = nb
-			n.material_override = mn
-			n.position = Vector3(sx * (m.x * 0.5 - 0.004), sy * (m.y * 0.5 - 0.004), SPESSORE + NASTRO.z * 0.5)
-			n.rotation.z = deg_to_rad(38.0 + 9.0 * i) * sx * sy
-			n.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			_aggiungi(n)
-			i += 1
+	if nastri:
+		# i quattro pezzi di nastro, di sbieco sugli angoli, a cavallo fra il foglio e il muro
+		var mn := StandardMaterial3D.new()
+		mn.albedo_color = COLORE_NASTRO
+		mn.roughness = 0.85
+		var i := 0
+		for sx in [-1.0, 1.0]:
+			for sy in [1.0, -1.0]:
+				var n := MeshInstance3D.new()
+				n.name = "Nastro%d" % i
+				var nb := BoxMesh.new()
+				nb.size = NASTRO
+				n.mesh = nb
+				n.material_override = mn
+				n.position = Vector3(sx * (m.x * 0.5 - 0.004), sy * (m.y * 0.5 - 0.004), SPESSORE + NASTRO.z * 0.5)
+				n.rotation.z = deg_to_rad(38.0 + 9.0 * i) * sx * sy
+				n.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				_aggiungi(n)
+				i += 1
 	if pastello and ResourceLoader.exists(PASTELLO):
 		var p := (load(PASTELLO) as PackedScene).instantiate() as Node3D
 		p.name = "Pastello"

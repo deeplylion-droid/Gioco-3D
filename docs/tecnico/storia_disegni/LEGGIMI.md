@@ -27,6 +27,7 @@ Sorgenti e script in `assets_src/storia_disegni/`: `genera_disegni.py` (Meshy), 
 - `altezza`: quanto il centro del foglio sta sopra il pavimento. L'ha attaccato un bambino: fra 1,0 e 1,2 m (D1 è a 0,84, perché nel corridoio del risveglio c'è una fascia sul muro a 1,07-1,13 m: un foglio sopra la fascia non starebbe piatto).
 - `emissione`: 0,12, come il disegno dei giocattoli (i pastelli si vedono appena al buio). Non cambiarla senza chiedere.
 - Il foglio è una lastra di carta di 0,4 mm col retro sul muro; davanti il disegno; quattro pezzi di nastro di carta di sbieco sugli angoli, a cavallo fra il foglio e il muro.
+- `nastri` (acceso di serie): i quattro pezzi di nastro. Si spegne solo per il foglio tenuto in mano, DZ nel finale del tunnel (`SalaSottomarino._crea_foglio`, ambienti-2): lì il nastro starebbe a mezz'aria e quello in basso a destra copriva la firma (coordinatore, 15 novembre).
 - **`pastello`** (facoltativo): un pastello a cera turchese per terra sotto il foglio (`assets/storia_disegni/pastello.glb`, sdraiato su una faccia, origine sul pavimento). `pastello_dove` è dove sta (x lungo il muro, y fuori dal muro, in metri, nel sistema del nodo), `pastello_giro` quanto è girato.
 - **`impronte`** (facoltativo): una fila di impronte bagnate dei suoi piedi nudi (Decal), da `impronte_da` (x lungo il muro, y fuori dal muro, sul pavimento) fin sotto il foglio, a passi alternati, le prime più asciutte. **Devono arrivare da dove lui può essere passato**: una porta, un buco, l'acqua. In D1 vengono dalla porta degli spogliatoi (le docce).
 
