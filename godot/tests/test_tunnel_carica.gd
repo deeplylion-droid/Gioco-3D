@@ -57,12 +57,18 @@ func _run() -> void:
 			["finestra %.1f s" % sala._finestra])
 	_controlla(sala.lei_tunnel.lei.has_meta(LeiTunnel.CANTO_ZITTO) and sala.lei_tunnel.stato == LeiTunnel.Stato.CARICA,
 			"mentre carica il canto tace", ["zitto %s, stato %s" % [sala.lei_tunnel.lei.has_meta(LeiTunnel.CANTO_ZITTO), sala.lei_tunnel.stato]])
+	var ap := sala.lei_tunnel._ap
+	_controlla(ap != null and ap.current_animation == &"inseguimento/carica", "la carica suona la clip inseguimento/carica",
+			["%s" % (ap.current_animation if ap else "senza AnimationPlayer")])
 	# 2) non la colpisci: scatta e ti prende poco dopo la finestra
 	var t0 := _t
 	var s := sala._s_bersaglio
+	var scatto := false
 	while not preso and _t - t0 < 8.0:
 		s += 5.8 * await _passo()
 		b.global_position = _banchina(s)
+		scatto = scatto or (ap != null and ap.current_animation == &"inseguimento/scatto")
+	_controlla(scatto, "lo scatto suona la clip inseguimento/scatto", ["scatto %s" % scatto])
 	_controlla(preso and _t - t0 >= sala.carica_finestra_prima and _t - t0 <= sala.carica_finestra_prima + 1.5,
 			"se non la colpisci scatta e ti prende", ["preso %s dopo %.2f s dalla carica" % [preso, _t - t0]])
 

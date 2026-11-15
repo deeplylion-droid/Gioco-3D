@@ -38,11 +38,10 @@ const OBLO := Vector2(0.95, 4.62)
 ## Quando la faccia tocca il vetro nello schianto (s).
 const SCHIANTO_CONTRO := 0.35
 const ROSA := Color(1.0, 0.35, 0.6)
-## Le animazioni della carica e dello scatto (di mascotte, lavoro/acqua-di-lei). Finché non ci sono, al loro posto
-## i morsi ([constant SEGNAPOSTO]), più veloci nello scatto.
+## Le animazioni della carica (2 s: si tira indietro a bocca spalancata e resta ferma col tremito) e dello scatto
+## (0,8 s, in avanti con la testa) di mascotte (medusa_inseguimento.res, lavoro/acqua-di-lei).
 const CARICA := "carica"
 const SCATTO := "scatto"
-const SEGNAPOSTO := "insegue_morde"
 ## Il segno su lei che fa tacere il canto (l'addon audio, Statua._tunnel): nella carica e nello scatto.
 const CANTO_ZITTO := &"canto_zitto"
 
@@ -293,8 +292,8 @@ func schianto(centro_oblo: Vector3, normale: Vector3) -> void:
 	_anima("schianto", 0.12)
 
 
-## A 8 m carica: smette di cantare e si prepara (l'animazione "carica", o il segnaposto). Il getto in faccia la
-## respinge come quando insegue.
+## A 8 m carica: smette di cantare e si prepara (l'animazione "carica"). Il getto in faccia la respinge come quando
+## insegue.
 func carica() -> void:
 	if stato != Stato.INSEGUE:
 		return
@@ -302,21 +301,18 @@ func carica() -> void:
 	_t = 0.0
 	_getto = 0.0
 	_canta(false)
-	_anima(CARICA if _ha(CARICA) else SEGNAPOSTO, 0.15)
+	_anima(CARICA, 0.15)
 	lei.segui_con_la_testa(1.0, 0.2)
 
 
-## La finestra è passata: scatta verso il giocatore (l'animazione "scatto", o il segnaposto più veloce). Il getto non
-## la ferma più.
+## La finestra è passata: scatta verso il giocatore (l'animazione "scatto"). Il getto non la ferma più.
 func scatto() -> void:
 	if stato != Stato.CARICA:
 		return
 	stato = Stato.SCATTO
 	_t = 0.0
 	_canta(false)
-	_anima(SCATTO if _ha(SCATTO) else SEGNAPOSTO, 0.1)
-	if not _ha(SCATTO) and _ap:
-		_ap.speed_scale = 1.8
+	_anima(SCATTO, 0.1)
 
 
 ## Torna a inseguire (una carica finita senza scatto: il giocatore è entrato in un passaggio obbligato).
@@ -395,14 +391,8 @@ func _su_getto(litri: float, _p: Vector3, _d: Vector3) -> void:
 func _anima(nome: String, sfuma: float) -> void:
 	if _ap == null:
 		return
-	_ap.speed_scale = 1.0
 	_anim = StringName(nome)
 	_ap.play(StringName(ANIM + nome), sfuma)
-
-
-## Vero se c'è l'animazione [param nome] (carica e scatto arrivano da mascotte).
-func _ha(nome: String) -> bool:
-	return _ap != null and _ap.has_animation(StringName(ANIM + nome))
 
 
 ## Il canto (l'addon audio): tace nella carica e nello scatto ([constant CANTO_ZITTO] su lei).
