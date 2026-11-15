@@ -1775,7 +1775,8 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA, CARICA, SCATTO }
 ## secondi lei arriva a 8 metri, smette di cantare e carica: se non ti giri a spruzzarla, ti prende. Colpita, torna
 ## indietro e si ricomincia.»). Mentre corri lei guadagna terreno, da [member distanza_max] a [member distanza_min] in
 ## [member avvicinamento] secondi; a [member distanza_min] metri, sulla banchina, carica: smette di cantare e resta lì
-## per [member carica_finestra] secondi ([member carica_finestra_prima] alla prima carica della partita). Un getto in
+## per [member carica_finestra] secondi ([member carica_finestra_prima] finché il giocatore non ne ha respinta una in
+## questa partita). Un getto in
 ## faccia in quel tempo la rimanda a [member distanza_max] metri; se no scatta a [member velocita_scatto] m/s e ti
 ## prende. Mai durante un passaggio obbligato: lì vale la regola di sempre (non sotto [member distanza_min]), e la
 ## carica parte solo quando il giocatore è sulla banchina da [member carica_dopo_passaggio] secondi.
@@ -1785,7 +1786,7 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA, CARICA, SCATTO }
 @export var carica_attiva := true
 @export var avvicinamento := 15.0
 @export var carica_finestra := 2.5
-@export var carica_finestra_prima := 3.0
+@export var carica_finestra_prima := 4.0
 @export var carica_dopo_passaggio := 2.0
 @export var velocita_scatto := 14.0
 ## Il serbatoio nel tunnel (build 0.4.0: «il serbatoio basta per pochi spruzzi, tre per esempio: poi devi ricaricare
@@ -1924,6 +1925,7 @@ func respingi() -> void:
 	_indietro = indietro_dopo_getto
 	if lei_stato == Lei.CARICA:
 		_indietro = maxf(distanza_max - (_s_bersaglio - lei_s), 0.0)
+		preload("res://scripts/game/stato_tunnel.gd").prima_respinta_fatta = true
 	lei_stato = Lei.RESPINTA
 	_lei_t = 0.0
 	lei_tunnel.respinta()
@@ -1936,9 +1938,8 @@ func _carica() -> void:
 	_lei_t = 0.0
 	_finestra = carica_finestra
 	const STATO := preload("res://scripts/game/stato_tunnel.gd")
-	if not STATO.prima_carica_fatta:
+	if not STATO.prima_respinta_fatta:
 		_finestra = carica_finestra_prima
-		STATO.prima_carica_fatta = true
 	lei_tunnel.carica()
 	lei_carica.emit()
 

@@ -4,7 +4,8 @@ extends Node
 ## Colpita, torna indietro e si ricomincia. Il serbatoio basta per pochi spruzzi»). Senza schermo.
 ## Con un bersaglio finto che corre sulla banchina (5,8 m/s):
 ## - lei guadagna terreno e carica a 8 m dopo circa SalaSottomarino.avvicinamento secondi, e mentre carica il canto tace;
-## - la prima carica della partita dura carica_finestra_prima secondi, le altre carica_finestra;
+## - finché il giocatore non ne ha respinta una la carica dura carica_finestra_prima secondi (anche dopo una morte alla
+##   prima carica), dalla prima respinta in poi carica_finestra;
 ## - se non la colpisci scatta e ti prende, poco dopo la fine della finestra;
 ## - colpita nella finestra torna a distanza_max metri, il canto riprende, e la carica dopo arriva più tardi;
 ## - fermo sulla banchina lei arriva a 8 m e carica, senza prenderti prima;
@@ -72,12 +73,14 @@ func _run() -> void:
 	_controlla(preso and _t - t0 >= sala.carica_finestra_prima and _t - t0 <= sala.carica_finestra_prima + 1.5,
 			"se non la colpisci scatta e ti prende", ["preso %s dopo %.2f s dalla carica" % [preso, _t - t0]])
 
-	# 3) la colpisci: torna a 18 m, il canto riprende, la carica dopo arriva più tardi (la seconda: finestra corta)
+	# 3) morto alla prima carica e ripartito: la finestra è ancora quella lunga; la colpisci: torna a 18 m, il canto
+	# riprende, la carica dopo arriva più tardi, con la finestra corta
 	# (col bersaglio finto la presa lascia lei nella posa della presa: nel gioco la morte ricostruisce il tunnel)
 	preso = false
 	sala.lei_tunnel.via()
 	r = await _corri_fino_alla_carica(60.0, 40.0)
-	_controlla(not preso and is_equal_approx(sala._finestra, sala.carica_finestra), "dalla seconda carica la finestra è di %.0f s" % sala.carica_finestra,
+	_controlla(not preso and is_equal_approx(sala._finestra, sala.carica_finestra_prima),
+			"morto alla prima carica e ripartito, la finestra è ancora di %.0f s" % sala.carica_finestra_prima,
 			["finestra %.1f s, preso %s" % [sala._finestra, preso]])
 	s = sala._s_bersaglio
 	t0 = _t
@@ -103,6 +106,8 @@ func _run() -> void:
 		b.global_position = _banchina(s)
 	_controlla(cariche == c0 + 1 and not preso and _t - t0 >= 12.0 and _t - t0 <= 25.0,
 			"dopo la respinta la carica dopo arriva fra 15 e 20 s circa", ["dopo %.1f s, preso %s" % [_t - t0, preso]])
+	_controlla(is_equal_approx(sala._finestra, sala.carica_finestra), "dopo la prima respinta la finestra è di %.1f s" % sala.carica_finestra,
+			["finestra %.1f s" % sala._finestra])
 
 	# 4) fermo sulla banchina: arriva a 8 m e carica, senza prenderti prima
 	preso = false
