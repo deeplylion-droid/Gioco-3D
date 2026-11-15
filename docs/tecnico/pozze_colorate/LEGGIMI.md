@@ -41,6 +41,14 @@
 - le pozze stanno fuori dalla tabella delle masse d'acqua dell'addon (`WaterManager`, al più 12). Altrimenti avrebbero preso il posto delle vasche e dei canali del resto del gioco: per questo sui fondi delle pozze non ci sono le caustiche;
 - chi cade in una pozza ne esce saltando (il salto è 1 m).
 
+**L'agnellino** (build 0.5.0, «La storia»: `scripts/game/agnellino_pozze.gd`, AgnellinoPozze, figlio di EnigmaPozze). Ostacola, e si sente soltanto: non si vede. Una volta sola per partita:
+- dopo il secondo colore tolto aspetta `attesa` 2 s. Poi si sentono le zampette sotto il pavimento (`zampette_condotto`, 4 volte in `durata_zampette` 2,6 s, verso le pozze del primo colore) e il volantino che gira (`cancello_ruota`, `durata_volantino` 1,8 s);
+- poi il PRIMO colore tolto si riempie di nuovo in `durata_riempimento` 5 s (`EnigmaPozze.riempi_di_nuovo`). Mentre si riempie non si aspira e non conta fra i tolti; pieno, va tolto di nuovo. L'enigma si risolve allo stesso modo, e le pozze riempite sono di nuovo acqua vera: lei può uscirne;
+- non comincia mentre lei è fuori (la fase del motore non è LONTANA o CALMA): aspetta che sia tornata sotto;
+- se intanto il colore non è più tolto o l'enigma non è più aperto, non riempie niente;
+- l'interruttore è `attivo`;
+- che c'è già stato lo ricorda `scripts/game/stato_storia.gd` (azzerato da GameState.reset_progress con la partita nuova). È anche nel salvataggio dell'enigma (`agnellino`): ripartendo da un checkpoint dopo di lui non torna. Un colore che si stava riempiendo riparte pieno. Ripartendo dal checkpoint d'ingresso dopo una chiusura del gioco torna, come le uscite dimostrative di lei (lo stato per partita sta in memoria).
+
 ## Il cartello (l'indizio)
 
 - **Dove (dal 4 novembre, 0.3.21):** l'utente l'ha trovato troppo facile ("spostiamolo più lontano, così è troppo facile", scelta B). Ora sta nel **corridoio del personale** prima dell'infermeria, quello dopo l'approdo con l'oblò di lei: sul muro est (x -34), di fronte all'oblò, dalla parte del capannone, a 18 cm dall'angolo, cioè a circa 2,3 m dalla porta dell'infermeria. Chi arriva dall'approdo lo ha subito a destra. È all'altezza degli occhi (centro a 1,5 m) ed è a contatto col muro; sotto, per terra, c'è la Polaroid 15. Lo costruisce `CartelloPozze` (`scripts/risalita/cartello_pozze.gd`), messo da `RisalitaGioco._cartello_pozze`; il faretto è `FarettoSoffitto` (`scripts/risalita/faretto_soffitto.gd`), lo stesso dei faretti dell'infermeria. L'infermeria è tornata senza cartello e senza il suo faretto.
@@ -88,6 +96,15 @@
   - un quarto colore no;
   - lo stato salvato a metà e da risolto;
   - si esce saltando da una pozza.
+- `tests/test_pozze_agnellino.gd` (34 controlli), nella stessa stanza:
+  - niente dopo il primo colore;
+  - dopo il secondo le zampette, il volantino e il primo colore che si riempie;
+  - risolto allo stesso modo;
+  - una volta per partita, di nuovo con la partita nuova;
+  - aspetta lei sotto;
+  - spento;
+  - salvato.
+  Negli altri test della stanza l'agnellino è spento. `test_pozze_strada` lo prova sulla strada vera, dopo Continua.
 - `tests/test_pozze_strada.gd`: il cartello nel corridoio del personale (posto lontano dalla porta dell'infermeria, a contatto col muro est, altezza, texture, smalto opaco, faretto bianco neutro e forte che lo illumina di fronte, con l'ombra) e niente cartello nell'infermeria; `tests/test_infermeria_gioco.gd`: nell'infermeria non c'è più.
 - **Da fare con la stanza vera:**
   - la strada da F9 Fiume attraverso le pozze;

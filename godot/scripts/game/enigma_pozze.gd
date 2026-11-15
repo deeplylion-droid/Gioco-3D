@@ -349,16 +349,21 @@ func riempi_di_nuovo(c: String, durata := 5.0) -> void:
 	tolti.erase(c)
 	riempiendo.append(c)
 	var tanks: Array = _per_colore[c]
+	# (una pozza vuota, sotto 1 ml su 1000, perde il colore a ogni fotogramma: WaterTank._physics_process; si parte
+	# appena sopra, già del colore)
+	const DA := 0.002
 	for t: WaterTank in tanks:
+		t.fill = DA
 		t.set_mix(WaterMix.pura(c))
 	var tw := create_tween().set_parallel(true)
 	for t: WaterTank in tanks:
-		tw.tween_property(t, ^"fill", pieno, maxf(durata, 0.1)).from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_property(t, ^"fill", pieno, maxf(durata, 0.1)).from(DA).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await tw.finished
 	if not is_inside_tree():
 		return
 	for t: WaterTank in tanks:
 		t.fill = pieno
+		t.set_mix(WaterMix.pura(c))
 	riempiendo.erase(c)
 
 

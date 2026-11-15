@@ -24,6 +24,21 @@ La creatura e la macchina a stati sono di mascotte: `godot/scripts/creature/squa
 4. **L'interruttore:** `abilitato` (spento, sparisce) e `letale` (spento, urta invece di mordere).
 5. **Riscaldamento:** intorno al disegno fuori vista del fiume chiama `squalo.posa_per_il_riscaldamento(true, punto)`: lui a bocca aperta con la scia. Alla fine chiama `posa_per_il_riscaldamento(false)`. Così il primo attacco non compila niente. Non fa niente se sta già seguendo.
 
+## Nel fiume lento del gioco (enigmi)
+
+Il nodo è `Risalita/Fiume/FiumeLento/Squalo`, creato da `scripts/risalita/fiume_gioco.gd`. La guida è `FiumeLento.GuidaSqualo`. I numeri sono esportati su FiumeLento, nel gruppo «Squalo»:
+- `squalo_attivo` (l'interruttore: spento non compare) e `squalo_letale` (spento: urta e fa girare la ciambella invece di mordere).
+- **Dove vive.** Nel tratto d'imbarco è calmo. Uscendo dall'imbarco il fiume chiama `comincia()`, anche nei rami sbagliati. Quando un ramo sbagliato riporta all'imbarco chiama `ferma()`, e così all'approdo.
+- **Quando non attacca** (`puo_attaccare()` falso): nel tratto d'imbarco, negli ultimi `calmo_in_fondo_ai_rami` 14 m di un ramo sbagliato (lo scivolo), negli ultimi `calmo_prima_del_bivio` 20 m prima di un bivio (un urto lì farebbe perdere il disco), durante il nero, senza giocatore sulla ciambella, all'approdo.
+- **Il morso:** il nero scende in `nero_giu` 0,25 s, resta `nero_fermo` 0,6 s e si schiarisce in `nero_su` 0,8 s. Nel nero la ciambella torna all'inizio dell'imbarco, girata verso valle, con le paratie come le aveva lasciate. La zona non si ricarica e non c'è `respawn()`. I primi morsi contano in `GameState.morti_totali`, se c'è.
+- **Regola B** (coordinatore, 15 novembre): dopo `morsi_per_giro` 2 morsi nello stesso giro lo squalo urta soltanto, anche se lo si respinge, fino all'approdo. Il conto non si azzera con la ripartenza morbida: si azzera al checkpoint dell'approdo e con la partita nuova. Gli urti non contano come morti. Così chi non lo respinge mai arriva al terzo tentativo.
+- **L'urto:** la ciambella gira su sé stessa per `giro_urto` dello squalo (3 s), partendo da `giri_urto` 0,6 giri al secondo e rallentando. Non la sposta dal tratto: non spinge in un ramo sbagliato e non fa perdere il bivio giusto.
+- **Continua, checkpoint, F9 «Fiume lento»:** lo squalo riparte calmo (`ferma()`), e ricomincia uscendo dall'imbarco. Nel salvataggio del fiume ci sono `arrivato` e `morsi_giro`.
+- **Riscaldamento:** `risalita_gioco.gd` lo mette in posa a bocca aperta, a metà del primo tratto giusto, mentre disegna il fiume fuori vista (`_riscalda_squalo_del_fiume` e il giro a pezzi).
+- **Profondità vera:** il pelo è a −0,22 m e il fondo a −0,9 m, cioè 0,68 m d'acqua. La ciambella galleggia 0,12 m sopra il pelo (`pelo_sopra_la_ciambella`).
+
+Test sul fiume vero: `godot/tests/test_squalo_strada.gd` (27 controlli): calmo all'imbarco e in fondo ai rami, i due morsi e la ripartenza morbida, il terzo tentativo che arriva all'approdo con gli urti, mai fuori strada, chi lo respinge sempre, chi a volte, letale spento, ripartenza calma dai checkpoint. Nei test che fanno solo la strada del fiume (`test_fiume_gioco`, `test_risalita`, `test_strada`, `test_presa_vera`) lo squalo è spento.
+
 ## Cosa fa (numeri esportati)
 
 - **Segue** a `distanza` 12 m lungo il fiume, quando la ciambella va a `velocita_media` (2,2 m/s). La sua velocità è la media più `richiamo` × (metri in più). Con la ciambella lenta si avvicina: a 1,2 m/s sta a circa 5,5 m, mai sotto `distanza_min` (4 m). Con quella veloce resta indietro: a 3,2 m/s circa 18 m.

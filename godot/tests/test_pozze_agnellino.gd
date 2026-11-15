@@ -68,8 +68,11 @@ func _run() -> void:
 	await _aspira(WaterMix.VIOLA, 0.5)
 	check(not WaterMix.VIOLA in e.svuotando, "aspirandolo mentre si riempie non ricomincia a svuotarsi")
 	await _fino_a(func(): return _riempito != "", 15.0)
-	check(_riempito == WaterMix.VIOLA and _piene(WaterMix.VIOLA) and e.tolti == [WaterMix.ARANCIONE],
-		"il viola è di nuovo pieno: va tolto ancora (tolti %s)" % [e.tolti])
+	var livelli := []
+	for t: WaterTank in e.pozze_del_colore(WaterMix.VIOLA):
+		livelli.append("%.3f/%.2f" % [t.fill, WaterMix.frazione(t.mix, WaterMix.VIOLA)])
+	check(_riempito == WaterMix.VIOLA and _piene(WaterMix.VIOLA) and e.tolti.size() == 1 and WaterMix.ARANCIONE in e.tolti,
+		"il viola è di nuovo pieno: va tolto ancora (riempito «%s», tolti %s, pozze %s)" % [_riempito, e.tolti, livelli])
 
 	print("3. L'enigma si risolve allo stesso modo")
 	await _togli(WaterMix.VIOLA)
