@@ -18,6 +18,10 @@ func _ready() -> void:
 
 
 func _scatta(nome: String) -> void:
+	# (mentre la ciambella va si disegna poco: col renderer software il giro intero sarebbe lentissimo)
+	RenderingServer.render_loop_enabled = true
+	for i in 3:
+		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_jpg(cartella.path_join(nome + ".jpg"), 0.9)
 	print("SCATTO %s" % nome)
@@ -82,6 +86,7 @@ func _squalo() -> void:
 	# all'imbarco, guardando avanti: è calmo
 	await _fisica(120)
 	await _scatta("squalo_0_imbarco_calmo")
+	RenderingServer.render_loop_enabled = false
 	while fiume.tratto == fiume.imbarco:
 		await get_tree().physics_frame
 	# segue: ci si gira indietro, verso la scia
@@ -95,8 +100,10 @@ func _squalo() -> void:
 		p.look_at_point(pinna + Vector3.UP * 0.1)
 		await _fisica(2)
 		await _scatta("squalo_1_segue_%d" % k)
+		RenderingServer.render_loop_enabled = false
 		await _fisica(60)
 	# attacca: la testa fuori dall'acqua, a bocca aperta
+	RenderingServer.render_loop_enabled = false
 	for i in 60 * 40:
 		await get_tree().physics_frame
 		if squalo.stato == S.ATTACCO:
@@ -110,8 +117,10 @@ func _squalo() -> void:
 			p.look_at_point(muso.global_position)
 		await _fisica(2)
 		await _scatta("squalo_2_attacco_%d" % k)
+		RenderingServer.render_loop_enabled = false
 		await _fisica(40)
 	# il morso, se non lo si respinge
+	RenderingServer.render_loop_enabled = false
 	for i in 60 * 6:
 		await get_tree().physics_frame
 		if squalo.stato == S.MORSO:
