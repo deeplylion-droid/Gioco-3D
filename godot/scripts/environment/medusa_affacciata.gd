@@ -45,6 +45,14 @@ var _pos_occhio := Vector3.ZERO
 var _dir_occhio := Vector3.BACK
 
 
+## Tutte le lei in scena (oblò, fossa, condotte, tunnel, l'acqua): AcquaDiLei le scorre per non farne vedere due insieme.
+const GRUPPO_LEI := &"lei_affacciata"
+
+
+func _enter_tree() -> void:
+	add_to_group(GRUPPO_LEI)
+
+
 func _dopo_rebuild() -> void:
 	for g in _gocce:
 		if is_instance_valid(g):
