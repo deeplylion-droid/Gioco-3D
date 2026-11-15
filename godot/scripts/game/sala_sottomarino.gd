@@ -1638,11 +1638,11 @@ func _finale() -> void:
 @export var foglio_fov := 55.0
 @export var foglio_schermo := 0.62
 ## Quanto brillano gli agnellini delle sagome rispetto a quello davanti (si vede appena il viso).
-@export var sagoma_bagliore := 0.12
+@export var sagoma_bagliore := 0.04
 ## La lampada a gabbia nella stanza dei bambini, sul muro accanto al primo tratto (dalla parte del bambino col cubo):
 ## quanto fa luce (energia) e fin dove arriva (m). Debole: i due davanti si riconoscono, le sagome dietro no.
-@export var stanza_luce := 0.35
-@export var stanza_luce_raggio := 4.5
+@export var stanza_luce := 1.0
+@export var stanza_luce_raggio := 3.6
 ## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
 ## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
 ## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
@@ -1653,7 +1653,7 @@ func _finale() -> void:
 	[1, 0.55, 5.0, 1.0, 1.4, false],
 	[1, -0.2, 6.75, 1.12, 0.0, true],
 	[0, 0.85, 6.45, 0.92, 1.9, true],
-	[1, -1.45, 6.0, 0.9, 0.0, true],
+	[1, -1.6, 6.6, 0.9, 0.0, true],
 	[0, 1.55, 6.25, 1.06, 0.0, true],
 ]
 ## Il disegno che porge il bambino col cubo (DZ, di ambienti-1): finché non c'è, un foglio bianco.
