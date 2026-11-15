@@ -295,6 +295,8 @@ func _prepara_lezione() -> void:
 	centro.global_position = Vector3(vasca.global_position.x, vasca.get_surface_global_y(), vasca.global_position.z)
 	acqua_lezione.set(&"pelo", vasca.get_surface_global_y())
 	acqua_lezione.set(&"punti_uscita", [centro] as Array[Node3D])
+	# (la luce solo dentro l'acqua della vasca: ai capi entra ed esce dai tubi, fuori è spenta)
+	acqua_lezione.set(&"acque", [vasca] as Array[Node3D])
 
 
 ## Il percorso della luce, nel mondo: dentro dal tubo a un capo della vasca (più giù), su fino a [member sotto_il_pelo]
