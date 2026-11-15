@@ -15,8 +15,8 @@ extends Node
 ##   più piano), poi nel «silenzio» e «fuori» niente; solo alla PRESA tace subito;
 ## - torna a cantare in «va_via», e due frasi di fila non sono mai la stessa;
 ## - in «ferma» si spegne;
-## - nel giro della luce (in_giro, AcquaDiLei.percorri; fase LONTANA) canta anche col giocatore lontano dai punti, e a
-##   vicinanza 0,8 è tutto vicino;
+## - nel giro della luce (in_giro, AcquaDiLei.percorri; fase LONTANA) canta col giocatore vicino alla luce (come ai
+##   punti: 15 m in pianta, stesso piano) anche se è lontano dai punti; a 40 m no; a vicinanza 0,8 è tutto vicino;
 ## - fra due acque si segue quella dove lei è adesso, anche se l'altra è più vicina;
 ## - all'oblò, con lei dietro il vetro e il giocatore nella sua zona, si sente appena: solo la lontana, 12 dB sotto;
 ## - se lei sparisce (nodo liberato) il canto si spegne.
@@ -222,12 +222,17 @@ func _run() -> void:
 	check(not canto.canta(), "in «ferma» si spegne")
 
 	print("Il giro della luce (la lezione nella sala pompe)")
-	gioc.global_position = Vector3(40, 0, 0)
+	gioc.global_position = Vector3(45, 0, 0)
 	lei.metti(LeiFinta.Fase.LONTANA, &"lontana")
 	lei.giro = true
 	lei.vicinanza = 0.0
+	await _secondi(3.0)
+	check(not canto.canta(), "col giro ma il giocatore a 40 m dalla luce non canta")
+	lei.punti_uscita[0].global_position = Vector3(-20, 0, 0)
+	lei.punto_luce = Vector3(17, -1.4, 0)
+	gioc.global_position = Vector3(30, 0, 0)
 	await _aspetta_canto()
-	check(canto.canta(), "col giro canta anche col giocatore lontano dai punti")
+	check(canto.canta(), "col giro canta col giocatore vicino alla luce (13 m), anche lontano dai punti")
 	lei.fase_canto = &"arriva"
 	lei.vicinanza = 0.8
 	await _secondi(0.6)
@@ -237,6 +242,8 @@ func _run() -> void:
 	lei.metti(LeiFinta.Fase.LONTANA, &"lontana")
 	await _secondi(0.7)
 	check(not canto.canta(), "finito il giro (giocatore lontano dai punti) si spegne")
+	lei.punti_uscita[0].global_position = lei.global_position
+	lei.punto_luce = lei.global_position + Vector3(0, -0.6, 0)
 
 	print("Due acque: si segue quella dove lei è adesso")
 	gioc.global_position = Vector3(8, 0, 0)

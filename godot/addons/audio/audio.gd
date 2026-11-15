@@ -2165,8 +2165,24 @@ class CantoPrima:
 					return true
 		return false
 
+	## Il giocatore vicino alla luce rosa di [param n] come a un punto d'uscita (entro [constant RAGGIO_TUBI] m in pianta
+	## e [constant DISLIVELLO_TUBI] m di quota). La quota della luce si conta dal pelo dell'acqua, se c'è: la luce sta
+	## sott'acqua, il giocatore sul bordo.
+	static func _vicino_alla_luce(n: Node, g: Node3D) -> bool:
+		if g == null:
+			return false
+		var lv: Variant = n.get(&"punto_luce")
+		if not lv is Vector3:
+			return false
+		var luce: Vector3 = lv
+		var pv: Variant = n.get(&"pelo")
+		if pv is float and not is_nan(pv):
+			luce.y = maxf(luce.y, pv)
+		var d: Vector3 = luce - g.global_position
+		return Vector2(d.x, d.z).length() <= RAGGIO_TUBI and absf(d.y) <= DISLIVELLO_TUBI
+
 	## La lei da seguire: [nodo, fase del canto]. Prima quella che è in un'acqua adesso (arriva, si spegne, è fuori, va
-	## via, o la sua luce fa un giro), poi un'acqua vicina al giocatore dove lei è nei tubi, poi un oblò con lei dietro il
+	## via, o la sua luce fa un giro col giocatore vicino), poi un'acqua vicina al giocatore dove lei è nei tubi, poi un oblò con lei dietro il
 	## vetro (fase &"oblo").
 	func _scegli() -> Array:
 		var g: Node = audio.get_node_or_null(^"/root/GameState")
@@ -2177,8 +2193,13 @@ class CantoPrima:
 			if not is_instance_valid(n) or not n.is_inside_tree():
 				continue
 			var f := fase_canto(n)
-			if f in FASI_QUI or in_giro(n):
+			if f in FASI_QUI:
 				return [n, f]
+			# (la luce che gira si sente solo dal giocatore vicino, come nei tubi: a tre piani di distanza no)
+			if in_giro(n):
+				if _vicino_alla_luce(n, giocatore) or _vicino_ai_punti(n, giocatore):
+					return [n, f]
+				continue
 			if f == &"lontana" and vicina == null and _vicino_ai_punti(n, giocatore):
 				vicina = n
 		if vicina:
