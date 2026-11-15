@@ -1176,7 +1176,10 @@ func _fine_luci(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> 
 	os.shadow_enabled = true
 	nodo.add_child(os)
 	var mira := _al(p + d * stanza_luce_mira.y, r, Vector2(stanza_luce_mira.x, sg + 0.75))
-	os.look_at_from_position(ls.global_position + d * 0.25 - Vector3.UP * 0.05, mira, Vector3.UP)
+	# (davanti al globo della lampada, che non fa ombra alla sua luce: dentro il globo il cono restava al buio)
+	for g in ls.find_children("*", "GeometryInstance3D", true, false):
+		(g as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	os.look_at_from_position(ls.global_position + d * 0.4 - Vector3.UP * 0.05, mira, Vector3.UP)
 
 
 ## Un palo (o un tubo) di ferro da [param a] a [param b].

@@ -56,6 +56,22 @@ func _run() -> void:
 	_pl.teleport(dentro, atan2(-d.x, -d.z))   # (di spalle al portello: guarda la stanza)
 	await _fotogrammi(60)
 	_scatta("00_stanza_vuota")
+	if OS.get_environment("SOLO_STANZA") != "":
+		# (prova veloce della luce: i bambini accesi e fermi, dagli occhi del giocatore a 2,2 m dal portello)
+		var occhi := sala.punto(L) + d * SalaSottomarino.CAMERA_DOVE_GUARDA
+		occhi.y = sg + 0.05
+		_pl.teleport(occhi, atan2(-d.x, -d.z))
+		for b in sala._bambini_finale:
+			b.visible = true
+			b.process_mode = Node.PROCESS_MODE_INHERIT
+		var luce := sala.find_child("LuceStanza", true, false) as Light3D
+		print("LUCE ", luce, " ", luce.global_position if luce else "", " verso ", -luce.global_basis.z if luce else "")
+		await _fotogrammi(1)
+		_pl.look_at_point(sala._bambini_finale[0].global_position + Vector3.UP * 0.7)
+		await _fotogrammi(50)
+		_scatta("01_prova_luce")
+		get_tree().quit()
+		return
 	_pl.teleport(dentro, atan2(d.x, d.z))     # (verso il portello)
 	await _fotogrammi(10)
 	var fatte := {}
