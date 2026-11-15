@@ -67,7 +67,7 @@ enum Formato { A3, A4, A3_ORIZZONTALE }
 ## La lunghezza di un passo di bambino (m).
 @export var passo := 0.3
 ## Le prime impronte (le più vecchie) sono quasi asciutte: l'opacità va da questa a 1.
-@export var asciutte := 0.25
+@export var asciutte := 0.6
 
 const MISURE := {Formato.A3: Vector2(0.297, 0.42), Formato.A4: Vector2(0.21, 0.297), Formato.A3_ORIZZONTALE: Vector2(0.42, 0.297)}
 ## Lo spessore del foglio (m): il retro tocca il muro, a z = 0.
@@ -79,7 +79,7 @@ const IMPRONTE := ["res://assets/storia_disegni/impronta_sx.png", "res://assets/
 ## Bagnate: lucide (ruvidezza bassa), così riflettono le luci anche su un pavimento scuro.
 const IMPRONTE_ORM := ["res://assets/storia_disegni/impronta_sx_orm.png", "res://assets/storia_disegni/impronta_dx_orm.png"]
 ## Una impronta: larga, alta (quanto proietta sopra e sotto il pavimento), lunga (m).
-const IMPRONTA := Vector3(0.075, 0.06, 0.17)
+const IMPRONTA := Vector3(0.085, 0.06, 0.19)
 ## Le impronte si fermano a tanto dal muro, sotto il foglio (lì lui si è fermato a disegnare).
 const IMPRONTE_FINE := 0.32
 
@@ -157,6 +157,16 @@ func _costruisci() -> void:
 		p.name = "Pastello"
 		p.position = Vector3(pastello_dove.x, -altezza, pastello_dove.y)
 		p.rotation.y = deg_to_rad(pastello_giro)
+		# la cera si vede appena al buio, come i pastelli del foglio (stessa emissione)
+		for mi: MeshInstance3D in p.find_children("*", "MeshInstance3D", true, false):
+			for k in mi.mesh.get_surface_count():
+				var cera := mi.mesh.surface_get_material(k) as StandardMaterial3D
+				if cera and cera.resource_name.contains("cera"):
+					var mm := cera.duplicate() as StandardMaterial3D
+					mm.emission_enabled = emissione > 0.0
+					mm.emission = cera.albedo_color
+					mm.emission_energy_multiplier = emissione * 2.0
+					mi.set_surface_override_material(k, mm)
 		_aggiungi(p)
 	if impronte:
 		_impronte()
@@ -187,8 +197,8 @@ func _impronte() -> void:
 		dec.texture_albedo = tex[0 if sinistro else 1]
 		dec.texture_orm = orm[0 if sinistro else 1]
 		dec.size = IMPRONTA
-		dec.modulate = Color(0.06, 0.065, 0.07, lerpf(asciutte, 1.0, float(k) / maxf(quante - 1, 1)))
-		dec.albedo_mix = 0.85
+		dec.modulate = Color(0.03, 0.033, 0.036, lerpf(asciutte, 1.0, float(k) / maxf(quante - 1, 1)))
+		dec.albedo_mix = 1.0
 		var c := da + dir * (passo * k) + lato * (0.055 if not sinistro else -0.055)
 		dec.position = c
 		# la punta del piede (in alto nella texture, -Z del decal) verso dove va
