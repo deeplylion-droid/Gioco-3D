@@ -99,7 +99,8 @@ func _prova(bambini: bool, tutto: bool) -> void:
 			var h := spazio.intersect_ray(ray)
 			var a_terra := not h.is_empty() and absf((h.position as Vector3).y - q.y) < 0.01
 			var dentro := (q - sott.punto(L)).dot(d) > SalaSottomarino.CAMERA_TRATTO + 0.3 and sott._in_camera(q)
-			var giusto := (2.7 <= dist and dist <= 3.3) if i < 2 else (dist > 3.3 and dist < 5.5)
+			# (il bambino col cubo a 2,34 m, dove prima arrivava coi due passi; l'agnellino a circa 3 m; le sagome dietro)
+			var giusto := (2.2 <= dist and dist <= 2.5) if i == 0 else ((2.7 <= dist and dist <= 3.3) if i == 1 else (dist > 3.3 and dist < 5.5))
 			if not (a_terra and dentro and giusto and b.global_basis.z.normalized().dot(verso) > 0.97 and b.get_meta(&"sagoma") == (i >= 2)):
 				fuori.append("%d: a %.2f m, a terra %s, nella stanza %s, girato %.2f" % [i, dist, a_terra, dentro, b.global_basis.z.normalized().dot(verso)])
 		check(fuori.is_empty(), "al loro posto: nella stanza, coi piedi a terra, girati verso il giocatore; i due davanti a circa 3 m, le sagome dietro %s" % [fuori])
@@ -139,7 +140,7 @@ func _prova(bambini: bool, tutto: bool) -> void:
 	while not fine[0] and t[0] < 40.0:
 		await get_tree().process_frame
 		t[0] += get_process_delta_time()
-		if tutto and sott._foglio and sott._foglio.is_visible_in_tree() and sott.fase_finale in ["porge", "foglio"]:
+		if tutto and sott._foglio and sott._foglio.is_visible_in_tree() and sott.fase_finale in ["girata", "fermi", "porge", "foglio"]:
 			var mani := _mani(bb[0])
 			if mani != Vector3.INF:
 				foglio_mani.append(bb[0].global_transform.affine_inverse() * sott._foglio.global_position - mani)
@@ -195,11 +196,11 @@ func _prova(bambini: bool, tutto: bool) -> void:
 		for v: Vector3 in foglio_mani:
 			scarto = maxf(scarto, v.distance_to(foglio_mani[0]))
 		check(foglio_mani.size() > 30 and scarto < 0.03,
-			"il foglio segue le mani in tutti i fotogrammi del gesto (%d fotogrammi, si sposta al più di %.3f m rispetto alle mani)" % [foglio_mani.size(), scarto])
+			"il foglio in mano dalla comparsa e segue le mani in tutte le clip (%d fotogrammi, si sposta al più di %.3f m rispetto alle mani)" % [foglio_mani.size(), scarto])
 	var porge := bb[0] as Bambino
 	var occhi_p := p.global_position
-	check(Vector2(porge.global_position.x - occhi_p.x, porge.global_position.z - occhi_p.z).length() < 3.0 - sott.porge_passi + 0.4,
-			"il bambino col cubo è venuto avanti di due passi (a %.2f m)" % Vector2(porge.global_position.x - occhi_p.x, porge.global_position.z - occhi_p.z).length())
+	var dist_porge := Vector2(porge.global_position.x - occhi_p.x, porge.global_position.z - occhi_p.z).length()
+	check(dist_porge > 2.15 and dist_porge < 2.55, "il bambino col cubo porge dal suo posto, senza passi (a %.2f m)" % dist_porge)
 
 
 ## Il punto fra le due mani del bambino [param b] (le ossa LeftHand e RightHand del modello che si vede), nel suo

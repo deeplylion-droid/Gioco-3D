@@ -1637,8 +1637,8 @@ func _finale() -> void:
 @export var finale_girata := 1.8
 ## I bambini restano fermi a guardarti tanti secondi, prima che quello col cubo venga avanti.
 @export var finale_fermi := 2.5
-## Quanto viene avanti il bambino col cubo (m, due passi) e quanto ci mette (s).
-@export var porge_passi := 0.75
+## Quanto resta fermo col foglio basso, dopo i bambini fermi, prima di porgerlo (s; prima c'erano due passi).
+@export var attesa_porge := 1.0
 ## La camera si abbassa sul foglio in tanti secondi, e il foglio resta davanti per [member finale_foglio] s.
 @export var finale_abbassa := 1.6
 @export var finale_foglio := 5.0
@@ -1655,14 +1655,14 @@ func _finale() -> void:
 @export var stanza_luce_raggio := 4.0
 ## Il cono della luce (gradi, mezza apertura) e dove punta: [di lato, dal portello] (m), a 75 cm da terra.
 @export var stanza_luce_cono := 20.0
-@export var stanza_luce_mira := Vector2(-0.45, 4.8)
+@export var stanza_luce_mira := Vector2(-0.35, 4.5)
 ## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
 ## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
 ## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
 ## Davanti, a circa 3 m dal giocatore (che sta a CAMERA_DOVE_GUARDA m dal portello), il bambino col cubo e l'agnellino;
 ## dietro quattro sagome, mezze coperte dai due davanti e ai lati del semicerchio.
 @export var bambini_finale: Array = [
-	[0, -0.45, 5.15, 1.0, 0.0, false],
+	[0, -0.35, 4.51, 1.0, 0.0, false],
 	[1, 1.2, 5.2, 1.0, 1.4, false],
 	[1, -0.2, 6.75, 1.12, 0.0, true],
 	[0, 0.85, 6.45, 0.92, 1.9, true],
@@ -1749,44 +1749,23 @@ func mostra_finale_per_controllo(porge: bool) -> void:
 	for b in _bambini_finale:
 		b.visible = true
 		b.process_mode = Node.PROCESS_MODE_INHERIT
-	if not porge or _bambini_finale.is_empty():
+	if _bambini_finale.is_empty():
 		return
 	var b := _bambini_finale[0]
-	var L := lunghezza()
-	var occhi := _al(punto(L) + direzione(L) * CAMERA_DOVE_GUARDA, destra(L), Vector2(0.0, piano + SOGLIA))
-	var verso := occhi - b.global_position
-	verso.y = 0.0
-	var m := Marker3D.new()
-	add_child(m)
-	m.global_position = b.global_position + verso.normalized() * porge_passi
-	if _foglio == null:
-		_foglio = _crea_foglio()
-		b.add_child(_foglio)
-	_foglio.visible = false
-	if b.has_method(&"porge"):
-		var porto := [false]
-		b.connect(&"porge_il_foglio", func(): porto[0] = true, CONNECT_ONE_SHOT)
-		b.call(&"porge", [m] as Array[Node3D])
-		for i in 600:
-			if porto[0]:
-				break
-			await get_tree().physics_frame
-		# (fino alla fine del gesto, che poi tiene)
-		for i in 90:
-			await get_tree().physics_frame
-		var mano := b.call(&"punto_foglio") as Node3D
-		if porto[0] and mano:
-			_foglio.reparent(mano, false)
-			_foglio.transform = Transform3D.IDENTITY
-		else:
-			# (senza il giocatore il bambino non si muove: due passi messi a mano e il foglio davanti a lui)
-			b.global_position = m.global_position
-			_metti_foglio(b)
-	else:
-		b.global_position = m.global_position
-		_metti_foglio(b)
-	_foglio.visible = true
-	m.queue_free()
+	# (col foglio in mano da subito, basso; con [param porge] il gesto fino alla posa che tiene)
+	_foglio_in_mano(b)
+	if not porge or not b.has_method(&"porge"):
+		return
+	var porto := [false]
+	b.connect(&"porge_il_foglio", func(): porto[0] = true, CONNECT_ONE_SHOT)
+	b.call(&"porge", [] as Array[Node3D])
+	for i in 600:
+		if porto[0]:
+			break
+		await get_tree().physics_frame
+	# (fino alla fine del gesto, che poi tiene)
+	for i in 90:
+		await get_tree().physics_frame
 
 
 func _fase(f: String) -> void:
@@ -1820,6 +1799,9 @@ func _dopo_lo_schianto() -> void:
 	for b in _bambini_finale:
 		b.visible = true
 		b.process_mode = Node.PROCESS_MODE_INHERIT
+	# il bambino col cubo ha già il foglio in mano, basso con due mani, dal primo fotogramma in cui si vede (decisione del
+	# coordinatore del 15 novembre: niente passi a mani vuote, niente foglio che compare dal nulla)
+	_foglio_in_mano(_bambini_finale[0])
 	var vm := pl.get_node_or_null(^"Head/Camera3D/ViewModel") as Node3D
 	var vm_da := vm.position if vm else Vector3.ZERO
 	var yaw0 := pl.yaw
@@ -1846,45 +1828,20 @@ func _dopo_lo_schianto() -> void:
 	# il bambino col cubo fa due passi e ti porge il foglio
 	_fase("porge")
 	var porge := _bambini_finale[0]
-	var occhi := pl.get_eye_position()
-	var verso := occhi - porge.global_position
-	verso.y = 0.0
-	var arrivo := porge.global_position + verso.normalized() * porge_passi
-	var punto_passi := Marker3D.new()
-	add_child(punto_passi)
-	punto_passi.global_position = arrivo
-	if _foglio == null:
-		_foglio = _crea_foglio()
-		porge.add_child(_foglio)
-	# (nascosto finché non è nelle sue mani: senza il riscaldamento, che lo nasconde, si vedeva ai suoi piedi)
-	_foglio.visible = false
+	# (un po' di attesa ancora fermo col foglio basso, poi il gesto: porge lo porta davanti e lo gira verso il giocatore)
+	await get_tree().create_timer(attesa_porge, false).timeout
+	if not is_inside_tree():
+		return
+	_foglio_in_mano(porge)
 	if porge.has_method(&"porge"):
-		# il movimento «porge» di mascotte (lavoro/storia-mascotte, Bambino.porge): cammina fin lì, porge il foglio con
-		# le due mani (segnale porge_il_foglio) e lo tiene; il foglio va su punto_foglio(), al centro, faccia avanti
 		var porto := [false]
 		porge.connect(&"porge_il_foglio", func(): porto[0] = true, CONNECT_ONE_SHOT)
-		porge.call(&"porge", [punto_passi] as Array[Node3D])
+		porge.call(&"porge", [] as Array[Node3D])
 		var t0 := Time.get_ticks_msec()
 		while not porto[0] and Time.get_ticks_msec() - t0 < 6000:
 			await get_tree().process_frame
 			if not is_inside_tree():
 				return
-		var mano := porge.call(&"punto_foglio") as Node3D
-		if mano:
-			_foglio.reparent(mano, false)
-			_foglio.transform = Transform3D.IDENTITY
-		else:
-			_metti_foglio(porge)
-	else:
-		# (finché il movimento non c'è: due passi con la camminata, e il foglio davanti a lui)
-		porge.cammina([punto_passi] as Array[Node3D])
-		var t0 := Time.get_ticks_msec()
-		while porge.modalita == Bambino.Modalita.CAMMINA and Time.get_ticks_msec() - t0 < 4000:
-			await get_tree().process_frame
-			if not is_inside_tree():
-				return
-		_metti_foglio(porge)
-	punto_passi.queue_free()
 	_foglio.visible = true
 	await get_tree().create_timer(0.6, false).timeout
 	if not is_inside_tree() or not is_instance_valid(pl):
@@ -1922,6 +1879,22 @@ func _dopo_lo_schianto() -> void:
 			_cam_finale.global_transform = _sul_foglio(), 0.0, 1.0, finale_foglio)
 	await fermo.finished
 	_nero()
+
+
+## Il foglio del finale nelle mani del bambino [param b] (Bambino.punto_foglio di mascotte: segue le mani in tutte le
+## clip), visibile; senza il punto (il bambino di prima), davanti a lui ([constant FOGLIO_IN_MANO]).
+func _foglio_in_mano(b: Bambino) -> void:
+	if _foglio == null:
+		_foglio = _crea_foglio()
+		b.add_child(_foglio)
+	var mano: Node3D = b.call(&"punto_foglio") as Node3D if b.has_method(&"punto_foglio") else null
+	if mano:
+		if _foglio.get_parent() != mano:
+			_foglio.reparent(mano, false)
+		_foglio.transform = Transform3D.IDENTITY
+	else:
+		_metti_foglio(b)
+	_foglio.visible = true
 
 
 ## Dove sta la camera del finale sul foglio: davanti al disegno, alla distanza a cui il foglio riempie

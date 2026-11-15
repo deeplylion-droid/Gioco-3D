@@ -105,12 +105,21 @@ func _run() -> void:
 	while not fatte.has("fermi") and Time.get_ticks_msec() - t0 < 900000:
 		await get_tree().process_frame
 	await _fotogrammi(12)
-	_scatta("01_appena_girato")
+	_scatta("01_fermo_col_foglio")
 	while not fatte.has("porge") and Time.get_ticks_msec() - t0 < 900000:
 		await get_tree().process_frame
+	# a metà del gesto (0,6 s dopo che comincia a porgere) e nella posa finale, prima che la camera scenda
+	var gesto := [false]
+	var bc: Node = sala._bambini_finale[0]
+	if bc.has_signal(&"porge_il_foglio"):
+		bc.connect(&"porge_il_foglio", func(): gesto[0] = true, CONNECT_ONE_SHOT)
+	while not gesto[0] and not fatte.has("foglio") and Time.get_ticks_msec() - t0 < 900000:
+		await get_tree().process_frame
+	await _fotogrammi(18)
+	_scatta("02_meta_gesto")
 	while not fatte.has("foglio") and Time.get_ticks_msec() - t0 < 900000:
 		await get_tree().process_frame
-	_scatta("02_due_passi")
+	_scatta("02b_posa_finale")
 	# dagli stessi occhi (durante il finale il giocatore non si muove: i comandi sono spenti), stretto sul bambino col
 	# cubo per vedere gli stracci dell'avambraccio; e quanto è di lato: l'angolo fra dove guarda lui e il giocatore
 	var b0: Node3D = sala._bambini_finale[0]
