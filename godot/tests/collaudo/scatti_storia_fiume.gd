@@ -4,10 +4,13 @@ extends Node
 ##   strada giusta), con l'ambiente e le luci del blackout della sala: lo squalo che segue (girandosi indietro), la testa
 ##   fuori quando attacca, il morso davanti alla camera;
 ## - "df": il foglio DF nel corridoio del fiume (la Risalita da sola, coi suoi corridoi): arrivando dalla scala, a metà
-##   corridoio, davanti al foglio, e da vicino gli angoli col nastro, il pastello e le impronte.
+##   corridoio, davanti al foglio, e da vicino gli angoli col nastro, il pastello e le impronte;
+## - "squalo_fermo" (per mascotte e il coordinatore: si vede il fondo, o il corpo tagliato dal fondo?): con la ciambella
+##   ferma e lo squalo tenuto fermo, a 3 m e a 6 m mentre nuota e nell'attacco con la testa fuori, nel tratto più
+##   illuminato (davanti alla paratia 1, coi cartelli verdi) e a 3 m al buio (a metà del tratto dopo).
 ## Uso (scena col renderer vero: llvmpipe, sotto il render.lock, con almeno 13,5 GB liberi):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##     --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/scatti_storia_fiume.gd <cartella> squalo|df
+##     --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/scatti_storia_fiume.gd <cartella> squalo|df|squalo_fermo
 
 const S := SqualoFiume.Stato
 var cartella := ""
@@ -50,6 +53,8 @@ func _run() -> void:
 	var cosa := a[2] if a.size() > 2 else "squalo"
 	if cosa == "df":
 		await _df()
+	elif cosa == "squalo_fermo":
+		await _squalo_fermo()
 	else:
 		await _squalo()
 	print("SCATTI FINITI")
@@ -128,6 +133,91 @@ func _squalo() -> void:
 	for k in 3:
 		await _fisica(9)
 		await _scatta("squalo_3_morso_%d" % k)
+
+
+# --- Lo squalo fermo, a 3 e 6 m (per la profondità del fiume) ---------------------------------
+
+func _squalo_fermo() -> void:
+	get_tree().change_scene_to_file("res://tests/scene/fiume_gioco_prova.tscn")
+	var p: Player = null
+	for i in 3000:
+		await get_tree().process_frame
+		if GameState.player and is_instance_valid(GameState.player) and get_tree().current_scene:
+			p = GameState.player
+			break
+	await _fisica(10)
+	var level := get_tree().current_scene
+	_ambiente(level)
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	var fiume := level.get_node(^"Fiume/FiumeLento") as FiumeLento
+	var squalo := fiume.squalo as SqualoFiume
+	(fiume.get_node(^"Paratia1") as ParatiaFiume).a_destra = false
+	(fiume.get_node(^"Paratia3") as ParatiaFiume).a_destra = false
+	for i in 400:
+		if p.input_enabled:
+			break
+		await get_tree().process_frame
+	p.camera.make_current()
+	Grafica.imposta("fov", 75.0)
+	p.teleport((level.get_node(^"Fiume/Marker/Imbarco") as Node3D).global_position, 0.0, 0.0)
+	await get_tree().physics_frame
+	fiume.sali(p)
+	RenderingServer.render_loop_enabled = false
+	# il tratto più illuminato: gli ultimi metri prima della paratia 1 (i cartelli verdi)
+	for i in 60 * 120:
+		await get_tree().physics_frame
+		if fiume.tratto != fiume.imbarco and fiume.tratto.paratia != null and fiume.s > fiume.tratto.lunghezza() - 12.0:
+			break
+	print("  (chiaro: %s a %.0f/%.0f m, squalo %s)" % [fiume.tratto.name, fiume.s, fiume.tratto.lunghezza(), S.find_key(squalo.stato)])
+	await _fermo(fiume, squalo, p, "chiaro", [3.0, 6.0], true)
+	# al buio: a metà del tratto dopo
+	var prima := fiume.tratto
+	RenderingServer.render_loop_enabled = false
+	for i in 60 * 120:
+		await get_tree().physics_frame
+		if fiume.tratto != prima and fiume.s > fiume.tratto.lunghezza() * 0.5:
+			break
+	print("  (buio: %s a %.0f/%.0f m, squalo %s)" % [fiume.tratto.name, fiume.s, fiume.tratto.lunghezza(), S.find_key(squalo.stato)])
+	await _fermo(fiume, squalo, p, "buio", [3.0], false)
+
+
+## Ciambella ferma, lo squalo tenuto a [param distanze] m dietro mentre nuota (girandosi a guardarlo), e se
+## [param attacco] la testa fuori; poi tutto riparte.
+func _fermo(fiume: FiumeLento, squalo: SqualoFiume, p: Player, dove: String, distanze: Array, attacco: bool) -> void:
+	if squalo.stato == S.ASSENTE:
+		squalo.comincia()
+		await _fisica(60 * 3)
+	fiume.set_physics_process(false)
+	squalo.distanza_min = 1.0
+	for d in distanze:
+		squalo.set_physics_process(true)
+		squalo._cambia(S.SEGUE)
+		squalo.distanza = float(d)
+		squalo.dietro = float(d)
+		await _fisica(3)
+		squalo.set_physics_process(false)
+		await _fisica(20)
+		p.look_at_point(squalo.squalo.global_position + Vector3.UP * 0.15)
+		await _fisica(2)
+		print("  (%s %d m: squalo a %.2f m dalla camera, pelo %.2f)" % [dove, int(d), squalo.squalo.global_position.distance_to(p.camera.global_position), squalo.squalo.global_position.y])
+		await _scatta("fermo_%s_%dm" % [dove, int(d)])
+		RenderingServer.render_loop_enabled = false
+	if attacco:
+		squalo.set_physics_process(true)
+		squalo.dietro = squalo.distanza_attacco
+		squalo._cambia(S.ATTACCO)
+		await _fisica(50)
+		squalo.set_physics_process(false)
+		var muso := squalo.get(&"_muso") as Node3D
+		p.look_at_point(muso.global_position if muso else squalo.squalo.global_position + Vector3.UP * 0.4)
+		await _fisica(2)
+		await _scatta("fermo_%s_attacco" % dove)
+		RenderingServer.render_loop_enabled = false
+	squalo.set_physics_process(true)
+	squalo.distanza = 12.0
+	squalo.distanza_min = 4.0
+	squalo.riparti(true)
+	fiume.set_physics_process(true)
 
 
 # --- Il foglio DF nel corridoio del fiume --------------------------------------------------
