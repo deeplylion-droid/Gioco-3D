@@ -13,7 +13,8 @@ extends Node
 ## Col giocatore vero (zaino e getto veri, la mira sul suo occhio): nel tunnel lo zaino ha il serbatoio del tunnel;
 ## quante cariche respinge un serbatoio pieno senza ricaricare, con la mira giusta (circa quattro, scelta del
 ## coordinatore del 15 novembre); il getto arriva in tempo anche girandosi dopo [constant REAZIONE] s; la ricarica
-## dal canale in circa 2 s; uscendo, lo zaino torna com'era.
+## dal canale in circa 2 s; mentre lei insegue è nel gruppo lei_in_scena (un'acqua di lei vicina non canta da
+## lontano); uscendo, lo zaino torna com'era.
 ## Le cariche fuori dai passaggi obbligati le prova test_tunnel_attraversamenti.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_carica.gd
 
@@ -238,11 +239,43 @@ func _serbatoio() -> void:
 	Input.action_release(&"suck")
 	_controlla(pack.tank_amount >= pack.tank_capacity - 0.05 and _t - t0 <= 3.0, "si ricarica dal canale in circa 2 s da fermo",
 			["%.1f litri in %.1f s" % [pack.tank_amount, _t - t0]])
+	# lei in scena (gruppo lei_in_scena): un'acqua di lei lì vicino non canta da lontano
+	var luci := GameState.luci
+	var a := _acqua_lontana(g)
+	sala.lei_tunnel.via()
+	await _passo()
+	_controlla(a.fase_canto == &"lontana", "con lei via, un'acqua di lei vicina canta da lontano", [a.fase_canto])
+	sala.lei_tunnel.riemergi(sala._al(sala.punto(s - 12.0), sala.destra(s), Vector2(0.0, sala.acqua)), sala.direzione(s))
+	await _passo()
+	_controlla(sala.lei_tunnel.lei.is_in_group(&"lei_in_scena") and a.fase_canto == &"ferma",
+			"mentre lei insegue nel tunnel è in scena, e l'acqua di lei vicina è ferma", [sala.lei_tunnel.lei.is_in_group(&"lei_in_scena"), a.fase_canto])
+	sala.lei_tunnel.via()
+	await _passo()
+	_controlla(not sala.lei_tunnel.lei.is_in_group(&"lei_in_scena") and a.fase_canto == &"lontana",
+			"sparita lei, esce dalla scena e il canto lontano riprende", [sala.lei_tunnel.lei.is_in_group(&"lei_in_scena"), a.fase_canto])
+	a.queue_free()
+	GameState.imposta_luci(luci)
 	sala.bersaglio = b
 	sala._serbatoio_di_fuori()
 	_controlla(is_equal_approx(pack.tank_capacity, 20.0) and is_equal_approx(pack.suck_rate, 10.0),
 			"uscendo dal tunnel lo zaino torna com'era", ["%.1f litri, %.1f l/s" % [pack.tank_capacity, pack.suck_rate]])
 	g.queue_free()
+
+
+## Un'acqua di lei «lontana» a 10 m dal giocatore [param g] (nella sua zona, senza uscite da sola): per vedere che
+## mentre lei è in scena qui il canto lontano tace (fase_canto «ferma»). Le luci in blackout: rimettile dopo.
+func _acqua_lontana(g: Node3D) -> AcquaDiLei:
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	var a := AcquaDiLei.new()
+	a.name = "AcquaLontanaDiProva"
+	a.pelo = g.global_position.y
+	var m := Marker3D.new()
+	a.add_child(m)
+	m.position = Vector3(10, 0, 0)
+	a.punti_uscita = [m] as Array[Node3D]
+	add_child(a)
+	a.global_position = g.global_position
+	return a
 
 
 func _banchina(s: float) -> Vector3:

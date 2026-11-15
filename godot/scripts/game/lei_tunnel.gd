@@ -205,6 +205,7 @@ func riemergi(pos: Vector3, verso: Vector3, profondita := 5.0) -> void:
 	_pos_prima = global_position
 	_orienta(0.0)
 	lei.visible = true
+	_in_scena(true)
 	stato = Stato.RIEMERGE
 	_t = 0.0
 	_getto = 0.0
@@ -286,6 +287,7 @@ func schianto(centro_oblo: Vector3, normale: Vector3) -> void:
 	global_position = centro_oblo + n * OBLO.x - Vector3.UP * OBLO.y
 	_orienta(0.0)
 	lei.visible = true
+	_in_scena(true)
 	stato = Stato.SCHIANTO
 	_t = 0.0
 	lei.segui_con_la_testa(0.0, 0.1)
@@ -331,6 +333,7 @@ func via() -> void:
 	_canta(true)
 	stato = Stato.VIA
 	lei.visible = false
+	_in_scena(false)
 	if morbidezza:
 		morbidezza.azzera()
 
@@ -396,6 +399,19 @@ func _anima(nome: String, sfuma: float) -> void:
 
 
 ## Il canto (l'addon audio): tace nella carica e nello scatto ([constant CANTO_ZITTO] su lei).
+## Lei nel gruppo [code]lei_in_scena[/code] (AcquaDiLei.LEI_IN_SCENA, scritto per esteso) da quando compare a quando
+## sparisce: le acque di lei vicine non la chiamano e non cantano da lontano (lei non è in due posti).
+func _in_scena(si: bool) -> void:
+	if si:
+		lei.add_to_group(&"lei_in_scena")
+	elif lei.is_in_group(&"lei_in_scena"):
+		lei.remove_from_group(&"lei_in_scena")
+
+
+func _exit_tree() -> void:
+	_in_scena(false)
+
+
 func _canta(si: bool) -> void:
 	if lei == null:
 		return
