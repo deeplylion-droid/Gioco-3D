@@ -157,7 +157,8 @@ def carica():
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='EDIT')
     for eb in arm.data.edit_bones:
-        if eb.name.startswith(tuple(r + '_' for r, _, _, _ in POZZA_TENTACOLI)) and eb.parent is not None:
+        if (eb.name.startswith(tuple(r + '_' for r, _, _, _ in POZZA_TENTACOLI)) or eb.name == 'avambraccio.R') \
+                and eb.parent is not None:
             eb.use_connect = False
     bpy.ops.object.mode_set(mode='OBJECT')
     for pb in arm.pose.bones:
@@ -949,12 +950,15 @@ def pose_scatto(arm, C, Z, t, T=T_SCATTO):
 # sotto il fondo (la testa a circa 0,28 m sotto il pelo), braccio e tentacoli passano dal fondo della pozza.
 
 POZZA_PELO = -0.0525
+POZZA_TESTA = ('Medusa_Ciocche', 'Medusa_Occhio', 'Medusa_Cornea', 'Medusa_Palpebre', 'Medusa_Denti', 'Medusa_Gola',
+               'Medusa_Strappo')   # le mesh della testa e dei capelli
+POZZA_TESTA_MAX = -0.10            # la testa coi capelli sempre almeno 5 cm sotto il pelo
 POZZA_NASCOSTO = -0.97                # sotto il fondo della pozza (-0,95) non si vede niente
 POZZA_CAVIGLIA = (0.0, -0.6, 0.1)       # la caviglia del giocatore sulla linea di mezzo (marker z +0,6 in Godot)
 # (roll, pitch, yaw in gradi, spalla destra nel mondo, testa su, testa girata): trovati con il controllo delle zone
-POZZA_GIU = (0.0, -10.0, 30.0, (-0.25, 0.45, -2.0), 0.0, 0.0)
-POZZA_ATTESA = (0.0, -10.0, 30.0, (-0.25, 0.4, -0.7), 0.0, 0.0)
-POZZA_PRESA = (30.0, -10.0, 45.0, (-0.2, 0.35, -0.52), -25.0, -30.0)
+POZZA_GIU = (0.0, -10.0, 30.0, (-0.25, 0.45, -2.4), 0.0, 0.0)
+POZZA_ATTESA = (0.0, -10.0, 30.0, (-0.25, 0.4, -1.3), 0.0, 0.0)
+POZZA_PRESA = (30.0, -10.0, 45.0, (-0.2, 0.35, -1.06), -25.0, -30.0)
 # il polso: (punto, direzione delle dita, dorso)
 POZZA_SLAM = ((0.0, 0.04, 0.09), (0.0, -1.0, -0.15), (0.0, 0.0, 1.0))
 POZZA_PRESA_POLSO = ((0.0, -0.40, 0.26), (0.0, -1.0, -0.2), (0.0, 0.2, 1.0))
@@ -1033,12 +1037,26 @@ def corpo_pozza(arm, C, Z, stato, t=0.0):
     Z.segui()
 
 
-def polso_pozza(arm, polso, dir_mano, dorso, polo=POZZA_POLO):
-    """Il braccio destro col polso in un punto del mondo (spazio del marker), il gomito piegato verso polo."""
+POZZA_GOMITO = (0.0, 0.85, -0.53)      # dal polso al gomito sul grigliato: indietro e giu', sott'acqua, cosi'
+                                        # l'avambraccio passa sopra il bordino
+POZZA_GOMITO_PRESA = (0.0, 0.95, -0.02)  # alla caviglia: il gomito sopra la pozza, appena dentro il bordo
+
+
+def polso_pozza(arm, polso, dir_mano, dorso, gomito=POZZA_GOMITO):
+    """Il braccio destro col polso in un punto del mondo (spazio del marker) e il gomito a un avambraccio dal polso,
+    nella direzione [param gomito]. Il corpo sta in fondo (la testa coi capelli tutta sott'acqua): il braccio non ci
+    arriva, quindi l'osso del braccio si allunga dalla spalla al gomito, sott'acqua (il liquido della pozza e' opaco
+    mentre lei c'e'); avambraccio e mano restano lunghi uguali."""
     W = arm.matrix_world
-    pc = W @ arm.pose.bones['braccio.R'].head
-    POSE.posa_braccio(arm, '.R', W.inverted() @ Vector(polso), W.inverted() @ (pc + Vector(polo)), Vector(dir_mano),
-                      Vector(dorso))
+    Wi = W.inverted()
+    sp = arm.pose.bones['braccio.R'].head.copy()
+    L2 = POSE.lunghezza(arm, 'avambraccio.R')
+    P = Vector(polso)
+    E = P + Vector(gomito).normalized() * L2
+    E_a, P_a = Wi @ E, Wi @ P
+    POSE.orienta(arm, 'braccio.R', sp, E_a - sp)
+    POSE.orienta(arm, 'avambraccio.R', E_a, P_a - E_a)
+    POSE.orienta(arm, 'mano.R', P_a, Vector(dir_mano), Vector(dorso))
     aggiorna()
 
 
@@ -1074,12 +1092,14 @@ def pista_tentacolo(x, punta):
     su = [(x, 0.30, -0.86), (x, 0.25, -0.70), (x, 0.22, -0.35), (x, 0.21, -0.05), (x, 0.21, 0.15), (x, 0.20, 0.30),
           (x, 0.15, 0.36), (x, 0.06, 0.38), (x, -0.04, 0.36), (x, -0.13, 0.28), (x, -0.20, 0.17),
           (x + 0.03 * sx, -0.26, 0.08)]
-    a = Vector((x + 0.06 * sx, -0.33, 0.045))
-    b = Vector((punta[0], punta[1], 0.02))
-    c = Vector((x + (punta[0] - x) * 0.35, min(-0.15, punta[1] * 0.4), 0.04))
+    a = Vector((x + 0.06 * sx, -0.33, 0.05))
+    b = Vector((punta[0], punta[1], 0.03))
+    c = Vector((x + (punta[0] - x) * 0.35, min(-0.15, punta[1] * 0.4), 0.05))
     curva = _bezier(a, c, b, 60)
+    # (l'asse 5 cm sopra il grigliato vicino al bordo, 3 cm alla punta: fra un fotogramma e l'altro il gioco interpola le
+    # rotazioni e la punta scende un poco)
     for q in curva:
-        q.z = 0.045 + (0.02 - 0.045) * min(1.0, (q - a).length / max((b - a).length, 1e-6))
+        q.z = 0.05 + (0.03 - 0.05) * min(1.0, (q - a).length / max((b - a).length, 1e-6))
     return [Vector(p) for p in su] + curva
 
 
@@ -1315,8 +1335,9 @@ def pose_pozza_presa(arm, C, Z, t, T=T_POZZA_PRESA):
         polso = (slam + Vector((0, 0.02, 0.10))).lerp(presa, liscio(0.0, 1.0, 0.08, 0.30, t))
     else:
         polso = presa.lerp(tira, liscio(0.0, 1.0, 0.40, 0.8, t))
-    dm, dz = gira_mano(POZZA_SLAM[1], POZZA_SLAM[2], POZZA_PRESA_POLSO[1], POZZA_PRESA_POLSO[2], liscio(0.0, 1.0, 0.08, 0.30, t))
-    polso_pozza(arm, polso, dm, dz)
+    kg = liscio(0.0, 1.0, 0.08, 0.30, t)
+    dm, dz = gira_mano(POZZA_SLAM[1], POZZA_SLAM[2], POZZA_PRESA_POLSO[1], POZZA_PRESA_POLSO[2], kg)
+    polso_pozza(arm, polso, dm, dz, Vector(POZZA_GOMITO).normalized().lerp(Vector(POZZA_GOMITO_PRESA).normalized(), kg))
     dita_piatte(arm, '.R', stringi=chiavi(t, [(0.0, 0.0), (0.12, -0.15), (0.28, -0.1), (0.38, 0.8), (0.8, 0.85)]))
     tentacoli_pozza(arm, lambda nome, lung: lung - POZZA_MARGINE_PISTA, avanti=0.10 * liscio(0.0, 1.0, 0.1, 0.3, t),
                     alza=0.06 * liscio(0.0, 1.0, 0.1, 0.3, t))
@@ -2013,6 +2034,30 @@ def controlla_pozza(arm, C, Z, nome, durata, fn):
             if difetti <= 6:
                 print(f'POZZA {nome} t={t:.2f}: ' + ', '.join(sorted(male)[:8]), flush=True)
     print(f'POZZA {nome}: {difetti} fotogrammi con difetti su {n + 1}' + (f'; fuori dall acqua: {sorted(fuori)[:6]}' if fuori else ''), flush=True)
+    # la testa coi capelli (le mesh vere, deformate): mai sopra POZZA_TESTA_MAX in nessun fotogramma (uno ogni 3)
+    import numpy as np
+    mesh_attive(True)
+    dg = bpy.context.evaluated_depsgraph_get()
+    alto, quando = -9.0, 0.0
+    for i in range(0, n + 1, 3):
+        t = min(i / FPS, durata)
+        fn(arm, C, Z, t)
+        dg.update()
+        for o in bpy.data.objects:
+            if o.type != 'MESH' or o.name.split('.')[0] not in POZZA_TESTA:
+                continue
+            oe = o.evaluated_get(dg)
+            me = oe.to_mesh()
+            if len(me.vertices):
+                co = np.empty(len(me.vertices) * 3)
+                me.vertices.foreach_get('co', co)
+                z = float((co.reshape(-1, 3) @ np.array(oe.matrix_world.to_3x3())[2] + oe.matrix_world.translation.z).max())
+                if z > alto:
+                    alto, quando = z, t
+            oe.to_mesh_clear()
+    mesh_attive(False)
+    print(f"POZZA {nome}: testa coi capelli al piu' a {alto:.3f} m (a {quando:.2f} s; il pelo e' a {POZZA_PELO}, il massimo {POZZA_TESTA_MAX})"
+          + ('' if alto <= POZZA_TESTA_MAX else ' FUORI DALL ACQUA'), flush=True)
 
 
 def controlla_vetro(arm, C, Z, nome, durata, fn, n=9):

@@ -54,8 +54,8 @@ const ANIM := "inseguimento/"
 ## Modo MANO: quando la mano sbatte sul grigliato in pozza_esce (s; POZZA_SLAM_T di medusa_inseguimento.py).
 const MANO_SBATTE := 0.62
 ## Modo MANO: la luce resta nell'acqua della pozza, più forte (la pozza si accende di rosa da sotto).
-const LUCE_POZZA := 3.6
-const LUCE_POZZA_PORTATA := 3.5
+const LUCE_POZZA := 3.0
+const LUCE_POZZA_PORTATA := 1.6
 
 @export var abilitata := true
 @export var modo := Modo.INTERA
@@ -368,8 +368,13 @@ func _scegli_punto(p: Node3D, lontano: bool) -> Node3D:
 	return meglio
 
 
-## Il punto della luce sotto l'uscita [param q]: 0,6 m sotto il pelo.
+## Il punto della luce sotto l'uscita [param q]: 0,6 m sotto il pelo (nel modo MANO al centro della pozza, 0,6 m dentro
+## dal marker e a metà fondo: il marker sta sul grigliato, sopra il bordino).
 func _sotto(q: Node3D) -> Vector3:
+	if modo == Modo.MANO:
+		var c := q.global_transform * Vector3(0.0, 0.0, -0.6)
+		c.y = pelo_a(q) - 0.35
+		return c
 	var v := q.global_position
 	v.y = pelo_a(q) - 0.6
 	return v
