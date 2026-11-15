@@ -49,6 +49,32 @@ RIEPILOGO = """      - name: (branch di prova) riepilogo dei comandi falliti
           echo "=== FINE RIEPILOGO: NESSUN PASSO ROSSO ==="
 """
 
+def controlla_yaml(testo):
+    """Rifiuta un workflow che GitHub boccerebbe: YAML rotto o chiavi doppie nello stesso passo."""
+    import collections
+    import yaml
+
+    class Lettore(yaml.SafeLoader):
+        pass
+
+    doppie = []
+
+    def mappa(lettore, nodo, deep=False):
+        viste = collections.Counter(lettore.construct_object(k, deep=True) for k, _ in nodo.value)
+        doppie.extend("riga %d: %s" % (nodo.start_mark.line + 1, k) for k, n in viste.items() if n > 1)
+        return dict((lettore.construct_object(k, deep=True), lettore.construct_object(v, deep=True))
+                    for k, v in nodo.value)
+
+    Lettore.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, mappa)
+    dati = yaml.load(testo, Loader=Lettore)
+    if doppie:
+        raise SystemExit("workflow non valido, chiavi doppie: %s" % "; ".join(doppie))
+    for nome, job in dati["jobs"].items():
+        for passo in job["steps"]:
+            if not ("run" in passo or "uses" in passo):
+                raise SystemExit("workflow non valido, passo senza run o uses: %s" % passo)
+
+
 def main():
     unione = sys.argv[1]
     righe = git("show", "%s:%s" % (unione, YML)).split("\n")
@@ -62,6 +88,10 @@ def main():
     fuori = []
     n = 0
     for i, r in enumerate(righe[:i_esporta[0]]):
+        # un passo che ha gia' il suo limite di tempo lo perde: vale il nostro (due chiavi uguali nello stesso
+        # passo rendono il workflow non valido, e GitHub lo boccia subito senza far girare niente)
+        if i > i_primo[0] and r.startswith("        timeout-minutes:"):
+            continue
         fuori.append(r)
         if i == i_checkout[0]:
             fuori.append("")
@@ -75,6 +105,7 @@ def main():
     fuori.append("")
     fuori.extend(RIEPILOGO.rstrip("\n").split("\n"))
     nuovo = "\n".join(fuori) + "\n"
+    controlla_yaml(nuovo)
     blob = git("hash-object", "-w", "--stdin", stdin=nuovo).strip()
     with tempfile.TemporaryDirectory() as d:
         env = dict(os.environ, GIT_INDEX_FILE=os.path.join(d, "indice"))
