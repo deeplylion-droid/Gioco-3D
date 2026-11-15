@@ -314,6 +314,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre.gd
 
+      - name: Test di lei nelle vasche di raccolta della torre (caduto dentro, la luce dal pozzo, esce dopo 5 s; chi risale in tempo è salvo, chi resta è preso; letale spento)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_vasche_lei.gd
+
       - name: Test della riserva della torre (thread lento al portone)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_riserva.gd
