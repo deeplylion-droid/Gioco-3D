@@ -279,7 +279,7 @@ def si_alza():
 
 
 # ---------------------------------------------------------------- porge
-PORGE = {'altezza': 0.62, 'avanti': 0.27, 'mani': A4[0] / 2 - 0.012}
+PORGE = {'altezza': 0.62, 'avanti': 0.27, 'mani': A4[0] / 2 - 0.02}
 
 
 def posa_porge(t, k=1.0, trema=1.0):
@@ -301,11 +301,13 @@ def posa_porge(t, k=1.0, trema=1.0):
         W = riposo.lerp(W, k)
         due_ossa(f'{lato}Arm', f'{lato}ForeArm', f'{lato}Hand', W, W + Vector((s * 0.25, 0.25, -0.25)))
         # le mani verso l'alto e un po' in avanti, il palmo verso il foglio
-        mano_verso(lato, dir_mano(lato).lerp(Vector((-s * 0.25, -0.35, 1.0)).normalized(), k), torci=0)
+        mano_verso(lato, dir_mano(lato).lerp(Vector((-s * 0.12, 0.05, 1.0)).normalized(), k), torci=0)
     # il centro del foglio: fra le mani, la parte alta del foglio in mano
     ML, MR = wa(pb_('LeftHand').head), wa(pb_('RightHand').head)
     mezzo = (ML + MR) / 2 + (dir_mano('Left') + dir_mano('Right')) / 2 * 0.045
-    return mezzo + Vector((0, -0.012, -0.065))
+    # (il foglio passa davanti alle mani, che lo tengono da dietro: davanti si vede solo il bordo della mano oltre il foglio,
+    # come il pollice di chi mostra un foglio; ambienti-2, decisione del coordinatore)
+    return mezzo + Vector((0, -0.028, -0.065))
 
 
 def metti_foglio(dove_w):
