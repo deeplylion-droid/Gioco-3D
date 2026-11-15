@@ -98,6 +98,26 @@ func _run() -> void:
 			"al buio, lontano dalla fossa, la luce gira: lei è lì")
 	check(not lei_sbuca.medusa.visible and lei_sbuca.fase == LeiSbuca.Fase.ATTESA, "e alla fossa non c'è ancora")
 
+	print("1b. La luce del giro è accesa solo nell'acqua vera")
+	var luce := buio.acqua.find_child("LuceSottacqua", true, false) as OmniLight3D
+	var fuori := 0
+	var accesa := 0
+	var dove_fuori := ""
+	for i in 60 * 40:
+		p.teleport(Vector3(-15.0, 0.05, 16.0))
+		await get_tree().physics_frame
+		if luce == null or not luce.is_visible_in_tree() or acqua.fase != AcquaDiLei.Fase.LONTANA:
+			continue
+		if luce.light_energy > 0.05:
+			accesa += 1
+			if not acqua.in_acqua(luce.global_position):
+				fuori += 1
+				dove_fuori = str(luce.global_position.snapped(Vector3.ONE * 0.01))
+	check(luce != null and accesa > 600 and fuori == 0,
+			"nel giro (40 s) la luce è accesa %d fotogrammi, mai fuori da un volume d'acqua (%d fuori%s)" % [accesa, fuori, ", per esempio " + dove_fuori if fuori else ""])
+	p.teleport(bordo)
+	await _fisica(5)
+
 	print("2. Sul bordo, quando la luce passa lì, esce e prende")
 	var uscita := false
 	var presa := false
