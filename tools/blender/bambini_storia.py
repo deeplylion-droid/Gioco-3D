@@ -318,6 +318,36 @@ def metti_foglio(dove_w):
     bpy.context.view_layer.update()
 
 
+_MANI = []
+
+
+def indici_mani():
+    """I vertici della pelle delle mani (guanti, dita comprese)."""
+    if not _MANI:
+        gi = {g.index: g.name for g in corpo.vertex_groups}
+        _MANI.extend(v.index for v in corpo.data.vertices
+                     if any(gi[g.group] in ('LeftHand', 'RightHand') and g.weight > 0.3 for g in v.groups))
+    return _MANI
+
+
+def mani_sul_foglio(centro):
+    """Le punte delle mani dentro la sagoma del foglio (A4 verticale, faccia avanti: -Y) messo in centro: quanto sta
+    avanti la più avanzata (y minima, m). None se nessuna."""
+    vs = misura_pelle()
+    ys = [vs[i].y for i in indici_mani()
+          if abs(vs[i].x - centro.x) <= A4[0] / 2 and abs(vs[i].z - centro.z) <= A4[1] / 2]
+    return min(ys) if ys else None
+
+
+def appoggia(centro):
+    """Il foglio appoggiato alle dita: davanti alla punta più avanzata dentro la sua sagoma, a 3 mm (nessuna punta lo
+    passa, il contatto entro mezzo centimetro)."""
+    y = mani_sul_foglio(centro)
+    if y is None:
+        return centro
+    return Vector((centro.x, y - 0.003, centro.z))
+
+
 def porge():
     nuova_azione('porge')
     n = int(round(1.2 * FPS))
@@ -326,14 +356,14 @@ def porge():
         k = liscio(u, 0.0, 1.0)
         dove = posa_porge(f / FPS, k=k, trema=k)
         if dove is not None:
-            metti_foglio(dove)
+            metti_foglio(appoggia(dove))
         chiavi(f)
     nuova_azione('porge_tiene')
     n = 4 * FPS
     for f in range(n + 1):
         t = f / FPS + 1.2          # (prosegue da dove finisce porge: il respiro e il tremare continuano)
         dove = posa_porge(t, k=1.0)
-        metti_foglio(dove)
+        metti_foglio(appoggia(dove))
         chiavi(f)
 
 
@@ -499,6 +529,22 @@ def controlla():
             log(f'KO {nome}: la matita si stacca dal foglio'); ko += 1
         if nome in ('disegna', 'alza_testa') and (peggio['testa_mani'] < 0.02 or peggio['testa_foglio'] < 0.05):
             log(f'KO {nome}: il cubo tocca le mani o il foglio'); ko += 1
+    # il foglio che porge: appoggiato alle dita (contatto entro 5 mm), nessuna punta oltre il foglio
+    arm.animation_data.action = bpy.data.actions['porge_tiene']
+    vicino, lontano, oltre = 9.0, 0.0, 0
+    for f in range(0, 4 * FPS + 1, 4):
+        sc.frame_set(f)
+        c = wa(pb_('foglio').head)
+        vs = misura_pelle()
+        ds = [vs[i].y - c.y for i in indici_mani()
+              if abs(vs[i].x - c.x) <= A4[0] / 2 and abs(vs[i].z - c.z) <= A4[1] / 2]
+        if ds:
+            vicino = min(vicino, min(ds))
+            lontano = max(lontano, min(ds))
+            oltre += sum(1 for d in ds if d < 0.0)
+    log(f'porge_tiene: dalla punta più vicina al foglio da {vicino * 1000:.1f} a {lontano * 1000:.1f} mm; punte oltre il foglio {oltre}')
+    if oltre or lontano > 0.005:
+        log('KO porge_tiene: il foglio non è appoggiato alle dita'); ko += 1
     log('CONTROLLO STORIA:', 'ok' if ko == 0 else f'{ko} KO')
     return ko
 
