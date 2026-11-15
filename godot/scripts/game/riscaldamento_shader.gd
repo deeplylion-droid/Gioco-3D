@@ -181,6 +181,12 @@ func _disegna() -> void:
 	await riscalda_goccia(sv, 3)
 	if not is_inside_tree():
 		return
+	# il jumpscare della prima morte per medusa (JumpscareGlitch: lo schermo che si rompe, uno shader che legge lo
+	# schermo): senza, al primo morso 1 pipeline "canvas" (15 novembre). Sullo schermo vero, dietro la schermata di
+	# caricamento, a forza 0 (non cambia niente di quello che si vede): la pipeline è quella del suo framebuffer.
+	await riscalda_morte(get_viewport(), 3, 0.0)
+	if not is_inside_tree():
+		return
 	# gli effetti che compaiono solo con un evento a metà partita (ritocco "scatti" dell'utente del 4 novembre, scelta A;
 	# tests/sonda_primo_uso_effetti.gd): il gorgo dello scarico, il vapore e le medusine, coi loro nodi veri
 	await _disegna_effetti(sv)
@@ -214,6 +220,33 @@ static func riscalda_goccia(sv: Viewport, fotogrammi := 2) -> void:
 	sv.add_child(c)
 	for i in fotogrammi:
 		await RenderingServer.frame_post_draw
+	c.queue_free()
+
+
+## Il glitch dello schermo del jumpscare (JumpscareGlitch, glitch_schermo.gdshader) acceso a piena forza sopra il
+## SubViewport [param sv], per [param fotogrammi] fotogrammi.
+static func riscalda_morte(sv: Viewport, fotogrammi := 2, forza := 1.0) -> void:
+	var c := CanvasLayer.new()
+	c.layer = 95
+	var r := ColorRect.new()
+	r.set_anchors_preset(Control.PRESET_FULL_RECT)
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var m := ShaderMaterial.new()
+	m.shader = JumpscareGlitch.SHADER
+	m.set_shader_parameter(&"forza", forza)
+	m.set_shader_parameter(&"seme", 3.0)
+	r.material = m
+	c.add_child(r)
+	if sv is Window or sv == (Engine.get_main_loop() as SceneTree).root:
+		# (sullo schermo vero: 2 pixel nell'angolo, così sotto la schermata di caricamento non si vede niente)
+		r.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		r.size = Vector2(2, 2)
+		(Engine.get_main_loop() as SceneTree).root.add_child(c)
+	else:
+		sv.add_child(c)
+	for i in fotogrammi:
+		await RenderingServer.frame_post_draw
+	_tenuti.append(m)
 	c.queue_free()
 
 
@@ -564,8 +597,15 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 ## Rende visibile [param radice] e mette sullo strato fuori vista i suoi nodi visibili, luci comprese (la camera del
 ## gioco non le vede): torna lo stato da rimettere con [method _rimetti].
 static func _fuori_vista(radice: Node3D) -> Dictionary:
-	var stato := {"visibile": radice.visible, "strati": {}, "aabb": AABB(), "rimesso": false}
+	var stato := {"visibile": radice.visible, "strati": {}, "aabb": AABB(), "rimesso": false, "bocche": []}
 	radice.visible = true
+	# lei con la bocca (gola, denti) che si vede solo quando ti prende: disegnata anche lei, poi rinascosta
+	var statue: Array = radice.find_children("*", "MedusaStatue", true, false)
+	if radice is MedusaStatue:
+		statue.append(radice)
+	for m in statue:
+		if (m as MedusaStatue).mostra_bocca_per_il_riscaldamento():
+			(stato["bocche"] as Array).append(m)
 	var primo := true
 	for v in radice.find_children("*", "VisualInstance3D", true, false):
 		var vi := v as VisualInstance3D
@@ -639,4 +679,7 @@ static func _rimetti(radice: Variant, stato: Dictionary) -> void:
 		Strati.metti(n, stato["strati"][vi])
 		for g in giu:
 			g.visible = false
+	for m in stato.get("bocche", []):
+		if is_instance_valid(m):
+			(m as MedusaStatue).nascondi_bocca_dopo_il_riscaldamento()
 	radice.visible = stato["visibile"]
