@@ -70,9 +70,22 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 
 `puo_venire()` è vera solo se valgono tutte queste:
 - le pompe sono riaccese (`GameState.luci == BLACKOUT`) e il giocatore non sta morendo;
-- lei non è già in un altro specchio (una sola, condivisa da tutte le istanze: `AcquaDiLei.chi_la_usa()`);
-- nessun'altra lei è in vista (ogni `MedusaAffacciata` visibile in scena: oblò, fossa, condotte, tunnel);
+- il giocatore è nella zona dello specchio (`giocatore_nella_zona()`): entro `zona_raggio` (25 m) in pianta da un punto d'uscita e a non più di `zona_dislivello` (3 m) dal pelo. Fuori dalla zona lei non viene e, se la luce gira o aspetta lì, se ne va subito (`lascia()`): nessuno specchio la tiene da lontano;
+- lei non è da un'altra parte (`lei_altrove()`, vedi sotto);
 - nessun bambino è nell'inquadratura (gruppo `bambini` e `BambinoSfuggita`).
+
+**Dov'è lei adesso** (`lei_altrove()`, usata da `puo_venire()` e da `fase_canto`). Lei è da un'altra parte se vale una di queste:
+- un altro specchio la usa (`AcquaDiLei.chi_la_usa()`);
+- una scena la sta usando: la sua lei è nel gruppo `AcquaDiLei.LEI_IN_SCENA` (`lei_in_scena`). LeiSbuca ce la mette mentre la scena della fossa è in corso; condotte e tunnel ce la mettono mentre lei insegue;
+- un'altra lei (MedusaAffacciata, gruppo `lei_affacciata`) è visibile e il giocatore la può vedere da dove sta: entro `vista_lontano` (40 m) e nell'inquadratura, oppure entro `vista_dietro` (12 m), perché girandosi la vedrebbe.
+
+Perché così: il giocatore non ne vede mai due insieme, e una lei lontana, in un'altra zona o dietro i muri (la fossa lasciata visibile, un oblò pronto dietro il vetro) non ferma la regola dove si trova lui. Quando lei è da un'altra parte, o il giocatore è fuori dalla zona, `fase_canto` dà `ferma`: il canto lontano di quello specchio tace (lei non è in due posti).
+
+**Lei e la luce condivise.** Lei, la luce e il viso sono uno solo per tutto il gioco, ma possono stare sotto specchi diversi. Si controllano uno per uno e si ricrea solo quello che manca. Uno specchio liberato si porta via quelli che ha sotto, senza lasciare riferimenti.
+
+**La prima volta dimostrativa** si ricorda in `scripts/game/stato_lei.gd`, con la chiave `chiave_zona` (o, se vuota, il percorso del nodo). `GameState.reset_progress()` la azzera: con la partita nuova la prima uscita è di nuovo dimostrativa. Dall'esterno usa `prossima_dimostrativa()`.
+
+**Riscaldamento:** `posa_per_il_riscaldamento(acceso, animazione = "")`. Si chiama intorno al disegno fuori vista della zona (`RiscaldamentoShader.disegna_fuori_vista`). Con `true` mette lei fuori dal primo punto d'uscita, con la luce di quando è fuori e l'animazione dell'uscita a metà; con `false` la rimette via. Così la prima uscita vera non compila shader.
 
 `chiama()` restituisce falso se non può. Se un bambino entra in vista durante l'avviso, lei non esce e la luce se ne va.
 

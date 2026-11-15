@@ -124,6 +124,8 @@ func _run() -> void:
 	sbuca.medusa.visible = true
 	await _fisica(2)
 	check(sp2.lei_in_vista_altrove(), "la lei della fossa davanti, a 6 m: conta (non se ne vedono due)")
+	check(sbuca.fase != LeiSbuca.Fase.GUARDA or (sp2.fase_canto == &"ferma" and not sp2.puo_venire()),
+			"con la scena della fossa in corso lo specchio lì vicino tace e lei non viene (fossa in fase %d)" % sbuca.fase)
 	sbuca.medusa.visible = false
 	sp2.queue_free()
 	await _fisica(2)
