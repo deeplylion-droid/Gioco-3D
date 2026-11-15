@@ -152,6 +152,14 @@ def carica():
         ico.hide_render = True
         ico.hide_viewport = True
     arm = bpy.data.objects['Medusa_Scheletro']
+    # le ossa dei tentacoli che strisciano nelle pozze staccate dal padre: il primo osso (sotto il fondo, nascosto) si
+    # allunga (tentacolo_pozza); la posa di riposo non cambia
+    bpy.context.view_layer.objects.active = arm
+    bpy.ops.object.mode_set(mode='EDIT')
+    for eb in arm.data.edit_bones:
+        if eb.name.startswith(tuple(r + '_' for r, _, _, _ in POZZA_TENTACOLI)) and eb.parent is not None:
+            eb.use_connect = False
+    bpy.ops.object.mode_set(mode='OBJECT')
     for pb in arm.pose.bones:
         pb.rotation_mode = 'QUATERNION'
     return arm
@@ -930,6 +938,438 @@ def pose_scatto(arm, C, Z, t, T=T_SCATTO):
     _caricata(arm, C, Z, tc, w, l)
 
 
+# --------------------------------------------------------------------------------------------- le pozze (modo MANO)
+# Le pozze colorate della Risalita (0.4.0, scelta C dell'utente): da una pozza di 1 m x 1 m e 0,7 m d'acqua esce prima
+# il braccio e la mano sbatte sul grigliato, poi dal bordo salgono quattro tentacoli che strisciano lungo la passerella
+# fino a circa 2 m; la presa la fa la mano, alla caviglia. Spazio: l'origine e' il punto dove sbatte la mano (il marker
+# di enigmi, sul grigliato a filo del bordo), -Y verso la passerella (Godot +Z), Z su. Le misure sono quelle di
+# Pozza_2_4 (enigmi, 15 novembre): pozza x -0,5..0,5, y 0,1..1,1 (Godot z -0,1..-1,1), pozze contigue a passo 1,1 m,
+# acqua fino a -0,0525, fondo chiuso da -0,75 a -0,95; il bordino davanti y 0..0,1 a filo del grigliato (z 0); il
+# grigliato pieno da 0 a -0,23, la passerella fino a y -1,2 (poi il muro). Lei non ci sta: il corpo resta sott'acqua e
+# sotto il fondo (la testa a circa 0,28 m sotto il pelo), braccio e tentacoli passano dal fondo della pozza.
+
+POZZA_PELO = -0.0525
+POZZA_NASCOSTO = -0.97                # sotto il fondo della pozza (-0,95) non si vede niente
+POZZA_CAVIGLIA = (0.0, -0.6, 0.1)       # la caviglia del giocatore sulla linea di mezzo (marker z +0,6 in Godot)
+# (roll, pitch, yaw in gradi, spalla destra nel mondo, testa su, testa girata): trovati con il controllo delle zone
+POZZA_GIU = (0.0, -10.0, 30.0, (-0.25, 0.45, -2.0), 0.0, 0.0)
+POZZA_ATTESA = (0.0, -10.0, 30.0, (-0.25, 0.4, -0.7), 0.0, 0.0)
+POZZA_PRESA = (30.0, -10.0, 45.0, (-0.2, 0.35, -0.52), -25.0, -30.0)
+# il polso: (punto, direzione delle dita, dorso)
+POZZA_SLAM = ((0.0, 0.04, 0.09), (0.0, -1.0, -0.15), (0.0, 0.0, 1.0))
+POZZA_PRESA_POLSO = ((0.0, -0.40, 0.26), (0.0, -1.0, -0.2), (0.0, 0.2, 1.0))
+POZZA_POLO = (0.0, 0.2, 1.2)            # verso dove piega il gomito (rispetto alla spalla): in alto e indietro, cosi'
+                                        # l'avambraccio passa sopra il bordino (il gomito resta appena sott'acqua)
+POZZA_DITA = (3.0, 1.5, 1.0)            # quanto si piegano le falangi sul grigliato: le punte premono, il palmo un poco alzato
+# i quattro tentacoli che strisciano: (osso radice, x dove sale dal bordo, punta sul grigliato, partenza nella salita)
+POZZA_TENTACOLI = (
+    ('tentacolo_03', 0.40, (1.85, -0.35), 0.70),
+    ('tentacolo_05', -0.40, (-1.85, -0.35), 0.85),
+    ('tentacolo_02', 0.22, (1.25, -0.80), 1.00),
+    ('tentacolo_04', -0.25, (-1.25, -0.80), 1.10),
+)
+T_POZZA_ESCE = 2.2
+T_POZZA_ATTESA = 2.4
+T_POZZA_PRESA = 0.8
+T_POZZA_RESPINTA = 1.0
+T_POZZA_SCENDE = 1.2
+POZZA_SLAM_T = 0.62                    # quando la mano sbatte (s; AcquaDiLei.MANO_SBATTE deve essere uguale)
+
+
+def _pozza_mix(a, b, k):
+    return tuple(_pozza_lerp(x, y, k) for x, y in zip(a, b))
+
+
+def _pozza_lerp(x, y, k):
+    if isinstance(x, tuple):
+        return tuple(p + (q - p) * k for p, q in zip(x, y))
+    return x + (y - x) * k
+
+
+def dita_piatte(arm, suf, giu=POZZA_DITA, stringi=0.0, tamburo=0.0):
+    """Le dita della mano distese nel piano del palmo (dal dorso, asse Z della mano), un poco aperte, piegate di giu
+    gradi per falange verso il palmo; stringi (0-1) le chiude a pugno intorno a qualcosa; tamburo (s) le fa battere
+    a turno sul grigliato."""
+    pm = arm.pose.bones['mano' + suf]
+    Mh = pm.matrix.to_3x3()
+    hx, hy, hz = Mh.col[0].normalized(), Mh.col[1].normalized(), Mh.col[2].normalized()
+    Rr = arm.data.bones['mano' + suf].matrix_local
+    for i, f in enumerate(DITA):
+        off = Rr.inverted() @ arm.data.bones[f'{f}_1{suf}'].head_local
+        if f == 'pollice':
+            y = (hy * 0.6 + hx * (1 if off.x > 0 else -1) * 0.75 + hz * 0.05).normalized()
+        else:
+            y = (hy + hx * (off.x / 0.03) * 0.12).normalized()
+        ax = hz.cross(y).normalized()       # (un angolo positivo piega verso il palmo)
+        alza = 0.0
+        if tamburo and f != 'pollice':
+            alza = -14.0 * max(0.0, math.sin(2 * math.pi * (tamburo * 2.5 - 0.18 * i)))
+        for k, g in zip((1, 2, 3), giu):
+            g = g + stringi * (35 if k == 1 else 45) + (alza if k == 1 else 0.0)
+            y = Matrix.Rotation(math.radians(g), 3, ax) @ y
+            nm = f'{f}_{k}{suf}'
+            POSE.orienta(arm, nm, arm.pose.bones[nm].head.copy(), y, hz)
+            aggiorna()
+
+
+def corpo_pozza(arm, C, Z, stato, t=0.0):
+    """Il corpo di lei nella pozza: posa di insegue (busto, braccio sinistro, zampe sul petto), i tentacoli che non
+    strisciano raccolti sotto la campana (sotto il fondo), poi tutta girata (roll, pitch, yaw) intorno alla spalla
+    destra e portata con la spalla nel punto dato, la testa su e girata. Il braccio destro e i tentacoli che
+    strisciano si mettono dopo."""
+    roll, pitch, yaw, S, su, giro = stato
+    W = arm.matrix_world
+    applica(arm, base(C, campiona(C, 'insegue', 0.0), campiona(C, 'fluttua', t), campiona(C, 'statua', 0.0, False)))
+    Z.leggi()
+    raccogli(arm, 1.0)
+    pb = arm.pose.bones['radice']
+    sp = W @ arm.pose.bones['braccio.R'].head
+    R = (Matrix.Rotation(math.radians(yaw), 4, 'Z') @ Matrix.Rotation(math.radians(pitch), 4, 'X')
+         @ Matrix.Rotation(math.radians(roll), 4, 'Y'))
+    Mw = Matrix.Translation(Vector(S)) @ R @ Matrix.Translation(-sp)
+    pb.matrix = W.inverted() @ Mw @ W @ pb.matrix
+    aggiorna()
+    testa(arm, su=su, giro=giro)
+    Z.segui()
+
+
+def polso_pozza(arm, polso, dir_mano, dorso, polo=POZZA_POLO):
+    """Il braccio destro col polso in un punto del mondo (spazio del marker), il gomito piegato verso polo."""
+    W = arm.matrix_world
+    pc = W @ arm.pose.bones['braccio.R'].head
+    POSE.posa_braccio(arm, '.R', W.inverted() @ Vector(polso), W.inverted() @ (pc + Vector(polo)), Vector(dir_mano),
+                      Vector(dorso))
+    aggiorna()
+
+
+def _catena(arm, prefisso):
+    """Le ossa di un tentacolo, dalla radice alla punta (tentacolo_03 -> tentacolo_03_01, tentacolo_03_02, ...)."""
+    return sorted(b.name for b in arm.data.bones if b.name.startswith(prefisso + '_'))
+
+
+def _polilinea(punti, passo=0.01):
+    """Punti fitti (ogni passo m) lungo i segmenti, con la lunghezza progressiva."""
+    out, s = [Vector(punti[0])], [0.0]
+    for a, b in zip(punti[:-1], punti[1:]):
+        a, b = Vector(a), Vector(b)
+        n = max(1, int((b - a).length / passo))
+        for k in range(1, n + 1):
+            q = a.lerp(b, k / n)
+            s.append(s[-1] + (q - out[-1]).length)
+            out.append(q)
+    return out, s
+
+
+def _bezier(a, c, b, n=40):
+    return [a * (1 - u) ** 2 + c * 2 * u * (1 - u) + b * u * u for u in (k / n for k in range(n + 1))]
+
+
+def pista_tentacolo(x, punta):
+    """Il percorso visibile di un tentacolo: dal fondo della pozza su lungo la parete davanti, sopra il bordino (mai
+    sotto 5 cm dalla cima), giu' sul grigliato e lungo la passerella fino alla punta, appoggiato (l'asse a 4,5 cm
+    dal grigliato vicino al bordo, 2 cm alla punta)."""
+    sx = 1.0 if punta[0] > x else -1.0
+    # (sale dritto oltre la cima e passa alto sopra il bordino: le ossa sono lunghe quasi 0,4 m e la corda
+    # taglierebbe l'angolo)
+    su = [(x, 0.30, -0.86), (x, 0.25, -0.70), (x, 0.22, -0.35), (x, 0.21, -0.05), (x, 0.21, 0.15), (x, 0.20, 0.30),
+          (x, 0.15, 0.36), (x, 0.06, 0.38), (x, -0.04, 0.36), (x, -0.13, 0.28), (x, -0.20, 0.17),
+          (x + 0.03 * sx, -0.26, 0.08)]
+    a = Vector((x + 0.06 * sx, -0.33, 0.045))
+    b = Vector((punta[0], punta[1], 0.02))
+    c = Vector((x + (punta[0] - x) * 0.35, min(-0.15, punta[1] * 0.4), 0.04))
+    curva = _bezier(a, c, b, 60)
+    for q in curva:
+        q.z = 0.045 + (0.02 - 0.045) * min(1.0, (q - a).length / max((b - a).length, 1e-6))
+    return [Vector(p) for p in su] + curva
+
+
+def _sulla_polilinea(P, S, da, dist):
+    """Primo punto della polilinea, dopo l'indice da, a distanza dist (corda) da P[da]: (punto, indice, lunghezza)."""
+    c = P[da]
+    for i in range(da + 1, len(P)):
+        if (P[i] - c).length >= dist:
+            a, b = P[i - 1], P[i]
+            # sulla retta a-b il punto a distanza dist da c
+            d = b - a
+            f = a - c
+            A, B, Cc = d.dot(d), 2 * f.dot(d), f.dot(f) - dist * dist
+            disc = max(B * B - 4 * A * Cc, 0.0)
+            u = (-B + math.sqrt(disc)) / (2 * A) if A > 1e-12 else 1.0
+            u = min(max(u, 0.0), 1.0)
+            return a.lerp(b, u), i - 1, S[i - 1] + (S[i] - S[i - 1]) * u
+    return None, len(P) - 1, S[-1]
+
+
+def tentacolo_pozza(arm, radice, pista, s_punta, alza=0.0):
+    """Mette la catena del tentacolo lungo la pista (polilinea dal fondo della pozza) con la punta a s_punta metri
+    sulla pista. Se il tentacolo avanza, la parte sotto il fondo (nascosta) fa una curva verso il basso tanto lunga da
+    tenere la punta li'. Se non basta, si allunga solo il primo osso, quello attaccato alla campana, tutto sotto il
+    fondo (non si vede: POZZA_NASCOSTO): le altre ossa restano lunghe uguali (posate a corda) e il pezzo che si vede ha
+    la lunghezza vera. Le ossa girano il meno possibile rispetto al padre. Restituisce dove e' arrivata la punta sulla
+    pista (meno di s_punta se non basta neanche cosi')."""
+    W = arm.matrix_world
+    Wi = W.inverted()
+    nomi = _catena(arm, radice)
+    L = [arm.data.bones[n].length for n in nomi]
+    R0 = W @ arm.pose.bones[nomi[0]].head
+    pista_p, pista_s = _polilinea(pista)
+    F = pista_p[0]
+
+    def posa_da(P, S, lg, giunti, da, ossa):
+        for l in ossa:
+            q, da, s = _sulla_polilinea(P, S, da, l)
+            if q is None:
+                return None, giunti
+            # (il punto trovato e' su un segmento: per il prossimo osso si riparte da li')
+            P.insert(da + 1, q)
+            S.insert(da + 1, s)
+            da += 1
+            giunti.append(q)
+        return S[da] - lg, giunti
+
+    def prova(b):
+        giu = _bezier(R0, (R0 + F) * 0.5 + Vector((0, 0, -b)), F, 60)
+        P, S = _polilinea(giu + pista_p[1:], 0.01)
+        lg = _polilinea(giu, 0.01)[1][-1]
+        return posa_da(P, S, lg, [R0], 0, L)
+
+    def allunga(h):
+        # il primo osso dritto da R0 verso F, lungo h; le altre ossa da li'
+        d = F - R0
+        j1 = R0 + d.normalized() * min(h, d.length)
+        P, S = _polilinea([j1, F] + pista_p[1:], 0.01)
+        lg = (F - j1).length
+        return posa_da(P, S, lg, [R0, j1], 0, L[1:])
+
+    def oltre(s):
+        return s is None or s > s_punta
+    s0, g0 = prova(0.0)
+    if '--diagnosi' in sys.argv:
+        print(f'DIAGNOSI {radice}: R0 {tuple(round(v, 2) for v in R0)} F {tuple(round(v, 2) for v in F)} s0 {s0} L {[round(l, 2) for l in L]} punta {s_punta:.2f}', flush=True)
+    if not oltre(s0):
+        # il tentacolo non basta: si allunga il primo osso, finche' la sua punta resta sotto il fondo
+        d = F - R0
+        h_max = L[0]
+        if d.z > 1e-6:
+            h_max = max(L[0], d.length * min(1.0, (POZZA_NASCOSTO - R0.z) / d.z))
+        lo, hi = L[0], h_max
+        giunti, arrivo = g0, s0
+        sh, gh = allunga(hi)
+        if oltre(sh):
+            for _ in range(30):
+                mid = (lo + hi) * 0.5
+                s_, g_ = allunga(mid)
+                if oltre(s_):
+                    hi = mid
+                else:
+                    lo, giunti, arrivo = mid, g_, s_
+        else:
+            giunti, arrivo = gh, sh
+    else:
+        lo, hi = 0.0, 4.0
+        giunti, arrivo = None, None
+        for _ in range(30):
+            mid = (lo + hi) * 0.5
+            s, g = prova(mid)
+            if oltre(s):
+                lo = mid
+            else:
+                hi, giunti, arrivo = mid, g, s
+        if giunti is None:
+            giunti, arrivo = prova(hi)[1], -1.0
+    while len(giunti) < len(nomi) + 1:
+        giunti.append(giunti[-1] + (giunti[-1] - giunti[-2]).normalized() * L[len(giunti) - 1])
+    # la punta che si alza un poco (le ultime tre ossa)
+    if alza:
+        n = len(giunti)
+        for k in range(max(1, n - 3), n):
+            giunti[k] = giunti[k] + Vector((0, 0, alza * (k - (n - 4)) / 3.0))
+    for i, nm in enumerate(nomi):
+        pb = arm.pose.bones[nm]
+        bone = arm.data.bones[nm]
+        if bone.parent:
+            Mp = arm.pose.bones[bone.parent.name].matrix
+            base_m = Mp @ (bone.parent.matrix_local.inverted() @ bone.matrix_local)
+        else:
+            base_m = pb.matrix.copy()
+        Rb = base_m.to_3x3().normalized()
+        y_new = (Wi @ giunti[i + 1] - Wi @ giunti[i]).normalized() if i + 1 < len(giunti) else Rb.col[1]
+        q = Rb.col[1].normalized().rotation_difference(y_new)
+        N = (q.to_matrix() @ Rb).to_4x4()
+        N.translation = Wi @ giunti[i]
+        pb.matrix = N
+        aggiorna()
+    return arrivo
+
+
+def _pista_lunghezza(pista):
+    return _polilinea(pista)[1][-1]
+
+
+_POZZA_PISTE = {}
+POZZA_MARGINE_PISTA = 0.14      # quanto di tentacolo resta da avanzare nella posa d'attesa (le punte che respirano, lo
+                                # scatto della presa)
+
+
+def piste_pozza(arm, C, Z):
+    """Le piste dei quattro tentacoli, tagliate dove ci arrivano davvero: nella posa d'attesa, con la parte nascosta
+    dritta, meno POZZA_MARGINE_PISTA. Si calcolano una volta; stampa dove finiscono le punte."""
+    if _POZZA_PISTE:
+        return _POZZA_PISTE
+    corpo_pozza(arm, C, Z, POZZA_ATTESA)
+    for radice, x, punta, _ in POZZA_TENTACOLI:
+        pista = pista_tentacolo(x, punta)
+        P, S = _polilinea(pista)
+        # (fin dove arriva la punta con POZZA_MARGINE_PISTA ancora da avanzare: la pista continua dritta oltre la fine)
+        d = (P[-1] - P[-2]).normalized()
+        arrivo = tentacolo_pozza(arm, radice, pista + [P[-1] + d * POZZA_MARGINE_PISTA], S[-1] + POZZA_MARGINE_PISTA)
+        lim = min(S[-1], arrivo - POZZA_MARGINE_PISTA)
+        taglio = [q for q, s in zip(P, S) if s <= lim]
+        _POZZA_PISTE[radice] = taglio
+        t = taglio[-1]
+        print(f'POZZA pista {radice}: punta a ({t.x:.2f}, {t.y:.2f}), {math.hypot(t.x, t.y):.2f} m dal marker '
+              f'(voluta {punta}, il tentacolo arriva a {arrivo:.2f} m di pista su {S[-1]:.2f})', flush=True)
+    return _POZZA_PISTE
+
+
+def tentacoli_pozza(arm, quanto, alza=0.0, avanti=0.0):
+    """I quattro tentacoli: quanto(nome, lunghezza della pista) -> metri di pista percorsi dalla punta."""
+    arrivi = {}
+    for radice, x, punta, _ in POZZA_TENTACOLI:
+        pista = _POZZA_PISTE[radice] + []
+        lung = _pista_lunghezza(pista) + POZZA_MARGINE_PISTA
+        # (oltre la fine tagliata la pista continua dritta: lo scatto della presa)
+        d = (pista[-1] - pista[-2]).normalized()
+        pista.append(pista[-1] + d * POZZA_MARGINE_PISTA)
+        voluto = min(quanto(radice, lung) + avanti, lung)
+        arrivi[radice] = tentacolo_pozza(arm, radice, pista, voluto, alza)
+        if '--pozza' in sys.argv and arrivi[radice] < voluto - 0.02:
+            print(f'POZZA corto {radice}: la punta a {arrivi[radice]:.2f} m di {voluto:.2f} (pista {lung:.2f})', flush=True)
+    return arrivi
+
+
+def _striscia(u):
+    """Come avanza una punta (0-1 della pista) nel tempo (0-1): due spinte decise con una pausa in mezzo."""
+    return chiavi(u, [(0.0, 0.0), (0.30, 0.52), (0.42, 0.56), (0.78, 0.96), (1.0, 1.0)])
+
+
+def pose_pozza_esce(arm, C, Z, t, T=T_POZZA_ESCE):
+    """2,2 s: da sotto il fondo sale col braccio destro alzato (la mano esce dall'acqua a circa 0,3 s), la mano si
+    alza sopra il bordo e sbatte sul grigliato (POZZA_SLAM_T), poi dal bordo salgono i quattro tentacoli e strisciano
+    sulla passerella, a scatti. Finisce nella posa di pozza_attesa al tempo 0."""
+    piste_pozza(arm, C, Z)
+    k = chiavi(t, [(0.0, 0.0), (0.40, 1.0)])
+    stato = _pozza_mix(POZZA_GIU, POZZA_ATTESA, liscio(0.0, 1.0, 0.0, 1.0, k))
+    corpo_pozza(arm, C, Z, stato)
+    sp = arm.matrix_world @ arm.pose.bones['braccio.R'].head
+    alto = sp + Vector((0.05, -0.08, 0.85))
+    chiavi_polso = [(0.0, alto), (0.40, Vector((-0.10, 0.24, 0.36))), (0.50, Vector((-0.05, 0.13, 0.42))),
+                    (POZZA_SLAM_T, Vector(POZZA_SLAM[0])), (POZZA_SLAM_T + 0.05, Vector(POZZA_SLAM[0]) + Vector((0, 0, 0.012))),
+                    (POZZA_SLAM_T + 0.12, Vector(POZZA_SLAM[0]))]
+    if t <= 0.40:
+        polso = alto.lerp(chiavi_polso[1][1], liscio(0.0, 1.0, 0.0, 0.40, t))
+    else:
+        polso = Vector(chiavi(t, [(a, tuple(b)) for a, b in chiavi_polso[1:]]))
+    dm, dz = gira_mano((0.0, -0.25, 1.0), (0.0, 1.0, 0.15), POZZA_SLAM[1], POZZA_SLAM[2], liscio(0.0, 1.0, 0.42, POZZA_SLAM_T, t))
+    polso_pozza(arm, polso, dm, dz)
+    kd = liscio(0.0, 1.0, 0.45, 0.56, t)
+    dita_piatte(arm, '.R', giu=tuple(b + (a - b) * kd for a, b in zip(POZZA_DITA, (10.0, 12.0, 12.0))),
+                stringi=chiavi(t, [(0.0, 0.25), (0.45, 0.0), (POZZA_SLAM_T, -0.05), (POZZA_SLAM_T + 0.1, 0.0)]))
+
+    def quanto(nome, lung):
+        da = [d for r, _, _, d in POZZA_TENTACOLI if r == nome][0]
+        return (lung - POZZA_MARGINE_PISTA) * _striscia(liscio(0.0, 1.0, da, da + (T - da) * 0.95, t) if t > da else 0.0)
+    tentacoli_pozza(arm, quanto)
+
+
+def pose_pozza_attesa(arm, C, Z, t, T=T_POZZA_ATTESA):
+    """Ciclo 2,4 s: la mano premuta sul grigliato, le dita che battono a turno, i tentacoli fermi sulla passerella
+    con le punte che si alzano e avanzano di pochi centimetri, il corpo sott'acqua che respira."""
+    piste_pozza(arm, C, Z)
+    u = (t / T) % 1.0
+    roll, pitch, yaw, S, su, giro = POZZA_ATTESA
+    S = (S[0], S[1], S[2] + 0.015 * math.sin(2 * math.pi * u))
+    corpo_pozza(arm, C, Z, (roll, pitch, yaw + 2.0 * math.sin(2 * math.pi * u), S, su, giro))
+    polso_pozza(arm, POZZA_SLAM[0], POZZA_SLAM[1], POZZA_SLAM[2])
+    dita_piatte(arm, '.R', tamburo=u * T if u > 0.0 else 0.0)
+    if '--pozza' in sys.argv and t == 0.0:
+        W = arm.matrix_world
+        print('POZZA dita: ' + ', '.join(f"{f} {(W @ arm.pose.bones[f + '_3.R'].tail).z:.3f}" for f in DITA)
+              + f"; polso {(W @ arm.pose.bones['mano.R'].head).z:.3f}", flush=True)
+    a = 0.03 * (0.5 - 0.5 * math.cos(2 * math.pi * u))
+    tentacoli_pozza(arm, lambda nome, lung: lung - POZZA_MARGINE_PISTA + 0.04 * (0.5 - 0.5 * math.cos(2 * math.pi * u)), alza=a)
+
+
+def pose_pozza_presa(arm, C, Z, t, T=T_POZZA_PRESA):
+    """0,8 s: la mano si stacca dal grigliato, scatta alla caviglia (0,1-0,3 s) e la stringe, poi tira verso la
+    pozza; il corpo sale e si gira sotto il pelo per arrivarci; i tentacoli scattano avanti."""
+    piste_pozza(arm, C, Z)
+    k = liscio(0.0, 1.0, 0.08, 0.30, t)
+    corpo_pozza(arm, C, Z, _pozza_mix(POZZA_ATTESA, POZZA_PRESA, k))
+    slam = Vector(POZZA_SLAM[0])
+    presa = Vector(POZZA_PRESA_POLSO[0])
+    tira = presa + Vector((0.0, 0.12, 0.0))
+    if t < 0.08:
+        polso = slam.lerp(slam + Vector((0, 0.02, 0.10)), liscio(0.0, 1.0, 0.0, 0.08, t))
+    elif t < 0.30:
+        polso = (slam + Vector((0, 0.02, 0.10))).lerp(presa, liscio(0.0, 1.0, 0.08, 0.30, t))
+    else:
+        polso = presa.lerp(tira, liscio(0.0, 1.0, 0.40, 0.8, t))
+    dm, dz = gira_mano(POZZA_SLAM[1], POZZA_SLAM[2], POZZA_PRESA_POLSO[1], POZZA_PRESA_POLSO[2], liscio(0.0, 1.0, 0.08, 0.30, t))
+    polso_pozza(arm, polso, dm, dz)
+    dita_piatte(arm, '.R', stringi=chiavi(t, [(0.0, 0.0), (0.12, -0.15), (0.28, -0.1), (0.38, 0.8), (0.8, 0.85)]))
+    tentacoli_pozza(arm, lambda nome, lung: lung - POZZA_MARGINE_PISTA, avanti=0.10 * liscio(0.0, 1.0, 0.1, 0.3, t),
+                    alza=0.06 * liscio(0.0, 1.0, 0.1, 0.3, t))
+
+
+def _pozza_torna(arm, C, Z, t, T, veloce):
+    """Torna sotto: la mano si stacca e rientra sopra il bordo nell'acqua, i tentacoli scivolano indietro nella
+    pozza, il corpo scende sotto il fondo (POZZA_GIU)."""
+    piste_pozza(arm, C, Z)
+    if veloce:
+        tm = (0.0, 0.10, 0.22, 0.35)    # stacca, su, indietro sopra l'acqua, dentro
+        tc = (0.20, 1.0)                # il corpo scende
+        tt = (0.10, 0.65)               # i tentacoli rientrano
+    else:
+        tm = (0.0, 0.30, 0.50, 0.70)
+        tc = (0.45, 1.2)
+        tt = (0.10, 0.95)
+    kc = liscio(0.0, 1.0, tc[0], tc[1], t)
+    corpo_pozza(arm, C, Z, _pozza_mix(POZZA_ATTESA, POZZA_GIU, kc))
+    sp = arm.matrix_world @ arm.pose.bones['braccio.R'].head
+    alto = sp + Vector((0.05, -0.08, 0.85))
+    slam = Vector(POZZA_SLAM[0])
+    su = slam + Vector((0.0, 0.03, 0.22))
+    indietro = Vector((-0.05, 0.30, 0.20))      # (sopra l'acqua, oltre il bordino, prima di scendere)
+    dentro = Vector((-0.10, 0.36, -0.15))
+    if t < tm[1]:
+        polso = slam.lerp(su, liscio(0.0, 1.0, tm[0], tm[1], t))
+    elif t < tm[2]:
+        polso = su.lerp(indietro, liscio(0.0, 1.0, tm[1], tm[2], t))
+    elif t < tm[3]:
+        polso = indietro.lerp(dentro, liscio(0.0, 1.0, tm[2], tm[3], t))
+    else:
+        polso = dentro.lerp(alto, liscio(0.0, 1.0, tm[3], tc[1], t))
+        polso.z = min(polso.z, dentro.z)
+    dm, dz = gira_mano(POZZA_SLAM[1], POZZA_SLAM[2], (0.0, -0.25, 1.0), (0.0, 1.0, 0.15), liscio(0.0, 1.0, tm[0], tm[3], t))
+    polso_pozza(arm, polso, dm, dz)
+    kd = liscio(0.0, 1.0, tm[0], tm[1], t)
+    dita_piatte(arm, '.R', giu=tuple(a + (b - a) * kd for a, b in zip(POZZA_DITA, (10.0, 12.0, 12.0))),
+                stringi=0.25 * liscio(0.0, 1.0, tm[0], tm[3], t))
+    tentacoli_pozza(arm, lambda nome, lung: (lung - POZZA_MARGINE_PISTA) * (1.0 - liscio(0.0, 1.0, tt[0], tt[1], t)))
+
+
+def pose_pozza_respinta(arm, C, Z, t, T=T_POZZA_RESPINTA):
+    """1 s: il getto sulla mano: la ritira di scatto nella pozza, i tentacoli scivolano via in fretta, giu' sotto."""
+    _pozza_torna(arm, C, Z, t, T, True)
+
+
+def pose_pozza_scende(arm, C, Z, t, T=T_POZZA_SCENDE):
+    """1,2 s: torna sotto senza fretta (non ti ha preso): la mano si stacca e striscia indietro, i tentacoli
+    rientrano nella pozza."""
+    _pozza_torna(arm, C, Z, t, T, False)
+
+
 def pose_tuffo_sb1(arm, C, Z, t, T=1.3):
     """1,3 s dopo affacciata_sb1 (che finisce a 5,4 s): si stacca dal bordo, si alza un poco e si tuffa giu' nel
     pozzo (-5 m), le braccia che restano in alto, la testa che ti guarda fino all'ultimo."""
@@ -1277,6 +1717,12 @@ ANIMAZIONI = {
     'schianto': (2.4, False, lambda a, C, Z, t: pose_schianto(a, C, Z, t)),
     'carica': (T_CARICA, False, lambda a, C, Z, t: pose_carica(a, C, Z, t)),
     'scatto': (T_SCATTO, False, lambda a, C, Z, t: pose_scatto(a, C, Z, t)),
+    # le pozze della Risalita (modo MANO)
+    'pozza_esce': (T_POZZA_ESCE, False, lambda a, C, Z, t: pose_pozza_esce(a, C, Z, t)),
+    'pozza_attesa': (T_POZZA_ATTESA, True, lambda a, C, Z, t: pose_pozza_attesa(a, C, Z, t)),
+    'pozza_presa': (T_POZZA_PRESA, False, lambda a, C, Z, t: pose_pozza_presa(a, C, Z, t)),
+    'pozza_respinta': (T_POZZA_RESPINTA, False, lambda a, C, Z, t: pose_pozza_respinta(a, C, Z, t)),
+    'pozza_scende': (T_POZZA_SCENDE, False, lambda a, C, Z, t: pose_pozza_scende(a, C, Z, t)),
     # gli oblò della risalita
     'oblo_schiacciata': (T_OBLO, True, pose_oblo_schiacciata),
     'oblo_schiacciata_stacca': (T_STACCA, False, pose_oblo_schiacciata_stacca),
@@ -1497,6 +1943,78 @@ def anteprime(arm, C, Z, nome, durata, fn, cartella, n=6):
     mesh_attive(False)
 
 
+def zona_pozza(p):
+    """In che zona e' un punto (spazio del marker della pozza): aria, acqua (della sua pozza), fondo (la soletta della
+    sua pozza: ci passa, dallo scarico), nascosta (sotto i fondi e sotto il grigliato); in maiuscolo i difetti
+    (BORDINO, GRIGLIATO, MURO, ACQUA_ALTRA / FONDO_ALTRO: un'altra pozza)."""
+    x, y, z = p
+    if y < -1.2:
+        return 'MURO' if z > -0.23 else 'nascosta'
+    if z > 0.0:
+        return 'aria'
+    if y >= 0.0:
+        i = round(x / 1.1)
+        j = round((y - 0.6) / 1.1)
+        if abs(x - 1.1 * i) <= 0.5 and abs(y - 0.6 - 1.1 * j) <= 0.5:
+            mia = (i, j) == (0, 0)
+            if z > POZZA_PELO:
+                return 'aria' if mia else 'aria_altra'
+            if z >= -0.75:
+                return 'acqua' if mia else 'ACQUA_ALTRA'
+            if z >= -0.95:
+                return 'fondo' if mia else 'FONDO_ALTRO'
+            return 'nascosta'
+        return 'BORDINO' if z >= -0.95 else 'nascosta'
+    return 'GRIGLIATO' if z >= -0.23 else 'nascosta'
+
+
+def controlla_pozza(arm, C, Z, nome, durata, fn):
+    """Modo MANO: a ogni fotogramma, per ogni osso (6 punti, piu' sotto di quanto e' spesso per braccio, mano e
+    tentacoli che strisciano), la zona; stampa i fotogrammi con difetti, le ossa del corpo fuori dall'acqua e quanto
+    manca alle punte dei tentacoli."""
+    W = arm.matrix_world
+    strisciano = tuple(r + '_' for r, _, _, _ in POZZA_TENTACOLI)
+    braccio_r = ('braccio.R', 'avambraccio.R', 'mano.R')
+
+    def spessore(nm):
+        if nm.startswith('braccio'):
+            return 0.05
+        if nm.startswith('avambraccio'):
+            return 0.04
+        if nm.startswith('mano'):
+            return 0.02
+        if nm.startswith(strisciano):
+            return 0.012
+        if nm.endswith('.R') and nm.startswith(DITA):
+            return 0.006
+        return 0.0
+    n = int(round(durata * FPS))
+    difetti = 0
+    fuori = set()
+    for i in range(n + 1):
+        t = min(i / FPS, durata)
+        fn(arm, C, Z, t)
+        male = set()
+        for pb in arm.pose.bones:
+            h, c = W @ pb.head, W @ pb.tail
+            m = spessore(pb.name)
+            libero = pb.name.startswith(braccio_r + strisciano) or (pb.name.endswith('.R') and pb.name.startswith(DITA))
+            for k in range(7):
+                q = h.lerp(c, k / 6)
+                for qq in ((q, q - Vector((0, 0, m))) if m else (q,)):
+                    z = zona_pozza(qq)
+                    if z.isupper() or z == 'aria_altra':
+                        male.add(f'{pb.name} {z}' + (f' ({qq.x:.2f} {qq.y:.2f} {qq.z:.2f})' if '--diagnosi' in sys.argv else ''))
+                    elif z == 'aria' and not libero:
+                        fuori.add(pb.name)
+                        male.add(f'{pb.name} fuori')
+        if male:
+            difetti += 1
+            if difetti <= 6:
+                print(f'POZZA {nome} t={t:.2f}: ' + ', '.join(sorted(male)[:8]), flush=True)
+    print(f'POZZA {nome}: {difetti} fotogrammi con difetti su {n + 1}' + (f'; fuori dall acqua: {sorted(fuori)[:6]}' if fuori else ''), flush=True)
+
+
 def controlla_vetro(arm, C, Z, nome, durata, fn, n=9):
     """Oblò: quanto la pelle (tutte le mesh) arriva vicino al piano del vetro (y = -OBLO[0]) in n fotogrammi; stampa
     il punto piu' avanti per ciascuno (positivo: dietro il vetro, negativo: dentro)."""
@@ -1578,6 +2096,8 @@ def main():
         print(f'ANIMAZIONE {nome}: {n + 1} fotogrammi', flush=True)
         if '--vetro' in sys.argv and nome.startswith('oblo_'):
             controlla_vetro(arm, C, Z, nome, durata, fn)
+        if '--pozza' in sys.argv and nome.startswith('pozza_'):
+            controlla_pozza(arm, C, Z, nome, durata, fn)
         if '--anteprime' in sys.argv:
             anteprime(arm, C, Z, nome, durata, fn, cartella)
     with open(USCITA, 'w') as f:
