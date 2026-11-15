@@ -1529,6 +1529,10 @@ func chiudi_portello() -> void:
 	if finito:
 		return
 	finito = true
+	# (il tempo della partita si ferma col portello chiuso: la scena del finale non conta nel riepilogo di ambienti-1;
+	# GameState.tempo_fermo è sul loro branch, lavoro/storia-disegni)
+	if &"tempo_fermo" in GameState:
+		GameState.set(&"tempo_fermo", true)
 	for u in [_usa_portello, _usa_battente]:
 		if u:
 			u.enabled = false
