@@ -1745,9 +1745,9 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA, CARICA, SCATTO }
 @export var velocita_lei := 4.6
 ## Quanto corre per rientrare quando è più lontana di [member distanza_max].
 @export var velocita_rincorsa := 7.5
-## Il getto in faccia (litri sul viso: 1,2, circa 0,2 s di getto che la colpisce; prima della 0.4.0 0,6) la ferma per [member fermo_dopo_getto] secondi e la rimanda indietro di
+## Mezzo secondo di getto in faccia (litri sul viso: 3, a 6 l/s; il numero approvato dall'utente il 24 ottobre) la ferma per [member fermo_dopo_getto] secondi e la rimanda indietro di
 ## [member indietro_dopo_getto] metri; si ritrae strizzando l'occhio, rallenta e riparte.
-@export var getto_in_faccia := 1.2
+@export var getto_in_faccia := 3.0
 @export var fermo_dopo_getto := 2.0
 @export var indietro_dopo_getto := 6.0
 ## A guado nel canale (velocità massima a piedi e di corsa, m/s): la danno i volumi d'acqua del canale
@@ -1780,18 +1780,21 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA, CARICA, SCATTO }
 ## prende. Mai durante un passaggio obbligato: lì vale la regola di sempre (non sotto [member distanza_min]), e la
 ## carica parte solo quando il giocatore è sulla banchina da [member carica_dopo_passaggio] secondi.
 ## Con [member carica_attiva] falso lei insegue come prima della 0.4.0. Tutti i numeri li ritocca l'utente giocando.
+## (La finestra era 2 s: col getto in faccia di mezzo secondo, chi si gira dopo 1 s la colpisce a 1,9 s; 2,5 s
+## lasciano il margine a un giocatore vero, scelta del coordinatore del 15 novembre.)
 @export var carica_attiva := true
 @export var avvicinamento := 15.0
-@export var carica_finestra := 2.0
+@export var carica_finestra := 2.5
 @export var carica_finestra_prima := 3.0
 @export var carica_dopo_passaggio := 2.0
 @export var velocita_scatto := 14.0
 ## Il serbatoio nel tunnel (build 0.4.0: «il serbatoio basta per pochi spruzzi, tre per esempio: poi devi ricaricare
-## dal canale»): mentre il tunnel è nel gioco lo zaino tiene [member serbatoio_tunnel] litri (fuori 20) e dal canale
-## aspira [member aspira_tunnel] litri al secondo (fuori 10), così si ricarica in circa 2 s da fermo. Una respinta con
-## la mira giusta costa circa 1,5 litri (test_tunnel_carica): 3-4 respinte per serbatoio, circa 3 se si sbaglia un poco.
-@export var serbatoio_tunnel := 6.0
-@export var aspira_tunnel := 3.0
+## dal canale»): mentre il tunnel è nel gioco lo zaino tiene [member serbatoio_tunnel] litri e dal canale aspira
+## [member aspira_tunnel] litri al secondo. Di partenza quelli di sempre, 20 e 10 (scelta del coordinatore del 15
+## novembre: chi gioca non vede il serbatoio cambiare senza motivo): col getto in faccia di mezzo secondo una respinta
+## costa circa 4-5 litri, circa quattro per serbatoio, e la ricarica piena dal canale prende 2 s. Si ritoccano qui.
+@export var serbatoio_tunnel := 20.0
+@export var aspira_tunnel := 10.0
 ## Chi insegue (vuoto: il giocatore); i test lo cambiano.
 var bersaglio: Node3D
 

@@ -10,16 +10,17 @@ extends Node
 ## - fermo sulla banchina lei arriva a 8 m e carica, senza prenderti prima;
 ## - con carica_attiva spento corri e lei resta fra 8 e 18 m (come prima della 0.4.0).
 ## Col giocatore vero (zaino e getto veri, la mira sul suo occhio): nel tunnel lo zaino ha il serbatoio del tunnel;
-## quante cariche respinge un serbatoio pieno senza ricaricare, con la mira giusta (3-4: circa tre, scelta del
-## coordinatore del 15 novembre); la ricarica dal canale in circa 2 s; uscendo, lo zaino torna com'era.
+## quante cariche respinge un serbatoio pieno senza ricaricare, con la mira giusta (circa quattro, scelta del
+## coordinatore del 15 novembre); il getto arriva in tempo anche girandosi dopo [constant REAZIONE] s; la ricarica
+## dal canale in circa 2 s; uscendo, lo zaino torna com'era.
 ## Le cariche fuori dai passaggi obbligati le prova test_tunnel_attraversamenti.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_carica.gd
 
 const STATO := preload("res://scripts/game/stato_tunnel.gd")
 ## Quante respinte deve dare un serbatoio pieno al più e al meno.
-const RESPINTE := Vector2i(3, 4)
+const RESPINTE := Vector2i(3, 6)
 ## Il giocatore vero si gira e spruzza dopo questi secondi dall'inizio della carica.
-const REAZIONE := 0.7
+const REAZIONE := 1.0
 
 var ok := 0
 var falliti := 0
@@ -184,6 +185,7 @@ func _serbatoio() -> void:
 	sala.insegui_da(s - sala.distanza_max)
 	var r0 := respinte
 	var litri: Array[float] = []
+	var tempi: Array[float] = []
 	var t0 := _t
 	while not preso and pack.tank_amount > 0.05 and _t - t0 < 200.0 and s < sala.lunghezza() - 30.0:
 		var dt := await _passo()
@@ -197,13 +199,14 @@ func _serbatoio() -> void:
 				await _passo()
 			Input.action_release(&"spray")
 			litri.append(prima - pack.tank_amount)
+			tempi.append(_t - t1 + REAZIONE)
 			g.teleport(g.global_position, _yaw(sala.direzione(s)))
 			continue
 		s += 5.8 * dt
 		g.teleport(_banchina(s) + Vector3.UP * 0.1, _yaw(sala.direzione(s)))
 	var n := respinte - r0
-	print("    serbatoio: %d respinte con %.0f litri, litri per carica %s, preso %s, %.1f litri rimasti" % [
-			n, pack.tank_capacity, litri.map(func(x): return snappedf(x, 0.1)), preso, pack.tank_amount])
+	print("    serbatoio: %d respinte con %.0f litri, litri per carica %s, dalla carica alla respinta %s s, preso %s, %.1f litri rimasti" % [
+			n, pack.tank_capacity, litri.map(func(x): return snappedf(x, 0.1)), tempi.map(func(x): return snappedf(x, 0.01)), preso, pack.tank_amount])
 	_controlla(n >= RESPINTE.x and n <= RESPINTE.y, "un serbatoio pieno respinge circa tre cariche (%d-%d)" % [RESPINTE.x, RESPINTE.y],
 			["%d respinte, preso %s" % [n, preso]])
 	# la ricarica dal canale: fermo sul bordo della banchina, puntando l'acqua
