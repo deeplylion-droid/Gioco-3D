@@ -1,26 +1,37 @@
 extends Node
 ## Test del canto di lei prima del tunnel (addon audio, classe CantoPrima; 0.4.0, «L'acqua è sua», scelta A del 15
 ## novembre). Finché l'utente non dà il sì agli esempi le frasi vere (lei_canto_prima_lontano_NN e _vicino_NN) non sono
-## nel catalogo: il test usa al loro posto due coppie di file che ci sono (CantoPrima.prova). Una lei finta nel gruppo
-## lei_nell_acqua (vicinanza, punto_luce, fase, dietro_vetro, i nomi concordati con mascotte):
+## nel catalogo: il test usa al loro posto due coppie di file che ci sono (CantoPrima.prova). Una lei finta come
+## AcquaDiLei di mascotte (gruppo lei_nell_acqua; fase con l'enum Fase, vicinanza, punto_luce, punti_uscita), un
+## giocatore finto (CantoPrima.giocatore_prova) e un oblò finto (come ObloLei: stato e _dentro):
 ## - senza le frasi non suona niente e non ci sono errori;
 ## - prima che si riaccendano le pompe (GameState.luci = PRIMA_DEL_RISVEGLIO) non canta;
-## - dopo, nella fase "lontana" canta entro 2,5 s: la frase lontana piena, la vicina giù;
-## - con la vicinanza a 1 la vicina sale e la lontana scende, e la vicina sta alla luce rosa (punto_luce);
-## - nella fase "silenzio" tace di colpo (entro 0,15 s), e anche in "fuori" e "respinta";
-## - torna a cantare in "va_via", e due frasi di fila non sono mai la stessa;
-## - dietro il vetro di un oblò si sente appena: solo la lontana, almeno 12 dB sotto;
-## - fra due lei si segue la più vicina; se lei sparisce (nodo liberato) il canto si spegne.
+## - in LONTANA canta solo col giocatore vicino a un punto d'uscita (15 m), e lontano: la frase dei tubi piena, la
+##   vicina giù; la lontana non posizionale, la vicina in 3D;
+## - in ARRIVA, con la vicinanza a 0,9, la vicina sale e la lontana scende, e la vicina sta alla luce rosa;
+## - nel SILENZIO tace di colpo (entro 0,15 s), e anche in ESCE, SU e PRESA;
+## - torna a cantare in SCENDE, e due frasi di fila non sono mai la stessa;
+## - in CALMA si spegne;
+## - fra due acque si segue quella dove lei è adesso, anche se l'altra è più vicina;
+## - all'oblò, con lei dietro il vetro e il giocatore nella sua zona, si sente appena: solo la lontana, 12 dB sotto;
+## - se lei sparisce (nodo liberato) il canto si spegne.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_prima.gd
 
 const Catalogo := preload("res://addons/audio/catalogo.gd")
 
 
 class LeiFinta extends Node3D:
+	enum Fase { LONTANA, ARRIVA, SILENZIO, ESCE, SU, PRESA, SCENDE, CALMA }
+	var fase := Fase.LONTANA
 	var vicinanza := 0.0
 	var punto_luce := Vector3.ZERO
-	var fase: StringName = &"ferma"
-	var dietro_vetro := false
+	var punti_uscita: Array[Node3D] = []
+
+
+class ObloFinto extends Node3D:
+	var stato := 0
+	func _dentro(pos: Vector3) -> bool:
+		return pos.distance_to(global_position) < 10.0
 
 
 var canto
@@ -49,6 +60,18 @@ func _secondi(s: float) -> void:
 		t += get_process_delta_time()
 
 
+func _acqua(pos: Vector3) -> LeiFinta:
+	var l := LeiFinta.new()
+	l.add_to_group(&"lei_nell_acqua")
+	add_child(l)
+	l.global_position = pos
+	var u := Marker3D.new()
+	l.add_child(u)
+	l.punti_uscita = [u]
+	l.punto_luce = pos + Vector3(0, -0.6, 0)
+	return l
+
+
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	classe = (Audio.get_script() as GDScript).get(&"CantoPrima")
@@ -59,19 +82,20 @@ func _run() -> void:
 		return
 	var luci_prima = GameState.luci
 	GameState.luci = GameState.Luci.BLACKOUT
-	var lei := LeiFinta.new()
-	lei.add_to_group(&"lei_nell_acqua")
-	add_child(lei)
-	lei.global_position = Vector3(5, 0, 0)
-	lei.punto_luce = Vector3(4, -0.5, 1)
+	var gioc := Node3D.new()
+	add_child(gioc)
+	gioc.global_position = Vector3(40, 0, 0)
+	classe.giocatore_prova = gioc
+	var lei := _acqua(Vector3(5, 0, 0))
+	check(classe.nome_fase(lei) == "LONTANA", "la fase si legge per nome dall'enum (%s)" % classe.nome_fase(lei))
 
 	print("Senza le frasi nel catalogo")
 	classe.prova = []
 	var vere: Array = Catalogo.SUONI.get(&"lei_canto_prima_lontano", [])
 	check(vere.is_empty(), "le frasi vere non sono ancora nel catalogo (prima il sì dell'utente)")
-	lei.fase = &"lontana"
+	gioc.global_position = Vector3(8, 0, 0)
 	await _secondi(3.0)
-	check(not canto.canta(), "lei nell'acqua, ma non suona niente")
+	check(not canto.canta(), "lei nell'acqua vicina, ma non suona niente")
 
 	# due coppie di file che ci sono, al posto delle frasi vere
 	var t: Array = Catalogo.SUONI.get(&"lei_tunnel_canto", [])
@@ -83,13 +107,16 @@ func _run() -> void:
 	check(not canto.canta(), "con le luci di prima del risveglio non canta")
 	GameState.luci = GameState.Luci.BLACKOUT
 
-	print("Lontana, nei tubi")
-	lei.vicinanza = 0.0
+	print("LONTANA: nei tubi, solo con il giocatore vicino")
+	gioc.global_position = Vector3(40, 0, 0)
+	await _secondi(3.0)
+	check(not canto.canta(), "col giocatore a 35 m dall'acqua non canta")
+	gioc.global_position = Vector3(14, 0, 3)
 	var t0 := 0.0
 	while t0 < 2.6 and not canto.canta():
 		await get_tree().process_frame
 		t0 += get_process_delta_time()
-	check(canto.canta(), "nella fase lontana canta entro 2,5 s (%.1f s)" % t0)
+	check(canto.canta(), "col giocatore a 9 m canta entro 2,5 s (%.1f s)" % t0)
 	await _secondi(0.5)
 	var lon: Node = canto.lon
 	var vic: Node = canto.vic
@@ -99,37 +126,38 @@ func _run() -> void:
 				"lontana piena e vicina giù (%.1f e %.1f dB)" % [lon.volume_db, vic.volume_db])
 		check(not (lon is AudioStreamPlayer3D) and vic is AudioStreamPlayer3D, "la lontana non posizionale, la vicina in 3D")
 
-	print("Si avvicina")
-	lei.vicinanza = 1.0
+	print("ARRIVA: la luce rosa si avvicina")
+	lei.fase = LeiFinta.Fase.ARRIVA
+	lei.vicinanza = 0.9
 	lei.punto_luce = Vector3(2, -0.4, 0.5)
+	await _aspetta_canto()
 	await _secondi(0.6)
 	if canto.canta():
 		lon = canto.lon
 		vic = canto.vic
 		check(float(vic.volume_db) > -1.0 and float(lon.volume_db) < -30.0,
-				"vicina piena e lontana giù (%.1f e %.1f dB)" % [vic.volume_db, lon.volume_db])
+				"a vicinanza 0,9 vicina piena e lontana giù (%.1f e %.1f dB)" % [vic.volume_db, lon.volume_db])
 		check((vic as Node3D).global_position.distance_to(lei.punto_luce) < 0.01, "la vicina viene dalla luce rosa")
 	else:
-		# (la frase di prova può essere finita: aspetta la prossima)
-		await _secondi(5.5)
-		check(canto.canta() and float(canto.vic.volume_db) > -1.0, "vicina piena alla frase dopo")
+		check(false, "in ARRIVA canta")
 
-	print("Silenzio: sta per uscire")
-	await _aspetta_canto()
-	lei.fase = &"silenzio"
+	print("SILENZIO: sta per uscire")
+	lei.vicinanza = 1.0
+	lei.fase = LeiFinta.Fase.SILENZIO
 	await _secondi(0.15)
-	check(not canto.canta(), "nella fase di silenzio tace entro 0,15 s")
+	check(not canto.canta(), "nel SILENZIO tace entro 0,15 s")
 	await _secondi(4.0)
 	check(not canto.canta(), "e resta zitto finché è in silenzio")
-	for f in [&"fuori", &"respinta"]:
-		lei.fase = &"lontana"
+	for f in [LeiFinta.Fase.ESCE, LeiFinta.Fase.SU, LeiFinta.Fase.PRESA]:
+		lei.fase = LeiFinta.Fase.ARRIVA
+		lei.vicinanza = 0.5
 		await _aspetta_canto()
 		lei.fase = f
 		await _secondi(0.15)
-		check(not canto.canta(), "in \"%s\" tace di colpo" % f)
+		check(not canto.canta(), "in %s tace di colpo" % LeiFinta.Fase.find_key(f))
 
-	print("Se ne va: riprende, mai la stessa frase due volte di fila")
-	lei.fase = &"va_via"
+	print("SCENDE: torna sotto, il canto riprende; mai la stessa frase due volte di fila")
+	lei.fase = LeiFinta.Fase.SCENDE
 	lei.vicinanza = 0.2
 	var frasi_sentite: Array = []
 	var ultimo_partito := -1.0
@@ -140,45 +168,55 @@ func _run() -> void:
 		if canto.canta() and float(canto.partito) != ultimo_partito:
 			ultimo_partito = float(canto.partito)
 			frasi_sentite.append(String((canto.lon as Node).get(&"stream").resource_path))
-	check(frasi_sentite.size() >= 4, "nella fase va_via riprende a cantare (%d frasi in %.0f s)" % [frasi_sentite.size(), tempo])
+	check(frasi_sentite.size() >= 4, "in SCENDE canta (%d frasi in %.0f s)" % [frasi_sentite.size(), tempo])
 	var ripetute := 0
 	for i in range(1, frasi_sentite.size()):
 		if frasi_sentite[i] == frasi_sentite[i - 1]:
 			ripetute += 1
 	check(ripetute == 0, "due frasi di fila non sono mai la stessa (%s)" % [frasi_sentite.map(func(p): return p.get_file())])
 
-	print("Dietro il vetro di un oblò")
-	lei.dietro_vetro = true
-	lei.vicinanza = 1.0
+	print("CALMA")
 	await _aspetta_canto()
-	await _secondi(0.8)
+	lei.fase = LeiFinta.Fase.CALMA
+	await _secondi(0.7)
+	check(not canto.canta(), "in CALMA si spegne")
+
+	print("Due acque: si segue quella dove lei è adesso")
+	lei.fase = LeiFinta.Fase.LONTANA
+	var altra := _acqua(Vector3(30, 0, 0))
+	altra.fase = LeiFinta.Fase.ARRIVA
+	altra.vicinanza = 0.3
+	await _secondi(0.2)
+	check(canto.lei == altra, "segue l'acqua dove lei arriva, anche se il giocatore è più vicino all'altra")
+	altra.fase = LeiFinta.Fase.SILENZIO
+	await _secondi(0.2)
+	check(canto.lei == altra and not canto.canta(), "e quando lì sta per uscire, tace (non canta dall'acqua vicina)")
+	altra.queue_free()
+
+	print("Oblò con lei dietro il vetro")
+	lei.queue_free()
+	await _secondi(0.7)
+	check(not canto.canta(), "lei sparita: il canto si spegne")
+	var oblo := ObloFinto.new()
+	add_child(oblo)
+	oblo.global_position = Vector3(16, 1, 3)
+	canto.obli.append(oblo)
+	await _secondi(3.0)
+	check(not canto.canta(), "oblò vuoto (lei non è comparsa): niente")
+	oblo.stato = 1
+	await _aspetta_canto()
+	await _secondi(0.5)
+	check(canto.canta() and canto.fase == "OBLO", "lei dietro il vetro: canta")
 	if canto.canta():
 		check(float(canto.lon.volume_db) <= -11.5 and float(canto.vic.volume_db) < -40.0,
 				"si sente appena: solo la lontana, sotto di 12 dB (%.1f e %.1f dB)" % [canto.lon.volume_db, canto.vic.volume_db])
-	lei.dietro_vetro = false
-
-	print("Due lei: si segue la più vicina")
-	var altra := LeiFinta.new()
-	altra.add_to_group(&"lei_nell_acqua")
-	add_child(altra)
-	altra.fase = &"arriva"
-	altra.vicinanza = 0.9
-	lei.vicinanza = 0.3
-	await _secondi(0.2)
-	check(canto.lei == altra, "segue la lei più vicina")
-	altra.fase = &"silenzio"
-	await _secondi(0.2)
-	check(canto.lei == altra and not canto.canta(), "e se quella sta per uscire, tace (anche se l'altra è lontana nei tubi)")
-	altra.queue_free()
-
-	print("Lei sparisce")
-	lei.fase = &"lontana"
-	await _aspetta_canto()
-	lei.queue_free()
+	oblo.stato = 3
 	await _secondi(0.7)
-	check(not canto.canta(), "il canto si spegne")
+	check(not canto.canta(), "lei se ne va dal vetro: il canto si spegne")
+	oblo.queue_free()
 
 	classe.prova = []
+	classe.giocatore_prova = null
 	GameState.luci = luci_prima
 	_fine()
 

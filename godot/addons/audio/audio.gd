@@ -1019,6 +1019,7 @@ func _esamina(n: Node) -> void:
 		"MonitorCrt": _attivi.append(AudioMonitor.new(self, n))
 		"Paratia": _attivi.append(AudioParatia.new(self, n))
 		"LeiSbuca": _attivi.append(AudioLei.new(self, n))
+		"ObloLei": canto_prima.obli.append(n)
 		_:
 			fatto = _esamina_senza_classe(n)
 	if fatto:
@@ -1987,19 +1988,31 @@ class Statua:
 ## Gocciolatoio dell'addon acqua: niente segnale, si guarda quando una goccia sparisce.
 ## Il canto di lei prima del tunnel (0.4.0, «L'acqua è sua», scelta A del 15 novembre): da quando si riaccendono le
 ## pompe, ogni volta che lei è nell'acqua vicina, la sigla lenta e storpiata con la sua gola
-## (assets_src/audio/genera_canto_sigla.py). Lei la comanda il motore della regola di mascotte: i nodi del gruppo
-## [constant GRUPPO] con [code]vicinanza[/code] (0-1), [code]punto_luce[/code] (Vector3), [code]fase[/code] (StringName) e
-## [code]dietro_vetro[/code] (bool). Si segue la lei più vicina: canta nelle fasi di [constant FASI_CANTO], sfumando fra
-## la frase lontana nei tubi (non posizionale) e la stessa frase vicina (dalla luce rosa); nella fase di silenzio, poco
-## prima che esca, tace di colpo. Agli oblò (dietro il vetro) si sente appena, solo lontana. Ogni frase è una coppia di
-## file con lo stesso numero (lei_canto_prima_lontano_NN, lei_canto_prima_vicino_NN), mai la stessa due volte di fila.
-## Parte solo quando le frasi sono nel catalogo, dopo il sì dell'utente agli esempi. Nel tunnel resta il canto del 25
-## ottobre (Statua).
+## (assets_src/audio/genera_canto_sigla.py). Lei la comanda il motore della regola di mascotte (AcquaDiLei): i nodi del
+## gruppo [constant GRUPPO] con [code]fase[/code] (l'enum AcquaDiLei.Fase, letto per nome), [code]vicinanza[/code]
+## (0-1), [code]punto_luce[/code] e [code]punti_uscita[/code]. Il canto:
+## - in LONTANA, col giocatore entro [constant RAGGIO_TUBI] m da un punto d'uscita: lontano, nei tubi;
+## - in ARRIVA sfuma dal lontano al vicino (dalla luce rosa) con la vicinanza (0-0,9);
+## - nel SILENZIO, l'ultimo secondo prima che esca, tace di colpo, e così mentre è fuori (ESCE, SU, PRESA: lì ci sono
+##   i suoi versi); in SCENDE torna lontano; in CALMA si spegne piano;
+## - agli oblò (ObloLei, lei dietro il vetro) si sente appena: solo lontano, [constant VETRO_DB] dB sotto.
+## Si segue una lei sola: quella che arriva o è fuori prima di tutto, poi le acque vicine, poi gli oblò. Ogni frase è
+## una coppia di file con lo stesso numero (lei_canto_prima_lontano_NN, lei_canto_prima_vicino_NN), mai la stessa due
+## volte di fila. Parte solo quando le frasi sono nel catalogo, dopo il sì dell'utente agli esempi. Nel tunnel resta
+## il canto del 25 ottobre (Statua).
 class CantoPrima:
 	const GRUPPO := &"lei_nell_acqua"
-	const FASI_CANTO := [&"lontana", &"arriva", &"va_via"]
 	const LONTANO := &"lei_canto_prima_lontano"
 	const VICINO := &"lei_canto_prima_vicino"
+	## Le fasi in cui canta, e quelle in cui tace di colpo (le altre: piano).
+	const FASI_CANTO := ["LONTANA", "ARRIVA", "SCENDE"]
+	const FASI_TAGLIO := ["SILENZIO", "ESCE", "SU", "PRESA"]
+	## Le fasi in cui lei è in quell'acqua adesso (vince sulle altre).
+	const FASI_QUI := ["ARRIVA", "SILENZIO", "ESCE", "SU", "PRESA", "SCENDE"]
+	## In LONTANA si sente nei tubi col giocatore entro questi metri (in pianta) da un punto d'uscita.
+	const RAGGIO_TUBI := 15.0
+	## La vicinanza massima mentre arriva (AcquaDiLei: fino a 0,9): lì il canto è tutto vicino.
+	const VICINANZA_PIENA := 0.9
 	## Prima frase dopo che lei arriva e pausa fra una frase e l'altra (s).
 	const PRIMA := Vector2(0.5, 2.0)
 	const PAUSA := Vector2(2.0, 5.0)
@@ -2011,8 +2024,12 @@ class CantoPrima:
 	## Il vicino dalla luce rosa: unit_size e max_distance (m).
 	const UNIT := 4.0
 	const MAX_DIST := 35.0
+	## ObloLei.Stato: PRONTA e VISTA, lei dietro il vetro.
+	const OBLO_STATI := [1, 2]
 	## Per i test, finché le frasi vere non sono nel catalogo: [lontane, vicine], percorsi di file che ci sono.
 	static var prova: Array = []
+	## Per i test: il nodo che fa da giocatore (senza, GameState.player).
+	static var giocatore_prova: Node3D = null
 
 	var audio
 	var lon: AudioStreamPlayer
@@ -2021,8 +2038,11 @@ class CantoPrima:
 	var t := -1.0
 	var ultima := -1
 	var mix := 0.0
-	## La lei che si segue adesso (per i test).
+	## Gli oblò con lei (ObloLei), segnati da _esamina.
+	var obli: Array = []
+	## La lei che si segue adesso (un nodo del gruppo o un ObloLei) e la sua fase (per i test).
 	var lei: Node
+	var fase := ""
 
 	func _init(a) -> void:
 		audio = a
@@ -2036,6 +2056,18 @@ class CantoPrima:
 		if l.is_empty() or l.size() != v.size():
 			return [[], []]
 		return [l, v]
+
+	## Il nome della fase di [param n]: l'enum Fase del suo script letto per nome (o già un nome), in maiuscolo.
+	static func nome_fase(n: Node) -> String:
+		var f: Variant = n.get(&"fase")
+		if f is int:
+			var s: Script = n.get_script()
+			var mappa: Dictionary = s.get_script_constant_map().get("Fase", {}) if s else {}
+			for k in mappa:
+				if int(mappa[k]) == int(f):
+					return String(k)
+			return ""
+		return String(f).to_upper() if f != null else ""
 
 	## Vero se una frase partita da qui suona ancora (i lettori sono della riserva e si riprendono).
 	func canta() -> bool:
@@ -2054,33 +2086,65 @@ class CantoPrima:
 		vic = null
 		partito = -1.0
 
-	## La lei da seguire: quella del gruppo con la vicinanza più alta fra quelle che non sono ferme.
-	func _scegli() -> Node:
-		var meglio: Node = null
-		var v_meglio := -1.0
+	## Il giocatore vicino (in pianta, entro [constant RAGGIO_TUBI] m) a un punto d'uscita di [param n].
+	static func _vicino_ai_punti(n: Node, g: Node3D) -> bool:
+		if g == null:
+			return false
+		var punti: Variant = n.get(&"punti_uscita")
+		for q in (punti if punti is Array else []):
+			if q is Node3D and is_instance_valid(q):
+				var d: Vector3 = (q as Node3D).global_position - g.global_position
+				if Vector2(d.x, d.z).length() <= RAGGIO_TUBI:
+					return true
+		return false
+
+	## La lei da seguire: [nodo, fase]. Prima quella che è in un'acqua adesso (arriva, è fuori, scende), poi un'acqua
+	## vicina al giocatore dove lei è nei tubi (LONTANA), poi un oblò con lei dietro il vetro.
+	func _scegli() -> Array:
+		var g: Node = audio.get_node_or_null(^"/root/GameState")
+		var pv: Variant = giocatore_prova if is_instance_valid(giocatore_prova) else (g.get(&"player") if g else null)
+		var giocatore: Node3D = pv as Node3D if is_instance_valid(pv) else null
+		var vicina: Node = null
 		for n in audio.get_tree().get_nodes_in_group(GRUPPO):
-			if not is_instance_valid(n) or not n.is_inside_tree() or StringName(n.get(&"fase")) == &"ferma":
+			if not is_instance_valid(n) or not n.is_inside_tree():
 				continue
-			var v := float(n.get(&"vicinanza"))
-			if v > v_meglio:
-				v_meglio = v
-				meglio = n
-		return meglio
+			var f := nome_fase(n)
+			if f in FASI_QUI:
+				return [n, f]
+			if f == "LONTANA" and vicina == null and _vicino_ai_punti(n, giocatore):
+				vicina = n
+		if vicina:
+			return [vicina, "LONTANA"]
+		var i := 0
+		while i < obli.size():
+			var o: Variant = obli[i]
+			if not is_instance_valid(o):
+				obli.remove_at(i)
+				continue
+			i += 1
+			var on := o as Node3D
+			if on.is_inside_tree() and int(on.get(&"stato")) in OBLO_STATI and giocatore \
+					and bool(on.call(&"_dentro", giocatore.global_position)):
+				return [on, "OBLO"]
+		return [null, ""]
 
 	func aggiorna(a, delta: float) -> bool:
 		var f := frasi()
 		# (da quando si riaccendono le pompe: GameState.luci non più PRIMA_DEL_RISVEGLIO, che è 0; l'addon non usa gli
 		# autoload per nome)
 		var gs: Node = audio.get_node_or_null(^"/root/GameState")
-		lei = _scegli() if gs and int(gs.get(&"luci")) != 0 else null
-		var fase: StringName = StringName(lei.get(&"fase")) if lei else &"ferma"
-		if (f[0] as Array).is_empty() or lei == null or not (fase in FASI_CANTO):
-			# il silenzio prima che esca (e quando esce, prende o è respinta): di colpo; se se ne va o sparisce, piano
-			_zitto(TAGLIO if fase in [&"silenzio", &"fuori", &"respinta"] else 0.5)
+		var scelta: Array = _scegli() if gs and int(gs.get(&"luci")) != 0 else [null, ""]
+		lei = scelta[0]
+		fase = scelta[1]
+		if (f[0] as Array).is_empty() or lei == null or not (fase in FASI_CANTO or fase == "OBLO"):
+			# il silenzio prima che esca, e mentre è fuori: di colpo; se se ne va o sparisce, piano
+			_zitto(TAGLIO if fase in FASI_TAGLIO else 0.5)
 			t = -1.0
 			return true
-		var vetro := bool(lei.get(&"dietro_vetro"))
-		var obiettivo := 0.0 if vetro else clampf(float(lei.get(&"vicinanza")), 0.0, 1.0)
+		var vetro: bool = fase == "OBLO" or lei.get(&"dietro_vetro") == true
+		var obiettivo := 0.0
+		if fase in ["ARRIVA", "SCENDE"] and not vetro:
+			obiettivo = clampf(float(lei.get(&"vicinanza")) / VICINANZA_PIENA, 0.0, 1.0)
 		mix = move_toward(mix, obiettivo, SEGUE * delta)
 		if canta():
 			_volumi(vetro)
@@ -2099,6 +2163,12 @@ class CantoPrima:
 		_volumi(vetro)
 		return true
 
+	func _punto() -> Vector3:
+		var p: Variant = lei.get(&"punto_luce") if lei else null
+		if p is Vector3:
+			return p
+		return (lei as Node3D).global_position if lei is Node3D else Vector3.ZERO
+
 	func _parti(a, file_lontano: String, file_vicino: String) -> void:
 		lon = a._prendi_2d(false)
 		lon.stream = a._prendi(file_lontano) as AudioStream
@@ -2110,7 +2180,7 @@ class CantoPrima:
 		vic.pitch_scale = 1.0
 		vic.unit_size = UNIT
 		vic.max_distance = MAX_DIST
-		vic.global_position = lei.get(&"punto_luce") as Vector3
+		vic.global_position = _punto()
 		# (le due metà della stessa frase partono insieme, con lo stesso segno nella riserva)
 		partito = float(lon.get_meta(&"partito", 0.0))
 		vic.set_meta(&"partito", partito)
@@ -2125,8 +2195,7 @@ class CantoPrima:
 			lon.volume_db = linear_to_db(maxf(1.0 - mix, 0.001)) + (VETRO_DB if vetro else 0.0)
 		if is_instance_valid(vic) and float(vic.get_meta(&"partito", -2.0)) == partito:
 			vic.volume_db = linear_to_db(maxf(mix, 0.001))
-			if lei:
-				vic.global_position = lei.get(&"punto_luce") as Vector3
+			vic.global_position = _punto()
 
 
 class Gocciolatoio:
