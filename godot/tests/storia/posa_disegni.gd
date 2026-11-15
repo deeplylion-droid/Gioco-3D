@@ -6,7 +6,7 @@ extends Node
 ## nella scena (nel sistema della scena caricata). Un oggetto che sta fermo si posa una volta così e il posto si scrive
 ## nel codice (regola di docs/tecnico/posizionamento/LEGGIMI.md).
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/storia/posa_disegni.gd <scena> \
-##      "x,y,z" "verso x,y,z" [A3|A4] [pastello x,z]
+##      "x,y,z" "verso x,y,z" [A3|A4|A3_ORIZZONTALE] [pastello x,z]
 
 func _ready() -> void:
 	_run.call_deferred()
@@ -26,7 +26,9 @@ func _run() -> void:
 	var verso := _v(args[3]).normalized()
 	var d := DisegnoBambino.new()
 	d.name = "DisegnoProva"
-	d.formato = DisegnoBambino.Formato.A4 if args.size() > 4 and args[4] == "A4" else DisegnoBambino.Formato.A3
+	d.formato = DisegnoBambino.Formato.A3
+	if args.size() > 4 and args[4] in DisegnoBambino.Formato:
+		d.formato = DisegnoBambino.Formato[args[4]]
 	scena.add_child(d)
 	d.global_position = _v(args[2])
 	d.global_basis = Basis.looking_at(-verso, Vector3.UP)     # il foglio guarda verso +Z del nodo = verso
