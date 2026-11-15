@@ -4,7 +4,8 @@ extends Node
 ## 2. col giocatore sul bordo della vasca grande, quando la luce passa sotto quel punto lei esce (uscita intera) e,
 ##    se lui resta lì, lo prende (letale);
 ## 3. con letale spento esce e torna sotto senza prendere;
-## 4. arrivati vicino alla fossa il giro finisce, la luce va nella fossa e lei si affaccia lì (la scena di oggi).
+## 4. a 13 m dalla fossa il giro finisce: l'avviso intero sotto la fossa (3,5 s) e lei sbuca in vista; nei primi 1,6 s non
+##    prende (la fossa senza sorprese: test_fossa_mai_di_sorpresa.gd).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala_al_buio.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -161,19 +162,45 @@ func _run() -> void:
 			break
 	check(uscita2 and tornata and not GameState.is_dying, "con letale spento esce, incombe e torna sotto senza prendere")
 
-	print("4. Verso la fossa")
+	print("4. Verso la fossa: l'avviso intero, poi sbuca in vista (il giocatore a più di 8 m)")
 	var fossa := lei_sbuca.punto_sbuca.global_position
-	var vicino := fossa + Vector3(2.0, 0.0, 2.0)
-	vicino.y = 0.05
+	var occhio := lei_sbuca.punto_sbuca.global_transform * Vector3(0.0, 1.63, 1.8)
+	# a 12 m dalla fossa, a est della vasca grande (lontano dal bordo): il giro finisce
+	var verso_est := Vector3(5.0, 0.0, 11.0).normalized()
+	var qui := fossa + verso_est * 12.0
+	qui.y = 0.05
+	var fasi: Array = []
+	var t := 0.0
+	var t_avviso := -1.0
+	var t_sbuca := -1.0
 	for i in 60 * 12:
-		p.teleport(vicino)
+		p.teleport(qui)
+		p.look_at_point(occhio)
 		await get_tree().physics_frame
-		if lei_sbuca.medusa.visible:
+		t += 1.0 / 60.0
+		if fasi.is_empty() or fasi[-1] != acqua.fase:
+			fasi.append(acqua.fase)
+			if acqua.fase == AcquaDiLei.Fase.ARRIVA and t_avviso < 0.0:
+				t_avviso = t
+		if lei_sbuca.fase == LeiSbuca.Fase.SBUCA and t_sbuca < 0.0:
+			t_sbuca = t
+		if lei_sbuca.fase == LeiSbuca.Fase.GUARDA:
 			break
-	check(buio.stato == LeiSalaAlBuio.Stato.FINITO and not acqua.in_giro(), "vicino alla fossa il giro finisce")
-	check(lei_sbuca.medusa.visible and (lei_sbuca.fase == LeiSbuca.Fase.GUARDA or lei_sbuca.fase == LeiSbuca.Fase.SBUCA),
-			"e lei è alla fossa, come oggi")
+	check(buio.stato == LeiSalaAlBuio.Stato.FINITO and not acqua.in_giro(), "a 12 m dalla fossa il giro finisce")
+	check(fasi.has(AcquaDiLei.Fase.SPEGNE) and fasi.has(AcquaDiLei.Fase.SILENZIO) and t_sbuca - t_avviso >= 3.45,
+			"la luce va sotto la fossa, il canto si spegne, il silenzio: sbuca %.2f s dopo l'avviso" % (t_sbuca - t_avviso))
+	check(lei_sbuca.medusa.visible and lei_sbuca.fase == LeiSbuca.Fase.GUARDA and lei_sbuca.sbucata_in_vista,
+			"e sbuca in vista, poi resta affacciata")
 	check(AcquaDiLei.chi_la_usa() == null, "il motore l'ha lasciata")
+	var presa_presto := false
+	for i in int(60 * 1.4):
+		p.teleport(occhio + Vector3(1.0, 0.0, 1.0).normalized() * 1.5 - Vector3(0, occhio.y - 0.05, 0))
+		p.look_at_point(occhio)
+		await get_tree().physics_frame
+		if GameState.is_dying:
+			presa_presto = true
+			break
+	check(not presa_presto, "nei primi 1,6 s da affacciata non prende, nemmeno addosso a lei")
 
 	print("5. Ripartendo dopo la fossa (CheckpointSpiaggiaBuio), con lei già andata via")
 	GameState.respawn()
