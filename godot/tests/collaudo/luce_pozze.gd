@@ -11,7 +11,7 @@ extends Node
 
 const STANZA := "res://scenes/risalita/stanza_pozze.tscn"
 const R := 3.35
-const POSTI := [["sud", Vector3(0, 0, R)], ["sud_est", Vector3(2.2, 0, R)], ["ovest", Vector3(-R, 0, -1.1)]]
+const POSTI := [["sud", Vector3(0, 0, R)], ["ovest", Vector3(-R, 0, -1.1)]]
 
 var g: Player
 var poz: Node3D
@@ -86,14 +86,6 @@ func _run() -> void:
 		await _posto(posto[0], posto[1], y_grigliato)
 	peggiori.sort_custom(func(x, y): return x[0] > y[0])
 	print("LC: i momenti peggiori mentre passa: %s" % [peggiori.slice(0, 8).map(func(x): return "%s %.1f %% (%s)" % [x[1], x[0] * 100.0, x[2]])])
-	var k := 0
-	for x in peggiori.slice(0, 6):
-		(x[3] as Image).save_jpg(cart.path_join("passa_%d_%s.jpg" % [k, x[1]]), 0.9)
-		k += 1
-	k = 0
-	for x in uscite.slice(0, 6):
-		(x[3] as Image).save_jpg(cart.path_join("esce_%d_%s.jpg" % [k, x[1]]), 0.9)
-		k += 1
 	print("LC: finito")
 	get_tree().quit()
 
@@ -145,10 +137,10 @@ func _posto(nome: String, dove: Vector3, yg: float) -> void:
 	var n := 0
 	var max_passa := 0.0
 	var luce_fuori := 0
-	while n < 60 * 50:
+	while n < 60 * 35:
 		await get_tree().process_frame
 		n += 1
-		if n % 4 != 0:
+		if n % 10 != 0:
 			continue
 		var l := acqua.get(&"_luce") as OmniLight3D
 		if l == null or not l.is_visible_in_tree() or l.light_energy < 0.01:
@@ -172,16 +164,20 @@ func _posto(nome: String, dove: Vector3, yg: float) -> void:
 				chiari += 1
 			piu = maxf(piu, dlum)
 		var quota := float(chiari) / maxf(campioni.size(), 1)
-		var etichetta := "%s_%05.1fs_%s" % [nome, (Time.get_ticks_msec() - t0) / 1000.0, fase]
+		var etichetta := "%s_%05.1fs_%s" % [nome, n / 60.0, fase]
 		if quota > 0.0 or n % 120 == 0:
 			print("LC: %s: luce %s, energia %.2f, raggio %.2f; grigliato più chiaro in %.1f %% dei pixel, il più chiaro +%.3f" % [etichetta,
 					dl, en, l.omni_range, quota * 100.0, piu])
 		if fase in ["LONTANA", "ARRIVA", "SPEGNE"]:
 			max_passa = maxf(max_passa, quota)
-			peggiori.append([quota, etichetta, dl, con])
+			# (gli scatti subito: la luce fuori dalle pozze sempre, gli altri se il grigliato schiarisce)
+			if dl.begins_with("FUORI") or quota > 0.02:
+				con.save_jpg(cart.path_join("passa_%s.jpg" % etichetta), 0.85)
+			peggiori.append([quota, etichetta, dl, null])
 			peggiori.sort_custom(func(x, y): return x[0] > y[0])
 			peggiori.resize(mini(peggiori.size(), 8))
-		elif uscite.size() < 6 and fase in ["ESCE", "SU"] and n % 24 == 0:
-			uscite.append([quota, etichetta, dl, con])
+		elif uscite.size() < 6 and fase in ["ESCE", "SU"] and n % 60 == 0:
+			con.save_jpg(cart.path_join("esce_%s.jpg" % etichetta), 0.85)
+			uscite.append([quota, etichetta, dl, null])
 	print("LC: %s: mentre passa il grigliato più chiaro al più in %.1f %% dei pixel; luce fuori dalle pozze in %d campioni" % [nome,
 			max_passa * 100.0, luce_fuori])
