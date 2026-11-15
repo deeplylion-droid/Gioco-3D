@@ -43,7 +43,11 @@ func _run() -> void:
 	sala = SalaSottomarino.new()
 	sala.name = "SalaSottomarino"
 	add_child(sala)
-	sala.costruisci()
+	if OS.get_environment("A_PEZZI") != "":
+		# (come nel gioco: a pezzi, col riscaldamento dei materiali, di lei e dei bambini del finale)
+		await sala.costruisci_a_pezzi()
+	else:
+		sala.costruisci()
 	_pl = (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as Player
 	add_child(_pl)
 	var L := sala.lunghezza()
@@ -75,7 +79,9 @@ func _run() -> void:
 	_pl.teleport(dentro, atan2(d.x, d.z))     # (verso il portello)
 	await _fotogrammi(10)
 	var fatte := {}
-	sala.fase_finale_cambiata.connect(func(f: String): fatte[f] = Engine.get_process_frames())
+	sala.fase_finale_cambiata.connect(func(f: String):
+		fatte[f] = Engine.get_process_frames()
+		print("PIPELINE all'inizio di %s: %s" % [f, _pipeline()]))
 	sala.chiudi_portello()
 	var t0 := Time.get_ticks_msec()
 	while not fatte.has("fermi") and Time.get_ticks_msec() - t0 < 900000:
@@ -91,5 +97,14 @@ func _run() -> void:
 		await get_tree().process_frame
 		if Engine.get_process_frames() - int(fatte["foglio"]) == int(30 * (sala.finale_abbassa + 1.5)):
 			_scatta("03_sul_foglio")
+	print("PIPELINE alla fine: %s" % [_pipeline()])
 	print("fasi: ", fatte)
 	get_tree().quit()
+
+
+## Le pipeline compilate finora: [draw, specialization, surface, mesh] (RenderingServer).
+static func _pipeline() -> Array:
+	return [RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_DRAW),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SURFACE),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_MESH)]

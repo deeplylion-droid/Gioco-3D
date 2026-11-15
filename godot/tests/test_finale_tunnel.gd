@@ -103,6 +103,23 @@ func _prova(bambini: bool, tutto: bool) -> void:
 			if not (a_terra and dentro and giusto and b.global_basis.z.normalized().dot(verso) > 0.97 and b.get_meta(&"sagoma") == (i >= 2)):
 				fuori.append("%d: a %.2f m, a terra %s, nella stanza %s, girato %.2f" % [i, dist, a_terra, dentro, b.global_basis.z.normalized().dot(verso)])
 		check(fuori.is_empty(), "al loro posto: nella stanza, coi piedi a terra, girati verso il giocatore; i due davanti a circa 3 m, le sagome dietro %s" % [fuori])
+		# (i bambini sono creature: il controllo di posizionamento non li guarda; qui che non si tocchino fra loro e che
+		# stiano lontani dai muri della stanza)
+		var vicini: Array = []
+		for i in bb.size():
+			for j in range(i + 1, bb.size()):
+				var a := (bb[i] as Node3D).global_position
+				var c := (bb[j] as Node3D).global_position
+				if Vector2(a.x - c.x, a.z - c.z).length() < 0.55:
+					vicini.append("%d-%d %.2f m" % [i, j, Vector2(a.x - c.x, a.z - c.z).length()])
+		var ai_muri: Array = []
+		for i in bb.size():
+			var v := (bb[i] as Node3D).global_position - sott.punto(L)
+			var u := absf(v.dot(r))
+			var dentro2 := v.dot(d)
+			if u > sott.stanza_mezza - 0.35 or dentro2 > sott.stanza_fondo - 0.35:
+				ai_muri.append("%d: di lato %.2f, dal portello %.2f" % [i, u, dentro2])
+		check(vicini.is_empty() and ai_muri.is_empty(), "non si toccano fra loro (almeno 55 cm) e stanno ad almeno 35 cm dai muri %s %s" % [vicini, ai_muri])
 	var fasi := {}
 	var t := [0.0]
 	var fine := [false]
