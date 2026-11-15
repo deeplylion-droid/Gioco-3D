@@ -195,6 +195,26 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `interfaccia/ui_pausa.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | switch_002 |
 | `interfaccia/ui_scatto.ogg` | 0.1 s | Kenney Interface Sounds (CC0) | toggle_002 |
 | `lei/fossa_ribolle_loop.ogg` | 5.0 s | sintesi (originale) | gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse |
+| `lei/lei_canto_prima_lontano_01.ogg` | 14.0 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_02.ogg` | 10.6 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_03.ogg` | 12.9 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_04.ogg` | 10.8 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_05.ogg` | 12.2 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_06.ogg` | 11.1 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_07.ogg` | 11.1 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_08.ogg` | 10.8 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_09.ogg` | 12.4 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_lontano_10.ogg` | 10.2 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, lontana nei tubi (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_01.ogg` | 14.0 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_02.ogg` | 10.6 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_03.ogg` | 12.9 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_04.ogg` | 10.8 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_05.ogg` | 12.2 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_06.ogg` | 11.1 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_07.ogg` | 11.1 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_08.ogg` | 10.8 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_09.ogg` | 12.4 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
+| `lei/lei_canto_prima_vicino_10.ogg` | 10.2 s | sintesi (originale) | prima del tunnel, la sigla lenta e storpiata con la gola di lei, vicina (0.4.0, scelta A del 15 novembre) |
 | `lei/lei_esplosione.ogg` | 3.5 s | sintesi (originale) | il boato del geyser che la copre, versione A (scelta dell'utente, 17 ottobre; proposte_esplosione/genera_boato.py) |
 | `lei/lei_insegue_grata_01.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
 | `lei/lei_insegue_grata_02.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
@@ -210,16 +230,16 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `lei/lei_insegue_sb1.ogg` | 5.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): ti fissa dal pozzo SB1: fiato lento e umido, rantolo trattenuto |
 | `lei/lei_sbuca.ogg` | 7.6 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): gola sott'acqua, respiro umido, rantolo; impactSoft_medium, slime_000 |
 | `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) | versione gutturale (16 ottobre): brontolio di gola, l'ultimo fiato che gorgoglia sott'acqua |
-| `lei/lei_tunnel_canto_01.ogg` | 6.3 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_02.ogg` | 7.8 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_03.ogg` | 7.8 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_04.ogg` | 9.2 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_05.ogg` | 6.6 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_06.ogg` | 6.0 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_07.ogg` | 6.4 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_08.ogg` | 5.9 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_09.ogg` | 7.1 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
-| `lei/lei_tunnel_canto_10.ogg` | 6.8 s | sintesi (originale) | tunnel, canto di sirena (variante A, 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_01.ogg` | 9.4 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_02.ogg` | 5.2 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_03.ogg` | 6.3 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_04.ogg` | 7.3 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_05.ogg` | 6.5 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_06.ogg` | 6.1 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_07.ogg` | 7.8 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_08.ogg` | 8.2 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_09.ogg` | 7.3 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
+| `lei/lei_tunnel_canto_10.ogg` | 6.5 s | sintesi (originale) | tunnel, la sigla lenta e storpiata con la gola di lei (scelta B del 15 novembre, al posto del canto del 25 ottobre): una frase ogni 8-15 s mentre insegue |
 | `lei/lei_tunnel_fiato_loop.ogg` | 8.0 s | sintesi (originale) | tunnel, voce (24 ottobre): fiato roco e basso a bocca aperta, in ciclo |
 | `lei/lei_tunnel_verso_01.ogg` | 1.3 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
 | `lei/lei_tunnel_verso_02.ogg` | 1.4 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
@@ -247,11 +267,11 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `piscina/pulsante_botola_bibu.ogg` | 0.4 s | sintesi (originale) | un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s) |
 | `piscina/pulsante_botola_lampeggiante_loop.ogg` | 3.2 s | sintesi (originale) | il lampeggiante giallo che gira |
 | `squalo/jilly_richiamo.ogg` | 10.8 s | sintesi (originale) | il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco |
+| `squalo/squalo_annusa.ogg` | 6.3 s | sintesi (originale) | il fiato nel buio e le gocce di bava, poi il fiuto (0.3.23) |
 | `squalo/squalo_denti_01.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_02.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_03.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
-| `squalo/squalo_annusa.ogg` | 6.3 s | sintesi (originale) | il buio prima che apra la bocca: il fiato che si avvicina, le gocce di bava e i colpi di fiuto da sinistra a destra (0.3.22) |
-| `squalo/squalo_minaccia.ogg` | 4.8 s | sintesi (originale) | fiato a 30 cm, gola che brontola sotto, due ringhi svelti, la pausa col solo fiato e il ringhio dello scatto, coi tempi della 0.3.22; la versione B del 23 ottobre è in `assets_src/audio/scartati/squalo/squalo_minaccia_B_0322.ogg` |
+| `squalo/squalo_minaccia.ogg` | 4.8 s | sintesi (originale) | fiato a 30 cm, gola che brontola sotto (zitta nella pausa) e i morsi: due svelti e uno dopo la pausa; versione B del 23 ottobre, tempi della 0.3.23 |
 | `squalo/squalo_passo_01.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
 | `squalo/squalo_passo_02.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
 | `squalo/squalo_passo_03.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
@@ -275,4 +295,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 249 file, 7.9 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 270 file, 8.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
