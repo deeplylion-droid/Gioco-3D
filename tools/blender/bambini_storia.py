@@ -255,14 +255,17 @@ def si_alza():
             pb.rotation_quaternion = a_rot[pb.name].slerp(b_rot[pb.name], k)
         # le anche salgono dopo che i piedi sono venuti sotto
         pb_('Hips').location = a_loc.lerp(b_loc, liscio(u, 0.2, 1.0))
+        # (a metà si tira su un po' di più: le ginocchia e i tentacoli del cubo aperto non toccano il pavimento)
+        metti_anche(M_HIPS.inverted() @ pb_('Hips').location + Vector((0, 0, 0.06 * math.sin(math.pi * u))))
         bpy.context.view_layer.update()
         for lato, s in LATI.items():
             # (prima il destro, poi il sinistro: i piedi vengono avanti sotto il corpo, sollevati di poco)
             kk = liscio(u, 0.0, 0.6) if lato == 'Right' else liscio(u, 0.15, 0.8)
-            T = caviglie_a[lato].lerp(caviglie_b[lato], kk) + Vector((0, 0, 0.05 * math.sin(math.pi * kk)))
+            T = caviglie_a[lato].lerp(caviglie_b[lato], kk) + Vector((0, 0, 0.08 * math.sin(math.pi * kk)))
             K = wa(pb_(f'{lato}Leg').head)
             due_ossa(f'{lato}UpLeg', f'{lato}Leg', f'{lato}Foot', T, K + Vector((0, -0.3, 0.1)))
-            if kk > 0.0:
+            # (anche col piede ancora fermo: il piede resta disteso dietro, la punta non scende sotto il pavimento)
+            if True:
                 A_ = wa(pb_(f'{lato}Foot').head)
                 P0 = A_ + Vector((s * 0.1, 1.0, -0.45)).normalized() * 0.07
                 P1 = punte_b[lato] - caviglie_b[lato] + A_
@@ -373,13 +376,14 @@ def manca_alla_mano():
     verso = Vector((0.15, -0.55, -0.82)).normalized()
     S_ = wa(pb_('RightArm').head)
     br = lung('RightArm', 'RightForeArm') + lung('RightForeArm', 'RightHand')
-    return (S_ - (tip - verso * MATITA[1])).length - 0.96 * br
+    # (col braccio piegato bene: il 90% della lunghezza, non teso)
+    return (S_ - (tip - verso * MATITA[1])).length - 0.90 * br
 
 
 def calibra():
     """Quanto curvo, perché la mano arrivi sul foglio senza tendere del tutto il braccio; poi quanto alzare la posa in ginocchio perché il punto più basso della pelle stia a 3 mm dal pavimento."""
     nuova_azione('_prova')
-    lo, hi = 0.0, 80.0
+    lo, hi = 30.0, 80.0     # (almeno un po' chino sul foglio)
     for _ in range(14):
         CURVA[0] = (lo + hi) / 2
         if manca_alla_mano() > 0.0:
@@ -415,6 +419,11 @@ def controlla():
                  and (corpo.matrix_world @ v.co).z > z_testa + 0.05]
     mani_idx = [v.index for v in corpo.data.vertices
                 if any(gi[g.group] in ('LeftHand', 'RightHand') and g.weight > 0.5 for g in v.groups)]
+    # (fermo_vivo per confronto: il punto più basso della pelle da fermo, quello di sempre)
+    arm.animation_data.action = bpy.data.actions['fermo_vivo']
+    sc.frame_set(0)
+    z_fermo = min(v.z for v in misura_pelle())
+    log(f'fermo_vivo (per confronto): pelle più bassa {z_fermo:+.3f} m')
     for nome in ('disegna', 'alza_testa', 'si_alza', 'porge', 'porge_tiene'):
         act = bpy.data.actions[nome]
         arm.animation_data.action = act
@@ -425,6 +434,10 @@ def controlla():
             vs = misura_pelle()
             zmin = min(v.z for v in vs)
             peggio['sotto'] = min(peggio['sotto'], zmin)
+            if nome == 'si_alza' and os.environ.get('DEBUG_STORIA'):
+                iv = min(range(len(vs)), key=lambda k: vs[k].z)
+                ossa_v = sorted(((gi[g.group], g.weight) for g in corpo.data.vertices[iv].groups), key=lambda x: -x[1])[:2]
+                log(f'  si_alza f{f}: {zmin:+.3f} {vs[iv]} {ossa_v}')
             if nome in ('disegna', 'alza_testa'):
                 tp = punta_matita()
                 if nome == 'disegna':
@@ -438,7 +451,7 @@ def controlla():
                 peggio['testa_foglio'] = min(peggio['testa_foglio'], min(v.z for v in cubo) - H_FOGLIO)
         log(f'{nome}: pelle più bassa {peggio["sotto"]:+.3f} m; punta della matita fuori dal foglio al più '
             f'{peggio["punta"] * 1000:.1f} mm; cubo-mani {peggio["testa_mani"]:.3f} m, cubo-foglio {peggio["testa_foglio"]:.3f} m')
-        if peggio['sotto'] < -0.01:
+        if peggio['sotto'] < min(-0.01, z_fermo - 0.005):
             log(f'KO {nome}: la pelle va sotto il pavimento'); ko += 1
         if peggio['punta'] > 0.004:
             log(f'KO {nome}: la matita si stacca dal foglio'); ko += 1

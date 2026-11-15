@@ -184,6 +184,10 @@ jobs:
           godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_passi.gd
           godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_sfuggita.gd
 
+      - name: Test del bambino col cubo che disegna e porge il foglio (0.5.0)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambino_storia.gd
+
       - name: Test degli interni (corridoio, spogliatoi, stanzino)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd
