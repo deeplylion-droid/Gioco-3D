@@ -391,8 +391,9 @@ func _su_morso() -> void:
 	_nel_nero = true
 	morsi += 1
 	morsi_giro += 1
-	if GameState.get(&"morti_totali") != null:
-		GameState.set(&"morti_totali", int(GameState.get(&"morti_totali")) + 1)
+	# (i primi morsi contano come morti, come GameState.kill_player: il contatore va nell'istantanea e su disco)
+	GameState.morti_totali += 1
+	GameState.salva_contatori()
 	var velo := Dissolvenza.di(get_tree())
 	await velo.scurisci(nero_giu)
 	if not is_inside_tree():

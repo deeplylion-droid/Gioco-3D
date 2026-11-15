@@ -20,6 +20,10 @@ var _passed := 0
 var _failed := 0
 var _checkpoint_visti: Array[String] = []
 var _errori := ContaErrori.new()
+## Il test non resta mai appeso: un errore di script nel test (che ferma la funzione a metà, come l'Array in Array[Node]
+## della CI di candidata-0400b) lo fa finire subito rosso, e comunque finisce rosso dopo LIMITE_S secondi.
+const LIMITE_S := 1100.0
+var _finito := false
 
 
 ## Gli errori del motore e degli script dalla presa in poi: nel gioco esportato un accesso a un oggetto già liberato, che
@@ -27,10 +31,17 @@ var _errori := ContaErrori.new()
 class ContaErrori extends Logger:
 	var attivo := false
 	var errori: PackedStringArray = []
+	## Il primo errore di script nel test stesso (sempre, anche con [member attivo] spento).
+	var rotto := ""
 	var _m := Mutex.new()
 
 	func _log_error(function: String, file: String, line: int, code: String, rationale: String, _editor_notify: bool,
 			error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
+		if error_type == Logger.ERROR_TYPE_SCRIPT and file.ends_with("test_presa_vera.gd"):
+			_m.lock()
+			if rotto == "":
+				rotto = "%s (%s:%d, %s)" % [rationale if rationale != "" else code, file.get_file(), line, function]
+			_m.unlock()
 		if not attivo or error_type == Logger.ERROR_TYPE_WARNING or file.contains("rendering/dummy"):
 			return
 		_m.lock()
@@ -39,8 +50,25 @@ class ContaErrori extends Logger:
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	OS.add_logger(_errori)
 	_run.call_deferred()
+
+
+func _process(_delta: float) -> void:
+	if _finito:
+		return
+	_errori._m.lock()
+	var r := _errori.rotto
+	_errori._m.unlock()
+	if r != "":
+		_failed += 1
+		printerr("  FALLITO un errore nel test lo ha fermato a metà: ", r)
+		_fine()
+	elif Time.get_ticks_msec() > LIMITE_S * 1000.0:
+		_failed += 1
+		printerr("  FALLITO il test non è finito in %d s (appeso)" % int(LIMITE_S))
+		_fine()
 
 
 func _run() -> void:
@@ -409,6 +437,9 @@ func check(cond: bool, what: String) -> void:
 
 
 func _fine() -> void:
+	if _finito:
+		return
+	_finito = true
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	Game.esci(1 if _failed > 0 else 0)

@@ -90,6 +90,8 @@ const ALZATA := 0.18
 const PEDATA := 0.28
 ## Il bambino col cubo dei bambini visti di sfuggita, nel corridoio del fiume (preload: si carica col thread della zona).
 const BAMBINO_CUBO := preload("res://scenes/creature/bambino_cubo.tscn")
+## Il foglio DF del bambino con la scatola (build 0.5.0, «La storia»): l'omino sulla ciambella che spruzza lo squalo.
+const DISEGNO_DF := preload("res://assets/storia_disegni/disegno_df.jpg")
 ## L'arredo del corridoio del fiume (tools/blender/corridoio_fiume.py), nelle coordinate della sala.
 const ARREDO_CORRIDOIO := preload("res://assets/ambienti_tecnici/corridoio_fiume/corridoio_fiume.gltf")
 
@@ -469,6 +471,7 @@ func _scala_fiume() -> void:
 	var oblo := _oblo("ObloFiume", OBLO_FIUME, Vector3.LEFT, "schiacciata", AABB(Vector3(xc - 0.2, Y - 0.2, z0), Vector3(x_fondo - xc + 0.2, 3.0, fine - z0)),
 			{"vasca_larga": 6.6, "vasca_fonda": 5.6, "vasca_sotto": 8.0})
 	_bambino_corridoio_fiume(xc, x_fondo, z0, z1, porta0, porta1, fine, oblo)
+	_disegno_df(xc, porta0, porta1, fine)
 	_muro(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), Y)
 	# la Polaroid 13 (quella notte, il bagliore nel mare accanto alla nave, proposta del 25 ottobre notte): per terra
 	# contro il muro, sotto l'oblò da cui si vede il mare
@@ -609,6 +612,33 @@ func _bambino_corridoio_fiume(xc: float, x_fondo: float, z0: float, z1: float, p
 	b.inclinazione_testa = 0.25
 	b.preparazione = 0.35
 	add_child(b)
+
+
+## Il foglio DF del bambino con la scatola (build 0.5.0, «La storia», GDD del 15 novembre; il componente e le regole in
+## docs/tecnico/storia_disegni/LEGGIMI.md): nel corridoio del fiume, sul muro in fondo dietro il bambino col cubo, prima
+## della porta del capannone. L'omino sulla ciambella che spruzza lo squalo dietro: come si passa il fiume. A3, il centro
+## a 1,1 m (attaccato da un bambino), al centro del muro di fondo (x da xc a xc + 2, la faccia a z = fine), dietro dove
+## sta il bambino. Per terra sotto il foglio il suo pastello, e le impronte bagnate dei suoi piedi che vengono dalla
+## porta del capannone, cioè dal fiume (il pavimento del corridoio è piano). Un oggetto fermo: il posto è scritto qui ed è
+## controllato da test_disegni_bambino (a contatto col muro, niente davanti, altezza, pastello e impronte appoggiati).
+func _disegno_df(xc: float, porta0: float, porta1: float, fine: float) -> void:
+	var d := DisegnoBambino.new()
+	d.name = "StoriaDF"
+	d.disegno = DISEGNO_DF
+	d.formato = DisegnoBambino.Formato.A3
+	d.altezza = 1.1
+	# l'origine al centro del foglio, sulla faccia del muro; il foglio guarda +Z del nodo, qui verso -Z (verso la scala)
+	d.position = Vector3(xc + 1.1, Y + 1.1, fine)
+	d.rotation.y = PI
+	d.pastello = true
+	d.pastello_dove = Vector2(-0.16, 0.11)
+	d.pastello_giro = 35.0
+	d.impronte = true
+	# (nel sistema del foglio: x lungo il muro, con questo giro verso -X del mondo; y fuori dal muro, verso -Z) dalla
+	# soglia della porta del capannone (x = xc - 0,2, z al centro della porta), appena dentro il corridoio
+	var pm := (porta0 + porta1) * 0.5
+	d.impronte_da = Vector2(1.1 - 0.15, fine - pm)
+	add_child(d)
 
 
 ## Un oblò con lei dietro il vetro (ObloLei): [param centro] sulla faccia del muro dalla parte del corridoio,
