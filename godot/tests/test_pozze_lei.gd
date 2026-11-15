@@ -234,7 +234,8 @@ func _run() -> void:
 	await _nuova_stanza(false)
 	await _togli(WaterMix.ROSA)
 	_metti(Vector3(e.passo * 2.0, 0, r))
-	a = await _aspetta(F.ARRIVA, lei.prima_attesa + 4.0)
+	# (8 s: il giro a caso della luce, 4 pozze a 1,5 m/s, non si interrompe allo scadere dell'attesa; con l'avvicinamento il caso peggiore è circa 8,3 s dal risveglio)
+	a = await _aspetta(F.ARRIVA, lei.prima_attesa + 8.0)
 	if a.is_empty():
 		check(false, "arriva")
 		return _fine()
@@ -315,7 +316,8 @@ func _run() -> void:
 	check(lei._pozze_buone().size() == 16, "tutte le 16 pozze del bordo sono di nuovo porte aperte (%d)" % lei._pozze_buone().size())
 	lei._t = -0.5
 	_metti(Vector3(0, 0, r))
-	a = await _aspetta(F.ARRIVA, 6.0)
+	# (8 s: il giro a caso della luce, 4 pozze a 1,5 m/s, non si interrompe allo scadere dell'attesa: con l'avvicinamento, circa 5,8 s da qui nel caso peggiore)
+	a = await _aspetta(F.ARRIVA, 8.0)
 	check(not a.is_empty(), "e lei torna a venire")
 	if not a.is_empty():
 		await _cammina_via(lei.bersaglio, 3.0)
@@ -341,7 +343,8 @@ func _run() -> void:
 	lei.letale = false
 	await _togli(WaterMix.ROSA)
 	_metti(Vector3(0, 0, r))
-	a = await _aspetta(F.ARRIVA, lei.prima_attesa + 4.0)
+	# (8 s: il giro a caso della luce, 4 pozze a 1,5 m/s, non si interrompe allo scadere dell'attesa; con l'avvicinamento il caso peggiore è circa 8,3 s dal risveglio)
+	a = await _aspetta(F.ARRIVA, lei.prima_attesa + 8.0)
 	check(not a.is_empty() and _dist_uscita() <= lei.portata_effettiva(), "arriva a portata del giocatore")
 	var sc := await _aspetta(F.SCENDE, acqua.avviso + 8.0)
 	check(not sc.is_empty() and lei.uscite == 1 and lei.prese == 0 and not GameState.is_dying and p.input_enabled,
