@@ -60,6 +60,24 @@ func _run() -> void:
 	_pl.teleport(dentro, atan2(-d.x, -d.z))   # (di spalle al portello: guarda la stanza)
 	await _fotogrammi(60)
 	_scatta("00_stanza_vuota")
+	if OS.get_environment("SOLO_BRACCIO") != "":
+		# (lo scatto stretto sul braccio, senza tutta la sequenza: il bambino col cubo porge davvero il foglio)
+		var occhi_b := sala.punto(L) + d * SalaSottomarino.CAMERA_DOVE_GUARDA
+		occhi_b.y = sg + 0.05
+		_pl.teleport(occhi_b, atan2(-d.x, -d.z))
+		_pl.input_enabled = false
+		await sala.mostra_finale_per_controllo(true)
+		await _fotogrammi(20)
+		var b1: Node3D = sala._bambini_finale[0]
+		_pl.look_at_point(b1.global_position + Vector3.UP * 0.7)
+		var v1 := _pl.get_eye_position() - b1.global_position
+		v1.y = 0.0
+		var a1 := b1.global_basis.z
+		a1.y = 0.0
+		print("DI LATO: a %.2f m in pianta, %.1f gradi dal davanti del bambino col cubo" % [v1.length(), rad_to_deg(a1.normalized().angle_to(v1.normalized()))])
+		await _stretto(b1)
+		get_tree().quit()
+		return
 	if OS.get_environment("SOLO_STANZA") != "":
 		# (prova veloce della luce: i bambini accesi e fermi, dagli occhi del giocatore a 2,2 m dal portello)
 		var occhi := sala.punto(L) + d * SalaSottomarino.CAMERA_DOVE_GUARDA
@@ -102,12 +120,7 @@ func _run() -> void:
 	var avanti := b0.global_basis.z
 	avanti.y = 0.0
 	print("DI LATO: a %.2f m in pianta, %.1f gradi dal davanti del bambino col cubo" % [verso.length(), rad_to_deg(avanti.normalized().angle_to(verso.normalized()))])
-	var cam := get_viewport().get_camera_3d()
-	var fov := cam.fov
-	cam.fov = 28.0
-	await _fotogrammi(3)
-	_scatta("04_stretto_sul_braccio")
-	cam.fov = fov
+	await _stretto(b0)
 	while sala.fase_finale == "foglio" and Time.get_ticks_msec() - t0 < 900000:
 		await get_tree().process_frame
 		if Engine.get_process_frames() - int(fatte["foglio"]) == int(30 * (sala.finale_abbassa + 1.5)):
@@ -123,3 +136,19 @@ static func _pipeline() -> Array:
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION),
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SURFACE),
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_MESH)]
+
+
+## Dagli occhi del giocatore, una camera stretta (28 gradi) sul busto del bambino [param b]: lo scatto 04.
+func _stretto(b: Node3D) -> void:
+	var cam := Camera3D.new()
+	add_child(cam)
+	var vista := get_viewport().get_camera_3d()
+	cam.environment = vista.environment
+	cam.attributes = vista.attributes
+	cam.fov = 28.0
+	cam.look_at_from_position(_pl.get_eye_position(), b.global_position + Vector3.UP * 0.65)
+	cam.make_current()
+	await _fotogrammi(12)
+	_scatta("04_stretto_sul_braccio")
+	vista.make_current()
+	cam.queue_free()
