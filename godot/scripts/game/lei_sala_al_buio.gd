@@ -37,6 +37,11 @@ extends Node3D
 @export var spazio_galleggianti := 3.6
 ## Velocità della luce nel giro (m/s).
 @export var velocita := 1.8
+## La sala al buio, nel mondo: il giro parte solo col giocatore qui dentro (dall'uscita della serranda, z 19,3, in
+## poi; al piano della sala, non nella sala pompe o nel pozzo sotto) e, se ne esce prima della fossa, finisce e lei
+## torna libera. Dal blackout (la leva della sala pompe) alla serranda passano raccordo, fiume, pozze e infermeria:
+## lì lei deve poter venire.
+@export var zona := AABB(Vector3(-32.0, -3.0, -32.0), Vector3(64.0, 7.0, 51.0))
 
 enum Stato { ATTESA, GIRO, FINITO }
 var stato := Stato.ATTESA
@@ -82,14 +87,23 @@ func _physics_process(_delta: float) -> void:
 	acqua.pelo = vasca_grande.get_surface_global_y()
 	var vicino_fossa := lei_sbuca != null and lei_sbuca.punto_sbuca != null \
 			and AcquaDiLei._in_pianta(p.global_position, lei_sbuca.punto_sbuca.global_position) <= distanza_fossa
+	var in_sala := zona.has_point(p.global_position)
 	match stato:
 		Stato.ATTESA:
+			if not in_sala:
+				return
 			if vicino_fossa:
 				# ripartendo dalla fossa (o arrivati lì senza giro): la scena di oggi
 				_finisci(false)
 			elif acqua.gira(_giro(), velocita):
 				stato = Stato.GIRO
 		Stato.GIRO:
+			if not in_sala:
+				# uscito dalla sala prima della fossa: lei se ne va, il giro ripartirà quando torna
+				if acqua.fase == AcquaDiLei.Fase.LONTANA or acqua.fase == AcquaDiLei.Fase.CALMA:
+					acqua.lascia()
+					stato = Stato.ATTESA
+				return
 			if vicino_fossa and acqua.fase == AcquaDiLei.Fase.LONTANA and not _sul_bordo(p):
 				_finisci(true)
 				return
@@ -106,10 +120,15 @@ func _finisci(con_la_luce: bool) -> void:
 		var fossa := lei_sbuca.punto_sbuca.global_position
 		acqua.smetti_giro(fossa + Vector3.DOWN * 0.6, tempo_alla_fossa)
 		get_tree().create_timer(tempo_alla_fossa, false).timeout.connect(func():
+			# (dopo la fossa la sua luce se ne va: gli acquari sono una pausa, niente canto da qui)
+			acqua.abilitata = false
 			if is_instance_valid(lei_sbuca):
 				lei_sbuca.vai_alla_fossa())
-	elif lei_sbuca:
-		lei_sbuca.vai_alla_fossa()
+	else:
+		acqua.lascia()
+		acqua.abilitata = false
+		if lei_sbuca:
+			lei_sbuca.vai_alla_fossa()
 
 
 ## Vero se il giocatore è sul bordo della vasca grande vicino a un punto d'uscita (dove lei può uscire).
