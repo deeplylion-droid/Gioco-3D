@@ -1,4 +1,4 @@
-Versione 0.4.0 «L'acqua è sua»: unione di lavoro/candidata-0400c ([DA COMPLETARE: sha])
+Versione 0.4.0 «L'acqua è sua»: unione di lavoro/candidata-0400c (4b82e170)
 
 Prima delle tre build decise il 15 novembre. Da quando si riaccendono le pompe, dove c'è acqua vera può arrivare
 lei: la luce rosa sotto il pelo e il canto avvisano 3,5 secondi prima (motore AcquaDiLei). Sala pompe: la lezione
@@ -8,7 +8,7 @@ trascina al bordo della pozza (niente viso). Sala al buio: il giro nella vasca g
 la fossa, che non sorprende mai. Tunnel: lo spruzzo (carica a 8 m, 2,5 secondi per respingerla, 4 finché non la si
 è respinta una volta). Canto: la sigla del parco lenta e storpiata prima del tunnel e nel tunnel, mai tagliata di
 colpo. Menu F9: tre partenze nuove.
-Pezzi: lavoro/acqua-di-lei [DA COMPLETARE] (mascotte), lavoro/pozze-lei f342d44a (enigmi), lavoro/canto-prima
+Pezzi: lavoro/acqua-di-lei 82f171c2 (mascotte), lavoro/pozze-lei f342d44a (enigmi), lavoro/canto-prima
 422c5221 e lavoro/pompe-lezione 243eaf76 (ambienti-1), lavoro/tunnel-spruzzo 6fd9fdef (mascotte),
 lavoro/lancia-fov 1e123eec, partenze F9 7e66df28 + dd38cef2 + a117e574 (ambienti-1).
 Fuori dalla 0.4.0: la torre (lavoro/torre-vasche-lei, non unito: serve rigenerarla con gli scarichi).
