@@ -44,6 +44,13 @@ ap.add_argument('--occhio', default='', help="GLB da cui prendere il guscio dell
 ap.add_argument('--vivo', action='store_true',
                 help="anche fermo_vivo e inclina_testa_viva (il bambino col cubo, scelta A dell'utente del 1 novembre: "
                      "\"A ma animalo meglio\")")
+ap.add_argument('--storia', action='store_true',
+                help="con --vivo: anche le azioni della build 0.5.0 «la storia» (il bambino col cubo): disegna, alza_testa, "
+                     "si_alza, porge, porge_tiene, la matita nella mano destra e l'osso 'foglio' dove sta il foglio che porge")
+ap.add_argument('--foglio-altezza', type=float, default=0.0,
+                help="con --storia: a che altezza da terra sta il foglio su cui disegna (m)")
+ap.add_argument('--controlla', action='store_true', help="con --storia: misura le pose nuove sulla pelle vera, senza esportare")
+ap.add_argument('--render', default='', help="con --storia: cartella dove fare qualche render di prova (Cycles), senza esportare")
 ap.add_argument('--primo-passo', type=float, default=6.4,
                 help="con --vivo: il fotogramma della corsa dove finisce \"parte\" (6,4 il bambino col cubo, 7,6 l'agnellino; "
                      "nel gioco Bambino.corsa_primo_passo = questo / 24)")
@@ -112,6 +119,17 @@ for v in corpo.data.vertices:
     g_testa.add([v.index], 1.0, 'REPLACE')
     rifatti += 1
 log(f'testa rigida sopra z={z_testa:.3f}: {rifatti} vertici sistemati')
+
+if A.storia:
+    # l'osso 'foglio' (senza pesi): dove sta il centro del foglio che porge (bambini_storia.py)
+    bpy.context.view_layer.objects.active = arm
+    bpy.ops.object.mode_set(mode='EDIT')
+    eb = arm.data.edit_bones.new('foglio')
+    eb.parent = arm.data.edit_bones['Spine']
+    _mwi = arm.matrix_world.inverted()
+    eb.head = _mwi @ Vector((0.035, -0.12, 0.6))
+    eb.tail = _mwi @ Vector((0.035, -0.12, 0.65))
+    bpy.ops.object.mode_set(mode='OBJECT')
 
 OSSA = [pb.name for pb in arm.pose.bones]
 R_REST = {pb.name: (arm.matrix_world @ pb.bone.matrix_local).to_quaternion().normalized() for pb in arm.pose.bones}
@@ -465,6 +483,13 @@ cor_src.animation_data.action = cor_act
 da_mocap('corsa', cor_src, cor_act, lentezza=1.15, braccia=0.8, extra=extra_corsa)
 if A.vivo:
     parte()
+if A.storia:
+    exec(open(os.path.join(QUI, 'bambini_storia.py')).read())
+    if A.controlla:
+        sys.exit(1 if controlla() else 0)
+    if A.render:
+        render(A.render)
+        sys.exit(0)
 for o in (cam_src, cor_src):
     bpy.data.objects.remove(o, do_unlink=True)
 for act in (cam_act, cor_act):
@@ -496,4 +521,7 @@ bpy.ops.export_scene.gltf(filepath=A.uscita, export_format='GLB', export_yup=Tru
                           export_animations=True, export_animation_mode='ACTIONS',
                           export_force_sampling=True, export_frame_step=1,
                           export_skins=True, export_morph=False, export_apply=False)
+if A.storia:
+    with open(os.path.splitext(A.uscita)[0] + '_storia.json', 'w') as fj:
+        json.dump(misure(), fj, indent=1)
 log('scritto', A.uscita, f'{os.path.getsize(A.uscita) / 1e6:.1f} MB')

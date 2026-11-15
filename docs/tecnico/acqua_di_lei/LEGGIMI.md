@@ -58,7 +58,7 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | `portata` | `3` | in m |
 | `portata_mano` | `1,2` | nel modo MANO: in m dal marker |
 | `tempo_su` | `2,2` | in s |
-| `tempo_presa` | `0,8` | in s: dalla fine del silenzio alla presa 1,6 + 0,8 = 2,4 s, il tempo per mezzo secondo di getto in faccia |
+| `tempo_presa` | `1,6` | in s: dalla fine del silenzio alla presa 1,6 + 1,6 = 3,2 s (collaudo della 0.4.0: col giocatore vero per respingerla servono 0,9 s dall'inizio del getto; chi la vede fuori e reagisce in mezzo secondo ce la fa ancora) |
 | `tempo_presa_mano` | `0,35` | nel modo MANO: dalla fine del silenzio alla presa 2,2 + 0,35 = 2,55 s |
 | `getto_per_respingere` | `0,5` | in s |
 | `pausa_respinta` | `20` | in s |
@@ -126,7 +126,10 @@ La sala al buio usa tutto questo: `godot/scripts/game/lei_sala_al_buio.gd` (LeiS
 - Se il giocatore è entro 3 m da un punto d'uscita della VascaArrivo (uno a metà di ogni lato, `rientro` 2,4 m dentro: più vicino al bordo i tentacoli entrano nelle griglie e nel pavimento) quando la luce ci passa, lei esce.
 - Quando lei arriva, i giocattoli che galleggiano nella vasca si scostano a `spazio_galleggianti` (3,6 m) dal punto (`prepara_uscita`), così uscendo non li attraversa.
 - L'acqua della VascaArrivo è torbida e bassa (0,88 m): la salita parte sotto il fondo e non si vede. È un limite noto.
-- Arrivato a 9 m dalla fossa (`distanza_fossa`), se non è sul bordo vicino a un punto d'uscita (lì lei può ancora uscire: il bordo nord della vasca è a 4,8 m dalla fossa), la luce va nella fossa in `tempo_alla_fossa` (1,5 s) e LeiSbuca fa la scena di oggi. `LeiSbuca.aspetta_il_giro` e `vai_alla_fossa()`: se la fossa è inquadrata sbuca, se no è già affacciata.
+- Arrivato a 13 m dalla fossa (`distanza_fossa`: è quando lascia la vasca grande verso la fossa; scelta A del coordinatore dopo il collaudo della 0.4.0), se non è sul bordo vicino a un punto d'uscita (lì lei può ancora uscire), parte l'avviso intero della fossa: `annuncia(punto, poi)` porta la luce sotto la fossa (accesa solo nell'acqua: la fossa è in `acque_extra`, un AABB), il canto fa «arriva», si spegne, mezzo secondo di silenzio (`avviso`, 3,5 s); poi la luce si spegne e si chiama `LeiSbuca.vai_alla_fossa()`. Anche ripartendo vicino alla fossa c'è prima l'avviso. Mentre il livello si ripristina (`GameState.is_restoring()`) la sala non decide niente.
+- Lontano dal bordo della vasca grande (oltre 5 m da ogni punto d'uscita, `lontano_dal_bordo`) il passaggio parte già a 21 m (`distanza_fossa_lontano`): camminando l'avviso finisce col giocatore a circa 9 m e lei sbuca in vista, la scena della 0.3.25 («A in più» del coordinatore). Correndo l'avviso finisce quando è già vicino: lei aspetta.
+- Mentre lei aspetta dopo l'avviso, la luce rosa resta nella fossa e pulsa, in silenzio (`LuceFossa`, scelta B del coordinatore): si vede che è lì sotto.
+- La fossa non sorprende mai (LeiSbuca, gruppo «Mai di sorpresa»): con la fossa in vista lei sbuca (la salita) solo col giocatore a più di 8 m (`distanza_sbuca`); fuori dall'inquadratura o a schermo nero compare già affacciata, solo col giocatore a più di 8 m (`distanza_affaccia`); se no aspetta e ci riprova a ogni fotogramma. Mentre sale non prende; prende solo dopo che il giocatore l'ha avuta in vista affacciata e ferma per 1,6 s se l'ha vista sbucare (`vista_dopo_sbucata`, come `tempo_presa`), 3 s se è comparsa già affacciata (`vista_per_prendere`). Test: `test_fossa_mai_di_sorpresa.gd`.
 
 ## Carica e scatto (tunnel)
 
@@ -151,10 +154,11 @@ Scelta C dell'utente: esce prima il braccio e la mano sbatte sul grigliato, poi 
   - `pozza_attesa` (ciclo, 2,4 s): la mano premuta sul grigliato, le dita che battono, le punte dei tentacoli che si muovono di pochi centimetri;
   - `pozza_presa` (0,8 s): la mano scatta alla caviglia del giocatore (0,6 m davanti al marker) e tira;
   - `pozza_respinta` (1 s) e `pozza_scende` (1,2 s): la mano rientra sopra il bordo e lei torna sotto il fondo, i tentacoli scivolano nella pozza.
-- **Cosa si vede:** il corpo resta sott'acqua (la testa circa 28 cm sotto il pelo) e sotto il fondo. Braccio e tentacoli passano dal fondo della pozza. Il primo osso di ogni tentacolo che striscia si allunga sotto il fondo, dove non si vede: così il pezzo visibile ha la sua lunghezza vera e arriva fino a 2 m. Il controllo delle zone nello script Blender (`--pozza`) e la sonda d'ingombro non trovano niente che attraversa il grigliato, i bordini o le pozze vicine.
+- **Cosa si vede:** il corpo resta in fondo e la testa coi capelli sta sempre almeno 7 cm sotto il pelo (al più a -0,12 m, misurato sulle mesh deformate in ogni animazione: `--pozza`). Per arrivare al grigliato e alla caviglia l'osso del braccio si allunga dalla spalla al gomito sott'acqua. Il liquido della pozza è opaco mentre lei c'è (enigmi). Avambraccio e mano hanno la lunghezza vera. Braccio e tentacoli passano dal fondo della pozza. Il primo osso di ogni tentacolo che striscia si allunga sotto il fondo, dove non si vede: così il pezzo visibile ha la sua lunghezza vera e arriva fino a 2 m. Il controllo delle zone nello script Blender (`--pozza`) e la sonda d'ingombro non trovano niente che attraversa il grigliato, i bordini o le pozze vicine.
 - **La presa:** se il giocatore è entro `portata_mano` (1,2 m in pianta) dal marker quando lei è su, la mano lo prende. Segue la scena di morte della medusa: la camera scende fino al pelo della pozza e guarda il suo viso sott'acqua.
 - **La respinta:** il getto sulla mano (bersaglio di 0,4 m che segue la mano) per `getto_per_respingere` s la ricaccia sotto.
-- **La luce rosa** resta nell'acqua della pozza (0,6 m sotto il pelo), più forte: la pozza si accende di rosa da sotto.
+- **La luce rosa** resta nell'acqua della pozza, al centro, a metà fondo: la pozza si accende di rosa da sotto. Energia 3, portata 1,6 m, così accende poco le pozze accanto.
+- **Segnali per il liquido opaco (enigmi):** `fase_cambiata(SILENZIO)` all'inizio del silenzio, `presa` all'inizio della presa, `tornata_sotto` quando lei è di nuovo nascosta.
 - **Suoni:** un tonfo nell'acqua quando la mano esce e quando sbatte, e uno quando rientra.
 
 Test: `godot/tests/test_acqua_di_lei_mano.gd` (in CI). Per i marker veri: `sonda_ingombro_acqua_di_lei.gd <scena.tscn>` (nel modo MANO prova le animazioni `pozza_*` col marker).

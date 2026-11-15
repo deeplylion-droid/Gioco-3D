@@ -1,0 +1,19 @@
+{
+ "foglio_disegna": {
+  "centro": [
+   0.035,
+   0.15,
+   0.268
+  ],
+  "altezza": 0.15,
+  "note": "il centro del foglio su cui disegna (A4 per terra, lato corto verso di lui)"
+ },
+ "alza_tutto": 0.0371,
+ "durate": {
+  "disegna": 6.0,
+  "alza_testa": 1.0,
+  "si_alza": 0.583,
+  "porge": 1.208,
+  "porge_tiene": 4.0
+ }
+}

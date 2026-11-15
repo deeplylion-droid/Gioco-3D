@@ -54,8 +54,8 @@ const ANIM := "inseguimento/"
 ## Modo MANO: quando la mano sbatte sul grigliato in pozza_esce (s; POZZA_SLAM_T di medusa_inseguimento.py).
 const MANO_SBATTE := 0.62
 ## Modo MANO: la luce resta nell'acqua della pozza, più forte (la pozza si accende di rosa da sotto).
-const LUCE_POZZA := 3.6
-const LUCE_POZZA_PORTATA := 3.5
+const LUCE_POZZA := 3.0
+const LUCE_POZZA_PORTATA := 1.6
 
 @export var abilitata := true
 @export var modo := Modo.INTERA
@@ -86,8 +86,10 @@ const LUCE_POZZA_PORTATA := 3.5
 @export var portata_mano := 1.2
 ## Quanto sta su a cercarti, se non sei nella portata (s).
 @export var tempo_su := 2.2
-## Da su, quanto aspetta prima di prenderti (s): il tempo di uno spruzzo.
-@export var tempo_presa := 0.8
+## Da su, quanto aspetta prima di prenderti (s): il tempo di uno spruzzo. 1,6 s (collaudo della 0.4.0: col giocatore
+## vero servono 0,9 s dall'inizio del getto per respingerla; chi la vede fuori e reagisce in mezzo secondo deve farcela):
+## dall'acqua che si apre alla presa 3,2 s.
+@export var tempo_presa := 1.6
 ## Nel modo MANO: da su, quanto aspetta la mano prima di prenderti alla caviglia (s).
 @export var tempo_presa_mano := 0.35
 ## Secondi di getto in faccia che la ricacciano sotto.
@@ -354,6 +356,22 @@ func chiama(punto: Node3D = null) -> bool:
 	return true
 
 
+## Solo l'avviso, senza uscita: la luce va sotto [param punto] (con [method _sotto]), il canto fa «arriva», si spegne, mezzo
+## secondo di silenzio ([member avviso] in tutto), poi la luce si spegne, lei lascia questo specchio e si chiama [param poi]
+## (la fossa della sala al buio: lì sbuca LeiSbuca). Ritorna falso se adesso non può.
+func annuncia(punto: Node3D, poi: Callable) -> bool:
+	if not chiama(punto):
+		return false
+	_dimostrativa = false
+	_solo_avviso = poi
+	return true
+
+
+var _solo_avviso := Callable()
+## Altri volumi d'acqua (nel mondo) oltre ad [member acque], dove la luce è accesa: la fossa della sala al buio.
+var acque_extra: Array[AABB] = []
+
+
 ## Dove esce: il punto più vicino al giocatore (il più lontano per l'uscita dimostrativa).
 func _scegli_punto(p: Node3D, lontano: bool) -> Node3D:
 	var meglio: Node3D = null
@@ -368,8 +386,13 @@ func _scegli_punto(p: Node3D, lontano: bool) -> Node3D:
 	return meglio
 
 
-## Il punto della luce sotto l'uscita [param q]: 0,6 m sotto il pelo.
+## Il punto della luce sotto l'uscita [param q]: 0,6 m sotto il pelo (nel modo MANO al centro della pozza, 0,6 m dentro
+## dal marker e a metà fondo: il marker sta sul grigliato, sopra il bordino).
 func _sotto(q: Node3D) -> Vector3:
+	if modo == Modo.MANO:
+		var c := q.global_transform * Vector3(0.0, 0.0, -0.6)
+		c.y = pelo_a(q) - 0.35
+		return c
 	var v := q.global_position
 	v.y = pelo_a(q) - 0.6
 	return v
@@ -417,7 +440,12 @@ func _physics_process(delta: float) -> void:
 			# la luce ferma, che pulsa piano
 			_luce.light_energy = LUCE_SOTTO * (0.85 + 0.15 * sin(_t * 9.0))
 			punto_luce = _luce.global_position
-			if _t >= silenzio:
+			if _t >= silenzio and _solo_avviso.is_valid():
+				var poi := _solo_avviso
+				_solo_avviso = Callable()
+				lascia()
+				poi.call()
+			elif _t >= silenzio:
 				# un bambino è comparso intanto, o un'altra lei: non esce, la luce se ne va
 				if bambino_in_vista() or lei_in_vista_altrove() or GameState.is_dying:
 					_annulla()
@@ -514,6 +542,7 @@ func gira(punti: PackedVector3Array, velocita := 1.6) -> bool:
 
 ## Lei se ne va subito da qui (la luce si spegne, il giro finisce): per il giocatore uscito dalla zona.
 func lascia() -> void:
+	_solo_avviso = Callable()
 	if fase == Fase.ARRIVA or fase == Fase.SPEGNE or fase == Fase.SILENZIO:
 		_cambia(Fase.LONTANA)
 	elif fase != Fase.LONTANA and fase != Fase.CALMA:
@@ -651,6 +680,9 @@ func _muovi_giro(delta: float, p: Node3D) -> void:
 func in_acqua(q: Vector3) -> bool:
 	if acque.is_empty():
 		return true
+	for b in acque_extra:
+		if b.has_point(q):
+			return true
 	for a in acque:
 		var t := a as WaterTank
 		if t == null or not is_instance_valid(t):
