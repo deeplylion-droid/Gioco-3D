@@ -450,8 +450,12 @@ func _run() -> void:
 		if acqua and acqua.has_method(&"in_giro"):
 			var g := bool(acqua.call(&"in_giro"))
 			if g:
+				# (i primi 3 fotogrammi del giro no: punto_luce si aggiorna quando la luce comincia a muoversi)
+				if not in_giro[0]:
+					in_giro.append(i)
 				in_giro[0] = true
-				punti_luce.append(acqua.get(&"punto_luce"))
+				if i - int(in_giro[2]) >= 3:
+					punti_luce.append(acqua.get(&"punto_luce"))
 			elif in_giro[0]:
 				in_giro[1] = true
 			fasi_canto[StringName(acqua.get(&"fase_canto"))] = true

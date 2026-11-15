@@ -67,6 +67,11 @@ var risvegliata := false
 var finito := false
 ## La luce di lei è passata nella vasca di raccolta (la lezione), o non poteva farlo.
 var lezione_fatta := false
+## Dalla leva finché la luce della lezione non si è spenta: lei è qui. Chi la vuole altrove (LeiSalaAlBuio) aspetta
+## (il nodo è nel gruppo [constant GRUPPO]).
+var lezione_in_corso := false
+const GRUPPO := &"risveglio_pompe"
+signal lezione_finita
 ## L'acqua di lei sulla vasca di raccolta (AcquaDiLei), solo per la lezione.
 var acqua_lezione: Node3D
 
@@ -76,6 +81,7 @@ var _motori: Array = []
 
 func _ready() -> void:
 	add_to_group(&"persist")
+	add_to_group(GRUPPO)
 	for i in turbine.size():
 		var t := turbine[i]
 		if t:
@@ -149,6 +155,7 @@ func _risveglio() -> void:
 	if risvegliata:
 		return
 	risvegliata = true
+	lezione_in_corso = not lezione_fatta and acqua_lezione != null
 	risveglio_iniziato.emit()
 	_suona(&"cancello_fine", leva.global_position if leva else null, 0.0, 0.8)
 	get_tree().create_timer(sblocco_porta, false).timeout.connect(_sblocca_porta)
@@ -314,10 +321,12 @@ func percorso_lezione() -> PackedVector3Array:
 
 func _lezione() -> void:
 	if lezione_fatta or acqua_lezione == null or not is_instance_valid(acqua_lezione):
+		_fine_lezione()
 		return
 	lezione_fatta = true
 	if not acqua_lezione.has_method(&"percorri"):
 		push_warning("RisveglioSalaPompe: AcquaDiLei senza percorri(): niente lezione")
+		_fine_lezione()
 		return
 	var punti := percorso_lezione()
 	var lunghezza := 0.0
@@ -326,4 +335,12 @@ func _lezione() -> void:
 	var ok := bool(acqua_lezione.call(&"percorri", punti, lunghezza / maxf(durata_lezione, 0.1), null, spegni_lezione))
 	if not ok:
 		push_warning("RisveglioSalaPompe: la luce di lei non è potuta passare nella vasca di raccolta")
+		_fine_lezione()
+		return
+	acqua_lezione.connect(&"percorso_finito", _fine_lezione, CONNECT_ONE_SHOT)
 
+
+func _fine_lezione() -> void:
+	if lezione_in_corso:
+		lezione_in_corso = false
+		lezione_finita.emit()
