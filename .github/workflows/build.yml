@@ -204,6 +204,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acqua_di_lei.gd
 
+      - name: Test della sala al buio (0.4.0; la luce gira nelle vasche, lei esce dal bordo e prende, poi la fossa come prima)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala_al_buio.gd
+
       - name: Test della voce di lei nell'inseguimento
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lei_voce.gd

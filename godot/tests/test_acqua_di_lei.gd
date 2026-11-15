@@ -104,15 +104,18 @@ func _run() -> void:
 	print("3. Mai in due posti")
 	check(not b.chiama() and b.fase == AcquaDiLei.Fase.LONTANA and AcquaDiLei.chi_la_usa() == a,
 			"mentre arriva nella vasca A, la B non la può chiamare")
-	await _fisica(30)
+	check(a.fase_canto == &"arriva", "per il canto: arriva (%s)" % a.fase_canto)
+	await _fisica(60)
 	var v_meta := a.vicinanza
-	var t_sil := await _aspetta_fase(a, AcquaDiLei.Fase.SILENZIO, 4.0)
-	check(t_sil >= 0.0 and v_meta > 0.05 and v_meta < 0.9, "la luce arriva (vicinanza a metà %.2f) e c'è il silenzio" % v_meta)
+	var t_spe := await _aspetta_fase(a, AcquaDiLei.Fase.SPEGNE, 4.0)
+	check(t_spe >= 0.0 and v_meta > 0.05 and v_meta < 0.9, "la luce arriva in 2 s (vicinanza a metà %.2f), poi il canto si spegne" % v_meta)
 	var sotto := Vector3(0, -0.6, 6)
-	check(a.punto_luce.distance_to(sotto) < 0.2 and a.vicinanza >= 0.99,
-			"nel silenzio la luce è sotto il punto d'uscita (%s) e vicinanza 1" % str(a.punto_luce))
+	check(a.punto_luce.distance_to(sotto) < 0.2 and a.vicinanza >= 0.99 and a.fase_canto == &"spegne",
+			"mentre il canto si spegne la luce è sotto il punto d'uscita (%s), vicinanza 1, fase per il canto %s" % [str(a.punto_luce), a.fase_canto])
+	var t_sil := await _aspetta_fase(a, AcquaDiLei.Fase.SILENZIO, 2.0)
+	check(t_sil >= 0.9 and t_sil <= 1.1 and a.fase_canto == &"silenzio", "dopo 1 s di spegnimento il silenzio vero (%.2f s)" % t_sil)
 	var t_esce := await _aspetta_fase(a, AcquaDiLei.Fase.ESCE, 1.5)
-	check(t_esce >= 0.8 and t_esce <= 1.1, "esce dopo il secondo di silenzio (%.2f s)" % t_esce)
+	check(t_esce >= 0.4 and t_esce <= 0.6 and a.fase_canto == &"fuori", "esce dopo mezzo secondo di silenzio (%.2f s)" % t_esce)
 	var t_su := await _aspetta_fase(a, AcquaDiLei.Fase.SU, 3.0)
 	check(t_su > 0.3, "è fuori dall'acqua (salita %.2f s)" % t_su)
 	var t_giu := await _aspetta_fase(a, AcquaDiLei.Fase.SCENDE, 4.0)
@@ -165,6 +168,69 @@ func _run() -> void:
 	await _aspetta_fase(c, AcquaDiLei.Fase.SCENDE, 8.0)
 	check(not GameState.is_dying, "e non prende")
 	await _aspetta_fase(c, AcquaDiLei.Fase.LONTANA, 6.0)
+
+	print("8. La luce che passa senza che lei esca")
+	await _metti_giocatore(Vector3(10, 0.05, -10))
+	var giro := PackedVector3Array([Vector3(25, -0.6, 8), Vector3(25, -0.6, 2), Vector3(25, -0.6, -4)])
+	check(b.percorri(giro, 4.0) and AcquaDiLei.chi_la_usa() == b, "la luce percorre la vasca B: lei è lì")
+	check(not a.chiama(), "intanto non può venire nella A")
+	await _fisica(60)
+	check(b.fase == AcquaDiLei.Fase.LONTANA and b.in_giro() and b.punto_luce.distance_to(Vector3(25, -0.6, 4)) < 3.0,
+			"la luce passa sott'acqua senza che lei esca (%s)" % str(b.punto_luce))
+	for i in 240:
+		await get_tree().physics_frame
+		if not b.in_giro():
+			break
+	check(not b.in_giro() and AcquaDiLei.chi_la_usa() == null and b.fase == AcquaDiLei.Fase.LONTANA,
+			"alla fine la luce si spegne e lei se ne va (libera)")
+	var giro2 := PackedVector3Array([Vector3(30, -0.6, 8), Vector3(25, -0.6, 0)])
+	check(b.percorri(giro2, 4.0, b.punti_uscita[0]), "un percorso che finisce sotto un punto d'uscita")
+	var t_arr := await _aspetta_fase(b, AcquaDiLei.Fase.ARRIVA, 4.0)
+	check(t_arr >= 0.0, "alla fine del percorso lei viene lì: l'avviso")
+	await _aspetta_fase(b, AcquaDiLei.Fase.LONTANA, 15.0)
+	await _fisica(5)
+
+	print("9. Il giro e il punto sopra cui passa la luce")
+	var anello := PackedVector3Array([Vector3(25, -0.6, 4), Vector3(25, -0.6, -4)])
+	check(b.gira(anello, 6.0), "la luce gira nella vasca B")
+	var visto := false
+	for i in 120:
+		await get_tree().physics_frame
+		if b.punto_vicino_alla_luce(1.0) == b.punti_uscita[0]:
+			visto = true
+			break
+	check(visto, "la luce passa sopra il punto d'uscita e la zona lo sa")
+	b.smetti_giro(Vector3(25, -0.6, 0), 0.3)
+	for i in 60:
+		await get_tree().physics_frame
+	check(not b.in_giro() and AcquaDiLei.chi_la_usa() == null, "finito il giro lei è libera")
+
+	print("10. La luce che si ferma, la si chiama da lì o la si manda via")
+	var corto := PackedVector3Array([Vector3(30, -0.6, 4), Vector3(25, -0.6, 3)])
+	check(b.percorri(corto, 6.0, null, 0.0), "un percorso con la luce che resta accesa alla fine")
+	for i in 120:
+		await get_tree().physics_frame
+	check(b.in_giro() and AcquaDiLei.chi_la_usa() == b and b.fase == AcquaDiLei.Fase.LONTANA
+			and b.punto_luce.distance_to(Vector3(25, -0.6, 3)) < 0.05, "alla fine resta ferma lì, lei è qui")
+	b.manda_via(0.3)
+	for i in 40:
+		await get_tree().physics_frame
+	check(not b.in_giro() and AcquaDiLei.chi_la_usa() == null and b.fase == AcquaDiLei.Fase.LONTANA,
+			"mandata via: la luce si allontana e si spegne, lei è libera")
+	check(b.percorri(corto, 6.0, null, 0.0), "di nuovo, ferma alla fine")
+	for i in 120:
+		await get_tree().physics_frame
+	check(b.chiama(b.punti_uscita[0]) and b.fase == AcquaDiLei.Fase.ARRIVA, "e la si chiama da dove sta")
+	await _fisica(30)
+	b.manda_via(0.3)
+	for i in 40:
+		await get_tree().physics_frame
+	check(b.fase == AcquaDiLei.Fase.LONTANA and AcquaDiLei.chi_la_usa() == null, "mandata via durante l'avviso: non esce")
+	check(b.chiama(), "si può chiamare di nuovo")
+	await _aspetta_fase(b, AcquaDiLei.Fase.SU, 8.0)
+	b.manda_via()
+	check(b.fase == AcquaDiLei.Fase.SCENDE, "mandata via quando è fuori: come la respinta")
+	await _aspetta_fase(b, AcquaDiLei.Fase.LONTANA, 6.0)
 
 	print("7. La presa")
 	await _metti_giocatore(Vector3(-3, 0.05, 3.5))
