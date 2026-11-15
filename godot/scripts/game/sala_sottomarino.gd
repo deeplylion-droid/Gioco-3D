@@ -1168,7 +1168,7 @@ func _fine_luci(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> 
 	os.light_color = Color(1.0, 0.76, 0.5)
 	os.light_energy = stanza_luce
 	os.omni_range = stanza_luce_raggio
-	os.omni_attenuation = 1.6
+	os.omni_attenuation = 1.0
 	os.shadow_enabled = true
 	nodo.add_child(os)
 	os.global_position = ls.global_position + d * 0.4
@@ -1641,8 +1641,8 @@ func _finale() -> void:
 @export var sagoma_bagliore := 0.04
 ## La lampada a gabbia nella stanza dei bambini, sul muro accanto al primo tratto (dalla parte del bambino col cubo):
 ## quanto fa luce (energia) e fin dove arriva (m). Debole: i due davanti si riconoscono, le sagome dietro no.
-@export var stanza_luce := 1.0
-@export var stanza_luce_raggio := 3.6
+@export var stanza_luce := 4.0
+@export var stanza_luce_raggio := 4.0
 ## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
 ## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
 ## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
