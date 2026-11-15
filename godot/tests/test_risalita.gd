@@ -40,6 +40,8 @@ func _run() -> void:
 	p.teleport(ingresso.global_position, 0.0, 0.0)
 	await _secondi(0.3)
 	check(await _cammina([(ris.get_node(^"Fiume/Marker/FineFila") as Node3D).global_position, imbarco.global_position], 30.0), "dall'ingresso si arriva all'imbarco (%s)" % str(p.global_position))
+	# (lo squalo del fiume, build 0.5.0, lo prova test_squalo_strada: qui la strada senza)
+	fiume.squalo_attivo = false
 	fiume.sali(p)
 	check(fiume.a_bordo(), "si sale sulla ciambella")
 

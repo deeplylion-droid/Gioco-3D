@@ -1373,6 +1373,12 @@ func _logica() -> void:
 	# della ciambella. Tutto insieme era il pezzo più lungo della costruzione a pezzi, 70 ms)
 	add_child(fiume)
 	_ciambella_fosforescente(fiume.get_node_or_null(^"Ciambella"))
+	# lo squalo (SqualoFiume di mascotte, build 0.5.0): dopo il primo bivio segue la ciambella; FiumeLento gli fa da guida
+	fiume.pelo_sopra_la_ciambella = ACQUA - GALLA
+	var sq := SqualoFiume.new()
+	sq.name = "Squalo"
+	fiume.add_child(sq)
+	fiume.squalo = sq
 	# A ogni bivio la destra è il raggio verso l'imbarco (il ramo sbagliato), la sinistra continua.
 	var bivi := [["Imbarco", "Paratia1", 90.0, "Giusto1", "Sbagliato1", true, 55.0, false],
 		["Giusto1", "Paratia2", 180.0, "Giusto2", "Sbagliato2", false, 145.0, false],

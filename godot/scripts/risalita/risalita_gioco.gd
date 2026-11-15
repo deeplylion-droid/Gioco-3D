@@ -818,6 +818,7 @@ func _metti_infermeria(scena_infermeria: PackedScene, f: Node3D, dopo: bool) -> 
 	_tenuti.clear()
 	AttesaZone.pronta(&"risalita")
 	_riscalda_lei_delle_pozze.call_deferred(pozze)
+	_riscalda_squalo_del_fiume.call_deferred(f)
 	if dopo:
 		for n in [fiume, infermeria, pozze]:
 			UnificaMateriali.unifica(n)
@@ -865,6 +866,46 @@ static func riscalda_stanza_pozze(n: Node3D, vp: Viewport, fotogrammi := 4) -> v
 	RiscaldamentoShader._rimetti(lp, stato)
 	if is_instance_valid(lp):
 		lp.posa_per_il_riscaldamento(false)
+
+
+## Le stanze costruite subito: lo squalo del fiume a bocca aperta con la scia disegnato fuori vista col fiume intorno,
+## come lei nelle pozze (solo lui sullo strato fuori vista; il fiume resta com'è), così il suo primo attacco non
+## compila niente anche ripartendo vicino (build 0.5.0).
+func _riscalda_squalo_del_fiume(n: Node3D) -> void:
+	if Engine.is_editor_hint() or n == null or not n.is_inside_tree():
+		return
+	var sq := _squalo_del_fiume(n)
+	if sq == null or not sq.is_inside_tree() or int(sq.get(&"stato")) != 0:
+		return
+	var dove := _punto_squalo(n)
+	sq.posa_per_il_riscaldamento(true, dove)
+	var stato := RiscaldamentoShader._fuori_vista(sq)
+	var sv := RiscaldamentoShader._camera(sq, get_viewport(), AABB(dove - Vector3(4.0, 2.0, 4.0), Vector3(8.0, 4.0, 8.0)))
+	sv.get_camera_3d().cull_mask = 0xFFFFF
+	for i in 5:
+		await get_tree().process_frame
+		if not is_instance_valid(sq) or not sq.is_inside_tree():
+			break
+	if is_instance_valid(sv):
+		sv.queue_free()
+	RiscaldamentoShader._rimetti(sq, stato)
+	if is_instance_valid(sq):
+		sq.posa_per_il_riscaldamento(false)
+
+
+## Lo squalo del fiume (SqualoFiume di FiumeLento) nella stanza [param n], o null.
+static func _squalo_del_fiume(n: Node) -> SqualoFiume:
+	var fl := n.find_child("FiumeLento", true, false) as FiumeLento if n else null
+	return fl.squalo as SqualoFiume if fl and fl.squalo else null
+
+
+## Dove si mette lo squalo per il riscaldamento: a metà del primo tratto dopo il primo bivio, sul pelo.
+static func _punto_squalo(n: Node) -> Vector3:
+	var fl := n.find_child("FiumeLento", true, false) as FiumeLento if n else null
+	var t := fl.get_node_or_null(^"Giusto1") as TrattoFiume if fl else null
+	if t == null:
+		return n.global_position if n is Node3D else Vector3.ZERO
+	return t.punto(t.lunghezza() * 0.5) + Vector3(0.0, fl.pelo_sopra_la_ciambella, 0.0)
 
 
 ## Il motore di lei sotto le pozze (AcquaDiLei di LeiPozze) nella stanza [param n], o null.
@@ -949,10 +990,16 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 		var lei_pozze := _lei_delle_pozze(n) if n == poz else null
 		if lei_pozze:
 			lei_pozze.posa_per_il_riscaldamento(true)
+		# (nel fiume lo squalo a bocca aperta con la scia, build 0.5.0: il suo primo attacco non compila niente)
+		var squalo_f := _squalo_del_fiume(n) if n == f else null
+		if squalo_f:
+			squalo_f.posa_per_il_riscaldamento(true, _punto_squalo(n))
 		await RiscaldamentoShader.disegna_fuori_vista(n, get_viewport(), 4,
 				(func(): lei_pozze.posa_per_il_riscaldamento(true, "pozza_presa")) if lei_pozze else Callable())
 		if lei_pozze and is_instance_valid(lei_pozze):
 			lei_pozze.posa_per_il_riscaldamento(false)
+		if squalo_f and is_instance_valid(squalo_f):
+			squalo_f.posa_per_il_riscaldamento(false)
 		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
 			_libera(nuove)
 			return

@@ -271,6 +271,10 @@
 	"res://assets/infermeria/vetri_rotti_N_Image_0.jpg",
 	"res://assets/infermeria/vetri_rotti_N_Image_1.jpg",
 	"res://assets/infermeria/vetri_rotti_N_Image_2.jpg",
+	"res://assets/models/mascotte/mostro_squalo_A_fiume.glb",
+	"res://assets/models/mascotte/mostro_squalo_A_fiume_mostro_squalo_A_colore.jpg",
+	"res://assets/models/mascotte/mostro_squalo_A_fiume_mostro_squalo_A_normali.jpg",
+	"res://assets/models/mascotte/mostro_squalo_A_fiume_mostro_squalo_A_rugosita.jpg",
 	"res://assets/models/medusa/campana_base_alfa.png",
 	"res://assets/models/medusa/campana_emissione.png",
 	"res://assets/models/medusa/ciocche_base.jpg",
@@ -328,5 +332,8 @@
 	"res://audio/effetti/medusa_presenza_loop.ogg",
 	"res://audio/effetti/riempie_loop.ogg",
 	"res://audio/effetti/scarico_loop.ogg",
-	"res://scenes/props/polaroid.tscn"
+	"res://scenes/props/polaroid.tscn",
+	"res://shaders/creature/bocca_squalo.gdshader",
+	"res://shaders/creature/denti_squalo.gdshader",
+	"res://shaders/creature/scia_squalo.gdshader"
 ]

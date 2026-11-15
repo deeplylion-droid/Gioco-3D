@@ -157,6 +157,8 @@ func _run() -> void:
 	(fiume.get_node(^"Paratia3") as ParatiaFiume).a_destra = false
 	var giro := {"fuori": false}
 	fiume.uscito.connect(func(): giro.fuori = true, CONNECT_ONE_SHOT)
+	# (lo squalo del fiume, build 0.5.0, lo prova test_squalo_strada: qui la strada senza)
+	fiume.squalo_attivo = false
 	fiume.sali(p)
 	for i in 60 * 120:
 		await get_tree().physics_frame

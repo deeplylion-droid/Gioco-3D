@@ -299,6 +299,9 @@ func _aspetta_livello() -> void:
 	level = get_tree().current_scene
 	p = GameState.player
 	fiume = level.get_node_or_null(^"Fiume/FiumeLento") as FiumeLento
+	# (lo squalo del fiume, build 0.5.0, lo prova test_squalo_strada: qui la strada senza)
+	if fiume:
+		fiume.squalo_attivo = false
 	for i in 400:
 		if p.input_enabled:
 			break
