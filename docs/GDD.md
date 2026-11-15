@@ -759,3 +759,12 @@ L'analisi è nella pagina "Analisi del capitolo 1", https://claude.ai/artifact/S
 - **Ordine**: tre build (la regola; la storia; le finiture), poi l'allungamento verso le due ore.
 
 Fatti controllati per le proposte (15 novembre): lei uccide oggi solo alla fossa, nelle condotte e nel tunnel; lo squalo ha un solo movimento, quello del risveglio; i bambini hanno fermo, testa inclinata, cammina, corsa, partenza e girata; il canto si sente solo nel tunnel; la voce dello spot è sintetica (Kokoro, Apache 2.0); suoni e sigla sono sintesi scritta per il gioco più campioni CC0 di Kenney.
+
+**«Vai» dell'utente (15 novembre) e build 0.4.0.** L'utente ha scritto «Vai» senza toccare le 20 voci della pagina delle proposte nel dettaglio (nessuna risposta salvata). Il coordinatore parte con le scelte consigliate della sola prima build, che stanno dentro quello che l'utente aveva già approvato sulla prima pagina («L'acqua è sua», lo spruzzo nel tunnel A, il canto prima del tunnel):
+- la regola come proposta, da quando si riaccendono le pompe, con la lezione nella sala pompe;
+- dove può prendere: stanza delle pozze, sala al buio, vasche di raccolta della torre; oblò, infermeria e acquari come oggi;
+- ogni zona ha un interruttore `letale`, acceso: se l'utente preferisce «solo paura» si spegne senza rifare niente;
+- il canto A: prima del tunnel la sigla del parco lenta e storpiata, nel tunnel resta il canto del 25 ottobre. È un suono nuovo: l'utente lo sente prima che entri nel gioco;
+- il tunnel coi numeri proposti, tutti esportati, da ritoccare dopo che l'ha giocato.
+Squadre ripartite il 15 novembre: mascotte (motore della regola, movimenti nuovi, sala al buio), enigmi (stanza delle pozze), ambienti-2 (tunnel e torre), ambienti-1 (canto e sala pompe); il collaudo riparte sulla candidata. Un solo giro di prove: se si allunga oltre un giorno decide l'utente.
+Le build dopo non si cominciano senza le sue risposte: la storia (squalo nel fiume, chi aiuta e chi ostacola, scopo, finale, ultimo disegno) e le finiture (indicatore dell'acqua, forme, joypad), più il testo per Steam e la voce dello spot.
