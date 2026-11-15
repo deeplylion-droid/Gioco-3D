@@ -39,4 +39,14 @@ if __name__ == '__main__':
     sx = piede()
     sx.save(os.path.join(USCITA, 'impronta_sx.png'))
     sx.transpose(Image.FLIP_LEFT_RIGHT).save(os.path.join(USCITA, 'impronta_dx.png'))
+    # bagnato vuol dire lucido: la ORM del Decal (R occlusione 1, G ruvidezza bassa dove c'è acqua, B metallo 0), con
+    # l'alfa del piede; così l'impronta riflette le luci anche su un pavimento scuro
+    a = np.asarray(sx.getchannel('A')).astype(np.float32) / 255.0
+    orm = np.zeros((H, W, 4), np.uint8)
+    orm[..., 0] = 255
+    orm[..., 1] = (255 * (1.0 - 0.92 * a)).astype(np.uint8)
+    orm[..., 3] = (a * 255).astype(np.uint8)
+    o = Image.fromarray(orm, 'RGBA')
+    o.save(os.path.join(USCITA, 'impronta_sx_orm.png'))
+    o.transpose(Image.FLIP_LEFT_RIGHT).save(os.path.join(USCITA, 'impronta_dx_orm.png'))
     print('fatte')

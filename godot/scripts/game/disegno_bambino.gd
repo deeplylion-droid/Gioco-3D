@@ -76,6 +76,8 @@ const NASTRO := Vector3(0.055, 0.019, 0.0002)
 const COLORE_NASTRO := Color(0.86, 0.80, 0.62)
 const PASTELLO := "res://assets/storia_disegni/pastello.glb"
 const IMPRONTE := ["res://assets/storia_disegni/impronta_sx.png", "res://assets/storia_disegni/impronta_dx.png"]
+## Bagnate: lucide (ruvidezza bassa), così riflettono le luci anche su un pavimento scuro.
+const IMPRONTE_ORM := ["res://assets/storia_disegni/impronta_sx_orm.png", "res://assets/storia_disegni/impronta_dx_orm.png"]
 ## Una impronta: larga, alta (quanto proietta sopra e sotto il pavimento), lunga (m).
 const IMPRONTA := Vector3(0.075, 0.06, 0.17)
 ## Le impronte si fermano a tanto dal muro, sotto il foglio (lì lui si è fermato a disegnare).
@@ -175,13 +177,17 @@ func _impronte() -> void:
 	var tex: Array[Texture2D] = []
 	for t in IMPRONTE:
 		tex.append(load(t) as Texture2D if ResourceLoader.exists(t) else null)
+	var orm: Array[Texture2D] = []
+	for t in IMPRONTE_ORM:
+		orm.append(load(t) as Texture2D if ResourceLoader.exists(t) else null)
 	for k in quante:
 		var dec := Decal.new()
 		dec.name = "Impronta%d" % k
 		var sinistro := k % 2 == 0
 		dec.texture_albedo = tex[0 if sinistro else 1]
+		dec.texture_orm = orm[0 if sinistro else 1]
 		dec.size = IMPRONTA
-		dec.modulate = Color(0.10, 0.11, 0.12, lerpf(asciutte, 1.0, float(k) / maxf(quante - 1, 1)))
+		dec.modulate = Color(0.06, 0.065, 0.07, lerpf(asciutte, 1.0, float(k) / maxf(quante - 1, 1)))
 		dec.albedo_mix = 0.85
 		var c := da + dir * (passo * k) + lato * (0.055 if not sinistro else -0.055)
 		dec.position = c

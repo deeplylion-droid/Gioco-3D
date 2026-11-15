@@ -14,10 +14,12 @@ const SCATTI := {
 	"D1": ["Interni", 0, [
 		["d1_da_lontano", Vector3(13.5, 1.6, -1.3), Vector3(6.0, 1.3, -1.3)],
 		["d1_vicino", Vector3(8.5, 1.6, -0.8), Vector3(8.6, 0.84, -2.6)],
+		["d1_impronte", Vector3(9.6, 1.6, -0.9), Vector3(7.4, 0.0, -2.2)],
 	]],
 	"D2": ["Tecnici", 2, [
 		["d2_da_lontano", Vector3(46.9, 1.6, 1.4), Vector3(52.6, 1.2, 1.5)],
 		["d2_vicino", Vector3(51.0, 1.6, 1.3), Vector3(52.6, 1.1, 1.5)],
+		["d2_pastello", Vector3(51.6, 1.6, 1.2), Vector3(52.45, 0.0, 1.6)],
 	]],
 }
 
