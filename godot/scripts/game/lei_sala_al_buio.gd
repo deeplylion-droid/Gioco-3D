@@ -19,10 +19,18 @@ extends Node3D
 ## La scena della fossa (tappa 8): si affaccia quando il giro finisce.
 @export var lei_sbuca: LeiSbuca
 ## Il giocatore più vicino di così alla fossa (in pianta): il giro finisce e lei va alla fossa, se lui non è sul bordo
-## della vasca grande vicino a un punto d'uscita (lì può ancora uscire). Sulla scia, a 9 m dalla fossa ha ancora circa
-## 6,5 m di strada prima della presa: lei è già affacciata quando arriva, come oggi.
-@export var distanza_fossa := 9.0
-## Quanto ci mette la luce ad andare dalla vasca alla fossa quando il giro finisce (s).
+## della vasca grande vicino a un punto d'uscita (lì può ancora uscire). 13 m (collaudo della 0.4.0, scelta A del
+## coordinatore): è quando lascia la vasca grande verso la fossa (il centro della vasca è a 9,8 m dalla fossa, i suoi
+## punti d'uscita fra 7 e 12 m). Poi l'avviso intero (la luce sotto la fossa, il canto che arriva e si spegne, il
+## silenzio: 3,5 s) e lei viene alla fossa senza sorprendere (LeiSbuca._prova_a_venire).
+@export var distanza_fossa := 13.0
+## Lontano dal bordo della vasca grande (più lontano di così da ogni punto d'uscita, in pianta: la portata di lei, 3 m,
+## più un margine) il passaggio alla fossa parte già a [member distanza_fossa_lontano] m: dopo l'avviso intero lei sbuca
+## in vista col giocatore che cammina ancora a 8-9 m, la scena della 0.3.25 (scelta del coordinatore, «A in più»). Vicino
+## al bordo resta il giro (le uscite dalla vasca) e il passaggio parte a [member distanza_fossa].
+@export var lontano_dal_bordo := 5.0
+@export var distanza_fossa_lontano := 21.0
+## (non più usato: dalla 0.4.0 collaudata la luce va alla fossa con l'avviso intero, AcquaDiLei.annuncia)
 @export var tempo_alla_fossa := 1.5
 ## Il giocatore più vicino di così (in pianta) al punto d'uscita sopra cui passa la luce: è sul bordo, lei sale.
 @export var distanza_bordo := 3.0
@@ -47,6 +55,8 @@ enum Stato { ATTESA, GIRO, FINITO }
 var stato := Stato.ATTESA
 var acqua: AcquaDiLei
 var _punti: Array[Node3D] = []
+## Quando è partito l'avviso della fossa (ms, Time.get_ticks_msec; -1: mai): per i test.
+var avviso_fossa_da := -1
 
 
 func _ready() -> void:
@@ -81,15 +91,19 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if acqua == null or GameState.luci != GameState.Luci.BLACKOUT or GameState.is_dying:
+	# (mentre il livello si ripristina il giocatore nuovo non è ancora al checkpoint: niente decisioni sulla sua posizione)
+	if acqua == null or GameState.luci != GameState.Luci.BLACKOUT or GameState.is_dying or GameState.is_restoring():
 		return
 	var p := GameState.player
 	if p == null or not is_instance_valid(p):
 		return
 	acqua.letale = letale
-	acqua.pelo = vasca_grande.get_surface_global_y()
-	var vicino_fossa := lei_sbuca != null and lei_sbuca.punto_sbuca != null \
-			and AcquaDiLei._in_pianta(p.global_position, lei_sbuca.punto_sbuca.global_position) <= distanza_fossa
+	if stato != Stato.FINITO:
+		acqua.pelo = vasca_grande.get_surface_global_y()
+	var d_fossa := AcquaDiLei._in_pianta(p.global_position, lei_sbuca.punto_sbuca.global_position) \
+			if lei_sbuca != null and lei_sbuca.punto_sbuca != null else INF
+	var vicino_fossa := d_fossa <= distanza_fossa or (d_fossa <= distanza_fossa_lontano and _lontano_dal_bordo(p))
+	_aggiorna_luce_fossa(_delta)
 	var in_sala := zona.has_point(p.global_position)
 	match stato:
 		Stato.ATTESA:
@@ -121,23 +135,90 @@ func _physics_process(_delta: float) -> void:
 			var q := acqua.punto_vicino_alla_luce(raggio_luce)
 			if q and AcquaDiLei._in_pianta(p.global_position, q.global_position) <= distanza_bordo:
 				acqua.chiama(q)
+		Stato.FINITO:
+			# l'avviso della fossa interrotto (il giocatore uscito dalla zona, o lei non poteva venire): si riprova, così
+			# lei non arriva mai alla fossa senza l'avviso
+			if lei_sbuca and lei_sbuca.aspetta_il_giro and acqua.abilitata and acqua.fase == AcquaDiLei.Fase.LONTANA \
+					and in_sala:
+				_annuncia_la_fossa()
 
 
-func _finisci(con_la_luce: bool) -> void:
+func _finisci(_con_la_luce: bool) -> void:
 	stato = Stato.FINITO
-	if con_la_luce and lei_sbuca and lei_sbuca.punto_sbuca:
-		var fossa := lei_sbuca.punto_sbuca.global_position
-		acqua.smetti_giro(fossa + Vector3.DOWN * 0.6, tempo_alla_fossa)
-		get_tree().create_timer(tempo_alla_fossa, false).timeout.connect(func():
-			# (dopo la fossa la sua luce se ne va: gli acquari sono una pausa, niente canto da qui)
+	if lei_sbuca == null or lei_sbuca.punto_sbuca == null:
+		acqua.lascia()
+		acqua.abilitata = false
+		return
+	# l'avviso intero (collaudo della 0.4.0), anche ripartendo vicino alla fossa: la luce lascia le vasche e va sotto la
+	# fossa (accesa solo nell'acqua), il canto fa «arriva» e si spegne, mezzo secondo di silenzio
+	# ([member AcquaDiLei.avviso], 3,5 s), poi lei viene alla fossa: sbuca se si può senza sorprendere, se no aspetta
+	# (LeiSbuca._prova_a_venire). Se adesso lei non può essere qui, si riprova a ogni fotogramma (Stato.FINITO): alla
+	# fossa non arriva mai senza l'avviso.
+	if acqua.fase != AcquaDiLei.Fase.LONTANA:
+		acqua.lascia()
+	_annuncia_la_fossa()
+
+
+## L'avviso della fossa: la luce va sotto la fossa, il canto arriva e si spegne, il silenzio; poi lei viene alla fossa
+## (LeiSbuca.vai_alla_fossa). Falso se adesso lei non può essere qui.
+func _annuncia_la_fossa() -> bool:
+	var m := acqua.get_node_or_null(^"SottoLaFossa") as Marker3D
+	if m == null:
+		m = Marker3D.new()
+		m.name = "SottoLaFossa"
+		acqua.add_child(m)
+	# (al centro della fossa, davanti al bordo dove si affaccia: dove fa lo schizzo quando sbuca)
+	m.global_position = lei_sbuca.punto_sbuca.global_transform * Vector3(0.0, 0.0, 1.4)
+	var pelo := lei_sbuca.pelo_fossa()
+	acqua.pelo = pelo
+	# la fossa è acqua anche se non è una vasca: lì la luce è accesa
+	acqua.acque_extra = [AABB(Vector3(m.global_position.x - 1.2, pelo - lei_sbuca.profondita, m.global_position.z - 1.2),
+			Vector3(2.4, lei_sbuca.profondita - 0.05, 2.4))]
+	avviso_fossa_da = Time.get_ticks_msec()
+	return acqua.annuncia(m, func():
 			acqua.abilitata = false
 			if is_instance_valid(lei_sbuca):
 				lei_sbuca.vai_alla_fossa())
-	else:
-		acqua.lascia()
-		acqua.abilitata = false
-		if lei_sbuca:
-			lei_sbuca.vai_alla_fossa()
+
+
+## Vero se il giocatore è lontano da tutti i punti d'uscita della vasca grande (oltre [member lontano_dal_bordo] m).
+func _lontano_dal_bordo(p: Node3D) -> bool:
+	for q in _punti:
+		if AcquaDiLei._in_pianta(p.global_position, q.global_position) <= lontano_dal_bordo:
+			return false
+	return true
+
+
+## La luce rosa che resta nella fossa e pulsa, in silenzio, mentre lei aspetta di poter venire senza sorprendere (dopo
+## l'avviso: scelta B del coordinatore). Si spegne quando sbuca o si affaccia.
+var _luce_fossa: OmniLight3D
+var _t_luce := 0.0
+
+
+func _aggiorna_luce_fossa(delta: float) -> void:
+	var accesa := lei_sbuca != null and lei_sbuca.sta_aspettando() and not lei_sbuca.aspetta_il_giro
+	if not accesa and _luce_fossa == null:
+		return
+	if _luce_fossa == null:
+		_luce_fossa = OmniLight3D.new()
+		_luce_fossa.name = "LuceFossa"
+		_luce_fossa.light_color = AcquaDiLei.ROSA
+		_luce_fossa.omni_range = AcquaDiLei.LUCE_SOTTO_PORTATA
+		_luce_fossa.shadow_enabled = false
+		_luce_fossa.light_energy = 0.0
+		add_child(_luce_fossa)
+		var c := lei_sbuca.punto_sbuca.global_transform * Vector3(0.0, 0.0, 1.4)
+		_luce_fossa.global_position = Vector3(c.x, lei_sbuca.pelo_fossa() - 0.6, c.z)
+	_t_luce += delta
+	var voluta := AcquaDiLei.LUCE_SOTTO * (0.85 + 0.15 * sin(_t_luce * 9.0)) if accesa else 0.0
+	# (si accende subito, al posto della luce dell'avviso; si spegne in 0,4 s)
+	_luce_fossa.light_energy = voluta if accesa else move_toward(_luce_fossa.light_energy, 0.0, AcquaDiLei.LUCE_SOTTO * delta / 0.4)
+	_luce_fossa.visible = _luce_fossa.light_energy > 0.01
+
+
+## Per i test: la luce della fossa è accesa.
+func luce_fossa_accesa() -> bool:
+	return _luce_fossa != null and _luce_fossa.visible and _luce_fossa.light_energy > 0.05
 
 
 ## Vero se il giocatore è sul bordo della vasca grande vicino a un punto d'uscita (dove lei può uscire).

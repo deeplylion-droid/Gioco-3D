@@ -208,9 +208,13 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acqua_di_lei_mano.gd
 
-      - name: Test della sala al buio (0.4.0; la luce gira nelle vasche, lei esce dal bordo e prende, poi la fossa come prima)
+      - name: Test della sala al buio (0.4.0; la luce gira nelle vasche, lei esce dal bordo e prende, poi l'avviso e la fossa)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala_al_buio.gd
+
+      - name: Test della fossa mai di sorpresa (0.4.0; avviso intero, mai entro 8 m, presa solo dopo averla vista)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fossa_mai_di_sorpresa.gd
 
       - name: Test di dov'è lei sulla strada vera (0.4.0; la sala al buio non la tiene da lontano, la fossa lontana non blocca)
         if: steps.progetto.outputs.presente == 'si'

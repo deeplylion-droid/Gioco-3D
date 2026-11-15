@@ -58,7 +58,7 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | `portata` | `3` | in m |
 | `portata_mano` | `1,2` | nel modo MANO: in m dal marker |
 | `tempo_su` | `2,2` | in s |
-| `tempo_presa` | `0,8` | in s: dalla fine del silenzio alla presa 1,6 + 0,8 = 2,4 s, il tempo per mezzo secondo di getto in faccia |
+| `tempo_presa` | `1,6` | in s: dalla fine del silenzio alla presa 1,6 + 1,6 = 3,2 s (collaudo della 0.4.0: col giocatore vero per respingerla servono 0,9 s dall'inizio del getto; chi la vede fuori e reagisce in mezzo secondo ce la fa ancora) |
 | `tempo_presa_mano` | `0,35` | nel modo MANO: dalla fine del silenzio alla presa 2,2 + 0,35 = 2,55 s |
 | `getto_per_respingere` | `0,5` | in s |
 | `pausa_respinta` | `20` | in s |
@@ -126,7 +126,10 @@ La sala al buio usa tutto questo: `godot/scripts/game/lei_sala_al_buio.gd` (LeiS
 - Se il giocatore è entro 3 m da un punto d'uscita della VascaArrivo (uno a metà di ogni lato, `rientro` 2,4 m dentro: più vicino al bordo i tentacoli entrano nelle griglie e nel pavimento) quando la luce ci passa, lei esce.
 - Quando lei arriva, i giocattoli che galleggiano nella vasca si scostano a `spazio_galleggianti` (3,6 m) dal punto (`prepara_uscita`), così uscendo non li attraversa.
 - L'acqua della VascaArrivo è torbida e bassa (0,88 m): la salita parte sotto il fondo e non si vede. È un limite noto.
-- Arrivato a 9 m dalla fossa (`distanza_fossa`), se non è sul bordo vicino a un punto d'uscita (lì lei può ancora uscire: il bordo nord della vasca è a 4,8 m dalla fossa), la luce va nella fossa in `tempo_alla_fossa` (1,5 s) e LeiSbuca fa la scena di oggi. `LeiSbuca.aspetta_il_giro` e `vai_alla_fossa()`: se la fossa è inquadrata sbuca, se no è già affacciata.
+- Arrivato a 13 m dalla fossa (`distanza_fossa`: è quando lascia la vasca grande verso la fossa; scelta A del coordinatore dopo il collaudo della 0.4.0), se non è sul bordo vicino a un punto d'uscita (lì lei può ancora uscire), parte l'avviso intero della fossa: `annuncia(punto, poi)` porta la luce sotto la fossa (accesa solo nell'acqua: la fossa è in `acque_extra`, un AABB), il canto fa «arriva», si spegne, mezzo secondo di silenzio (`avviso`, 3,5 s); poi la luce si spegne e si chiama `LeiSbuca.vai_alla_fossa()`. Anche ripartendo vicino alla fossa c'è prima l'avviso. Mentre il livello si ripristina (`GameState.is_restoring()`) la sala non decide niente.
+- Lontano dal bordo della vasca grande (oltre 5 m da ogni punto d'uscita, `lontano_dal_bordo`) il passaggio parte già a 21 m (`distanza_fossa_lontano`): camminando l'avviso finisce col giocatore a circa 9 m e lei sbuca in vista, la scena della 0.3.25 («A in più» del coordinatore). Correndo l'avviso finisce quando è già vicino: lei aspetta.
+- Mentre lei aspetta dopo l'avviso, la luce rosa resta nella fossa e pulsa, in silenzio (`LuceFossa`, scelta B del coordinatore): si vede che è lì sotto.
+- La fossa non sorprende mai (LeiSbuca, gruppo «Mai di sorpresa»): con la fossa in vista lei sbuca (la salita) solo col giocatore a più di 8 m (`distanza_sbuca`); fuori dall'inquadratura o a schermo nero compare già affacciata, solo col giocatore a più di 8 m (`distanza_affaccia`); se no aspetta e ci riprova a ogni fotogramma. Mentre sale non prende; prende solo dopo che il giocatore l'ha avuta in vista affacciata e ferma per 1,6 s se l'ha vista sbucare (`vista_dopo_sbucata`, come `tempo_presa`), 3 s se è comparsa già affacciata (`vista_per_prendere`). Test: `test_fossa_mai_di_sorpresa.gd`.
 
 ## Carica e scatto (tunnel)
 
