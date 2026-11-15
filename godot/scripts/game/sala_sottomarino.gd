@@ -1657,7 +1657,7 @@ func _finale() -> void:
 	[1, -2.2, 7.0, 0.9, 0.0, true],
 	[0, 1.55, 6.25, 1.06, 0.0, true],
 ]
-## Il disegno che porge il bambino col cubo (DZ, di ambienti-1): finché non c'è, un foglio bianco.
+## Il disegno che porge il bambino col cubo (DZ, di ambienti-1, assets/storia_disegni).
 const DISEGNO_FINALE := "res://assets/storia_disegni/disegno_dz.jpg"
 ## Le misure del foglio (A4, m).
 const FOGLIO := Vector2(0.21, 0.297)
@@ -1669,7 +1669,7 @@ const FOGLIO_IN_MANO := Vector3(0.0, 0.78, 0.3)
 var fase_finale := ""
 signal fase_finale_cambiata(fase: String)
 var _bambini_finale: Array[Bambino] = []
-var _foglio: MeshInstance3D
+var _foglio: Node3D
 var _cam_finale: Camera3D
 
 
@@ -1875,22 +1875,15 @@ func _sul_foglio() -> Transform3D:
 	return Transform3D(Basis.looking_at(c - pos, _foglio.global_basis.y.normalized()), pos)
 
 
-## Il foglio del finale: il disegno DZ (o un foglio bianco finché non c'è) su un foglio di carta A4, il disegno verso +Z.
-func _crea_foglio() -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	mi.name = "FoglioFinale"
-	var qm := QuadMesh.new()
-	qm.size = FOGLIO
-	mi.mesh = qm
-	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.92, 0.9, 0.84)
-	m.roughness = 0.95
-	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+## Il foglio del finale: il disegno DZ di ambienti-1 col loro componente (DisegnoBambino, A4: origine al centro del
+## foglio, faccia verso +Z, lato lungo in su).
+func _crea_foglio() -> Node3D:
+	var f := DisegnoBambino.new()
+	f.name = "FoglioFinale"
+	f.formato = DisegnoBambino.Formato.A4
 	if ResourceLoader.exists(DISEGNO_FINALE):
-		m.albedo_texture = load(DISEGNO_FINALE)
-		m.albedo_color = Color.WHITE
-	mi.material_override = m
-	return mi
+		f.disegno = load(DISEGNO_FINALE)
+	return f
 
 
 func _nero() -> void:
@@ -2177,6 +2170,8 @@ static func risorse() -> Array:
 	out.append_array(SalaInseguimento.RISORSE_LEI)
 	# (i materiali campione: CampioniTunnel.carica li prendeva sul thread principale mentre si gioca, sonda dei load)
 	out.append(CampioniTunnel.FILE)
+	# (il disegno del finale, DZ: caricato nel thread con il resto)
+	out.append(DISEGNO_FINALE)
 	return out.filter(func(p): return ResourceLoader.exists(p))
 
 
