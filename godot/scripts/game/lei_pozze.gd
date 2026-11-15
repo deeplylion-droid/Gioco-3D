@@ -86,16 +86,18 @@ const NOMI := [&"dorme", &"gira", &"viene", &"finita"]
 ## accanto diventa opaco come una vernice: colore pieno fino ai bordi, niente pareti, niente fondo, niente capelli
 ## (decisione del coordinatore del 15 novembre). Solo i parametri del materiale di quelle pozze, niente materiali nuovi:
 ## l'estinzione più bassa dei tre canali sale fino a [member opaco_estinzione] (1/m: 7 cm d'acqua lasciano passare il
-## 4 %), in [member opaco_tempo] secondi, e torna com'era allo stesso modo. Dalla presa in poi torna trasparente (la
-## scena di morte, col viso).
+## 4 %), in [member opaco_tempo] secondi, e torna com'era allo stesso modo. Nella presa resta opaco (vedi
+## [member liquido_trasparente_alla_presa]).
 @export var opaco_estinzione := 45.0
 @export var opaco_tempo := 0.4
 ## Mentre il liquido è opaco la luce rosa sta sopra il pelo, al centro della pozza, così si vede su quello che sta
 ## sopra (il bordino, il grigliato, il braccio, i tentacoli): quanto sopra (m).
 @export var luce_sopra_il_pelo := 0.25
-## Dalla presa il liquido torna trasparente (la scena di morte guarda dentro la pozza). Spento (il piano B del
-## coordinatore, se il viso nella scena di morte non c'è): resta opaco anche nella presa, e la luce resta sopra il pelo.
-@export var liquido_trasparente_alla_presa := true
+## Acceso: dalla presa il liquido torna trasparente (per una scena di morte che guarda dentro la pozza). Spento (la
+## scelta per la 0.4.0, piano B del coordinatore del 15 novembre: la camera della morte si ferma sopra il pelo): resta
+## opaco per tutta la scena di morte, e la luce rosa resta sopra il pelo finché lei è fuori. Alla ripartenza la stanza
+## è nuova e tutto torna com'era.
+@export var liquido_trasparente_alla_presa := false
 
 ## Il motore di lei.
 var acqua: AcquaDiLei
@@ -338,8 +340,8 @@ func _process(delta: float) -> void:
 
 # --- Il liquido opaco quando lei c'è -------------------------------------------------------------------------------
 
-## Vero nelle fasi del motore in cui lei c'è o sta per esserci: dal silenzio prima che esca a quando è tornata sotto
-## (la presa no: la scena di morte vede dentro).
+## Vero nelle fasi del motore in cui lei c'è o sta per esserci: dal silenzio prima che esca a quando è tornata sotto,
+## e la presa se [member liquido_trasparente_alla_presa] è spento.
 func _lei_presente() -> bool:
 	if acqua == null:
 		return false

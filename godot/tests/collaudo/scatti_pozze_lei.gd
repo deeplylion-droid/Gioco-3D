@@ -7,9 +7,9 @@ extends Node
 ##   cinque colori dritto in giù; a1-a3) la scena di morte;
 ## - "resto": tutto tranne c), b) e d1 (per riprendere un giro interrotto);
 ## - "morte": solo a1-a3;
-## - "viso": il controllo della scena di morte (a4-a6 a 0,45 / 0,7 / 0,95 s) con gli strati della scena di morte
+## - "viso": il controllo della scena di morte (a4-a7 a 0,5 / 0,7 / 0,95 / 1,1 s) con gli strati della scena di morte
 ##   nascosti (nero, lampo, glitch: restano le scosse della camera), e stampa dove sono la camera e gli occhi di lei e
-##   l'estinzione del liquido della sua pozza.
+##   l'estinzione del liquido della sua pozza (nella 0.4.0 resta opaco: LeiPozze.liquido_trasparente_alla_presa spento).
 ## Uso (scena pesante: llvmpipe, un processo per volta, flock /home/user/tools/render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720
 ##   --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/scatti_pozze_lei.gd <cartella> [resto|morte|viso]
@@ -231,8 +231,8 @@ func _morte(sud: WaterTank) -> void:
 		seq.free()
 
 
-## Controllo (non per il gioco): la scena di morte con lo strato della scena nascosto (glitch, lampo, nero), per vedere
-## se dalla camera della morte il viso si vede nel liquido tornato com'era; tre istanti.
+## Controllo (non per il gioco): la scena di morte con gli strati della scena nascosti (glitch, lampo, nero), per vedere
+## dalla camera della morte che cosa si vede; quattro istanti.
 func _morte_viso(sud: WaterTank) -> void:
 	lei.letale = true
 	acqua.letale = true
@@ -245,7 +245,7 @@ func _morte_viso(sud: WaterTank) -> void:
 		var seq: CanvasLayer = GameState.get(&"_death_sequence")
 		var t0 := Time.get_ticks_msec()
 		var k := 0
-		for quando in [0.45, 0.7, 0.95]:
+		for quando in [0.5, 0.7, 0.95, 1.1]:
 			while true:
 				if is_instance_valid(seq):
 					seq.visible = false
