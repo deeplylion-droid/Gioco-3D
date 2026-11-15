@@ -138,8 +138,8 @@ func _run() -> void:
 		var s := get_tree().current_scene
 		if s and s.scene_file_path == Game.SCENE_TITLE:
 			break
-	var cs := get_tree().current_scene
-	check(cs and cs.scene_file_path == Game.SCENE_TITLE, "ed è il titolo (%s)" % (cs.scene_file_path if cs else "niente"))
+	var fine := get_tree().current_scene
+	check(fine and fine.scene_file_path == Game.SCENE_TITLE, "ed è il titolo (%s)" % (fine.scene_file_path if fine else "niente"))
 	if prima != "":
 		var f := FileAccess.open(GameState.SAVE_PATH, FileAccess.WRITE)
 		f.store_string(prima)
