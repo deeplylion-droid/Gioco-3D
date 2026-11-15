@@ -465,6 +465,8 @@ func _nuova_stanza(dimostrativa := true) -> void:
 	if GameState.is_dying:
 		_rianima()
 	e = STANZA.costruisci(self)
+	# (l'agnellino, build 0.5.0, ha il suo test: qui l'enigma senza)
+	e.agnellino.attivo = false
 	r = e.passo * 2.5 + 0.6
 	lei = e.lei
 	acqua = lei.acqua

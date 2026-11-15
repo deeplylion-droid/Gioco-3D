@@ -188,6 +188,8 @@ func _nuova_stanza() -> void:
 		vecchia.queue_free()
 		await _frames(2)
 	e = STANZA.costruisci(self)
+	# (l'agnellino, build 0.5.0, ha il suo test: qui l'enigma senza)
+	e.agnellino.attivo = false
 	GameState.snapshot = {}
 	p.water_pack.set_tank_amount(0.0)
 	await _frames(3)

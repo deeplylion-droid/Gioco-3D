@@ -7,8 +7,9 @@ extends Node
 ##    cartello col faretto è nel corridoio del personale prima dell'infermeria, lontano dalla sua porta (scelta B del 4
 ##    novembre), le 25 pozze sono piene, la porta stagna è chiusa e il checkpoint d'ingresso si scrive su disco;
 ## 2. Continua a metà: tolto un colore, una chiusura (i progressi in memoria azzerati) e Continua dal titolo ripartono
-##    dall'ingresso con le pozze tutte piene e la porta chiusa; da lì si risolve (turchese, viola, arancione) e la porta
-##    si apre, col checkpoint a enigma risolto scritto su disco;
+##    dall'ingresso con le pozze tutte piene e la porta chiusa; da lì si tolgono viola e arancione, l'agnellino (build
+##    0.5.0) riempie di nuovo il viola, si tolgono viola e turchese e la porta si apre, col checkpoint a enigma risolto
+##    scritto su disco;
 ## 3. Continua da risolto: la porta è già aperta e le pozze dei tre colori vuote; si passa la porta stagna e si sale la
 ##    scala di servizio fino alla porta di C3, verso il magazzino.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_pozze_strada.gd
@@ -65,10 +66,22 @@ func _run() -> void:
 	check(String(GameState.snapshot.get("checkpoint", "")) == ingresso, "Continua riparte dall'ingresso della stanza (%s)" % GameState.snapshot.get("checkpoint", ""))
 	check(e != null and _tutte_piene() and e.tolti.is_empty() and not _porta_aperta(),
 		"con le pozze tutte piene e la porta chiusa, come quando si è entrati")
-	for c in [WaterMix.VIOLA, WaterMix.ARANCIONE, WaterMix.TURCHESE]:
+	for c in [WaterMix.VIOLA, WaterMix.ARANCIONE]:
+		await _togli(c)
+	# (l'agnellino, build 0.5.0: dopo il secondo colore il primo, il viola, si riempie di nuovo; lo prova anche
+	# test_pozze_agnellino)
+	var ag := e.agnellino
+	check(ag != null and ag.attivo and not ag.fatto(), "nella stanza vera c'è l'agnellino, e non è ancora passato")
+	var t0 := Engine.get_physics_frames()
+	while Engine.get_physics_frames() - t0 < 60 * 20 and (ag.in_corso() or not ag.fatto()):
+		await get_tree().physics_frame
+	await _frames(5)
+	check(ag.fatto() and not WaterMix.VIOLA in e.tolti and e.riempiendo.is_empty() and _piene(WaterMix.VIOLA),
+		"dopo il secondo colore l'agnellino riempie di nuovo il viola, il primo tolto (dopo %.1f s)" % ((Engine.get_physics_frames() - t0) / 60.0))
+	for c in [WaterMix.VIOLA, WaterMix.TURCHESE]:
 		await _togli(c)
 	await _frames(10)
-	check(e.stato == EnigmaPozze.Stato.RISOLTO and _porta_aperta(), "turchese, viola e arancione: risolto, la porta stagna si apre")
+	check(e.stato == EnigmaPozze.Stato.RISOLTO and _porta_aperta(), "viola (di nuovo), arancione e turchese: risolto, la porta stagna si apre")
 	var risolto := String(GameState.salvataggio().get("checkpoint", ""))
 	check(risolto.ends_with("CheckpointRisolto"), "il checkpoint a enigma risolto si scrive su disco (%s)" % risolto)
 

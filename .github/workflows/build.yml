@@ -430,6 +430,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_pozze_strada.gd
 
+      - name: Test dell'agnellino nella stanza delle pozze (build 0.5.0, una volta per partita dopo il secondo colore riempie di nuovo il primo, zampette e volantino, aspetta che lei sia sotto, interruttore, stato salvato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_pozze_agnellino.gd
+
       - name: Test dell'uscita dal gioco con un caricamento nel thread in corso
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_uscita.gd

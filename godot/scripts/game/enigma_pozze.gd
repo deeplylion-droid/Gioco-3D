@@ -85,6 +85,8 @@ var stato := Stato.APERTO
 var tolti: Array[String] = []
 ## I colori che si stanno svuotando adesso.
 var svuotando: Array[String] = []
+## I colori che si stanno riempiendo di nuovo (l'agnellino, build 0.5.0): non si aspirano finché non sono pieni.
+var riempiendo: Array[String] = []
 
 var _pozze: Array[WaterTank] = []
 var _per_colore := {}
@@ -98,6 +100,8 @@ var _luci_errore: Array[Light3D] = []
 var _accesi_errore: Array[Node3D] = []
 ## Lei sotto il pavimento (0.4.0, LeiPozze): dopo il primo colore tolto esce dalle pozze piene del bordo.
 var lei: LeiPozze
+## L'agnellino che una volta per partita riempie di nuovo il primo colore tolto (build 0.5.0).
+var agnellino: AgnellinoPozze
 
 
 ## Il colore della pozza nella colonna [param colonna] e nella riga [param riga] (0..4).
@@ -140,6 +144,9 @@ func _ready() -> void:
 	lei = LeiPozze.new()
 	lei.name = "Lei"
 	add_child(lei)
+	agnellino = AgnellinoPozze.new()
+	agnellino.name = "Agnellino"
+	add_child(agnellino)
 
 
 func _cerca(nome: StringName) -> Node:
@@ -235,7 +242,7 @@ func _physics_process(delta: float) -> void:
 ## Una pozza aspirata: comincia a svuotarsi tutto il suo colore.
 func _controlla_aspirate() -> void:
 	for c in COLORI:
-		if c in tolti or c in svuotando:
+		if c in tolti or c in svuotando or c in riempiendo:
 			continue
 		var tolta := 0.0
 		for t: WaterTank in _per_colore[c]:
@@ -325,13 +332,34 @@ func _aggiorna_aspirabili() -> void:
 	var pieni := tolti.size() + svuotando.size() >= 3
 	for t in _pozze:
 		var c: String = t.fill_pigment
-		var si := stato == Stato.APERTO and not (c in tolti) and (c in svuotando or not pieni)
+		var si := stato == Stato.APERTO and not (c in tolti) and not (c in riempiendo) and (c in svuotando or not pieni)
 		if si != t.suckable:
 			t.suckable = si
 			if si:
 				t.add_to_group(&"water_sources")
 			else:
 				t.remove_from_group(&"water_sources")
+
+
+## Il colore [param c], già tolto, si riempie di nuovo in [param durata] s (l'agnellino, build 0.5.0): torna fra quelli da
+## togliere, e finché non è pieno non si aspira. Si può aspettare con await.
+func riempi_di_nuovo(c: String, durata := 5.0) -> void:
+	if not c in tolti or stato != Stato.APERTO:
+		return
+	tolti.erase(c)
+	riempiendo.append(c)
+	var tanks: Array = _per_colore[c]
+	for t: WaterTank in tanks:
+		t.set_mix(WaterMix.pura(c))
+	var tw := create_tween().set_parallel(true)
+	for t: WaterTank in tanks:
+		tw.tween_property(t, ^"fill", pieno, maxf(durata, 0.1)).from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tw.finished
+	if not is_inside_tree():
+		return
+	for t: WaterTank in tanks:
+		t.fill = pieno
+	riempiendo.erase(c)
 
 
 func _apri_porta(subito: bool) -> void:
@@ -361,11 +389,16 @@ func pozze_del_colore(c: String) -> Array:
 # --- Checkpoint -------------------------------------------------------------------------------
 
 func save_state() -> Dictionary:
-	return {"stato": int(stato), "tolti": tolti.duplicate(), "svuotando": svuotando.duplicate()}
+	return {"stato": int(stato), "tolti": tolti.duplicate(), "svuotando": svuotando.duplicate(),
+		"agnellino": preload("res://scripts/game/stato_storia.gd").agnellino_pozze}
 
 
 func load_state(data: Dictionary) -> void:
 	stato = clampi(int(data.get("stato", 0)), 0, Stato.RISOLTO) as Stato
+	# (l'agnellino è passato prima di questo salvataggio: non torna; un colore che si riempiva riparte pieno)
+	if bool(data.get("agnellino", false)):
+		preload("res://scripts/game/stato_storia.gd").agnellino_pozze = true
+	riempiendo.clear()
 	tolti.clear()
 	for c in data.get("tolti", []):
 		if String(c) in COLORI and not String(c) in tolti:

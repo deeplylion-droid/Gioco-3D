@@ -505,6 +505,8 @@ func reset_progress() -> void:
 	preload("res://scripts/game/stato_tunnel.gd").azzera()
 	# (le uscite dimostrative di lei: una volta per partita, di nuovo con la partita nuova; vedi stato_lei.gd)
 	preload("res://scripts/game/stato_lei.gd").azzera()
+	# (quello che la storia fa una volta per partita, build 0.5.0: l'agnellino nelle pozze; vedi stato_storia.gd)
+	preload("res://scripts/game/stato_storia.gd").azzera()
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()
