@@ -67,9 +67,16 @@ func _ready() -> void:
 	acqua.punti_uscita = _punti
 	acqua.profondita = 5.0
 	acqua.pelo = vasca_grande.get_surface_global_y()
+	# (la luce passa solo nell'acqua vera: fra una vasca e l'altra è spenta)
+	var volumi: Array[Node3D] = [vasca_grande]
+	for v in vasche_bimbi:
+		if v:
+			volumi.append(v)
+	acqua.acque = volumi
 	acqua.arriva.connect(func(_dove: Vector3): prepara_uscita(acqua.get(&"_punto"), 1.6))
-	# l'acqua è torbida: la salita parte sotto il fondo e non si vede
-	if lei_sbuca and GameState.luci != GameState.Luci.FLASH:
+	# la fossa aspetta il giro (anche se la sala si carica prima del blackout: ripartendo da più avanti o con le luci
+	# del lampo lei non deve affacciarsi alla fossa da sola, al blackout, lontano dal giocatore)
+	if lei_sbuca:
 		lei_sbuca.aspetta_il_giro = true
 
 
@@ -86,6 +93,12 @@ func _physics_process(_delta: float) -> void:
 	var in_sala := zona.has_point(p.global_position)
 	match stato:
 		Stato.ATTESA:
+			# la fossa c'è già stata (ripartendo da un checkpoint dopo, o con Continua): lei se n'è andata, niente giro
+			if lei_sbuca and (lei_sbuca.fase == LeiSbuca.Fase.FUGA or lei_sbuca.fase == LeiSbuca.Fase.FINITA):
+				stato = Stato.FINITO
+				acqua.lascia()
+				acqua.abilitata = false
+				return
 			if not in_sala:
 				return
 			if vicino_fossa:
@@ -153,12 +166,19 @@ func _giro() -> PackedVector3Array:
 	return out
 
 
-## I giocattoli che galleggiano nella vasca grande (ogg_* della sala, alla quota del pelo, dentro la vasca).
+## I giocattoli che galleggiano nella vasca grande (ogg_* della sala, alla quota del pelo, dentro la vasca): l'elenco si
+## fa la prima volta e si tiene; con ognuno il raggio in pianta (dalle mesh) e dove stava (per tornarci).
 func _galleggianti() -> Array[Node3D]:
-	var out: Array[Node3D] = []
+	if _elenco_galleggianti_fatto:
+		var vivi: Array[Node3D] = []
+		for g in _elenco_galleggianti:
+			if is_instance_valid(g):
+				vivi.append(g)
+		return vivi
+	_elenco_galleggianti_fatto = true
 	var scena := get_tree().current_scene if is_inside_tree() else null
 	if scena == null or vasca_grande == null:
-		return out
+		return _elenco_galleggianti
 	var pelo := vasca_grande.get_surface_global_y()
 	var mezzo := vasca_grande.inner_size * 0.5
 	for n in scena.find_children("ogg_*", "Node3D", true, false):
@@ -167,35 +187,89 @@ func _galleggianti() -> Array[Node3D]:
 			continue
 		var l := vasca_grande.to_local(g.global_position)
 		if absf(l.x) <= mezzo.x and absf(l.z) <= mezzo.z and absf(g.global_position.y - pelo) < 0.6:
-			out.append(g)
-	return out
+			_elenco_galleggianti.append(g)
+			_raggi[g] = _raggio_in_pianta(g)
+	return _elenco_galleggianti
+
+
+var _elenco_galleggianti: Array[Node3D] = []
+var _elenco_galleggianti_fatto := false
+var _raggi := {}
+
+
+## Il raggio in pianta di un giocattolo (dai vertici delle sue mesh: anche senza schermo, dove le AABB sono vuote).
+static func _raggio_in_pianta(g: Node3D) -> float:
+	var r := 0.3
+	var mesh_g: Array = g.find_children("*", "MeshInstance3D", true, false)
+	if g is MeshInstance3D:
+		mesh_g.append(g)
+	for m in mesh_g:
+		var mi := m as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var facce := mi.mesh.get_faces()
+		for k in range(0, facce.size(), 3):
+			var c := mi.global_transform * facce[k] - g.global_position
+			r = maxf(r, Vector2(c.x, c.z).length())
+	return r
 
 
 ## Prima che lei esca dal punto [param q]: i giocattoli che galleggiano lì vicino si scostano (l'acqua che si muove),
-## in [param secondi] (0: subito), restando dentro la vasca, lontani dal bordo.
+## in [param secondi] (0: subito), restando dentro la vasca lontani dal bordo e senza toccarsi fra loro.
 func prepara_uscita(q: Node3D, secondi := 1.6) -> void:
 	if q == null:
 		return
-	var mezzo := vasca_grande.inner_size * 0.5 - Vector3(0.6, 0, 0.6)
-	var centro := vasca_grande.to_local(q.global_position)
-	for g in _galleggianti():
+	var mezzo := vasca_grande.inner_size * 0.5
+	var centro3 := vasca_grande.to_local(q.global_position)
+	var centro := Vector2(centro3.x, centro3.z)
+	var lista := _galleggianti()
+	# dove sono adesso (in pianta, nella vasca) quelli che restano fermi, e dove vanno quelli che si spostano
+	var posti := {}
+	for g in lista:
 		var l := vasca_grande.to_local(g.global_position)
-		var via := Vector2(l.x - centro.x, l.z - centro.z)
-		if via.length() >= spazio_galleggianti:
-			continue
+		posti[g] = Vector2(l.x, l.z)
+	var da_spostare: Array[Node3D] = []
+	for g in lista:
+		if (posti[g] as Vector2).distance_to(centro) < spazio_galleggianti + float(_raggi.get(g, 0.3)):
+			da_spostare.append(g)
+	for g in da_spostare:
+		var r := float(_raggi.get(g, 0.3))
+		var via: Vector2 = (posti[g] as Vector2) - centro
 		if via.length() < 0.05:
-			via = Vector2(-centro.x, -centro.z).normalized() if Vector2(centro.x, centro.z).length() > 0.05 else Vector2.RIGHT
-		# dove arriva: alla distanza giusta in quella direzione; se esce dalla vasca, lungo il bordo dalla parte opposta
-		var meta := Vector2(centro.x, centro.z) + via.normalized() * spazio_galleggianti
-		meta.x = clampf(meta.x, -mezzo.x, mezzo.x)
-		meta.y = clampf(meta.y, -mezzo.z, mezzo.z)
-		if meta.distance_to(Vector2(centro.x, centro.z)) < spazio_galleggianti - 0.05:
-			meta = Vector2(-signf(centro.x) * mezzo.x if absf(centro.x) > 0.05 else meta.x, meta.y)
-			if meta.distance_to(Vector2(centro.x, centro.z)) < spazio_galleggianti - 0.05:
-				meta.y = -signf(centro.z) * mezzo.z if absf(centro.z) > 0.05 else mezzo.z
-		var arrivo := vasca_grande.to_global(Vector3(meta.x, l.y, meta.y))
+			via = -centro if centro.length() > 0.05 else Vector2.RIGHT
+		var meglio := Vector2.INF
+		# si prova la direzione in cui già sta, poi girando a passi di 15 gradi da una parte e dall'altra
+		for k in 25:
+			var ang := deg_to_rad(15.0 * floorf((k + 1) / 2.0) * (1.0 if k % 2 == 1 else -1.0))
+			var d := via.normalized().rotated(ang)
+			var meta := centro + d * (spazio_galleggianti + r)
+			meta.x = clampf(meta.x, -mezzo.x + r + 0.15, mezzo.x - r - 0.15)
+			meta.y = clampf(meta.y, -mezzo.z + r + 0.15, mezzo.z - r - 0.15)
+			if meta.distance_to(centro) < spazio_galleggianti + r - 0.05:
+				continue
+			var libero := true
+			for h in lista:
+				if h != g and (posti[h] as Vector2).distance_to(meta) < r + float(_raggi.get(h, 0.3)) + 0.05:
+					libero = false
+					break
+			if libero:
+				meglio = meta
+				break
+		if meglio == Vector2.INF:
+			continue    # (nessun posto libero: resta dov'è)
+		posti[g] = meglio
+		var l := vasca_grande.to_local(g.global_position)
+		var arrivo := vasca_grande.to_global(Vector3(meglio.x, l.y, meglio.y))
 		if secondi <= 0.0:
 			g.global_position = arrivo
 		else:
 			var tw := g.create_tween()
 			tw.tween_property(g, "global_position", arrivo, secondi).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+## Per i test e il controllo di posizionamento: i giocattoli che galleggiano, col loro raggio in pianta.
+func galleggianti_e_raggi() -> Dictionary:
+	var out := {}
+	for g in _galleggianti():
+		out[g] = float(_raggi.get(g, 0.3))
+	return out

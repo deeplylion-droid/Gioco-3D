@@ -64,10 +64,59 @@ func _run() -> void:
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	await _fisica(10)
 
+	print("0. I giocattoli che galleggiano si scostano senza toccarsi")
+	var gr: Dictionary = buio.galleggianti_e_raggi()
+	check(gr.size() >= 2, "ci sono i giocattoli nella vasca grande (%d)" % gr.size())
+	var origine := {}
+	for g in gr:
+		origine[g] = (g as Node3D).global_position
+	var mezzo := buio.vasca_grande.inner_size * 0.5
+	var tutto_bene := true
+	var dettaglio := ""
+	for q in buio.acqua.punti_uscita:
+		buio.prepara_uscita(q, 0.0)
+		var lista: Array = gr.keys()
+		for i in lista.size():
+			var gi := lista[i] as Node3D
+			var li := buio.vasca_grande.to_local(gi.global_position)
+			var ri: float = gr[gi]
+			if absf(li.x) > mezzo.x - ri + 0.01 or absf(li.z) > mezzo.z - ri + 0.01:
+				tutto_bene = false
+				dettaglio = "%s contro il bordo dopo l'uscita da %s" % [gi.name, q.name]
+			for j in range(i + 1, lista.size()):
+				var gj := lista[j] as Node3D
+				var d := Vector2(gi.global_position.x - gj.global_position.x, gi.global_position.z - gj.global_position.z).length()
+				if d < ri + float(gr[gj]):
+					tutto_bene = false
+					dettaglio = "%s e %s si toccano dopo l'uscita da %s (%.2f m)" % [gi.name, gj.name, q.name, d]
+		for g in gr:
+			(g as Node3D).global_position = origine[g]
+	check(tutto_bene, "da tutti e quattro i punti d'uscita nessun giocattolo ne tocca un altro o il bordo%s" % ("" if tutto_bene else ": " + dettaglio))
+
 	print("1. Il giro")
 	check(buio.stato == LeiSalaAlBuio.Stato.GIRO and acqua.in_giro() and AcquaDiLei.chi_la_usa() == acqua,
 			"al buio, lontano dalla fossa, la luce gira: lei è lì")
 	check(not lei_sbuca.medusa.visible and lei_sbuca.fase == LeiSbuca.Fase.ATTESA, "e alla fossa non c'è ancora")
+
+	print("1b. La luce del giro è accesa solo nell'acqua vera")
+	var luce := buio.acqua.find_child("LuceSottacqua", true, false) as OmniLight3D
+	var fuori := 0
+	var accesa := 0
+	var dove_fuori := ""
+	for i in 60 * 40:
+		p.teleport(Vector3(-15.0, 0.05, 16.0))
+		await get_tree().physics_frame
+		if luce == null or not luce.is_visible_in_tree() or acqua.fase != AcquaDiLei.Fase.LONTANA:
+			continue
+		if luce.light_energy > 0.05:
+			accesa += 1
+			if not acqua.in_acqua(luce.global_position):
+				fuori += 1
+				dove_fuori = str(luce.global_position.snapped(Vector3.ONE * 0.01))
+	check(luce != null and accesa > 600 and fuori == 0,
+			"nel giro (40 s) la luce è accesa %d fotogrammi, mai fuori da un volume d'acqua (%d fuori%s)" % [accesa, fuori, ", per esempio " + dove_fuori if fuori else ""])
+	p.teleport(bordo)
+	await _fisica(5)
 
 	print("2. Sul bordo, quando la luce passa lì, esce e prende")
 	var uscita := false
@@ -125,6 +174,26 @@ func _run() -> void:
 	check(lei_sbuca.medusa.visible and (lei_sbuca.fase == LeiSbuca.Fase.GUARDA or lei_sbuca.fase == LeiSbuca.Fase.SBUCA),
 			"e lei è alla fossa, come oggi")
 	check(AcquaDiLei.chi_la_usa() == null, "il motore l'ha lasciata")
+
+	print("5. Ripartendo dopo la fossa (CheckpointSpiaggiaBuio), con lei già andata via")
+	GameState.respawn()
+	for i in 60 * 30:
+		await get_tree().process_frame
+		if not GameState.is_dying and GameState.player and is_instance_valid(GameState.player) and get_tree().current_scene != level:
+			break
+	await _fisica(30)
+	level = get_tree().current_scene
+	buio = level.find_child("LeiSalaAlBuio", true, false) as LeiSalaAlBuio
+	lei_sbuca = level.find_child("LeiSbuca", true, false) as LeiSbuca
+	p = GameState.player as Player
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	lei_sbuca.call(&"_finita")      # (come la restituisce il checkpoint dopo la fossa: FINITA)
+	var spiaggia := (level.find_child("CheckpointSpiaggiaBuio", true, false) as Checkpoint).spawn_point.global_position
+	for i in 120:
+		p.teleport(spiaggia + Vector3(0, 0.05, 0))
+		await get_tree().physics_frame
+	check(buio.stato == LeiSalaAlBuio.Stato.FINITO and not buio.acqua.in_giro() and not buio.acqua.abilitata \
+			and AcquaDiLei.chi_la_usa() == null, "il giro non riparte: la sala al buio è finita e spenta (stato %d)" % buio.stato)
 	_fine()
 
 

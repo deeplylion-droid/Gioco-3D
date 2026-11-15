@@ -173,11 +173,26 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	_segna_in_scena()
 	if superficie_fossa == null or vasche.is_empty() or not vasche[0] is WaterTank:
 		return
 	if superficie_fossa.material_override == null and acque.size() > 0 and acque[0] and "material" in acque[0]:
 		superficie_fossa.material_override = acque[0].get(&"material")
 	superficie_fossa.global_position.y = (vasche[0] as WaterTank).get_surface_global_y()
+
+
+## Mentre la scena della fossa è in corso (lei visibile, affacciata, che scivola, fugge o prende) la sua lei sta nel
+## gruppo AcquaDiLei.LEI_IN_SCENA: lei è qui, gli specchi d'acqua non la chiamano e il loro canto lontano tace.
+func _segna_in_scena() -> void:
+	if medusa == null:
+		return
+	var attiva := medusa.visible and (fase == Fase.SBUCA or fase == Fase.GUARDA or fase == Fase.SCIVOLA
+			or fase == Fase.FUGA or fase == Fase.PRESA)
+	if attiva != medusa.is_in_group(AcquaDiLei.LEI_IN_SCENA):
+		if attiva:
+			medusa.add_to_group(AcquaDiLei.LEI_IN_SCENA)
+		else:
+			medusa.remove_from_group(AcquaDiLei.LEI_IN_SCENA)
 
 
 func _on_luci(f: GameState.Luci) -> void:

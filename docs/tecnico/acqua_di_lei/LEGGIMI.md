@@ -58,7 +58,8 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | `portata` | `3` | in m |
 | `portata_mano` | `1,2` | nel modo MANO: in m dal marker |
 | `tempo_su` | `2,2` | in s |
-| `tempo_presa` | `0,35` | in s |
+| `tempo_presa` | `0,8` | in s: dalla fine del silenzio alla presa 1,6 + 0,8 = 2,4 s, il tempo per mezzo secondo di getto in faccia |
+| `tempo_presa_mano` | `0,35` | nel modo MANO: dalla fine del silenzio alla presa 2,2 + 0,35 = 2,55 s |
 | `getto_per_respingere` | `0,5` | in s |
 | `pausa_respinta` | `20` | in s |
 | `pausa_dopo` | `4` | in s |
@@ -70,9 +71,22 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 
 `puo_venire()` è vera solo se valgono tutte queste:
 - le pompe sono riaccese (`GameState.luci == BLACKOUT`) e il giocatore non sta morendo;
-- lei non è già in un altro specchio (una sola, condivisa da tutte le istanze: `AcquaDiLei.chi_la_usa()`);
-- nessun'altra lei è in vista (ogni `MedusaAffacciata` visibile in scena: oblò, fossa, condotte, tunnel);
-- nessun bambino è nell'inquadratura (gruppo `bambini` e `BambinoSfuggita`).
+- il giocatore è nella zona dello specchio (`giocatore_nella_zona()`): entro `zona_raggio` (25 m) in pianta da un punto d'uscita e a non più di `zona_dislivello` (3 m) dal pelo. Fuori dalla zona lei non viene e, se la luce gira o aspetta lì, se ne va subito (`lascia()`): nessuno specchio la tiene da lontano;
+- lei non è da un'altra parte (`lei_altrove()`, vedi sotto);
+- nessun bambino è in vista (gruppo `bambini` e `BambinoSfuggita`): nell'inquadratura, entro `vista_lontano` (40 m) e senza muri in mezzo, come per l'altra lei.
+
+**Dov'è lei adesso** (`lei_altrove()`, usata da `puo_venire()` e da `fase_canto`). Lei è da un'altra parte se vale una di queste:
+- un altro specchio la usa (`AcquaDiLei.chi_la_usa()`);
+- una scena la sta usando: la sua lei è nel gruppo `AcquaDiLei.LEI_IN_SCENA` (`lei_in_scena`). LeiSbuca ce la mette mentre la scena della fossa è in corso; condotte e tunnel ce la mettono mentre lei insegue;
+- un'altra lei (MedusaAffacciata, gruppo `lei_affacciata`) è visibile e il giocatore la può vedere da dove sta: entro `vista_lontano` (40 m) e nell'inquadratura, oppure entro `vista_dietro` (12 m), perché girandosi la vedrebbe. In tutti e due i casi deve essere senza muri in mezzo: un raggio dagli occhi a lei non tocca niente prima di 2,5 m da lei (il vetro di un oblò e il bordo della sua vasca non la coprono). Per esempio, la zona dell'oblò di servizio copre la stanza delle pozze, ma lei dietro quel vetro, dall'altra parte dei muri, non conta.
+
+Perché così: il giocatore non ne vede mai due insieme, e una lei lontana, in un'altra zona o dietro i muri (la fossa lasciata visibile, un oblò pronto dietro il vetro) non ferma la regola dove si trova lui. Quando lei è da un'altra parte, o il giocatore è fuori dalla zona, `fase_canto` dà `ferma`: il canto lontano di quello specchio tace (lei non è in due posti).
+
+**Lei e la luce condivise.** Lei, la luce e il viso sono uno solo per tutto il gioco, ma possono stare sotto specchi diversi. Si controllano uno per uno e si ricrea solo quello che manca. Uno specchio liberato si porta via quelli che ha sotto, senza lasciare riferimenti.
+
+**La prima volta dimostrativa** si ricorda in `scripts/game/stato_lei.gd`, con la chiave `chiave_zona` (o, se vuota, il percorso del nodo). `GameState.reset_progress()` la azzera: con la partita nuova la prima uscita è di nuovo dimostrativa. Dall'esterno usa `prossima_dimostrativa()`.
+
+**Riscaldamento:** `posa_per_il_riscaldamento(acceso, animazione = "")`. Si chiama intorno al disegno fuori vista della zona (`RiscaldamentoShader.disegna_fuori_vista`). Con `true` mette lei fuori dal primo punto d'uscita, con la luce di quando è fuori e l'animazione dell'uscita a metà; con `false` la rimette via. Così la prima uscita vera non compila shader.
 
 `chiama()` restituisce falso se non può. Se un bambino entra in vista durante l'avviso, lei non esce e la luce se ne va.
 
@@ -89,6 +103,12 @@ Ogni istanza sta nel gruppo `lei_nell_acqua` (`AcquaDiLei.GRUPPO`) e dà:
 - `punto_luce`: dove sta la luce rosa, nel mondo;
 - `fase`: in `SPEGNE` il canto sfuma, nel `SILENZIO` tace; in `ESCE`, `SU` e `PRESA` restano i suoni di lei;
 - `fase_canto` (StringName), già pronta per il canto: `ferma`, `lontana`, `arriva`, `spegne`, `silenzio`, `fuori`, `respinta`, `va_via`. «`LONTANA` + `in_giro()`» vuol dire che la luce passa.
+
+## La luce solo nell'acqua vera
+
+Con `acque` (i WaterTank dove passa la luce) la luce rosa è accesa solo dentro un volume d'acqua (`in_acqua(punto)`): arrivando al bordo si spegne in 0,25 s, guardando 0,45 m avanti; fra una vasca e l'altra viaggia spenta e si riaccende dentro la vasca dopo. Vale per il giro, il percorso, la luce che arriva e quella che si spegne alla fine. La sala al buio ci mette la vasca grande e le vasche dei bimbi. Senza `acque` la luce resta sempre accesa, come prima.
+
+Mentre la luce si spegne alla fine di un percorso, o mandata via, `fase_canto` dà `spegne`: il canto muore in 1 s, come prima di un'uscita.
 
 ## Lei e la luce
 
@@ -131,10 +151,11 @@ Scelta C dell'utente: esce prima il braccio e la mano sbatte sul grigliato, poi 
   - `pozza_attesa` (ciclo, 2,4 s): la mano premuta sul grigliato, le dita che battono, le punte dei tentacoli che si muovono di pochi centimetri;
   - `pozza_presa` (0,8 s): la mano scatta alla caviglia del giocatore (0,6 m davanti al marker) e tira;
   - `pozza_respinta` (1 s) e `pozza_scende` (1,2 s): la mano rientra sopra il bordo e lei torna sotto il fondo, i tentacoli scivolano nella pozza.
-- **Cosa si vede:** il corpo resta sott'acqua (la testa circa 28 cm sotto il pelo) e sotto il fondo. Braccio e tentacoli passano dal fondo della pozza. Il primo osso di ogni tentacolo che striscia si allunga sotto il fondo, dove non si vede: così il pezzo visibile ha la sua lunghezza vera e arriva fino a 2 m. Il controllo delle zone nello script Blender (`--pozza`) e la sonda d'ingombro non trovano niente che attraversa il grigliato, i bordini o le pozze vicine.
+- **Cosa si vede:** il corpo resta in fondo e la testa coi capelli sta sempre almeno 7 cm sotto il pelo (al più a -0,12 m, misurato sulle mesh deformate in ogni animazione: `--pozza`). Per arrivare al grigliato e alla caviglia l'osso del braccio si allunga dalla spalla al gomito sott'acqua. Il liquido della pozza è opaco mentre lei c'è (enigmi). Avambraccio e mano hanno la lunghezza vera. Braccio e tentacoli passano dal fondo della pozza. Il primo osso di ogni tentacolo che striscia si allunga sotto il fondo, dove non si vede: così il pezzo visibile ha la sua lunghezza vera e arriva fino a 2 m. Il controllo delle zone nello script Blender (`--pozza`) e la sonda d'ingombro non trovano niente che attraversa il grigliato, i bordini o le pozze vicine.
 - **La presa:** se il giocatore è entro `portata_mano` (1,2 m in pianta) dal marker quando lei è su, la mano lo prende. Segue la scena di morte della medusa: la camera scende fino al pelo della pozza e guarda il suo viso sott'acqua.
 - **La respinta:** il getto sulla mano (bersaglio di 0,4 m che segue la mano) per `getto_per_respingere` s la ricaccia sotto.
-- **La luce rosa** resta nell'acqua della pozza (0,6 m sotto il pelo), più forte: la pozza si accende di rosa da sotto.
+- **La luce rosa** resta nell'acqua della pozza, al centro, a metà fondo: la pozza si accende di rosa da sotto. Energia 3, portata 1,6 m, così accende poco le pozze accanto.
+- **Segnali per il liquido opaco (enigmi):** `fase_cambiata(SILENZIO)` all'inizio del silenzio, `presa` all'inizio della presa, `tornata_sotto` quando lei è di nuovo nascosta.
 - **Suoni:** un tonfo nell'acqua quando la mano esce e quando sbatte, e uno quando rientra.
 
 Test: `godot/tests/test_acqua_di_lei_mano.gd` (in CI). Per i marker veri: `sonda_ingombro_acqua_di_lei.gd <scena.tscn>` (nel modo MANO prova le animazioni `pozza_*` col marker).
