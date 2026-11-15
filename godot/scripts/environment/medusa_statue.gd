@@ -369,6 +369,27 @@ func _dopo_rebuild() -> void:
 
 
 ## Gola e denti (dentro la bocca chiusa) visibili o no.
+## Per il riscaldamento delle pipeline (RiscaldamentoShader, quando disegna lei fuori vista): mostra la bocca (gola,
+## denti, strappo) anche se lei non ha ancora aperto la fauce, così le sue pipeline si compilano lì e non al primo morso
+## (4 "draw" alla prima morte per medusa, 15 novembre). Ritorna vero se era nascosta (poi la si rinasconde con
+## [method nascondi_bocca_dopo_il_riscaldamento]).
+func mostra_bocca_per_il_riscaldamento() -> bool:
+	if _instance == null:
+		return false
+	var nascosta := false
+	for nome in BOCCA:
+		var n := _instance.find_child(nome, true, false) as Node3D
+		if n and not n.visible:
+			nascosta = true
+	if nascosta:
+		_mostra_bocca(true)
+	return nascosta
+
+
+func nascondi_bocca_dopo_il_riscaldamento() -> void:
+	_mostra_bocca(false)
+
+
 func _mostra_bocca(on: bool) -> void:
 	if _instance == null:
 		return

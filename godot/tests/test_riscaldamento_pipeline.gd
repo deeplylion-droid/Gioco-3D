@@ -12,6 +12,9 @@ extends Node
 ## 5. nel tunnel la nebbia viola (NebbiaViola) che sale entrando: nessuna compilazione "surface" né "draw".
 ## 6. col giocatore vero, la lancia guardando in basso a FOV 70, 90 e 110: nessuna compilazione "surface" né "draw"
 ##    (#146: il tubo della lancia verso lo zaino).
+## 7. la prima morte per medusa: lei (come la mettono le zone dell'acqua di lei: disegnata a pezzi fuori vista, poi in
+##    vista) ti prende, apre la fauce, e la scena di morte col jumpscare: nessuna compilazione "surface", "draw" né
+##    "canvas" (prima del 15 novembre: 4 "draw" per la bocca di lei e 1 "canvas" per il glitch dello schermo).
 ## (la torre al primo fotogramma visibile la prova test_torre_ingresso.gd)
 ## Uso: xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 \
 ##        --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
@@ -249,6 +252,54 @@ func _run() -> void:
 	Grafica.imposta("fov", fov_prima)
 	check(dove6.is_empty(), "guardando in basso a FOV 70, 90 e 110 (%d pose) nessuna compilazione che blocca%s (in sottofondo %d)" % [
 		pose, "" if dove6.is_empty() else ": " + ", ".join(dove6), sotto])
+	print("7. La prima morte per medusa: lei ti prende, la fauce, la scena di morte col jumpscare")
+	GameState.save_to_disk = false
+	g.teleport(piedi, atan2(-avanti.x, -avanti.z), 0.0)
+	# lei come la crea l'acqua di lei (il modello e i materiali bagnati di LeiOblo, le animazioni dell'inseguimento),
+	# fuori dall'acqua davanti al giocatore, con la sua luce rosa con le ombre
+	var presa := MedusaAffacciata.new()
+	presa.name = "LeiCheTiPrende"
+	presa.model = LeiOblo.MODELLO
+	presa.bell_material = LeiOblo.CAMPANA
+	presa.material_map = LeiOblo.MATERIALI.duplicate()
+	presa.animazioni_inseguimento = true
+	presa.animazione = &"inseguimento/incombe"
+	add_child(presa)
+	presa.global_position = piedi + avanti * 2.2 - Vector3.UP * 2.0
+	presa.look_at(Vector3(piedi.x, presa.global_position.y, piedi.z), Vector3.UP, true)
+	var rosa := OmniLight3D.new()
+	rosa.light_color = Color(1.0, 0.45, 0.75)
+	rosa.light_energy = 6.0
+	rosa.omni_range = 9.0
+	rosa.shadow_enabled = true
+	presa.add_child(rosa)
+	rosa.position = Vector3(0, 2.4, 0.9)
+	await get_tree().process_frame
+	await RiscaldamentoShader.disegna_a_pezzi(presa, get_viewport())
+	for i in 20:
+		await get_tree().process_frame
+	prima = _conta()
+	var canvas_prima := RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_CANVAS)
+	var ap_presa := presa.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap_presa and ap_presa.has_animation(&"inseguimento/presa"):
+		ap_presa.play(&"inseguimento/presa", 0.15)
+	presa.attacca(0.7, &"")
+	presa.add_to_group(&"medusa_che_prende")
+	GameState.kill_player(&"medusa")
+	var morte := GameState.get(&"_death_sequence") as Node
+	for i in 150:
+		await get_tree().process_frame
+	c = _conta()
+	var canvas := int(RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_CANVAS) - canvas_prima)
+	check(is_instance_valid(morte) and morte.find_children("*", "JumpscareGlitch", true, false).size() == 1,
+		"la scena di morte della medusa, col jumpscare")
+	check(int(c[0] - prima[0]) == 0 and int(c[1] - prima[1]) == 0 and canvas == 0,
+		"dalla presa al nero nessuna compilazione che blocca (surface %d, draw %d, canvas %d; in sottofondo %d)" % [c[0] - prima[0], c[1] - prima[1], canvas, c[2] - prima[2]])
+	# (la scena di morte si toglie prima che finisca: la ripartenza ricaricherebbe la scena del test)
+	if is_instance_valid(morte):
+		morte.free()
+	GameState.is_dying = false
+	presa.queue_free()
 	g.queue_free()
 	_fine()
 
