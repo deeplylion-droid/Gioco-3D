@@ -60,6 +60,7 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | `tempo_su` | `2,2` | in s |
 | `tempo_presa` | `1,6` | in s: dalla fine del silenzio alla presa 1,6 + 1,6 = 3,2 s (collaudo della 0.4.0: col giocatore vero per respingerla servono 0,9 s dall'inizio del getto; chi la vede fuori e reagisce in mezzo secondo ce la fa ancora) |
 | `tempo_presa_mano` | `0,35` | nel modo MANO: dalla fine del silenzio alla presa 2,2 + 0,35 = 2,55 s |
+| `camera_morte_avanti` | `vero` | nel modo MANO, la scena di morte (piano B della 0.4.0, il viso no): la camera cade verso il grigliato accanto alla caviglia, è trascinata a strattoni, alta sopra il braccio e i tentacoli, e finisce col viso 22 cm sopra il pelo appena dentro il bordo, inclinata in giù nel liquido opaco; falso: dentro la pozza a guardare indietro il braccio che esce (`camera_morte_mano()`, DeathSequence legge il meta `camera_morte`). Scatti in `docs/proposte/pozze_morte_b/` |
 | `getto_per_respingere` | `0,5` | in s |
 | `pausa_respinta` | `20` | in s |
 | `pausa_dopo` | `4` | in s |

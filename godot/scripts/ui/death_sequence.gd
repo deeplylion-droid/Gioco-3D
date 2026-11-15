@@ -133,6 +133,31 @@ func _camera_medusa() -> void:
 	var p := GameState.player
 	if p == null or not is_instance_valid(p):
 		return
+	if _lei.has_meta(&"camera_morte"):
+		# (le pozze, modo MANO: ti trascina. La camera cade verso il grigliato accanto alla caviglia, poi è tirata fino al
+		# bordo della pozza, sopra il pelo, e guarda il braccio che rientra; AcquaDiLei.camera_morte_mano)
+		var cm: Array = _lei.get_meta(&"camera_morte")
+		var caduta: Vector3 = cm[0]
+		var arrivo_m: Vector3 = cm[1]
+		var bersaglio: Vector3 = cm[2]
+		var k1 := smoothstep(0.0, 0.35, elapsed)          # cade
+		var k2 := smoothstep(0.3, 0.95, elapsed)          # trascinata
+		var pos_m := _camera_da.origin.lerp(caduta, k1).lerp(arrivo_m, k2)
+		# (trascinata passa alta sopra le braccia e i tentacoli stesi sul grigliato, e scende al pelo solo alla fine)
+		pos_m.y += 0.35 * sin(PI * k2) * (1.0 - smoothstep(0.75, 0.95, elapsed) * 0.0)
+		# (strattoni mentre è trascinata, poi il tremito)
+		var strappo := Vector3(0.0, 0.03 * sin(elapsed * 31.0), 0.0) * k2 * (1.0 - k2) * 4.0
+		var tremito_m := Vector3(sin(elapsed * 53.0), sin(elapsed * 47.0 + 1.3), 0.0) * 0.008 * k2
+		var giu := Vector3(-_camera_da.basis.z.x, -1.6, -_camera_da.basis.z.z).normalized()   # cadendo guarda a terra
+		# (si gira presto verso la pozza: a 0,7 s guarda già il liquido, la mano e il braccio sono di lato)
+		var kd := smoothstep(0.25, 0.6, elapsed)
+		var dir := (-_camera_da.basis.z).slerp(giu, k1 * (1.0 - kd)).slerp((bersaglio - pos_m).normalized(), kd).normalized()
+		if absf(dir.y) > 0.99:
+			dir = (dir + Vector3(0.0, 0.0, 0.05)).normalized()
+		p.camera.global_transform = Transform3D(Basis.looking_at(dir, Vector3.UP), pos_m + strappo + tremito_m)
+		return
+		p.camera.global_transform = Transform3D(Basis.looking_at(dir, Vector3.UP), pos_m + tremito_m)
+		return
 	var viso: Vector3 = _lei.call(&"get_eye_position") if _lei.has_method(&"get_eye_position") else _lei.global_position + Vector3.UP * 1.6
 	var bocca := viso + Vector3.DOWN * 0.22
 	var verso := _camera_da.origin - bocca

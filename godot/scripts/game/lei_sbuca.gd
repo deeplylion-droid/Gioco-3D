@@ -242,6 +242,8 @@ func _physics_process(delta: float) -> void:
 			if _vuole_venire:
 				_prova_a_venire(p)
 		Fase.SBUCA:
+			if _pelo_da_alzare and _acqua_al_minimo(delta):
+				_pelo_da_alzare = false
 			var k := clampf(_t / durata_sbuca, 0.0, 1.0)
 			_metti_a(1.0 - _ease_out(k))
 			# (mentre sale non prende)
@@ -249,6 +251,9 @@ func _physics_process(delta: float) -> void:
 			if k >= 1.0:
 				fase = Fase.GUARDA
 				_t = 0.0
+				if _pelo_da_alzare:
+					_pelo_da_alzare = false
+					_acqua_al_minimo()
 				if _morbidezza and is_instance_valid(_morbidezza):
 					_morbidezza.trattieni = false
 		Fase.GUARDA:
@@ -446,6 +451,7 @@ func puo_prendere() -> bool:
 
 
 func _affaccia() -> void:
+	_pelo_da_alzare = false
 	in_vista_t = 0.0
 	sbucata_in_vista = false
 	_acqua_al_minimo()
@@ -463,13 +469,25 @@ func _affaccia() -> void:
 	_accendi_morbidezza()
 
 
-## La fossa almeno a [member pelo_minimo]: l'acqua le copre il seno (affacciata o appena sbucata).
-func _acqua_al_minimo() -> void:
+## La fossa almeno a [member pelo_minimo]: l'acqua le copre il seno (affacciata o appena sbucata). Con [param delta] sale
+## piano, al più di [constant SALITA_PELO] m al secondo (sbucando in vista); senza, in un colpo. Vero quando ci è arrivata.
+func _acqua_al_minimo(delta := -1.0) -> bool:
 	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
-	if tank:
-		var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
-		if tank.fill < minimo:
-			tank.fill = minimo
+	if tank == null:
+		return true
+	var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
+	if tank.fill >= minimo:
+		return true
+	if delta < 0.0:
+		tank.fill = minimo
+		return true
+	tank.fill = minf(tank.fill + SALITA_PELO * delta / maxf(tank.inner_size.y, 0.01), minimo)
+	return tank.fill >= minimo
+
+
+## Quanto in fretta sale il pelo della fossa mentre lei sbuca in vista (m/s: 0,15 m/s sono 2,5 mm a fotogramma).
+const SALITA_PELO := 0.15
+var _pelo_da_alzare := false
 
 
 ## Ripartendo dal checkpoint vicino alla fossa (dopo una presa, F9, Continua), a schermo ancora nero: lei è già affacciata,
@@ -488,7 +506,8 @@ func affaccia_alla_ripartenza() -> bool:
 func _sbuca() -> void:
 	in_vista_t = 0.0
 	sbucata_in_vista = true
-	_acqua_al_minimo()
+	# (l'acqua sale piano fino a pelo_minimo nel primo mezzo secondo della salita: in vista niente scatto del pelo)
+	_pelo_da_alzare = true
 	fase = Fase.SBUCA
 	_t = 0.0
 	vista_t = 0.0
