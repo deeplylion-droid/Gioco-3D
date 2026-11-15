@@ -1652,10 +1652,10 @@ func _finale() -> void:
 ## bambino col cubo, a circa 2,6 m da lui):
 ## quanto fa luce (energia) e fin dove arriva (m). Debole: i due davanti si riconoscono, le sagome dietro no.
 @export var stanza_luce := 6.0
-@export var stanza_luce_raggio := 5.0
+@export var stanza_luce_raggio := 4.0
 ## Il cono della luce (gradi, mezza apertura) e dove punta: [di lato, dal portello] (m), a 75 cm da terra.
-@export var stanza_luce_cono := 24.0
-@export var stanza_luce_mira := Vector2(-0.35, 4.75)
+@export var stanza_luce_cono := 20.0
+@export var stanza_luce_mira := Vector2(-0.45, 4.8)
 ## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
 ## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
 ## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
