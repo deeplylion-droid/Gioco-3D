@@ -1,0 +1,1 @@
+Brief della build 2 per enigmi: mandato come messaggio alle 18:37 UTC del 15 novembre (squalo nel fiume lento, colore riempito nelle pozze, apparizione agli acquari, foglio DF, morte-riscaldamento; branch lavoro/storia-fiume da 0c177214 + f342d44a; entro le 10:00 UTC del 16). Riassunto nel registro.
