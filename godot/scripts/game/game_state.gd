@@ -502,6 +502,7 @@ func reset_progress() -> void:
 	_tenute.clear()
 	# (senza nominare FormeTunnel: vedi forme_tenute.gd)
 	preload("res://scripts/environment/forme_tenute.gd").lascia()
+	preload("res://scripts/game/stato_tunnel.gd").azzera()
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()

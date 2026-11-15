@@ -12,6 +12,8 @@ extends Node3D
 ## - vai(pos, verso, delta): a ogni fotogramma, il punto a centro canale sul pelo dell'acqua e la direzione della
 ##   strada; lei ci sta sopra a QUOTA, si gira e si inclina in curva da sola;
 ## - respinta(): il getto in faccia (lo segnala getto_in_faccia: la logica la rimanda indietro e chiama respinta);
+## - carica() e scatto() (build 0.4.0): a 8 m smette di cantare e carica; poi, se non è colpita, scatta;
+## - insegui(): torna a inseguire (una carica finita senza scatto);
 ## - prendi(): sotto i 2,5 m;
 ## - schianto(centro_oblo, normale): il portello chiuso (normale verso di lei).
 ## L'origine del modello è sul piano dei tentacoli: nella corsa lei va da 0 a 5,2 m (5,5 nel ritrarsi e nel
@@ -25,7 +27,7 @@ signal schianto_contro
 ## Lo schianto è finito: lei resta premuta sul portello.
 signal schianto_finito
 
-enum Stato { VIA, RIEMERGE, INSEGUE, RITRAE, PRESA, SCHIANTO }
+enum Stato { VIA, RIEMERGE, INSEGUE, RITRAE, PRESA, SCHIANTO, CARICA, SCATTO }
 
 const ANIM := "inseguimento/"
 ## L'origine di lei sopra il pelo dell'acqua (m): le punte dei tentacoli restano sopra il piano delle banchine (0,42 m
@@ -36,6 +38,13 @@ const OBLO := Vector2(0.95, 4.62)
 ## Quando la faccia tocca il vetro nello schianto (s).
 const SCHIANTO_CONTRO := 0.35
 const ROSA := Color(1.0, 0.35, 0.6)
+## Le animazioni della carica e dello scatto (di mascotte, lavoro/acqua-di-lei). Finché non ci sono, al loro posto
+## i morsi ([constant SEGNAPOSTO]), più veloci nello scatto.
+const CARICA := "carica"
+const SCATTO := "scatto"
+const SEGNAPOSTO := "insegue_morde"
+## Il segno su lei che fa tacere il canto (l'addon audio, Statua._tunnel): nella carica e nello scatto.
+const CANTO_ZITTO := &"canto_zitto"
 
 ## Litri di getto in faccia per farla ritrarre (circa mezzo secondo di getto, come nelle vasche).
 @export var getto_litri := 0.6
@@ -239,8 +248,9 @@ func vai(pos: Vector3, verso: Vector3, delta: float) -> void:
 ## Il getto in faccia: si ritrae strizzando l'occhio per 2 s (animazione "ritrae"), poi riprende a inseguire. La
 ## distanza (indietro di circa 6 m) la decide chi la comanda.
 func respinta() -> void:
-	if stato != Stato.INSEGUE:
+	if stato != Stato.INSEGUE and stato != Stato.CARICA:
 		return
+	_canta(true)
 	stato = Stato.RITRAE
 	_t = 0.0
 	_anima("ritrae", 0.1)
@@ -251,6 +261,7 @@ func respinta() -> void:
 func prendi() -> void:
 	if stato == Stato.PRESA or stato == Stato.VIA:
 		return
+	_canta(true)
 	stato = Stato.PRESA
 	_t = 0.0
 	var p := GameState.player
@@ -282,6 +293,38 @@ func schianto(centro_oblo: Vector3, normale: Vector3) -> void:
 	_anima("schianto", 0.12)
 
 
+## A 8 m carica: smette di cantare e si prepara (l'animazione "carica", o il segnaposto). Il getto in faccia la
+## respinge come quando insegue.
+func carica() -> void:
+	if stato != Stato.INSEGUE:
+		return
+	stato = Stato.CARICA
+	_t = 0.0
+	_getto = 0.0
+	_canta(false)
+	_anima(CARICA if _ha(CARICA) else SEGNAPOSTO, 0.15)
+	lei.segui_con_la_testa(1.0, 0.2)
+
+
+## La finestra è passata: scatta verso il giocatore (l'animazione "scatto", o il segnaposto più veloce). Il getto non
+## la ferma più.
+func scatto() -> void:
+	if stato != Stato.CARICA:
+		return
+	stato = Stato.SCATTO
+	_t = 0.0
+	_canta(false)
+	_anima(SCATTO if _ha(SCATTO) else SEGNAPOSTO, 0.1)
+	if not _ha(SCATTO) and _ap:
+		_ap.speed_scale = 1.8
+
+
+## Torna a inseguire (una carica finita senza scatto: il giocatore è entrato in un passaggio obbligato).
+func insegui() -> void:
+	if stato == Stato.CARICA or stato == Stato.SCATTO:
+		_insegui()
+
+
 ## Vero mentre si ritrae dal getto (2 s).
 func in_ritrae() -> bool:
 	return stato == Stato.RITRAE
@@ -289,6 +332,7 @@ func in_ritrae() -> bool:
 
 ## Nasconde lei (per i checkpoint: si riparte con riemergi).
 func via() -> void:
+	_canta(true)
 	stato = Stato.VIA
 	lei.visible = false
 	if morbidezza:
@@ -319,6 +363,7 @@ func _process(delta: float) -> void:
 
 
 func _insegui() -> void:
+	_canta(true)
 	stato = Stato.INSEGUE
 	_t = 0.0
 	_getto = 0.0
@@ -339,7 +384,7 @@ func _morsi() -> void:
 
 
 func _su_getto(litri: float, _p: Vector3, _d: Vector3) -> void:
-	if stato != Stato.INSEGUE:
+	if stato != Stato.INSEGUE and stato != Stato.CARICA:
 		return
 	_getto += litri
 	if _getto >= getto_litri:
@@ -350,8 +395,24 @@ func _su_getto(litri: float, _p: Vector3, _d: Vector3) -> void:
 func _anima(nome: String, sfuma: float) -> void:
 	if _ap == null:
 		return
+	_ap.speed_scale = 1.0
 	_anim = StringName(nome)
 	_ap.play(StringName(ANIM + nome), sfuma)
+
+
+## Vero se c'è l'animazione [param nome] (carica e scatto arrivano da mascotte).
+func _ha(nome: String) -> bool:
+	return _ap != null and _ap.has_animation(StringName(ANIM + nome))
+
+
+## Il canto (l'addon audio): tace nella carica e nello scatto ([constant CANTO_ZITTO] su lei).
+func _canta(si: bool) -> void:
+	if lei == null:
+		return
+	if si:
+		lei.remove_meta(CANTO_ZITTO)
+	else:
+		lei.set_meta(CANTO_ZITTO, true)
 
 
 func _durata(nome: StringName) -> float:
