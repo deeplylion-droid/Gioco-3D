@@ -7,7 +7,7 @@
 [ext_resource type="Shader" path="res://shaders/creature/denti_squalo.gdshader" id="4_1coif"]
 [ext_resource type="Shader" path="res://shaders/creature/scia_squalo.gdshader" id="5_acamg"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_3rf2k"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1tw0x"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("1_dbwtr")
@@ -26,7 +26,7 @@ shader_parameter/foam_amount = 0.5
 shader_parameter/edge_foam = 0.5
 shader_parameter/reflection_color = Color(0.02, 0.02, 0.025, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2q4ti"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1coif"]
 resource_name = "campione"
 albedo_color = Color(0.89, 0.66, 0.06, 1)
 roughness_texture_channel = 1
@@ -36,7 +36,7 @@ uv1_scale = Vector3(0.5, 0.5, 0.5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_kj4t6"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_acamg"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("2_ptp36")
@@ -44,7 +44,7 @@ shader_parameter/rosso = null
 shader_parameter/bianco = null
 shader_parameter/raggio = null
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iuywl"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3rf2k"]
 resource_name = "campione"
 cull_mode = 2
 albedo_color = Color(0.82, 1, 0.84, 1)
@@ -58,7 +58,7 @@ emission_operator = 1
 normal_enabled = true
 metadata/_gltf_primary_texture_coord = 0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_6q48n"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2q4ti"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("3_1tw0x")
@@ -66,7 +66,7 @@ shader_parameter/carne = null
 shader_parameter/gola = null
 shader_parameter/lucido = null
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_fuxsn"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kj4t6"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("4_1coif")
@@ -74,14 +74,14 @@ shader_parameter/base_gengiva = null
 shader_parameter/avorio = null
 shader_parameter/punta = null
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_btucg"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iuywl"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("5_acamg")
 shader_parameter/forza = null
 shader_parameter/colore = null
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4qpgh"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6q48n"]
 resource_name = "campione"
 normal_enabled = true
 uv1_scale = Vector3(0.7, 0.7, 0.7)
@@ -89,13 +89,13 @@ uv1_triplanar = true
 uv1_world_triplanar = true
 texture_filter = 5
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pkisf"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fuxsn"]
 resource_name = "campione"
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1.6, 1.6, 1.6, 1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_qsk7o"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_btucg"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("3_ptp36")
@@ -104,4 +104,4 @@ shader_parameter/emissione = 1.5
 shader_parameter/opacita = 0.75
 
 [resource]
-metadata/materiali = Array[Material]([SubResource("ShaderMaterial_3rf2k"), SubResource("StandardMaterial3D_2q4ti"), SubResource("ShaderMaterial_kj4t6"), SubResource("StandardMaterial3D_iuywl"), SubResource("ShaderMaterial_6q48n"), SubResource("ShaderMaterial_fuxsn"), SubResource("ShaderMaterial_btucg"), SubResource("StandardMaterial3D_4qpgh"), SubResource("StandardMaterial3D_pkisf"), SubResource("ShaderMaterial_qsk7o")])
+metadata/materiali = Array[Material]([SubResource("ShaderMaterial_1tw0x"), SubResource("StandardMaterial3D_1coif"), SubResource("ShaderMaterial_acamg"), SubResource("StandardMaterial3D_3rf2k"), SubResource("ShaderMaterial_2q4ti"), SubResource("ShaderMaterial_kj4t6"), SubResource("ShaderMaterial_iuywl"), SubResource("StandardMaterial3D_6q48n"), SubResource("StandardMaterial3D_fuxsn"), SubResource("ShaderMaterial_btucg")])
