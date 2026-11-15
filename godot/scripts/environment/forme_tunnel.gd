@@ -23,6 +23,9 @@ const FONDO_APPRODO := 14.0
 ## Cella della griglia dell'asse (m).
 const CELLA := 2.0
 
+## Quanti triangoli per volta in [method prepara_a_pezzi], fra un controllo del tempo e l'altro.
+const PEZZO_TRIANGOLI := 16
+
 ## sala (instance id) -> [Array di [piani, AABB]]
 static var _cache := {}
 
@@ -92,7 +95,16 @@ static func prepara_a_pezzi(sala: SalaSottomarino, ms_per_fotogramma := 4.0) -> 
 	var id := sala.get_instance_id()
 	if _cache.has(id):
 		return (_cache[id] as Array).size()
+	# (il contesto in un fotogramma suo, e il primo pezzo in quello dopo: con la fine dei passi del tunnel e gli strati
+	# del riscaldamento, il fotogramma arrivava a 40 ms; collaudo di enigmi del 10 novembre)
+	var albero := sala.get_tree()
+	await albero.process_frame
+	if not is_instance_valid(sala) or not sala.is_inside_tree() or _cache.has(id):
+		return (_cache[id] as Array).size() if _cache.has(id) else 0
 	var ctx := _contesto(sala)
+	await albero.process_frame
+	if not is_instance_valid(sala) or not sala.is_inside_tree() or _cache.has(id):
+		return (_cache[id] as Array).size() if _cache.has(id) else 0
 	var t0 := Time.get_ticks_usec()
 	for c3 in _forme_collisione(sala):
 		# (dopo un fotogramma il tunnel può non esserci più: una morte nella torre ricarica la sala, e c3 è già liberato;
@@ -104,8 +116,11 @@ static func prepara_a_pezzi(sala: SalaSottomarino, ms_per_fotogramma := 4.0) -> 
 		while da < nt:
 			if not is_instance_valid(sala) or not sala.is_inside_tree():
 				return 0
-			var a := mini(da + 64, nt)
+			# (16 triangoli per volta: con 64 un pezzo solo superava i 4 ms, 6-14 ms nel fotogramma)
+			var a := mini(da + PEZZO_TRIANGOLI, nt)
+			var tp := Time.get_ticks_usec()
 			_forme_di(c3, ctx, da, a)
+			_segno("pezzo", tp)
 			da = a
 			if (Time.get_ticks_usec() - t0) / 1000.0 > ms_per_fotogramma:
 				await sala.get_tree().process_frame
@@ -192,7 +207,11 @@ static func _forme_di(c3: CollisionShape3D, ctx: Dictionary, da: int, a_: int) -
 					bbc = bbc.expand(q)
 				forme.append([pl, bbc])
 		return
-	var facce := (c3.shape as ConcavePolygonShape3D).get_faces()
+	# (le facce copiate una volta per forma, non a ogni pezzo: prepara_a_pezzi ne fa tanti, di 16 triangoli)
+	if int(ctx.get("facce_di", 0)) != c3.get_instance_id():
+		ctx["facce_di"] = c3.get_instance_id()
+		ctx["facce"] = (c3.shape as ConcavePolygonShape3D).get_faces()
+	var facce: PackedVector3Array = ctx["facce"]
 	for t in range(da, a_):
 		var a := xf * facce[t * 3]
 		var b := xf * facce[t * 3 + 1]
@@ -294,9 +313,13 @@ static func _unisci(ctx: Dictionary) -> void:
 		var pol: Array = gruppi[k]
 		var i := 0
 		while i < pol.size():
+			var tp := Time.get_ticks_usec()
 			i = _unisci_da(pol, i)
+			_segno("unisci (gruppo di %d)" % pol.size(), tp)
+		var tp := Time.get_ticks_usec()
 		for p in pol:
 			forme.append(_prisma_poligono(p[0], p[2]))
+		_segno("prismi (%d)" % pol.size(), tp)
 	(ctx["tri"] as Array).clear()
 
 
@@ -311,7 +334,9 @@ static func _unisci_a_pezzi(ctx: Dictionary, sala: SalaSottomarino, ms: float) -
 	var da := 0
 	while da < tri.size():
 		var a := mini(da + 256, tri.size())
+		var tp := Time.get_ticks_usec()
 		_raggruppa(ctx, gruppi, da, a)
+		_segno("raggruppa", tp)
 		da = a
 		if (Time.get_ticks_usec() - t0) / 1000.0 > ms:
 			await albero.process_frame
@@ -323,16 +348,27 @@ static func _unisci_a_pezzi(ctx: Dictionary, sala: SalaSottomarino, ms: float) -
 		var pol: Array = gruppi[k]
 		var i := 0
 		while i < pol.size():
+			var tp := Time.get_ticks_usec()
 			i = _unisci_da(pol, i)
+			_segno("unisci (gruppo di %d)" % pol.size(), tp)
 			if (Time.get_ticks_usec() - t0) / 1000.0 > ms:
 				await albero.process_frame
 				if not is_instance_valid(sala) or not sala.is_inside_tree():
 					return false
 				t0 = Time.get_ticks_usec()
+		var tp := Time.get_ticks_usec()
 		for p in pol:
 			forme.append(_prisma_poligono(p[0], p[2]))
+		_segno("prismi (%d)" % pol.size(), tp)
 	tri.clear()
 	return true
+
+
+## Con TORRE_TEMPI, un segno (RiscaldamentoShader.segno) per un pezzo delle forme sopra 3 ms, cominciato a [param da].
+static func _segno(cosa: String, da: int) -> void:
+	var ms := (Time.get_ticks_usec() - da) / 1000.0
+	if ms > 3.0 and OS.has_environment("TORRE_TEMPI"):
+		RiscaldamentoShader.segno("forme %s %.1f ms" % [cosa, ms])
 
 
 ## I triangoli da [param da] ad [param a] (escluso) di ctx["tri"] nei gruppi dello stesso piano.

@@ -23,6 +23,8 @@ func _run() -> void:
 	sala = SalaSottomarino.new()
 	get_tree().root.add_child(sala)
 	sala.costruisci()
+	# (le regole di prima della 0.4.0: la carica la prova test_tunnel_carica)
+	sala.carica_attiva = false
 	b = Node3D.new()
 	add_child(b)
 	sala.bersaglio = b
