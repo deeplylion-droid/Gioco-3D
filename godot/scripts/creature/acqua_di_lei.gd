@@ -84,7 +84,9 @@ const LUCE_POZZA_PORTATA := 3.5
 ## Quanto sta su a cercarti, se non sei nella portata (s).
 @export var tempo_su := 2.2
 ## Da su, quanto aspetta prima di prenderti (s): il tempo di uno spruzzo.
-@export var tempo_presa := 0.35
+@export var tempo_presa := 0.8
+## Nel modo MANO: da su, quanto aspetta la mano prima di prenderti alla caviglia (s).
+@export var tempo_presa_mano := 0.35
 ## Secondi di getto in faccia che la ricacciano sotto.
 @export var getto_per_respingere := 0.5
 ## Dopo una respinta lo specchio resta calmo per tanto (s).
@@ -249,11 +251,31 @@ func lei_in_vista_altrove() -> bool:
 			continue
 		var q := l.global_position + Vector3.UP * 1.5
 		var d := q.distance_to(p.global_position)
-		if d <= vista_dietro:
-			return true
-		if d <= vista_lontano and cam and cam.is_position_in_frustum(q):
+		if d > vista_lontano:
+			continue
+		if d > vista_dietro and not (cam and cam.is_position_in_frustum(q)):
+			continue
+		# (dietro i muri non la vede: una lei di un'altra stanza, come quella di un oblò dietro la parete, non conta)
+		if not _coperta(p, cam, q):
 			return true
 	return false
+
+
+## Vero se fra gli occhi del giocatore e [param q] c'è un muro (più di [constant VETRO_TOLLERANZA] m prima di lei:
+## il vetro di un oblò, o il bordo della vasca dove lei sta, non la coprono).
+const VETRO_TOLLERANZA := 2.5
+
+
+func _coperta(p: Node3D, cam: Camera3D, q: Vector3) -> bool:
+	var da := cam.global_position if cam else p.global_position + Vector3.UP * 1.6
+	var spazio := get_world_3d().direct_space_state if is_inside_tree() else null
+	if spazio == null:
+		return false
+	var qr := PhysicsRayQueryParameters3D.create(da, q)
+	if p is CollisionObject3D:
+		qr.exclude = [(p as CollisionObject3D).get_rid()]
+	var hit := spazio.intersect_ray(qr)
+	return not hit.is_empty() and (hit["position"] as Vector3).distance_to(da) < da.distance_to(q) - VETRO_TOLLERANZA
 
 
 ## Vero se un bambino (anche quelli visti di sfuggita) è visibile e dentro l'inquadratura.
@@ -403,7 +425,7 @@ func _physics_process(delta: float) -> void:
 			_girala_verso(p)
 			var vicino := p != null and is_instance_valid(p) \
 					and _in_pianta(p.global_position, _punto.global_position) <= (portata_mano if modo == Modo.MANO else portata)
-			if letale and not _dimostrativa and vicino and _t >= tempo_presa:
+			if letale and not _dimostrativa and vicino and _t >= (tempo_presa_mano if modo == Modo.MANO else tempo_presa):
 				_prendi()
 			elif _t >= tempo_su:
 				_scendi(false)

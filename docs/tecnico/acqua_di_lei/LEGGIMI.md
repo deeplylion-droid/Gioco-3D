@@ -58,7 +58,8 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | `portata` | `3` | in m |
 | `portata_mano` | `1,2` | nel modo MANO: in m dal marker |
 | `tempo_su` | `2,2` | in s |
-| `tempo_presa` | `0,35` | in s |
+| `tempo_presa` | `0,8` | in s: dalla fine del silenzio alla presa 1,6 + 0,8 = 2,4 s, il tempo per mezzo secondo di getto in faccia |
+| `tempo_presa_mano` | `0,35` | nel modo MANO: dalla fine del silenzio alla presa 2,2 + 0,35 = 2,55 s |
 | `getto_per_respingere` | `0,5` | in s |
 | `pausa_respinta` | `20` | in s |
 | `pausa_dopo` | `4` | in s |
@@ -77,7 +78,7 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 **Dov'è lei adesso** (`lei_altrove()`, usata da `puo_venire()` e da `fase_canto`). Lei è da un'altra parte se vale una di queste:
 - un altro specchio la usa (`AcquaDiLei.chi_la_usa()`);
 - una scena la sta usando: la sua lei è nel gruppo `AcquaDiLei.LEI_IN_SCENA` (`lei_in_scena`). LeiSbuca ce la mette mentre la scena della fossa è in corso; condotte e tunnel ce la mettono mentre lei insegue;
-- un'altra lei (MedusaAffacciata, gruppo `lei_affacciata`) è visibile e il giocatore la può vedere da dove sta: entro `vista_lontano` (40 m) e nell'inquadratura, oppure entro `vista_dietro` (12 m), perché girandosi la vedrebbe.
+- un'altra lei (MedusaAffacciata, gruppo `lei_affacciata`) è visibile e il giocatore la può vedere da dove sta: entro `vista_lontano` (40 m) e nell'inquadratura, oppure entro `vista_dietro` (12 m), perché girandosi la vedrebbe. In tutti e due i casi deve essere senza muri in mezzo: un raggio dagli occhi a lei non tocca niente prima di 2,5 m da lei (il vetro di un oblò e il bordo della sua vasca non la coprono). Per esempio, la zona dell'oblò di servizio copre la stanza delle pozze, ma lei dietro quel vetro, dall'altra parte dei muri, non conta.
 
 Perché così: il giocatore non ne vede mai due insieme, e una lei lontana, in un'altra zona o dietro i muri (la fossa lasciata visibile, un oblò pronto dietro il vetro) non ferma la regola dove si trova lui. Quando lei è da un'altra parte, o il giocatore è fuori dalla zona, `fase_canto` dà `ferma`: il canto lontano di quello specchio tace (lei non è in due posti).
 

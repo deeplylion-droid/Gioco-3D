@@ -98,6 +98,25 @@ func _run() -> void:
 		sp.queue_free()
 		await _fisica(2)
 
+	print("1b. Dalle pozze, la lei dell'oblò di servizio dietro i muri")
+	await _sta(pozze + Vector3(0, 0.05, 0))
+	var sp3 := _specchio(p.global_position)
+	var oblo := ris.get_node(^"ObloServizio") as Node3D
+	var finta := Node3D.new()      # (come la lei dell'oblò, pronta dietro il vetro)
+	level.add_child(finta)
+	finta.global_position = oblo.global_transform * Vector3(0, -1.5, -1.0)
+	finta.add_to_group(MedusaAffacciata.GRUPPO_LEI)
+	p.look_at_point(finta.global_position + Vector3.UP * 1.5)
+	await _fisica(3)
+	check(sp3.puo_venire(), "guardando verso l'oblò di servizio, dietro i muri a %.0f m: non conta, lei può venire nelle pozze" % p.global_position.distance_to(finta.global_position))
+	finta.global_position = p.global_position - p.camera.global_basis.z * 6.0 + Vector3.DOWN * 1.5
+	finta.global_position.y = p.global_position.y
+	await _fisica(3)
+	check(not sp3.puo_venire(), "una lei davanti, nella stanza a 6 m: conta")
+	finta.queue_free()
+	sp3.queue_free()
+	await _fisica(2)
+
 	print("2. La serranda e il magazzino")
 	await _sta(Vector3(-15.0, 0.05, 16.5), 90)
 	check(buio.stato == LeiSalaAlBuio.Stato.GIRO and AcquaDiLei.chi_la_usa() == buio.acqua and buio.acqua.in_giro(),
