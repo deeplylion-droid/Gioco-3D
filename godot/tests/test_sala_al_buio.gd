@@ -98,6 +98,26 @@ func _run() -> void:
 			"al buio, lontano dalla fossa, la luce gira: lei è lì")
 	check(not lei_sbuca.medusa.visible and lei_sbuca.fase == LeiSbuca.Fase.ATTESA, "e alla fossa non c'è ancora")
 
+	print("1b. La luce del giro è accesa solo nell'acqua vera")
+	var luce := buio.acqua.find_child("LuceSottacqua", true, false) as OmniLight3D
+	var fuori := 0
+	var accesa := 0
+	var dove_fuori := ""
+	for i in 60 * 40:
+		p.teleport(Vector3(-15.0, 0.05, 16.0))
+		await get_tree().physics_frame
+		if luce == null or not luce.is_visible_in_tree() or acqua.fase != AcquaDiLei.Fase.LONTANA:
+			continue
+		if luce.light_energy > 0.05:
+			accesa += 1
+			if not acqua.in_acqua(luce.global_position):
+				fuori += 1
+				dove_fuori = str(luce.global_position.snapped(Vector3.ONE * 0.01))
+	check(luce != null and accesa > 600 and fuori == 0,
+			"nel giro (40 s) la luce è accesa %d fotogrammi, mai fuori da un volume d'acqua (%d fuori%s)" % [accesa, fuori, ", per esempio " + dove_fuori if fuori else ""])
+	p.teleport(bordo)
+	await _fisica(5)
+
 	print("2. Sul bordo, quando la luce passa lì, esce e prende")
 	var uscita := false
 	var presa := false
@@ -154,6 +174,26 @@ func _run() -> void:
 	check(lei_sbuca.medusa.visible and (lei_sbuca.fase == LeiSbuca.Fase.GUARDA or lei_sbuca.fase == LeiSbuca.Fase.SBUCA),
 			"e lei è alla fossa, come oggi")
 	check(AcquaDiLei.chi_la_usa() == null, "il motore l'ha lasciata")
+
+	print("5. Ripartendo dopo la fossa (CheckpointSpiaggiaBuio), con lei già andata via")
+	GameState.respawn()
+	for i in 60 * 30:
+		await get_tree().process_frame
+		if not GameState.is_dying and GameState.player and is_instance_valid(GameState.player) and get_tree().current_scene != level:
+			break
+	await _fisica(30)
+	level = get_tree().current_scene
+	buio = level.find_child("LeiSalaAlBuio", true, false) as LeiSalaAlBuio
+	lei_sbuca = level.find_child("LeiSbuca", true, false) as LeiSbuca
+	p = GameState.player as Player
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	lei_sbuca.call(&"_finita")      # (come la restituisce il checkpoint dopo la fossa: FINITA)
+	var spiaggia := (level.find_child("CheckpointSpiaggiaBuio", true, false) as Checkpoint).spawn_point.global_position
+	for i in 120:
+		p.teleport(spiaggia + Vector3(0, 0.05, 0))
+		await get_tree().physics_frame
+	check(buio.stato == LeiSalaAlBuio.Stato.FINITO and not buio.acqua.in_giro() and not buio.acqua.abilitata \
+			and AcquaDiLei.chi_la_usa() == null, "il giro non riparte: la sala al buio è finita e spenta (stato %d)" % buio.stato)
 	_fine()
 
 

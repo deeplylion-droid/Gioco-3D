@@ -73,12 +73,12 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 - le pompe sono riaccese (`GameState.luci == BLACKOUT`) e il giocatore non sta morendo;
 - il giocatore è nella zona dello specchio (`giocatore_nella_zona()`): entro `zona_raggio` (25 m) in pianta da un punto d'uscita e a non più di `zona_dislivello` (3 m) dal pelo. Fuori dalla zona lei non viene e, se la luce gira o aspetta lì, se ne va subito (`lascia()`): nessuno specchio la tiene da lontano;
 - lei non è da un'altra parte (`lei_altrove()`, vedi sotto);
-- nessun bambino è nell'inquadratura (gruppo `bambini` e `BambinoSfuggita`).
+- nessun bambino è in vista (gruppo `bambini` e `BambinoSfuggita`): nell'inquadratura, entro `vista_lontano` (40 m) e senza muri in mezzo, come per l'altra lei.
 
 **Dov'è lei adesso** (`lei_altrove()`, usata da `puo_venire()` e da `fase_canto`). Lei è da un'altra parte se vale una di queste:
 - un altro specchio la usa (`AcquaDiLei.chi_la_usa()`);
 - una scena la sta usando: la sua lei è nel gruppo `AcquaDiLei.LEI_IN_SCENA` (`lei_in_scena`). LeiSbuca ce la mette mentre la scena della fossa è in corso; condotte e tunnel ce la mettono mentre lei insegue;
-- un'altra lei (MedusaAffacciata, gruppo `lei_affacciata`) è visibile e il giocatore la può vedere da dove sta: entro `vista_lontano` (40 m) e nell'inquadratura, oppure entro `vista_dietro` (12 m), perché girandosi la vedrebbe.
+- un'altra lei (MedusaAffacciata, gruppo `lei_affacciata`) è visibile e il giocatore la può vedere da dove sta: entro `vista_lontano` (40 m) e nell'inquadratura, oppure entro `vista_dietro` (12 m), perché girandosi la vedrebbe. In tutti e due i casi deve essere senza muri in mezzo: un raggio dagli occhi a lei non tocca niente prima di 2,5 m da lei (il vetro di un oblò e il bordo della sua vasca non la coprono). Per esempio, la zona dell'oblò di servizio copre la stanza delle pozze, ma lei dietro quel vetro, dall'altra parte dei muri, non conta.
 
 Perché così: il giocatore non ne vede mai due insieme, e una lei lontana, in un'altra zona o dietro i muri (la fossa lasciata visibile, un oblò pronto dietro il vetro) non ferma la regola dove si trova lui. Quando lei è da un'altra parte, o il giocatore è fuori dalla zona, `fase_canto` dà `ferma`: il canto lontano di quello specchio tace (lei non è in due posti).
 
@@ -103,6 +103,12 @@ Ogni istanza sta nel gruppo `lei_nell_acqua` (`AcquaDiLei.GRUPPO`) e dà:
 - `punto_luce`: dove sta la luce rosa, nel mondo;
 - `fase`: in `SPEGNE` il canto sfuma, nel `SILENZIO` tace; in `ESCE`, `SU` e `PRESA` restano i suoni di lei;
 - `fase_canto` (StringName), già pronta per il canto: `ferma`, `lontana`, `arriva`, `spegne`, `silenzio`, `fuori`, `respinta`, `va_via`. «`LONTANA` + `in_giro()`» vuol dire che la luce passa.
+
+## La luce solo nell'acqua vera
+
+Con `acque` (i WaterTank dove passa la luce) la luce rosa è accesa solo dentro un volume d'acqua (`in_acqua(punto)`): arrivando al bordo si spegne in 0,25 s, guardando 0,45 m avanti; fra una vasca e l'altra viaggia spenta e si riaccende dentro la vasca dopo. Vale per il giro, il percorso, la luce che arriva e quella che si spegne alla fine. La sala al buio ci mette la vasca grande e le vasche dei bimbi. Senza `acque` la luce resta sempre accesa, come prima.
+
+Mentre la luce si spegne alla fine di un percorso, o mandata via, `fase_canto` dà `spegne`: il canto muore in 1 s, come prima di un'uscita.
 
 ## Lei e la luce
 

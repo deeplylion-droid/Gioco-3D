@@ -70,6 +70,9 @@ const LUCE_POZZA_PORTATA := 3.5
 @export var profondita := 5.0
 ## Da dove arriva la luce rosa (se manca: 8 m dietro il punto d'uscita, dalla parte opposta al giocatore).
 @export var partenza_luce: Node3D
+## I volumi d'acqua vera (WaterTank) dove passa la luce rosa: fuori da questi (fra una vasca e l'altra, sotto un
+## pavimento) la luce è spenta, si spegne arrivando al bordo e si riaccende dentro la vasca dopo. Vuoto: sempre accesa.
+@export var acque: Array[Node3D] = []
 @export_group("Tempi e distanze")
 ## L'avviso intero (s): la luce che arriva, il canto che si spegne e il silenzio.
 @export var avviso := 3.5
@@ -142,6 +145,9 @@ var fase_canto: StringName:
 		# lei è da un'altra parte, o il giocatore è lontano da qui: niente canto da questo specchio
 		if _proprietaria != self and (not is_inside_tree() or lei_altrove() or not giocatore_nella_zona()):
 			return &"ferma"
+		# (la luce del giro che si spegne alla fine del percorso, o mandata via: il canto muore come prima di un'uscita)
+		if _fine_giro and _proprietaria == self:
+			return &"spegne"
 		return &"arriva" if in_giro() and vicinanza > 0.2 else &"lontana"
 
 var _t := 0.0
@@ -251,11 +257,31 @@ func lei_in_vista_altrove() -> bool:
 			continue
 		var q := l.global_position + Vector3.UP * 1.5
 		var d := q.distance_to(p.global_position)
-		if d <= vista_dietro:
-			return true
-		if d <= vista_lontano and cam and cam.is_position_in_frustum(q):
+		if d > vista_lontano:
+			continue
+		if d > vista_dietro and not (cam and cam.is_position_in_frustum(q)):
+			continue
+		# (dietro i muri non la vede: una lei di un'altra stanza, come quella di un oblò dietro la parete, non conta)
+		if not _coperta(p, cam, q):
 			return true
 	return false
+
+
+## Vero se fra gli occhi del giocatore e [param q] c'è un muro (più di [constant VETRO_TOLLERANZA] m prima di lei:
+## il vetro di un oblò, o il bordo della vasca dove lei sta, non la coprono).
+const VETRO_TOLLERANZA := 2.5
+
+
+func _coperta(p: Node3D, cam: Camera3D, q: Vector3) -> bool:
+	var da := cam.global_position if cam else p.global_position + Vector3.UP * 1.6
+	var spazio := get_world_3d().direct_space_state if is_inside_tree() else null
+	if spazio == null:
+		return false
+	var qr := PhysicsRayQueryParameters3D.create(da, q)
+	if p is CollisionObject3D:
+		qr.exclude = [(p as CollisionObject3D).get_rid()]
+	var hit := spazio.intersect_ray(qr)
+	return not hit.is_empty() and (hit["position"] as Vector3).distance_to(da) < da.distance_to(q) - VETRO_TOLLERANZA
 
 
 ## Vero se un bambino (anche quelli visti di sfuggita) è visibile e dentro l'inquadratura.
@@ -267,9 +293,16 @@ func bambino_in_vista() -> bool:
 	for n in get_tree().get_nodes_in_group(&"persist"):
 		if n is BambinoSfuggita:
 			lista.append(n)
+	var p := GameState.player
 	for n in lista:
 		var b := n as Node3D
-		if b and b.is_visible_in_tree() and cam.is_position_in_frustum(b.global_position + Vector3.UP * 0.8):
+		if b == null or not b.is_visible_in_tree():
+			continue
+		var q := b.global_position + Vector3.UP * 0.8
+		# (come per l'altra lei: lontano, o dietro i muri, non lo vede)
+		if cam.global_position.distance_to(q) > vista_lontano or not cam.is_position_in_frustum(q):
+			continue
+		if p == null or not is_instance_valid(p) or not _coperta(p, cam, q):
 			return true
 	return false
 
@@ -364,8 +397,10 @@ func _physics_process(delta: float) -> void:
 			var dur := maxf(avviso - spegnimento - silenzio, 0.01)
 			var k := clampf(_t / dur, 0.0, 1.0)
 			var e := k * k * (3.0 - 2.0 * k)
+			var prima := _luce.global_position
 			_luce.global_position = _da.lerp(_sotto(_punto), e)
-			_luce.light_energy = maxf(_luce.light_energy, LUCE_SOTTO * clampf(k * 3.0, 0.0, 1.0))
+			_luce.light_energy = minf(maxf(_luce.light_energy, LUCE_SOTTO * clampf(k * 3.0, 0.0, 1.0)),
+					_energia_in_acqua(LUCE_SOTTO, delta, _luce.global_position - prima))
 			vicinanza = e * 0.9
 			punto_luce = _luce.global_position
 			if _t >= dur:
@@ -555,7 +590,7 @@ func _muovi_giro(delta: float, p: Node3D) -> void:
 		_fine_t += delta
 		var k := clampf(_fine_t / _fine_durata, 0.0, 1.0)
 		_luce.global_position = _fine_da.lerp(_fine_a, k * k * (3.0 - 2.0 * k))
-		_luce.light_energy = LUCE_SOTTO * (1.0 - k)
+		_luce.light_energy = minf(LUCE_SOTTO * (1.0 - k), _energia_in_acqua(LUCE_SOTTO, delta))
 		punto_luce = _luce.global_position
 		if k >= 1.0:
 			_fine_giro = false
@@ -564,7 +599,7 @@ func _muovi_giro(delta: float, p: Node3D) -> void:
 				_proprietaria = null
 			percorso_finito.emit()
 		return
-	_luce.light_energy = minf(_luce.light_energy + LUCE_SOTTO * delta, LUCE_SOTTO)
+	_luce.light_energy = _energia_in_acqua(LUCE_SOTTO, delta)
 	if _giro.size() == 1:
 		_luce.global_position = _giro[0]
 		punto_luce = _luce.global_position
@@ -609,6 +644,34 @@ func _muovi_giro(delta: float, p: Node3D) -> void:
 	# per il canto: più vicina quanto più la luce è vicina al giocatore (al più 0,8: fuori è 1)
 	if p and is_instance_valid(p):
 		vicinanza = clampf(1.0 - _in_pianta(p.global_position, punto_luce) / 14.0, 0.0, 1.0) * 0.8
+
+
+## Vero se [param q] è dentro un volume d'acqua vera di [member acque] (lontano 5 cm dalle pareti e dal fondo e sotto
+## il pelo); senza [member acque], sempre.
+func in_acqua(q: Vector3) -> bool:
+	if acque.is_empty():
+		return true
+	for a in acque:
+		var t := a as WaterTank
+		if t == null or not is_instance_valid(t):
+			continue
+		var l := t.to_local(q)
+		var m := t.inner_size * 0.5
+		if absf(l.x) <= m.x - 0.05 and absf(l.z) <= m.z - 0.05 \
+				and q.y >= t.get_floor_global_y() + 0.05 and q.y <= t.get_surface_global_y() - 0.05:
+			return true
+	return false
+
+
+## L'energia della luce verso [param piena] dentro l'acqua e verso 0 fuori, in 0,25 s; guarda anche 0,45 m più avanti
+## (dove va la luce), così si spegne arrivando al bordo e non dopo averlo passato.
+func _energia_in_acqua(piena: float, delta: float, mossa := Vector3.ZERO) -> float:
+	var q := _luce.global_position
+	var avanti := mossa
+	if avanti.length_squared() < 1e-8 and not _giro.is_empty() and _giro_i < _giro.size():
+		avanti = _giro[_giro_i] - q
+	var dentro := in_acqua(q) and (avanti.length_squared() < 1e-8 or in_acqua(q + avanti.normalized() * 0.45))
+	return move_toward(_luce.light_energy, piena if dentro else 0.0, piena * delta / 0.25)
 
 
 ## L'indice del punto del giro più vicino a [param q].

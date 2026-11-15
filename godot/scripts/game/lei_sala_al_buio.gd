@@ -67,6 +67,12 @@ func _ready() -> void:
 	acqua.punti_uscita = _punti
 	acqua.profondita = 5.0
 	acqua.pelo = vasca_grande.get_surface_global_y()
+	# (la luce passa solo nell'acqua vera: fra una vasca e l'altra è spenta)
+	var volumi: Array[Node3D] = [vasca_grande]
+	for v in vasche_bimbi:
+		if v:
+			volumi.append(v)
+	acqua.acque = volumi
 	acqua.arriva.connect(func(_dove: Vector3): prepara_uscita(acqua.get(&"_punto"), 1.6))
 	# la fossa aspetta il giro (anche se la sala si carica prima del blackout: ripartendo da più avanti o con le luci
 	# del lampo lei non deve affacciarsi alla fossa da sola, al blackout, lontano dal giocatore)
@@ -87,6 +93,12 @@ func _physics_process(_delta: float) -> void:
 	var in_sala := zona.has_point(p.global_position)
 	match stato:
 		Stato.ATTESA:
+			# la fossa c'è già stata (ripartendo da un checkpoint dopo, o con Continua): lei se n'è andata, niente giro
+			if lei_sbuca and (lei_sbuca.fase == LeiSbuca.Fase.FUGA or lei_sbuca.fase == LeiSbuca.Fase.FINITA):
+				stato = Stato.FINITO
+				acqua.lascia()
+				acqua.abilitata = false
+				return
 			if not in_sala:
 				return
 			if vicino_fossa:

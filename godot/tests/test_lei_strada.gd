@@ -98,6 +98,51 @@ func _run() -> void:
 		sp.queue_free()
 		await _fisica(2)
 
+	print("1c. Un bambino lontano, dietro i muri")
+	var bimbo := ris.find_child("BambinoCorridoioFiume", true, false) as Node3D
+	await _sta(pompe + Vector3(0, 0.05, 0), 10)
+	var sp4 := _specchio(p.global_position)
+	if bimbo:
+		var vis := bimbo.visible
+		bimbo.visible = true
+		p.look_at_point(bimbo.global_position + Vector3.UP * 0.8)
+		await _fisica(3)
+		var cam := p.camera
+		check(cam.is_position_in_frustum(bimbo.global_position + Vector3.UP * 0.8) and sp4.puo_venire() and not sp4.bambino_in_vista(),
+				"dalla sala pompe il bambino del corridoio del fiume (a %.0f m, dietro i muri) è nell'inquadratura ma non conta" % p.global_position.distance_to(bimbo.global_position))
+		bimbo.visible = vis
+	else:
+		check(false, "c'è il bambino del corridoio del fiume")
+	var bimbo2 := Node3D.new()
+	bimbo2.add_to_group(&"bambini")
+	level.add_child(bimbo2)
+	bimbo2.global_position = p.global_position - p.camera.global_basis.z * 5.0
+	bimbo2.global_position.y = p.global_position.y
+	await _fisica(3)
+	check(sp4.bambino_in_vista() and not sp4.puo_venire(), "un bambino davanti, a 5 m nella stessa stanza: conta")
+	bimbo2.queue_free()
+	sp4.queue_free()
+	await _fisica(2)
+
+	print("1b. Dalle pozze, la lei dell'oblò di servizio dietro i muri")
+	await _sta(pozze + Vector3(0, 0.05, 0))
+	var sp3 := _specchio(p.global_position)
+	var oblo := ris.get_node(^"ObloServizio") as Node3D
+	var finta := Node3D.new()      # (come la lei dell'oblò, pronta dietro il vetro)
+	level.add_child(finta)
+	finta.global_position = oblo.global_transform * Vector3(0, -1.5, -1.0)
+	finta.add_to_group(MedusaAffacciata.GRUPPO_LEI)
+	p.look_at_point(finta.global_position + Vector3.UP * 1.5)
+	await _fisica(3)
+	check(sp3.puo_venire(), "guardando verso l'oblò di servizio, dietro i muri a %.0f m: non conta, lei può venire nelle pozze" % p.global_position.distance_to(finta.global_position))
+	finta.global_position = p.global_position - p.camera.global_basis.z * 6.0 + Vector3.DOWN * 1.5
+	finta.global_position.y = p.global_position.y
+	await _fisica(3)
+	check(not sp3.puo_venire(), "una lei davanti, nella stanza a 6 m: conta")
+	finta.queue_free()
+	sp3.queue_free()
+	await _fisica(2)
+
 	print("2. La serranda e il magazzino")
 	await _sta(Vector3(-15.0, 0.05, 16.5), 90)
 	check(buio.stato == LeiSalaAlBuio.Stato.GIRO and AcquaDiLei.chi_la_usa() == buio.acqua and buio.acqua.in_giro(),
