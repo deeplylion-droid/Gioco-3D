@@ -65,8 +65,12 @@ var avviate := 0
 var risvegliata := false
 ## Il risveglio è finito: paratie giù, porta sbloccata.
 var finito := false
-## La luce di lei è passata nella vasca di raccolta (la lezione), o non poteva farlo.
+## La luce di lei è partita davvero nella vasca di raccolta (la lezione). Finché non parte si riprova (la lezione
+## insegna la regola: c'è sempre).
 var lezione_fatta := false
+## Ogni quanto si riprova la lezione se la luce non può passare (s), finché non parte.
+const RIPROVA_LEZIONE := 0.5
+var _avvisato := false
 ## Dalla leva finché la luce della lezione non si è spenta: lei è qui. Chi la vuole altrove (LeiSalaAlBuio) aspetta
 ## (il nodo è nel gruppo [constant GRUPPO]).
 var lezione_in_corso := false
@@ -280,6 +284,9 @@ func _prepara_lezione() -> void:
 	acqua_lezione.name = "AcquaDiLeiLezione"
 	acqua_lezione.set(&"letale", false)
 	acqua_lezione.set(&"automatica", false)
+	# (spenta finché non parte la lezione e di nuovo dopo: il suo canto arriva con la luce e se ne va con lei,
+	# poi la sala pompe tace; decisione del coordinatore del 15 novembre)
+	acqua_lezione.set(&"abilitata", false)
 	var centro := Marker3D.new()
 	centro.name = "Centro"
 	acqua_lezione.add_child(centro)
@@ -320,27 +327,36 @@ func percorso_lezione() -> PackedVector3Array:
 
 
 func _lezione() -> void:
-	if lezione_fatta or acqua_lezione == null or not is_instance_valid(acqua_lezione):
-		_fine_lezione()
+	if lezione_fatta or acqua_lezione == null or not is_instance_valid(acqua_lezione) or not is_inside_tree():
+		if lezione_fatta or acqua_lezione == null:
+			_fine_lezione()
 		return
-	lezione_fatta = true
 	if not acqua_lezione.has_method(&"percorri"):
 		push_warning("RisveglioSalaPompe: AcquaDiLei senza percorri(): niente lezione")
 		_fine_lezione()
 		return
+	# accesa solo per partire; se il motore dice di no (lei altrove, un bambino in vista, il giocatore fuori dalla
+	# sala) si spegne di nuovo e si riprova fra [constant RIPROVA_LEZIONE] s, senza rinunciare
+	acqua_lezione.set(&"abilitata", true)
 	var punti := percorso_lezione()
 	var lunghezza := 0.0
 	for i in range(1, punti.size()):
 		lunghezza += punti[i].distance_to(punti[i - 1])
 	var ok := bool(acqua_lezione.call(&"percorri", punti, lunghezza / maxf(durata_lezione, 0.1), null, spegni_lezione))
 	if not ok:
-		push_warning("RisveglioSalaPompe: la luce di lei non è potuta passare nella vasca di raccolta")
-		_fine_lezione()
+		acqua_lezione.set(&"abilitata", false)
+		if not _avvisato:
+			_avvisato = true
+			print("RisveglioSalaPompe: la luce di lei non può ancora passare nella vasca di raccolta, si riprova")
+		get_tree().create_timer(RIPROVA_LEZIONE, false).timeout.connect(_lezione)
 		return
+	lezione_fatta = true
 	acqua_lezione.connect(&"percorso_finito", _fine_lezione, CONNECT_ONE_SHOT)
 
 
 func _fine_lezione() -> void:
+	if acqua_lezione and is_instance_valid(acqua_lezione):
+		acqua_lezione.set(&"abilitata", false)
 	if lezione_in_corso:
 		lezione_in_corso = false
 		lezione_finita.emit()
