@@ -101,6 +101,15 @@ const LUCE_POZZA_PORTATA := 3.5
 @export var automatica := false
 @export var intervallo := Vector2(14.0, 26.0)
 @export var distanza_richiamo := 10.0
+## La zona di questo specchio: il giocatore è qui se è entro [member zona_raggio] m (in pianta) da un punto d'uscita
+## e a non più di [member zona_dislivello] m sopra o sotto il pelo. Fuori dalla zona lei non viene e, se è qui
+## (la luce che gira o aspetta), se ne va subito: nessuno specchio la tiene da lontano.
+@export var zona_raggio := 25.0
+@export var zona_dislivello := 3.0
+## Un'altra lei conta «in vista» se è entro tanto dal giocatore (m) e nell'inquadratura, o comunque più vicina di
+## [member vista_dietro] (girandosi la vedrebbe).
+@export var vista_lontano := 40.0
+@export var vista_dietro := 12.0
 
 var fase := Fase.LONTANA
 ## Quanto è vicina (0 lontana, 1 sotto il punto o fuori): per il canto.
@@ -187,16 +196,39 @@ func puo_venire() -> bool:
 		return false
 	if _proprietaria != null and is_instance_valid(_proprietaria) and _proprietaria != self:
 		return false
+	if not giocatore_nella_zona():
+		return false
 	return not lei_in_vista_altrove() and not bambino_in_vista()
 
 
-## Vero se un'altra lei (oblò, fossa, condotte, tunnel) è in scena adesso.
-func lei_in_vista_altrove() -> bool:
-	var scena := get_tree().current_scene
-	if scena == null:
+## Vero se il giocatore è nella zona di questo specchio (vedi [member zona_raggio]).
+func giocatore_nella_zona() -> bool:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p):
 		return false
-	for n in scena.find_children("*", "MedusaAffacciata", true, false):
-		if n != _lei and (n as Node3D).is_visible_in_tree():
+	for q in punti_uscita:
+		if q and _in_pianta(q.global_position, p.global_position) <= zona_raggio \
+				and absf(p.global_position.y - pelo_a(q)) <= zona_dislivello:
+			return true
+	return false
+
+
+## Vero se un'altra lei (oblò, fossa, condotte, tunnel) è visibile e il giocatore la può vedere da dove sta: vicina
+## e nell'inquadratura, o vicinissima (alle spalle). Una lei lontana o dietro i muri di un'altra zona non conta.
+func lei_in_vista_altrove() -> bool:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p):
+		return false
+	var cam := get_viewport().get_camera_3d()
+	for n in get_tree().get_nodes_in_group(MedusaAffacciata.GRUPPO_LEI):
+		var l := n as Node3D
+		if l == null or l == _lei or not l.is_visible_in_tree():
+			continue
+		var q := l.global_position + Vector3.UP * 1.5
+		var d := q.distance_to(p.global_position)
+		if d <= vista_dietro:
+			return true
+		if d <= vista_lontano and cam and cam.is_position_in_frustum(q):
 			return true
 	return false
 
@@ -290,6 +322,9 @@ func _sotto(q: Node3D) -> Vector3:
 func _physics_process(delta: float) -> void:
 	_t += delta
 	var p := GameState.player
+	# nessuno specchio tiene lei da lontano: col giocatore fuori dalla zona se ne va (non mentre è fuori dall'acqua)
+	if _proprietaria == self and not giocatore_nella_zona():
+		lascia()
 	match fase:
 		Fase.LONTANA:
 			vicinanza = 0.0
@@ -397,19 +432,41 @@ func _annulla() -> void:
 func gira(punti: PackedVector3Array, velocita := 1.6) -> bool:
 	if punti.size() < 2 or fase != Fase.LONTANA or not puo_venire():
 		return false
-	_proprietaria = self
 	_assicura_lei()
+	# (la luce già accesa qui, ferma o in giro: riparte da dove sta, senza spegnersi)
+	var gia := _proprietaria == self and _luce.visible and _luce.get_parent() == self and _luce.light_energy > 0.05
+	_proprietaria = self
 	_giro = punti
 	velocita_giro = velocita
 	_fine_giro = false
 	_luce.reparent(self, false)
-	_luce.global_position = punti[0]
+	if not gia or _luce.global_position.distance_to(punti[0]) > 0.3:
+		_luce.global_position = punti[0]
 	_giro_i = 1
 	_luce.omni_range = LUCE_SOTTO_PORTATA
 	_luce.shadow_enabled = false
-	_luce.light_energy = 0.0
+	if not gia:
+		_luce.light_energy = 0.0
 	_luce.visible = true
+	punto_luce = _luce.global_position
 	return true
+
+
+## Lei se ne va subito da qui (la luce si spegne, il giro finisce): per il giocatore uscito dalla zona.
+func lascia() -> void:
+	if fase == Fase.ARRIVA or fase == Fase.SPEGNE or fase == Fase.SILENZIO:
+		_cambia(Fase.LONTANA)
+	elif fase != Fase.LONTANA and fase != Fase.CALMA:
+		return
+	_giro = PackedVector3Array()
+	_fine_giro = false
+	_una_volta = false
+	_alla_fine = null
+	if _luce and is_instance_valid(_luce) and _luce.get_parent() == self:
+		_luce.visible = false
+		_luce.light_energy = 0.0
+	if _proprietaria == self:
+		_proprietaria = null
 
 
 ## Il giro finisce: la luce va a [param verso] (sott'acqua), si spegne in [param secondi] e lei se ne va da qui.
@@ -456,6 +513,10 @@ func punto_vicino_alla_luce(raggio := 2.0) -> Node3D:
 
 
 func _muovi_giro(delta: float, p: Node3D) -> void:
+	if _luce == null or not is_instance_valid(_luce):
+		_giro = PackedVector3Array()
+		_fine_giro = false
+		return
 	if _luce.get_parent() != self:
 		# (era su di lei: riparte da dove è scesa)
 		_luce.reparent(self, false)
@@ -537,6 +598,7 @@ func _vicino_del_giro(q: Vector3) -> int:
 # --- Fuori dall'acqua --------------------------------------------------------------------------------------------
 
 func _esci() -> void:
+	_assicura_lei()
 	if _dimostrativa:
 		_dimostrate[str(get_path())] = true
 	_lei.reparent(self, false)
@@ -665,7 +727,7 @@ func manda_via(secondi := 1.0) -> void:
 	var sotto := fase == Fase.ARRIVA or fase == Fase.SPEGNE or fase == Fase.SILENZIO
 	if not sotto and _giro.is_empty():
 		return
-	if _luce == null or not _luce.visible:
+	if _luce == null or not is_instance_valid(_luce) or not _luce.visible:
 		return
 	var via := Vector3.FORWARD
 	var p := GameState.player
@@ -698,39 +760,56 @@ func respingi() -> void:
 ## Lei (MedusaAffacciata con le animazioni dell'inseguimento), la luce rosa e il viso da colpire: creati una volta,
 ## nascosti, sotto la prima istanza che li chiede.
 func _assicura_lei() -> void:
-	if _lei and is_instance_valid(_lei):
-		return
-	_lei = MedusaAffacciata.new()
-	_lei.name = "LeiNellAcqua"
-	_lei.model = LeiOblo.MODELLO
-	_lei.bell_material = LeiOblo.CAMPANA
-	_lei.material_map = LeiOblo.MATERIALI.duplicate()
-	_lei.animazioni_inseguimento = true
-	_lei.animazione = &"inseguimento/incombe"
-	_lei.visible = false
-	add_child(_lei)
-	_luce = OmniLight3D.new()
-	_luce.name = "LuceSottacqua"
-	_luce.light_color = ROSA
-	_luce.light_energy = 0.0
-	_luce.omni_range = LUCE_SOTTO_PORTATA
-	_luce.light_volumetric_fog_energy = 3.0
-	_luce.shadow_enabled = false
-	_luce.visible = false
-	_luce.set_meta(&"risveglio_ignora", true)
-	add_child(_luce)
-	_viso = WaterHitbox.new()
-	_viso.name = "Viso"
-	var cs := CollisionShape3D.new()
-	var sf := SphereShape3D.new()
-	sf.radius = 0.9
-	cs.shape = sf
-	_viso.add_child(cs)
-	_viso.position = Vector3(0, 3.4, 0.6)
-	_lei.add_child(_viso)
-	_viso.water_hit.connect(func(litri: float, pt: Vector3, d: Vector3):
-		if _proprietaria and is_instance_valid(_proprietaria):
-			_proprietaria._su_getto(litri, pt, d))
+	# (ognuno dei tre si controlla da solo: lei e la luce possono stare sotto specchi diversi, e uno specchio liberato
+	# si porta via quello che ha sotto; si ricrea solo quello che manca, mai una seconda luce)
+	if not (_lei and is_instance_valid(_lei)):
+		_lei = MedusaAffacciata.new()
+		_lei.name = "LeiNellAcqua"
+		_lei.model = LeiOblo.MODELLO
+		_lei.bell_material = LeiOblo.CAMPANA
+		_lei.material_map = LeiOblo.MATERIALI.duplicate()
+		_lei.animazioni_inseguimento = true
+		_lei.animazione = &"inseguimento/incombe"
+		_lei.visible = false
+		add_child(_lei)
+		_viso = null
+	if not (_luce and is_instance_valid(_luce)):
+		_luce = OmniLight3D.new()
+		_luce.name = "LuceSottacqua"
+		_luce.light_color = ROSA
+		_luce.light_energy = 0.0
+		_luce.omni_range = LUCE_SOTTO_PORTATA
+		_luce.light_volumetric_fog_energy = 3.0
+		_luce.shadow_enabled = false
+		_luce.visible = false
+		_luce.set_meta(&"risveglio_ignora", true)
+		add_child(_luce)
+	if not (_viso and is_instance_valid(_viso)):
+		_viso = WaterHitbox.new()
+		_viso.name = "Viso"
+		var cs := CollisionShape3D.new()
+		var sf := SphereShape3D.new()
+		sf.radius = 0.9
+		cs.shape = sf
+		_viso.add_child(cs)
+		_viso.position = Vector3(0, 3.4, 0.6)
+		_lei.add_child(_viso)
+		_viso.water_hit.connect(func(litri: float, pt: Vector3, d: Vector3):
+			if _proprietaria and is_instance_valid(_proprietaria):
+				_proprietaria._su_getto(litri, pt, d))
+
+
+## Quando questo specchio viene liberato, quello che ha sotto di condiviso (lei, la luce, il viso) se ne va con lui:
+## gli altri specchi lo ricreano ([method _assicura_lei]) invece di toccare un oggetto liberato.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		if _luce and is_instance_valid(_luce) and is_ancestor_of(_luce):
+			_luce = null
+		if _lei and is_instance_valid(_lei) and is_ancestor_of(_lei):
+			_lei = null
+			_viso = null
+		if _proprietaria == self:
+			_proprietaria = null
 
 
 func _ap() -> AnimationPlayer:

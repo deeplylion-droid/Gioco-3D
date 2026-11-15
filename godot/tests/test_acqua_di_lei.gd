@@ -91,6 +91,7 @@ func _run() -> void:
 	await _metti_giocatore(Vector3(0, 0.05, -10))
 	var a := _vasca("VascaA", [Vector3(0, 0, 6)])
 	var b := _vasca("VascaB", [Vector3(25, 0, 0)])
+	b.zona_raggio = 40.0     # (la B a 27 m dal giocatore: la sua zona arriva fin qui; la regola della zona è nel punto 11)
 	await _fisica(10)
 
 	print("1. Le pompe")
@@ -231,6 +232,22 @@ func _run() -> void:
 	b.manda_via()
 	check(b.fase == AcquaDiLei.Fase.SCENDE, "mandata via quando è fuori: come la respinta")
 	await _aspetta_fase(b, AcquaDiLei.Fase.LONTANA, 6.0)
+
+	print("11. La zona: nessuno specchio tiene lei da lontano")
+	var z := _vasca("VascaZ", [Vector3(-40, 0, 0)])
+	await _metti_giocatore(Vector3(-40, 0.05, -10))
+	await _fisica(3)
+	check(z.gira(PackedVector3Array([Vector3(-42, -0.6, 0), Vector3(-38, -0.6, 0)]), 1.6) and AcquaDiLei.chi_la_usa() == z,
+			"col giocatore nella zona la luce gira qui")
+	await _metti_giocatore(Vector3(-40, 0.05, -40))
+	await _fisica(3)
+	check(AcquaDiLei.chi_la_usa() == null and not z.in_giro() and not z.puo_venire(),
+			"uscito dalla zona (30 m): lei se ne va subito e da qui non viene")
+	await _metti_giocatore(Vector3(-40, 9.05, -5))
+	await _fisica(3)
+	check(not z.puo_venire(), "vicino in pianta ma 9 m sopra (un altro piano): non viene")
+	z.queue_free()
+	await _fisica(2)
 
 	print("7. La presa")
 	await _metti_giocatore(Vector3(-3, 0.05, 3.5))
