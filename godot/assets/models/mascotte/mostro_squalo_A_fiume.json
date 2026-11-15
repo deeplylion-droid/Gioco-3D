@@ -1,0 +1,53 @@
+{
+ "fps": 30,
+ "pinna_fuori": 0.22,
+ "affondo": 0.9,
+ "morso_t": 0.55,
+ "animazioni": {
+  "fiume_nuota": {
+   "durata": 1.6,
+   "ciclo": true,
+   "bocca": [
+    0.103,
+    -1.173,
+    -0.926
+   ]
+  },
+  "fiume_emerge": {
+   "durata": 0.6,
+   "ciclo": false,
+   "bocca": [
+    0.082,
+    -1.174,
+    -0.926
+   ]
+  },
+  "fiume_attacco": {
+   "durata": 1.0,
+   "ciclo": true,
+   "bocca": [
+    0.135,
+    -0.648,
+    0.276
+   ]
+  },
+  "fiume_respinto": {
+   "durata": 0.8,
+   "ciclo": false,
+   "bocca": [
+    0.085,
+    -0.655,
+    0.275
+   ]
+  },
+  "fiume_morso": {
+   "durata": 0.9,
+   "ciclo": false,
+   "bocca": [
+    -0.026,
+    -1.58,
+    0.311
+   ]
+  }
+ }
+}
