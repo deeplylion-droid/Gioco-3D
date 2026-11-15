@@ -1,0 +1,405 @@
+{
+ "version": 1,
+ "scene": "res://scenes/sala_principale.tscn",
+ "checkpoint": "Tecnici/Logica/Checkpoint/CheckpointSalaPompe",
+ "order": 6,
+ "player": {
+  "position": [
+   -0.00000132882621528552,
+   -9.05000019073486,
+   31.7600002288818
+  ],
+  "yaw": 3.14159256616702,
+  "inventory": {
+   "zaino_pompa": 1
+  },
+  "water": 20.0,
+  "water_mix": {}
+ },
+ "objects": {
+  "Vasca/VascaCentrale": {
+   "fill": 0.88,
+   "mix": {}
+  },
+  "Vasca/PulsanteSigla": {
+   "powered": false
+  },
+  "Risalita/Fiume/FiumeLento": {
+   "arrivato": false
+  },
+  "Risalita/Fiume/FiumeLento/Paratia1": {
+   "a_destra": true
+  },
+  "Risalita/Fiume/FiumeLento/Paratia2": {
+   "a_destra": false
+  },
+  "Risalita/Fiume/FiumeLento/Paratia3": {
+   "a_destra": true
+  },
+  "Risalita/Infermeria/Negatoscopio": {
+   "con_radiografia": false
+  },
+  "Risalita/Infermeria/Interruttore": {
+   "powered": false
+  },
+  "Risalita/Infermeria/Cassetto11": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto12": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto13": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto14": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto15": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto21": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto22": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto23": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto24": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto25": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassaforte": {
+   "cifre": [
+    0,
+    0,
+    0
+   ],
+   "aperta": false
+  },
+  "Risalita/StanzaPozze/EnigmaPozze": {
+   "stato": 0,
+   "tolti": [],
+   "svuotando": []
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_0": {
+   "fill": 0.93,
+   "mix": {
+    "arancione": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_0": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_0": {
+   "fill": 0.93,
+   "mix": {
+    "viola": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_0": {
+   "fill": 0.93,
+   "mix": {
+    "turchese": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_0": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_1": {
+   "fill": 0.93,
+   "mix": {
+    "viola": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_1": {
+   "fill": 0.93,
+   "mix": {
+    "turchese": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_1": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_1": {
+   "fill": 0.93,
+   "mix": {
+    "arancione": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_1": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_2": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_2": {
+   "fill": 0.93,
+   "mix": {
+    "arancione": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_2": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_2": {
+   "fill": 0.93,
+   "mix": {
+    "viola": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_2": {
+   "fill": 0.93,
+   "mix": {
+    "turchese": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_3": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_3": {
+   "fill": 0.93,
+   "mix": {
+    "viola": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_3": {
+   "fill": 0.93,
+   "mix": {
+    "turchese": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_3": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_3": {
+   "fill": 0.93,
+   "mix": {
+    "arancione": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_4": {
+   "fill": 0.93,
+   "mix": {
+    "turchese": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_1_4": {
+   "fill": 0.93,
+   "mix": {
+    "bianco_latte": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_2_4": {
+   "fill": 0.93,
+   "mix": {
+    "arancione": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_3_4": {
+   "fill": 0.93,
+   "mix": {
+    "rosa": 1.0
+   }
+  },
+  "Risalita/StanzaPozze/EnigmaPozze/Pozza_4_4": {
+   "fill": 0.93,
+   "mix": {
+    "viola": 1.0
+   }
+  },
+  "Risalita/ObloPersonale": {
+   "finito": false
+  },
+  "Risalita/ObloServizio": {
+   "finito": false
+  },
+  "Risalita/ObloFiume": {
+   "finito": false
+  },
+  "Risalita/BambinoCorridoioFiume": {
+   "finito": false
+  },
+  "Interni": {
+   "tornello": true,
+   "docce": true,
+   "armadietto": true
+  },
+  "Interni/Acqua/VascaLavapiedi": {
+   "fill": 0.75,
+   "mix": {}
+  },
+  "Interni/Meccanismi/PulsanteTornello": {
+   "powered": true
+  },
+  "Interni/Meccanismi/Saracinesca": {
+   "latched": true,
+   "open": 1.0
+  },
+  "Piscina/Pozza": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Piscina/PulsantePortello": {
+   "powered": true
+  },
+  "Piscina/SvuotaPiscina": {
+   "attivo": true
+  },
+  "Piscina/SvuotaPiscina/Medusine": {},
+  "Piscina/EnigmaGiocattoli": {
+   "pos": [
+    [
+     -3.89999222755432,
+     3.29999732971191,
+     0.523598790168762
+    ],
+    [
+     3.89999508857727,
+     3.29999804496765,
+     0.0
+    ],
+    [
+     -3.89999914169312,
+     -0.0999995023012161,
+     2.09439516067505
+    ]
+   ],
+   "giu": [
+    true,
+    true,
+    true
+   ],
+   "risolto": true
+  },
+  "Piscina/Portello": {
+   "open": true
+  },
+  "Vasche/VascaArrivo": {
+   "fill": 0.838095238095238,
+   "mix": {}
+  },
+  "Vasche/VascaBimbi1": {
+   "fill": 0.651162790697674,
+   "mix": {}
+  },
+  "Vasche/VascaBimbi2": {
+   "fill": 0.465116279069767,
+   "mix": {}
+  },
+  "Tecnici/AgnellinoScala": {
+   "fatto": false
+  },
+  "Tecnici/Acqua/VascaRaccolta": {
+   "fill": 0.9118,
+   "mix": {}
+  },
+  "Tecnici/Logica/SalaPompe/Pompa3": {
+   "stato": 0
+  },
+  "Tecnici/Logica/SalaPompe/Pompa1": {
+   "stato": 0
+  },
+  "Tecnici/Logica/SalaPompe/Pompa2": {
+   "stato": 0
+  },
+  "Tecnici/Logica/SalaPompe/Leva": {
+   "abbassata": false
+  },
+  "Tecnici/Logica/SalaPompe/Paratia1": {
+   "chiusa": false,
+   "aperta": false
+  },
+  "Tecnici/Logica/SalaPompe/Paratia2": {
+   "chiusa": false,
+   "aperta": false
+  },
+  "Tecnici/Logica/SalaPompe/Maniglione": {
+   "aperta": false,
+   "bloccata": true
+  },
+  "Tecnici/Logica/SalaPompe/Risveglio": {
+   "avviate": 0,
+   "finito": false
+  },
+  "Tecnici/Logica/SerrandaMagazzino": {
+   "latched": false,
+   "open": 0.0,
+   "aperta": false
+  },
+  "Tecnici/Logica/LettoreTessera": {
+   "aperto": false
+  },
+  "Gioco/PortaSalaPompeInterni": {
+   "aperta": false,
+   "bloccata": true
+  },
+  "Gioco/LeiSbuca": {
+   "finita": false
+  },
+  "Gioco/PortoneTorre": {
+   "aperto": false,
+   "chiuso_dietro": false
+  },
+  "Gioco/EnigmaAcquari": {
+   "stato": 0
+  },
+  "Gioco/EnigmaAcquari/AcquarioGiallo": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Gioco/EnigmaAcquari/AcquarioMisto": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Gioco/EnigmaAcquari/AcquarioBlu": {
+   "fill": 0.0,
+   "mix": {}
+  }
+ },
+ "removed": [
+  "Interni/Zaino/Prendi"
+ ],
+ "collectibles": {
+  "polaroid": [
+   "p01",
+   "p02",
+   "p03",
+   "p04",
+   "p05",
+   "p08",
+   "p09",
+   "p06"
+  ]
+ },
+ "luci": 0,
+ "time": 1794748612.6338,
+ "partenza_prova": "sala_pompe"
+}
