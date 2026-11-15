@@ -98,6 +98,32 @@ func _run() -> void:
 		sp.queue_free()
 		await _fisica(2)
 
+	print("1c. Un bambino lontano, dietro i muri")
+	var bimbo := ris.find_child("BambinoCorridoioFiume", true, false) as Node3D
+	await _sta(pompe + Vector3(0, 0.05, 0), 10)
+	var sp4 := _specchio(p.global_position)
+	if bimbo:
+		var vis := bimbo.visible
+		bimbo.visible = true
+		p.look_at_point(bimbo.global_position + Vector3.UP * 0.8)
+		await _fisica(3)
+		var cam := p.camera
+		check(cam.is_position_in_frustum(bimbo.global_position + Vector3.UP * 0.8) and sp4.puo_venire() and not sp4.bambino_in_vista(),
+				"dalla sala pompe il bambino del corridoio del fiume (a %.0f m, dietro i muri) è nell'inquadratura ma non conta" % p.global_position.distance_to(bimbo.global_position))
+		bimbo.visible = vis
+	else:
+		check(false, "c'è il bambino del corridoio del fiume")
+	var bimbo2 := Node3D.new()
+	bimbo2.add_to_group(&"bambini")
+	level.add_child(bimbo2)
+	bimbo2.global_position = p.global_position - p.camera.global_basis.z * 5.0
+	bimbo2.global_position.y = p.global_position.y
+	await _fisica(3)
+	check(sp4.bambino_in_vista() and not sp4.puo_venire(), "un bambino davanti, a 5 m nella stessa stanza: conta")
+	bimbo2.queue_free()
+	sp4.queue_free()
+	await _fisica(2)
+
 	print("1b. Dalle pozze, la lei dell'oblò di servizio dietro i muri")
 	await _sta(pozze + Vector3(0, 0.05, 0))
 	var sp3 := _specchio(p.global_position)

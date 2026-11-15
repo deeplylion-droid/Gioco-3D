@@ -182,12 +182,15 @@ func _run() -> void:
 	await _fisica(60)
 	check(b.fase == AcquaDiLei.Fase.LONTANA and b.in_giro() and b.punto_luce.distance_to(Vector3(25, -0.6, 4)) < 3.0,
 			"la luce passa sott'acqua senza che lei esca (%s)" % str(b.punto_luce))
+	var spegne := false
 	for i in 240:
 		await get_tree().physics_frame
+		spegne = spegne or b.fase_canto == &"spegne"
 		if not b.in_giro():
 			break
 	check(not b.in_giro() and AcquaDiLei.chi_la_usa() == null and b.fase == AcquaDiLei.Fase.LONTANA,
 			"alla fine la luce si spegne e lei se ne va (libera)")
+	check(spegne and b.fase_canto != &"spegne", "mentre la luce si spegne alla fine il canto «spegne» (muore), poi no")
 	var giro2 := PackedVector3Array([Vector3(30, -0.6, 8), Vector3(25, -0.6, 0)])
 	check(b.percorri(giro2, 4.0, b.punti_uscita[0]), "un percorso che finisce sotto un punto d'uscita")
 	var t_arr := await _aspetta_fase(b, AcquaDiLei.Fase.ARRIVA, 4.0)
