@@ -1,0 +1,11 @@
+GP: riscaldamento concluso, compilazioni [338.0, 105.0, 149.0]
+GP: sulla banchina davanti al primo gommone (s 67.0) fotogramma 0: surface 4, draw 0, specialization 0
+GP: sulla banchina davanti al primo gommone (s 67.0) fotogramma 2: surface 0, draw 1, specialization 1
+GP: sulla banchina davanti al primo gommone (s 67.0) in 60 fotogrammi: surface 4, draw 1, specialization 1
+GP: salto sul gommone 1 in 90 fotogrammi: surface 0, draw 0, specialization 0
+GP: gommone 1: il giocatore è sopra false (y -30.00, gommone -30.59)
+GP: messo sopra il gommone 1 in 90 fotogrammi: surface 0, draw 0, specialization 0
+GP: salto sul gommone 2 in 90 fotogrammi: surface 0, draw 0, specialization 0
+GP: gommone 2: il giocatore è sopra false (y -30.92, gommone -30.55)
+GP: messo sopra il gommone 2 in 90 fotogrammi: surface 0, draw 0, specialization 0
+GP: finito
