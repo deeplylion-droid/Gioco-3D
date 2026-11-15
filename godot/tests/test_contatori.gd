@@ -6,7 +6,9 @@ extends Node
 ##   morte, senza un checkpoint dopo), Continua li ritrova (prepara_ripresa non li azzera dopo averli letti), la partita
 ##   nuova li azzera;
 ## - il riepilogo: Polaroid su 16, tempo, morti, in italiano e in inglese; un tasto non lo chiude prima di 4 s, dopo sì;
-##   da solo torna al titolo dopo 25 s.
+##   da solo torna al titolo dopo 25 s; tornando al titolo i contatori vanno su disco prima di azzerarsi e Continua li
+##   ritrova (l'uscita dal gioco chiama la stessa GameState.salva_contatori, in Game.quit: qui non si prova, chiuderebbe
+##   il test).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_contatori.gd
 
 var _ok := 0
@@ -121,6 +123,10 @@ func _run() -> void:
 	var testi_en := en.righe.map(func(l: Label): return l.text)
 	check(testi_en[0].begins_with("Polaroids found:") and testi_en[1] == "Time: 12:34" and testi_en[2] == "Deaths: 3", "in inglese: %s" % [testi_en])
 	TranslationServer.set_locale(lingua)
+	# (tornando al titolo i contatori vanno su disco prima di azzerarsi: si scrive davvero, come nel gioco)
+	GameState.save_to_disk = true
+	if FileAccess.file_exists(GameState.SAVE_PATH):
+		DirAccess.remove_absolute(GameState.SAVE_PATH)
 	var chiuso := [false]
 	en.finito.connect(func(): chiuso[0] = true)
 	await _secondi(1.0)
@@ -140,6 +146,20 @@ func _run() -> void:
 			break
 	var fine := get_tree().current_scene
 	check(fine and fine.scene_file_path == Game.SCENE_TITLE, "ed è il titolo (%s)" % (fine.scene_file_path if fine else "niente"))
+	GameState.save_to_disk = false
+	check(GameState.tempo_gioco == 0.0 and GameState.morti_totali == 0, "nel titolo i contatori in memoria sono azzerati")
+	var salvato := GameState.salvataggio()
+	var letto = JSON.parse_string(FileAccess.get_file_as_string(GameState.SAVE_PATH)) if FileAccess.file_exists(GameState.SAVE_PATH) else {}
+	check(typeof(letto) == TYPE_DICTIONARY and int(letto.get("morti_totali", -1)) == 3 and float(letto.get("tempo_gioco", 0.0)) >= 754.0,
+			"tornando al titolo i contatori sono andati su disco (%s)" % [letto.get("morti_totali", "-") if typeof(letto) == TYPE_DICTIONARY else "niente"])
+	# Continua: la stessa strada del titolo (continue_from_disk legge il salvataggio e chiama prepara_ripresa)
+	if typeof(letto) == TYPE_DICTIONARY:
+		GameState.prepara_ripresa(letto)
+		GameState._restore_pending = false
+		check(GameState.morti_totali == 3 and GameState.tempo_gioco >= 754.0, "e Continua li ritrova (morti %d, tempo %s)"
+				% [GameState.morti_totali, GameState.tempo_leggibile(GameState.tempo_gioco)])
+		GameState.reset_progress()
+	print("  (salvataggio valido per Continua: %s)" % (not salvato.is_empty()))
 	if prima != "":
 		var f := FileAccess.open(GameState.SAVE_PATH, FileAccess.WRITE)
 		f.store_string(prima)
