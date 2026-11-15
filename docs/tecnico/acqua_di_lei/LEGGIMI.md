@@ -47,7 +47,7 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | Parametro | Valore | Cosa fa |
 |---|---|---|
 | `abilitata` | `true` | spento, la zona è sicura |
-| `modo` | `INTERA` | `MANO` (mano e tentacoli, per le pozze) arriva dopo |
+| `modo` | `INTERA` | `MANO`: mano e tentacoli, per le pozze (sotto) |
 | `punti_uscita` | | i marker d'uscita |
 | `pelo` | `NAN` | quota del pelo dell'acqua |
 | `profondita` | `5` | spazio libero sotto i punti |
@@ -56,6 +56,7 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | `spegnimento` | `1` | in s: il canto sfuma |
 | `silenzio` | `0,5` | in s: silenzio vero prima che esca |
 | `portata` | `3` | in m |
+| `portata_mano` | `1,2` | nel modo MANO: in m dal marker |
 | `tempo_su` | `2,2` | in s |
 | `tempo_presa` | `0,35` | in s |
 | `getto_per_respingere` | `0,5` | in s |
@@ -119,6 +120,21 @@ Lo spostamento in avanti lo fa il gioco. Mentre suonano, lei non è in `insegue_
 
 `godot/tests/sonda_ingombro_acqua_di_lei.gd <scena.tscn>`: per ogni AcquaDiLei della scena, ogni punto d'uscita e 8 direzioni, controlla le ossa di lei mentre esce, incombe, prende, è respinta e scende, contro le collisioni. Stampa cosa attraversa sopra il pelo, che è un difetto da correggere, e sotto il pelo, nell'acqua torbida. Gli oggetti mobili si contano a parte. Se il genitore dell'AcquaDiLei ha `prepara_uscita(punto, 0)`, la chiama prima. Con `Classe.proprieta=valore` si prova un valore prima di entrare nella scena (per esempio `LeiSalaAlBuio.rientro=2.4`).
 
-## Ancora da fare
+## Il modo MANO (le pozze della Risalita)
 
-- `modo = MANO` (mano e tentacoli dalle pozze, scelta C: di fianco, braccio e mano che sbatte sul grigliato, poi tre o quattro tentacoli lungo la passerella fino a 2 m; la presa la fa la mano, alla caviglia): in lavoro, sulle misure di Pozza_2_4.
+Scelta C dell'utente: esce prima il braccio e la mano sbatte sul grigliato, poi dal bordo salgono quattro tentacoli che strisciano lungo la passerella; la presa la fa la mano, alla caviglia. Con `modo = MANO`:
+
+- **Il marker** (`punti_uscita`): l'origine è dove sbatte la mano, sul grigliato a filo del bordo della pozza; il +Z del marker va verso la passerella (fuori dalla pozza). Lei prende il transform del marker e non si gira. Una pozza d'angolo ha un marker per lato: esce dal più vicino al giocatore. `pelo` è il pelo della pozza piena.
+- **Le misure** (Pozza_2_4 di enigmi): pozza 1 m × 1 m, interno da z −1,10 a −0,10 del marker, acqua profonda 0,70 m; pelo a −0,0525; fondo chiuso da −0,75 a −0,95; bordino di 10 cm a filo del grigliato; grigliato pieno fino a −0,23; passerella larga 1,2 m. Pozze contigue a passo 1,1 m. Con un'altra geometria le animazioni vanno rifatte.
+- **Le animazioni** (`inseguimento/pozza_*`, in `tools/blender/medusa_inseguimento.py`):
+  - `pozza_esce` (2,2 s): sale da sotto il fondo col braccio alzato, la mano esce dall'acqua, si alza sopra il bordo e sbatte sul grigliato a 0,62 s (`MANO_SBATTE`); poi i tentacoli salgono dritti oltre il bordo e strisciano a scatti sulla passerella. Le punte arrivano a circa 1,9 m e 1,5 m dal marker, in diagonale, lontane dalla porta in fondo alla passerella;
+  - `pozza_attesa` (ciclo, 2,4 s): la mano premuta sul grigliato, le dita che battono, le punte dei tentacoli che si muovono di pochi centimetri;
+  - `pozza_presa` (0,8 s): la mano scatta alla caviglia del giocatore (0,6 m davanti al marker) e tira;
+  - `pozza_respinta` (1 s) e `pozza_scende` (1,2 s): la mano rientra sopra il bordo e lei torna sotto il fondo, i tentacoli scivolano nella pozza.
+- **Cosa si vede:** il corpo resta sott'acqua (la testa circa 28 cm sotto il pelo) e sotto il fondo. Braccio e tentacoli passano dal fondo della pozza. Il primo osso di ogni tentacolo che striscia si allunga sotto il fondo, dove non si vede: così il pezzo visibile ha la sua lunghezza vera e arriva fino a 2 m. Il controllo delle zone nello script Blender (`--pozza`) e la sonda d'ingombro non trovano niente che attraversa il grigliato, i bordini o le pozze vicine.
+- **La presa:** se il giocatore è entro `portata_mano` (1,2 m in pianta) dal marker quando lei è su, la mano lo prende. Segue la scena di morte della medusa: la camera scende fino al pelo della pozza e guarda il suo viso sott'acqua.
+- **La respinta:** il getto sulla mano (bersaglio di 0,4 m che segue la mano) per `getto_per_respingere` s la ricaccia sotto.
+- **La luce rosa** resta nell'acqua della pozza (0,6 m sotto il pelo), più forte: la pozza si accende di rosa da sotto.
+- **Suoni:** un tonfo nell'acqua quando la mano esce e quando sbatte, e uno quando rientra.
+
+Test: `godot/tests/test_acqua_di_lei_mano.gd` (in CI). Per i marker veri: `sonda_ingombro_acqua_di_lei.gd <scena.tscn>` (nel modo MANO prova le animazioni `pozza_*` col marker).

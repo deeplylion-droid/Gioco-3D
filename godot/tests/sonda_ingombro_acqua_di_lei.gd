@@ -5,6 +5,8 @@ extends Node
 ## secondo, per ogni osso, un raggio dal padre al figlio contro le collisioni: se attraversa qualcosa sopra il pelo
 ## dell'acqua lì lei passa attraverso e si vede (difetto); sotto il pelo, nell'acqua torbida, si stampa a parte.
 ## Stampa, per punto e direzione, le ossa che attraversano e cosa. Per chi mette i punti d'uscita.
+## Nel modo MANO (le pozze) lei sta col marker (una sola direzione) e si provano le animazioni pozza_*: sopra il pelo
+## non deve attraversare né il grigliato né i bordini.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/sonda_ingombro_acqua_di_lei.gd \
 ##        <scena.tscn> [Classe.proprieta=valore ...]
 ## (Classe.proprieta=valore: prima di entrare nella scena, al primo nodo di quella classe, per esempio
@@ -12,6 +14,8 @@ extends Node
 ## (con una scena che crea gli AcquaDiLei nel suo _ready, come la sala principale con LeiSalaAlBuio)
 
 const ANIMAZIONI := ["sale_dall_acqua", "incombe", "presa", "respinta", "scende"]
+## Il modo MANO (le pozze): lei sta col marker, non si gira.
+const ANIMAZIONI_MANO := ["pozza_esce", "pozza_attesa", "pozza_presa", "pozza_respinta", "pozza_scende"]
 
 var _spazio: PhysicsDirectSpaceState3D
 
@@ -59,12 +63,16 @@ func _run() -> void:
 				ad.get_parent().call(&"prepara_uscita", q, 0.0)
 				for i in 2:
 					await get_tree().physics_frame
-			for k in 8:
+			var mano := ad.modo == AcquaDiLei.Modo.MANO
+			for k in (1 if mano else 8):
 				var ang := TAU * k / 8.0
-				lei.global_position = q.global_position
-				lei.global_rotation = Vector3(0, ang, 0)
+				if mano:
+					lei.global_transform = q.global_transform
+				else:
+					lei.global_position = q.global_position
+					lei.global_rotation = Vector3(0, ang, 0)
 				var visti := _incroci(ad, ap, sk, pelo)
-				var nome := "%s/%s %3d°" % [ad.get_parent().name, q.name, int(rad_to_deg(ang))]
+				var nome := "%s/%s %s" % [ad.get_parent().name, q.name, "(mano)" if mano else "%3d°" % int(rad_to_deg(ang))]
 				var sopra: Dictionary = visti[0]
 				var sotto: Dictionary = visti[1]
 				if sopra.is_empty():
@@ -81,7 +89,7 @@ func _incroci(ad: AcquaDiLei, ap: AnimationPlayer, sk: Skeleton3D, pelo: float) 
 	var sopra := {}
 	var sotto := {}
 	var prof := clampf(ad.profondita, 0.05, 5.0)
-	for an: String in ANIMAZIONI:
+	for an: String in (ANIMAZIONI_MANO if ad.modo == AcquaDiLei.Modo.MANO else ANIMAZIONI):
 		var n := StringName("inseguimento/" + an)
 		var anim := ap.get_animation(n)
 		if anim == null:

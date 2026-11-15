@@ -37,7 +37,9 @@ signal tornata_sotto
 signal percorso_finito
 
 enum Fase { LONTANA, ARRIVA, SPEGNE, SILENZIO, ESCE, SU, PRESA, SCENDE, CALMA }
-## Come esce: intera (le vasche grandi) o mano e tentacoli (gli specchi stretti: punto 3 della build, da fare).
+## Come esce: intera (le vasche grandi) o mano e tentacoli (le pozze piccole della Risalita, scelta C dell'utente: esce
+## prima il braccio e la mano sbatte sul grigliato, poi dal bordo salgono quattro tentacoli che strisciano lungo la
+## passerella; la presa la fa la mano, alla caviglia).
 enum Modo { INTERA, MANO }
 
 const GRUPPO := &"lei_nell_acqua"
@@ -49,11 +51,18 @@ const LUCE_SOTTO_PORTATA := 4.5
 const LUCE_SU := 6.0
 const LUCE_SU_PORTATA := 9.0
 const ANIM := "inseguimento/"
+## Modo MANO: quando la mano sbatte sul grigliato in pozza_esce (s; POZZA_SLAM_T di medusa_inseguimento.py).
+const MANO_SBATTE := 0.62
+## Modo MANO: la luce resta nell'acqua della pozza, più forte (la pozza si accende di rosa da sotto).
+const LUCE_POZZA := 3.6
+const LUCE_POZZA_PORTATA := 3.5
 
 @export var abilitata := true
 @export var modo := Modo.INTERA
 ## I punti d'uscita: l'origine è la posa «su» (incombe) di lei, cioè dove sta il suo nodo quando è fuori; le
 ## animazioni salgono da 5 m sotto. Lei si gira verso il giocatore. Esce dal punto più vicino al giocatore.
+## Nel modo MANO l'origine è dove sbatte la mano, sul grigliato a filo del bordo della pozza, e il +Z del marker va
+## verso la passerella (fuori dalla pozza): lei non si gira (misure in docs/tecnico/acqua_di_lei/LEGGIMI.md).
 @export var punti_uscita: Array[Node3D] = []
 ## Quota del pelo dell'acqua (nel mondo). NAN: quella del punto d'uscita.
 @export var pelo := NAN
@@ -70,6 +79,8 @@ const ANIM := "inseguimento/"
 @export var silenzio := 0.5
 ## Più vicino di così al punto d'uscita (m, in pianta) quando è fuori: ti prende.
 @export var portata := 3.0
+## Nel modo MANO: più vicino di così al punto dove sbatte la mano (m, in pianta) ti prende alla caviglia.
+@export var portata_mano := 1.2
 ## Quanto sta su a cercarti, se non sei nella portata (s).
 @export var tempo_su := 2.2
 ## Da su, quanto aspetta prima di prenderti (s): il tempo di uno spruzzo.
@@ -323,13 +334,17 @@ func _physics_process(delta: float) -> void:
 			_girala_verso(p)
 			if _t >= _durata:
 				_cambia(Fase.SU)
-				_anima("incombe", 0.2)
-				_lei.segui_con_la_testa(1.0, 0.5)
+				if modo == Modo.MANO:
+					_anima("pozza_attesa", 0.0)
+				else:
+					_anima("incombe", 0.2)
+					_lei.segui_con_la_testa(1.0, 0.5)
 		Fase.SU:
 			vicinanza = 1.0
 			_aggiorna_viso()
 			_girala_verso(p)
-			var vicino := p != null and is_instance_valid(p) and _in_pianta(p.global_position, _punto.global_position) <= portata
+			var vicino := p != null and is_instance_valid(p) \
+					and _in_pianta(p.global_position, _punto.global_position) <= (portata_mano if modo == Modo.MANO else portata)
 			if letale and not _dimostrativa and vicino and _t >= tempo_presa:
 				_prendi()
 			elif _t >= tempo_su:
@@ -536,6 +551,10 @@ func _esci() -> void:
 	_ultimo_getto = -1
 	_respinta = false
 	_lei.segui_con_la_testa(0.0, 0.01)
+	if modo == Modo.MANO:
+		_esci_mano()
+		return
+	_viso_mano(false)
 	_girala_verso(GameState.player)
 	var nome := "sale_dall_acqua"
 	var dur := _anima(nome)
@@ -552,8 +571,38 @@ func _esci() -> void:
 	uscita.emit()
 
 
+## Modo MANO: lei col marker (non si gira), la luce resta nell'acqua della pozza, pozza_esce dall'inizio: la mano
+## esce e sbatte sul grigliato (MANO_SBATTE), poi i tentacoli strisciano sulla passerella.
+func _esci_mano() -> void:
+	_lei.global_transform = _punto.global_transform
+	_luce.reparent(self, false)
+	_luce.global_position = _sotto(_punto)
+	_luce.light_energy = LUCE_POZZA
+	_luce.omni_range = LUCE_POZZA_PORTATA
+	_luce.shadow_enabled = false
+	_durata = _anima("pozza_esce")
+	var ap := _ap()
+	if ap:
+		ap.seek(0.0, true)
+	_viso_mano(true)
+	_cambia(Fase.ESCE)
+	get_tree().create_timer(0.2, false).timeout.connect(func():
+		if fase == Fase.ESCE and _proprietaria == self:
+			Audio.suona(&"tuffo", _punto.global_position, -6.0, 1.3))
+	get_tree().create_timer(MANO_SBATTE, false).timeout.connect(func():
+		if fase == Fase.ESCE and _proprietaria == self:
+			Audio.suona(&"atterraggio_acqua", _punto.global_position, 0.0, 1.4))
+	uscita.emit()
+
+
 func _prendi() -> void:
 	_cambia(Fase.PRESA)
+	if modo == Modo.MANO:
+		_anima("pozza_presa", 0.1)
+		_lei.add_to_group(&"medusa_che_prende")
+		presa.emit()
+		GameState.kill_player(&"medusa")
+		return
 	_girala_verso(GameState.player)
 	_lei.segui_con_la_testa(0.0, 0.1)
 	_anima("presa", 0.15)
@@ -568,17 +617,23 @@ func _scendi(da_respinta: bool) -> void:
 	_respinta = da_respinta
 	_lei.segui_con_la_testa(0.0, 0.15)
 	var nome := "respinta" if da_respinta else "scende"
-	_anima(nome, 0.15)
+	if modo == Modo.MANO:
+		nome = "pozza_" + nome
+	var dur_anim := _anima(nome, 0.15 if modo == Modo.INTERA else 0.08)
 	var a := _ap().get_animation(StringName(ANIM + nome)) if _ap() else null
-	_durata = _quando_radice(StringName(ANIM + nome), clampf(profondita, 0.05, 5.0), false) if a else 1.0
+	if modo == Modo.MANO:
+		_durata = dur_anim
+	else:
+		_durata = _quando_radice(StringName(ANIM + nome), clampf(profondita, 0.05, 5.0), false) if a else 1.0
 	# la luce si spegne con lei, negli ultimi 0,4 s
 	var spegni := minf(0.4, _durata)
 	var tw := create_tween()
 	tw.tween_interval(_durata - spegni)
 	tw.tween_property(_luce, "light_energy", 0.0, spegni)
-	get_tree().create_timer(_durata * 0.6, false).timeout.connect(func():
+	var dove := _punto.global_position if modo == Modo.MANO else _lei.global_position + Vector3.UP * 3.0
+	get_tree().create_timer(_durata * (0.3 if modo == Modo.MANO else 0.6), false).timeout.connect(func():
 		if fase == Fase.SCENDE and _proprietaria == self:
-			Audio.suona(&"atterraggio_acqua", _lei.global_position + Vector3.UP * 3.0, 2.0, 0.6))
+			Audio.suona(&"atterraggio_acqua", dove, -2.0 if modo == Modo.MANO else 2.0, 1.2 if modo == Modo.MANO else 0.6))
 	_cambia(Fase.SCENDE)
 	if da_respinta:
 		respinta.emit()
@@ -693,15 +748,37 @@ func _anima(nome: String, fondi := 0.0) -> float:
 	return ap.get_animation(n).length
 
 
-## Il viso da colpire segue l'occhio.
+## Il viso da colpire segue l'occhio (nel modo MANO: la mano, il getto sulla mano la ricaccia sotto).
 func _aggiorna_viso() -> void:
+	if _viso == null:
+		return
+	if modo == Modo.MANO:
+		var sk := _scheletro()
+		var i := sk.find_bone("mano.R") if sk else -1
+		if i >= 0:
+			_viso.global_position = sk.global_transform * sk.get_bone_global_pose(i).origin
+		return
 	var occhio := _lei.get_eye_position()
-	if occhio != Vector3.ZERO and _viso:
+	if occhio != Vector3.ZERO:
 		_viso.global_position = occhio
 
 
+## Il bersaglio del getto: grande come il viso (INTERA) o come la mano (MANO).
+func _viso_mano(mano: bool) -> void:
+	var cs := _viso.get_child(0) as CollisionShape3D if _viso and _viso.get_child_count() > 0 else null
+	if cs and cs.shape is SphereShape3D:
+		(cs.shape as SphereShape3D).radius = 0.4 if mano else 0.9
+
+
+func _scheletro() -> Skeleton3D:
+	if _lei == null:
+		return null
+	var l := _lei.find_children("*", "Skeleton3D", true, false)
+	return l[0] as Skeleton3D if l.size() > 0 else null
+
+
 func _girala_verso(p: Node3D) -> void:
-	if p == null or not is_instance_valid(p) or _lei == null:
+	if p == null or not is_instance_valid(p) or _lei == null or modo == Modo.MANO:
 		return
 	var guarda := p.global_position
 	guarda.y = _lei.global_position.y
