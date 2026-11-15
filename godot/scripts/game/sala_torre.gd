@@ -68,6 +68,20 @@ const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creat
 ## Falso: niente oblò (le prove della discesa senza di lei).
 @export var oblo_lei := true
 var oblo: ObloLei
+## Lei nelle vasche di raccolta (build 0.4.0 «L'acqua è sua», scelta del coordinatore del 15 novembre): chi sbaglia un
+## salto e cade in una vasca di raccolta vede la luce di lei arrivare dal pozzo fino a quella vasca; ha
+## [member vasche_avviso] secondi per salire la scaletta, poi lei esce (AcquaDiLei di mascotte) e prende chi è ancora
+## nella vasca o sulla parte bassa della scaletta (sotto [member vasche_salvo_sotto] m dalla pedana). Chi è salito è
+## salvo anche se lei, in pianta, gli è vicina. [member letale_vasche] spento: esce e incombe, ma non prende.
+@export var lei_vasche := true
+@export var letale_vasche := true
+@export var vasche_avviso := 5.0
+@export var vasche_silenzio := 1.0
+@export var vasche_salvo_sotto := 0.9
+@export var vasche_modo := AcquaDiLei.Modo.INTERA
+## Le vasche con lei: [AcquaDiLei, uscita (Marker3D), rettangolo in pianta (Rect2, nel mondo), quota del fondo,
+## quota della pedana].
+var acque_vasche: Array = []
 
 var dati := {}
 var checkpoint: Array[Checkpoint] = []
@@ -320,7 +334,7 @@ func _passi() -> Array:
 	out.append(_toppe_torre_A)
 	out.append(_prepara_dati)
 	out.append_array(_passi_scivoli())
-	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _polaroid])
+	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _raccolta_lei, _polaroid])
 	out.append_array(_passi_balconata())
 	out.append(_vasca_fondo)
 	out.append(_oblo_lei)
@@ -630,10 +644,65 @@ func _raccolta() -> void:
 		k += 1
 
 
+## Lei nelle vasche di raccolta ([member lei_vasche]): un AcquaDiLei per vasca, l'uscita al centro sul pelo (lì sopra
+## ci sono 8-12 m liberi, sonda_vasche_raccolta), la luce che parte dal pozzo.
+func _raccolta_lei() -> void:
+	if not lei_vasche:
+		return
+	var da := Marker3D.new()
+	da.name = "PartenzaLuceVasche"
+	add_child(da)
+	da.global_position = b(dati["pozzo"])
+	var k := 0
+	for v in dati.get("raccolta", []):
+		var r: Array = v["rett"]
+		var a := AcquaDiLei.new()
+		a.name = "LeiRaccolta%d" % k
+		a.modo = vasche_modo
+		a.pelo = float(v["acqua"])
+		a.profondita = clampf(float(v["acqua"]) - float(v["fondo"]), 0.0, 5.0)
+		a.partenza_luce = da
+		a.avviso = vasche_avviso
+		a.silenzio = vasche_silenzio
+		a.letale = false
+		var u := Marker3D.new()
+		u.name = "Uscita"
+		a.add_child(u)
+		a.punti_uscita = [u]
+		add_child(a)
+		u.global_position = b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, float(v["acqua"])])
+		var c0 := b([r[0], r[1], 0.0])
+		var c1 := b([r[2], r[3], 0.0])
+		var rett := Rect2(Vector2(minf(c0.x, c1.x), minf(c0.z, c1.z)), Vector2(absf(c1.x - c0.x), absf(c1.z - c0.z)))
+		acque_vasche.append([a, u, rett, float(v["fondo"]), float(v["scala"]["z1"])])
+		k += 1
+
+
+## Vero se [param pos] è nella vasca [param voce] di [member acque_vasche] (in pianta, con 20 cm di margine), sotto la
+## pedana di più di [member vasche_salvo_sotto] m: nell'acqua o sulla parte bassa della scaletta.
+func in_vasca(pos: Vector3, voce: Array) -> bool:
+	var rett: Rect2 = (voce[2] as Rect2).grow(0.2)
+	return rett.has_point(Vector2(pos.x, pos.z)) and pos.y > float(voce[3]) - 0.5 \
+			and pos.y < float(voce[4]) - vasche_salvo_sotto
+
+
+## Chi è caduto in una vasca la chiama; lei prende solo chi è ancora dentro ([method in_vasca]).
+func _vasche_lei(p: Player) -> void:
+	for voce in acque_vasche:
+		var a := voce[0] as AcquaDiLei
+		if not is_instance_valid(a):
+			continue
+		var dentro := in_vasca(p.global_position, voce)
+		a.letale = letale_vasche and dentro
+		if dentro and p.is_in_water() and a.fase == AcquaDiLei.Fase.LONTANA:
+			a.chiama(voce[1])
+
+
 func _physics_process(_delta: float) -> void:
 	var p := GameState.player
 	if p == null or not is_instance_valid(p) or GameState.is_dying:
 		return
+	_vasche_lei(p)
 	var y := p.global_position.y
 	# la caduta vera: da quando si stacca da tutto (non scivolando, non sulla scala, non nell'acqua) a quando
 	# tocca di nuovo qualcosa; oltre caduta_mortale metri si muore lì
