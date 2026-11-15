@@ -22,6 +22,12 @@ func _run() -> void:
 		else:
 			aabb = aabb.merge(b)
 	print("AABB tunnel: ", aabb)
+	var luce := sala.find_child("LuceStanza", true, false) as OmniLight3D
+	print("LUCE ", luce.global_position if luce else "nessuna", " ", luce.light_energy if luce else 0.0, " ", luce.omni_range if luce else 0.0)
+	var lamp := sala.find_child("LampadaStanza", true, false) as Node3D
+	print("LAMPADA ", lamp.global_position if lamp else "nessuna")
+	for b in sala._bambini_finale:
+		print("BAMBINO ", b.name, " ", b.global_position, " scala ", b.scale, " ", b.scene_file_path.get_file(), " da luce %.2f" % (b.global_position.distance_to(luce.global_position) if luce else -1.0))
 	var box := AABB(Vector3(-62.0, -27.5, 8.0), Vector3(10.0, 4.0, 14.0))
 	for mi in sala.find_children("*", "VisualInstance3D", true, false):
 		var b := (mi as VisualInstance3D).global_transform * (mi as VisualInstance3D).get_aabb()
