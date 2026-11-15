@@ -1630,7 +1630,7 @@ func _finale() -> void:
 ## I bambini restano fermi a guardarti tanti secondi, prima che quello col cubo venga avanti.
 @export var finale_fermi := 2.5
 ## Quanto viene avanti il bambino col cubo (m, due passi) e quanto ci mette (s).
-@export var porge_passi := 0.9
+@export var porge_passi := 0.75
 ## La camera si abbassa sul foglio in tanti secondi, e il foglio resta davanti per [member finale_foglio] s.
 @export var finale_abbassa := 1.6
 @export var finale_foglio := 5.0
@@ -1794,22 +1794,36 @@ func _dopo_lo_schianto() -> void:
 	var punto_passi := Marker3D.new()
 	add_child(punto_passi)
 	punto_passi.global_position = arrivo
-	porge.cammina([punto_passi] as Array[Node3D])
-	var t0 := Time.get_ticks_msec()
-	while porge.modalita == Bambino.Modalita.CAMMINA and Time.get_ticks_msec() - t0 < 4000:
-		await get_tree().process_frame
-		if not is_inside_tree():
-			return
-	punto_passi.queue_free()
 	if _foglio == null:
 		_foglio = _crea_foglio()
 		porge.add_child(_foglio)
-	var mano: Node3D = porge.call(&"porgi") if porge.has_method(&"porgi") else null
-	if mano:
-		_foglio.reparent(mano, false)
-		_foglio.transform = Transform3D.IDENTITY
+	if porge.has_method(&"porge"):
+		# il movimento «porge» di mascotte (lavoro/storia-mascotte, Bambino.porge): cammina fin lì, porge il foglio con
+		# le due mani (segnale porge_il_foglio) e lo tiene; il foglio va su punto_foglio(), al centro, faccia avanti
+		var porto := [false]
+		porge.connect(&"porge_il_foglio", func(): porto[0] = true, CONNECT_ONE_SHOT)
+		porge.call(&"porge", [punto_passi] as Array[Node3D])
+		var t0 := Time.get_ticks_msec()
+		while not porto[0] and Time.get_ticks_msec() - t0 < 6000:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+		var mano := porge.call(&"punto_foglio") as Node3D
+		if mano:
+			_foglio.reparent(mano, false)
+			_foglio.transform = Transform3D.IDENTITY
+		else:
+			_metti_foglio(porge)
 	else:
+		# (finché il movimento non c'è: due passi con la camminata, e il foglio davanti a lui)
+		porge.cammina([punto_passi] as Array[Node3D])
+		var t0 := Time.get_ticks_msec()
+		while porge.modalita == Bambino.Modalita.CAMMINA and Time.get_ticks_msec() - t0 < 4000:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
 		_metti_foglio(porge)
+	punto_passi.queue_free()
 	_foglio.visible = true
 	await get_tree().create_timer(0.6, false).timeout
 	if not is_inside_tree() or not is_instance_valid(pl):
