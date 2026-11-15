@@ -25,7 +25,10 @@ const FATTI := {
 		"Piscina/Portello": {"open": true},
 		"Piscina/EnigmaGiocattoli": {"risolto": true},
 	},
-	"tecnici": {
+	# i tecnici prima delle pompe (dal pozzo al checkpoint della sala pompe): niente di persist, solo la P06
+	"tecnici": {},
+	# la sala pompe: pompe, leva, risveglio (la lezione della 0.4.0 compresa), e quello che viene col blackout
+	"pompe": {
 		"Tecnici/AgnellinoScala": {"fatto": true},
 		"Tecnici/Logica/SalaPompe/Pompa1": {"stato": 99},
 		"Tecnici/Logica/SalaPompe/Pompa2": {"stato": 99},
@@ -43,8 +46,13 @@ const FATTI := {
 		"Risalita/Infermeria/Interruttore": {"powered": true},
 		"Risalita/Infermeria/Cassetto14": {"aperto": true},
 		"Risalita/Infermeria/Cassaforte": {"aperta": true},
+	},
+	"pozze": {
 		# la stanza delle pozze colorate risolta: tolti i tre colori del cartello, la porta stagna aperta (EnigmaPozze)
 		"Risalita/StanzaPozze/EnigmaPozze": {"stato": 2, "tolti": ["turchese", "viola", "arancione"], "svuotando": []},
+	},
+	# su per la scala di servizio, il magazzino, il lettore della tessera e la serranda verso la sala
+	"magazzino": {
 		"Tecnici/Logica/LettoreTessera": {"aperto": true},
 		"Tecnici/Logica/SerrandaMagazzino": {"aperta": true, "latched": true, "open": 1.0},
 	},
@@ -64,22 +72,31 @@ const RACCOLTI := {
 const POLAROID := {
 	"interni": ["p01", "p02", "p03"],
 	"piscina": ["p04", "p05", "p08", "p09"],
-	"tecnici": ["p06", "p07"],
+	"tecnici": ["p06"],
+	"pompe": ["p07"],
 	"risalita": ["PolaroidPecora", "p13", "p15", "p16"],
 	"sala_buio": ["p14"],
 	"torre": ["Polaroid10", "p12"],
 }
-const PARTI := ["interni", "piscina", "tecnici", "risalita", "sala_buio", "torre"]
+const PARTI := ["interni", "piscina", "tecnici", "pompe", "risalita", "pozze", "magazzino", "sala_buio", "torre"]
 
-## Le partenze: le parti fatte prima, il checkpoint (percorso dalla scena del livello), se serve la torre, le Polaroid
-## raccolte in più (quelle della parte della partenza che stanno prima del suo checkpoint).
+## Le partenze: le parti fatte prima (quante di [constant PARTI]), il checkpoint (percorso dalla scena del livello), se
+## serve la torre, le Polaroid raccolte in più (quelle della parte della partenza che stanno prima del suo checkpoint),
+## se le pompe sono ancora da riavviare (luci di prima del risveglio: "prima_del_risveglio").
 const PARTENZE := {
-	"risalita": {"fatte": 3, "checkpoint": "Tecnici/Logica/Checkpoint/CheckpointT7Inizio"},
+	# (0.4.0) la sala pompe con le pompe da riavviare: si vede la lezione dopo la leva
+	"sala_pompe": {"fatte": 3, "checkpoint": "Tecnici/Logica/Checkpoint/CheckpointSalaPompe", "prima_del_risveglio": true},
+	"risalita": {"fatte": 4, "checkpoint": "Tecnici/Logica/Checkpoint/CheckpointT7Inizio"},
 	# (la P13 sta nel corridoio della scala verso il fiume, prima del capannone: chi parte dal fiume ci è già passato)
-	"fiume": {"fatte": 3, "checkpoint": "Risalita/Fiume/Checkpoint/CheckpointIngresso", "polaroid": ["p13"]},
-	"torre": {"fatte": 5, "checkpoint": "SalaTorre/Checkpoint_portone", "torre": true},
-	"inseguimento": {"fatte": 6, "checkpoint": "SalaTorre/Checkpoint_fondo", "torre": true},
-	"tunnel": {"fatte": 6, "checkpoint": "SalaSottomarino/Checkpoint_6", "torre": true, "tunnel": true},
+	"fiume": {"fatte": 4, "checkpoint": "Risalita/Fiume/Checkpoint/CheckpointIngresso", "polaroid": ["p13"]},
+	# (0.4.0) all'ingresso della stanza delle pozze, con fiume e infermeria fatti e l'enigma da fare
+	"pozze": {"fatte": 5, "checkpoint": "Risalita/StanzaPozze/Checkpoint/CheckpointIngresso"},
+	# (0.4.0) alla serranda del magazzino, con la risalita fatta e lei non ancora sbucata: il giro della luce nelle vasche,
+	# poi la fossa
+	"sala_buio": {"fatte": 7, "checkpoint": "Tecnici/Logica/Checkpoint/CheckpointSerranda"},
+	"torre": {"fatte": 8, "checkpoint": "SalaTorre/Checkpoint_portone", "torre": true},
+	"inseguimento": {"fatte": 9, "checkpoint": "SalaTorre/Checkpoint_fondo", "torre": true},
+	"tunnel": {"fatte": 9, "checkpoint": "SalaSottomarino/Checkpoint_6", "torre": true, "tunnel": true},
 }
 
 var level: Node
@@ -156,7 +173,7 @@ func _partenza(id: String, p: Dictionary) -> void:
 	if pl.water_pack:
 		pl.water_pack.set_equipped(true, false)
 		pl.water_pack.set_tank_amount(pl.water_pack.tank_capacity)
-	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	GameState.imposta_luci(GameState.Luci.PRIMA_DEL_RISVEGLIO if p.get("prima_del_risveglio", false) else GameState.Luci.BLACKOUT)
 	for i in 10:
 		await get_tree().physics_frame
 	if p.get("torre", false):
