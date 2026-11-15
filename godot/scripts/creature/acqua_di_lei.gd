@@ -781,10 +781,15 @@ func _prendi() -> void:
 	_cambia(Fase.PRESA)
 	if modo == Modo.MANO:
 		_anima("pozza_presa", 0.1)
+		# la scena di morte (DeathSequence): la camera scende e si ferma sopra il pelo, al bordo della pozza dalla parte del
+		# giocatore, e guarda dove il braccio rientra nell'acqua; il viso no (piano B del coordinatore per la 0.4.0)
+		_lei.set_meta(&"camera_morte", camera_morte_mano())
 		_lei.add_to_group(&"medusa_che_prende")
 		presa.emit()
 		GameState.kill_player(&"medusa")
 		return
+	if _lei.has_meta(&"camera_morte"):
+		_lei.remove_meta(&"camera_morte")
 	_girala_verso(GameState.player)
 	_lei.segui_con_la_testa(0.0, 0.1)
 	_anima("presa", 0.15)
@@ -792,6 +797,27 @@ func _prendi() -> void:
 	_lei.add_to_group(&"medusa_che_prende")
 	presa.emit()
 	GameState.kill_player(&"medusa")
+
+
+## Nel modo MANO, la strada della camera nella scena di morte ([caduta, arrivo, bersaglio], nel mondo): prima cade verso il
+## grigliato, accanto alla caviglia (di lato al braccio, 35 cm da terra), poi è trascinata fino al bordo della pozza e si
+## ferma 15 cm sopra il pelo (e sopra il grigliato), 25 cm dentro la pozza e di lato al braccio; guarda il bordo al pelo,
+## dove il braccio rientra nell'acqua. Il braccio resta di lato (piano B del coordinatore per la 0.4.0).
+func camera_morte_mano() -> Array:
+	var q := _punto
+	var pelo_q := pelo_a(q)
+	var caduta := q.global_transform * Vector3(0.35, 0.0, 0.8)
+	caduta.y = q.global_position.y + 0.6
+	var pos := q.global_transform * Vector3(CAMERA_MORTE_LATO, 0.0, -CAMERA_MORTE_DENTRO)
+	pos.y = maxf(pelo_q, q.global_position.y) + CAMERA_MORTE_SOPRA
+	var guarda := q.global_transform * Vector3(0.0, 0.0, 0.15)
+	guarda.y = pelo_q + 0.1
+	return [caduta, pos, guarda]
+
+
+const CAMERA_MORTE_SOPRA := 0.3
+const CAMERA_MORTE_LATO := 0.25
+const CAMERA_MORTE_DENTRO := 0.5
 
 
 ## Torna sotto: respinta (il getto in faccia) o da sola (dopo averti cercato: sbatte nell'acqua).
