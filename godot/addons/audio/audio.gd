@@ -1865,10 +1865,7 @@ class Statua:
 				verso_t = randf_range(VERSO_OGNI.x, VERSO_OGNI.y)
 		else:
 			verso_t = -2.0
-		# (il canto tace nella carica e nello scatto del tunnel, build 0.4.0: LeiTunnel.CANTO_ZITTO; lì si spegne in
-		# CANTO_SPEGNI s, mai di netto, scelta dell'utente del 15 novembre: «l'ultima nota cala e muore»)
-		var zitta := n.has_meta(&"canto_zitto")
-		_canto(a, corsa and (n as Node3D).is_visible_in_tree() and not zitta, CANTO_SPEGNI if zitta else 0.5)
+		_canto(a, corsa and (n as Node3D).is_visible_in_tree() and not n.has_meta(&"canto_zitto"))
 		if n.has_meta(&"cuore_condotte"):
 			# (nelle condotte solo il battito, mentre lei è su: lo segnala SalaInseguimento)
 			_cuore_condotte(a, int(n.get_meta(&"cuore_condotte")))
@@ -1881,13 +1878,10 @@ class Statua:
 		return is_instance_valid(canto) and (canto.get(&"playing") or audio._finto(canto)) \
 				and float(canto.get_meta(&"partito", -2.0)) == canto_partito
 
-	## Quanto si spegne il canto quando lei carica (s): la finestra per colpirla parte con la sfumata.
-	const CANTO_SPEGNI := 1.0
-
-	func _canto(a, corsa: bool, spegni := 0.5) -> void:
+	func _canto(a, corsa: bool) -> void:
 		if not corsa or not Catalogo.SUONI.has(canto_nome):
 			if canta():
-				a.dissolvi(canto, spegni)
+				a.dissolvi(canto, 0.5)
 			canto = null
 			canto_t = -1.0
 			return
