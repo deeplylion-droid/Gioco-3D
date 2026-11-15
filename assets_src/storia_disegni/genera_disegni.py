@@ -26,10 +26,13 @@ BARCA = 'a little orange boat on wavy blue water'
 SCENE = {
     'D1': (f'{OMINO} at the bottom of the sheet, a big thick arrow drawn in blue crayon going from the stick figure up '
            f'towards the top of the sheet, and at the top {BARCA}. Lots of empty paper around, very simple.'),
-    'D2': (f'at the bottom a big blue rectangular water tank seen from the side, with {MEDUSA} inside the water. '
-           f'{OMINO} walks around the tank keeping far away from its edge, shown by a big curved dashed arrow that goes '
-           f'around the tank without touching it. From there a simple ladder goes up the sheet, and at the top, small, '
-           f'{BARCA}.'),
+    'D2': (f'in the lower middle an open swimming pool seen from straight above, a big rounded rectangle outlined in '
+           f'dark blue and coloured light blue with heavy crayon strokes and a few wavy lines for the water, no walls, '
+           f'no glass. Inside the water {MEDUSA}. {OMINO} stands at the bottom left corner of the sheet. One single '
+           f'dashed orange line with ONLY ONE arrowhead: it starts at the stick figure, goes up along the left side of '
+           f'the sheet, curves across above the pool far from its edge, and ends with its one arrowhead at the foot of '
+           f'a simple ladder standing on the right side of the sheet, well away from the pool. The ladder goes up, and '
+           f'at the top of the sheet, small, {BARCA}.'),
     'DF': (f'a lazy river drawn as a big blue ring loop seen from above. {OMINO} sits on a green swim ring floating on '
            f'the river. Behind the swim ring a grey shark fin sticks out of the water and a grey shark mouth with big '
            f'white pointy teeth. From the stick figure short blue dashes go backwards towards the shark, like a water '
@@ -39,10 +42,14 @@ SCENE = {
     'D4': (f'a long tube tunnel drawn across the sheet. {OMINO} runs along the tunnel and sprays blue water dashes '
            f'backwards. Behind him, very big, {MEDUSA} following him. At the far end of the tunnel a round door, and '
            f'beyond the round door {BARCA}.'),
-    'DZ': (f'a row of children holding hands, simple stick figure kids in different crayon colours. {OMINO} is in the '
-           f'middle of the row; at his sides a stick figure child with a square turquoise head and a little white lamb '
-           f'with only one eye. Above all of them a very big {MEDUSA}, her long tentacles come down and hold the hand '
-           f'of every child, the orange stick figure too. No boat.'),
+    'DZ': (f'a row of seven simple stick figures standing on the ground, side by side, not touching each other. In the '
+           f'middle {OMINO}, a plain stick figure exactly like a simple drawing of a grown-up, the TALLEST of all. The '
+           f'other six are small children, simple stick figures: one with a square turquoise head with a smile, one '
+           f'small child standing upright on two legs wearing a white curly lamb hood costume with one single big eye, '
+           f'and four more children in red, green, purple and blue crayon. Above all of them a very big {MEDUSA}; each '
+           f'of her long wavy tentacles comes down to one figure, and every figure raises one arm up to hold the tip of '
+           f'a tentacle, like children holding their mother\'s hand; the tall orange stick figure holds one too. No '
+           f'boat.'),
     'FIRMA': ('only one tiny thing in the middle of the blank sheet: a small square drawn and coloured in turquoise '
               'crayon with a simple smiling face inside it, like a little smiling box. The rest of the sheet is empty '
               'paper.'),

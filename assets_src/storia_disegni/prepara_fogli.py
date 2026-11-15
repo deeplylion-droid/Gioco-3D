@@ -12,13 +12,17 @@ QUI = os.path.dirname(os.path.abspath(__file__))
 RADICE = os.path.join(QUI, '..', '..')
 GODOT = os.path.join(RADICE, 'godot')
 USCITA = os.path.join(GODOT, 'assets', 'storia_disegni')
-SCELTI = {'D1': 'D1_v2', 'D2': 'D2_v2', 'DF': 'DF_v1', 'D3': 'D3_v2', 'D4': 'D4_v2', 'DZ': 'DZ_v2'}
+# (D2 e DZ rifatti su richiesta del coordinatore del 15 novembre: la vasca aperta vista dall'alto con una sola freccia;
+# l'omino il più alto in mezzo, l'agnellino bambino in piedi, tutti per mano ai tentacoli. D4 orizzontale.)
+SCELTI = {'D1': 'D1_v2', 'D2': 'D2_v7', 'DF': 'DF_v1', 'D3': 'D3_v2', 'D4': 'D4_v2', 'DZ': 'DZ_v3'}
+## I fogli orizzontali (A3 orizzontale nel gioco): 4:3, ritagliati intorno al disegno.
+ORIZZONTALI = {'D4'}
 LATO = (1024, 1365)
 # la firma: larga così rispetto al lato corto del foglio, a questa distanza dal bordo (in basso a destra)
 FIRMA_LARGA = 0.10
 # dove il foglio non si stacca bene dallo sfondo (carta chiara su fondo chiaro, legno chiaro): il taglio a mano, in px del
 # grezzo (x0, y0, x1, y1), misurato su una griglia
-TAGLI = {'D2_v2': (62, 52, 848, 1152), 'D3_v2': (40, 40, 852, 1160), 'D4_v2': (52, 50, 862, 1150)}
+TAGLI = {'D2_v2': (62, 52, 848, 1152), 'D3_v2': (40, 40, 852, 1160), 'D4_v2': (52, 302, 862, 910)}
 FIRMA_MARGINE = 0.035
 
 
@@ -122,7 +126,7 @@ def main() -> None:
     for nome, grezzo in SCELTI.items():
         im = Image.open(os.path.join(QUI, 'grezzi', grezzo + '.jpg'))
         foglio = im.crop(TAGLI[grezzo]) if grezzo in TAGLI else taglia_foglio(im)
-        f = firma_su(a_misura(foglio, LATO), strato)
+        f = firma_su(a_misura(foglio, (LATO[1], LATO[0]) if nome in ORIZZONTALI else LATO), strato)
         f.save(os.path.join(USCITA, f'disegno_{nome.lower()}.jpg'), quality=90)
         fogli.append((nome, f))
     # i due che c'erano già: dagli originali (senza firma) in assets_src, così si può rifare
@@ -150,6 +154,15 @@ def main() -> None:
         x += p.size[0] + 20
     os.makedirs(os.path.join(QUI, 'anteprima'), exist_ok=True)
     tot.save(os.path.join(QUI, 'anteprima', 'otto_disegni.jpg'), quality=88)
+    # e i tre rifatti dopo il primo giro del coordinatore (D2, D4 orizzontale, DZ)
+    tre = [f for n, f in fogli if n in ('D2', 'D4', 'DZ')]
+    pezzi = [f.convert('RGB').resize((int(f.size[0] * H / f.size[1]), H)) for f in tre]
+    tot = Image.new('RGB', (sum(p.size[0] for p in pezzi) + 20 * (len(pezzi) + 1), H + 40), (60, 60, 60))
+    x = 20
+    for p in pezzi:
+        tot.paste(p, (x, 20))
+        x += p.size[0] + 20
+    tot.save(os.path.join(QUI, 'anteprima', 'tre_rifatti.jpg'), quality=88)
     print('fatti:', [n for n, _ in fogli])
 
 
