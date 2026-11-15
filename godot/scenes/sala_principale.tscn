@@ -77,6 +77,7 @@
 [ext_resource type="Script" path="res://scripts/tecnici/luci_risveglio.gd" id="73_elmpe"]
 [ext_resource type="Script" path="res://scripts/game/ritorno_al_buio.gd" id="74_a51qx"]
 [ext_resource type="Script" path="res://scripts/game/lei_sbuca.gd" id="75_hiwkq"]
+[ext_resource type="Script" path="res://scripts/game/lei_sala_al_buio.gd" id="lsab_04"]
 [ext_resource type="Script" path="res://scripts/mechanisms/portone_torre.gd" id="76_nwfer"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="77_6lyoo"]
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="78_cy8pr"]
@@ -954,6 +955,12 @@ material_map = {
 "M_pelle": ExtResource("34_5f88w"),
 "M_tentacoli": ExtResource("39_sbxv2")
 }
+
+[node name="LeiSalaAlBuio" type="Node3D" parent="Gioco" node_paths=PackedStringArray("vasca_grande", "vasche_bimbi", "lei_sbuca")]
+script = ExtResource("lsab_04")
+vasca_grande = NodePath("../../Vasche/VascaArrivo")
+vasche_bimbi = [NodePath("../../Vasche/VascaBimbi1"), NodePath("../../Vasche/VascaBimbi2")]
+lei_sbuca = NodePath("../LeiSbuca")
 
 [node name="CheckpointAreaBimbi" type="Area3D" parent="Gioco" unique_id=1965263182 node_paths=PackedStringArray("spawn_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.3, 1.5, -0.5)

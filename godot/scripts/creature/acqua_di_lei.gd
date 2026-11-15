@@ -4,8 +4,10 @@ extends Node3D
 ## d'acqua vero (vasca, pozza profonda, canale). Si attacca come figlio della zona, con uno o più punti d'uscita.
 ## Le fasi:
 ## - LONTANA: niente. Da qui la chiama la zona ([method chiama]) o, con [member automatica], lei stessa ogni tanto;
-## - ARRIVA: la luce rosa sott'acqua arriva sotto il punto d'uscita (per [member avviso] - [member silenzio] s);
-## - SILENZIO: l'ultimo secondo dell'avviso, la luce è lì e il canto si ferma (lo legge l'audio: [member fase]);
+## - ARRIVA: la luce rosa sott'acqua arriva sotto il punto d'uscita (l'avviso meno spegnimento e silenzio);
+## - SPEGNE: la luce è lì e il canto si spegne da solo, l'ultima nota che cala ([member spegnimento], 1 s: il canto non
+##   si tronca mai di netto, scelta dell'utente del 15 novembre);
+## - SILENZIO: silenzio vero ([member silenzio], 0,5 s), poi esce (lo legge l'audio: [member fase_canto]);
 ## - ESCE: lei sale dall'acqua («intera»: sale_dall_acqua delle condotte);
 ## - SU: incombe e ti cerca con la testa; se sei nella [member portata] ti prende ([member letale]), se no dopo
 ##   [member tempo_su] sbatte nell'acqua e torna sotto;
@@ -30,8 +32,11 @@ signal presa
 signal respinta
 ## È tornata sotto (respinta o da sola) ed è sparita.
 signal tornata_sotto
+## Il percorso della luce ([method percorri]) è finito (anche il giro, con [method smetti_giro]): la luce è spenta e lei
+## se n'è andata, o (con alla_fine) arriva al punto d'uscita.
+signal percorso_finito
 
-enum Fase { LONTANA, ARRIVA, SILENZIO, ESCE, SU, PRESA, SCENDE, CALMA }
+enum Fase { LONTANA, ARRIVA, SPEGNE, SILENZIO, ESCE, SU, PRESA, SCENDE, CALMA }
 ## Come esce: intera (le vasche grandi) o mano e tentacoli (gli specchi stretti: punto 3 della build, da fare).
 enum Modo { INTERA, MANO }
 
@@ -57,10 +62,12 @@ const ANIM := "inseguimento/"
 ## Da dove arriva la luce rosa (se manca: 8 m dietro il punto d'uscita, dalla parte opposta al giocatore).
 @export var partenza_luce: Node3D
 @export_group("Tempi e distanze")
-## L'avviso intero (s): la luce che arriva più il silenzio.
-@export var avviso := 3.0
-## L'ultima parte dell'avviso (s): la luce è ferma lì e il canto tace.
-@export var silenzio := 1.0
+## L'avviso intero (s): la luce che arriva, il canto che si spegne e il silenzio.
+@export var avviso := 3.5
+## Dentro l'avviso: il canto che si spegne da solo (s), con la luce già ferma sotto il punto.
+@export var spegnimento := 1.0
+## L'ultima parte dell'avviso (s): silenzio vero, poi esce.
+@export var silenzio := 0.5
 ## Più vicino di così al punto d'uscita (m, in pianta) quando è fuori: ti prende.
 @export var portata := 3.0
 ## Quanto sta su a cercarti, se non sei nella portata (s).
@@ -89,6 +96,26 @@ var fase := Fase.LONTANA
 var vicinanza := 0.0
 ## Dove sta la luce rosa (nel mondo).
 var punto_luce := Vector3.ZERO
+## La fase per il canto (accordo con ambienti-1): &"ferma" (prima delle pompe, o spenta: niente canto), &"lontana"
+## (canto lontano), &"arriva" (sale con [member vicinanza]), &"spegne" (il canto si spegne da solo in
+## [member spegnimento] s), &"silenzio" (niente), &"fuori" (esce, incombe, prende: niente canto), &"respinta" (il
+## getto la ricaccia sotto: niente), &"va_via" (torna sotto da sola: il canto lontano riprende).
+var fase_canto: StringName:
+	get:
+		match fase:
+			Fase.ARRIVA:
+				return &"arriva"
+			Fase.SPEGNE:
+				return &"spegne"
+			Fase.SILENZIO:
+				return &"silenzio"
+			Fase.ESCE, Fase.SU, Fase.PRESA:
+				return &"fuori"
+			Fase.SCENDE:
+				return &"respinta" if _respinta else &"va_via"
+		if not abilitata or GameState.luci != GameState.Luci.BLACKOUT:
+			return &"ferma"
+		return &"arriva" if in_giro() and vicinanza > 0.2 else &"lontana"
 
 var _t := 0.0
 var _durata := 0.0
@@ -99,6 +126,18 @@ var _ultimo_getto := -1
 var _respinta := false
 var _prossima := 0.0
 var _dimostrativa := false
+var _giro := PackedVector3Array()
+var _giro_i := 0
+## La velocità della luce nel giro (m/s).
+var velocita_giro := 1.6
+var _fine_giro := false
+var _fine_da := Vector3.ZERO
+var _fine_a := Vector3.ZERO
+var _fine_t := 0.0
+var _fine_durata := 1.0
+var _una_volta := false
+var _alla_fine: Node3D
+var _spegni_alla_fine := 1.5
 
 ## Lei, la sua luce e il viso da colpire: una sola per tutto il gioco, sotto l'istanza che la usa.
 static var _lei: MedusaAffacciata
@@ -122,6 +161,12 @@ func _exit_tree() -> void:
 
 
 # --- Domande -----------------------------------------------------------------------------------------------------
+
+## Vero se la prossima uscita da qui sarà quella dimostrativa (dal punto più lontano, non prende):
+## [member prima_volta_dimostrativa] acceso e da questo nodo non è ancora uscita.
+func prossima_dimostrativa() -> bool:
+	return prima_volta_dimostrativa and not _dimostrate.has(str(get_path()))
+
 
 ## Vero se lei adesso può venire qui.
 func puo_venire() -> bool:
@@ -180,9 +225,13 @@ func chiama(punto: Node3D = null) -> bool:
 		return false
 	_proprietaria = self
 	_assicura_lei()
+	# (col giro o alla fine di un percorso la luce c'è già: parte da dove sta)
+	var gia := _luce.visible and _luce.light_energy > 0.05 and _luce.get_parent() == self
 	_luce.reparent(self, false)
 	var arrivo := _sotto(_punto)
-	if partenza_luce:
+	if gia:
+		_da = _luce.global_position
+	elif partenza_luce:
 		_da = partenza_luce.global_position
 	else:
 		var via := Vector3.FORWARD
@@ -192,8 +241,9 @@ func chiama(punto: Node3D = null) -> bool:
 		if via.length() < 0.1:
 			via = Vector3.FORWARD
 		_da = arrivo + via.normalized() * 8.0
-	_da.y = arrivo.y - 0.4
-	_luce.light_energy = 0.0
+	if not gia:
+		_da.y = arrivo.y - 0.4
+		_luce.light_energy = 0.0
 	_luce.omni_range = LUCE_SOTTO_PORTATA
 	_luce.shadow_enabled = false
 	_luce.global_position = _da
@@ -232,21 +282,29 @@ func _physics_process(delta: float) -> void:
 	match fase:
 		Fase.LONTANA:
 			vicinanza = 0.0
+			if not _giro.is_empty() or _fine_giro:
+				_muovi_giro(delta, p)
 			if automatica and p and is_instance_valid(p) and _vicino(p):
 				_prossima -= delta
 				if _prossima <= 0.0:
 					_prossima = randf_range(intervallo.x, intervallo.y)
 					chiama()
 		Fase.ARRIVA:
-			var dur := maxf(avviso - silenzio, 0.01)
+			var dur := maxf(avviso - spegnimento - silenzio, 0.01)
 			var k := clampf(_t / dur, 0.0, 1.0)
 			var e := k * k * (3.0 - 2.0 * k)
 			_luce.global_position = _da.lerp(_sotto(_punto), e)
-			_luce.light_energy = LUCE_SOTTO * clampf(k * 3.0, 0.0, 1.0)
+			_luce.light_energy = maxf(_luce.light_energy, LUCE_SOTTO * clampf(k * 3.0, 0.0, 1.0))
 			vicinanza = e * 0.9
 			punto_luce = _luce.global_position
 			if _t >= dur:
 				vicinanza = 1.0
+				_cambia(Fase.SPEGNE)
+		Fase.SPEGNE:
+			vicinanza = 1.0
+			_luce.light_energy = LUCE_SOTTO * (0.85 + 0.15 * sin(_t * 9.0))
+			punto_luce = _luce.global_position
+			if _t >= spegnimento:
 				_cambia(Fase.SILENZIO)
 		Fase.SILENZIO:
 			vicinanza = 1.0
@@ -287,7 +345,8 @@ func _physics_process(delta: float) -> void:
 				_cambia(Fase.CALMA)
 		Fase.CALMA:
 			vicinanza = 0.0
-			if _proprietaria == self:
+			# (col giro della luce lei resta qui: la luce riparte da dove è scesa)
+			if _proprietaria == self and _giro.is_empty():
 				_proprietaria = null
 			if _t >= (pausa_respinta if _respinta else pausa_dopo):
 				_cambia(Fase.LONTANA)
@@ -308,9 +367,156 @@ func _cambia(f: Fase) -> void:
 
 ## La luce se ne va senza che lei esca (un bambino in vista all'ultimo momento).
 func _annulla() -> void:
-	_luce.visible = false
-	_proprietaria = null
+	if _giro.is_empty():
+		_luce.visible = false
+		_proprietaria = null
 	_cambia(Fase.LONTANA)
+
+
+# --- Il giro della luce (la sala al buio) ---------------------------------------------------------------------------
+
+## Mentre è lontana la luce rosa gira sott'acqua lungo [param punti] (nel mondo, in ciclo) a [param velocita] m/s:
+## lei è qui (in nessun altro posto) e si avvicina e si allontana. La zona la chiama ([method chiama]) quando la luce
+## passa vicino a un punto d'uscita (vedi [method punto_vicino_alla_luce]): parte da dove sta la luce.
+## Ritorna falso se adesso lei non può essere qui.
+func gira(punti: PackedVector3Array, velocita := 1.6) -> bool:
+	if punti.size() < 2 or fase != Fase.LONTANA or not puo_venire():
+		return false
+	_proprietaria = self
+	_assicura_lei()
+	_giro = punti
+	velocita_giro = velocita
+	_fine_giro = false
+	_luce.reparent(self, false)
+	_luce.global_position = punti[0]
+	_giro_i = 1
+	_luce.omni_range = LUCE_SOTTO_PORTATA
+	_luce.shadow_enabled = false
+	_luce.light_energy = 0.0
+	_luce.visible = true
+	return true
+
+
+## Il giro finisce: la luce va a [param verso] (sott'acqua), si spegne in [param secondi] e lei se ne va da qui.
+func smetti_giro(verso: Vector3, secondi := 2.5) -> void:
+	if _giro.is_empty():
+		return
+	_giro = PackedVector3Array()
+	_fine_giro = true
+	_fine_da = _luce.global_position
+	_fine_a = verso
+	_fine_durata = maxf(secondi, 0.1)
+	_fine_t = 0.0
+
+
+## La luce fa una volta sola il percorso [param punti] (nel mondo, sott'acqua) a [param velocita] m/s, senza che lei
+## esca: la luce che passa di pozza in pozza, quella che passa sotto la vasca della sala pompe e se ne va. Alla fine:
+## con [param alla_fine] (un punto d'uscita, sopra l'ultimo punto del percorso) lei viene lì come con [method chiama]
+## (avviso, canto che si spegne, silenzio, esce); senza, la luce si spegne in [param spegni] s e lei se ne va; con
+## [param spegni] 0 la luce resta accesa e ferma all'ultimo punto (lei resta qui) finché la zona non la chiama
+## ([method chiama] parte da lì) o la manda via ([method manda_via]). Intanto la fase resta LONTANA.
+## Ritorna falso se adesso lei non può essere qui.
+func percorri(punti: PackedVector3Array, velocita := 1.6, alla_fine: Node3D = null, spegni := 1.5) -> bool:
+	if not gira(punti, velocita):
+		return false
+	_una_volta = true
+	_alla_fine = alla_fine
+	_spegni_alla_fine = spegni
+	return true
+
+
+## Vero mentre la luce fa il giro (o lo sta finendo).
+func in_giro() -> bool:
+	return not _giro.is_empty() or _fine_giro
+
+
+## Il punto d'uscita sopra cui passa adesso la luce del giro (entro [param raggio] m, in pianta), o null.
+func punto_vicino_alla_luce(raggio := 2.0) -> Node3D:
+	if _giro.is_empty() or fase != Fase.LONTANA or not _luce.visible:
+		return null
+	for q in punti_uscita:
+		if q and _in_pianta(q.global_position, _luce.global_position) <= raggio:
+			return q
+	return null
+
+
+func _muovi_giro(delta: float, p: Node3D) -> void:
+	if _luce.get_parent() != self:
+		# (era su di lei: riparte da dove è scesa)
+		_luce.reparent(self, false)
+		_luce.omni_range = LUCE_SOTTO_PORTATA
+		_luce.shadow_enabled = false
+		if _punto:
+			_luce.global_position = _sotto(_punto)
+		_giro_i = _vicino_del_giro(_luce.global_position)
+	_luce.visible = true
+	if _fine_giro:
+		_fine_t += delta
+		var k := clampf(_fine_t / _fine_durata, 0.0, 1.0)
+		_luce.global_position = _fine_da.lerp(_fine_a, k * k * (3.0 - 2.0 * k))
+		_luce.light_energy = LUCE_SOTTO * (1.0 - k)
+		punto_luce = _luce.global_position
+		if k >= 1.0:
+			_fine_giro = false
+			_luce.visible = false
+			if _proprietaria == self:
+				_proprietaria = null
+			percorso_finito.emit()
+		return
+	_luce.light_energy = minf(_luce.light_energy + LUCE_SOTTO * delta, LUCE_SOTTO)
+	if _giro.size() == 1:
+		_luce.global_position = _giro[0]
+		punto_luce = _luce.global_position
+		if p and is_instance_valid(p):
+			vicinanza = clampf(1.0 - _in_pianta(p.global_position, punto_luce) / 14.0, 0.0, 1.0) * 0.8
+		return
+	var dove: Vector3 = _giro[_giro_i]
+	var passo := velocita_giro * delta
+	var verso := dove - _luce.global_position
+	if verso.length() <= passo:
+		_luce.global_position = dove
+		if _una_volta and _giro_i == _giro.size() - 1:
+			# il percorso è finito
+			_una_volta = false
+			var fine := _alla_fine
+			_alla_fine = null
+			if fine == null and _spegni_alla_fine <= 0.0:
+				# resta accesa e ferma qui
+				_giro = PackedVector3Array([_luce.global_position])
+				_giro_i = 0
+				percorso_finito.emit()
+				return
+			if fine:
+				_giro = PackedVector3Array()
+				_proprietaria = null
+				percorso_finito.emit()
+				# (chiama parte da dove sta la luce); se adesso non può uscire, la luce si spegne lì
+				if not chiama(fine):
+					_proprietaria = self
+					_fine_giro = true
+					_fine_da = _luce.global_position
+					_fine_a = _fine_da
+					_fine_durata = maxf(_spegni_alla_fine, 0.1)
+					_fine_t = 0.0
+			else:
+				smetti_giro(_luce.global_position, _spegni_alla_fine)
+			return
+		_giro_i = (_giro_i + 1) % _giro.size()
+	else:
+		_luce.global_position += verso.normalized() * passo
+	punto_luce = _luce.global_position
+	# per il canto: più vicina quanto più la luce è vicina al giocatore (al più 0,8: fuori è 1)
+	if p and is_instance_valid(p):
+		vicinanza = clampf(1.0 - _in_pianta(p.global_position, punto_luce) / 14.0, 0.0, 1.0) * 0.8
+
+
+## L'indice del punto del giro più vicino a [param q].
+func _vicino_del_giro(q: Vector3) -> int:
+	var meglio := 0
+	for i in _giro.size():
+		if _giro[i].distance_to(q) < _giro[meglio].distance_to(q):
+			meglio = i
+	return (meglio + 1) % _giro.size() if _giro.size() > 1 else 0
 
 
 # --- Fuori dall'acqua --------------------------------------------------------------------------------------------
@@ -392,6 +598,38 @@ func _su_getto(_litri: float, _punto_colpo: Vector3, _dir: Vector3) -> void:
 	_ultimo_getto = ora
 	if _getto >= getto_per_respingere:
 		_scendi(true)
+
+
+## La manda via. Se non è ancora uscita (la luce che gira o percorre, l'avviso) la luce si allontana di qualche metro
+## dal giocatore, si spegne in [param secondi] e lei se ne va (fase LONTANA, libera); se è già fuori (ESCE, SU) è come
+## [method respingi]. Le pozze la chiamano quando il giocatore comincia a svuotare il colore della pozza.
+func manda_via(secondi := 1.0) -> void:
+	if fase == Fase.ESCE or fase == Fase.SU:
+		_scendi(true)
+		return
+	var sotto := fase == Fase.ARRIVA or fase == Fase.SPEGNE or fase == Fase.SILENZIO
+	if not sotto and _giro.is_empty():
+		return
+	if _luce == null or not _luce.visible:
+		return
+	var via := Vector3.FORWARD
+	var p := GameState.player
+	if p and is_instance_valid(p):
+		via = _luce.global_position - p.global_position
+		via.y = 0.0
+	if via.length() < 0.1:
+		via = Vector3.FORWARD
+	_giro = PackedVector3Array()
+	_una_volta = false
+	_alla_fine = null
+	_fine_giro = true
+	_fine_da = _luce.global_position
+	_fine_a = _fine_da + via.normalized() * 3.0
+	_fine_durata = maxf(secondi, 0.1)
+	_fine_t = 0.0
+	_proprietaria = self
+	if sotto:
+		_cambia(Fase.LONTANA)
 
 
 ## Respinge lei adesso, come un getto lungo in faccia (per i test e per chi la ricaccia in altro modo).

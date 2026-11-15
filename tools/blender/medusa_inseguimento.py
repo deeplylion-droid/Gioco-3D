@@ -43,6 +43,8 @@ fauce a ogni fotogramma, per le blend shape):
   tuffo_sb1 (1,3 s): dopo affacciata_sb1 si stacca dal bordo e si tuffa nel pozzo;
   riemerge (1,8 s): dal fondo su nella posa di insegue_aperta al tempo 0, la bocca che si spalanca;
   schianto (2,4 s): contro il portello, la faccia sull'oblo' (OBLO) e i palmi ai lati, poi resta premuta.
+  carica (2 s, 0.4.0): smette di cantare, si tira indietro e si carica, bocca spalancata, poi ferma col tremito;
+  scatto (0,8 s, 0.4.0): dalla fine di carica parte in avanti e torna nella posa di insegue_aperta al tempo 0.
 
 Uso: flock /home/user/tools/render.lock /home/user/tools/blender-venv/bin/python \
          tools/blender/medusa_inseguimento.py [--anteprime] [--solo nome,nome]
@@ -875,6 +877,59 @@ def pose_ritrae(arm, C, Z, t, T=2.0):
     Z.segui()
 
 
+T_CARICA = 2.0          # la carica nel tunnel (0.4.0)
+T_SCATTO = 0.8          # lo scatto in avanti dopo la carica
+CARICA_CICLO = 1.0      # dove arriva il ciclo della corsa alla fine della carica (s): lo scatto riparte da li'
+
+
+def _caricata(arm, C, Z, tc, w, l=0.0, vib=0.0):
+    """La posa della carica: la corsa (aperta) al tempo tc del suo ciclo, tirata indietro di w (0-1) e lanciata in
+    avanti di l (0-1). Tirata: busto indietro, testa bassa e puntata, le braccia piegate indietro all'altezza delle
+    spalle, pronte; la bocca si apre di piu'. Lanciata: busto e testa in avanti, le braccia tese davanti. vib e' il
+    tremito della carica (-1..1)."""
+    def ritocco(a):
+        busto(a, avanti=(-14 + 1.5 * vib) * w + 22 * l, giro=1.0 * vib * w)
+        testa(a, su=-12 * w - 6 * l, piega=1.5 * vib * w)
+    k = max(0.0, 1.0 - 0.7 * w - 0.6 * l)
+    aperta(arm, C, Z, tc, k=k, extra=ritocco)
+    sposta(arm, (0.0, 0.6 * w - 0.5 * l, -0.10 * w + 0.05 * l))
+    if w > 1e-4 or l > 1e-4:
+        # le braccia: dalla posa tesa della corsa (braccia_tese, stesso tempo del ciclo) indietro o avanti, con gli stessi
+        # assi della mano (cosi' a w = l = 0 e' la corsa)
+        t2 = 2.0 * ((tc / T_APERTA) % 1.0)
+        for suf, sfasa in (('.L', 0.0), ('.R', 0.5)):
+            a = math.sin(2 * math.pi * (t2 + sfasa))
+            teso = (0.30 - 0.04 * a, -0.95 - 0.10 * a * k, 0.10 + 0.08 * math.cos(2 * math.pi * (t2 + sfasa)) * k)
+            indietro = (0.48, -0.18, 0.40)
+            avanti = (0.22, -1.10, 0.20)
+            polso = tuple(x + (y - x) * w for x, y in zip(teso, indietro))
+            polso = tuple(x + (y - x) * l for x, y in zip(polso, avanti))
+            braccio(arm, suf, polso, (0.7, 0.0, -0.4), (0.12, -1.0, 0.05), (0.1, 0.1, 1.0))
+    fauce_mascella(arm, C, 1.0 + 0.15 * w + 0.1 * l)
+    Z.segui()
+
+
+def pose_carica(arm, C, Z, t, T=T_CARICA):
+    """2 s nel tunnel (0.4.0): a 8 m da te smette di cantare e si carica. Dalla posa di insegue_aperta al tempo 0 si
+    tira indietro e si raccoglie in 0,9 s (busto indietro, testa bassa e puntata su di te, braccia piegate indietro,
+    bocca spalancata), poi resta cosi' con un tremito che cresce. Finisce ferma nella posa da cui parte scatto."""
+    u = t / T
+    w = liscio(0.0, 1.0, 0.0, 0.45, u)
+    vib = math.sin(2 * math.pi * 11.0 * t) * liscio(0.0, 1.0, 0.3, 1.0, u)
+    _caricata(arm, C, Z, CARICA_CICLO * u, w, vib=vib)
+
+
+def pose_scatto(arm, C, Z, t, T=T_SCATTO):
+    """0,8 s: dalla fine di carica parte in avanti di scatto, si allunga verso di te (busto e testa avanti, braccia
+    tese) e torna nella posa di insegue_aperta al tempo 0 (il gioco riprende la corsa). Lo spostamento in avanti
+    lo fa il gioco."""
+    u = t / T
+    w = liscio(1.0, 0.0, 0.0, 0.35, u)
+    l = chiavi(u, [(0.0, 0.0), (0.32, 1.0), (0.6, 0.85), (1.0, 0.0)])
+    tc = CARICA_CICLO + (T_APERTA - CARICA_CICLO) * u
+    _caricata(arm, C, Z, tc, w, l)
+
+
 def pose_tuffo_sb1(arm, C, Z, t, T=1.3):
     """1,3 s dopo affacciata_sb1 (che finisce a 5,4 s): si stacca dal bordo, si alza un poco e si tuffa giu' nel
     pozzo (-5 m), le braccia che restano in alto, la testa che ti guarda fino all'ultimo."""
@@ -1220,6 +1275,8 @@ ANIMAZIONI = {
     'tuffo_sb1': (1.3, False, lambda a, C, Z, t: pose_tuffo_sb1(a, C, Z, t)),
     'riemerge': (1.8, False, lambda a, C, Z, t: pose_riemerge(a, C, Z, t)),
     'schianto': (2.4, False, lambda a, C, Z, t: pose_schianto(a, C, Z, t)),
+    'carica': (T_CARICA, False, lambda a, C, Z, t: pose_carica(a, C, Z, t)),
+    'scatto': (T_SCATTO, False, lambda a, C, Z, t: pose_scatto(a, C, Z, t)),
     # gli oblò della risalita
     'oblo_schiacciata': (T_OBLO, True, pose_oblo_schiacciata),
     'oblo_schiacciata_stacca': (T_STACCA, False, pose_oblo_schiacciata_stacca),
@@ -1243,6 +1300,8 @@ FAUCE = {
     'ritrae': lambda t: 1.0,
     'riemerge': fauce_riemerge,
     'schianto': lambda t: 1.0,
+    'carica': lambda t: 1.0,
+    'scatto': lambda t: 1.0,
     'oblo_schiacciata': lambda t: 0.0,
     'oblo_schiacciata_stacca': lambda t: 0.0,
     'oblo_sbircia': lambda t: 0.0,
