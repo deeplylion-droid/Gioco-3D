@@ -586,7 +586,7 @@ luce_path = NodePath("../../../Ambienti/SalaPompe/LUCE_crt")
 schermo_sul_vetro = ExtResource("65_pwl5v")
 immagine = ExtResource("66_ow6up")
 
-[node name="Risveglio" type="Node" parent="Tecnici/Logica/SalaPompe" unique_id=880763279 node_paths=PackedStringArray("turbine", "pompe", "leva", "paratie", "porta", "monitor", "checkpoint")]
+[node name="Risveglio" type="Node" parent="Tecnici/Logica/SalaPompe" unique_id=880763279 node_paths=PackedStringArray("turbine", "pompe", "leva", "paratie", "porta", "monitor", "checkpoint", "vasca")]
 script = ExtResource("67_qcrvb")
 turbine = [NodePath("../Turbina3"), NodePath("../Turbina1"), NodePath("../Turbina2")]
 pompe = [NodePath("../Pompa3"), NodePath("../Pompa1"), NodePath("../Pompa2")]
@@ -597,6 +597,7 @@ monitor = NodePath("../Monitor")
 vapori = Array[NodePath]([NodePath("../../../Ambienti/SalaPompe/VAPORE_collettore"), NodePath("../../../Ambienti/SalaPompe/VAPORE_perdita_ovest")])
 checkpoint = NodePath("../../Checkpoint/CheckpointRisveglio")
 punto_lontano = Vector3(0, 0.6, 10)
+vasca = NodePath("../../../Acqua/VascaRaccolta")
 
 [node name="Checkpoint" type="Node3D" parent="Tecnici/Logica" unique_id=1653883795]
 
