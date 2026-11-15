@@ -59,6 +59,8 @@ Ognuna delle due aggiunte va messa solo se ha un perché in quel posto.
 
 Il corridoio del fiume è costruito da codice: il foglio lo mette `RisalitaGioco._disegno_df` (`godot/scripts/risalita/risalita_gioco.gd`), nodo `Risalita/StoriaDF`. Sta sul muro in fondo al corridoio, dietro il bambino col cubo, al centro del muro (x da xc a xc + 2, la faccia a z = fine), A3 col centro a 1,1 m. Il pastello è per terra sotto il foglio; le impronte bagnate vengono dalla porta del capannone, cioè dal fiume (il pavimento è piano). test_disegni_bambino lo trova nella sala (la Risalita è figlia della sala) e lo controlla come gli altri. Scatti in `docs/proposte/storia_fiume/df_*.jpg`.
 
+Il pannello chiaro a destra in `df_3_davanti_riflesso_cielo.jpg` non è un pezzo del corridoio (sonda `df_sonda` di `tests/collaudo/scatti_storia_fiume.gd`, 15 novembre). Nella Risalita non c'è nessuna ReflectionProbe. Il pannello misura 0,130 di luminosità nei primi 5 fotogrammi disegnati dopo il salto della camera, poi da solo 0,033-0,038, cioè il muro com'è, qualunque pezzo si nasconda (130 pezzi provati). È un residuo dei primi fotogrammi dello scatto: la camera salta lì col disegno fermo, e probabilmente un effetto che si accumula nel tempo, forse la nebbia volumetrica, non si è ancora assestato. Negli scatti di questo corridoio si aspettano almeno 10 fotogrammi disegnati prima di scattare. Resta da rifare df_3 così, per conferma.
+
 ## Cose da sapere
 
 - La firma è già nei fogli: non serve aggiungerla.
