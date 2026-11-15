@@ -39,7 +39,8 @@ const NOMI := [&"dorme", &"gira", &"viene", &"finita"]
 		letale = v
 		if acqua:
 			acqua.letale = v
-## Fin dove arriva la presa, in pianta dal punto d'uscita (m; è [member AcquaDiLei.portata]).
+## Col segnaposto INTERA: fin dove arriva la presa, in pianta dal punto d'uscita (m; è [member AcquaDiLei.portata]).
+## Con la mano vale quella del motore, [member AcquaDiLei.portata_mano] (vedi [method portata_effettiva]).
 @export var portata := 2.0:
 	set(v):
 		portata = v
@@ -65,7 +66,7 @@ const NOMI := [&"dorme", &"gira", &"viene", &"finita"]
 ## tentacoli lungo la passerella): i punti d'uscita sono sul grigliato appena fuori dal bordo di ogni pozza del bordo,
 ## alla quota del grigliato, con +Z verso fuori (due per le pozze d'angolo: vale quello più vicino al giocatore).
 ## INTERA, il segnaposto finché la mano non c'è: lei esce dal centro della pozza, al pelo.
-@export var modo := AcquaDiLei.Modo.INTERA
+@export var modo := AcquaDiLei.Modo.MANO
 ## Con INTERA, quanto sotto il pelo parte la salita (m).
 @export var profondita_uscita := 1.5
 ## La prima uscita, almeno così lontana dal giocatore (m).
@@ -82,6 +83,8 @@ const NOMI := [&"dorme", &"gira", &"viene", &"finita"]
 
 ## Il motore di lei.
 var acqua: AcquaDiLei
+## Il punto d'uscita dove sta venendo (o null).
+var uscita_scelta: Marker3D
 var fase := Fase.DORME
 ## La pozza dove sta venendo (o null).
 var bersaglio: WaterTank
@@ -152,11 +155,11 @@ func _metti_motore() -> void:
 	acqua.percorso_finito.connect(_su_percorso_finito)
 
 
-## I punti d'uscita della pozza del bordo [param t], con +Z verso fuori, allineati al suo scarico (da lì passa lei,
-## EnigmaPozze.centro_scarico). MANO: dove sbatte la mano, sul grigliato appena fuori dal bordino esterno, uno per ogni
-## lato sulla passerella, di fronte allo scarico. INTERA: sopra lo scarico, al pelo dell'acqua piena.
+## I punti d'uscita della pozza del bordo [param t], con +Z verso fuori. MANO: dove sbatte la mano, sul grigliato a filo
+## del bordino esterno, uno per ogni lato sulla passerella, di fronte al centro della pozza. INTERA: il centro della
+## pozza al pelo dell'acqua piena.
 func _pose_uscita(t: WaterTank) -> Array[Transform3D]:
-	var c := _locale(_enigma.centro_scarico(t))
+	var c := _locale(t.global_position)
 	var lati: Array[Vector3] = []
 	var m := _enigma.passo * 2.0 - 0.01
 	if absf(c.x) >= m:
@@ -210,6 +213,13 @@ func uscite_di(t: WaterTank) -> Array:
 	return _uscite.get(t, [])
 
 
+## Fin dove arriva la presa adesso, in pianta dal punto d'uscita (m): quella della mano o, col segnaposto, [member portata].
+func portata_effettiva() -> float:
+	if acqua == null:
+		return portata
+	return acqua.portata_mano if acqua.modo == AcquaDiLei.Modo.MANO else acqua.portata
+
+
 ## Il nome della fase adesso.
 func nome_fase() -> StringName:
 	return NOMI[fase]
@@ -237,6 +247,7 @@ func _sveglia() -> void:
 ## Lei è tornata sotto (o se n'è andata): la pausa, poi di nuovo.
 func _riposa() -> void:
 	bersaglio = null
+	uscita_scelta = null
 	_in_giro = false
 	_vai(Fase.GIRA)
 	_t = -_rng.randf_range(pausa_min, maxf(pausa_min, pausa_max))
@@ -288,6 +299,9 @@ func _manda_via() -> bool:
 func _su_fase_motore(f: AcquaDiLei.Fase) -> void:
 	if fase == Fase.VIENE and (f == AcquaDiLei.Fase.CALMA or f == AcquaDiLei.Fase.LONTANA):
 		_riposa()
+	elif fase == Fase.FINITA and (f == AcquaDiLei.Fase.CALMA or f == AcquaDiLei.Fase.LONTANA):
+		# (risolto mentre era fuori: tornata sotto, se ne va del tutto, senza la luce che riprenderebbe a girare)
+		acqua.lascia()
 
 
 func _physics_process(delta: float) -> void:
@@ -398,6 +412,7 @@ func _chiama(t: WaterTank) -> bool:
 		return false
 	if not acqua.chiama(m):
 		return false
+	uscita_scelta = m
 	bersaglio = t
 	luce_in = t
 	_vai(Fase.VIENE)
@@ -530,7 +545,8 @@ func _bersaglio_dimostrativo() -> WaterTank:
 
 
 ## Vero se dal punto [param da], camminando lungo la passerella per il tempo dell'avviso del motore (meno la reazione),
-## si arriva a un punto a più di [member portata] + [member margine_fuga] dal punto d'uscita della pozza [param t].
+## si arriva a un punto a più della portata ([method portata_effettiva]) + [member margine_fuga] dal punto d'uscita
+## della pozza [param t].
 func via_di_salvezza(da: Vector3, t: WaterTank) -> bool:
 	var q := _locale(da)
 	var r := _mezza() + 0.6   # la linea di mezzo della passerella
@@ -544,7 +560,7 @@ func via_di_salvezza(da: Vector3, t: WaterTank) -> bool:
 	while k + d0 <= corsa:
 		for verso in [-1.0, 1.0]:
 			var p := _anello_punto(fposmod(s0 + verso * k, perimetro), r)
-			if _distanza_punto(_enigma.global_transform * Vector3(p.x, 0.0, p.y), t) > portata + margine_fuga:
+			if _distanza_punto(_enigma.global_transform * Vector3(p.x, 0.0, p.y), t) > portata_effettiva() + margine_fuga:
 				return true
 		k += 0.25
 	return false

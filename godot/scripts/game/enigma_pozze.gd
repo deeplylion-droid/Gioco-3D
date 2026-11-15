@@ -61,8 +61,9 @@ const N := 5
 @export_range(0.5, 1.0) var pieno := 0.93
 ## Litri "di gioco" di una pozza piena fino al bordo (lo zaino ne tiene 20).
 @export var litri_pozza := 80.0
-## Lo scarico di fondo tondo di ogni pozza (ScaricoPozza, 0.4.0: lei passa da lì). Spento, le pozze tornano senza.
-@export var scarichi := true
+## Lo scarico di fondo tondo di ogni pozza (ScaricoPozza). Spento (com'è: decisione del coordinatore del 15 novembre,
+## la stanza resta quella di prima) non si crea niente.
+@export var scarichi := false
 ## Nelle pozze del bordo lo scarico sta verso fuori (dove passa il braccio di lei): il suo centro a tanto dalla parete
 ## interna dal lato della passerella (m). Nelle pozze di dentro sta al centro.
 @export var scarico_dal_bordo := 0.28

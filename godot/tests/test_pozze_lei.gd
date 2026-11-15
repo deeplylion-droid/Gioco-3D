@@ -76,77 +76,65 @@ func _run() -> void:
 	l.free()
 	await _nuova_stanza()
 	check(acqua != null and acqua.get_parent() == lei, "nella stanza c'è il motore di lei (AcquaDiLei)")
-	check(acqua.letale and is_equal_approx(acqua.portata, 2.0) and acqua.prima_volta_dimostrativa and not acqua.automatica,
-		"il motore ha letale acceso, portata 2 m, la prima volta dimostrativa e non viene da solo")
-	var bordo := 0
-	var sopra := 0
-	for t in e.pozze():
-		if lei._sul_bordo(t):
-			bordo += 1
-			var m := lei.uscita_di(t)
-			var sc := e.centro_scarico(t)
-			if m and m in acqua.punti_uscita and Vector2(m.global_position.x - sc.x, m.global_position.z - sc.z).length() < 0.01 \
-					and absf(m.global_position.y - _pelo_pieno(t)) < 0.01:
-				sopra += 1
-	check(bordo == 16 and sopra == 16 and acqua.punti_uscita.size() == 16,
-		"un punto d'uscita su ognuna delle 16 pozze del bordo, sopra il suo scarico, al pelo dell'acqua piena (%d/%d)" % [sopra, bordo])
-	check(absf(acqua.pelo - _pelo_pieno(e.pozze()[0])) < 0.001, "il pelo del motore è quello dell'acqua piena (%.3f)" % acqua.pelo)
-	# con la mano (quando c'è): sul grigliato appena fuori dal bordino, +Z verso fuori, due nelle pozze d'angolo
-	lei.modo = AcquaDiLei.Modo.MANO
+	check(acqua.letale and acqua.modo == AcquaDiLei.Modo.MANO and acqua.prima_volta_dimostrativa and not acqua.automatica,
+		"il motore ha letale acceso, il modo MANO (mano e tentacoli), la prima volta dimostrativa e non viene da solo")
+	check(is_equal_approx(lei.portata_effettiva(), acqua.portata_mano), "la presa arriva fin dove arriva la mano (%.1f m dal punto)" % lei.portata_effettiva())
+	check(absf(acqua.pelo - _pelo_pieno(e.pozze()[0])) < 0.001, "il pelo del motore è quello dell'acqua piena (%.4f)" % acqua.pelo)
+	# i punti d'uscita della mano: sul grigliato a filo del bordino, di fronte al centro della pozza, +Z verso fuori,
+	# due nelle pozze d'angolo
 	var giusti := 0
 	var punti := 0
 	for t in e.pozze():
 		if not lei._sul_bordo(t):
 			continue
-		var c := e.to_local(e.centro_scarico(t))
-		var pose := lei._pose_uscita(t)
+		var c := e.to_local(t.global_position)
+		var ms: Array = lei.uscite_di(t)
 		var angolo := absf(c.x) > 2.0 and absf(c.z) > 2.0
-		var ok := pose.size() == (2 if angolo else 1)
-		for q: Transform3D in pose:
+		var ok := ms.size() == (2 if angolo else 1)
+		for m: Marker3D in ms:
 			punti += 1
-			var lq := e.to_local(q.origin)
-			var fuori := e.global_basis.inverse() * q.basis.z
+			ok = ok and m in acqua.punti_uscita
+			var lq := e.to_local(m.global_position)
+			var fuori := e.global_basis.inverse() * m.global_basis.z
 			var lato := Vector3(signf(lq.x), 0, 0) if absf(fuori.x) > 0.9 else Vector3(0, 0, signf(lq.z))
 			var sul_bordo := absf(absf(lq.x) - 2.8) < 0.01 if lato.x != 0.0 else absf(absf(lq.z) - 2.8) < 0.01
 			var accanto := absf(lq.z - c.z) < 0.01 if lato.x != 0.0 else absf(lq.x - c.x) < 0.01
 			ok = ok and sul_bordo and accanto and absf(lq.y) < 0.001 and fuori.distance_to(lato) < 0.01
 		if ok:
 			giusti += 1
+	check(giusti == 16 and punti == 20 and acqua.punti_uscita.size() == 20,
+		"i punti della mano: sul grigliato a filo del bordino (2,80 m), di fronte alla pozza, +Z verso fuori, due nelle 4 pozze d'angolo (%d/16, %d punti)" % [giusti, punti])
+	# col segnaposto INTERA: uno per pozza, al centro, al pelo
 	lei.modo = AcquaDiLei.Modo.INTERA
-	check(giusti == 16 and punti == 20, "con la mano: sul grigliato a filo del bordino (2,80 m), di fronte allo scarico, +Z verso fuori, due punti nelle 4 pozze d'angolo (%d/16, %d punti)" % [giusti, punti])
-	# lo scarico tondo sul fondo di ogni pozza
-	var scarichi := 0
-	var a_posto := 0
-	var verso_fuori := 0
+	var centrati := 0
 	for t in e.pozze():
+		if lei._sul_bordo(t):
+			var pose := lei._pose_uscita(t)
+			if pose.size() == 1 and _in_pianta(pose[0].origin, t.global_position) < 0.01 and absf(pose[0].origin.y - _pelo_pieno(t)) < 0.01:
+				centrati += 1
+	lei.modo = AcquaDiLei.Modo.MANO
+	check(centrati == 16, "(col segnaposto INTERA un punto per pozza, al centro, al pelo: %d/16)" % centrati)
+	# niente scarichi: la stanza è quella di prima, nodo per nodo; l'interruttore li mette sul fondo
+	check(not e.scarichi and e.pozze().all(func(u): return u.get_node_or_null(^"Scarico") == null and u.find_children("*", "ScaricoPozza", true, false).is_empty()),
+		"niente scarichi: le pozze sono quelle di prima (interruttore spento)")
+	var con := EnigmaPozze.new()
+	con.scarichi = true
+	var radice_con := Node3D.new()
+	radice_con.position = Vector3(0, -40, 0)
+	add_child(radice_con)
+	radice_con.add_child(con)
+	await _frames(1)
+	var a_posto := 0
+	for t in con.pozze():
 		var sc := t.get_node_or_null(^"Scarico") as ScaricoPozza
 		if sc == null:
 			continue
-		scarichi += 1
 		var q := t.to_local(sc.global_position)
 		var r_sc := ScaricoPozza.DIAMETRO * 0.5 + ScaricoPozza.ANELLO
-		var dentro := absf(q.x) + r_sc <= e.lato * 0.5 - 0.01 and absf(q.z) + r_sc <= e.lato * 0.5 - 0.01
-		if absf(q.y) < 0.001 and absf(sc.global_position.y - t.get_floor_global_y()) < 0.001 and dentro:
+		if absf(q.y) < 0.001 and absf(q.x) + r_sc <= con.lato * 0.5 - 0.01 and absf(q.z) + r_sc <= con.lato * 0.5 - 0.01:
 			a_posto += 1
-		var c := e.to_local(t.global_position)
-		var bordo_x := absf(c.x) > 2.0
-		var bordo_z := absf(c.z) > 2.0
-		var ok_x := (signf(q.x) == signf(c.x) and absf(q.x) > 0.1) if bordo_x else absf(q.x) < 0.001
-		var ok_z := (signf(q.z) == signf(c.z) and absf(q.z) > 0.1) if bordo_z else absf(q.z) < 0.001
-		if ok_x and ok_z:
-			verso_fuori += 1
-	check(scarichi == 25 and a_posto == 25, "uno scarico tondo sul fondo di ognuna delle 25 pozze, appoggiato, tutto dentro la pozza (%d/%d)" % [a_posto, scarichi])
-	check(verso_fuori == 25, "nelle pozze del bordo verso la passerella, in quelle di dentro al centro (%d/25)" % verso_fuori)
-	var senza := EnigmaPozze.new()
-	senza.scarichi = false
-	var radice_senza := Node3D.new()
-	radice_senza.position = Vector3(0, -40, 0)
-	add_child(radice_senza)
-	radice_senza.add_child(senza)
-	await _frames(1)
-	check(senza.pozze().size() == 25 and senza.pozze().all(func(u): return u.get_node_or_null(^"Scarico") == null),
-		"con l'interruttore spento le pozze sono senza scarico")
-	radice_senza.queue_free()
+	check(a_posto == 25, "(con l'interruttore acceso uno scarico sul fondo di ognuna delle 25 pozze, tutto dentro: %d)" % a_posto)
+	radice_con.queue_free()
 	await _frames(2)
 
 	print("1. Senza colori tolti lei non c'è")
@@ -176,7 +164,8 @@ func _run() -> void:
 	check(viste.all(func(u): return String(u.fill_pigment) != WaterMix.ROSA), "solo sotto pozze piene")
 	check(giro["di_fila"], "da una pozza a una accanto, senza salti")
 	check(giro["vicinanza"] > 0.05, "e il canto sale da sotto (vicinanza fino a %.2f)" % giro["vicinanza"])
-	print("        (luce nel giro: energia minima %.2f, salti %d)" % [giro["energia_min"], giro["salti"]])
+	check(giro["energia_min"] >= 0.9 and giro["salti"] == 0,
+		"la luce non salta e non pulsa da un tratto all'altro (energia minima %.2f, salti %d)" % [giro["energia_min"], giro["salti"]])
 	check(not a.is_empty(), "dopo qualche secondo arriva la prima volta")
 	if a.is_empty():
 		return _fine()
@@ -188,8 +177,8 @@ func _run() -> void:
 	var da := acqua.punto_luce
 	check(_sotto_pozza_piena(da), "la luce parte sotto una pozza piena")
 	var si := await _aspetta(F.SILENZIO, acqua.avviso + 1.0)
-	check(not si.is_empty() and _in_pianta(acqua.punto_luce, e.centro_scarico(t)) < 0.05,
-		"nel silenzio la luce è sotto lo scarico della pozza (%.2f m)" % _in_pianta(acqua.punto_luce, e.centro_scarico(t)))
+	check(not si.is_empty() and lei.uscita_scelta != null and _in_pianta(acqua.punto_luce, lei.uscita_scelta.global_position) < 0.05,
+		"nel silenzio la luce è sotto il punto dove sbatterà la mano (%.2f m)" % (_in_pianta(acqua.punto_luce, lei.uscita_scelta.global_position) if lei.uscita_scelta else -1.0))
 	var es := await _aspetta(F.ESCE, acqua.silenzio + 1.0)
 	var dt: float = (es[1] - a[1]) / 60.0 if not es.is_empty() else -1.0
 	check(not es.is_empty() and absf(dt - acqua.avviso) < 0.05, "esce %.2f s dopo l'arrivo della luce (avviso del motore %.1f s)" % [dt, acqua.avviso])
@@ -200,32 +189,34 @@ func _run() -> void:
 	check(lei.prese == 0 and lei.uscite == 1 and not GameState.is_dying and not lei.prossima_dimostrativa(), "e non prende")
 
 	print("3. Poi la pozza piena del bordo più vicina: chi resta lì è preso")
+	# (davanti alla pozza arancione del lato sud)
+	_metti(Vector3(0, 0, r))
 	a = await _aspetta(F.ARRIVA, 8.0)
 	check(not a.is_empty(), "arriva di nuovo dopo la pausa")
 	if a.is_empty():
 		return _fine()
 	t = lei.bersaglio
 	check(t == _piu_vicina(), "punta la pozza piena del bordo più vicina al giocatore (%s)" % t.name)
-	check(lei._distanza(p, t) <= lei.portata, "il giocatore è a portata (%.1f m)" % lei._distanza(p, t))
+	check(_dist_uscita() <= lei.portata_effettiva(), "il giocatore è a portata (%.1f m)" % _dist_uscita())
 	var pr := await _aspetta(F.PRESA, acqua.avviso + 5.0)
 	check(not pr.is_empty() and lei.prese == 1 and GameState.is_dying and GameState.last_death_cause == &"medusa",
 		"resta lì: esce e lo prende, si muore (%s)" % GameState.last_death_cause)
 	_rianima()
 
-	print("4. Allontanandosi lungo la passerella si è salvi, anche da un angolo")
+	print("4. Allontanandosi lungo la passerella si è salvi, anche vicino a un angolo")
 	await _nuova_stanza(false)
 	await _togli(WaterMix.ROSA)
-	_metti(Vector3(r, 0, r))
+	_metti(Vector3(e.passo * 2.0, 0, r))
 	a = await _aspetta(F.ARRIVA, lei.prima_attesa + 4.0)
 	if a.is_empty():
 		check(false, "arriva")
 		return _fine()
 	t = lei.bersaglio
-	check(lei._distanza(p, t) <= lei.portata, "dall'angolo punta una pozza a portata (%s, %.1f m)" % [t.name, lei._distanza(p, t)])
+	check(_dist_uscita() <= lei.portata_effettiva(), "vicino all'angolo punta una pozza a portata (%s, %.1f m)" % [t.name, _dist_uscita()])
 	await _cammina_via(t, 3.0)
-	check(lei._distanza(p, t) >= 3.0 and acqua.fase in [F.ARRIVA, F.SILENZIO],
-		"camminando lungo la passerella è a %.1f m dalla pozza prima che esca" % lei._distanza(p, t))
-	var ca := await _aspetta(F.CALMA, 8.0)
+	check(_dist_uscita() >= 3.0 and acqua.fase in [F.ARRIVA, F.SPEGNE, F.SILENZIO],
+		"camminando lungo la passerella è a %.1f m dal punto prima che esca" % _dist_uscita())
+	var ca := await _aspetta(F.CALMA, 14.0)
 	check(not ca.is_empty() and lei.uscite == 1 and lei.prese == 0 and not GameState.is_dying, "lei esce, incombe e torna sotto senza prenderlo")
 
 	print("5. Col getto in faccia mentre esce, viene respinta")
@@ -237,7 +228,7 @@ func _run() -> void:
 		check(false, "arriva di nuovo")
 		return _fine()
 	t = lei.bersaglio
-	check(lei._distanza(p, t) <= lei.portata, "a portata della pozza %s (%.1f m)" % [t.name, lei._distanza(p, t)])
+	check(_dist_uscita() <= lei.portata_effettiva(), "a portata della pozza %s (%.1f m)" % [t.name, _dist_uscita()])
 	await _aspetta(F.ESCE, acqua.avviso + 1.0)
 	var viso := acqua.find_child("Viso", true, false) as Node3D
 	if viso == null:
@@ -301,7 +292,7 @@ func _run() -> void:
 	check(not a.is_empty(), "e lei torna a venire")
 	if not a.is_empty():
 		await _cammina_via(lei.bersaglio, 3.0)
-	await _aspetta(F.CALMA, 8.0)
+	await _aspetta(F.CALMA, 14.0)
 	check(not GameState.is_dying, "(e il giocatore si salva allontanandosi)")
 	if GameState.is_dying:
 		return _fine()
@@ -324,7 +315,7 @@ func _run() -> void:
 	await _togli(WaterMix.ROSA)
 	_metti(Vector3(0, 0, r))
 	a = await _aspetta(F.ARRIVA, lei.prima_attesa + 4.0)
-	check(not a.is_empty() and lei._distanza(p, lei.bersaglio) <= lei.portata, "arriva a portata del giocatore")
+	check(not a.is_empty() and _dist_uscita() <= lei.portata_effettiva(), "arriva a portata del giocatore")
 	var sc := await _aspetta(F.SCENDE, acqua.avviso + 8.0)
 	check(not sc.is_empty() and lei.uscite == 1 and lei.prese == 0 and not GameState.is_dying and p.input_enabled,
 		"esce e incombe vicino a lui, ma non lo prende e non si muore")
@@ -507,7 +498,7 @@ func _cammina_via(t: WaterTank, d: float) -> void:
 	Input.action_press(&"move_forward")
 	for i in 60 * 3:
 		await get_tree().physics_frame
-		if lei._distanza(p, t) >= d:
+		if _dist_uscita(t) >= d:
 			break
 		p.look_at_point(meta + Vector3(0, 1.5, 0))
 	Input.action_release(&"move_forward")
@@ -521,7 +512,8 @@ func _punto_lontano(t: WaterTank, d: float) -> Vector3:
 	while s < 8.0 * r:
 		var q := LeiPozze._anello_punto(s, r)
 		var g := e.to_global(Vector3(q.x, 0.0, q.y))
-		if lei._distanza_punto(g, t) > d:
+		var dg := _in_pianta(g, lei.uscita_scelta.global_position) if lei.uscita_scelta else lei._distanza_punto(g, t)
+		if dg > d:
 			var dd := g.distance_to(p.global_position)
 			if dd < dm:
 				dm = dd
@@ -601,6 +593,13 @@ func _segui_luce(f: F, secondi: float) -> Dictionary:
 						out["di_fila"] = false
 					viste.append(u)
 	return out
+
+
+## In pianta, dal giocatore al punto d'uscita dove sta venendo lei (o, senza, a quello più vicino della pozza [param t]).
+func _dist_uscita(t: WaterTank = null) -> float:
+	if lei.uscita_scelta:
+		return _in_pianta(p.global_position, lei.uscita_scelta.global_position)
+	return lei._distanza(p, t) if t else INF
 
 
 func _luce_accesa() -> bool:
