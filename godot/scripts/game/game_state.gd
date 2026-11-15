@@ -51,6 +51,13 @@ var snapshot: Dictionary = {}
 var last_death_cause: StringName = &""
 ## Le luci dell'acquapark adesso (vedi [enum Luci]).
 var luci: Luci = Luci.PRIMA_DEL_RISVEGLIO
+## I contatori della partita per il riepilogo di fine capitolo (build 0.5.0): i secondi di gioco vero (non il titolo,
+## la pausa, i caricamenti: si contano solo col giocatore nel livello e l'albero non in pausa) e le morti. Restano dopo
+## una morte, si salvano nel salvataggio, Continua li ritrova ([method prepara_ripresa]); la partita nuova li azzera.
+var tempo_gioco := 0.0
+var morti_totali := 0
+## Vero dalla fine del capitolo: il tempo non conta più (il riepilogo mostra quello della fine).
+var tempo_fermo := false
 
 var _removed: Dictionary = {}       # chiave persist -> true
 # Lo stato degli oggetti "persist" delle parti del livello scaricate per la memoria (le stanze della
@@ -214,6 +221,8 @@ func capture_snapshot(checkpoint_id: String, order: int, spawn: Transform3D) -> 
 		# Il flash dura un secondo: chi riparte da lì lo ritrova già finito.
 		"luci": int(Luci.BLACKOUT if luci == Luci.FLASH else luci),
 		"time": Time.get_unix_time_from_system(),
+		"tempo_gioco": tempo_gioco,
+		"morti_totali": morti_totali,
 	}
 	# su disco solo dal primo checkpoint vero: l'istantanea "inizio" di un livello nuovo (una nuova partita, anche solo
 	# per guardare lo spot) resta in memoria e non cancella il salvataggio di prima
@@ -293,6 +302,8 @@ func kill_player(cause: StringName = &"generico") -> void:
 		return
 	is_dying = true
 	last_death_cause = cause
+	morti_totali += 1
+	salva_contatori()
 	player.input_enabled = false
 	player_died.emit(cause)
 	var dove := "%s|%s" % [snapshot.get("scene", _scene_path()), snapshot.get("checkpoint", "")]
@@ -414,6 +425,36 @@ func _lists_to_collected(data: Dictionary) -> Dictionary:
 	return out
 
 
+# --- Contatori della partita (riepilogo di fine capitolo) ------------------------------------
+
+func _process(delta: float) -> void:
+	# (l'autoload si ferma con la pausa; nel titolo e nei caricamenti il giocatore non c'è)
+	if tempo_fermo or player == null or not is_instance_valid(player) or not player.is_inside_tree():
+		return
+	if get_tree().paused or _restore_pending:
+		return
+	tempo_gioco += delta
+
+
+## Il tempo di gioco come lo legge il giocatore: «12:05», o «1:02:05» sopra l'ora.
+static func tempo_leggibile(secondi: float) -> String:
+	var s := int(secondi)
+	if s >= 3600:
+		return "%d:%02d:%02d" % [s / 3600, (s / 60) % 60, s % 60]
+	return "%d:%02d" % [s / 60, s % 60]
+
+
+## Scrive i contatori nell'ultima istantanea e, se c'è un salvataggio vero, su disco: alla morte, tornando al titolo e
+## uscendo dal gioco (così Continua li ritrova anche senza un checkpoint dopo).
+func salva_contatori() -> void:
+	if snapshot.is_empty():
+		return
+	snapshot["tempo_gioco"] = tempo_gioco
+	snapshot["morti_totali"] = morti_totali
+	if save_to_disk and String(snapshot.get("checkpoint", "")) not in ["", "inizio"] and not snapshot.has("partenza_prova"):
+		_write_disk()
+
+
 # --- Disco ---------------------------------------------------------------------------------
 
 func _write_disk() -> void:
@@ -486,6 +527,9 @@ func continue_from_disk() -> bool:
 ## le luci e i collezionabili dell'istantanea. Chi la chiama poi apre la scena (direttamente o col caricamento).
 func prepara_ripresa(data: Dictionary) -> void:
 	reset_progress()
+	# (i contatori della partita: azzerati da reset_progress e poi ripresi dall'istantanea, se li ha)
+	tempo_gioco = float(data.get("tempo_gioco", 0.0))
+	morti_totali = int(data.get("morti_totali", 0))
 	snapshot = data
 	_collected = _lists_to_collected(snapshot.get("collectibles", {}))
 	_removed.clear()
@@ -512,4 +556,7 @@ func reset_progress() -> void:
 	is_dying = false
 	morti_al_checkpoint = 0
 	_morti_dove = ""
+	tempo_gioco = 0.0
+	morti_totali = 0
+	tempo_fermo = false
 	imposta_luci(Luci.PRIMA_DEL_RISVEGLIO)
