@@ -184,6 +184,10 @@ jobs:
           godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_passi.gd
           godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini_sfuggita.gd
 
+      - name: Test del bambino col cubo che disegna e porge il foglio (0.5.0)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambino_storia.gd
+
       - name: Test degli interni (corridoio, spogliatoi, stanzino)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd
@@ -207,6 +211,10 @@ jobs:
       - name: Test della mano dalle pozze (0.4.0; esce la mano, il getto sulla mano, la presa alla caviglia)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acqua_di_lei_mano.gd
+
+      - name: Test dello squalo nel fiume lento (0.5.0; segue, attacca, il getto sul muso, il morso)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_squalo_fiume.gd
 
       - name: Test della sala al buio (0.4.0; la luce gira nelle vasche, lei esce dal bordo e prende, poi l'avviso e la fossa)
         if: steps.progetto.outputs.presente == 'si'

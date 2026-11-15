@@ -1,0 +1,61 @@
+# Il bambino col cubo che disegna e porge il foglio (build 0.5.0)
+
+Le animazioni nuove sono nei due modelli del bambino col cubo (`bambino_cubo_calmo.glb`, `bambino_cubo_rivelato.glb`).
+Le fa `tools/blender/bambini_animazioni.py <nome> <uscita> --vivo --storia --foglio-altezza <m>`, che esegue
+`tools/blender/bambini_storia.py`. Con `--controlla` misura le pose sulla pelle vera senza esportare:
+- niente sotto il pavimento;
+- la punta della matita sempre sul foglio;
+- il cubo lontano dalle mani e dal foglio.
+
+| Animazione | Durata | Cosa fa |
+|---|---|---|
+| `disegna` | 6 s, ciclo | in ginocchio, chino sul foglio: la destra disegna con la matita, la sinistra tiene fermo il foglio |
+| `alza_testa` | 1 s | si raddrizza un po' e alza la testa; la matita si stacca |
+| `si_alza` | 0,6 s | si tira su; finisce nella posa da cui parte `parte` (poi la corsa) |
+| `porge` | 1,2 s | alza le braccia e tiene il foglio davanti al petto |
+| `porge_tiene` | 4 s, ciclo | lo tiene lì: respiro, un piccolo tremito |
+
+## Nel gioco (Bambino, `godot/scripts/creature/bambino.gd`)
+
+La scena è la solita `scenes/creature/bambino_cubo.tscn`. Conviene mettere `fermo_vivo = true` e
+`partenza_continua = true`, come il bambino del corridoio del fiume.
+
+### Disegna
+
+`modalita = DISEGNA` (o `disegna()`): il bambino è in ginocchio a disegnare, con la matita in mano.
+- Quando il giocatore lo guarda (come la statua: `tempo_per_vederlo`, `distanza_vista`, `angolo_vista`) o arriva
+  entro `distanza_alza_testa` (6 m), alza la testa verso di lui (segnale `alza_la_testa`).
+- Resta così `tempo_testa_alzata` (1 s): la testa segue il giocatore.
+- Poi si tira su e scappa lungo `punti_fuga`, come le altre fughe (segnali `scappa`, `sparito`).
+- `alza_testa_ora()` lo fa partire subito.
+
+Il foglio su cui disegna lo mette chi fa la scena. Il suo centro va a 0,27 m davanti all'origine del bambino (+Z), al
+centro, all'altezza scritta in `bambino_cubo_calmo_storia.json` (`foglio_disegna`). Adesso è 15 cm: un appoggio basso. La
+misura vera degli acquari la dà enigmi; se cambia, si rifà il GLB con `--foglio-altezza`.
+
+### Porge
+
+`modalita = PORGE` con `percorso` (di solito un punto, 0,7-0,8 m davanti: due passi), oppure `porge(punti)`.
+- Cammina fin lì, poi porge il foglio con le due mani (segnale `porge_il_foglio`) e lo tiene.
+- Non scappa.
+- Senza punti lo porge subito.
+
+**Dove attaccare il foglio:** `punto_foglio()` restituisce un nodo (`Foglio`) che segue le mani. Il disegno va messo
+come suo figlio, con il centro nell'origine:
+- la faccia del disegno guarda dove guarda il bambino (+Z del nodo);
+- il lato lungo è in su (+Y);
+- la scala è 1.
+
+È pensato per un A4 (21 x 29,7 cm) tenuto per i lati della metà alta. Fuori da `porge` e `porge_tiene` il punto sta
+davanti al petto, quindi il disegno si mostra solo quando arriva `porge_il_foglio`.
+
+La matita è nascosta in tutte le modalità tranne DISEGNA, e resta in mano mentre scappa.
+
+## Test
+
+`godot/tests/test_bambino_storia.gd` (nella CI) controlla:
+- le animazioni, la matita e l'osso del foglio nei due modelli;
+- che disegna e, se non lo guardi, continua a disegnare;
+- che alza la testa quando lo guardi e ti guarda;
+- che dopo 1,6 s scappa;
+- che fa i passi e porge il foglio, e che il punto del foglio sta fra le mani, davanti al petto e dritto.
