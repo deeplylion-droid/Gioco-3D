@@ -26,6 +26,9 @@ func _run() -> void:
 	GameState.save_to_disk = false
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	torre = (load(TORRE) as PackedScene).instantiate() as SalaTorre
+	# (finché il modo MANO non c'è nel motore, lei nelle vasche la accendono solo i test, col segnaposto intero)
+	torre.lei_vasche = true
+	torre.vasche_modo = AcquaDiLei.Modo.INTERA
 	add_child(torre)
 	g = (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as Player
 	add_child(g)

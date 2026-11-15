@@ -73,12 +73,15 @@ var oblo: ObloLei
 ## [member vasche_avviso] secondi per salire la scaletta, poi lei esce (AcquaDiLei di mascotte) e prende chi è ancora
 ## nella vasca o sulla parte bassa della scaletta (sotto [member vasche_salvo_sotto] m dalla pedana). Chi è salito è
 ## salvo anche se lei, in pianta, gli è vicina. [member letale_vasche] spento: esce e incombe, ma non prende.
-@export var lei_vasche := true
+## Dall'acqua bassa delle vasche (68 cm) escono la mano e i tentacoli, il modo MANO di AcquaDiLei (scelta del
+## coordinatore del 15 novembre, la A: niente lei intera in 68 cm d'acqua). Finché MANO non c'è nel motore di
+## mascotte, [member lei_vasche] è spento nel gioco e lo accendono solo i test, col segnaposto intero.
+@export var lei_vasche := false
 @export var letale_vasche := true
 @export var vasche_avviso := 5.0
 @export var vasche_silenzio := 1.0
 @export var vasche_salvo_sotto := 0.9
-@export var vasche_modo := AcquaDiLei.Modo.INTERA
+@export var vasche_modo := AcquaDiLei.Modo.MANO
 ## Le vasche con lei: [AcquaDiLei, uscita (Marker3D), rettangolo in pianta (Rect2, nel mondo), quota del fondo,
 ## quota della pedana].
 var acque_vasche: Array = []
