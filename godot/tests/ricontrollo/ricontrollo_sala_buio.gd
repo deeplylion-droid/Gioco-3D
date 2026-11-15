@@ -93,7 +93,8 @@ func _caso_b(d: Dictionary) -> void:
 	for dx in [-6.0, -4.0, 0.0, 4.0, 6.0]:
 		for dz in [-6.0, -4.0, 0.0, 4.0, 6.0]:
 			var q := Vector3(fossa.x + dx, 0.05, fossa.z + dz)
-			var vicino := Vector2(dx, dz).length() <= g.distanza_fossa - 1.0 and Vector2(dx, dz).length() >= 3.0
+			var dist := Vector2(dx, dz).length()
+			var vicino: bool = dist <= float(g.distanza_fossa) - 1.0 and dist >= 3.0
 			if vicino and not _vicino_ai_punti(g, q) and dove == Vector3.INF:
 				dove = q
 	_check(dove != Vector3.INF, "B: c'è un posto vicino alla fossa lontano dal bordo (%s)" % dove)
