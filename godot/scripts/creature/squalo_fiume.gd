@@ -246,6 +246,8 @@ func _metti() -> void:
 	_scia.visible = vis and squalo.visible
 	(_scia.material_override as ShaderMaterial).set_shader_parameter(&"forza", clampf(1.0 - _affondo / 0.35, 0.0, 1.0)
 			* (1.6 if stato == Stato.CARICA or stato == Stato.ATTACCO else 1.0))
+	# (il collare intorno alla pinna solo finché la pinna è fuori: non quando la testa esce per attaccare)
+	(_scia.material_override as ShaderMaterial).set_shader_parameter(&"collare", 0.0 if stato == Stato.ATTACCO else 1.0)
 
 
 func _posizione_dietro(m: float) -> Vector3:
@@ -420,25 +422,55 @@ func _crea() -> void:
 	add_child(_scia)
 
 
-## La scia: una V di due strisce (lunghe 3,5 m, larghe 0,25 m) che si aprono dietro la pinna (verso -Z), col verso
-## della striscia in UV.x (0 alla pinna, 1 in fondo).
+## Dove la pinna dorsale taglia il pelo nella nuotata, nello spazio dello squalo (+Z avanti): un poco a destra del
+## centro, lunga 0,45 m (misurata sulla pelle deformata in squalo_fiume.py, fiume_nuota).
+const PINNA_CENTRO := Vector3(0.145, 0.0, 0.035)
+const PINNA_MEZZA := Vector2(0.045, 0.23)
+
+
+## La scia: una V di due strisce (lunghe 3,5 m, larghe 0,4 m) che si aprono dalla punta della pinna all'indietro
+## (verso -Z), col verso della striscia in UV.x (0 alla pinna, 1 in fondo); più il collare di schiuma intorno alla base
+## della pinna (COLOR.r = 1, UV.x da dentro a fuori). Lo shader li distingue dal colore dei vertici.
 static func _mesh_scia() -> ArrayMesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var punta := PINNA_CENTRO + Vector3(0.0, 0.0, PINNA_MEZZA.y)
 	for lato in [-1.0, 1.0]:
-		var n := 12
+		var n := 16
 		for i in n:
 			var a := float(i) / n
 			var b := float(i + 1) / n
-			var pa := Vector3(lato * (0.05 + a * 1.3), 0.0, -a * 3.5 + 0.2)
-			var pb := Vector3(lato * (0.05 + b * 1.3), 0.0, -b * 3.5 + 0.2)
-			var w := Vector3(lato * 0.12, 0.0, 0.03)
-			var quad := [[pa - w, Vector2(a, 0.0)], [pa + w, Vector2(a, 1.0)], [pb + w, Vector2(b, 1.0)],
-				[pa - w, Vector2(a, 0.0)], [pb + w, Vector2(b, 1.0)], [pb - w, Vector2(b, 0.0)]]
+			var pa := punta + Vector3(lato * (0.03 + a * 1.3), 0.0, -a * 3.5)
+			var pb := punta + Vector3(lato * (0.03 + b * 1.3), 0.0, -b * 3.5)
+			var wa := Vector3(lato * 0.2, 0.0, 0.05) * (0.5 + 0.5 * minf(a * 6.0, 1.0))
+			var wb := Vector3(lato * 0.2, 0.0, 0.05) * (0.5 + 0.5 * minf(b * 6.0, 1.0))
+			var quad := [[pa - wa, Vector2(a, 0.0)], [pa + wa, Vector2(a, 1.0)], [pb + wb, Vector2(b, 1.0)],
+				[pa - wa, Vector2(a, 0.0)], [pb + wb, Vector2(b, 1.0)], [pb - wb, Vector2(b, 0.0)]]
 			for v in quad:
+				st.set_color(Color(0, 0, 0))
 				st.set_normal(Vector3.UP)
 				st.set_uv(v[1])
-				st.add_vertex(v[0])
+				st.add_vertex(v[0] + Vector3.UP * 0.002)
+	# il collare: un anello ovale intorno al taglio della pinna, più largo davanti (dove la pinna spinge l'acqua)
+	var giri := 32
+	for i in giri:
+		var u0 := float(i) / giri
+		var u1 := float(i + 1) / giri
+		var anello := []
+		for u: float in [u0, u1]:
+			var ang := TAU * u
+			var d := Vector2(sin(ang), cos(ang))
+			var dentro := Vector3(d.x * PINNA_MEZZA.x, 0.0, d.y * PINNA_MEZZA.y) * 0.8
+			var largo := 0.16 + 0.08 * maxf(d.y, 0.0)
+			var fuori := dentro + Vector3(d.x, 0.0, d.y * 0.6).normalized() * largo
+			anello.append([PINNA_CENTRO + dentro, PINNA_CENTRO + fuori])
+		var quad := [[anello[0][0], Vector2(0.0, u0)], [anello[0][1], Vector2(1.0, u0)], [anello[1][1], Vector2(1.0, u1)],
+			[anello[0][0], Vector2(0.0, u0)], [anello[1][1], Vector2(1.0, u1)], [anello[1][0], Vector2(0.0, u1)]]
+		for v in quad:
+			st.set_color(Color(1, 0, 0))
+			st.set_normal(Vector3.UP)
+			st.set_uv(v[1])
+			st.add_vertex(v[0] + Vector3.UP * 0.004)
 	return st.commit()
 
 

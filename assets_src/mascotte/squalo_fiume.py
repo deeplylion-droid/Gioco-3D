@@ -40,7 +40,7 @@ RIG = os.path.join(REPO, 'godot', 'assets', 'models', 'mascotte', 'mostro_squalo
 USCITA = os.path.join(REPO, 'godot', 'assets', 'models', 'mascotte', 'mostro_squalo_A_fiume.glb')
 FPS = 30
 
-PINNA_FUORI = 0.22       # quanto esce la punta della pinna dorsale dal pelo nella nuotata (m)
+PINNA_FUORI = 0.26       # quanto esce la punta della pinna dorsale dal pelo nella nuotata (m); era 0,22 ma ne usciva 0,17
 AFFONDO = 0.9            # di quanto sta più giù alla fine del respinto (tutto sotto, pinna compresa)
 APERTA = 38.0            # la bocca spalancata (gradi della mascella)
 MORSO_T = 0.55           # quando la bocca si chiude nel morso (s); SqualoFiume.MORSO_T deve essere uguale
@@ -150,9 +150,10 @@ def corpo_in_acqua(arm, t, battito=1.0, testa_su=0.0, apri=0.0, scuoti=0.0, peri
         dirigi(arm, f'coscia.{s}', mix3((0.10 * sx, 1.0, -0.20 + k), (0.12 * sx, 0.35 + k, -1.0), dritto))
         dirigi(arm, f'stinco.{s}', mix3((0.05 * sx, 1.0, -0.12 + k * 1.3), (0.08 * sx, 0.45 + k, -1.0), dritto))
         dirigi(arm, f'piede.{s}', mix3((0.0, 1.0, -0.05 + k * 1.6), (0.0, 0.6 + k, -1.0), dritto))
+    # (la coda giù di traverso: la punta, che si piega in su, sta sotto il pelo anche con la pinna più fuori)
     for i, n in enumerate(('coda1', 'coda2', 'coda3')):
         a = battito * 0.35 * math.sin(u - 0.8 * (i + 1))
-        dirigi(arm, n, mix3((a, 1.0, -0.18), (a, 0.6, -1.0), dritto))
+        dirigi(arm, n, mix3((a, 1.0, -0.50), (a, 0.6, -1.0), dritto))
     ruota(arm, 'spina', (0, 0, 1), battito * 3.0 * math.sin(u + 1.2))
     alto = math.tan(math.radians(testa_su))
     dirigi(arm, 'collo', (0.0, -1.0, 0.10 + alto * 0.7))

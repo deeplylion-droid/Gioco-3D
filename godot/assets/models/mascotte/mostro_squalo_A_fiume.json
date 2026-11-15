@@ -1,6 +1,6 @@
 {
  "fps": 30,
- "pinna_fuori": 0.22,
+ "pinna_fuori": 0.26,
  "affondo": 0.9,
  "morso_t": 0.55,
  "animazioni": {
@@ -10,7 +10,7 @@
    "bocca": [
     0.103,
     -1.173,
-    -0.926
+    -0.839
    ]
   },
   "fiume_emerge": {
@@ -19,7 +19,7 @@
    "bocca": [
     0.082,
     -1.174,
-    -0.926
+    -0.839
    ]
   },
   "fiume_attacco": {
