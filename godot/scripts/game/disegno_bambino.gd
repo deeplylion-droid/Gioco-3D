@@ -15,7 +15,8 @@ extends Node3D
 ## - il punto sul muro e il pavimento si trovano con lo strumento comune (Posa, tests/posa_disegni.gd), poi si scrivono
 ##   nella scena: niente a mezz'aria, nemmeno di 1 cm (test_disegni_bambino.gd controlla).
 
-enum Formato { A3, A4 }
+## A3 verticale (29,7 × 42 cm), A4 verticale (21 × 29,7, il foglio del finale), A3 orizzontale (42 × 29,7, D4).
+enum Formato { A3, A4, A3_ORIZZONTALE }
 
 ## Il disegno (una texture di godot/assets/storia_disegni/).
 @export var disegno: Texture2D:
@@ -68,7 +69,7 @@ enum Formato { A3, A4 }
 ## Le prime impronte (le più vecchie) sono quasi asciutte: l'opacità va da questa a 1.
 @export var asciutte := 0.25
 
-const MISURE := {Formato.A3: Vector2(0.297, 0.42), Formato.A4: Vector2(0.21, 0.297)}
+const MISURE := {Formato.A3: Vector2(0.297, 0.42), Formato.A4: Vector2(0.21, 0.297), Formato.A3_ORIZZONTALE: Vector2(0.42, 0.297)}
 ## Lo spessore del foglio (m): il retro tocca il muro, a z = 0.
 const SPESSORE := 0.0004
 const NASTRO := Vector3(0.055, 0.019, 0.0002)

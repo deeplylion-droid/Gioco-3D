@@ -189,8 +189,16 @@ func _run() -> void:
 	var dove := ag.lucchetto_grata()
 	var buco := tec.to_global(Vector3(ag.muro_x, ag.posizione.y, ag.buco_z))
 	check(ag.grata_chiusa == 2 and catena_a >= 0.0, "dopo le zampette dalla grata di C2 la catena tirata e il lucchetto che scatta")
-	check(tec.find_child("grata_c2_lucchetto*", true, false) != null and dove.distance_to(buco) < 8.0,
-			"il suono viene dal lucchetto della grata verde (a %.1f m dal buco)" % dove.distance_to(buco))
+	var q := PhysicsShapeQueryParameters3D.new()
+	var sfera := SphereShape3D.new()
+	sfera.radius = 0.15
+	q.shape = sfera
+	q.transform = Transform3D(Basis(), dove)
+	var tocchi := p.get_world_3d().direct_space_state.intersect_shape(q, 8)
+	var sulla_grata := tocchi.any(func(t): return "grata" in String((t.collider as Node).name).to_lower())
+	check(sulla_grata and dove.distance_to(buco) < 8.0,
+			"il suono viene dal lucchetto della grata verde (a %.1f m dal buco, tocca %s)" % [dove.distance_to(buco),
+			tocchi.map(func(t): return (t.collider as Node).name)])
 	_fine()
 
 

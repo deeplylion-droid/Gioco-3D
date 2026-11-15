@@ -174,26 +174,15 @@ func _chiude_la_grata() -> void:
 			Audio.suona(&"lucchetto_scatto", dove))
 
 
-## Dove sta il lucchetto della grata verde di C2 (il modello del raccordo: grata_c2_lucchetto); se non c'è, la
-## grata subito dopo il buco, lungo C2.
+## Dove sta il lucchetto della grata verde di C2, nelle coordinate del genitore: nel modello del raccordo è
+## grata_c2_lucchetto (tools/blender/ambienti2_raccordo.py: x 44,77, y Blender GY + 0,08 = -5,845, quota 1 m sopra il
+## pavimento della sala, 9,05), unito alle altre mesh dei dettagli, quindi non è un nodo a parte.
+@export var lucchetto := Vector3(44.77, 10.05, 5.845)
+
+
 func lucchetto_grata() -> Vector3:
 	return _lucchetto()
 
 
 func _lucchetto() -> Vector3:
-	var genitore := get_parent() as Node3D
-	var l := genitore.find_child("grata_c2_lucchetto*", true, false) as Node3D
-	if l:
-		return l.global_position
-	var ultimo := punti_fuga[punti_fuga.size() - 1] if not punti_fuga.is_empty() else posizione
-	return genitore.to_global(Vector3(posizione.x, posizione.y + 1.0, ultimo.z + 2.0))
-
-
-func save_state() -> Dictionary:
-	return {"fatto": _fatto}
-
-
-func load_state(s: Dictionary) -> void:
-	_fatto = _fatto or bool(s.get("fatto", false))   # una volta sola: ripartendo da prima non ricompare
-	if _fatto and bambino and is_instance_valid(bambino):
-		bambino.queue_free()
+	return (get_parent() as Node3D).to_global(lucchetto)

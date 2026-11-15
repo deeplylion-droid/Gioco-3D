@@ -12,7 +12,7 @@ Sono in `godot/assets/storia_disegni/` (1024×1365, JPG q90, compressi VRAM con 
 | `disegno_d2.jpg` | dopo la sala pompe, verso la Risalita (ambienti-1) | la vasca con la medusa, l'omino che le gira intorno lontano dal bordo, la scala, la scialuppa |
 | `disegno_df.jpg` | corridoio del fiume (enigmi) | il fiume ad anello, l'omino sulla ciambella, lo squalo dietro, lo spruzzo verso lo squalo |
 | `disegno_d3.jpg` | prima della torre (ambienti-2) | la torre coi tubi colorati, l'omino che sale, la freccia, la scialuppa in cima |
-| `disegno_d4.jpg` | inizio del tunnel (ambienti-2) | il tubo, l'omino che corre e spruzza indietro, la medusa dietro, la porta tonda e la scialuppa |
+| `disegno_d4.jpg` | inizio del tunnel (ambienti-2, A3 orizzontale) | il tubo, l'omino che corre e spruzza indietro, la medusa dietro, la porta tonda e la scialuppa |
 | `disegno_dz.jpg` | il foglio del finale (ambienti-2, formato A4) | la fila di bambini per mano, l'omino in mezzo, la medusa sopra che tiene tutti per mano |
 
 Sorgenti e script in `assets_src/storia_disegni/`: `genera_disegni.py` (Meshy), `prepara_fogli.py` (taglio, misura, firma; mette la firma anche sui due disegni che c'erano già), `pastello.py` (Blender), `impronte.py`. Il foglio con tutti e otto affiancati: `assets_src/storia_disegni/anteprima/otto_disegni.jpg`.
@@ -23,7 +23,7 @@ Sorgenti e script in `assets_src/storia_disegni/`: `genera_disegni.py` (Meshy), 
 
 - **L'origine è il centro del foglio, sulla superficie del muro che si vede.** Il foglio guarda verso **+Z** del nodo (il muro è dietro, a z = 0). Il nodo si gira solo attorno alla verticale.
 - `disegno`: la texture del foglio.
-- `formato`: A3 (29,7 × 42 cm, verticale) o A4 (21 × 29,7, per DZ).
+- `formato`: A3 (29,7 × 42 cm, verticale), A4 (21 × 29,7, per DZ) o A3_ORIZZONTALE (42 × 29,7, per D4).
 - `altezza`: quanto il centro del foglio sta sopra il pavimento. L'ha attaccato un bambino: fra 1,0 e 1,2 m (D1 è a 0,84, perché nel corridoio del risveglio c'è una fascia sul muro a 1,07-1,13 m: un foglio sopra la fascia non starebbe piatto).
 - `emissione`: 0,12, come il disegno dei giocattoli (i pastelli si vedono appena al buio). Non cambiarla senza chiedere.
 - Il foglio è una lastra di carta di 0,4 mm col retro sul muro; davanti il disegno; quattro pezzi di nastro di carta di sbieco sugli angoli, a cavallo fra il foglio e il muro.

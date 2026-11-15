@@ -115,6 +115,12 @@ func _componente() -> void:
 	var a4 := (d.get_node(^"Foglio") as MeshInstance3D)
 	var aa := a4.global_transform * a4.get_aabb()
 	check(is_equal_approx(aa.size.x, 0.21) and is_equal_approx(aa.size.y, 0.297), "A4 per il foglio del finale (%s)" % aa.size)
+	d.formato = DisegnoBambino.Formato.A3_ORIZZONTALE
+	await _fisica(2)
+	var ao := (d.get_node(^"Foglio") as MeshInstance3D)
+	var ab := ao.global_transform * ao.get_aabb()
+	check(is_equal_approx(ab.size.x, 0.42) and is_equal_approx(ab.size.y, 0.297) and d.find_children("Nastro*", "MeshInstance3D", false, false).size() == 4,
+			"A3 orizzontale per D4 (%s), coi suoi quattro nastri" % ab.size)
 	r.queue_free()
 	await _fisica(2)
 

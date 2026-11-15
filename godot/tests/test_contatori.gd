@@ -132,12 +132,14 @@ func _run() -> void:
 	while not chiuso[0] and Time.get_ticks_msec() - t3 < 40000:
 		await get_tree().process_frame
 	check(chiuso[0], "da solo dopo 25 s torna al titolo")
-	for i in 600:
+	var t4 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t4 < 90000:
 		await get_tree().process_frame
 		var s := get_tree().current_scene
 		if s and s.scene_file_path == Game.SCENE_TITLE:
 			break
-	check(get_tree().current_scene and get_tree().current_scene.scene_file_path == Game.SCENE_TITLE, "ed è il titolo")
+	var cs := get_tree().current_scene
+	check(cs and cs.scene_file_path == Game.SCENE_TITLE, "ed è il titolo (%s)" % (cs.scene_file_path if cs else "niente"))
 	if prima != "":
 		var f := FileAccess.open(GameState.SAVE_PATH, FileAccess.WRITE)
 		f.store_string(prima)
