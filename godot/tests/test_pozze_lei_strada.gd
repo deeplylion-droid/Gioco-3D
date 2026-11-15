@@ -25,6 +25,41 @@ func _ready() -> void:
 	_run.call_deferred()
 
 
+## Il riscaldamento della stanza delle pozze ripartendo vicino (RisalitaGioco.riscaldo_pozze): in quanti fotogrammi
+## c'è stato, e in quanti la camera del gioco avrebbe visto qualcosa di diverso (un pezzo della stanza tolto dalla
+## vista, o lei e la sua luce in posa visibili).
+var riscaldo_visti := 0
+var riscaldo_scoperti := 0
+
+
+func _process(_d: float) -> void:
+	var s := get_tree().current_scene
+	var r := s.get_node_or_null(^"Risalita") if s else null
+	if r and r.get(&"riscaldo_pozze") == true:
+		riscaldo_visti += 1
+		if not _vista_com_era(r.get(&"pozze") as Node3D):
+			riscaldo_scoperti += 1
+
+
+## Vero se nella stanza delle pozze [param poz] nessuna mesh o luce è solo sullo strato fuori vista, tranne quelle di
+## lei (il suo motore), che lì devono stare tutte (la camera del gioco non le vede).
+func _vista_com_era(poz: Node3D) -> bool:
+	if poz == null or not is_instance_valid(poz):
+		return true
+	var en := poz.find_child("EnigmaPozze", true, false) as EnigmaPozze
+	var aq: Node = en.lei.acqua if en and en.lei else null
+	for v in poz.find_children("*", "VisualInstance3D", true, false):
+		var vi := v as VisualInstance3D
+		if not vi.is_visible_in_tree():
+			continue
+		var di_lei := aq != null and aq.is_ancestor_of(vi)
+		if di_lei and vi.layers != SalaTorre.STRATO_PREPARA:
+			return false
+		if not di_lei and vi.layers == SalaTorre.STRATO_PREPARA:
+			return false
+	return true
+
+
 func check(cond: bool, what: String) -> void:
 	if cond:
 		_passed += 1
@@ -81,11 +116,15 @@ func _run() -> void:
 		await get_tree().process_frame
 		if not is_instance_valid(seq) or not GameState.is_dying:
 			break
+	riscaldo_visti = 0
+	riscaldo_scoperti = 0
 	if is_instance_valid(seq) and GameState.is_dying:
 		seq.emit_signal(&"finished", true)
 	await _aspetta_ripresa()
 
 	print("3. Si riparte dall'ingresso con le pozze piene e lei che dorme")
+	check(riscaldo_visti > 0 and riscaldo_scoperti == 0,
+		"ripartendo lei in posa si disegna fuori vista con la stanza, e la camera del gioco non vede niente di diverso (%d fotogrammi, %d diversi)" % [riscaldo_visti, riscaldo_scoperti])
 	check(String(GameState.snapshot.get("checkpoint", "")) == ingresso, "si riparte dal checkpoint d'ingresso (%s)" % GameState.snapshot.get("checkpoint", ""))
 	check(e != null and _tutte_piene() and e.tolti.is_empty() and e.stato == EnigmaPozze.Stato.APERTO and not _porta_aperta(),
 		"con le pozze tutte piene e la porta chiusa")

@@ -224,7 +224,10 @@ func _run() -> void:
 	check(not pr.is_empty() and lei.prese == 1 and GameState.is_dying and GameState.last_death_cause == &"medusa",
 		"resta lì: esce e lo prende, si muore (%s)" % GameState.last_death_cause)
 	await _frames(int((lei.opaco_tempo + 0.1) * 60))
-	check(is_equal_approx(_estinzione(t), _estinzione_stile(t)), "dalla presa il liquido torna trasparente, per la scena di morte (%.2f)" % _estinzione(t))
+	check(not lei.liquido_trasparente_alla_presa and _estinzione(t) >= 0.95 * lei.opaco_estinzione,
+		"nella scena di morte il liquido resta opaco (%.1f; piano B, interruttore spento di serie)" % _estinzione(t))
+	var lm := AcquaDiLei._luce
+	check(lm.visible and lm.global_position.y > t.get_surface_global_y() + 0.1, "e la luce rosa resta sopra il pelo")
 	_rianima()
 
 	print("4. Allontanandosi lungo la passerella si è salvi, anche vicino a un angolo")
@@ -425,6 +428,20 @@ func _run() -> void:
 				dove = lei._giro[0]
 				break
 		check(riparte and dove != null and lei._piena(dove), "poi riprende a girare da una pozza piena (%s)" % (dove.name if dove else "?"))
+
+	print("12. Con liquido_trasparente_alla_presa acceso: dalla presa il liquido torna trasparente (com'era prima)")
+	await _nuova_stanza(false)
+	lei.liquido_trasparente_alla_presa = true
+	await _togli(WaterMix.ROSA)
+	_metti(Vector3(0, 0, r))
+	var pr2 := await _aspetta(F.PRESA, lei.prima_attesa + acqua.avviso + 10.0)
+	check(not pr2.is_empty(), "esce vicino e lo prende")
+	if not pr2.is_empty():
+		var t2: WaterTank = lei.bersaglio
+		await _frames(int((lei.opaco_tempo + 0.2) * 60))
+		check(t2 != null and is_equal_approx(_estinzione(t2), _estinzione_stile(t2)),
+			"dalla presa il liquido torna trasparente (%.2f, stile %.2f)" % [_estinzione(t2) if t2 else -1.0, _estinzione_stile(t2) if t2 else -1.0])
+		_rianima()
 	_fine()
 
 
