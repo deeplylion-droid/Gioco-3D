@@ -8,7 +8,8 @@ extends Node
 ## - tace quando si ritrae (getto), quando prende (la morte), quando sbatte sul portello e quando sparisce;
 ## - dopo la morte e la ripartenza da un checkpoint (sparita, poi riemerge e insegue) riparte, una frase alla volta;
 ## - se lei sparisce dalla scena a metà frase, la frase si spegne;
-## - le frasi vere della variante A ci sono (10, mono); mentre canta niente versi, e il fiato è a x0,3 (scelta dell'utente).
+## - le frasi vere ci sono (10, mono: dal 15 novembre la sigla da tunnel, scelta B); mentre canta niente versi, e il fiato
+##   è a x0,3 (scelta dell'utente del 25 ottobre); quando smette non si tronca: si spegne in 1 s (15 novembre).
 ## (Senza uscita audio i suoni sono finti e i lettori della riserva si riprendono subito: qui una frase può finire
 ## prima che nel gioco, dove il lettore suona davvero e non viene ripreso. La pausa conta dalla fine della frase.)
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_tunnel.gd
@@ -43,7 +44,7 @@ func _run() -> void:
 		_fine()
 		return
 
-	print("Le frasi vere (variante A)")
+	print("Le frasi vere (la sigla da tunnel)")
 	var frasi: Array = Catalogo.SUONI.get(&"lei_tunnel_canto", [])
 	check(frasi.size() == 10, "10 frasi del canto nel catalogo (%d)" % frasi.size())
 	var mono := frasi.all(func(f): return (load(f) as AudioStream) != null)
