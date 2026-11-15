@@ -18,8 +18,10 @@ extends Node3D
 ##            si avvicina alza la testa verso di lui per un secondo ("alza_testa"), si tira su ("si_alza") e scappa.
 ##            Con [member guarda_il_disegno] invece è in piedi e guarda in su il disegno ("guarda_su", agli acquari): gira
 ##            la testa verso il giocatore per un secondo e scappa, lasciando cadere il pastello ([signal lascia_il_pastello]).
-##   PORGE    (il finale, build 0.5.0) fa due passi lungo "percorso" e porge il foglio con le due mani ("porge", poi
-##            "porge_tiene"); il foglio si attacca a [method punto_foglio]. Non scappa.
+##   PORGE    (il finale, build 0.5.0) senza "percorso" (scelta R del coordinatore) tiene il foglio basso con due mani
+##            fin da subito ("tiene_foglio", guardandolo; segnale [signal tiene_il_foglio]) e lo porge quando la scena
+##            chiama [method porgi] ("porge" dal basso, poi "porge_tiene"). Con "percorso" (com'era prima) fa i passi e poi lo
+##            porge. Il foglio si attacca a [method punto_foglio]. Non scappa.
 ## Dalla statua, dall'osservazione e dalla camminata scappa se il giocatore si avvicina troppo
 ## (non dalla luce della torcia: scelta dell'utente del 21 ottobre, "lascia come ora"). È nel gruppo "bambini". I segnali servono per l'audio.
 
@@ -32,8 +34,10 @@ signal sparito    ## è sparito, alla fine della fuga o del percorso
 signal passo(dove: Vector3)
 ## Disegnando, alza la testa verso il giocatore (DISEGNA).
 signal alza_la_testa
-## Comincia a porgere il foglio (PORGE, alla fine dei passi).
+## Comincia a porgere il foglio (PORGE: quando la scena chiama [method porgi], o alla fine dei passi).
 signal porge_il_foglio
+## Ha il foglio in mano, basso con due mani (PORGE senza percorso, all'inizio della modalità): da qui il foglio si mostra.
+signal tiene_il_foglio
 ## Scappando lascia cadere il pastello (DISEGNA con [member guarda_il_disegno]): [param dove] è il punto del pavimento sotto
 ## la sua mano, dove chi fa la scena mette il pastello appoggiato.
 signal lascia_il_pastello(dove: Vector3)
@@ -43,10 +47,11 @@ enum Reazione { NESSUNA, INCLINA_TESTA, SI_GIRA }
 
 const ANIMAZIONI: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"si_gira"]
 const CICLICHE: Array[StringName] = [&"fermo", &"inclina_testa", &"cammina", &"corsa", &"fermo_vivo", &"inclina_testa_viva",
-		&"disegna", &"porge_tiene", &"guarda_su"]
+		&"disegna", &"porge_tiene", &"guarda_su", &"tiene_foglio"]
 ## Le animazioni della build 0.5.0 (bambini_animazioni.py --storia; solo il bambino col cubo): in ginocchio che disegna, alza
 ## la testa (1 s), si tira su (0,6 s, finisce nella posa da cui parte "parte"); porge il foglio (1,2 s) e lo tiene.
-const STORIA: Array[StringName] = [&"disegna", &"alza_testa", &"si_alza", &"porge", &"porge_tiene", &"guarda_su"]
+const STORIA: Array[StringName] = [&"disegna", &"alza_testa", &"si_alza", &"porge", &"porge_tiene", &"guarda_su",
+		&"tiene_foglio"]
 ## Le pose da fermo vive (il peso da un piede all'altro, il respiro più ampio: bambini_animazioni.py --vivo), al posto di
 ## quelle di prima, con [member fermo_vivo].
 const VIVE := {&"fermo": &"fermo_vivo", &"inclina_testa": &"inclina_testa_viva"}
@@ -214,6 +219,8 @@ var _fase := 0
 var _t_fase := 0.0
 ## PORGE: sta ancora facendo i passi
 var _porge_passi := false
+## PORGE: lo sta porgendo (o lo tiene già davanti al petto)
+var _porto := false
 var _matite: Array[Node3D] = []
 var _fogli: Array[Node3D] = []
 
@@ -405,8 +412,9 @@ func alza_testa_ora() -> void:
 	alza_la_testa.emit()
 
 
-## Fa i passi lungo [param punti] (di solito due: un metro scarso) e porge il foglio con le due mani; senza punti lo porge
-## subito. Non scappa.
+## Il finale. Senza [param punti] (scelta R): tiene subito il foglio basso con due mani, guardandolo ("tiene_foglio", ciclo
+## di 8 s), ed emette [signal tiene_il_foglio]; lo porge quando si chiama [method porgi]. Con [param punti] (di solito
+## due: un metro scarso) fa i passi e poi lo porge da solo. Non scappa.
 func porge(punti: Array[Node3D]) -> void:
 	modalita = Modalita.PORGE
 	_mostra_matita(false)
@@ -415,6 +423,7 @@ func porge(punti: Array[Node3D]) -> void:
 		if n:
 			_punti.append(n.global_position)
 	_porge_passi = not _punti.is_empty()
+	_porto = false
 	_vel = 0.0
 	_perno_osso = -1
 	_svolta = false
@@ -422,7 +431,18 @@ func porge(punti: Array[Node3D]) -> void:
 		_anima(&"cammina")
 		_passo_animazione(vel_camminata_anim)
 	else:
-		_porgi()
+		for ap in _player_anim:
+			ap.speed_scale = 1.0
+		_anima(&"tiene_foglio", 0.0)
+		tiene_il_foglio.emit()
+
+
+## PORGE: alza il foglio che tiene basso e lo porge (1,2 s, sfumato in 0,35 s), poi lo tiene lì ("porge_tiene"). Non fa
+## niente fuori da PORGE, durante i passi o se lo sta già porgendo.
+func porgi() -> void:
+	if modalita != Modalita.PORGE or _porge_passi or _porto:
+		return
+	_porgi()
 
 
 ## Dove sta il foglio che porge: il centro del foglio, con la faccia del disegno verso dove guarda il bambino (+Z) e il
@@ -434,6 +454,7 @@ func punto_foglio() -> Node3D:
 
 func _porgi() -> void:
 	_porge_passi = false
+	_porto = true
 	for ap in _player_anim:
 		ap.speed_scale = 1.0
 	_anima(&"porge", 0.35)

@@ -6,7 +6,10 @@ extends Node
 ##    verso di te per 1 s (segnale alza_la_testa, lo sguardo ti segue), si tira su (si_alza, 0,6 s) e scappa (parte e corsa);
 ## 3. porge: due passi (cammina) e porge il foglio con le due mani (segnale porge_il_foglio, porge e poi porge_tiene); il
 ##    punto del foglio sta fra le mani, davanti al petto, dritto verso dove guarda il bambino; non scappa anche se gli sei
-##    vicino.
+##    vicino;
+## 4. il finale senza passi (scelta R): tiene il foglio basso con due mani da subito (segnale tiene_il_foglio, tiene_foglio),
+##    non lo porge finché la scena non chiama porgi(); poi porge e porge_tiene, il foglio sempre fra le mani (nessun salto,
+##    sfumatura compresa) e alla fine davanti al petto.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambino_storia.gd
 
 const LEVEL := "res://scenes/test/test_level.tscn"
@@ -55,6 +58,7 @@ func _run() -> void:
 	await _disegna()
 	await _guarda_su()
 	await _porge()
+	await _tiene_e_porge()
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	Game.esci(1 if _ko > 0 else 0)
 
@@ -236,4 +240,59 @@ func _porge() -> void:
 	var bs := f.global_basis
 	check(bs.z.normalized().dot(b.global_basis.z) > 0.98 and bs.y.normalized().dot(Vector3.UP) > 0.98 \
 			and absf(bs.get_scale().x - 1.0) < 0.02, "dritto, la faccia verso dove guarda il bambino, scala 1 (%s)" % bs.get_scale())
+	b.queue_free()
+
+
+func _mani(b: Bambino) -> Array:
+	var sk := b.get_node("Calmo").find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+	var ml := sk.global_transform * sk.get_bone_global_pose(sk.find_bone("LeftHand")).origin
+	var mr := sk.global_transform * sk.get_bone_global_pose(sk.find_bone("RightHand")).origin
+	return [ml, mr]
+
+
+func _tiene_e_porge() -> void:
+	print("4. Il finale: tiene il foglio basso, lo porge quando glielo dice la scena")
+	var b := await _bambino(Vector3(0.5, 0.0, 0.0), 0.0)
+	var ev := {}
+	for s in [&"tiene_il_foglio", &"porge_il_foglio", &"scappa"]:
+		b.connect(s, func() -> void: ev[s] = ev.get(s, 0) + 1)
+	p.teleport(Vector3(0.5, 0.0, 2.34), 0.0, 0.0)
+	p.look_at_point(Vector3(0.5, 0.8, 0.0))
+	b.porge([] as Array[Node3D])
+	check(ev.get(&"tiene_il_foglio", 0) == 1, "all'inizio della modalità dice che ha il foglio (tiene_il_foglio)")
+	var ap := b.get_node("Calmo").find_child("AnimationPlayer", true, false) as AnimationPlayer
+	await _frames(3)
+	var f := b.punto_foglio()
+	var m := _mani(b)
+	var loc := b.to_local(f.global_position)
+	check(ap.current_animation == &"tiene_foglio", "tiene il foglio da fermo (%s)" % ap.current_animation)
+	check(f.global_position.distance_to(m[0]) < 0.2 and f.global_position.distance_to(m[1]) < 0.2,
+			"il foglio fra le mani dal primo fotogramma (%.2f e %.2f m dai polsi)" % [f.global_position.distance_to(m[0]), f.global_position.distance_to(m[1])])
+	check(loc.y < 0.58 and loc.z > 0.1, "basso, davanti alle cosce (%s)" % loc)
+	check(f.global_basis.z.normalized().dot(b.global_basis.z) > 0.98, "la faccia del disegno verso il giocatore")
+	# aspetta: non lo porge da solo
+	var rel_prima: Vector3 = f.global_position - (m[0] + m[1]) / 2
+	var salto := 0.0
+	for i in 60 * 3:
+		await get_tree().physics_frame
+		m = _mani(b)
+		var rel: Vector3 = f.global_position - (m[0] + m[1]) / 2
+		salto = maxf(salto, rel.distance_to(rel_prima))
+		rel_prima = rel
+	check(not ev.has(&"porge_il_foglio") and ap.current_animation == &"tiene_foglio", "da solo non lo porge (3 s)")
+	# la scena dice di porgerlo
+	b.porgi()
+	check(ev.get(&"porge_il_foglio", 0) == 1, "porgi(): comincia a porgerlo (porge_il_foglio)")
+	for i in 60 * 3:
+		await get_tree().physics_frame
+		m = _mani(b)
+		var rel: Vector3 = f.global_position - (m[0] + m[1]) / 2
+		salto = maxf(salto, rel.distance_to(rel_prima))
+		rel_prima = rel
+	check(salto < 0.004, "il foglio segue le mani, senza salti, anche nella sfumatura (al più %.1f mm per fotogramma)" % (salto * 1000.0))
+	check(ap.current_animation == &"porge_tiene", "poi lo tiene davanti al petto (%s)" % ap.current_animation)
+	loc = b.to_local(f.global_position)
+	check(loc.z > 0.15 and loc.y > 0.45 and loc.y < 0.75, "davanti al petto (%s)" % loc)
+	b.porgi()
+	check(ev.get(&"porge_il_foglio", 0) == 1 and not ev.has(&"scappa"), "una volta sola; non scappa")
 	b.queue_free()

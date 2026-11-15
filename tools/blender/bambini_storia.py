@@ -280,19 +280,27 @@ def si_alza():
 
 # ---------------------------------------------------------------- porge
 PORGE = {'altezza': 0.62, 'avanti': 0.27, 'mani': A4[0] / 2 - 0.02}
+# il foglio basso davanti alle cosce, tenuto con la stessa presa (tiene_foglio; il finale, scelta R del coordinatore):
+# l'altezza delle mani, e quanto avanti (lo sceglie calibra_basso(): il più vicino al corpo con le cosce staccate)
+BASSO = {'altezza': 0.56, 'avanti': 0.17}
+STACCO_CORPO = 0.012     # quanto almeno il foglio basso sta davanti a cosce e pancia (m)
+# (avanti è uguale per i due modelli, che nel gioco si scambiano: quello del rivelato, che col vestito aperto sporge di più;
+# calibra_basso() controlla solo che basti)
 
 
-def posa_porge(t, k=1.0, trema=1.0):
-    """Le braccia avanti che tengono il foglio davanti al petto (k: quanto, da fermo_vivo)."""
+def posa_porge(t, k=1.0, trema=1.0, su=1.0, respiro=3.0):
+    """Le braccia avanti che tengono il foglio (k: quanto, da fermo_vivo): davanti al petto con su = 1, basso davanti
+    alle cosce con su = 0 (la stessa presa); con su = 0 la testa guarda il foglio, alzandolo la alza."""
     rot, spost = posa_viva(t, 4.0, 4.0)
-    p = posa_curva(t, respiro=3.0, ondeggio=8.0)
-    testa = {'neck': [(X, 4.0 * k)], 'Head': [(X, 6.0 * k), (Y, 4.0 * k)]}
+    p = posa_curva(t, respiro=respiro, ondeggio=8.0)
+    giu = (1.0 - su) * k
+    testa = {'neck': [(X, 4.0 * k + 10.0 * giu)], 'Head': [(X, 6.0 * k + 14.0 * giu), (Y, 4.0 * k * su)]}
     applica(unisci(p, {kk: v for kk, v in rot.items() if not kk.endswith(('Arm',))}, testa))
     metti_anche(spost * 0.4)
     piedi_a_terra()
     if k <= 0.0:
         return None
-    centro = Vector((CX, CY - PORGE['avanti'], PORGE['altezza']))
+    centro = Vector((CX, CY - BASSO['avanti'], BASSO['altezza'])).lerp(Vector((CX, CY - PORGE['avanti'], PORGE['altezza'])), su)
     tr = Vector((0.0015 * math.sin(2 * math.pi * t / 0.4), 0, 0.002 * math.sin(2 * math.pi * t / 0.5 + 1.0))) * trema
     resp = Vector((0, 0, 0.004 * onda(t, 4.0)))
     for lato, s in LATI.items():
@@ -348,15 +356,92 @@ def appoggia(centro):
     return Vector((centro.x, y - 0.003, centro.z))
 
 
+def foglio_e_pelle(c, vs=None):
+    """Il foglio (A4 verticale, faccia avanti: -Y, centro c) e la pelle dentro la sua sagoma: la punta delle mani più
+    vicina (m dietro il foglio), quante punte delle mani lo passano, e quanto sta dietro il resto del corpo (il punto
+    più vicino; negativo: dentro il foglio)."""
+    vs = vs or misura_pelle()
+    mani = set(indici_mani())
+    braccia = set(indici_braccia())
+    dm, oltre, dc, dt = 9.0, 0, 9.0, 9.0
+    for i, v in enumerate(vs):
+        if abs(v.x - c.x) <= A4[0] / 2 and abs(v.z - c.z) <= A4[1] / 2:
+            d = v.y - c.y
+            if i in mani:
+                dm = min(dm, d)
+                oltre += d < 0.0
+            else:
+                dc = min(dc, d)
+                if i not in braccia:
+                    dt = min(dt, d)
+    return dm, oltre, dc, dt
+
+
+_BRACCIA = []
+
+
+def indici_braccia():
+    """I vertici di braccia e avambracci (quelli che tengono il foglio da dietro: per forza vicini)."""
+    if not _BRACCIA:
+        gi = {g.index: g.name for g in corpo.vertex_groups}
+        _BRACCIA.extend(v.index for v in corpo.data.vertices
+                        if any(gi[g.group].endswith(('Arm', 'ForeArm', 'Hand')) and g.weight > 0.2 for g in v.groups))
+    return _BRACCIA
+
+
+def posa_basso(t):
+    """tiene_foglio: il foglio basso con due mani, la testa china a guardarlo (ciclo di 8 s)."""
+    dove = posa_porge(t, k=1.0, trema=0.0, su=0.0, respiro=4.0)
+    metti_foglio(appoggia(dove))
+
+
+def calibra_basso():
+    """Controlla che il foglio basso (BASSO['avanti']) stia davanti a cosce e pancia di almeno STACCO_CORPO in tutto il
+    ciclo; dice anche quanto si potrebbe avvicinare."""
+    vicino = None
+    for av in [0.10 + 0.01 * i for i in range(18)]:
+        BASSO['avanti'], prima = av, BASSO['avanti']
+        peggio = 9.0
+        for t in (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0):
+            azzera_posa()
+            posa_basso(t)
+            peggio = min(peggio, foglio_e_pelle(wa(pb_('foglio').head))[3])
+        BASSO['avanti'] = prima
+        if peggio >= STACCO_CORPO:
+            vicino = av
+            break
+    azzera_posa()
+    log(f'foglio basso: {BASSO["avanti"]:.2f} m avanti (per questo modello basterebbero {vicino} m), le mani a {BASSO["altezza"]:.2f} m')
+    if vicino is None or vicino > BASSO['avanti'] + 1e-6:
+        raise SystemExit(f'KO foglio basso: a {BASSO["avanti"]:.2f} m tocca il corpo')
+
+
+def azzera_posa():
+    for pb in arm.pose.bones:
+        pb.location = (0, 0, 0)
+        pb.rotation_quaternion = Quaternion()
+        pb.scale = (1, 1, 1)
+    bpy.context.view_layer.update()
+
+
+def tiene_foglio():
+    nuova_azione('tiene_foglio')
+    n = 8 * FPS
+    for f in range(n + 1):
+        posa_basso(f / FPS)
+        chiavi(f)
+
+
 def porge():
+    """Dal foglio basso (tiene_foglio, al suo tempo 0) lo alza e lo allunga fino alla posa davanti al petto."""
     nuova_azione('porge')
     n = int(round(1.2 * FPS))
     for f in range(n + 1):
         u = f / n
-        k = liscio(u, 0.0, 1.0)
-        dove = posa_porge(f / FPS, k=k, trema=k)
-        if dove is not None:
-            metti_foglio(appoggia(dove))
+        s = liscio(u, 0.0, 1.0)
+        # (il respiro passa da quello di tiene_foglio a quello di porge_tiene)
+        dove = posa_porge(f / FPS, k=1.0, trema=s, su=s, respiro=4.0 + (3.0 - 4.0) * s)
+        metti_foglio(appoggia(dove))
         chiavi(f)
     nuova_azione('porge_tiene')
     n = 4 * FPS
@@ -475,6 +560,8 @@ DEBUG = False
 disegna()
 alza_testa()
 si_alza()
+calibra_basso()
+tiene_foglio()
 porge()
 guarda_su()
 matita = fai_pastello()
@@ -529,24 +616,58 @@ def controlla():
             log(f'KO {nome}: la matita si stacca dal foglio'); ko += 1
         if nome in ('disegna', 'alza_testa') and (peggio['testa_mani'] < 0.02 or peggio['testa_foglio'] < 0.05):
             log(f'KO {nome}: il cubo tocca le mani o il foglio'); ko += 1
-    # il foglio che porge: appoggiato alle dita (contatto entro 5 mm), nessuna punta oltre il foglio
-    arm.animation_data.action = bpy.data.actions['porge_tiene']
-    vicino, lontano, oltre = 9.0, 0.0, 0
-    for f in range(0, 4 * FPS + 1, 4):
-        sc.frame_set(f)
-        c = wa(pb_('foglio').head)
-        vs = misura_pelle()
-        ds = [vs[i].y - c.y for i in indici_mani()
-              if abs(vs[i].x - c.x) <= A4[0] / 2 and abs(vs[i].z - c.z) <= A4[1] / 2]
-        if ds:
-            vicino = min(vicino, min(ds))
-            lontano = max(lontano, min(ds))
-            oltre += sum(1 for d in ds if d < 0.0)
-    log(f'porge_tiene: dalla punta più vicina al foglio da {vicino * 1000:.1f} a {lontano * 1000:.1f} mm; punte oltre il foglio {oltre}')
-    if oltre or lontano > 0.005:
-        log('KO porge_tiene: il foglio non è appoggiato alle dita'); ko += 1
+    # il foglio del finale (tiene_foglio, porge, porge_tiene), fotogramma per fotogramma: appoggiato alle dita (la punta
+    # più vicina entro 5 mm), nessuna punta oltre il foglio, cosce, pancia e braccia dietro il foglio
+    for nome in ('tiene_foglio', 'porge', 'porge_tiene'):
+        act = bpy.data.actions[nome]
+        arm.animation_data.action = act
+        f0, f1 = act.frame_range
+        vicino, lontano, oltre, corpo_min = 9.0, 0.0, 0, 9.0
+        for f in range(int(f0), int(f1) + 1):
+            sc.frame_set(f)
+            dm, ol, dc, _ = foglio_e_pelle(wa(pb_('foglio').head))
+            vicino, lontano, oltre, corpo_min = min(vicino, dm), max(lontano, dm), oltre + ol, min(corpo_min, dc)
+        log(f'{nome}: la punta più vicina al foglio da {vicino * 1000:.1f} a {lontano * 1000:.1f} mm; punte oltre il foglio '
+            f'{oltre}; il resto del corpo dietro il foglio di almeno {corpo_min * 1000:.1f} mm')
+        if oltre or lontano > 0.005 or vicino < 0.0 or corpo_min <= 0.0:
+            log(f'KO {nome}: il foglio non è appoggiato alle dita, o tocca il corpo'); ko += 1
+    ko += controlla_sfumatura()
     log('CONTROLLO STORIA:', 'ok' if ko == 0 else f'{ko} KO')
     return ko
+
+
+def posa_azione(nome, t):
+    """Le pose locali (posizione, rotazione) di tutte le ossa nell'azione al tempo t (s)."""
+    arm.animation_data.action = bpy.data.actions[nome]
+    f = t * FPS
+    sc.frame_set(int(f), subframe=f - int(f))
+    return {pb.name: (pb.location.copy(), pb.rotation_quaternion.copy()) for pb in arm.pose.bones}
+
+
+def controlla_sfumatura(durata=0.35):
+    """Come la sfumatura di Godot da tiene_foglio a porge (play con fusione 0,35 s): tiene_foglio continua dal suo punto
+    e svanisce, porge parte da 0; le ossa mescolate nelle pose locali. Da 8 punti del ciclo di tiene_foglio."""
+    peggio_l, peggio_v, oltre, corpo_min = 0.0, 9.0, 0, 9.0
+    for fase in range(8):
+        for i in range(int(durata * FPS) + 1):
+            tau = i / FPS
+            w = min(tau / durata, 1.0)
+            a = posa_azione('tiene_foglio', fase + tau)
+            b = posa_azione('porge', tau)
+            arm.animation_data.action = None
+            for pb in arm.pose.bones:
+                la, qa = a[pb.name]
+                lb, qb = b[pb.name]
+                pb.location = la.lerp(lb, w)
+                pb.rotation_quaternion = qa.slerp(qb, w)
+            bpy.context.view_layer.update()
+            dm, ol, dc, _ = foglio_e_pelle(wa(pb_('foglio').head))
+            peggio_l, peggio_v, oltre, corpo_min = max(peggio_l, dm), min(peggio_v, dm), oltre + ol, min(corpo_min, dc)
+    log(f'sfumatura tiene_foglio -> porge (0,35 s, da 8 punti del ciclo): la punta più vicina da {peggio_v * 1000:.1f} a '
+        f'{peggio_l * 1000:.1f} mm; punte oltre {oltre}; corpo dietro di almeno {corpo_min * 1000:.1f} mm')
+    if oltre or peggio_l > 0.005 or peggio_v < 0.0 or corpo_min <= 0.0:
+        log('KO sfumatura: il foglio si stacca dalle dita'); return 1
+    return 0
 
 
 def misure():
@@ -619,7 +740,7 @@ def render(cartella):
     for nome, f in scatti:
         arm.animation_data.action = bpy.data.actions[nome]
         sc.frame_set(f)
-        porta = nome.startswith('porge')
+        porta = nome.startswith('porge') or nome == 'tiene_foglio'
         fp.hide_render = porta
         fv.hide_render = not porta
         if porta:
@@ -628,7 +749,7 @@ def render(cartella):
             fv.rotation_euler = (math.radians(90), 0, 0)
         matita.hide_render = porta
         for vn, (da, verso) in viste.items():
-            if porta and vn == 'alto':
+            if (porta and vn == 'alto') or (os.environ.get('VISTE') and vn not in os.environ['VISTE'].split(',')):
                 continue
             guarda(da, verso)
             sc.render.filepath = os.path.join(cartella, f'{nome}_{f:02d}_{vn}.png')
