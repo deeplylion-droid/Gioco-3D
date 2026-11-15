@@ -84,7 +84,9 @@ const LUCE_POZZA_PORTATA := 3.5
 ## Quanto sta su a cercarti, se non sei nella portata (s).
 @export var tempo_su := 2.2
 ## Da su, quanto aspetta prima di prenderti (s): il tempo di uno spruzzo.
-@export var tempo_presa := 0.35
+@export var tempo_presa := 0.8
+## Nel modo MANO: da su, quanto aspetta la mano prima di prenderti alla caviglia (s).
+@export var tempo_presa_mano := 0.35
 ## Secondi di getto in faccia che la ricacciano sotto.
 @export var getto_per_respingere := 0.5
 ## Dopo una respinta lo specchio resta calmo per tanto (s).
@@ -403,7 +405,7 @@ func _physics_process(delta: float) -> void:
 			_girala_verso(p)
 			var vicino := p != null and is_instance_valid(p) \
 					and _in_pianta(p.global_position, _punto.global_position) <= (portata_mano if modo == Modo.MANO else portata)
-			if letale and not _dimostrativa and vicino and _t >= tempo_presa:
+			if letale and not _dimostrativa and vicino and _t >= (tempo_presa_mano if modo == Modo.MANO else tempo_presa):
 				_prendi()
 			elif _t >= tempo_su:
 				_scendi(false)

@@ -58,7 +58,8 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | `portata` | `3` | in m |
 | `portata_mano` | `1,2` | nel modo MANO: in m dal marker |
 | `tempo_su` | `2,2` | in s |
-| `tempo_presa` | `0,35` | in s |
+| `tempo_presa` | `0,8` | in s: dalla fine del silenzio alla presa 1,6 + 0,8 = 2,4 s, il tempo per mezzo secondo di getto in faccia |
+| `tempo_presa_mano` | `0,35` | nel modo MANO: dalla fine del silenzio alla presa 2,2 + 0,35 = 2,55 s |
 | `getto_per_respingere` | `0,5` | in s |
 | `pausa_respinta` | `20` | in s |
 | `pausa_dopo` | `4` | in s |
