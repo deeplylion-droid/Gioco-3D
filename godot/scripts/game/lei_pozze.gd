@@ -3,76 +3,74 @@ extends Node3D
 ## Lei sotto il pavimento della stanza delle pozze (0.4.0, «L'acqua è sua»; GDD, «Analisi del capitolo 1 e direzione
 ## nuova», 15 novembre). La stanza, i colori, il cartello e l'enigma restano quelli di EnigmaPozze: le pozze dello stesso
 ## colore sono collegate sotto il pavimento, e lì sotto nuota lei.
-## - Finché il giocatore non toglie il primo colore non succede niente ([constant Fase] DORME). Dopo, il canto sale da
-##   sotto e la luce rosa passa di pozza in pozza (GIRA).
-## - La prima uscita è dimostrativa: lontano dal giocatore (almeno [member distanza_dimostrativa], se si può dove lui
-##   guarda), mano e tentacoli sbattono sul grigliato e tornano giù. Non prende.
-## - Poi punta la pozza piena del bordo più vicina al giocatore: la luce ci arriva e resta lì [member avviso] secondi
-##   (ARRIVA, poi SILENZIO: il canto si ferma), poi esce (ESCE) e al colpo prende chi è entro [member portata] dalla
-##   pozza (PRESA).
-## - Ci si salva in tre modi: allontanandosi lungo la passerella; col getto sulla pozza mentre lei sta per uscire o esce,
-##   fino al colpo (RESPINTA); svuotando quel colore: una pozza che si svuota è una porta che si chiude, e se la luce è
-##   lì viene cacciata (CACCIATA). Il gorgo dura più dell'avviso: per questo vale già quando comincia, non a pozza vuota.
+## Quello che si vede e si sente (la luce rosa, il canto che si spegne, il silenzio, l'uscita, la presa, la respinta col
+## getto in faccia) e i suoi tempi sono del motore comune di mascotte, [AcquaDiLei] ([member acqua], figlio di questo
+## nodo): qui c'è solo dove e quando.
+## - Finché il giocatore non toglie il primo colore non succede niente (DORME). Dopo, la luce rosa passa di pozza in pozza
+##   piena (GIRA, AcquaDiLei.percorri a tratti di [member passi_giro] pozze; il canto lo fa il motore dalla vicinanza) e
+##   fra un'uscita e l'altra c'è una pausa fra [member pausa_min] e [member pausa_max]. Finita la pausa la luce va per
+##   pozze piene fino a quella accanto alla pozza scelta, e da lì comincia l'avviso del motore (AcquaDiLei.chiama).
+## - La prima uscita è dimostrativa ([member AcquaDiLei.prima_volta_dimostrativa]): lontano dal giocatore (almeno
+##   [member distanza_dimostrativa], se si può dove lui guarda). Non prende.
+## - Poi punta la pozza piena del bordo più vicina al giocatore (VIENE): l'avviso del motore, poi esce e prende chi è entro
+##   [member portata] dal punto d'uscita.
+## - Ci si salva in tre modi: allontanandosi lungo la passerella; col getto in faccia mentre esce o incombe (la respinta
+##   del motore); svuotando quel colore: una pozza che si svuota è una porta che si chiude, e lei viene cacciata appena
+##   comincia il gorgo (il gorgo dura più dell'avviso).
 ## - Se i tre colori sono sbagliati e le pozze si riempiono di nuovo, tutte le porte si riaprono.
-## - Fra un'uscita e l'altra una pausa fra [member pausa_min] e [member pausa_max]. Deve sempre esistere una via di
-##   salvezza: non esce se il giocatore non è sulla passerella della stanza, se è in una pozza, se sta aspirando e la
-##   pozza non è nel suo campo visivo, o se lungo la passerella non c'è un punto fuori portata raggiungibile in tempo.
-## - [member letale] (acceso): la presa uccide; spento, lei esce, sbatte e torna giù, solo paura.
+## - Deve sempre esistere una via di salvezza: non la chiama se il giocatore non è sulla passerella della stanza, se è in
+##   una pozza, se sta aspirando e la pozza non è nel suo campo visivo, o se lungo la passerella non c'è un punto fuori
+##   portata raggiungibile durante l'avviso.
+## - [member letale] (acceso): la presa uccide; spento, esce, incombe e torna sotto, solo paura.
 ## - Quando l'enigma è risolto se ne va (FINITA). Chi muore riparte dal checkpoint 14 d'ingresso con le pozze piene:
 ##   questo nodo riparte da DORME.
-## Quello che si vede e si sente (la luce rosa sott'acqua, il canto, mano e tentacoli) lo fa il motore di lei di
-## mascotte ([member motore]); qui c'è solo dove e quando. Senza motore lei non c'è (non può prendere senza farsi vedere).
-## Il motore riceve:
-## - luce(posizione: Vector3): la luce rosa va sotto il pelo di una pozza (il centro del fondo);
-## - fase(fase: StringName, pozza: WaterTank, dati: Dictionary): &"dorme", &"gira" (canto da sotto), &"arriva"
-##   ({avviso}), &"silenzio", &"esce" ({dimostrativa, colpo, verso: dalla pozza verso il giocatore}), &"presa"
-##   ({giocatore, letale}), &"respinta", &"cacciata", &"torna", &"finita".
 ## Le coordinate sono quelle di EnigmaPozze (il padre): origine al centro della griglia, sul piano della passerella.
 
-signal fase_cambiata(fase: StringName, pozza: WaterTank)
-signal presa(giocatore: Node3D)
-signal respinta
+signal fase_cambiata(fase: StringName)
+## Ha cominciato a svuotarsi il colore della pozza dove stava venendo: se n'è andata.
 signal cacciata
 
-enum Fase { DORME, GIRA, ARRIVA, SILENZIO, ESCE, PRESA, RESPINTA, CACCIATA, TORNA, FINITA }
-const NOMI := [&"dorme", &"gira", &"arriva", &"silenzio", &"esce", &"presa", &"respinta", &"cacciata", &"torna", &"finita"]
+enum Fase { DORME, GIRA, VIENE, FINITA }
+const NOMI := [&"dorme", &"gira", &"viene", &"finita"]
 
-## Interruttore della zona (0.4.0): acceso, la presa uccide; spento, solo paura.
-@export var letale := true
-## Il motore di lei (mascotte): luce(), fase(). Senza, lei non c'è.
-@export var motore: Node
+## Interruttore della zona (0.4.0): acceso, la presa uccide; spento, solo paura (è [member AcquaDiLei.letale]).
+@export var letale := true:
+	set(v):
+		letale = v
+		if acqua:
+			acqua.letale = v
+## Fin dove arriva la presa, in pianta dal punto d'uscita (m; è [member AcquaDiLei.portata]).
+@export var portata := 2.0:
+	set(v):
+		portata = v
+		if acqua:
+			acqua.portata = v
 
-@export_group("Tempi")
-## Dopo il primo colore tolto, quanto gira (canto e luce) prima dell'uscita dimostrativa (s).
+@export_group("Quando")
+## Dopo il primo colore tolto, quanto gira la luce prima dell'uscita dimostrativa (s).
 @export var prima_attesa := 5.0
-## La pausa fra un'uscita e l'altra (s), a caso fra i due.
+## La pausa fra un'uscita e l'altra (s), a caso fra i due; parte quando lei è tornata sotto.
 @export var pausa_min := 15.0
 @export var pausa_max := 20.0
-## Dall'arrivo della luce nella pozza all'uscita (s): l'avviso, compreso il silenzio.
-@export var avviso := 3.0
-## L'ultima parte dell'avviso, col canto fermo (s).
-@export var silenzio := 0.6
-## Dall'inizio dell'uscita al colpo sul grigliato (s): fino a lì il getto la respinge.
-@export var colpo := 0.6
-## Quanto resta fuori in tutto (s).
-@export var durata_uscita := 1.4
-## Quanto ci mette a tornare giù, respinta o no (s).
-@export var ritorno := 1.2
-## Ogni quanto la luce passa a un'altra pozza mentre gira (s).
-@export var passo_luce := 0.8
-## Quanto ci mette la luce da una pozza all'altra andando verso quella dell'uscita (s).
-@export var viaggio_luce := 0.15
-## Ogni quanto si riprova a scegliere la pozza quando adesso non si può (s).
+## Ogni quanto si riprova a chiamarla quando adesso non si può (s).
 @export var riprova := 0.5
+## La luce che gira di pozza in pozza (m/s), e quante pozze fa per volta.
+@export var velocita_luce := 1.5
+@export var passi_giro := 4
+## La luce che va verso la pozza scelta, fino alla pozza accanto (m/s): da lì comincia l'avviso del motore.
+@export var velocita_avvicinamento := 4.0
 
-@export_group("Distanze")
-## Fin dove arriva la presa dal bordo della pozza (m).
-@export var portata := 2.0
-## Il getto la respinge se colpisce entro questa distanza dal centro della pozza (m, in pianta).
-@export var raggio_getto := 1.0
+@export_group("Dove")
+## Come esce (AcquaDiLei.modo). MANO (la scelta dell'utente: il braccio di fianco, la mano che sbatte sul grigliato e i
+## tentacoli lungo la passerella): i punti d'uscita sono sul grigliato appena fuori dal bordo di ogni pozza del bordo,
+## alla quota del grigliato, con +Z verso fuori (due per le pozze d'angolo: vale quello più vicino al giocatore).
+## INTERA, il segnaposto finché la mano non c'è: lei esce dal centro della pozza, al pelo.
+@export var modo := AcquaDiLei.Modo.INTERA
+## Con INTERA, quanto sotto il pelo parte la salita (m).
+@export var profondita_uscita := 1.5
 ## La prima uscita, almeno così lontana dal giocatore (m).
 @export var distanza_dimostrativa := 4.0
-## Oltre questa distanza dalla pozza più vicina non lo punta (m): gira e basta.
+## Oltre questa distanza dalla pozza più vicina non la chiama (m): la luce gira e basta.
 @export var distanza_attenzione := 6.0
 ## Mentre aspira, la pozza deve essere entro questo angolo da dove guarda (gradi).
 @export var angolo_vista := 50.0
@@ -82,12 +80,13 @@ const NOMI := [&"dorme", &"gira", &"arriva", &"silenzio", &"esce", &"presa", &"r
 ## Quanto oltre la portata deve poter arrivare (m).
 @export var margine_fuga := 0.5
 
+## Il motore di lei.
+var acqua: AcquaDiLei
 var fase := Fase.DORME
-## La pozza dell'uscita (o null).
+## La pozza dove sta venendo (o null).
 var bersaglio: WaterTank
 ## La pozza dove sta la luce.
 var luce_in: WaterTank
-var dimostrativa_fatta := false
 ## Quante uscite e come sono finite, per i test.
 var uscite := 0
 var prese := 0
@@ -96,12 +95,15 @@ var cacciate := 0
 
 var _enigma: EnigmaPozze
 var _t := 0.0
-var _t_luce := 0.0
-var _percorso: Array[WaterTank] = []
-var _colpito := false
-var _colpo_fatto := false
-var _dimostrativa := false
-var _zaino: WaterPack
+## Il punto d'uscita di ogni pozza del bordo.
+var _uscite := {}
+## Da dove parte la luce quando la si chiama (solo col motore che non sa far girare la luce): sotto la pozza accanto.
+var _partenza: Marker3D
+## La luce sta facendo un tratto (o se ne sta andando): si aspetta che finisca.
+var _in_giro := false
+## Le pozze del tratto che sta facendo.
+var _giro: Array = []
+var _t_riprova := 0.0
 var _rng := RandomNumberGenerator.new()
 
 
@@ -114,6 +116,106 @@ func _ready() -> void:
 	_enigma.colore_cominciato.connect(_su_colore_cominciato)
 	_enigma.risolto.connect(_su_risolto)
 	_rng.randomize()
+	_metti_motore()
+
+
+## Il motore di lei con un punto d'uscita per ogni pozza del bordo.
+func _metti_motore() -> void:
+	acqua = AcquaDiLei.new()
+	acqua.name = "AcquaDiLei"
+	acqua.automatica = false
+	acqua.prima_volta_dimostrativa = true
+	acqua.letale = letale
+	acqua.portata = portata
+	acqua.modo = modo
+	acqua.profondita = profondita_uscita
+	add_child(acqua)
+	# (il pelo dell'acqua piena: con la mano il punto d'uscita è sul grigliato, non sull'acqua)
+	acqua.pelo = _enigma.to_global(Vector3(0.0, _enigma.profondita * (_enigma.pieno - 1.0), 0.0)).y
+	_partenza = Marker3D.new()
+	_partenza.name = "PartenzaLuce"
+	acqua.add_child(_partenza)
+	# (col giro della luce il motore la fa partire da dove sta)
+	if not sa_girare():
+		acqua.partenza_luce = _partenza
+	var lista: Array[Node3D] = []
+	for t in _enigma.pozze():
+		if not _sul_bordo(t):
+			continue
+		var pose := _pose_uscita(t)
+		var ms: Array[Marker3D] = []
+		for k in pose.size():
+			var m := Marker3D.new()
+			m.name = "Uscita_" + String(t.name) + ("" if k == 0 else "_%d" % k)
+			acqua.add_child(m)
+			m.global_transform = pose[k]
+			ms.append(m)
+			lista.append(m)
+		_uscite[t] = ms
+	acqua.punti_uscita = lista
+	acqua.fase_cambiata.connect(_su_fase_motore)
+	acqua.uscita.connect(func(): uscite += 1)
+	acqua.presa.connect(func(): prese += 1)
+	acqua.respinta.connect(func(): respinte += 1)
+	if acqua.has_signal(&"percorso_finito"):
+		acqua.connect(&"percorso_finito", _su_percorso_finito)
+
+
+## I punti d'uscita della pozza del bordo [param t], con +Z verso fuori. MANO: dove sbatte la mano, sul grigliato appena
+## fuori dal bordino esterno, uno per ogni lato sulla passerella. INTERA: il centro della pozza al pelo dell'acqua piena.
+func _pose_uscita(t: WaterTank) -> Array[Transform3D]:
+	var c := _locale(t.global_position)
+	var lati: Array[Vector3] = []
+	var m := _enigma.passo * 2.0 - 0.01
+	if absf(c.x) >= m:
+		lati.append(Vector3(signf(c.x), 0, 0))
+	if absf(c.z) >= m:
+		lati.append(Vector3(0, 0, signf(c.z)))
+	var out: Array[Transform3D] = []
+	if modo == AcquaDiLei.Modo.MANO:
+		var bordo := _enigma.passo * 2.5 + 0.05   # (il bordino esterno: 2,75 più mezzo bordino)
+		for l in lati:
+			var q := Vector3(c.x, 0.0, c.z)
+			if l.x != 0.0:
+				q.x = l.x * bordo
+			else:
+				q.z = l.z * bordo
+			out.append(_posa(q, l))
+	else:
+		var fuori := Vector3.ZERO
+		for l in lati:
+			fuori += l
+		out.append(_posa(Vector3(c.x, _enigma.profondita * (_enigma.pieno - 1.0), c.z), fuori.normalized()))
+	return out
+
+
+## La posa in [param q] (coordinate dell'enigma) con +Z verso [param fuori].
+func _posa(q: Vector3, fuori: Vector3) -> Transform3D:
+	var z := (_enigma.global_basis * fuori).normalized()
+	return Transform3D(Basis.looking_at(-z, Vector3.UP), _enigma.to_global(q))
+
+
+## Il punto d'uscita della pozza [param t]: con due (pozza d'angolo con la mano), quello più vicino al giocatore.
+func uscita_di(t: WaterTank) -> Marker3D:
+	var ms: Array = _uscite.get(t, [])
+	if ms.size() <= 1:
+		return ms[0] if ms.size() == 1 else null
+	var g := _giocatore()
+	if g == null:
+		return ms[0]
+	var meglio: Marker3D = null
+	var dm := INF
+	for m: Marker3D in ms:
+		var d := Vector2(m.global_position.x - g.global_position.x, m.global_position.z - g.global_position.z).length()
+		if d < dm:
+			dm = d
+			meglio = m
+	return meglio
+
+
+## Tutti i punti d'uscita della pozza [param t].
+func uscite_di(t: WaterTank) -> Array:
+	return _uscite.get(t, [])
 
 
 ## Il nome della fase adesso.
@@ -121,188 +223,212 @@ func nome_fase() -> StringName:
 	return NOMI[fase]
 
 
-func _vai(f: Fase, dati := {}) -> void:
+func _vai(f: Fase) -> void:
 	fase = f
 	_t = 0.0
-	if motore and motore.has_method(&"fase"):
-		motore.call(&"fase", NOMI[f], bersaglio, dati)
-	fase_cambiata.emit(NOMI[f], bersaglio)
+	fase_cambiata.emit(NOMI[f])
 
 
 func _su_colore_tolto(_c: String) -> void:
-	if fase == Fase.DORME and motore and _enigma.stato == EnigmaPozze.Stato.APERTO:
+	if fase == Fase.DORME and _enigma.stato == EnigmaPozze.Stato.APERTO:
 		_sveglia()
 
 
 func _sveglia() -> void:
 	bersaglio = null
-	_muovi_luce(_pozza_a_caso(null))
+	luce_in = _pozza_a_caso(null)
+	_in_giro = false
 	_vai(Fase.GIRA)
 	_t = -prima_attesa
 
 
+## Lei è tornata sotto (o se n'è andata): la pausa, poi di nuovo.
+func _riposa() -> void:
+	bersaglio = null
+	_in_giro = false
+	_vai(Fase.GIRA)
+	_t = -_rng.randf_range(pausa_min, maxf(pausa_min, pausa_max))
+
+
 func _su_colore_cominciato(c: String) -> void:
-	# una pozza che si svuota è una porta che si chiude: se la luce è lì, viene cacciata
-	if bersaglio and String(bersaglio.fill_pigment) == c and fase in [Fase.ARRIVA, Fase.SILENZIO, Fase.ESCE] \
-			and not (fase == Fase.ESCE and _t >= colpo):
-		_caccia()
+	# una pozza che si svuota è una porta che si chiude: se stava venendo lì, viene cacciata
+	if fase == Fase.VIENE and bersaglio and String(bersaglio.fill_pigment) == c and _manda_via():
+		cacciate += 1
+		cacciata.emit()
+	elif fase == Fase.GIRA and _in_giro and _giro.any(func(t): return String(t.fill_pigment) == c):
+		# (la luce girava per quelle pozze: se ne va, e riprende da una pozza piena)
+		_manda_via()
 
 
 func _su_risolto() -> void:
-	if fase != Fase.FINITA and fase != Fase.DORME:
-		bersaglio = null
+	if fase == Fase.VIENE or (fase == Fase.GIRA and _in_giro):
+		_manda_via()
+	bersaglio = null
+	if acqua:
+		acqua.abilitata = false
+	if fase != Fase.FINITA:
 		_vai(Fase.FINITA)
-	fase = Fase.FINITA
 
 
-func _caccia() -> void:
-	cacciate += 1
-	_vai(Fase.CACCIATA)
-	cacciata.emit()
+## Manda via lei: se non è ancora uscita (la luce che gira o l'avviso) la luce se ne va, se è fuori torna sotto. Falso
+## se è troppo tardi (presa) o se ne sta già andando.
+func _manda_via() -> bool:
+	var nome := String(AcquaDiLei.Fase.find_key(acqua.fase))
+	if nome in ["ARRIVA", "SPEGNE", "SILENZIO"] or (nome == "LONTANA" and _in_giro):
+		if acqua.has_method(&"manda_via"):
+			acqua.call(&"manda_via")
+		else:
+			acqua.call(&"_annulla")
+		# (se ne va in un secondo: si riparte quando ha finito)
+		_in_giro = sa_girare()
+		return true
+	if nome in ["ESCE", "SU"]:
+		acqua.respingi()
+		return true
+	return false
+
+
+func _su_fase_motore(f: AcquaDiLei.Fase) -> void:
+	if fase == Fase.VIENE and (f == AcquaDiLei.Fase.CALMA or f == AcquaDiLei.Fase.LONTANA):
+		_riposa()
 
 
 func _physics_process(delta: float) -> void:
-	if fase == Fase.DORME:
-		# ripreso da un salvataggio con un colore già tolto: si sveglia subito
-		if motore and _enigma.stato == EnigmaPozze.Stato.APERTO and not _enigma.tolti.is_empty():
-			_sveglia()
-		return
-	if fase == Fase.FINITA:
-		return
-	_collega_zaino()
-	_t += delta
 	match fase:
+		Fase.DORME:
+			# ripreso da un salvataggio con un colore già tolto: si sveglia subito
+			if _enigma.stato == EnigmaPozze.Stato.APERTO and not _enigma.tolti.is_empty():
+				_sveglia()
 		Fase.GIRA:
-			_gira(delta)
-		Fase.ARRIVA:
-			_avanza_luce(delta)
-			if _t >= avviso - silenzio:
-				_vai(Fase.SILENZIO)
-		Fase.SILENZIO:
-			if _t >= silenzio:
-				_esci()
-		Fase.ESCE:
-			if _t >= colpo and not _colpo_fatto:
-				_colpo_fatto = true
-				_al_colpo()
-			if fase == Fase.ESCE and _t >= durata_uscita:
-				_vai(Fase.TORNA)
-		Fase.RESPINTA, Fase.CACCIATA, Fase.TORNA:
-			if _t >= ritorno:
-				bersaglio = null
-				_vai(Fase.GIRA)
-				_t = -_rng.randf_range(pausa_min, maxf(pausa_min, pausa_max))
-		Fase.PRESA:
-			# (con letale la sala si ricarica e questo nodo con lei; se no, o se la morte non c'è stata, riprende)
-			if _t >= durata_uscita + ritorno and not GameState.is_dying:
-				bersaglio = null
-				_vai(Fase.GIRA)
-				_t = -_rng.randf_range(pausa_min, maxf(pausa_min, pausa_max))
+			_t += delta
+			if _enigma.stato == EnigmaPozze.Stato.RISOLTO:
+				return
+			if sa_girare():
+				# la luce gira di tratto in tratto (il prossimo lo fa partire _su_percorso_finito); se adesso non può,
+				# si riprova ogni tanto
+				_t_riprova -= delta
+				if not _in_giro and acqua.fase == AcquaDiLei.Fase.LONTANA and _t_riprova <= 0.0:
+					_t_riprova = riprova
+					_prossimo_tratto()
+				return
+			# (motore che non sa far girare la luce: solo la chiamata)
+			if _t < 0.0:
+				return
+			var b := _scegli()
+			if b == null or not _chiama(b):
+				_t = -riprova
+		Fase.VIENE:
+			# (rete di sicurezza: il motore è tornato lontano senza dirlo)
+			_t += delta
+			if _t > 1.0 and acqua.fase == AcquaDiLei.Fase.LONTANA:
+				_riposa()
 
 
-# --- Gira: la luce passa di pozza in pozza; finita la pausa sceglie dove uscire ------------------------------------
-
-func _gira(delta: float) -> void:
-	_t_luce += delta
-	if luce_in == null or not _piena(luce_in) or _t_luce >= passo_luce:
-		_t_luce = 0.0
-		_muovi_luce(_pozza_vicina_a_caso(luce_in))
-	if _t < 0.0 or _enigma.stato == EnigmaPozze.Stato.RISOLTO:
-		return
-	var b := _bersaglio_dimostrativo() if not dimostrativa_fatta else _bersaglio()
-	if b == null:
-		_t = -riprova
-		return
-	bersaglio = b
-	_dimostrativa = not dimostrativa_fatta
-	_percorso = _strada(luce_in, b)
-	_t_luce = 0.0
-	_colpito = false
-	_vai(Fase.ARRIVA, {"avviso": avviso})
+## La pozza dove venire adesso (la prima volta quella dimostrativa), o null.
+func _scegli() -> WaterTank:
+	return _bersaglio_dimostrativo() if prossima_dimostrativa() else _bersaglio()
 
 
-func _avanza_luce(delta: float) -> void:
-	if _percorso.is_empty():
-		return
-	_t_luce += delta
-	if _t_luce >= viaggio_luce:
-		_t_luce = 0.0
-		_muovi_luce(_percorso.pop_front())
+## Vero se il motore sa far girare la luce senza che lei esca (AcquaDiLei.percorri).
+func sa_girare() -> bool:
+	return acqua != null and acqua.has_method(&"percorri")
 
 
-func _muovi_luce(t: WaterTank) -> void:
+## Finito un tratto (o all'inizio): finita la pausa, se c'è una pozza dove venire la luce ci va per pozze piene fino a
+## quella accanto e da lì comincia l'avviso; se no gira ancora.
+func _prossimo_tratto() -> void:
+	if _t >= 0.0:
+		var b := _scegli()
+		if b:
+			if luce_in and _piena(luce_in) and (luce_in == b or luce_in in _vicine(b)):
+				if _chiama(b):
+					return
+			else:
+				var strada: Array = _strada(luce_in if luce_in and _piena(luce_in) else b, b)
+				strada.pop_back()
+				if not strada.is_empty() and _percorri(strada, velocita_avvicinamento):
+					return
+	_percorri(_giro_a_caso(), velocita_luce)
+
+
+func _su_percorso_finito() -> void:
+	_in_giro = false
+	if fase == Fase.GIRA:
+		_prossimo_tratto()
+
+
+## La luce fa il tratto [param pozze] (sotto il pelo, come la luce del motore) e resta accesa all'ultima.
+func _percorri(pozze: Array, v: float) -> bool:
+	if pozze.is_empty():
+		return false
+	var punti := PackedVector3Array()
+	for t: WaterTank in pozze:
+		punti.append(_sotto(t))
+	if not bool(acqua.call(&"percorri", punti, v, null, 0.0)):
+		return false
+	_in_giro = true
+	_giro = pozze
+	luce_in = pozze.back()
+	return true
+
+
+## Il punto sotto la pozza [param t] dove passa la luce: 0,6 m sotto il pelo dell'acqua piena (come nel motore).
+func _sotto(t: WaterTank) -> Vector3:
+	var c := t.to_global(Vector3(0.0, t.inner_size.y * _enigma.pieno, 0.0))
+	return c - Vector3(0.0, 0.6, 0.0)
+
+
+## Un tratto a caso di [member passi_giro] pozze piene vicine, da dove sta la luce.
+func _giro_a_caso() -> Array:
+	var out: Array = []
+	var t := luce_in if luce_in and _piena(luce_in) else null
 	if t == null:
-		return
+		t = _pozza_a_caso(null)
+		if t == null:
+			return out
+		out.append(t)
+	var prima: WaterTank = null
+	while out.size() < passi_giro:
+		var vicine := _vicine(t).filter(func(u): return _piena(u) and u != prima)
+		if vicine.is_empty():
+			vicine = _vicine(t).filter(func(u): return _piena(u))
+		if vicine.is_empty():
+			break
+		prima = t
+		t = vicine[_rng.randi() % vicine.size()]
+		out.append(t)
+	return out
+
+
+## Chiama lei nella pozza [param t]. Col giro la luce è già nella pozza accanto; se no parte da una pozza piena vicina,
+## sulla strada da dove stava, così non passa sotto le pozze vuote.
+func _chiama(t: WaterTank) -> bool:
+	var m := uscita_di(t)
+	if m == null:
+		return false
+	var da := t
+	if luce_in and _piena(luce_in) and luce_in != t:
+		var strada := _strada(luce_in, t)
+		if strada.size() >= 2:
+			da = strada[strada.size() - 2]
+		elif luce_in in _vicine(t):
+			da = luce_in
+	_partenza.global_position = da.global_position
+	if not acqua.chiama(m):
+		return false
+	bersaglio = t
 	luce_in = t
-	if motore and motore.has_method(&"luce"):
-		motore.call(&"luce", t.global_position + Vector3(0, 0.05, 0))
+	_vai(Fase.VIENE)
+	return true
 
 
-func _esci() -> void:
-	# (se la luce era ancora per strada, ora è nella pozza)
-	if not _percorso.is_empty():
-		_muovi_luce(_percorso.back())
-		_percorso.clear()
-	uscite += 1
-	var verso := Vector3.ZERO
-	var g := _giocatore()
-	if g:
-		verso = g.global_position - bersaglio.global_position
-		verso.y = 0.0
-		verso = verso.normalized()
-	_colpo_fatto = false
-	_vai(Fase.ESCE, {"dimostrativa": _dimostrativa, "colpo": colpo, "verso": verso})
-	if _dimostrativa:
-		dimostrativa_fatta = true
-
-
-func _al_colpo() -> void:
-	if _colpito:
-		respinte += 1
-		_vai(Fase.RESPINTA)
-		respinta.emit()
-		return
-	if _dimostrativa:
-		return
-	var g := _giocatore()
-	if g == null or GameState.is_dying or not _in_stanza(g) or _distanza(g, bersaglio) > portata:
-		return
-	prese += 1
-	_vai(Fase.PRESA, {"giocatore": g, "letale": letale})
-	presa.emit(g)
-	if letale:
-		GameState.kill_player(&"lei_pozze")
-
-
-# --- Il getto ------------------------------------------------------------------------------------------------------
-
-func _collega_zaino() -> void:
-	var g := _giocatore()
-	var z: WaterPack = g.water_pack if g else null
-	if z == _zaino:
-		return
-	if _zaino and is_instance_valid(_zaino) and _zaino.jet_hit.is_connected(_su_getto):
-		_zaino.jet_hit.disconnect(_su_getto)
-	_zaino = z
-	if _zaino:
-		_zaino.jet_hit.connect(_su_getto)
-
-
-func _su_getto(_collider: Object, punto: Vector3, _normale: Vector3) -> void:
-	if bersaglio == null or not (fase == Fase.SILENZIO or (fase == Fase.ESCE and _t < colpo)):
-		return
-	var c := bersaglio.global_position
-	var d := Vector2(punto.x - c.x, punto.z - c.z).length()
-	var su := punto.y - (bersaglio.global_position.y + bersaglio.inner_size.y * bersaglio.fill)
-	# (il getto può andare fino al fondo della pozza: conta tutto, dal fondo a 2,5 m sopra il pelo)
-	if d <= raggio_getto and su > -(bersaglio.inner_size.y + 0.3) and su < 2.5:
-		_colpito = true
-
-
-## Il getto ha colpito la pozza dell'uscita adesso (per i test e per il motore, se la colpisce lui).
-func colpisci() -> void:
-	if bersaglio and (fase == Fase.SILENZIO or (fase == Fase.ESCE and _t < colpo)):
-		_colpito = true
+## Vero se la prossima uscita è quella dimostrativa (una volta per partita, la tiene il motore).
+func prossima_dimostrativa() -> bool:
+	if acqua == null or not acqua.prima_volta_dimostrativa:
+		return false
+	if acqua.has_method(&"prossima_dimostrativa"):
+		return bool(acqua.call(&"prossima_dimostrativa"))
+	return not AcquaDiLei._dimostrate.has(str(acqua.get_path()))
 
 
 # --- Dove uscire ---------------------------------------------------------------------------------------------------
@@ -333,14 +459,11 @@ func _in_acqua(g: Node3D) -> bool:
 	return absf(q.x) < m and absf(q.z) < m and q.y < -0.05
 
 
-## Distanza in pianta del punto [param p] dal quadrato della pozza [param t] (bordino compreso).
+## Distanza in pianta del punto [param p] dal punto d'uscita della pozza [param t]: la misura della portata del motore.
 func _distanza_punto(p: Vector3, t: WaterTank) -> float:
-	var q := _locale(p)
-	var c := _locale(t.global_position)
-	var h := _enigma.passo * 0.5
-	var dx := maxf(absf(q.x - c.x) - h, 0.0)
-	var dz := maxf(absf(q.z - c.z) - h, 0.0)
-	return Vector2(dx, dz).length()
+	var m := uscita_di(t)
+	var c := m.global_position if m else t.global_position
+	return Vector2(p.x - c.x, p.z - c.z).length()
 
 
 func _distanza(g: Node3D, t: WaterTank) -> float:
@@ -428,12 +551,12 @@ func _bersaglio_dimostrativo() -> WaterTank:
 	return vista if vista else lontana
 
 
-## Vero se dal punto [param da], camminando lungo la passerella per il tempo dell'avviso (meno la reazione), si arriva
-## a un punto a più di [member portata] + [member margine_fuga] dalla pozza [param t].
+## Vero se dal punto [param da], camminando lungo la passerella per il tempo dell'avviso del motore (meno la reazione),
+## si arriva a un punto a più di [member portata] + [member margine_fuga] dal punto d'uscita della pozza [param t].
 func via_di_salvezza(da: Vector3, t: WaterTank) -> bool:
 	var q := _locale(da)
 	var r := _mezza() + 0.6   # la linea di mezzo della passerella
-	var corsa := maxf(avviso - reazione, 0.0) * velocita_fuga
+	var corsa := maxf(acqua.avviso - reazione, 0.0) * velocita_fuga
 	var s0 := _anello_s(q, r)
 	var perimetro := 8.0 * r
 	# (dal punto di partenza alla linea di mezzo della passerella ci si arriva in linea retta: quel tratto si conta)
