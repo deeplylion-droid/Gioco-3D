@@ -19,7 +19,9 @@ extends Node
 ##   punti: 15 m in pianta, stesso piano) anche se è lontano dai punti; a 40 m no; a vicinanza 0,8 è tutto vicino;
 ## - fra due acque si segue quella dove lei è adesso, anche se l'altra è più vicina;
 ## - all'oblò, con lei dietro il vetro e il giocatore nella sua zona, si sente appena: solo la lontana, 12 dB sotto;
-## - se lei sparisce (nodo liberato) il canto si spegne.
+## - se lei sparisce (nodo liberato) il canto si spegne;
+## - col motore vero e il giocatore vero, con lei da un'altra parte (gruppo lei_in_scena: la fossa, le condotte, il
+##   tunnel) l'acqua vicina in «lontana» non canta, e riprende quando la scena finisce.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_canto_prima.gd
 
 const Catalogo := preload("res://addons/audio/catalogo.gd")
@@ -282,10 +284,66 @@ func _run() -> void:
 	check(not canto.canta(), "lei se ne va dal vetro: il canto si spegne")
 	oblo.queue_free()
 
+	await _lei_altrove()
+
 	classe.prova = []
 	classe.giocatore_prova = null
 	GameState.luci = luci_prima
 	_fine()
+
+
+## Col motore vero (AcquaDiLei di mascotte) e il giocatore vero: un'acqua vicina in «lontana» canta; con lei da
+## un'altra parte (una scena che la usa, gruppo AcquaDiLei.LEI_IN_SCENA: la fossa in corso, le condotte, il tunnel)
+## fase_canto dà «ferma» e il canto tace; finita la scena riprende.
+func _lei_altrove() -> void:
+	print("Lei da un'altra parte: l'acqua vicina non canta")
+	var radice := Node3D.new()
+	add_child(radice)
+	radice.global_position = Vector3(300, 0, 300)
+	var pav := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(60, 0.2, 60)
+	cs.shape = box
+	pav.add_child(cs)
+	radice.add_child(pav)
+	pav.position = Vector3(0, -0.1, 0)
+	var p := (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as Player
+	radice.add_child(p)
+	classe.giocatore_prova = null
+	for i in 5:
+		await get_tree().physics_frame
+	for i in 3:
+		p.teleport(radice.global_position + Vector3(0, 0.05, -8))
+		await get_tree().physics_frame
+	var a := AcquaDiLei.new()
+	a.pelo = 0.0
+	var m := Marker3D.new()
+	a.add_child(m)
+	m.position = Vector3(0, 0, 0)
+	var punti: Array[Node3D] = [m]
+	a.punti_uscita = punti
+	radice.add_child(a)
+	for i in 5:
+		await get_tree().physics_frame
+	check(GameState.player == p and a.fase_canto == &"lontana", "col motore vero, il giocatore a 8 m: «lontana» (%s)" % a.fase_canto)
+	await _aspetta_canto()
+	check(canto.canta() and canto.lei == a, "l'acqua vicina canta")
+	var scena := Node3D.new()
+	radice.add_child(scena)
+	scena.position = Vector3(-25, 0, 0)
+	scena.add_to_group(AcquaDiLei.LEI_IN_SCENA)
+	await _secondi(1.5)
+	check(a.fase_canto == &"ferma", "con lei in un'altra scena (la fossa, le condotte, il tunnel) la fase è «ferma» (%s)" % a.fase_canto)
+	check(not canto.canta(), "e il canto tace")
+	await _secondi(3.0)
+	check(not canto.canta(), "e non riparte finché lei è lì")
+	scena.queue_free()
+	await _aspetta_canto()
+	check(canto.canta(), "finita la scena, il canto lontano riprende")
+	radice.queue_free()
+	await _secondi(0.7)
+	check(not canto.canta(), "tolta l'acqua, niente")
 
 
 func _aspetta_silenzio() -> void:
