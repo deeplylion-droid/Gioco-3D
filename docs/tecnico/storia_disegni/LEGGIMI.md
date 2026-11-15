@@ -55,6 +55,10 @@ Ognuna delle due aggiunte va messa solo se ha un perché in quel posto.
    - il controllo di posizionamento (`tests/controllo_posizionamento.gd`): 0 casi nuovi;
    - il giro dagli occhi del giocatore, e il collaudo prima della build (scatto ravvicinato degli angoli col nastro).
 
+## DF nel gioco (enigmi)
+
+Il corridoio del fiume è costruito da codice: il foglio lo mette `RisalitaGioco._disegno_df` (`godot/scripts/risalita/risalita_gioco.gd`), nodo `Risalita/StoriaDF`. Sta sul muro in fondo al corridoio, dietro il bambino col cubo, al centro del muro (x da xc a xc + 2, la faccia a z = fine), A3 col centro a 1,1 m. Il pastello è per terra sotto il foglio; le impronte bagnate vengono dalla porta del capannone, cioè dal fiume (il pavimento è piano). test_disegni_bambino lo trova nella sala (la Risalita è figlia della sala) e lo controlla come gli altri. Scatti in `docs/proposte/storia_fiume/df_*.jpg`.
+
 ## Cose da sapere
 
 - La firma è già nei fogli: non serve aggiungerla.

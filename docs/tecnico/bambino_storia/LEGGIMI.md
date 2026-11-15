@@ -45,6 +45,13 @@ appoggiato. Va messo a circa 1,2 m dal vetro, girato verso il vetro.
 Il pastello in mano è quello di ambienti-1 (`godot/assets/storia_disegni/pastello.glb`, opzione `--pastello`), chiamato
 `pastello` nel GLB. Prende il posto della matita anche in ginocchio.
 
+**Nel gioco (enigmi):** lo mette `EnigmaAcquari._bambino_col_cubo` (`godot/scripts/game/enigma_acquari.gd`, nodo `Gioco/EnigmaAcquari/BambinoAcquari`) con `BambinoSfuggita` in modalità `guarda_il_disegno`:
+- a 1,2 m dal vetro, sotto il disegno, girato verso il vetro;
+- compare una volta sola, quando gli acquari ci sono e funzionano (lei andata via, tappa 8 finita) e non sono risolti; mai sotto gli occhi del giocatore, mai con lei fuori dall'acqua (`aspetta_lei`); se nessuno lo vede resta lì (`tempo_max` 0);
+- la fuga la decide Bambino; scappa nel varco fra il cilindro e il muro est fino all'angolo dietro il cilindro e sparisce fuori vista;
+- il pastello che gli cade lo appoggia BambinoSfuggita (`pastello_a_terra`, con Posa, lontano dalla Polaroid 14) e resta coi checkpoint.
+Test: `godot/tests/test_bambino_acquari.gd` (in CI).
+
 ### Porge
 
 `modalita = PORGE` con `percorso` (di solito un punto, 0,7-0,8 m davanti: due passi), oppure `porge(punti)`.
