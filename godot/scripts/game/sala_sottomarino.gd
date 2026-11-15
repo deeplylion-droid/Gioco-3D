@@ -1728,8 +1728,11 @@ signal lei_riemersa
 signal lei_respinta
 signal lei_morde
 signal giocatore_preso
+## La carica (build 0.4.0): lei a [member distanza_min] metri smette di cantare e carica; poi lo scatto.
+signal lei_carica
+signal lei_scatta
 
-enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
+enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA, CARICA, SCATTO }
 
 ## Fra quanti metri (lungo la strada) lei ti sta dietro: sotto [member distanza_min] si avvicina (ti raggiunge se
 ## ti fermi, se vai a guado o se sbagli), sopra [member distanza_max] corre per rientrare. Sotto
@@ -1742,9 +1745,9 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 @export var velocita_lei := 4.6
 ## Quanto corre per rientrare quando è più lontana di [member distanza_max].
 @export var velocita_rincorsa := 7.5
-## Mezzo secondo di getto in faccia (litri) la ferma per [member fermo_dopo_getto] secondi e la rimanda indietro di
+## Il getto in faccia (litri sul viso: 1,2, circa 0,2 s di getto che la colpisce; prima della 0.4.0 0,6) la ferma per [member fermo_dopo_getto] secondi e la rimanda indietro di
 ## [member indietro_dopo_getto] metri; si ritrae strizzando l'occhio, rallenta e riparte.
-@export var getto_in_faccia := 0.6
+@export var getto_in_faccia := 1.2
 @export var fermo_dopo_getto := 2.0
 @export var indietro_dopo_getto := 6.0
 ## A guado nel canale (velocità massima a piedi e di corsa, m/s): la danno i volumi d'acqua del canale
@@ -1768,6 +1771,27 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 @export var fermo_passo := 0.6
 ## L'approdo, gli ultimi metri della strada (dal guado obbligato verso la scala della banchina sinistra al portello).
 @export var approdo_tratto := 7.0
+## La carica (scelta dell'utente del 15 novembre, build 0.4.0 «L'acqua è sua», spruzzo nel tunnel A: «Ogni 15-20
+## secondi lei arriva a 8 metri, smette di cantare e carica: se non ti giri a spruzzarla, ti prende. Colpita, torna
+## indietro e si ricomincia.»). Mentre corri lei guadagna terreno, da [member distanza_max] a [member distanza_min] in
+## [member avvicinamento] secondi; a [member distanza_min] metri, sulla banchina, carica: smette di cantare e resta lì
+## per [member carica_finestra] secondi ([member carica_finestra_prima] alla prima carica della partita). Un getto in
+## faccia in quel tempo la rimanda a [member distanza_max] metri; se no scatta a [member velocita_scatto] m/s e ti
+## prende. Mai durante un passaggio obbligato: lì vale la regola di sempre (non sotto [member distanza_min]), e la
+## carica parte solo quando il giocatore è sulla banchina da [member carica_dopo_passaggio] secondi.
+## Con [member carica_attiva] falso lei insegue come prima della 0.4.0. Tutti i numeri li ritocca l'utente giocando.
+@export var carica_attiva := true
+@export var avvicinamento := 15.0
+@export var carica_finestra := 2.0
+@export var carica_finestra_prima := 3.0
+@export var carica_dopo_passaggio := 2.0
+@export var velocita_scatto := 14.0
+## Il serbatoio nel tunnel (build 0.4.0: «il serbatoio basta per pochi spruzzi, tre per esempio: poi devi ricaricare
+## dal canale»): mentre il tunnel è nel gioco lo zaino tiene [member serbatoio_tunnel] litri (fuori 20) e dal canale
+## aspira [member aspira_tunnel] litri al secondo (fuori 10), così si ricarica in circa 2 s da fermo. Una respinta con
+## la mira giusta costa circa 1,5 litri (test_tunnel_carica): 3-4 respinte per serbatoio, circa 3 se si sbaglia un poco.
+@export var serbatoio_tunnel := 6.0
+@export var aspira_tunnel := 3.0
 ## Chi insegue (vuoto: il giocatore); i test lo cambiano.
 var bersaglio: Node3D
 
@@ -1781,6 +1805,13 @@ var lei_s := 0.0
 var _lei_t := 0.0
 var _morso_tra := 1.5
 var _s_bersaglio := 0.0
+## La velocità del giocatore lungo la strada (m/s, mediata), per guadagnare terreno mentre corre.
+var _v_bersaglio := 0.0
+## Da quanto il giocatore è sulla banchina fuori da un passaggio obbligato (s), la finestra della carica in corso e di
+## quanto torna indietro lei respinta (m).
+var _banchina_t := 0.0
+var _finestra := 0.0
+var _indietro := 0.0
 var checkpoint: Array[Checkpoint] = []
 
 
@@ -1852,6 +1883,8 @@ func _bersaglio() -> Node3D:
 ## Lei comincia a inseguire da [param s] (la riemersione dalla presa, o la ripartenza da un checkpoint: 18 m dietro).
 func insegui_da(s: float) -> void:
 	_dai_forme_a_lei()
+	_v_bersaglio = 0.0
+	_banchina_t = 0.0
 	lei_s = s
 	lei_stato = Lei.INSEGUE
 	_lei_t = 0.0
@@ -1881,13 +1914,45 @@ func riemergi() -> void:
 
 ## Il getto in faccia: si ritrae strizzando l'occhio, si ferma [member fermo_dopo_getto] secondi tornando indietro
 ## di [member indietro_dopo_getto] metri, poi riparte.
+## Nella carica il getto la rimanda a [member distanza_max] metri (si ritrae come sempre).
 func respingi() -> void:
-	if lei_stato != Lei.INSEGUE and lei_stato != Lei.SALE:
+	if lei_stato != Lei.INSEGUE and lei_stato != Lei.SALE and lei_stato != Lei.CARICA:
 		return
+	_indietro = indietro_dopo_getto
+	if lei_stato == Lei.CARICA:
+		_indietro = maxf(distanza_max - (_s_bersaglio - lei_s), 0.0)
 	lei_stato = Lei.RESPINTA
 	_lei_t = 0.0
 	lei_tunnel.respinta()
 	lei_respinta.emit()
+
+
+## A [member distanza_min] metri sulla banchina: carica (smette di cantare) per [member carica_finestra] secondi.
+func _carica() -> void:
+	lei_stato = Lei.CARICA
+	_lei_t = 0.0
+	_finestra = carica_finestra
+	const STATO := preload("res://scripts/game/stato_tunnel.gd")
+	if not STATO.prima_carica_fatta:
+		_finestra = carica_finestra_prima
+		STATO.prima_carica_fatta = true
+	lei_tunnel.carica()
+	lei_carica.emit()
+
+
+## La finestra è passata senza un getto in faccia: scatta.
+func _scatta() -> void:
+	lei_stato = Lei.SCATTO
+	_lei_t = 0.0
+	lei_tunnel.scatto()
+	lei_scatta.emit()
+
+
+## Vero se [param piedi] sono su una banchina, fuori dall'acqua del canale (non a guado e non caduti).
+func su_banchina(piedi: Vector3) -> bool:
+	var pr := proietta_vicino(piedi, _s_bersaglio)
+	var u := absf(float(pr[1]))
+	return u > canale - 0.05 and u < muro and piedi.y > piano - 0.3
 
 
 func _prendi() -> void:
@@ -1931,12 +1996,19 @@ func _process(delta: float) -> void:
 	var pg := GameState.player
 	if attivo and pg and is_instance_valid(pg) and bersaglio == null:
 		pg.accovacciato_forzato = in_tubo(pg.global_position)
+	if attivo:
+		var chi := bersaglio as Player if bersaglio is Player else (pg if pg and is_instance_valid(pg) else null)
+		if chi and chi.water_pack and not chi.water_pack.has_meta(&"serbatoio_fuori"):
+			_serbatoio_del_tunnel(chi.water_pack)
 	if lei == null or lei_stato == Lei.VIA or lei_stato == Lei.PRESA:
 		return
 	_lei_t += delta
 	var b := _bersaglio()
 	if b:
+		var prima := _s_bersaglio
 		_s_bersaglio = _s_vicino(b.global_position, _s_bersaglio)
+		if delta > 0.0:
+			_v_bersaglio = lerpf(_v_bersaglio, clampf((_s_bersaglio - prima) / delta, 0.0, 12.0), minf(1.0, delta * 3.0))
 	var gap := _s_bersaglio - lei_s
 	match lei_stato:
 		Lei.SALE:
@@ -1945,14 +2017,23 @@ func _process(delta: float) -> void:
 			pass      # (il portello si sta chiudendo: lei si ferma, poi la muove lo schianto)
 		Lei.INSEGUE:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
+			if carica_attiva and gap <= distanza_max:
+				# (guadagna terreno anche se corri: da distanza_max a distanza_min in avvicinamento secondi)
+				v = maxf(v, _v_bersaglio + (distanza_max - distanza_min) / maxf(avvicinamento, 0.1))
 			if gap < distanza_min and _lei_t < vantaggio:
 				v = 0.0
 			var tetto := minf(_s_bersaglio - 0.5, lunghezza() - 2.5)
-			if b and _passaggio_obbligato(b.global_position, delta):
-				# (non oltre gli 8 m dietro di lui; se era già più vicina non la si tira indietro)
+			var obbligato := b != null and _passaggio_obbligato(b.global_position, delta)
+			var banchina := b != null and not obbligato and su_banchina(b.global_position)
+			_banchina_t = _banchina_t + delta if banchina else 0.0
+			if obbligato or (carica_attiva and banchina):
+				# (non oltre gli 8 m dietro di lui; se era già più vicina non la si tira indietro. Con la carica anche
+				# sulla banchina: lì a 8 m carica, quando può)
 				tetto = minf(tetto, maxf(_s_bersaglio - distanza_min, lei_s))
 			lei_s = minf(lei_s + v * delta, tetto)
 			gap = _s_bersaglio - lei_s
+			if carica_attiva and banchina and _banchina_t >= carica_dopo_passaggio and gap <= distanza_min + 0.05:
+				_carica()
 			if gap < distanza_morsi:
 				_morso_tra -= delta
 				if _morso_tra <= 0.0:
@@ -1961,12 +2042,37 @@ func _process(delta: float) -> void:
 			if gap <= distanza_presa and b and _raggiungibile(b.global_position):
 				_prendi()
 		Lei.RESPINTA:
-			# indietro di 6 m nel primo secondo, poi ferma fino a 2 s, poi riparte
+			# indietro di 6 m (dalla carica: fino a distanza_max) nel primo secondo, poi ferma fino a 2 s, poi riparte
 			var f := clampf(_lei_t / 1.0, 0.0, 1.0)
-			lei_s -= indietro_dopo_getto * delta * (1.0 if f < 1.0 else 0.0)
+			lei_s -= _indietro * delta * (1.0 if f < 1.0 else 0.0)
 			lei_s = maxf(lei_s, -1.0)
+			# (respinta dalla carica non resta più indietro di distanza_max: se corri, ti segue lì)
+			if _indietro > indietro_dopo_getto + 0.01 and _lei_t >= 1.0:
+				lei_s = maxf(lei_s, _s_bersaglio - distanza_max)
 			if _lei_t >= fermo_dopo_getto:
 				lei_stato = Lei.INSEGUE
+		Lei.CARICA:
+			# resta a distanza_min dietro di lui (se corre lo segue); se entra in un passaggio obbligato la carica
+			# finisce (mai una carica lì)
+			lei_s = maxf(lei_s, _s_bersaglio - distanza_min)
+			if b and _passaggio_obbligato(b.global_position, delta):
+				lei_stato = Lei.INSEGUE
+				_lei_t = vantaggio
+				_banchina_t = 0.0
+				lei_tunnel.insegui()
+			elif _lei_t >= _finestra:
+				_scatta()
+		Lei.SCATTO:
+			lei_s = minf(lei_s + velocita_scatto * delta, _s_bersaglio - 0.5)
+			gap = _s_bersaglio - lei_s
+			if gap <= distanza_presa:
+				if b and _raggiungibile(b.global_position):
+					_prendi()
+				else:
+					# (dietro il muro, nella galleria: non ti prende, torna a inseguire)
+					lei_stato = Lei.INSEGUE
+					_lei_t = vantaggio
+					lei_tunnel.insegui()
 	_metti_lei(delta)
 
 
@@ -3246,7 +3352,36 @@ func _finisci_involucri() -> void:
 		print("tunnel involucri della lampada: pronti dopo %d fotogrammi di attesa (%.1f ms)" % [fotogrammi, (Time.get_ticks_usec() - t0) / 1000.0])
 
 
+## Lo zaino col serbatoio del tunnel ([member serbatoio_tunnel], [member aspira_tunnel]); quello di fuori resta segnato
+## sullo zaino e torna quando il tunnel esce dalla scena ([method _serbatoio_di_fuori]).
+func _serbatoio_del_tunnel(pack: WaterPack) -> void:
+	pack.set_meta(&"serbatoio_fuori", [pack.tank_capacity, pack.suck_rate])
+	_zaino = pack
+	pack.suck_rate = aspira_tunnel
+	var pieno := pack.tank_amount >= pack.tank_capacity - 0.01
+	pack.tank_capacity = serbatoio_tunnel
+	pack.set_tank_amount(serbatoio_tunnel if pieno else minf(pack.tank_amount, serbatoio_tunnel))
+	pack.tank_changed.emit(pack.tank_amount, pack.tank_capacity)
+
+
+func _serbatoio_di_fuori() -> void:
+	if _zaino and is_instance_valid(_zaino) and _zaino.has_meta(&"serbatoio_fuori"):
+		var v: Array = _zaino.get_meta(&"serbatoio_fuori")
+		_zaino.remove_meta(&"serbatoio_fuori")
+		var pieno := _zaino.tank_amount >= _zaino.tank_capacity - 0.01
+		_zaino.tank_capacity = float(v[0])
+		_zaino.suck_rate = float(v[1])
+		if pieno:
+			_zaino.set_tank_amount(_zaino.tank_capacity)
+		_zaino.tank_changed.emit(_zaino.tank_amount, _zaino.tank_capacity)
+	_zaino = null
+
+
+var _zaino: WaterPack
+
+
 func _exit_tree() -> void:
+	_serbatoio_di_fuori()
 	# (i compiti nel thread si aspettano sempre, anche se il tunnel esce a metà della costruzione)
 	for lavoro in _involucri_lavori:
 		WorkerThreadPool.wait_for_task_completion(lavoro.compito)

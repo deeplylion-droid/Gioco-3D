@@ -338,9 +338,13 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/aggiorna_toppe_torre.gd controlla
 
-      - name: Test della distanza di lei nei passaggi obbligati del tunnel (gommoni e gallerie basse; mai sotto gli 8 m finché non sbagli, se cadi in acqua ti prende)
+      - name: Test della distanza di lei nei passaggi obbligati del tunnel (gommoni e gallerie basse; mai sotto gli 8 m finché non sbagli, se cadi in acqua ti prende; nessuna carica lì, la prima dopo 2 s di banchina)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_attraversamenti.gd
+
+      - name: Test della carica di lei nel tunnel (a 8 m dopo circa 15 s, il canto tace, la finestra di 3 s e poi di 2, la respinta a 18 m, la presa, circa tre respinte per serbatoio, la ricarica dal canale in 2 s)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_carica.gd
 
       - name: Test dell'inseguimento (le condotte, SB1)
         if: steps.progetto.outputs.presente == 'si'

@@ -1865,7 +1865,8 @@ class Statua:
 				verso_t = randf_range(VERSO_OGNI.x, VERSO_OGNI.y)
 		else:
 			verso_t = -2.0
-		_canto(a, corsa and (n as Node3D).is_visible_in_tree())
+		# (il canto tace nella carica e nello scatto del tunnel, build 0.4.0: LeiTunnel.CANTO_ZITTO)
+		_canto(a, corsa and (n as Node3D).is_visible_in_tree() and not n.has_meta(&"canto_zitto"))
 		if n.has_meta(&"cuore_condotte"):
 			# (nelle condotte solo il battito, mentre lei è su: lo segnala SalaInseguimento)
 			_cuore_condotte(a, int(n.get_meta(&"cuore_condotte")))
