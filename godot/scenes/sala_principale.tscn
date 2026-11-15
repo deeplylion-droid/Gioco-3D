@@ -91,6 +91,9 @@
 [ext_resource type="Script" path="res://scripts/environment/mascotte_sala.gd" id="83_mascotte"]
 [ext_resource type="Script" path="res://scripts/environment/scarabocchi.gd" id="scarabocchi_s"]
 [ext_resource type="Script" path="res://scripts/game/enigma_giocattoli.gd" id="86_giocattoli"]
+[ext_resource type="Script" path="res://scripts/game/disegno_bambino.gd" id="storia_disegno"]
+[ext_resource type="Texture2D" path="res://assets/storia_disegni/disegno_d1.jpg" id="storia_d1"]
+[ext_resource type="Texture2D" path="res://assets/storia_disegni/disegno_d2.jpg" id="storia_d2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5tb5"]
 resource_name = "M_acqua_vasca"
@@ -1049,5 +1052,20 @@ trigger = NodePath("../Gioco/SalitaTorre")
 
 [node name="Scarabocchi" type="Node3D" parent="." unique_id=528104377]
 script = ExtResource("scarabocchi_s")
+
+[node name="StoriaD1" type="Node3D" parent="Interni" unique_id=453636090]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 0.84, -2.6001)
+script = ExtResource("storia_disegno")
+disegno = ExtResource("storia_d1")
+altezza = 0.84
+impronte = true
+impronte_da = Vector2(-1.75, 0.35)
+
+[node name="StoriaD2" type="Node3D" parent="Tecnici" unique_id=688173680]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 52.5996, 1.1, 1.5)
+script = ExtResource("storia_disegno")
+disegno = ExtResource("storia_d2")
+pastello = true
+pastello_dove = Vector2(0.15, 0.1)
 
 [editable path="Sala/Oggetti"]

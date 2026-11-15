@@ -178,6 +178,19 @@ func _run() -> void:
 	Input.action_release(&"move_forward")
 	Input.action_release(&"crouch")
 	check(massima > 44.7 and massima < ag.muro_x, "nel buco il giocatore non entra, neanche accucciato (arriva a x %.2f, il muro è a %.2f)" % [massima, ag.muro_x])
+	# (0.5.0, «La storia»: è lui che chiude la grata verde di C2) dopo le zampette, dalla grata la catena tirata e il
+	# lucchetto che scatta; solo suono, una volta sola
+	var t0 := Time.get_ticks_msec()
+	var catena_a := -1.0
+	while ag.grata_chiusa < 2 and Time.get_ticks_msec() - t0 < 12000:
+		if ag.grata_chiusa == 1 and catena_a < 0.0:
+			catena_a = (Time.get_ticks_msec() - t0) / 1000.0
+		await get_tree().physics_frame
+	var dove := ag.lucchetto_grata()
+	var buco := tec.to_global(Vector3(ag.muro_x, ag.posizione.y, ag.buco_z))
+	check(ag.grata_chiusa == 2 and catena_a >= 0.0, "dopo le zampette dalla grata di C2 la catena tirata e il lucchetto che scatta")
+	check(tec.find_child("grata_c2_lucchetto*", true, false) != null and dove.distance_to(buco) < 8.0,
+			"il suono viene dal lucchetto della grata verde (a %.1f m dal buco)" % dove.distance_to(buco))
 	_fine()
 
 

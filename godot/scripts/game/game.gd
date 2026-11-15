@@ -277,6 +277,7 @@ func esci(codice := 0) -> void:
 		return
 	uscendo = true
 	AvvioSicuro.all_uscita()
+	GameState.salva_contatori()
 	if not _caricamenti.is_empty():
 		# Fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get() (in prova
 		# bloccare non bastava: Godot si fermava lo stesso all'uscita). Si riguardano tutti i caricamenti a ogni
@@ -381,6 +382,8 @@ func return_to_title() -> void:
 	# (nero subito: il titolo entra dal nero; in mezzo la scena vuota, così la sala è liberata prima che il titolo si carichi)
 	Dissolvenza.di(get_tree()).nero()
 	set_paused(false)
+	# (i contatori della partita su disco prima di azzerare: Continua li ritrova)
+	GameState.salva_contatori()
 	GameState.reset_progress()
 	await cambia_scena_in_due_tempi(load(SCENE_TITLE) as PackedScene)
 	# (fino al cambio di scena fatto: una ripartenza che finisce di aspettare adesso non ricarica il livello)

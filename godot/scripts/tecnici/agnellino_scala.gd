@@ -145,10 +145,48 @@ func compari() -> void:
 	add_child(bambino)
 
 
-## Dentro il muro: le zampette che si allontanano nel condotto.
+## Dentro il muro: le zampette che si allontanano nel condotto. Poi (0.5.0, «La storia», GDD riga della grata di C2:
+## è lui che l'ha chiusa) dalla grata verde di C2 si sentono la catena tirata e il lucchetto che scatta. Solo suono:
+## non si vede niente di nuovo.
 func _corre_nel_muro() -> void:
 	var genitore := get_parent() as Node3D
 	Audio.suona(&"zampette_condotto", genitore.to_global(Vector3(muro_x + 0.9, posizione.y + 0.3, buco_z)))
+	get_tree().create_timer(dopo_le_zampette, false).timeout.connect(_chiude_la_grata)
+
+
+## Quando, dopo che si è infilato nel buco, si sente la catena (s): le zampette (8 s) si sono quasi perse.
+@export var dopo_le_zampette := 5.5
+## Quanto dopo la catena scatta il lucchetto (s): quando la catena tirata si ferma.
+@export var dopo_la_catena := 1.95
+## Volte che la grata è stata chiusa col suono (una sola: per i test).
+var grata_chiusa := 0
+
+
+func _chiude_la_grata() -> void:
+	if grata_chiusa > 0 or not is_inside_tree():
+		return
+	grata_chiusa = 1
+	var dove := _lucchetto()
+	Audio.suona(&"catena_tirata", dove)
+	get_tree().create_timer(dopo_la_catena, false).timeout.connect(func():
+		if is_inside_tree():
+			grata_chiusa = 2
+			Audio.suona(&"lucchetto_scatto", dove))
+
+
+## Dove sta il lucchetto della grata verde di C2 (il modello del raccordo: grata_c2_lucchetto); se non c'è, la
+## grata subito dopo il buco, lungo C2.
+func lucchetto_grata() -> Vector3:
+	return _lucchetto()
+
+
+func _lucchetto() -> Vector3:
+	var genitore := get_parent() as Node3D
+	var l := genitore.find_child("grata_c2_lucchetto*", true, false) as Node3D
+	if l:
+		return l.global_position
+	var ultimo := punti_fuga[punti_fuga.size() - 1] if not punti_fuga.is_empty() else posizione
+	return genitore.to_global(Vector3(posizione.x, posizione.y + 1.0, ultimo.z + 2.0))
 
 
 func save_state() -> Dictionary:
