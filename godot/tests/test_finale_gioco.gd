@@ -52,12 +52,13 @@ func _run() -> void:
 	if t == null:
 		return _fine()
 	var ultimo: Checkpoint = t.checkpoint.back()
+	var nome_ultimo := String(ultimo.name)
 	GameState.reach_checkpoint(ultimo)
 	await _secondi(1.0)
 	GameState.kill_player(&"medusa")
 	await _salta_morte()
 	await _gioco()
-	check(String(GameState.snapshot.get("checkpoint", "")).ends_with(ultimo.name), "si riparte dall'ultimo checkpoint del tunnel (%s)" % GameState.snapshot.get("checkpoint", ""))
+	check(String(GameState.snapshot.get("checkpoint", "")).ends_with(nome_ultimo), "si riparte dall'ultimo checkpoint del tunnel (%s)" % GameState.snapshot.get("checkpoint", ""))
 	await _finale("dopo una morte nell'ultimo tratto")
 
 	print("3. Continua dal titolo dopo l'ultimo checkpoint")
