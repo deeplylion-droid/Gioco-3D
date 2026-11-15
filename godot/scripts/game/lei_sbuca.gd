@@ -77,10 +77,12 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 ## Uno sguardo interrotto per meno di così (s) non fa ripartire il conto.
 @export var tolleranza_vista := 0.3
 @export_group("Mai di sorpresa")
-## (collaudo della 0.4.0, decisione del coordinatore: «la fossa non deve mai sorprendere», scelta A) Quando viene alla
-## fossa (dopo l'avviso intero della sala al buio) con la fossa in vista sbuca, la salita dal fondo, solo col giocatore più
-## lontano di così (m, in pianta); se no aspetta.
-@export var distanza_sbuca := 8.0
+## (collaudo della 0.4.0, decisione del coordinatore: «la fossa non deve mai sorprendere») Quando viene alla fossa (dopo
+## l'avviso intero della sala al buio) con la fossa in vista sbuca, la salita dal fondo, solo col giocatore più lontano di
+## così dal punto dove sarà il suo occhio (m, in pianta): la portata della presa ([member distanza_presa], 2,4 m: l'area
+## Tocco sta tutta dentro) più un metro. Più vicino aspetta sotto, con la luce che pulsa. (Prima 8 m dal bordo: chi
+## andava dritto alla fossa guardandola a fine avviso era a 5-7 m e lei non usciva quasi mai; riscontro del collaudo.)
+@export var distanza_sbuca := 3.4
 ## Fuori dall'inquadratura (o a schermo nero) si mette già affacciata, ma solo col giocatore più lontano di così (m, in
 ## pianta): non ce la si trova addosso girandosi.
 @export var distanza_affaccia := 8.0
@@ -385,7 +387,7 @@ func _prova_a_venire(p: Player) -> void:
 	var d := _in_pianta(p.global_position, punto_sbuca.global_position)
 	var nero := not Dissolvenza.schermo_libero(get_tree())
 	if not nero and fossa_in_vista(p):
-		if d > distanza_sbuca:
+		if _in_pianta(p.global_position, _testa_prevista()) > distanza_sbuca:
 			_vuole_venire = false
 			_sbuca()
 	elif d > distanza_affaccia:

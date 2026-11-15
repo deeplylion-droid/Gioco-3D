@@ -166,6 +166,10 @@ func _run() -> void:
 	p.look_at_point(fossa + Vector3.UP * 1.2)
 	await _fisica(2)
 	var sp2 := _specchio(p.global_position)
+	# (lei affacciata e ferma: con la regola «mai di sorpresa» lì aspetterebbe sotto o starebbe ancora salendo; qui la si
+	# mette su)
+	if sbuca.fase == LeiSbuca.Fase.ATTESA or sbuca.fase == LeiSbuca.Fase.SBUCA:
+		sbuca.call(&"_affaccia")
 	sbuca.medusa.visible = true
 	await _fisica(2)
 	check(sp2.lei_in_vista_altrove(), "la lei della fossa davanti, a 6 m: conta (non se ne vedono due)")
