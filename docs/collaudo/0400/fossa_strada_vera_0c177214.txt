@@ -1,0 +1,30 @@
+BF: ===== strada_vera
+BF: strada_vera parte da (-15.0, 0.0, 16.8) (24.65 m dalla fossa), stato giro GIRO
+BF: strada_vera 8.24 s LeiSbuca ATTESA a 24.64 m, fossa in vista true, medusa visibile false, luce fossa false, avviso visto false
+BF: strada_vera 12.30 s giro finito col giocatore a 12.90 m dalla fossa (lontano dal bordo false)
+BF: strada_vera 14.78 s fermo a 4.97 m dalla fossa (3.22 m dal suo occhio) a guardarla
+BF: strada_vera 18.78 s lei aspetta ancora sotto: indietro guardandola
+BF: strada_vera 19.03 s fermo a 5.21 m (3.45 m dal suo occhio), LeiSbuca SBUCA
+BF: strada_vera 19.03 s il pelo della fossa salta di 0.021 m in un fotogramma (LeiSbuca SBUCA, giocatore a 5.21 m)
+BF: strada_vera 19.03 s LeiSbuca SBUCA a 5.21 m, fossa in vista true, medusa visibile true, luce fossa true, avviso visto true
+BF: DIFETTO strada_vera: comparsa in vista a 5.21 m
+BF: strada_vera 20.85 s LeiSbuca GUARDA a 5.46 m, fossa in vista true, medusa visibile true, luce fossa false, avviso visto true
+BF: strada_vera 24.04 s le va addosso (LeiSbuca GUARDA, in vista 1.62 s)
+BF: strada_vera dopo la presa: ripartito in 7.4 s (scena di morte intera), checkpoint Gioco/CheckpointAreaBimbi, giocatore a 8.98 m dalla fossa, LeiSbuca GUARDA, giro FINITO, acqua LONTANA
+BF: strada_vera_dopo 32.01 s giro finito col giocatore a 8.98 m dalla fossa (lontano dal bordo false)
+BF: strada_vera_dopo 32.01 s LeiSbuca GUARDA a 8.98 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto false
+BF: strada_vera_dopo 33.27 s fermo a 4.99 m dalla fossa (3.22 m dal suo occhio) a guardarla
+BF: strada_vera_dopo 38.28 s le va addosso (LeiSbuca GUARDA, in vista 3.02 s)
+BF: strada_vera_dopo dopo la presa: ripartito in 3.2 s (scena di morte intera), checkpoint Gioco/CheckpointAreaBimbi, giocatore a 8.98 m dalla fossa, LeiSbuca GUARDA, giro FINITO, acqua LONTANA
+BF: strada_vera_dopo_dopo 41.83 s giro finito col giocatore a 8.98 m dalla fossa (lontano dal bordo false)
+BF: strada_vera_dopo_dopo 41.83 s LeiSbuca GUARDA a 8.98 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto false
+BF: strada_vera_dopo_dopo 43.09 s fermo a 4.99 m dalla fossa (3.22 m dal suo occhio) a guardarla
+BF: strada_vera_dopo_dopo 48.10 s le va addosso (LeiSbuca GUARDA, in vista 3.02 s)
+BF: strada_vera_dopo_dopo dopo la presa: ripartito in 3.2 s (scena di morte intera), checkpoint Gioco/CheckpointAreaBimbi, giocatore a 8.98 m dalla fossa, LeiSbuca GUARDA, giro FINITO, acqua LONTANA
+BF: strada_vera_dopo_dopo_dopo 51.71 s giro finito col giocatore a 8.98 m dalla fossa (lontano dal bordo false)
+BF: strada_vera_dopo_dopo_dopo 51.71 s LeiSbuca GUARDA a 8.98 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto false
+BF: strada_vera_dopo_dopo_dopo 52.98 s fermo a 4.99 m dalla fossa (3.22 m dal suo occhio) a guardarla
+BF: strada_vera_dopo_dopo_dopo 57.99 s le va addosso (LeiSbuca GUARDA, in vista 3.02 s)
+BF: strada_vera_dopo_dopo_dopo dopo la presa: ripartito in 3.5 s (scena di morte intera), checkpoint Gioco/CheckpointAreaBimbi, giocatore a 8.98 m dalla fossa, LeiSbuca GUARDA, giro FINITO, acqua LONTANA
+BF: strada_vera_dopo_dopo_dopo_dopo 61.86 s giro finito col giocatore a 8.98 m dalla fossa (lontano dal bordo false)
+BF: strada_vera_dopo_dopo_dopo_dopo 61.86 s LeiSbuca GUARDA a 8.98 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto false

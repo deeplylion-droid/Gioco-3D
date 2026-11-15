@@ -213,7 +213,7 @@ func _cammina(tappe: Array, corre: bool, tag: String) -> void:
 		if t_fermo >= 0.0 and fase_g == 2 and _t() - t_fermo > 16.0:
 			break
 	_lascia()
-	if GameState.is_dying and OS.get_environment("DOPO_PRESA") == "1":
+	if GameState.is_dying and OS.get_environment("DOPO_PRESA") == "1" and not tag.ends_with("_dopo"):
 		var v := _p().get_instance_id()
 		var td := Time.get_ticks_msec()
 		await _arriva(v)

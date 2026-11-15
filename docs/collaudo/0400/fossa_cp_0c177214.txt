@@ -1,0 +1,63 @@
+BF: ===== cp16
+BF: cp16 checkpoint Tecnici/Logica/Checkpoint/CheckpointSerranda, stato giro GIRO, LeiSbuca ATTESA
+BF: cp16 ripartito in (-15.0, 0.0, 19.3) (27.14 m dalla fossa), stato giro ATTESA, LeiSbuca ATTESA, acqua fase LONTANA
+BF: cp16 14.69 s LeiSbuca ATTESA a 27.14 m, fossa in vista true, medusa visibile false, luce fossa false, avviso visto false
+BF: cp16 15.37 s stato: giocatore (-15.3, 0.0, 17.29) a 25.17 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_07.ogg"]
+BF: cp16 17.37 s stato: giocatore (-16.33, 0.0, 10.57) a 18.64 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_07.ogg"]
+BF: cp16 19.21 s giro finito col giocatore a 12.91 m dalla fossa (lontano dal bordo false)
+BF: cp16 19.37 s stato: giocatore (-17.37, 0.0, 3.85) a 12.41 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-0.23440787196159, "lei_canto_prima_lontano_07.ogg"]
+BF: cp16 21.37 s stato: giocatore (-18.4, 0.0, -2.87) a 7.27 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-7.06481111350478, "lei_canto_prima_vicino_07.ogg"]
+BF: cp16 22.09 s fermo a 4.97 m dalla fossa (3.18 m dal suo occhio) a guardarla
+BF: cp16 23.37 s stato: giocatore (-16.61, 0.0, -4.74) a 4.69 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa true, canto [-80.0, ""]
+BF: cp16 25.37 s stato: giocatore (-16.61, 0.0, -4.74) a 4.69 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa true, canto [-80.0, ""]
+BF: cp16 26.09 s lei aspetta ancora sotto: indietro guardandola
+BF: cp16 26.36 s fermo a 5.28 m (3.49 m dal suo occhio), LeiSbuca SBUCA
+BF: cp16 26.36 s il pelo della fossa salta di 0.018 m in un fotogramma (LeiSbuca SBUCA, giocatore a 5.28 m)
+BF: cp16 26.36 s LeiSbuca SBUCA a 5.28 m, fossa in vista true, medusa visibile true, luce fossa true, avviso visto true
+BF: DIFETTO cp16: comparsa in vista a 5.28 m
+BF: cp16 27.37 s stato: giocatore (-17.25, 0.0, -4.2) a 5.54 m, LeiSbuca SBUCA, in vista adesso true (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: cp16 28.17 s LeiSbuca GUARDA a 5.54 m, fossa in vista true, medusa visibile true, luce fossa false, avviso visto true
+BF: cp16 29.37 s stato: giocatore (-17.25, 0.0, -4.2) a 5.54 m, LeiSbuca GUARDA, in vista adesso true (tot 1.20 s), luce fossa false, canto [-80.0, ""]
+BF: cp16 31.36 s le va addosso (LeiSbuca GUARDA, in vista 1.62 s)
+BF: cp16 31.37 s stato: giocatore (-17.25, 0.0, -4.2) a 5.53 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: cp16 pelo della fossa durante la salita: da 0.370 a 0.381
+BF: cp16 fine in (-16.01, 0.0, -5.25): giro finito a 12.91 m, LeiSbuca PRESA, morendo true (causa medusa), in vista 1.62 s; luce/canto: ["LONTANA/lontana@14.69(27.1m)", "LONTANA/arriva@18.22(15.9m)", "ARRIVA/arriva@19.21(12.9m)", "SPEGNE/spegne@21.20(7.6m)", "SILENZIO/silenzio@22.20(4.8m)", "LONTANA/ferma@22.72(4.7m)"]
+BF: ===== cp17
+BF: cp17 checkpoint Gioco/CheckpointAreaBimbi, stato giro FINITO, LeiSbuca ATTESA
+BF: cp17 ripartito in (-18.3, 0.0, -0.5) (8.98 m dalla fossa), stato giro FINITO, LeiSbuca GUARDA, acqua fase LONTANA
+BF: cp17 45.36 s giro finito col giocatore a 8.98 m dalla fossa (lontano dal bordo false)
+BF: cp17 45.36 s LeiSbuca GUARDA a 8.98 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto false
+BF: cp17 45.98 s stato: giocatore (-17.17, 0.0, -2.11) a 7.02 m, LeiSbuca GUARDA, in vista adesso true (tot 0.62 s), luce fossa false, canto [-80.0, ""]
+BF: cp17 46.58 s fermo a 4.99 m dalla fossa (3.22 m dal suo occhio) a guardarla
+BF: cp17 47.98 s stato: giocatore (-15.81, 0.0, -3.97) a 4.71 m, LeiSbuca GUARDA, in vista adesso true (tot 2.62 s), luce fossa false, canto [-80.0, ""]
+BF: cp17 49.98 s stato: giocatore (-15.81, 0.0, -3.97) a 4.71 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp17 51.59 s le va addosso (LeiSbuca GUARDA, in vista 3.02 s)
+BF: cp17 fine in (-15.31, 0.0, -4.66): giro finito a 8.98 m, LeiSbuca PRESA, morendo true (causa medusa), in vista 3.02 s; luce/canto: ["LONTANA/ferma@45.36(9.0m)"]
+BF: ===== cp18
+BF: cp18 checkpoint Gioco/CheckpointSpiaggiaBuio, stato giro FINITO, LeiSbuca ATTESA
+BF: cp18 ripartito in (2.0, -0.05, -12.59) (15.78 m dalla fossa), stato giro FINITO, LeiSbuca GUARDA, acqua fase LONTANA
+BF: cp18 64.96 s giro finito col giocatore a 15.79 m dalla fossa (lontano dal bordo true)
+BF: cp18 64.96 s LeiSbuca GUARDA a 15.79 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto false
+BF: cp18 66.30 s stato: giocatore (-1.93, -0.26, -11.32) a 11.65 m, LeiSbuca GUARDA, in vista adesso true (tot 1.32 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 68.29 s stato: giocatore (-6.65, -0.6, -9.29) a 6.55 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 70.29 s stato: giocatore (-6.65, -0.77, -8.26) a 6.39 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 72.28 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 74.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 76.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 78.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 80.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 82.28 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 84.28 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 86.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 88.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 90.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 92.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 94.28 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 96.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 98.28 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 100.28 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 102.29 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 104.28 s stato: giocatore (-6.65, -0.82, -8.0) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 3.02 s), luce fossa false, canto [-80.0, ""]
+BF: cp18 fine in (-6.65, -0.82, -8.0): giro finito a 15.79 m, LeiSbuca GUARDA, morendo false (causa prova), in vista 3.02 s; luce/canto: ["LONTANA/ferma@64.96(15.8m)"]
+BF: difetti 1
+BF: finito
