@@ -78,6 +78,9 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var tolleranza_vista := 0.3
 @export_group("")
 @export var durata_sbuca := 1.8
+## La sala al buio (0.4.0, LeiSalaAlBuio): lei prima gira nelle vasche della sala e si affaccia alla fossa solo quando
+## il giro finisce ([method vai_alla_fossa]).
+var aspetta_il_giro := false
 @export var durata_scivola := 1.6
 ## Scivolando sotto: quanto si alza e quanto arretra (m) per staccarsi dal bordo prima di scendere,
 ## in che parte della discesa (0..1) lo fa, e in che parte della discesa vera e propria svanisce.
@@ -170,11 +173,26 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	_segna_in_scena()
 	if superficie_fossa == null or vasche.is_empty() or not vasche[0] is WaterTank:
 		return
 	if superficie_fossa.material_override == null and acque.size() > 0 and acque[0] and "material" in acque[0]:
 		superficie_fossa.material_override = acque[0].get(&"material")
 	superficie_fossa.global_position.y = (vasche[0] as WaterTank).get_surface_global_y()
+
+
+## Mentre la scena della fossa è in corso (lei visibile, affacciata, che scivola, fugge o prende) la sua lei sta nel
+## gruppo AcquaDiLei.LEI_IN_SCENA: lei è qui, gli specchi d'acqua non la chiamano e il loro canto lontano tace.
+func _segna_in_scena() -> void:
+	if medusa == null:
+		return
+	var attiva := medusa.visible and (fase == Fase.SBUCA or fase == Fase.GUARDA or fase == Fase.SCIVOLA
+			or fase == Fase.FUGA or fase == Fase.PRESA)
+	if attiva != medusa.is_in_group(AcquaDiLei.LEI_IN_SCENA):
+		if attiva:
+			medusa.add_to_group(AcquaDiLei.LEI_IN_SCENA)
+		else:
+			medusa.remove_from_group(AcquaDiLei.LEI_IN_SCENA)
 
 
 func _on_luci(f: GameState.Luci) -> void:
@@ -193,8 +211,9 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	match fase:
 		Fase.ATTESA:
-			# Già affacciata quando arrivi: dal blackout (o ripartendo al buio) è sul bordo.
-			if punto_sbuca:
+			# Già affacciata quando arrivi: dal blackout (o ripartendo al buio) è sul bordo. Con la sala al buio della
+			# 0.4.0 (LeiSalaAlBuio) prima gira nelle vasche, e viene qui quando il giro finisce (vai_alla_fossa).
+			if punto_sbuca and not aspetta_il_giro:
 				_affaccia()
 		Fase.SBUCA:
 			var k := clampf(_t / durata_sbuca, 0.0, 1.0)
@@ -317,6 +336,19 @@ func la_stai_guardando(p: Player) -> bool:
 
 ## Lei è già sul bordo della fossa, affacciata, senza la salita né il suono di quando sbuca: la fossa
 ## arriva subito almeno a [member pelo_minimo]. Ti segue con l'occhio e aspetta che la guardi bene.
+## Il giro della sala al buio è finito: lei viene alla fossa. Se il giocatore la sta guardando sbuca (sale dal fondo),
+## se no è già affacciata.
+func vai_alla_fossa() -> void:
+	aspetta_il_giro = false
+	if fase != Fase.ATTESA or punto_sbuca == null or GameState.luci != GameState.Luci.BLACKOUT:
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam and cam.is_position_in_frustum(punto_sbuca.global_position + Vector3.UP * 1.0):
+		_sbuca()
+	else:
+		_affaccia()
+
+
 func _affaccia() -> void:
 	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
 	if tank:
