@@ -24,6 +24,9 @@ extends Node
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_posizionamento.gd [zona]
 
 ## Le zone: la scena e, per le scene grandi, i nodi di primo livello che fanno da sotto-zone.
+## I giocattoli che galleggiano nella vasca grande della sala (LeiSalaAlBuio li scosta quando lei sta per uscire).
+const GALLEGGIANTI := ["Sala/Oggetti/ogg_ciambella_gonfiabile_76", "Sala/Oggetti/ogg_pallone_spiaggia_78",
+		"Sala/Oggetti/ogg_tubi_galleggianti_77"]
 const ZONE := [
 	{"scena": "res://scenes/sala_principale.tscn", "sotto": {"Sala": "sala", "Interni": "interni",
 			"Tecnici": "tecnici", "Piscina": "sala", "Vasche": "sala", "Vasca": "sala", "Gioco": "sala",
@@ -35,6 +38,12 @@ const ZONE := [
 	# gli stati indicati dalle squadre (22 ottobre): quello che cambia più avanti nel gioco
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "interni", "stato": "interni_dopo", "parti": ["Interni"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "sala", "stato": "lei_fossa", "parti": ["Gioco/LeiSbuca"]},
+	# mascotte (0.4.0): nella sala al buio, quando lei sta per uscire da uno dei quattro punti della vasca grande, i
+	# giocattoli che galleggiano si scostano (LeiSalaAlBuio.prepara_uscita): uno stato per punto
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "sala", "stato": "galleggianti_0", "parti": GALLEGGIANTI},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "sala", "stato": "galleggianti_1", "parti": GALLEGGIANTI},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "sala", "stato": "galleggianti_2", "parti": GALLEGGIANTI},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "sala", "stato": "galleggianti_3", "parti": GALLEGGIANTI},
 	# le stanze della Risalita si disegnano solo col giocatore vicino (risalita_gioco.gd): nei due stati si mostrano,
 	# come quando ci arriva (enigmi non risolti) e dopo (risolti)
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_arrivo", "parti": ["Risalita"]},
@@ -315,6 +324,17 @@ func _prepara(stato: String) -> void:
 				if saracinesca and saracinesca.has_method(&"load_state"):
 					saracinesca.call(&"load_state", {"latched": true, "open": 1.0})
 			for i in 10:
+				await get_tree().physics_frame
+			return
+		"galleggianti_0", "galleggianti_1", "galleggianti_2", "galleggianti_3":
+			# mascotte: lei sta per uscire dal punto N della vasca grande, i giocattoli si sono scostati
+			var buio := _radice.find_child("LeiSalaAlBuio", true, false)
+			if buio and buio.get(&"acqua"):
+				var punti: Array = buio.get(&"acqua").punti_uscita
+				var n := int(stato.substr(stato.length() - 1))
+				if n < punti.size():
+					buio.call(&"prepara_uscita", punti[n], 0.0)
+			for i in 5:
 				await get_tree().physics_frame
 			return
 		"lei_fossa":
