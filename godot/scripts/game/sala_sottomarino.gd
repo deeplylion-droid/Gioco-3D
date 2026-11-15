@@ -1156,7 +1156,7 @@ func _fine_luci(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> 
 	var ls := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 	ls.name = "LampadaStanza"
 	nodo.add_child(ls)
-	ls.global_position = _al(p + d * CAMERA_TRATTO, r, Vector2(-(CAMERA_MEZZA + stanza_mezza) * 0.5, sg + 2.1)) + d * 0.05
+	ls.global_position = _al(p + d * CAMERA_TRATTO, r, Vector2(-(CAMERA_MEZZA + 0.4), sg + 2.1)) + d * 0.05
 	ls.look_at(ls.global_position + d * 2.0, Vector3.UP)
 	ls.rotate_object_local(Vector3.UP, PI)
 	_a_filo_del_muro(ls, d)
@@ -1639,10 +1639,11 @@ func _finale() -> void:
 @export var foglio_schermo := 0.62
 ## Quanto brillano gli agnellini delle sagome rispetto a quello davanti (si vede appena il viso).
 @export var sagoma_bagliore := 0.04
-## La lampada a gabbia nella stanza dei bambini, sul muro accanto al primo tratto (dalla parte del bambino col cubo):
+## La lampada a gabbia nella stanza dei bambini, sul muro accanto al primo tratto, vicino all'angolo (dalla parte del
+## bambino col cubo, a circa 2,6 m da lui):
 ## quanto fa luce (energia) e fin dove arriva (m). Debole: i due davanti si riconoscono, le sagome dietro no.
 @export var stanza_luce := 4.0
-@export var stanza_luce_raggio := 4.0
+@export var stanza_luce_raggio := 3.8
 ## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
 ## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
 ## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
@@ -1653,7 +1654,7 @@ func _finale() -> void:
 	[1, 0.55, 5.0, 1.0, 1.4, false],
 	[1, -0.2, 6.75, 1.12, 0.0, true],
 	[0, 0.85, 6.45, 0.92, 1.9, true],
-	[1, -1.6, 6.6, 0.9, 0.0, true],
+	[1, -2.2, 7.0, 0.9, 0.0, true],
 	[0, 1.55, 6.25, 1.06, 0.0, true],
 ]
 ## Il disegno che porge il bambino col cubo (DZ, di ambienti-1): finché non c'è, un foglio bianco.
