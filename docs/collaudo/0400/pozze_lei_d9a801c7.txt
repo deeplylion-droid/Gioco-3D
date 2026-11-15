@@ -1,0 +1,154 @@
+SC:  10.71 s parte lei_canto_prima_vicino_05.ogg (3D), giocatore (-38.8, -5.4, 40.9)
+SC:  10.71 s parte lei_canto_prima_lontano_05.ogg (2D), giocatore (-38.8, -5.4, 40.9)
+PL: arrivato in (-38.8, -5.4, 40.9), checkpoint Risalita/StanzaPozze/Checkpoint/CheckpointIngresso, lei dorme, letale true, luci 2
+PL: 3.16 s aspirato dal turchese
+PL: 6.13 s LeiPozze gira
+PL: 6.14 s tolto turchese: true, stato enigma APERTO
+PL: 13.61 s motore ARRIVA, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [-5.52289796606288, "lei_canto_prima_vicino_05.ogg"]
+PL: 13.61 s LeiPozze viene
+SC: 1 24.50 s finisce lei_canto_prima_lontano_05.ogg dopo 12.23 s di 12.24: naturale; dB lettore/al giocatore a -1 s -11/-11, -0,5 s -1/-1, -0,25 s -2/-2, ultimo -5/-5, tono 1.00, giocatore (-38.9, -5.4, 40.9)
+SC: 1 24.51 s finisce lei_canto_prima_vicino_05.ogg dopo 12.23 s di 12.24: naturale; dB lettore/al giocatore a -1 s -3/-4, -0,5 s -22/-24, -0,25 s -13/-15, ultimo -7/-10, tono 1.00, giocatore (-38.9, -5.4, 40.9)
+SC: 1 24.51 s parte lei_canto_prima_vicino_01.ogg (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 24.51 s parte lei_canto_prima_lontano_01.ogg (2D), giocatore (-38.9, -5.4, 40.9)
+PL: 15.63 s motore SPEGNE, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [-3.96884646377645, "lei_canto_prima_vicino_01.ogg"]
+PL: 16.63 s motore SILENZIO, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [-63.9688464637765, "lei_canto_prima_vicino_01.ogg"]
+SC: 1 26.68 s finisce lei_canto_prima_vicino_01.ogg dopo 1.90 s di 14.02: spenta; dB lettore/al giocatore a -1 s 0/-4, -0,5 s -12/-16, -0,25 s -24/-28, ultimo -60/-64, tono 0.89, giocatore (-38.9, -5.4, 40.9)
+SC: 1 26.68 s finisce lei_canto_prima_lontano_01.ogg dopo 1.90 s di 14.02: spenta; dB lettore/al giocatore a -1 s -60/-60, -0,5 s -72/-72, -0,25 s -84/-84, ultimo -120/-120, tono 0.89, giocatore (-38.9, -5.4, 40.9)
+SC: 1 26.86 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+PL: 17.15 s motore ESCE, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [-80.0, ""]
+SC: 1 27.39 s finisce senza percorso dopo 0.40 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 0.94, giocatore (-38.9, -5.4, 40.9)
+SC: 1 27.40 s parte tuffo.ogg (2D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 27.56 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 28.02 s finisce senza percorso dopo 0.42 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.06, giocatore (-38.9, -5.4, 40.9)
+SC: 1 28.20 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 28.65 s finisce senza percorso dopo 0.43 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 0.98, giocatore (-38.9, -5.4, 40.9)
+SC: 1 28.84 s finisce tuffo.ogg dopo 1.59 s di 1.60: naturale; dB lettore/al giocatore a -1 s -9/-9, -0,5 s -9/-9, -0,25 s -9/-9, ultimo -9/-9, tono 1.30, giocatore (-38.9, -5.4, 40.9)
+PL: 19.36 s motore SU, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [-80.0, ""]
+SC: 1 29.54 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 30.00 s finisce senza percorso dopo 0.45 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.04, giocatore (-38.9, -5.4, 40.9)
+SC: 1 30.39 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 30.71 s finisce senza percorso dopo 0.29 s di 0.30: naturale; dB lettore/al giocatore a -1 s -7/-80, -0,5 s -7/-80, -0,25 s -7/-80, ultimo -7/-80, tono 0.95, giocatore (-38.9, -5.4, 40.9)
+SC: 1 30.92 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 31.43 s finisce senza percorso dopo 0.41 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.05, giocatore (-38.9, -5.4, 40.9)
+PL: 21.58 s motore SCENDE, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [-80.0, ""]
+SC: 1 31.89 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 31.99 s parte senza percorso (2D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 32.29 s parte lei_canto_prima_vicino_08.ogg (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 32.29 s parte lei_canto_prima_lontano_08.ogg (2D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 32.29 s finisce senza percorso dopo 0.35 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 0.95, giocatore (-38.9, -5.4, 40.9)
+SC: 1 32.29 s finisce senza percorso dopo 0.33 s di 0.57: TRONCATA; dB lettore/al giocatore a -1 s -2/-2, -0,5 s -2/-2, -0,25 s -2/-2, ultimo -2/-2, tono 1.18, giocatore (-38.9, -5.4, 40.9)
+PL: 22.78 s LeiPozze gira
+PL: 22.78 s motore CALMA, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [0.0, "lei_canto_prima_lontano_08.ogg"]
+PL: 26.79 s motore LONTANA, pozza Pozza_4_0 (bianco_latte), punto a 6.24 m dal giocatore, dimostrativa true, giocatore (-38.86, -5.4, 40.85), canto [0.0, "lei_canto_prima_lontano_08.ogg"]
+SC: 1 44.42 s finisce lei_canto_prima_vicino_08.ogg dopo 10.78 s di 10.78: naturale; dB lettore/al giocatore a -1 s -2/-2, -0,5 s -2/-2, -0,25 s -2/-2, ultimo -2/-2, tono 1.00, giocatore (-38.9, -5.4, 40.9)
+SC: 1 44.42 s finisce lei_canto_prima_lontano_08.ogg dopo 10.78 s di 10.78: naturale; dB lettore/al giocatore a -1 s -14/-14, -0,5 s -14/-14, -0,25 s -14/-14, ultimo -15/-15, tono 1.00, giocatore (-38.9, -5.4, 40.9)
+SC: 1 44.43 s parte lei_canto_prima_vicino_09.ogg (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 44.43 s parte lei_canto_prima_lontano_09.ogg (2D), giocatore (-38.9, -5.4, 40.9)
+PL: 41.45 s motore ARRIVA, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.86, -5.4, 40.85), canto [-1.69965600967407, "lei_canto_prima_vicino_09.ogg"]
+PL: 41.45 s LeiPozze viene
+PL: 43.47 s motore SPEGNE, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.86, -5.4, 40.85), canto [0.0, "lei_canto_prima_vicino_09.ogg"]
+PL: 44.47 s motore SILENZIO, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.86, -5.4, 40.85), canto [-60.0, "lei_canto_prima_vicino_09.ogg"]
+SC: 1 54.52 s finisce lei_canto_prima_vicino_09.ogg dopo 8.87 s di 12.41: spenta; dB lettore/al giocatore a -1 s 0/0, -0,5 s -12/-12, -0,25 s -24/-24, ultimo -60/-60, tono 0.89, giocatore (-38.9, -5.4, 40.9)
+SC: 1 54.52 s finisce lei_canto_prima_lontano_09.ogg dopo 8.93 s di 12.41: spenta; dB lettore/al giocatore a -1 s -60/-60, -0,5 s -72/-72, -0,25 s -84/-84, ultimo -120/-120, tono 0.89, giocatore (-38.9, -5.4, 40.9)
+SC: 1 54.59 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+PL: 44.99 s motore ESCE, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.86, -5.4, 40.85), canto [-80.0, ""]
+SC: 1 55.16 s finisce senza percorso dopo 0.45 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 0.96, giocatore (-38.9, -5.4, 40.9)
+SC: 1 55.34 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 55.66 s parte senza percorso (2D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 55.67 s finisce senza percorso dopo 0.29 s di 0.30: naturale; dB lettore/al giocatore a -1 s -7/-80, -0,5 s -7/-80, -0,25 s -7/-80, ultimo -7/-80, tono 1.04, giocatore (-38.9, -5.4, 40.9)
+SC: 1 55.71 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 56.08 s finisce senza percorso dopo 0.29 s di 0.30: naturale; dB lettore/al giocatore a -1 s -7/-80, -0,5 s -7/-80, -0,25 s -7/-80, ultimo -7/-80, tono 1.04, giocatore (-38.9, -5.4, 40.9)
+SC: 1 56.19 s finisce senza percorso dopo 0.66 s di 0.67: naturale; dB lettore/al giocatore a -1 s 0/0, -0,5 s 0/0, -0,25 s 0/0, ultimo 0/0, tono 1.43, giocatore (-38.9, -5.4, 40.9)
+SC: 1 56.33 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 56.71 s finisce senza percorso dopo 0.28 s di 0.30: naturale; dB lettore/al giocatore a -1 s -7/-80, -0,5 s -7/-80, -0,25 s -7/-80, ultimo -7/-80, tono 1.01, giocatore (-38.9, -5.4, 40.9)
+SC: 1 56.81 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+SC: 1 57.23 s finisce senza percorso dopo 0.30 s di 0.30: naturale; dB lettore/al giocatore a -1 s -7/-80, -0,5 s -7/-80, -0,25 s -7/-80, ultimo -7/-80, tono 0.99, giocatore (-38.9, -5.4, 40.9)
+PL: 47.21 s motore SU, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.86, -5.4, 40.85), canto [-80.0, ""]
+SC: 1 57.38 s parte senza percorso (3D), giocatore (-38.9, -5.4, 40.9)
+PL: 47.55 s motore PRESA, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.86, -5.4, 40.85), canto [-80.0, ""]
+SC: 1 57.61 s finisce senza percorso dopo 0.20 s di 0.45: spenta; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.05, giocatore (-38.9, -5.4, 40.9)
+PL: 1: dopo 40.8 s morendo true, causa medusa, uscite 2, prese 1; luce accesa 2204 fotogrammi, fuori dalle pozze 644
+SC: 1 67.14 s parte lei_canto_prima_vicino_01.ogg (3D), giocatore (-38.8, -5.4, 40.9)
+SC: 1 67.14 s parte lei_canto_prima_lontano_01.ogg (2D), giocatore (-38.8, -5.4, 40.9)
+PL: ripartito: checkpoint Risalita/StanzaPozze/Checkpoint/CheckpointIngresso, giocatore (-38.8, -5.4, 40.9), pozze piene true, tolti [], lei dorme
+PL: 60.59 s aspirato dal viola
+PL: 63.56 s LeiPozze gira
+PL: 63.58 s tolto viola: true, stato enigma APERTO
+PL: 70.44 s motore ARRIVA, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [-1.7095992565155, "lei_canto_prima_vicino_01.ogg"]
+PL: 70.44 s LeiPozze viene
+PL: 72.46 s motore SPEGNE, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [0.0, "lei_canto_prima_vicino_01.ogg"]
+SC: 2 83.06 s finisce lei_canto_prima_vicino_01.ogg dopo 14.01 s di 14.02: naturale; dB lettore/al giocatore a -1 s -0/-0, -0,5 s -1/-1, -0,25 s -6/-6, ultimo -14/-14, tono 0.94, giocatore (-38.7, -5.4, 40.9)
+SC: 2 83.06 s finisce lei_canto_prima_lontano_01.ogg dopo 14.01 s di 14.02: naturale; dB lettore/al giocatore a -1 s -34/-34, -0,5 s -61/-61, -0,25 s -66/-66, ultimo -74/-74, tono 0.94, giocatore (-38.7, -5.4, 40.9)
+SC: 2 83.29 s parte senza percorso (3D), giocatore (-38.7, -5.4, 40.9)
+PL: 73.46 s motore SILENZIO, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [-80.0, ""]
+SC: 2 83.67 s finisce senza percorso dopo 0.30 s di 0.30: naturale; dB lettore/al giocatore a -1 s -7/-80, -0,5 s -7/-80, -0,25 s -7/-80, ultimo -7/-80, tono 1.06, giocatore (-38.7, -5.4, 40.9)
+PL: 73.98 s motore ESCE, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [-80.0, ""]
+SC: 2 84.23 s parte tuffo.ogg (2D), giocatore (-38.7, -5.4, 40.9)
+PL: 74.84 s motore SCENDE, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [-9.0, "tuffo.ogg"]
+PL: 2: getto sulla mano per 0.87 s: motore SCENDE, morendo false
+SC: 3 85.01 s parte senza percorso (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 85.48 s finisce senza percorso dopo 0.44 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.04, giocatore (-38.7, -5.4, 40.9)
+SC: 3 85.52 s parte senza percorso (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 85.69 s finisce tuffo.ogg dopo 1.55 s di 1.60: naturale; dB lettore/al giocatore a -1 s -9/-9, -0,5 s -9/-9, -0,25 s -9/-9, ultimo -9/-9, tono 1.29, giocatore (-38.7, -5.4, 40.9)
+PL: 75.85 s LeiPozze gira
+PL: 75.85 s motore CALMA, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [-80.0, ""]
+SC: 3 86.01 s finisce senza percorso dopo 0.38 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.02, giocatore (-38.7, -5.4, 40.9)
+SC: 3 86.11 s parte senza percorso (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 86.64 s parte lei_canto_prima_vicino_09.ogg (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 86.64 s parte lei_canto_prima_lontano_09.ogg (2D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 86.64 s finisce senza percorso dopo 0.44 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 0.95, giocatore (-38.7, -5.4, 40.9)
+SC: 3 100.64 s finisce lei_canto_prima_vicino_09.ogg dopo 12.38 s di 12.41: naturale; dB lettore/al giocatore a -1 s -60/-60, -0,5 s -60/-60, -0,25 s -60/-60, ultimo -60/-60, tono 1.00, giocatore (-38.7, -5.4, 40.9)
+SC: 3 100.64 s finisce lei_canto_prima_lontano_09.ogg dopo 12.38 s di 12.41: naturale; dB lettore/al giocatore a -1 s 0/0, -0,5 s 0/0, -0,25 s 0/0, ultimo 0/0, tono 1.00, giocatore (-38.7, -5.4, 40.9)
+SC: 3 101.86 s parte senza percorso (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 102.31 s finisce senza percorso dopo 0.39 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.00, giocatore (-38.7, -5.4, 40.9)
+SC: 3 103.13 s parte senza percorso (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 103.66 s finisce senza percorso dopo 0.41 s di 0.45: naturale; dB lettore/al giocatore a -1 s -6/-80, -0,5 s -6/-80, -0,25 s -6/-80, ultimo -6/-80, tono 1.01, giocatore (-38.7, -5.4, 40.9)
+SC: 3 104.15 s parte lei_canto_prima_vicino_10.ogg (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 104.15 s parte lei_canto_prima_lontano_10.ogg (2D), giocatore (-38.7, -5.4, 40.9)
+PL: 95.84 s motore LONTANA, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [0.0, "lei_canto_prima_lontano_10.ogg"]
+PL: 95.86 s motore ARRIVA, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [0.0, "lei_canto_prima_lontano_10.ogg"]
+PL: 95.86 s LeiPozze viene
+PL: 3: arriva alla pozza Pozza_2_4 (arancione): si svuota quel colore
+PL: 96.08 s LeiPozze gira
+PL: 96.08 s motore LONTANA, pozza Pozza_2_4 (arancione), punto a 0.55 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [-0.32520791888237, "lei_canto_prima_lontano_10.ogg"]
+PL: 96.08 s CACCIATA
+SC: 3 107.13 s finisce lei_canto_prima_vicino_10.ogg dopo 2.64 s di 10.17: spenta; dB lettore/al giocatore a -1 s -29/-36, -0,5 s -40/-48, -0,25 s -52/-60, ultimo -89/-96, tono 0.89, giocatore (-38.7, -5.4, 40.9)
+SC: 3 107.13 s parte lei_canto_prima_vicino_04.ogg (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 3 107.13 s finisce lei_canto_prima_lontano_10.ogg dopo 2.64 s di 10.17: spenta; dB lettore/al giocatore a -1 s -0/-0, -0,5 s -12/-12, -0,25 s -24/-24, ultimo -60/-60, tono 0.89, giocatore (-38.7, -5.4, 40.9)
+SC: 3 107.13 s parte lei_canto_prima_lontano_04.ogg (2D), giocatore (-38.7, -5.4, 40.9)
+PL: 3: dopo 5 s motore LONTANA, morendo false, svuotando []
+SC: 4 119.47 s finisce lei_canto_prima_vicino_04.ogg dopo 10.78 s di 10.78: naturale; dB lettore/al giocatore a -1 s -2/-2, -0,5 s -3/-4, -0,25 s -3/-5, ultimo -4/-6, tono 1.00, giocatore (-38.7, -5.4, 40.9)
+SC: 4 119.47 s parte lei_canto_prima_vicino_06.ogg (3D), giocatore (-38.7, -5.4, 40.9)
+SC: 4 119.47 s finisce lei_canto_prima_lontano_04.ogg dopo 10.78 s di 10.78: naturale; dB lettore/al giocatore a -1 s -13/-13, -0,5 s -11/-11, -0,25 s -10/-10, ultimo -10/-10, tono 1.00, giocatore (-38.7, -5.4, 40.9)
+SC: 4 119.47 s parte lei_canto_prima_lontano_06.ogg (2D), giocatore (-38.7, -5.4, 40.9)
+PL: 117.83 s motore ARRIVA, pozza Pozza_3_4 (rosa), punto a 1.18 m dal giocatore, dimostrativa false, giocatore (-38.74, -5.4, 40.85), canto [-1.51946806907654, "lei_canto_prima_vicino_06.ogg"]
+PL: 117.83 s LeiPozze viene
+PL: 119.84 s motore SPEGNE, pozza Pozza_3_4 (rosa), punto a 3.29 m dal giocatore, dimostrativa false, giocatore (-40.94, -5.4, 40.85), canto [0.0, "lei_canto_prima_vicino_06.ogg"]
+PL: 120.84 s motore SILENZIO, pozza Pozza_3_4 (rosa), punto a 3.29 m dal giocatore, dimostrativa false, giocatore (-40.94, -5.4, 40.85), canto [-60.0, "lei_canto_prima_vicino_06.ogg"]
+SC: 4 130.89 s finisce lei_canto_prima_vicino_06.ogg dopo 10.07 s di 11.11: spenta; dB lettore/al giocatore a -1 s 0/0, -0,5 s -12/-12, -0,25 s -24/-24, ultimo -60/-60, tono 0.89, giocatore (-40.9, -5.4, 40.9)
+SC: 4 130.89 s finisce lei_canto_prima_lontano_06.ogg dopo 10.13 s di 11.11: spenta; dB lettore/al giocatore a -1 s -60/-60, -0,5 s -72/-72, -0,25 s -84/-84, ultimo -120/-120, tono 0.89, giocatore (-40.9, -5.4, 40.9)
+SC: 4 130.98 s parte senza percorso (3D), giocatore (-40.9, -5.4, 40.9)
+PL: 121.36 s motore ESCE, pozza Pozza_3_4 (rosa), punto a 3.29 m dal giocatore, dimostrativa false, giocatore (-40.94, -5.4, 40.85), canto [-5.35303228171883, "senza percorso"]
+SC: 4 131.61 s parte tuffo.ogg (2D), giocatore (-40.9, -5.4, 40.9)
+SC: 4 132.99 s finisce tuffo.ogg dopo 1.56 s di 1.60: naturale; dB lettore/al giocatore a -1 s -9/-9, -0,5 s -9/-9, -0,25 s -9/-9, ultimo -9/-9, tono 1.29, giocatore (-40.9, -5.4, 40.9)
+PL: 123.57 s motore SU, pozza Pozza_3_4 (rosa), punto a 3.29 m dal giocatore, dimostrativa false, giocatore (-40.94, -5.4, 40.85), canto [-5.35303228171883, "senza percorso"]
+PL: 125.79 s motore SCENDE, pozza Pozza_3_4 (rosa), punto a 3.29 m dal giocatore, dimostrativa false, giocatore (-40.94, -5.4, 40.85), canto [-5.35303228171883, "senza percorso"]
+SC: 4 136.21 s parte senza percorso (2D), giocatore (-40.9, -5.4, 40.9)
+SC: 4 136.84 s finisce senza percorso dopo 0.66 s di 0.67: naturale; dB lettore/al giocatore a -1 s -2/-2, -0,5 s -2/-2, -0,25 s -2/-2, ultimo -2/-2, tono 1.18, giocatore (-40.9, -5.4, 40.9)
+SC: 4 136.98 s parte lei_canto_prima_vicino_08.ogg (3D), giocatore (-40.9, -5.4, 40.9)
+SC: 4 136.98 s parte lei_canto_prima_lontano_08.ogg (2D), giocatore (-40.9, -5.4, 40.9)
+SC: 4 136.98 s finisce senza percorso dopo 5.55 s di 8.37: TRONCATA; dB lettore/al giocatore a -1 s -3/-5, -0,5 s -3/-5, -0,25 s -3/-5, ultimo -3/-5, tono 1.04, giocatore (-40.9, -5.4, 40.9)
+PL: 126.99 s LeiPozze gira
+PL: 126.99 s motore CALMA, pozza Pozza_3_4 (rosa), punto a 3.29 m dal giocatore, dimostrativa false, giocatore (-40.94, -5.4, 40.85), canto [0.0, "lei_canto_prima_lontano_08.ogg"]
+PL: 4: allontanato a 3.29 m dal punto: motore CALMA, morendo false
+PL: 127.51 s aspirato dal turchese
+PL: 130.48 s LeiPozze finita
+PL: 130.50 s tolto turchese: true, stato enigma RISOLTO
+SC: 5 141.03 s finisce lei_canto_prima_vicino_08.ogg dopo 3.53 s di 10.78: spenta; dB lettore/al giocatore a -1 s -60/-60, -0,5 s -60/-60, -0,25 s -60/-60, ultimo -60/-60, tono 1.00, giocatore (-40.9, -5.4, 40.9)
+SC: 5 141.03 s finisce lei_canto_prima_lontano_08.ogg dopo 3.53 s di 10.78: spenta; dB lettore/al giocatore a -1 s 0/0, -0,5 s 0/0, -0,25 s -29/-29, ultimo -60/-60, tono 1.00, giocatore (-40.9, -5.4, 40.9)
+PL: 131.01 s motore LONTANA, pozza Pozza_3_4 (rosa), punto a 3.29 m dal giocatore, dimostrativa false, giocatore (-40.94, -5.4, 40.85), canto [-80.0, ""]
+PL: 5: stato enigma RISOLTO, lei finita
+PL: 5: nei 30 s dopo: luce accesa 0 fotogrammi, canto più forte -80 dB, motore LONTANA
+PL: totale luce accesa 4994, fuori dalle pozze 1285
+SC: 5 riassunto: frasi finite 46 { "naturale": 33, "spenta": 11, "TRONCATA": 2 }, troncate 2
+PL: finito

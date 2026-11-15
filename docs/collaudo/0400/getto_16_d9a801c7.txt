@@ -1,0 +1,96 @@
+BG: F9 sala_buio: true
+BG: arrivato, checkpoint Tecnici/Logica/Checkpoint/CheckpointSerranda, giocatore (-15.0, 0.0, 19.3), luci 2; punti d'uscita [(-11.4, -1.1, 2.0), (-13.6, -1.1, 2.0), (-12.5, -1.1, 4.6), (-12.5, -1.1, -0.6)]; pelo vasca grande -0.220, fondo -1.100; fossa (-13.03, -0.51, -7.77)
+BG: all'arrivo giocattoli 3: ["ogg_ciambella_gonfiabile_76 fuori dal bordo interno -2.978 m, dal punto inf m, spostato 0.00 m", "ogg_pallone_spiaggia_78 fuori dal bordo interno -0.999 m, dal punto inf m, spostato 0.00 m", "ogg_tubi_galleggianti_77 fuori dal bordo interno -1.030 m, dal punto inf m, spostato 0.00 m"]
+BG: all'arrivo coppie vicine (distanza minima fra le impronte in pianta, vertici): []
+BG: ===== getto_su
+BG: bordo0 (getto_su): punto d'uscita in (-11.4, -1.1, 2.0)
+BG: 1.05 s giocatore messo in (-15.0, 0.02, 16.8) (pavimento trovato)
+BG: bordo0: entrato nella sala, stato GIRO
+BG: 2.07 s giocatore messo in (-8.55, 0.02, 2.0) (pavimento trovato)
+BG: bordo0 prima giocattoli 3: ["ogg_ciambella_gonfiabile_76 fuori dal bordo interno -2.978 m, dal punto 1.00 m, spostato 0.00 m", "ogg_pallone_spiaggia_78 fuori dal bordo interno -0.999 m, dal punto 3.42 m, spostato 0.00 m", "ogg_tubi_galleggianti_77 fuori dal bordo interno -1.030 m, dal punto 2.34 m, spostato 0.00 m"]
+BG: bordo0 prima coppie vicine (distanza minima fra le impronte in pianta, vertici): []
+BG: 4.95 s fase ARRIVA, giocatore (-8.58, 0.05, 2.0), luce (-10.2, -0.82, 0.66), stato giro GIRO
+BG: bordo0: arriva al punto 0
+BG: 6.95 s fase SPEGNE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 7.95 s fase SILENZIO, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 8.46 s fase ESCE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 10.08 s fase SU, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 10.96 s fase SCENDE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 10.96 s respinta
+BG: getto_su: RESPINTA 0.88 s dopo l'inizio (reazione 0.00 s), zaino 17.0
+BG: 12.16 s tornata sotto
+BG: 12.16 s fase CALMA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: ===== getto_su_0.3
+BG: bordo0 (getto_su_0.3): punto d'uscita in (-11.4, -1.1, 2.0)
+BG: 13.99 s giocatore messo in (-8.55, 0.02, 2.0) (pavimento trovato)
+BG: bordo0 prima giocattoli 3: ["ogg_ciambella_gonfiabile_76 fuori dal bordo interno -1.332 m, dal punto 3.61 m, spostato 2.61 m", "ogg_pallone_spiaggia_78 fuori dal bordo interno -0.901 m, dal punto 3.71 m, spostato 0.29 m", "ogg_tubi_galleggianti_77 fuori dal bordo interno -0.373 m, dal punto 3.81 m, spostato 1.66 m"]
+BG: bordo0 prima coppie vicine (distanza minima fra le impronte in pianta, vertici): []
+BG: condizioni luci 2, morendo false, zona true, puo true, altrove false, in vista false, bambino false []
+BG: 32.16 s fase LONTANA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 32.19 s fase ARRIVA, giocatore (-8.58, 0.05, 2.0), luce (-11.39, -0.82, 2.03), stato giro GIRO
+BG: bordo0: arriva al punto 0
+BG: 34.19 s fase SPEGNE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 35.19 s fase SILENZIO, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 35.72 s fase ESCE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 37.32 s fase SU, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 38.53 s fase SCENDE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 38.53 s respinta
+BG: getto_su_0.3: RESPINTA 1.20 s dopo l'inizio (reazione 0.30 s), zaino 14.0
+BG: 39.72 s tornata sotto
+BG: 39.72 s fase CALMA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: ===== getto_su_0.5
+BG: bordo0 (getto_su_0.5): punto d'uscita in (-11.4, -1.1, 2.0)
+BG: 41.55 s giocatore messo in (-8.55, 0.02, 2.0) (pavimento trovato)
+BG: bordo0 prima giocattoli 3: ["ogg_ciambella_gonfiabile_76 fuori dal bordo interno -1.332 m, dal punto 3.61 m, spostato 2.61 m", "ogg_pallone_spiaggia_78 fuori dal bordo interno -0.901 m, dal punto 3.71 m, spostato 0.29 m", "ogg_tubi_galleggianti_77 fuori dal bordo interno -0.373 m, dal punto 3.81 m, spostato 1.66 m"]
+BG: bordo0 prima coppie vicine (distanza minima fra le impronte in pianta, vertici): []
+BG: condizioni luci 2, morendo false, zona true, puo true, altrove false, in vista false, bambino false []
+BG: 59.73 s fase LONTANA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 59.77 s fase ARRIVA, giocatore (-8.58, 0.05, 2.0), luce (-11.39, -0.82, 2.03), stato giro GIRO
+BG: bordo0: arriva al punto 0
+BG: 61.77 s fase SPEGNE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 62.76 s fase SILENZIO, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 63.28 s fase ESCE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 64.89 s fase SU, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 66.28 s fase SCENDE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 66.28 s respinta
+BG: getto_su_0.5: RESPINTA 1.39 s dopo l'inizio (reazione 0.50 s), zaino 11.0
+BG: 67.48 s tornata sotto
+BG: 67.48 s fase CALMA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: ===== getto_su_0.8
+BG: bordo0 (getto_su_0.8): punto d'uscita in (-11.4, -1.1, 2.0)
+BG: 69.30 s giocatore messo in (-8.55, 0.02, 2.0) (pavimento trovato)
+BG: bordo0 prima giocattoli 3: ["ogg_ciambella_gonfiabile_76 fuori dal bordo interno -1.332 m, dal punto 3.61 m, spostato 2.61 m", "ogg_pallone_spiaggia_78 fuori dal bordo interno -0.901 m, dal punto 3.71 m, spostato 0.29 m", "ogg_tubi_galleggianti_77 fuori dal bordo interno -0.373 m, dal punto 3.81 m, spostato 1.66 m"]
+BG: bordo0 prima coppie vicine (distanza minima fra le impronte in pianta, vertici): []
+BG: condizioni luci 2, morendo false, zona true, puo true, altrove false, in vista false, bambino false []
+BG: 87.48 s fase LONTANA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 87.51 s fase ARRIVA, giocatore (-8.58, 0.05, 2.0), luce (-11.39, -0.82, 2.03), stato giro GIRO
+BG: bordo0: arriva al punto 0
+BG: 89.51 s fase SPEGNE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 90.51 s fase SILENZIO, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 91.03 s fase ESCE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 92.64 s fase SU, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 94.26 s fase PRESA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 94.26 s PRESA
+BG: getto_su_0.8: PRESO 1.62 s dopo l'inizio (reazione 0.80 s), zaino 8.5
+BG: ===== bordo0
+BG: bordo0 (presa): punto d'uscita in (-11.4, -1.1, 2.0)
+BG: 100.66 s giocatore messo in (-15.0, 0.02, 16.8) (pavimento trovato)
+BG: bordo0: entrato nella sala, stato GIRO
+BG: 101.71 s giocatore messo in (-8.55, 0.02, 2.0) (pavimento trovato)
+BG: bordo0 prima giocattoli 3: ["ogg_ciambella_gonfiabile_76 fuori dal bordo interno -2.978 m, dal punto 1.00 m, spostato 0.00 m", "ogg_pallone_spiaggia_78 fuori dal bordo interno -0.999 m, dal punto 3.42 m, spostato 0.00 m", "ogg_tubi_galleggianti_77 fuori dal bordo interno -1.030 m, dal punto 2.34 m, spostato 0.00 m"]
+BG: bordo0 prima coppie vicine (distanza minima fra le impronte in pianta, vertici): []
+BG: 104.56 s fase ARRIVA, giocatore (-8.58, 0.05, 2.0), luce (-10.2, -0.82, 0.66), stato giro GIRO
+BG: bordo0: arriva al punto 0
+BG: 106.56 s fase SPEGNE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 107.56 s fase SILENZIO, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 108.08 s fase ESCE, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 109.70 s fase SU, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: bordo0 con lei fuori giocattoli 3: ["ogg_ciambella_gonfiabile_76 fuori dal bordo interno -1.332 m, dal punto 3.61 m, spostato 2.61 m", "ogg_pallone_spiaggia_78 fuori dal bordo interno -0.901 m, dal punto 3.71 m, spostato 0.29 m", "ogg_tubi_galleggianti_77 fuori dal bordo interno -0.373 m, dal punto 3.81 m, spostato 1.66 m"]
+BG: bordo0 con lei fuori coppie vicine (distanza minima fra le impronte in pianta, vertici): []
+BG: 111.31 s fase PRESA, giocatore (-8.58, 0.05, 2.0), luce (-11.4, -0.82, 2.0), stato giro GIRO
+BG: 111.31 s PRESA
+BG: bordo0: morendo true
+BG: bordo0: ripartito, checkpoint Tecnici/Logica/Checkpoint/CheckpointSerranda, giocatore (-15.0, 0.0, 19.3), stato giro ATTESA, fase LONTANA
+BG: bordo0 dopo la ripartenza giocattoli confrontati 3, il più lontano dal suo posto  a 0.0000 m
+BG: bordo0: 3 s dopo la ripartenza: stato ATTESA, in giro false
+BG: finito

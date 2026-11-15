@@ -65,7 +65,9 @@ func _run() -> void:
 	# per la memoria: GI, sonde dei riflessi, particelle e volumi di nebbia non servono a vedere dove stanno gli
 	# oggetti (la sala intera sul renderer software se no supera i 15 GB della macchina)
 	var tolti := 0
-	for classe in ["VoxelGI", "LightmapGI", "ReflectionProbe", "GPUParticles3D", "CPUParticles3D", "FogVolume"]:
+	# COLLAUDO_GI=1: GI, riflessi e nebbia restano (per vedere i materiali nella luce del gioco); via solo le particelle
+	var classi := ["GPUParticles3D", "CPUParticles3D"] if OS.get_environment("COLLAUDO_GI") == "1" else ["VoxelGI", "LightmapGI", "ReflectionProbe", "GPUParticles3D", "CPUParticles3D", "FogVolume"]
+	for classe in classi:
 		for n in livello.find_children("*", classe, true, false):
 			if _nel_giocatore(n):
 				continue   # le particelle dello zaino: il giocatore le usa nel suo _ready
@@ -75,12 +77,13 @@ func _run() -> void:
 	print("COLLAUDO: tolti %d nodi di GI, riflessi, particelle e nebbia" % tolti)
 	if OS.get_environment("COLLAUDO_SEMPLICE") == "1":
 		_materiali_semplici(livello)
-	# le stanze della Risalita (fiume e infermeria) subito, come nei controlli: senza, si caricano solo col giocatore
-	# vicino, e nel giro il giocatore è fermo
-	if OS.get_environment("COLLAUDO_RISALITA") == "1":
-		Engine.set_meta(&"risalita_subito", true)
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
+	# COLLAUDO_LUCI40=1: le luci bianche al 40% come nel gioco (VarianteLuci)
+	if OS.get_environment("COLLAUDO_LUCI40") == "1":
+		var lb := get_node_or_null(^"/root/LuciBianche")
+		if lb:
+			lb.call(&"imposta", 0.4, false)
 	for i in 30:
 		await get_tree().process_frame
 	get_tree().paused = false
@@ -94,6 +97,17 @@ func _run() -> void:
 			break
 		await get_tree().process_frame
 	STATI.applica(livello, stato)
+	# COLLAUDO_PORTA_POMPE="x,z,gradi": negli interni da soli, la porta della sala pompe aperta come la apre la sala
+	# (PortaManiglione: giro attorno al cardine), in coordinate degli interni
+	if OS.get_environment("COLLAUDO_PORTA_POMPE") != "":
+		var v := OS.get_environment("COLLAUDO_PORTA_POMPE").split(",")
+		var porta := livello.find_child("porta_sala_pompe", true, false) as Node3D
+		if porta:
+			var h := Vector3(float(v[0]), 0, float(v[1]))
+			var r := Transform3D(Basis(Vector3.UP, deg_to_rad(float(v[2]))), Vector3.ZERO)
+			porta.global_transform = Transform3D(Basis(), h) * r * Transform3D(Basis(), -h) * porta.global_transform
+			var mi := porta as MeshInstance3D
+			print("COLLAUDO: porta della sala pompe ", (porta.global_transform * mi.mesh.get_aabb()) if mi and mi.mesh else porta.global_position)
 	for t in livello.find_children("*", "Tempesta", true, false):
 		t.set(&"automatica", false)
 	for i in 240:
@@ -114,10 +128,7 @@ func _run() -> void:
 	cam.far = 150.0
 	livello.add_child(cam)
 	cam.make_current()
-	# la luce del collaudo, attaccata alla camera; con COLLAUDO_SENZA_LUCE=1 no: gli scatti per l'utente con la luce del
-	# gioco (luci bianche al 40%, senza torcia: decisioni dell'utente del 23 ottobre)
 	var luce := OmniLight3D.new()
-	luce.visible = OS.get_environment("COLLAUDO_SENZA_LUCE") != "1"
 	luce.omni_range = 18.0
 	luce.light_energy = 1.6
 	luce.omni_attenuation = 0.8

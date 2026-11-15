@@ -1,0 +1,110 @@
+BF: ===== est
+BF: est parte da (-7.3, 0.0, 8.0) (16.78 m dalla fossa), stato giro GIRO
+BF: est 7.87 s LeiSbuca ATTESA a 16.77 m, fossa in vista false, medusa visibile false, luce fossa false, avviso visto false
+BF: est 8.48 s stato: giocatore (-7.29, 0.0, 6.25) a 15.15 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-3.1890983581543, "lei_canto_prima_lontano_04.ogg"]
+BF: est 9.31 s giro finito col giocatore a 12.93 m dalla fossa (lontano dal bordo false)
+BF: est 10.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-10.8520757169484, "lei_canto_prima_vicino_04.ogg"]
+BF: est 12.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 12.82 s il pelo della fossa salta di 0.041 m in un fotogramma (LeiSbuca GUARDA, giocatore a 12.14 m)
+BF: est 12.82 s LeiSbuca GUARDA a 12.14 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto true
+BF: est 14.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 16.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 18.46 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 20.46 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 22.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 24.46 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 26.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 28.46 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 30.46 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 32.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 34.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 36.46 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 38.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 40.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 42.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 44.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est 46.47 s stato: giocatore (-7.09, 0.01, 2.82) a 12.14 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: est fine in (-7.09, 0.01, 2.82): giro finito a 12.93 m, LeiSbuca GUARDA, morendo false (causa ), in vista 0.00 s; luce/canto: ["LONTANA/lontana@7.87(16.8m)", "LONTANA/arriva@8.27(15.8m)", "ARRIVA/arriva@9.31(12.9m)", "SPEGNE/spegne@11.30(12.1m)", "SILENZIO/silenzio@12.30(12.1m)", "LONTANA/ferma@12.82(12.1m)"]
+BF: ===== area_bimbi
+BF: area_bimbi parte da (-9.0, 0.0, -17.15) (10.20 m dalla fossa), stato giro FINITO
+BF: area_bimbi 53.71 s giro finito col giocatore a 10.21 m dalla fossa (lontano dal bordo false)
+BF: area_bimbi 53.71 s LeiSbuca ATTESA a 10.21 m, fossa in vista false, medusa visibile false, luce fossa false, avviso visto false
+BF: area_bimbi 55.59 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-8.8397205213533, "lei_canto_prima_vicino_09.ogg"]
+BF: area_bimbi 57.16 s il pelo della fossa salta di 0.048 m in un fotogramma (LeiSbuca GUARDA, giocatore a 9.68 m)
+BF: area_bimbi 57.16 s LeiSbuca GUARDA a 9.68 m, fossa in vista false, medusa visibile true, luce fossa false, avviso visto true
+BF: area_bimbi 57.59 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 59.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 61.59 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 63.59 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 65.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 67.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 69.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 71.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 73.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 75.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 77.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 79.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 81.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 83.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 85.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 87.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 89.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 91.61 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi 93.60 s stato: giocatore (-10.65, 0.0, -17.15) a 9.68 m, LeiSbuca GUARDA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: area_bimbi fine in (-10.65, 0.0, -17.15): giro finito a 10.21 m, LeiSbuca GUARDA, morendo false (causa ), in vista 0.00 s; luce/canto: ["ARRIVA/arriva@53.71(10.2m)", "SPEGNE/spegne@55.63(9.7m)", "SILENZIO/silenzio@56.63(9.7m)", "LONTANA/ferma@57.16(9.7m)"]
+BF: ===== serranda_dritto
+BF: serranda_dritto parte da (-15.0, 0.0, 16.8) (24.65 m dalla fossa), stato giro GIRO
+BF: serranda_dritto 99.62 s LeiSbuca ATTESA a 24.64 m, fossa in vista true, medusa visibile false, luce fossa false, avviso visto false
+BF: serranda_dritto 100.82 s stato: giocatore (-15.02, 0.0, 13.43) a 21.30 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_04.ogg"]
+BF: serranda_dritto 102.82 s stato: giocatore (-14.39, -0.15, 6.68) a 14.51 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-5.36079740524292, "lei_canto_prima_lontano_04.ogg"]
+BF: serranda_dritto 104.81 s stato: giocatore (-13.7, -1.1, 0.04) a 7.84 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-4.78309154510498, "lei_canto_prima_vicino_04.ogg"]
+BF: serranda_dritto 106.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: serranda_dritto 108.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: serranda_dritto 110.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: serranda_dritto 112.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_06.ogg"]
+BF: serranda_dritto 114.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_06.ogg"]
+BF: serranda_dritto 116.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-7.10229539871216, "lei_canto_prima_lontano_06.ogg"]
+BF: serranda_dritto 118.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-4.04749727249146, "lei_canto_prima_lontano_06.ogg"]
+BF: serranda_dritto 120.82 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-4.30132102966309, "lei_canto_prima_lontano_06.ogg"]
+BF: serranda_dritto 122.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-6.88318678649503, "lei_canto_prima_vicino_06.ogg"]
+BF: serranda_dritto 124.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-1.40710413455963, "lei_canto_prima_vicino_08.ogg"]
+BF: serranda_dritto 126.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-1.36886847019196, "lei_canto_prima_vicino_08.ogg"]
+BF: serranda_dritto 128.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-6.83953252583473, "lei_canto_prima_vicino_08.ogg"]
+BF: serranda_dritto 130.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-3.96024346351624, "lei_canto_prima_lontano_08.ogg"]
+BF: serranda_dritto 132.82 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_08.ogg"]
+BF: serranda_dritto 134.82 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_08.ogg"]
+BF: serranda_dritto 136.82 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [0.0, "lei_canto_prima_lontano_08.ogg"]
+BF: serranda_dritto 138.81 s stato: giocatore (-13.36, -1.1, -2.65) a 5.14 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-3.9913866519928, "lei_canto_prima_lontano_06.ogg"]
+BF: serranda_dritto fine in (-13.36, -1.1, -2.65): giro finito a -1.00 m, LeiSbuca ATTESA, morendo false (causa ), in vista 0.00 s; luce/canto: ["LONTANA/lontana@99.62(24.6m)", "LONTANA/arriva@102.20(16.6m)", "ARRIVA/arriva@103.82(11.1m)", "SPEGNE/spegne@105.81(5.1m)", "SILENZIO/silenzio@106.81(5.1m)", "ESCE/fuori@107.33(5.1m)", "SU/fuori@108.94(5.1m)", "SCENDE/va_via@111.16(5.1m)", "CALMA/lontana@112.16(5.1m)", "LONTANA/lontana@116.18(5.1m)", "LONTANA/arriva@116.20(5.1m)", "LONTANA/lontana@131.73(5.1m)", "LONTANA/arriva@137.90(5.1m)"]
+BF: ===== spiaggia
+BF: spiaggia parte da (2.0, -0.05, -12.6) (15.78 m dalla fossa), stato giro FINITO
+BF: spiaggia 145.43 s giro finito col giocatore a 15.79 m dalla fossa (lontano dal bordo true)
+BF: spiaggia 145.43 s LeiSbuca ATTESA a 15.79 m, fossa in vista false, medusa visibile false, luce fossa false, avviso visto false
+BF: spiaggia 145.97 s stato: giocatore (0.61, -0.11, -12.2) a 14.34 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-2.55576634407043, "lei_canto_prima_lontano_03.ogg"]
+BF: spiaggia 147.97 s stato: giocatore (-5.85, -0.46, -10.1) a 7.54 m, LeiSbuca ATTESA, in vista adesso false (tot 0.00 s), luce fossa false, canto [-24.1395617037268, "lei_canto_prima_vicino_03.ogg"]
+BF: spiaggia 148.87 s il pelo della fossa salta di 0.048 m in un fotogramma (LeiSbuca SBUCA, giocatore a 6.54 m)
+BF: spiaggia 148.87 s LeiSbuca SBUCA a 6.54 m, fossa in vista true, medusa visibile true, luce fossa false, avviso visto true
+BF: DIFETTO spiaggia: comparsa in vista a 6.54 m
+BF: spiaggia 149.97 s stato: giocatore (-6.65, -0.72, -8.55) a 6.42 m, LeiSbuca SBUCA, in vista adesso true (tot 0.00 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 150.69 s LeiSbuca GUARDA a 6.40 m, fossa in vista true, medusa visibile true, luce fossa false, avviso visto true
+BF: spiaggia 151.97 s stato: giocatore (-6.65, -0.81, -8.01) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.28 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 153.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 155.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 157.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 159.96 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 161.96 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 163.96 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 165.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 167.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 169.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 171.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 173.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 175.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 177.96 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 179.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 181.96 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia 183.97 s stato: giocatore (-6.65, -0.82, -7.99) a 6.38 m, LeiSbuca GUARDA, in vista adesso true (tot 1.62 s), luce fossa false, canto [-80.0, ""]
+BF: spiaggia pelo della fossa durante la salita: da 0.370 a 0.381
+BF: spiaggia fine in (-6.65, -0.82, -7.99): giro finito a 15.79 m, LeiSbuca GUARDA, morendo false (causa ), in vista 1.62 s; luce/canto: ["ARRIVA/arriva@145.43(15.8m)", "SPEGNE/spegne@147.35(9.6m)", "SILENZIO/silenzio@148.35(6.7m)", "LONTANA/ferma@148.87(6.5m)"]
+BF: difetti 1
+BF: finito

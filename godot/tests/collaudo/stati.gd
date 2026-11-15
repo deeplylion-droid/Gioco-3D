@@ -8,7 +8,6 @@ extends RefCounted
 ##    pieni e lampadine del portone accese), tappa 8 finita;
 ##  - "risolto": come "ritorno", con l'enigma degli acquari risolto e il portone della torre aperto;
 ##  - "lei_fossa": lei affacciata alla fossa dell'area bimbi, come lo stato omonimo del controllo della CI.
-## Il tunnel sottomarino (SalaSottomarino) in ogni stato si costruisce tutto, coi gommoni fermi.
 ## Le chiavi di save_state() dei nodi "persist" che vogliono dire "fatto" o "aperto" diventano vere; i
 ## Pickup restano dove sono (sono oggetti da controllare anche loro).
 
@@ -17,14 +16,6 @@ const FALSE := ["chiusa", "bloccata", "chiuso_dietro"]
 
 
 static func applica(livello: Node, stato: String) -> void:
-	# il tunnel sottomarino si costruisce a pezzi quando si arriva: qui tutto subito, coi gommoni fermi (come nel
-	# controllo della CI, stato sottomarino_t0)
-	var tunnel := livello as SalaSottomarino
-	if tunnel:
-		if not tunnel.costruita:
-			tunnel.costruisci()
-		tunnel.set_physics_process(false)
-		tunnel.ferma_gommoni(0.0)
 	mostra_nascosti(livello)
 	if stato == "inizio":
 		return
@@ -36,6 +27,10 @@ static func applica(livello: Node, stato: String) -> void:
 		return
 	if stato in ["ritorno", "risolto"]:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	# l'armadietto che sbatte, come quando ci passa il giocatore (prima che "armadietto" diventi vero)
+	for n in livello.find_children("*", "Node", true, false) + [livello]:
+		if n.has_method(&"_on_trigger_armadietto") and GameState.player:
+			n.call(&"_on_trigger_armadietto", GameState.player)
 	for n in livello.get_tree().get_nodes_in_group(&"persist"):
 		if not livello.is_ancestor_of(n) or n is Pickup or n is PackPickup or n is WaterTank:
 			continue
@@ -81,5 +76,3 @@ static func mostra_nascosti(livello: Node) -> void:
 			n.set_process(false)
 			(n.get(&"fiume") as Node3D).visible = true
 			(n.get(&"infermeria") as Node3D).visible = true
-			if n.get(&"pozze") is Node3D:
-				(n.get(&"pozze") as Node3D).visible = true

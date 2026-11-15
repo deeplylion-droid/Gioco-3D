@@ -1,6 +1,5 @@
 extends Node
-## Collaudo dei ritocchi di ambienti-2 per la 0.3.21 (copiato da lavoro/collaudo-ritocchi; grafica-2: misura tre
-## configurazioni, le ombre delle tre lampade verdi, solo quella della vasca 3 come nel gioco, nessuna): le tre lampade verdi delle paratie giuste ora fanno ombra (OmniLight
+## Collaudo dei ritocchi di ambienti-2 per la 0.3.21: le tre lampade verdi delle paratie giuste ora fanno ombra (OmniLight
 ## con meta lampada_paratia_verde). Col renderer vero, la torre con l'inseguimento come nel gioco (luci della sala spente,
 ## paratie aperte): 1) quante luci con ombra ci sono e quante se ne vedono insieme (sfera della luce dentro il campo
 ## visivo della camera) in una griglia di pose sopra le vasche e i camminamenti, 8 direzioni ciascuna, e il punto
@@ -167,16 +166,14 @@ func _run() -> void:
 		cam.global_position = m[1]
 		cam.look_at(m[2], Vector3.UP)
 		var righe := []
-		# (grafica-2, 0.3.21: tre configurazioni; "solo C3" è quella del gioco, l'ombra solo sulla verde della vasca 3)
 		for giro in 2:
-			for conf in ["tre", "solo C3", "nessuna"]:
+			for acc in [true, false]:
 				for l in verdi:
-					var c3 := (l as Node3D).global_position.distance_to(Vector3(66.95, -24.35, -3.6)) < 0.5
-					(l as OmniLight3D).shadow_enabled = conf == "tre" or (conf == "solo C3" and c3)
+					(l as OmniLight3D).shadow_enabled = acc
 				var t := await _misura(60)
-				righe.append("%s %.0f ms (max %.0f, disegno %.0f)" % ["ombre " + conf, t[0], t[1], t[2]])
+				righe.append("%s %.0f ms (max %.0f, disegno %.0f)" % ["con ombre" if acc else "senza", t[0], t[1], t[2]])
 		for l in verdi:
-			(l as OmniLight3D).shadow_enabled = (l as Node3D).global_position.distance_to(Vector3(66.95, -24.35, -3.6)) < 0.5
+			(l as OmniLight3D).shadow_enabled = true
 		print("OMBRE: %s: %d luci con ombra nel campo visivo; %s" % [m[0], _ombre_viste().size(), "; ".join(righe)])
 	print("OMBRE: finito")
 	get_tree().quit()
