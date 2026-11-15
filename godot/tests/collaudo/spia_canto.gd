@@ -71,12 +71,13 @@ func _process(delta: float) -> void:
 	if cp:
 		for k in [&"lon", &"vic"]:
 			var x = cp.get(k)
-			if x is Node and is_instance_valid(x) and not lettori.has(x):
+			# (solo se suona ancora la frase partita da lì: i lettori della riserva si riprendono per altri suoni)
+			if x is Node and is_instance_valid(x) and not lettori.has(x) and float(x.get_meta(&"partito", -2.0)) == float(cp.get(&"partito")):
 				lettori.append(x)
 	for at in a.get(&"_attivi"):
 		if at is Object and &"canto" in at:
 			var x = at.get(&"canto")
-			if x is Node and is_instance_valid(x) and not lettori.has(x):
+			if x is Node and is_instance_valid(x) and not lettori.has(x) and float(x.get_meta(&"partito", -2.0)) == float(at.get(&"canto_partito")):
 				x.set_meta(&"_spia_tunnel", true)
 				lettori.append(x)
 	var visti := {}

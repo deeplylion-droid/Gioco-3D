@@ -74,6 +74,17 @@ func _physics_process(_d: float) -> void:
 			get_viewport().disable_3d = (_f % OGNI) < OGNI - 3 and not _forza_3d
 		if _f % OGNI == 0:
 			_scatto("")
+	if sott.lei_stato in [SalaSottomarino.Lei.CARICA, SalaSottomarino.Lei.SCATTO, SalaSottomarino.Lei.RESPINTA, SalaSottomarino.Lei.PRESA] or (_carica_t >= 0.0 and _t() - _carica_t < 6.0):
+		var st2: Object = null
+		for x in get_node(^"/root/Audio").get(&"_attivi"):
+			if x is Object and x.get(&"n") == sott.lei:
+				st2 = x
+		var ap2: AnimationPlayer = sott.lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+		var cn2: Node = st2.get(&"canto") if st2 else null
+		_log.store_line("FR t %.3f lei %s anim %s zitto %s canto %s playing %s vol %s tono %s pos %s" % [_t(), SalaSottomarino.Lei.keys()[sott.lei_stato],
+				ap2.current_animation if ap2 and ap2.is_playing() else "-", sott.lei.has_meta(&"canto_zitto"), cn2.get_instance_id() if cn2 and is_instance_valid(cn2) else 0,
+				cn2.get(&"playing") if cn2 and is_instance_valid(cn2) else null, ("%.1f" % float(cn2.get(&"volume_db"))) if cn2 and is_instance_valid(cn2) else "-",
+				("%.2f" % float(cn2.get(&"pitch_scale"))) if cn2 and is_instance_valid(cn2) else "-", ("%.2f" % float(cn2.call(&"get_playback_position"))) if cn2 and is_instance_valid(cn2) else "-"])
 	if _f % 60 == 0:
 		var st: Object = null
 		for x in get_node(^"/root/Audio").get(&"_attivi"):

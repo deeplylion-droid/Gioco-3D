@@ -539,7 +539,7 @@ func _run() -> void:
 				await _sul_bordo(0, "salvo")
 			"getto":
 				await _sul_bordo(0, "getto")
-			"getto_su", "getto_su_0.2", "getto_su_0.4", "getto_esce_0.6", "getto_esce_1.0", "getto_esce_1.4", "getto_esce_1.8":
+			"getto_su", "getto_su_0.2", "getto_su_0.3", "getto_su_0.4", "getto_su_0.5", "getto_su_0.8", "getto_esce_0.6", "getto_esce_1.0", "getto_esce_1.4", "getto_esce_1.8":
 				await _sul_bordo(0, s)
 			"dopo_fossa":
 				await _dopo_fossa()
