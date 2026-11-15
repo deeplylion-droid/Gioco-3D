@@ -97,6 +97,9 @@ func _prendi_nodi() -> void:
 	p = GameState.player
 	ris = level.get_node_or_null(^"Risalita")
 	e = level.find_child("EnigmaPozze", true, false) as EnigmaPozze if level else null
+	# (qui si prova l'enigma: lei sotto le pozze, che ha i suoi test, non viene)
+	if e and e.lei and e.lei.acqua:
+		e.lei.acqua.abilitata = false
 
 
 ## Dall'ingresso del fiume: le scorciatoie del fiume e dell'infermeria, poi a piedi dalla porta nord nella stanza.
