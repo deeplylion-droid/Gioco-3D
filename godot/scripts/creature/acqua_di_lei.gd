@@ -90,6 +90,10 @@ const LUCE_POZZA_PORTATA := 1.6
 ## vero servono 0,9 s dall'inizio del getto per respingerla; chi la vede fuori e reagisce in mezzo secondo deve farcela):
 ## dall'acqua che si apre alla presa 3,2 s.
 @export var tempo_presa := 1.6
+## Nel modo MANO, la scena di morte: la camera trascinata finisce col viso sopra il liquido, che guarda giù nella pozza
+## (vero, la proposta del coordinatore) o dentro la pozza che guarda indietro il braccio che esce (falso). Vedi
+## [method camera_morte_mano].
+@export var camera_morte_avanti := true
 ## Nel modo MANO: da su, quanto aspetta la mano prima di prenderti alla caviglia (s).
 @export var tempo_presa_mano := 0.35
 ## Secondi di getto in faccia che la ricacciano sotto.
@@ -799,25 +803,32 @@ func _prendi() -> void:
 	GameState.kill_player(&"medusa")
 
 
-## Nel modo MANO, la strada della camera nella scena di morte ([caduta, arrivo, bersaglio], nel mondo): prima cade verso il
-## grigliato, accanto alla caviglia (di lato al braccio, 35 cm da terra), poi è trascinata fino al bordo della pozza e si
-## ferma 15 cm sopra il pelo (e sopra il grigliato), 25 cm dentro la pozza e di lato al braccio; guarda il bordo al pelo,
-## dove il braccio rientra nell'acqua. Il braccio resta di lato (piano B del coordinatore per la 0.4.0).
+## Nel modo MANO, la strada della camera nella scena di morte ([caduta, arrivo, bersaglio], nel mondo; piano B del
+## coordinatore per la 0.4.0, il viso no). Prima cade verso il grigliato accanto alla caviglia (di lato al braccio), poi è
+## trascinata a strattoni fino al bordo, alta sopra il braccio e i tentacoli stesi. Con [member camera_morte_avanti] (la
+## proposta del coordinatore) finisce col viso sopra il liquido, 22 cm sopra il pelo appena dentro il bordo, inclinata in
+## giù verso il liquido opaco davanti e sotto: lo schermo quasi tutto del colore della pozza, il chiarore rosa in alto, il
+## braccio sotto e dietro. Senza, finisce dentro la pozza 30 cm sopra il pelo e guarda indietro il bordo, dove il braccio
+## esce dal liquido verso la caviglia. (Per gli scatti: la variabile d'ambiente CAMERA_MORTE = "avanti" o "bordo".)
 func camera_morte_mano() -> Array:
 	var q := _punto
 	var pelo_q := pelo_a(q)
 	var caduta := q.global_transform * Vector3(0.35, 0.0, 0.8)
 	caduta.y = q.global_position.y + 0.6
-	var pos := q.global_transform * Vector3(CAMERA_MORTE_LATO, 0.0, -CAMERA_MORTE_DENTRO)
-	pos.y = maxf(pelo_q, q.global_position.y) + CAMERA_MORTE_SOPRA
+	var avanti := camera_morte_avanti
+	if OS.has_environment("CAMERA_MORTE"):
+		avanti = OS.get_environment("CAMERA_MORTE") == "avanti"
+	if avanti:
+		var pos_a := q.global_transform * Vector3(0.12, 0.0, -0.12)
+		pos_a.y = maxf(pelo_q, q.global_position.y) + 0.22
+		var guarda_a := q.global_transform * Vector3(0.0, 0.0, -0.75)
+		guarda_a.y = pelo_q - 0.25
+		return [caduta, pos_a, guarda_a]
+	var pos := q.global_transform * Vector3(0.25, 0.0, -0.5)
+	pos.y = maxf(pelo_q, q.global_position.y) + 0.3
 	var guarda := q.global_transform * Vector3(0.0, 0.0, 0.15)
 	guarda.y = pelo_q + 0.1
 	return [caduta, pos, guarda]
-
-
-const CAMERA_MORTE_SOPRA := 0.3
-const CAMERA_MORTE_LATO := 0.25
-const CAMERA_MORTE_DENTRO := 0.5
 
 
 ## Torna sotto: respinta (il getto in faccia) o da sola (dopo averti cercato: sbatte nell'acqua).

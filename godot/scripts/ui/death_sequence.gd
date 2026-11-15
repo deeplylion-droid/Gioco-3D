@@ -149,7 +149,9 @@ func _camera_medusa() -> void:
 		var strappo := Vector3(0.0, 0.03 * sin(elapsed * 31.0), 0.0) * k2 * (1.0 - k2) * 4.0
 		var tremito_m := Vector3(sin(elapsed * 53.0), sin(elapsed * 47.0 + 1.3), 0.0) * 0.008 * k2
 		var giu := Vector3(-_camera_da.basis.z.x, -1.6, -_camera_da.basis.z.z).normalized()   # cadendo guarda a terra
-		var dir := (-_camera_da.basis.z).slerp(giu, k1 * (1.0 - k2)).slerp((bersaglio - pos_m).normalized(), k2).normalized()
+		# (si gira presto verso la pozza: a 0,7 s guarda già il liquido, la mano e il braccio sono di lato)
+		var kd := smoothstep(0.25, 0.6, elapsed)
+		var dir := (-_camera_da.basis.z).slerp(giu, k1 * (1.0 - kd)).slerp((bersaglio - pos_m).normalized(), kd).normalized()
 		if absf(dir.y) > 0.99:
 			dir = (dir + Vector3(0.0, 0.0, 0.05)).normalized()
 		p.camera.global_transform = Transform3D(Basis.looking_at(dir, Vector3.UP), pos_m + strappo + tremito_m)
