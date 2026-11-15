@@ -53,6 +53,7 @@ func _run() -> void:
 	if manichino:
 		manichino.process_mode = Node.PROCESS_MODE_DISABLED
 	await _disegna()
+	await _guarda_su()
 	await _porge()
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	Game.esci(1 if _ko > 0 else 0)
@@ -69,7 +70,7 @@ func _modelli() -> void:
 			if ap == null or not ap.has_animation(a):
 				mancano.append(a)
 		check(mancano.is_empty(), "%s ha disegna, alza_testa, si_alza, porge e porge_tiene %s" % [nome, mancano])
-		check(not m.find_children("matita*", "", true, false).is_empty(), "%s ha la matita nella mano destra" % nome)
+		check(not m.find_children("pastello*", "", true, false).is_empty(), "%s ha il pastello nella mano destra" % nome)
 		var sk := m.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
 		check(sk.find_bone("foglio") >= 0, "%s ha l'osso del foglio" % nome)
 	b.free()
@@ -104,10 +105,10 @@ func _disegna() -> void:
 	p.look_at_point(Vector3(6.0, 1.4, 5.2))
 	await _frames(int(60 * 3.0))
 	var ap := b.get_node("Calmo").find_child("AnimationPlayer", true, false) as AnimationPlayer
-	var matite := b.get_node("Calmo").find_children("matita*", "", true, false)
+	var matite := b.get_node("Calmo").find_children("pastello*", "", true, false)
 	check(b.modalita == Bambino.Modalita.DISEGNA and ap.current_animation == &"disegna" and not ev.has(&"alza_la_testa"),
 			"se non lo guardi resta in ginocchio a disegnare (%s)" % ap.current_animation)
-	check(not matite.is_empty() and (matite[0] as Node3D).is_visible_in_tree(), "con la matita in mano")
+	check(not matite.is_empty() and (matite[0] as Node3D).is_visible_in_tree(), "col pastello in mano")
 	# lo guardi
 	var t := 0.0
 	var t_alza := -1.0
@@ -142,6 +143,53 @@ func _disegna() -> void:
 			corre = true
 			break
 	check(corre, "si volta e scappa di corsa")
+	b.queue_free()
+	await _frames(2)
+
+
+func _guarda_su() -> void:
+	print("2b. Agli acquari: in piedi guarda in su il disegno, si gira verso di te e scappa lasciando il pastello")
+	var b := await _bambino(Vector3(0.5, 0.0, 1.0), PI)    # (di spalle al giocatore: guarda il vetro)
+	b.guarda_il_disegno = true
+	b.distanza_alza_testa = 6.0
+	b.distanza_fuga_libera = 6.0
+	var ev := {}
+	var lasciato := [Vector3.INF]
+	for s in [&"alza_la_testa", &"scappa"]:
+		b.connect(s, func() -> void: ev[s] = ev.get(s, 0) + 1)
+	b.lascia_il_pastello.connect(func(dove: Vector3) -> void: lasciato[0] = dove)
+	p.teleport(Vector3(0.5, 0.0, 9.0), 0.0, 0.0)
+	p.look_at_point(Vector3(6.0, 1.4, 9.0))
+	b.disegna()
+	await _frames(60 * 2)
+	var ap := b.get_node("Calmo").find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var sk := b.get_node("Calmo").find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+	var testa := sk.find_bone("Head")
+	var dev := sk.get_bone_global_pose(testa).basis.orthonormalized() * sk.get_bone_global_rest(testa).basis.orthonormalized().inverse()
+	var avanti := (sk.global_basis * dev * (sk.global_basis.inverse() * b.global_basis.z)).normalized()
+	check(ap.current_animation == &"guarda_su" and avanti.y > 0.35, "in piedi, la testa in su verso il disegno (%s, in su %.2f)" % [ap.current_animation, avanti.y])
+	var pastelli := b.get_node("Calmo").find_children("pastello*", "", true, false)
+	check(not pastelli.is_empty() and (pastelli[0] as Node3D).is_visible_in_tree(), "col pastello in mano")
+	# il giocatore arriva a 5 m
+	p.teleport(Vector3(0.5, 0.0, 5.5), 0.0, 0.0)
+	var t := 0.0
+	var t_alza := -1.0
+	var t_scappa := -1.0
+	for i in 60 * 4:
+		p.look_at_point(b.punto_testa())
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+		if ev.has(&"alza_la_testa") and t_alza < 0.0:
+			t_alza = t
+		if ev.has(&"scappa") and t_scappa < 0.0:
+			t_scappa = t
+			break
+	check(t_alza >= 0.0 and t_alza < 0.2, "a meno di 6 m gira la testa verso di te")
+	check(t_scappa >= 0.0 and absf(t_scappa - t_alza - 1.0) < 0.1, "dopo un secondo scappa (%.2f s)" % (t_scappa - t_alza))
+	await _frames(2)
+	check(lasciato[0] != Vector3.INF and absf(lasciato[0].y - b.global_position.y) < 0.01 \
+			and Vector2(lasciato[0].x - 0.5, lasciato[0].z - 1.0).length() < 0.6 and not (pastelli[0] as Node3D).is_visible_in_tree(),
+			"e lascia il pastello per terra dove stava (%s)" % lasciato[0])
 	b.queue_free()
 	await _frames(2)
 
