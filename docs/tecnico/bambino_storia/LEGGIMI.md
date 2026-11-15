@@ -14,6 +14,7 @@ Le fa `tools/blender/bambini_animazioni.py <nome> <uscita> --vivo --storia --fog
 | `si_alza` | 0,6 s | si tira su; finisce nella posa da cui parte `parte` (poi la corsa) |
 | `porge` | 1,2 s | alza le braccia e tiene il foglio davanti al petto |
 | `porge_tiene` | 4 s, ciclo | lo tiene lì: respiro, un piccolo tremito |
+| `guarda_su` | 6 s, ciclo | in piedi davanti al vetro, la testa in su verso il disegno, il pastello in mano a mezz'aria (agli acquari) |
 
 ## Nel gioco (Bambino, `godot/scripts/creature/bambino.gd`)
 
@@ -32,6 +33,17 @@ La scena è la solita `scenes/creature/bambino_cubo.tscn`. Conviene mettere `fer
 Il foglio su cui disegna lo mette chi fa la scena. Il suo centro va a 0,27 m davanti all'origine del bambino (+Z), al
 centro, all'altezza scritta in `bambino_cubo_calmo_storia.json` (`foglio_disegna`). Adesso è 15 cm: un appoggio basso. La
 misura vera degli acquari la dà enigmi; se cambia, si rifà il GLB con `--foglio-altezza`.
+
+### Agli acquari: guarda il disegno
+
+`guarda_il_disegno = true` e `modalita = DISEGNA` (scelta A del coordinatore: il disegno sul vetro del cilindro giallo è a
+2,45-3,35 m, il bambino non ci arriva). È in piedi e guarda in su il disegno col pastello in mano. Quando lo vedi o arrivi a
+6 m gira la testa verso di te, aspetta `tempo_testa_alzata` (1 s) e scappa. Scappando il pastello gli cade: sparisce dalla
+mano e parte `lascia_il_pastello(dove)`, col punto del pavimento sotto la mano, dove chi fa la scena mette il pastello
+appoggiato. Va messo a circa 1,2 m dal vetro, girato verso il vetro.
+
+Il pastello in mano è quello di ambienti-1 (`godot/assets/storia_disegni/pastello.glb`, opzione `--pastello`), chiamato
+`pastello` nel GLB. Prende il posto della matita anche in ginocchio.
 
 ### Porge
 

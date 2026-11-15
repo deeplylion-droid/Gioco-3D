@@ -46,7 +46,10 @@ ap.add_argument('--vivo', action='store_true',
                      "\"A ma animalo meglio\")")
 ap.add_argument('--storia', action='store_true',
                 help="con --vivo: anche le azioni della build 0.5.0 «la storia» (il bambino col cubo): disegna, alza_testa, "
-                     "si_alza, porge, porge_tiene, la matita nella mano destra e l'osso 'foglio' dove sta il foglio che porge")
+                     "si_alza, porge, porge_tiene, guarda_su, il pastello nella mano destra e l'osso 'foglio' dove sta il foglio che porge")
+ap.add_argument('--pastello', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'godot', 'assets',
+                                                   'storia_disegni', 'pastello.glb'),
+                help="con --storia: il GLB del pastello a cera (di ambienti-1) da mettere nella mano destra")
 ap.add_argument('--foglio-altezza', type=float, default=0.0,
                 help="con --storia: a che altezza da terra sta il foglio su cui disegna (m)")
 ap.add_argument('--controlla', action='store_true', help="con --storia: misura le pose nuove sulla pelle vera, senza esportare")

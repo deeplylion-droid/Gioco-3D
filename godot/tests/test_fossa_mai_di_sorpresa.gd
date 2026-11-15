@@ -4,7 +4,7 @@ extends Node
 ## un'occhiata indietro ogni tanto, poi resta vicino alla fossa guardandola; e riparte dai checkpoint 16, 17 e 18. In
 ## ogni fotogramma:
 ## - lei comincia a sbucare (la salita in vista) solo dopo l'avviso intero (la luce sotto la fossa, il canto, il
-##   silenzio: 3,5 s) e col giocatore a più di 8 m;
+##   silenzio: 3,5 s) e col giocatore a più di 3,4 m da dove sarà il suo occhio (la presa più un metro);
 ## - compare già affacciata solo con la fossa fuori dall'inquadratura (o a schermo nero) e col giocatore a più di 8 m;
 ## - mentre sale non prende; prende solo dopo che il giocatore l'ha avuta in vista affacciata e ferma per 3 s (1,6 s se
 ##   l'ha vista sbucare: in tutto mai prima di avviso + salita + 1,6 s).
@@ -70,6 +70,8 @@ func _ricarica(nome := "CheckpointSerranda") -> void:
 			break
 	await _fisica(20)
 	_prendi_riferimenti()
+	# (il fischio dal buio lo prova test_fischio_sala: qui solo la fossa)
+	buio.fischio = false
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 
 
@@ -104,12 +106,40 @@ func _run() -> void:
 				continue
 			await _ricarica()
 			await _percorso("%s, %s" % [c[0], "camminando" if v == CAMMINA else "correndo"], c[1], v, c[0].begins_with("dal bordo"))
-	for nome in ["CheckpointAreaBimbi", "CheckpointSpiaggiaBuio"]:
+	await _ricarica()
+	await _bordo()
+	for nome in ([] if OS.has_environment("SOLO") and OS.get_environment("SOLO") != "checkpoint" else ["CheckpointAreaBimbi", "CheckpointSpiaggiaBuio"]):
 		await _ricarica(nome)
 		var da := p.global_position
 		await _percorso("ripartendo da %s" % nome, [Vector3(da.x, 0, da.z)] as Array[Vector3], CAMMINA, false, true)
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	Game.esci(1 if _ko > 0 else 0)
+
+
+## Chi arriva al bordo della vasca grande (dalla serranda, al bordo sud) e ci resta ha ancora un'uscita dalla vasca
+## prima che la luce se ne vada alla fossa.
+func _bordo() -> void:
+	print("— al bordo sud della vasca grande, dalla serranda")
+	buio.letale = false
+	var acqua := buio.acqua
+	var pos := Vector3(-15.0, 0.05, 19.3)
+	var bordo := buio.vasca_grande.to_global(Vector3(0, 0, buio.vasca_grande.inner_size.z * 0.5 + 0.4))
+	bordo.y = 0.05
+	var uscita := false
+	var finita_prima := false
+	for i in 60 * 40:
+		pos = pos.move_toward(bordo, 3.4 / 60.0)
+		p.teleport(pos)
+		p.look_at_point(buio.vasca_grande.global_position)
+		await get_tree().physics_frame
+		if buio.stato == LeiSalaAlBuio.Stato.FINITO and not uscita:
+			finita_prima = true
+			break
+		if acqua.fase == AcquaDiLei.Fase.ESCE:
+			uscita = true
+			break
+	check(uscita and not finita_prima, "al bordo sud lei esce dalla vasca grande prima che la luce vada alla fossa (sala %d, uscita %s)" % [buio.stato, uscita])
+	buio.letale = true
 
 
 ## Il giocatore lungo [param punti] e poi fin quasi al suo occhio (a 1,5 m), a [param v] m/s; guarda avanti (o sempre la
@@ -193,7 +223,12 @@ func _percorso(nome: String, punti: Array[Vector3], v: float, guarda_la_fossa: b
 			fasi_acqua.append(acqua.fase)
 			if OS.has_environment("DEBUG_FOSSA"):
 				print("    t=%.2f acqua %d buio %d ls %d d=%.1f" % [t, acqua.fase, buio.stato, ls.fase, AcquaDiLei._in_pianta(pos, ls.punto_sbuca.global_position)])
-			if acqua.fase == AcquaDiLei.Fase.ARRIVA and buio.stato == LeiSalaAlBuio.Stato.FINITO:
+			if fasi_acqua.size() == 1 and gia_li and buio.stato == LeiSalaAlBuio.Stato.FINITO \
+					and acqua.fase in [AcquaDiLei.Fase.ARRIVA, AcquaDiLei.Fase.SPEGNE, AcquaDiLei.Fase.SILENZIO]:
+				# (ripartendo vicino alla fossa l'avviso parte già al caricamento: lo si conta da prima)
+				t_avviso = -INF
+				fasi_acqua = [AcquaDiLei.Fase.ARRIVA, AcquaDiLei.Fase.SPEGNE, AcquaDiLei.Fase.SILENZIO].slice(0, [AcquaDiLei.Fase.ARRIVA, AcquaDiLei.Fase.SPEGNE, AcquaDiLei.Fase.SILENZIO].find(acqua.fase) + 1)
+			elif acqua.fase == AcquaDiLei.Fase.ARRIVA and buio.stato == LeiSalaAlBuio.Stato.FINITO:
 				t_avviso = t
 		if acqua and acqua.fase == AcquaDiLei.Fase.LONTANA and fasi_acqua.size() >= 4 \
 				and fasi_acqua.slice(-4) == [AcquaDiLei.Fase.ARRIVA, AcquaDiLei.Fase.SPEGNE, AcquaDiLei.Fase.SILENZIO, AcquaDiLei.Fase.LONTANA]:
@@ -210,10 +245,10 @@ func _percorso(nome: String, punti: Array[Vector3], v: float, guarda_la_fossa: b
 		if ls.fase != fase_prima:
 			if fase_prima == LeiSbuca.Fase.ATTESA and ls.fase == LeiSbuca.Fase.SBUCA:
 				come = "sbuca" if in_arrivo else "sbuca (tornando indietro)"
-				d_sbuca = dist
+				d_sbuca = AcquaDiLei._in_pianta(pos, occhio)
 				t_su = t
-				if dist <= 8.0:
-					errori.append("sbuca col giocatore a %.1f m" % dist)
+				if d_sbuca <= ls.distanza_sbuca:
+					errori.append("sbuca col giocatore a %.1f m dal suo occhio" % d_sbuca)
 				if not avviso_intero or t - t_avviso < 3.5 - 0.05:
 					errori.append("sbuca senza l'avviso intero (%.2f s dall'avviso)" % (t - t_avviso))
 			elif fase_prima == LeiSbuca.Fase.ATTESA and ls.fase == LeiSbuca.Fase.GUARDA:
@@ -221,7 +256,8 @@ func _percorso(nome: String, punti: Array[Vector3], v: float, guarda_la_fossa: b
 				t_su = t
 				if dist <= 8.0:
 					errori.append("compare affacciata col giocatore a %.1f m" % dist)
-				if ls.fossa_in_vista(p) and Dissolvenza.schermo_libero(get_tree()):
+				# (ripartendo vicino alla fossa, appena caricata la sala a schermo nero, lei è già affacciata)
+				if ls.fossa_in_vista(p) and Dissolvenza.schermo_libero(get_tree()) and not (gia_li and t < 0.6):
 					errori.append("compare affacciata con la fossa in vista")
 			fase_prima = ls.fase
 		if GameState.is_dying:
@@ -235,13 +271,14 @@ func _percorso(nome: String, punti: Array[Vector3], v: float, guarda_la_fossa: b
 			break
 	if aspetta_al_buio > 1:
 		errori.append("lei aspetta con la luce della fossa spenta (%d fotogrammi)" % aspetta_al_buio)
-	# A: lontano dal bordo, camminando dalla serranda, sbuca in vista mentre il giocatore arriva, a più di 8 m
-	if nome.begins_with("dalla serranda") and v == CAMMINA and (come != "sbuca" or d_sbuca <= 8.0):
-		errori.append("dalla serranda camminando doveva sbucare in vista arrivando (%s, a %.1f m)" % [come, d_sbuca])
+	# camminando dalla serranda e da ovest lei si fa vedere mentre il giocatore arriva (sbuca in vista oltre la soglia, o è
+	# già affacciata se in quel momento lui guardava altrove); dal bordo guardandola sbuca in vista oltre la soglia
+	if v == CAMMINA and nome.begins_with("dal bordo") and not come.begins_with("sbuca"):
+		errori.append("dal bordo guardandola doveva sbucare in vista (%s)" % come)
 	var esito := "lei %s %s" % [come if come != "" else "non è venuta", ("(%.1f s dall'avviso)" % (t_su - t_avviso)) if t_su >= 0.0 and t_avviso >= 0.0 else ""]
 	esito += "; %s" % ("presa" if morto else "nessuna presa")
 	if d_sbuca >= 0.0:
-		esito += "; sbucata col giocatore a %.1f m" % d_sbuca
+		esito += "; sbucata col giocatore a %.1f m dal suo occhio" % d_sbuca
 	if aspetta > 0:
 		esito += "; ha aspettato %.1f s con la luce nella fossa" % (aspetta / 60.0)
 	check(errori.is_empty(), "%s: %s%s" % [nome, esito, "" if errori.is_empty() else " — " + "; ".join(errori)])

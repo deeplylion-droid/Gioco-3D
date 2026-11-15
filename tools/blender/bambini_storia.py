@@ -14,7 +14,11 @@ Non si lancia da solo: lo esegue bambini_animazioni.py dopo le altre azioni, con
                mani ai lati della metà alta del foglio
   porge_tiene  (ciclo di 4 s) lo tiene lì: respiro, un piccolo tremare delle braccia
 
-La matita ('matita', un cilindro esagonale di 11 cm) è attaccata all'osso RightHand: nel gioco si vede solo in disegna e
+  guarda_su    (ciclo di 6 s) in piedi davanti al vetro del cilindro giallo agli acquari (il disegno è a 2,45-3,35 m:
+               scelta A del coordinatore), la testa in su verso il disegno, il pastello in mano a mezz'aria come chi ha
+               appena finito e guarda il lavoro
+
+Il pastello ('pastello', quello di ambienti-1, --pastello) è attaccato all'osso RightHand: nel gioco si vede solo in disegna e
 alza_testa. L'osso 'foglio' (figlio di Spine, senza pesi) è dove sta il centro del foglio che porge: in porge e
 porge_tiene è fra le mani; nelle altre azioni resta davanti al petto.
 
@@ -57,7 +61,7 @@ L_STINCO = {l: lung(f'{l}Leg', f'{l}Foot') for l in ('Left', 'Right')}
 # la direzione della mano a riposo (dal polso verso le dita: come l'avambraccio), nello spazio dell'armatura
 D_MANO = {l: (arm.data.bones[f'{l}Hand'].head_local - arm.data.bones[f'{l}ForeArm'].head_local).normalized()
           for l in ('Left', 'Right')}
-MATITA = (0.03, 0.14)      # la matita lungo la mano: dal polso, dove comincia e dove ha la punta (m)
+MATITA = (0.05, 0.135)     # il pastello lungo la mano: dal polso, dove comincia e dove ha la punta (m)
 
 
 def dir_mano(lato):
@@ -275,7 +279,7 @@ def si_alza():
 
 
 # ---------------------------------------------------------------- porge
-PORGE = {'altezza': 0.62, 'avanti': 0.27, 'mani': A4[0] / 2 - 0.012}
+PORGE = {'altezza': 0.62, 'avanti': 0.27, 'mani': A4[0] / 2 - 0.02}
 
 
 def posa_porge(t, k=1.0, trema=1.0):
@@ -297,11 +301,13 @@ def posa_porge(t, k=1.0, trema=1.0):
         W = riposo.lerp(W, k)
         due_ossa(f'{lato}Arm', f'{lato}ForeArm', f'{lato}Hand', W, W + Vector((s * 0.25, 0.25, -0.25)))
         # le mani verso l'alto e un po' in avanti, il palmo verso il foglio
-        mano_verso(lato, dir_mano(lato).lerp(Vector((-s * 0.25, -0.35, 1.0)).normalized(), k), torci=0)
+        mano_verso(lato, dir_mano(lato).lerp(Vector((-s * 0.12, 0.05, 1.0)).normalized(), k), torci=0)
     # il centro del foglio: fra le mani, la parte alta del foglio in mano
     ML, MR = wa(pb_('LeftHand').head), wa(pb_('RightHand').head)
     mezzo = (ML + MR) / 2 + (dir_mano('Left') + dir_mano('Right')) / 2 * 0.045
-    return mezzo + Vector((0, -0.012, -0.065))
+    # (il foglio passa davanti alle mani, che lo tengono da dietro: davanti si vede solo il bordo della mano oltre il foglio,
+    # come il pollice di chi mostra un foglio; ambienti-2, decisione del coordinatore)
+    return mezzo + Vector((0, -0.028, -0.065))
 
 
 def metti_foglio(dove_w):
@@ -312,6 +318,36 @@ def metti_foglio(dove_w):
     bpy.context.view_layer.update()
 
 
+_MANI = []
+
+
+def indici_mani():
+    """I vertici della pelle delle mani (guanti, dita comprese)."""
+    if not _MANI:
+        gi = {g.index: g.name for g in corpo.vertex_groups}
+        _MANI.extend(v.index for v in corpo.data.vertices
+                     if any(gi[g.group] in ('LeftHand', 'RightHand') and g.weight > 0.3 for g in v.groups))
+    return _MANI
+
+
+def mani_sul_foglio(centro):
+    """Le punte delle mani dentro la sagoma del foglio (A4 verticale, faccia avanti: -Y) messo in centro: quanto sta
+    avanti la più avanzata (y minima, m). None se nessuna."""
+    vs = misura_pelle()
+    ys = [vs[i].y for i in indici_mani()
+          if abs(vs[i].x - centro.x) <= A4[0] / 2 and abs(vs[i].z - centro.z) <= A4[1] / 2]
+    return min(ys) if ys else None
+
+
+def appoggia(centro):
+    """Il foglio appoggiato alle dita: davanti alla punta più avanzata dentro la sua sagoma, a 3 mm (nessuna punta lo
+    passa, il contatto entro mezzo centimetro)."""
+    y = mani_sul_foglio(centro)
+    if y is None:
+        return centro
+    return Vector((centro.x, y - 0.003, centro.z))
+
+
 def porge():
     nuova_azione('porge')
     n = int(round(1.2 * FPS))
@@ -320,44 +356,46 @@ def porge():
         k = liscio(u, 0.0, 1.0)
         dove = posa_porge(f / FPS, k=k, trema=k)
         if dove is not None:
-            metti_foglio(dove)
+            metti_foglio(appoggia(dove))
         chiavi(f)
     nuova_azione('porge_tiene')
     n = 4 * FPS
     for f in range(n + 1):
         t = f / FPS + 1.2          # (prosegue da dove finisce porge: il respiro e il tremare continuano)
         dove = posa_porge(t, k=1.0)
-        metti_foglio(dove)
+        metti_foglio(appoggia(dove))
         chiavi(f)
 
 
 # ---------------------------------------------------------------- la matita
-def fai_matita():
-    """Cilindro esagonale di 7 mm, giallo col legno e la mina, attaccato all'osso RightHand (a riposo, lungo la mano)."""
-    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.0036, depth=MATITA[1] - MATITA[0])
-    m = bpy.context.active_object
-    m.name = 'matita'
-    # la punta: i vertici di una base si stringono
-    me = m.data
-    for v in me.vertices:
-        if v.co.z < -0.01:
-            v.co.x *= 0.15
-            v.co.y *= 0.15
-            v.co.z -= 0.012
-    mat = bpy.data.materials.new('matita')
-    mat.use_nodes = True
-    bsdf = mat.node_tree.nodes['Principled BSDF']
-    bsdf.inputs['Base Color'].default_value = (0.55, 0.42, 0.12, 1)
-    bsdf.inputs['Roughness'].default_value = 0.6
-    me.materials.append(mat)
+def fai_pastello():
+    """Il pastello a cera di ambienti-1 (godot/assets/storia_disegni/pastello.glb, --pastello: prisma a otto facce di 1,1 cm,
+    lungo 8,5 cm, la punta verso +X), attaccato all'osso RightHand (a riposo, lungo la mano, la punta verso le dita a
+    [MATITA][1] dal polso). L'oggetto si chiama 'pastello' anche nel GLB del bambino."""
+    prima = set(bpy.context.scene.objects)
+    bpy.ops.import_scene.gltf(filepath=A.pastello)
+    nuovi = [o for o in bpy.context.scene.objects if o not in prima and o.type == 'MESH']
+    m = nuovi[0]
+    for o in nuovi[1:]:
+        bpy.data.objects.remove(o, do_unlink=True)
+    m.parent = None
+    m.name = 'pastello'
+    # nel sistema del pastello (Blender, Z su): l'asse lungo è X; la punta è a x massima; l'asse passa a mezzo spessore
+    bpy.context.view_layer.update()
+    vs = [m.matrix_world @ v.co for v in m.data.vertices]
+    xmax = max(v.x for v in vs)
+    cz = (min(v.z for v in vs) + max(v.z for v in vs)) / 2
+    cy = (min(v.y for v in vs) + max(v.y for v in vs)) / 2
+    m.data.transform(m.matrix_world)
+    m.data.transform(Matrix.Translation(Vector((-xmax, -cy, -cz))))   # la punta nell'origine, l'asse su X
+    m.matrix_world = Matrix.Identity(4)
     arm.data.pose_position = 'REST'
     bpy.context.view_layer.update()
     b = arm.data.bones['RightHand']
     W = MW @ b.head_local
     d = (MW.to_3x3() @ D_MANO['Right']).normalized()
-    centro = W + d * (MATITA[0] + MATITA[1]) / 2
-    rot = Vector((0, 0, -1)).rotation_difference(d)       # la punta (-Z del cilindro) verso le dita
-    m.matrix_world = Matrix.Translation(centro) @ rot.to_matrix().to_4x4()
+    rot = Vector((1, 0, 0)).rotation_difference(d)        # la punta (+X) verso le dita
+    m.matrix_world = Matrix.Translation(W + d * MATITA[1]) @ rot.to_matrix().to_4x4()
     mw = m.matrix_world.copy()
     m.parent = arm
     m.parent_type = 'BONE'
@@ -365,7 +403,7 @@ def fai_matita():
     m.matrix_world = mw
     arm.data.pose_position = 'POSE'
     bpy.context.view_layer.update()
-    log('matita attaccata alla mano destra')
+    log('pastello attaccato alla mano destra')
     return m
 
 
@@ -399,13 +437,47 @@ def calibra():
     log(f'in ginocchio: pelle più bassa a {zmin:+.3f} m, alzo tutto di {_alza[0]:+.3f}')
 
 
+# ---------------------------------------------------------------- guarda il disegno (agli acquari, scelta A del coordinatore)
+GUARDA = {'testa_su': 62.0, 'polso': (-0.10, -0.12, 0.50)}
+
+
+def posa_guarda_su(t, k=1.0):
+    """In piedi davanti al vetro, la testa in su verso il disegno (k: quanto, da fermo_vivo); il pastello in mano a
+    mezz'aria, come chi ha appena finito e guarda il lavoro; piccolo respiro e ondeggiare."""
+    rot, spost = posa_viva(t, 6.0, 4.0)
+    p = posa_curva(t, respiro=4.0, ondeggio=6.0)
+    su = GUARDA['testa_su'] * k
+    testa = {'neck': [(X, -0.45 * su)], 'Head': [(X, -0.55 * su + 1.5 * onda(t, 3.0, 0.2)), (Z, 3.0 * onda(t, 6.0, 0.4))],
+             # (guardando in su il busto si raddrizza un po')
+             'Spine': [(X, -3.0 * k)], 'Spine01': [(X, -2.0 * k)]}
+    applica(unisci(p, {kk: v for kk, v in rot.items() if kk not in ('RightArm',)}, testa))
+    metti_anche(spost)
+    piedi_a_terra()
+    if k > 0.0:
+        riposo = wa(pb_('RightHand').head)
+        W = Vector((CX, CY, 0.0)) + Vector(GUARDA['polso']) + Vector((0.004 * onda(t, 6.0), 0.0, 0.006 * onda(t, 4.0)))
+        W = riposo.lerp(W, k)
+        due_ossa('RightArm', 'RightForeArm', 'RightHand', W, W + Vector((-0.3, 0.2, -0.2)))
+        mano_verso('Right', dir_mano('Right').lerp(Vector((0.35, -0.6, 0.25)).normalized(), k), torci=0)
+
+
+def guarda_su():
+    """Il passaggio da fermo_vivo (1 s), poi il ciclo (6 s, finisce come comincia)."""
+    nuova_azione('guarda_su')
+    n = 6 * FPS
+    for f in range(n + 1):
+        posa_guarda_su(f / FPS)
+        chiavi(f)
+
+
 calibra()
 DEBUG = False
 disegna()
 alza_testa()
 si_alza()
 porge()
-matita = fai_matita()
+guarda_su()
+matita = fai_pastello()
 
 
 def controlla():
@@ -424,7 +496,7 @@ def controlla():
     sc.frame_set(0)
     z_fermo = min(v.z for v in misura_pelle())
     log(f'fermo_vivo (per confronto): pelle più bassa {z_fermo:+.3f} m')
-    for nome in ('disegna', 'alza_testa', 'si_alza', 'porge', 'porge_tiene'):
+    for nome in ('disegna', 'alza_testa', 'si_alza', 'porge', 'porge_tiene', 'guarda_su'):
         act = bpy.data.actions[nome]
         arm.animation_data.action = act
         f0, f1 = act.frame_range
@@ -457,6 +529,22 @@ def controlla():
             log(f'KO {nome}: la matita si stacca dal foglio'); ko += 1
         if nome in ('disegna', 'alza_testa') and (peggio['testa_mani'] < 0.02 or peggio['testa_foglio'] < 0.05):
             log(f'KO {nome}: il cubo tocca le mani o il foglio'); ko += 1
+    # il foglio che porge: appoggiato alle dita (contatto entro 5 mm), nessuna punta oltre il foglio
+    arm.animation_data.action = bpy.data.actions['porge_tiene']
+    vicino, lontano, oltre = 9.0, 0.0, 0
+    for f in range(0, 4 * FPS + 1, 4):
+        sc.frame_set(f)
+        c = wa(pb_('foglio').head)
+        vs = misura_pelle()
+        ds = [vs[i].y - c.y for i in indici_mani()
+              if abs(vs[i].x - c.x) <= A4[0] / 2 and abs(vs[i].z - c.z) <= A4[1] / 2]
+        if ds:
+            vicino = min(vicino, min(ds))
+            lontano = max(lontano, min(ds))
+            oltre += sum(1 for d in ds if d < 0.0)
+    log(f'porge_tiene: dalla punta più vicina al foglio da {vicino * 1000:.1f} a {lontano * 1000:.1f} mm; punte oltre il foglio {oltre}')
+    if oltre or lontano > 0.005:
+        log('KO porge_tiene: il foglio non è appoggiato alle dita'); ko += 1
     log('CONTROLLO STORIA:', 'ok' if ko == 0 else f'{ko} KO')
     return ko
 
@@ -471,7 +559,7 @@ def misure():
                            'altezza': H_FOGLIO, 'note': "il centro del foglio su cui disegna (A4 per terra, lato corto verso di lui)"},
         'alza_tutto': round(_alza[0], 4),
         'durate': {n: round((bpy.data.actions[n].frame_range[1] - bpy.data.actions[n].frame_range[0]) / FPS, 3)
-                   for n in ('disegna', 'alza_testa', 'si_alza', 'porge', 'porge_tiene')},
+                   for n in ('disegna', 'alza_testa', 'si_alza', 'porge', 'porge_tiene', 'guarda_su')},
     }
 
 

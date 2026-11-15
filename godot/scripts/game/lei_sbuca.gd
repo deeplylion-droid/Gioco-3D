@@ -77,10 +77,12 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 ## Uno sguardo interrotto per meno di così (s) non fa ripartire il conto.
 @export var tolleranza_vista := 0.3
 @export_group("Mai di sorpresa")
-## (collaudo della 0.4.0, decisione del coordinatore: «la fossa non deve mai sorprendere», scelta A) Quando viene alla
-## fossa (dopo l'avviso intero della sala al buio) con la fossa in vista sbuca, la salita dal fondo, solo col giocatore più
-## lontano di così (m, in pianta); se no aspetta.
-@export var distanza_sbuca := 8.0
+## (collaudo della 0.4.0, decisione del coordinatore: «la fossa non deve mai sorprendere») Quando viene alla fossa (dopo
+## l'avviso intero della sala al buio) con la fossa in vista sbuca, la salita dal fondo, solo col giocatore più lontano di
+## così dal punto dove sarà il suo occhio (m, in pianta): la portata della presa ([member distanza_presa], 2,4 m: l'area
+## Tocco sta tutta dentro) più un metro. Più vicino aspetta sotto, con la luce che pulsa. (Prima 8 m dal bordo: chi
+## andava dritto alla fossa guardandola a fine avviso era a 5-7 m e lei non usciva quasi mai; riscontro del collaudo.)
+@export var distanza_sbuca := 3.4
 ## Fuori dall'inquadratura (o a schermo nero) si mette già affacciata, ma solo col giocatore più lontano di così (m, in
 ## pianta): non ce la si trova addosso girandosi.
 @export var distanza_affaccia := 8.0
@@ -240,6 +242,8 @@ func _physics_process(delta: float) -> void:
 			if _vuole_venire:
 				_prova_a_venire(p)
 		Fase.SBUCA:
+			if _pelo_da_alzare and _acqua_al_minimo(delta):
+				_pelo_da_alzare = false
 			var k := clampf(_t / durata_sbuca, 0.0, 1.0)
 			_metti_a(1.0 - _ease_out(k))
 			# (mentre sale non prende)
@@ -247,6 +251,9 @@ func _physics_process(delta: float) -> void:
 			if k >= 1.0:
 				fase = Fase.GUARDA
 				_t = 0.0
+				if _pelo_da_alzare:
+					_pelo_da_alzare = false
+					_acqua_al_minimo()
 				if _morbidezza and is_instance_valid(_morbidezza):
 					_morbidezza.trattieni = false
 		Fase.GUARDA:
@@ -385,7 +392,7 @@ func _prova_a_venire(p: Player) -> void:
 	var d := _in_pianta(p.global_position, punto_sbuca.global_position)
 	var nero := not Dissolvenza.schermo_libero(get_tree())
 	if not nero and fossa_in_vista(p):
-		if d > distanza_sbuca:
+		if _in_pianta(p.global_position, _testa_prevista()) > distanza_sbuca:
 			_vuole_venire = false
 			_sbuca()
 	elif d > distanza_affaccia:
@@ -444,13 +451,10 @@ func puo_prendere() -> bool:
 
 
 func _affaccia() -> void:
+	_pelo_da_alzare = false
 	in_vista_t = 0.0
 	sbucata_in_vista = false
-	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
-	if tank:
-		var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
-		if tank.fill < minimo:
-			tank.fill = minimo
+	_acqua_al_minimo()
 	fase = Fase.GUARDA
 	_t = 0.0
 	vista_t = 0.0
@@ -465,9 +469,45 @@ func _affaccia() -> void:
 	_accendi_morbidezza()
 
 
+## La fossa almeno a [member pelo_minimo]: l'acqua le copre il seno (affacciata o appena sbucata). Con [param delta] sale
+## piano, al più di [constant SALITA_PELO] m al secondo (sbucando in vista); senza, in un colpo. Vero quando ci è arrivata.
+func _acqua_al_minimo(delta := -1.0) -> bool:
+	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
+	if tank == null:
+		return true
+	var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
+	if tank.fill >= minimo:
+		return true
+	if delta < 0.0:
+		tank.fill = minimo
+		return true
+	tank.fill = minf(tank.fill + SALITA_PELO * delta / maxf(tank.inner_size.y, 0.01), minimo)
+	return tank.fill >= minimo
+
+
+## Quanto in fretta sale il pelo della fossa mentre lei sbuca in vista (m/s: 0,15 m/s sono 2,5 mm a fotogramma).
+const SALITA_PELO := 0.15
+var _pelo_da_alzare := false
+
+
+## Ripartendo dal checkpoint vicino alla fossa (dopo una presa, F9, Continua), a schermo ancora nero: lei è già affacciata,
+## come prima che la scena ricominci (col giocatore oltre [member distanza_affaccia]); vero se l'ha fatto.
+func affaccia_alla_ripartenza() -> bool:
+	aspetta_il_giro = false
+	var p := GameState.player
+	if fase != Fase.ATTESA or punto_sbuca == null or p == null or not is_instance_valid(p) \
+			or _in_pianta(p.global_position, punto_sbuca.global_position) <= distanza_affaccia:
+		return false
+	_vuole_venire = false
+	_affaccia()
+	return true
+
+
 func _sbuca() -> void:
 	in_vista_t = 0.0
 	sbucata_in_vista = true
+	# (l'acqua sale piano fino a pelo_minimo nel primo mezzo secondo della salita: in vista niente scatto del pelo)
+	_pelo_da_alzare = true
 	fase = Fase.SBUCA
 	_t = 0.0
 	vista_t = 0.0
