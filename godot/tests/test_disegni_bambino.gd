@@ -6,10 +6,13 @@ extends Node
 ## 2. i disegni nella sala vera (ognuno, anche quelli che metteranno le altre squadre): il foglio sul muro che si vede,
 ##    a contatto in tutti i 25 punti (niente che sporge sotto la carta, niente staccato più di 3 mm, salvo le fughe
 ##    dietro), niente davanti; il centro fra 0,8 e 1,25 m sopra il pavimento; il pastello appoggiato (entro 5 mm); le
-##    impronte sul pavimento (entro 2 cm).
+##    impronte sul pavimento (entro 2 cm);
+## 3. gli stessi controlli per i disegni delle condotte (D4), nella scena di prova delle condotte.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_disegni_bambino.gd [solo_componente]
 
 const LEVEL := "res://scenes/sala_principale.tscn"
+## La sala delle condotte nella sua scena di prova (D4).
+const CONDOTTE := "res://scenes/test/inseguimento_prova.tscn"
 
 var _ok := 0
 var _ko := 0
@@ -40,6 +43,7 @@ func _run() -> void:
 	var args := OS.get_cmdline_user_args()
 	if not (args.size() > 1 and args[1] == "solo_componente"):
 		await _sala()
+		await _condotte()
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)
 
@@ -148,6 +152,29 @@ func _sala() -> void:
 	var level := get_tree().current_scene
 	var disegni := level.find_children("*", "DisegnoBambino", true, false)
 	check(disegni.size() >= 2, "nella sala ci sono i disegni (%d)" % disegni.size())
+	_controlla(level, disegni)
+
+
+## Le condotte (D4 di ambienti-2, sul muro accanto alla porta di servizio in cima alla scaletta del bacino): la sala
+## delle condotte nella sua scena di prova, costruita, coi suoi disegni.
+func _condotte() -> void:
+	print("== i disegni nelle condotte")
+	GameState.reset_progress()
+	get_tree().change_scene_to_file(CONDOTTE)
+	for i in 900:
+		await get_tree().process_frame
+		var s := get_tree().current_scene
+		if s and s.scene_file_path == CONDOTTE and GameState.player and is_instance_valid(GameState.player):
+			break
+	await _fisica(30)
+	var level := get_tree().current_scene
+	var disegni := level.find_children("*", "DisegnoBambino", true, false)
+	check(disegni.size() >= 1, "nelle condotte c'è il disegno D4 (%d)" % disegni.size())
+	_controlla(level, disegni)
+
+
+## Per ogni disegno: il foglio sul muro, niente davanti, l'altezza, il pastello e le impronte.
+func _controlla(level: Node, disegni: Array) -> void:
 	var space := (level as Node3D).get_world_3d().direct_space_state
 	for d: DisegnoBambino in disegni:
 		var nome := String(level.get_path_to(d))
