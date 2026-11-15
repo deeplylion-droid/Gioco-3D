@@ -163,6 +163,7 @@ func _df() -> void:
 		await _fisica(8)
 		await _scatta(v[0])
 	# da vicino (camera libera, come chi si avvicina col viso): i quattro angoli col nastro, il pastello e le impronte
+	p.visible = false
 	var cam := Camera3D.new()
 	cam.fov = 50.0
 	cam.near = 0.02
@@ -183,7 +184,9 @@ func _df() -> void:
 		cam.look_at(pastello.global_position, Vector3.UP)
 		await _fisica(6)
 		await _scatta("df_6_pastello")
-	cam.global_position = piedi + verso * 0.6 + Vector3.UP * 1.5 + df.global_basis.x * -0.2
-	cam.look_at(piedi + verso * 0.9 + df.global_basis.x * 0.6, Vector3.UP)
+	# le impronte dalla porta del capannone fin sotto il foglio, da in piedi nel corridoio
+	cam.fov = 70.0
+	cam.global_position = df.to_global(Vector3(0.1, -df.altezza + 1.6, 2.6))
+	cam.look_at(df.to_global(Vector3(0.45, -df.altezza, 0.7)), Vector3.UP)
 	await _fisica(6)
 	await _scatta("df_7_impronte")
