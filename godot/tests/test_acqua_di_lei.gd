@@ -63,6 +63,10 @@ func _vasca(nome: String, punti: Array) -> AcquaDiLei:
 	return a
 
 
+func _conta(nome: String) -> int:
+	return get_tree().root.find_children(nome, "", true, false).size()
+
+
 func _metti_giocatore(pos: Vector3) -> void:
 	for i in 3:
 		_p.teleport(pos)
@@ -247,6 +251,79 @@ func _run() -> void:
 	await _fisica(3)
 	check(not z.puo_venire(), "vicino in pianta ma 9 m sopra (un altro piano): non viene")
 	z.queue_free()
+	await _fisica(2)
+
+	print("12. Lei e la luce condivise, con gli specchi liberati")
+	await _metti_giocatore(Vector3(-40, 0.05, -10))
+	var x := _vasca("VascaX", [Vector3(-40, 0, -6)])
+	var y := _vasca("VascaY", [Vector3(-36, 0, -6)])
+	await _fisica(3)
+	check(x.gira(PackedVector3Array([Vector3(-41, -0.6, -6), Vector3(-39, -0.6, -6)]), 1.6), "la luce gira nella X")
+	await _fisica(10)
+	x.lascia()
+	x.queue_free()     # (la luce era sotto la X: se ne va con lei)
+	await _fisica(3)
+	check(y.chiama(), "liberata la X, la Y la chiama")
+	await _fisica(5)
+	check(_conta("LuceSottacqua") == 1, "e c'è una luce sola (%d)" % _conta("LuceSottacqua"))
+	await _aspetta_fase(y, AcquaDiLei.Fase.SU, 6.0)
+	y.respingi()
+	await _aspetta_fase(y, AcquaDiLei.Fase.LONTANA, 6.0)
+	var w := _vasca("VascaW", [Vector3(-44, 0, -6)])
+	y.queue_free()     # (lei è sotto la Y, da cui è uscita)
+	await _fisica(3)
+	check(w.gira(PackedVector3Array([Vector3(-45, -0.6, -6), Vector3(-43, -0.6, -6)]), 1.6) and _conta("LeiNellAcqua") == 1 \
+			and _conta("LuceSottacqua") == 1, "liberata la Y, la W la fa girare: una lei e una luce (%d, %d)" % [_conta("LeiNellAcqua"), _conta("LuceSottacqua")])
+	w.lascia()
+	await _fisica(2)
+
+	print("13. La prima volta dimostrativa e la partita nuova")
+	w.prima_volta_dimostrativa = true
+	w.chiave_zona = &"prova_dimostrativa"
+	check(w.prossima_dimostrativa(), "la prima è dimostrativa")
+	AcquaDiLei._STATO.dimostrate[&"prova_dimostrativa"] = true
+	check(not w.prossima_dimostrativa(), "fatta una volta, la prossima non lo è")
+	var gia_fatte: Dictionary = AcquaDiLei._STATO.dimostrate.duplicate()
+	GameState.reset_progress()
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	check(w.prossima_dimostrativa(), "con la partita nuova è di nuovo dimostrativa (chiave stabile: %s)" % w.chiave_zona)
+	AcquaDiLei._STATO.dimostrate.merge(gia_fatte)    # (per il punto 7: la C ha già fatto la sua)
+	AcquaDiLei._STATO.dimostrate.erase(&"prova_dimostrativa")
+	w.prima_volta_dimostrativa = false
+
+	print("14. Dov'è lei: il canto lontano tace quando lei è da un'altra parte")
+	await _metti_giocatore(Vector3(-44, 0.05, -2))
+	await _fisica(2)
+	check(w.fase_canto == &"lontana" and w.puo_venire(), "a 4 m, lei lontana: canto lontano, può venire")
+	var scena := Node3D.new()
+	_radice.add_child(scena)
+	scena.global_position = Vector3(-200, 0, -200)
+	scena.add_to_group(AcquaDiLei.LEI_IN_SCENA)    # (la fossa in corso, le condotte, il tunnel)
+	await _fisica(2)
+	check(w.fase_canto == &"ferma" and not w.puo_venire(), "con una scena di lei in corso: ferma, non viene")
+	scena.queue_free()
+	await _fisica(2)
+	var v := _vasca("VascaV", [Vector3(-48, 0, -6)])
+	await _fisica(2)
+	check(v.gira(PackedVector3Array([Vector3(-49, -0.6, -6), Vector3(-47, -0.6, -6)]), 1.6), "la luce gira nella V, lì vicino")
+	await _fisica(2)
+	check(w.fase_canto == &"ferma" and v.fase_canto != &"ferma", "la W tace, la V canta (%s, %s)" % [w.fase_canto, v.fase_canto])
+	v.lascia()
+	await _metti_giocatore(Vector3(-44, 0.05, -40))
+	await _fisica(2)
+	check(w.fase_canto == &"ferma", "fuori dalla zona dello specchio: ferma")
+	v.queue_free()
+
+	print("15. La posa per il riscaldamento")
+	w.posa_per_il_riscaldamento(true)
+	await _fisica(2)
+	var lw := w.find_child("LeiNellAcqua", true, false) as Node3D
+	check(lw != null and lw.visible and lw.global_position.distance_to(w.punti_uscita[0].global_position) < 0.01 \
+			and AcquaDiLei.chi_la_usa() == w, "accesa: lei fuori sul primo punto, con la luce di quando è fuori (anche col giocatore lontano)")
+	w.posa_per_il_riscaldamento(false)
+	await _fisica(2)
+	check(lw != null and not lw.visible and AcquaDiLei.chi_la_usa() == null, "spenta: nascosta, lei libera")
+	w.queue_free()
 	await _fisica(2)
 
 	print("7. La presa")

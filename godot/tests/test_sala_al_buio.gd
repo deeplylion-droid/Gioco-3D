@@ -64,6 +64,35 @@ func _run() -> void:
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	await _fisica(10)
 
+	print("0. I giocattoli che galleggiano si scostano senza toccarsi")
+	var gr: Dictionary = buio.galleggianti_e_raggi()
+	check(gr.size() >= 2, "ci sono i giocattoli nella vasca grande (%d)" % gr.size())
+	var origine := {}
+	for g in gr:
+		origine[g] = (g as Node3D).global_position
+	var mezzo := buio.vasca_grande.inner_size * 0.5
+	var tutto_bene := true
+	var dettaglio := ""
+	for q in buio.acqua.punti_uscita:
+		buio.prepara_uscita(q, 0.0)
+		var lista: Array = gr.keys()
+		for i in lista.size():
+			var gi := lista[i] as Node3D
+			var li := buio.vasca_grande.to_local(gi.global_position)
+			var ri: float = gr[gi]
+			if absf(li.x) > mezzo.x - ri + 0.01 or absf(li.z) > mezzo.z - ri + 0.01:
+				tutto_bene = false
+				dettaglio = "%s contro il bordo dopo l'uscita da %s" % [gi.name, q.name]
+			for j in range(i + 1, lista.size()):
+				var gj := lista[j] as Node3D
+				var d := Vector2(gi.global_position.x - gj.global_position.x, gi.global_position.z - gj.global_position.z).length()
+				if d < ri + float(gr[gj]):
+					tutto_bene = false
+					dettaglio = "%s e %s si toccano dopo l'uscita da %s (%.2f m)" % [gi.name, gj.name, q.name, d]
+		for g in gr:
+			(g as Node3D).global_position = origine[g]
+	check(tutto_bene, "da tutti e quattro i punti d'uscita nessun giocattolo ne tocca un altro o il bordo%s" % ("" if tutto_bene else ": " + dettaglio))
+
 	print("1. Il giro")
 	check(buio.stato == LeiSalaAlBuio.Stato.GIRO and acqua.in_giro() and AcquaDiLei.chi_la_usa() == acqua,
 			"al buio, lontano dalla fossa, la luce gira: lei è lì")

@@ -84,7 +84,9 @@ const LUCE_POZZA_PORTATA := 3.5
 ## Quanto sta su a cercarti, se non sei nella portata (s).
 @export var tempo_su := 2.2
 ## Da su, quanto aspetta prima di prenderti (s): il tempo di uno spruzzo.
-@export var tempo_presa := 0.35
+@export var tempo_presa := 0.8
+## Nel modo MANO: da su, quanto aspetta la mano prima di prenderti alla caviglia (s).
+@export var tempo_presa_mano := 0.35
 ## Secondi di getto in faccia che la ricacciano sotto.
 @export var getto_per_respingere := 0.5
 ## Dopo una respinta lo specchio resta calmo per tanto (s).
@@ -96,6 +98,8 @@ const LUCE_POZZA_PORTATA := 3.5
 @export var letale := true
 ## La prima uscita è dal punto più lontano dal giocatore e non prende (una volta per partita).
 @export var prima_volta_dimostrativa := false
+## Il nome stabile della zona per la prima uscita dimostrativa (vuoto: il percorso del nodo).
+@export var chiave_zona: StringName = &""
 ## Lei viene da sola quando il giocatore è entro [member distanza_richiamo] da un punto d'uscita, ogni
 ## [member intervallo] s (a caso fra i due).
 @export var automatica := false
@@ -135,6 +139,9 @@ var fase_canto: StringName:
 				return &"respinta" if _respinta else &"va_via"
 		if not abilitata or GameState.luci != GameState.Luci.BLACKOUT:
 			return &"ferma"
+		# lei è da un'altra parte, o il giocatore è lontano da qui: niente canto da questo specchio
+		if _proprietaria != self and (not is_inside_tree() or lei_altrove() or not giocatore_nella_zona()):
+			return &"ferma"
 		return &"arriva" if in_giro() and vicinanza > 0.2 else &"lontana"
 
 var _t := 0.0
@@ -164,8 +171,11 @@ static var _lei: MedusaAffacciata
 static var _luce: OmniLight3D
 static var _viso: WaterHitbox
 static var _proprietaria: AcquaDiLei
-## Le zone dove la prima uscita dimostrativa c'è già stata (per percorso del nodo: una volta per partita).
-static var _dimostrate := {}
+## Le zone dove la prima uscita dimostrativa c'è già stata: in stato_lei.gd (si azzera con la partita nuova).
+const _STATO := preload("res://scripts/game/stato_lei.gd")
+## Gruppo delle lei che una scena sta usando adesso (la fossa in corso, le condotte, il tunnel): finché c'è, lei è lì,
+## da nessun'altra parte (niente uscite, niente canto lontano). Chi ha la scena ci mette la sua lei e la toglie alla fine.
+const LEI_IN_SCENA := &"lei_in_scena"
 
 
 func _ready() -> void:
@@ -185,7 +195,11 @@ func _exit_tree() -> void:
 ## Vero se la prossima uscita da qui sarà quella dimostrativa (dal punto più lontano, non prende):
 ## [member prima_volta_dimostrativa] acceso e da questo nodo non è ancora uscita.
 func prossima_dimostrativa() -> bool:
-	return prima_volta_dimostrativa and not _dimostrate.has(str(get_path()))
+	return prima_volta_dimostrativa and not _STATO.dimostrate.has(_chiave())
+
+
+func _chiave() -> String:
+	return String(chiave_zona) if chiave_zona != &"" else str(get_path())
 
 
 ## Vero se lei adesso può venire qui.
@@ -194,11 +208,22 @@ func puo_venire() -> bool:
 		return false
 	if GameState.luci != GameState.Luci.BLACKOUT or GameState.is_dying:
 		return false
-	if _proprietaria != null and is_instance_valid(_proprietaria) and _proprietaria != self:
-		return false
 	if not giocatore_nella_zona():
 		return false
-	return not lei_in_vista_altrove() and not bambino_in_vista()
+	return not lei_altrove() and not bambino_in_vista()
+
+
+## Dov'è lei adesso: vero se è da un'altra parte, cioè se un altro specchio la usa, se una scena la sta usando (la
+## fossa in corso, le condotte, il tunnel: gruppo [constant LEI_IN_SCENA]) o se un'altra lei è in vista
+## ([method lei_in_vista_altrove]). La usano [method puo_venire] (non viene) e [member fase_canto] (niente canto
+## lontano: lei non è in due posti).
+func lei_altrove() -> bool:
+	if _proprietaria != null and is_instance_valid(_proprietaria) and _proprietaria != self:
+		return true
+	for n in get_tree().get_nodes_in_group(LEI_IN_SCENA):
+		if n != _lei and n is Node3D and (n as Node3D).is_visible_in_tree():
+			return true
+	return lei_in_vista_altrove()
 
 
 ## Vero se il giocatore è nella zona di questo specchio (vedi [member zona_raggio]).
@@ -226,11 +251,31 @@ func lei_in_vista_altrove() -> bool:
 			continue
 		var q := l.global_position + Vector3.UP * 1.5
 		var d := q.distance_to(p.global_position)
-		if d <= vista_dietro:
-			return true
-		if d <= vista_lontano and cam and cam.is_position_in_frustum(q):
+		if d > vista_lontano:
+			continue
+		if d > vista_dietro and not (cam and cam.is_position_in_frustum(q)):
+			continue
+		# (dietro i muri non la vede: una lei di un'altra stanza, come quella di un oblò dietro la parete, non conta)
+		if not _coperta(p, cam, q):
 			return true
 	return false
+
+
+## Vero se fra gli occhi del giocatore e [param q] c'è un muro (più di [constant VETRO_TOLLERANZA] m prima di lei:
+## il vetro di un oblò, o il bordo della vasca dove lei sta, non la coprono).
+const VETRO_TOLLERANZA := 2.5
+
+
+func _coperta(p: Node3D, cam: Camera3D, q: Vector3) -> bool:
+	var da := cam.global_position if cam else p.global_position + Vector3.UP * 1.6
+	var spazio := get_world_3d().direct_space_state if is_inside_tree() else null
+	if spazio == null:
+		return false
+	var qr := PhysicsRayQueryParameters3D.create(da, q)
+	if p is CollisionObject3D:
+		qr.exclude = [(p as CollisionObject3D).get_rid()]
+	var hit := spazio.intersect_ray(qr)
+	return not hit.is_empty() and (hit["position"] as Vector3).distance_to(da) < da.distance_to(q) - VETRO_TOLLERANZA
 
 
 ## Vero se un bambino (anche quelli visti di sfuggita) è visibile e dentro l'inquadratura.
@@ -262,7 +307,7 @@ func chiama(punto: Node3D = null) -> bool:
 	if fase != Fase.LONTANA or not puo_venire():
 		return false
 	var p := GameState.player
-	_dimostrativa = prima_volta_dimostrativa and not _dimostrate.has(str(get_path()))
+	_dimostrativa = prima_volta_dimostrativa and not _STATO.dimostrate.has(_chiave())
 	_punto = punto if punto else _scegli_punto(p, _dimostrativa)
 	if _punto == null:
 		return false
@@ -323,7 +368,7 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	var p := GameState.player
 	# nessuno specchio tiene lei da lontano: col giocatore fuori dalla zona se ne va (non mentre è fuori dall'acqua)
-	if _proprietaria == self and not giocatore_nella_zona():
+	if _proprietaria == self and not _riscaldo and not giocatore_nella_zona():
 		lascia()
 	match fase:
 		Fase.LONTANA:
@@ -380,7 +425,7 @@ func _physics_process(delta: float) -> void:
 			_girala_verso(p)
 			var vicino := p != null and is_instance_valid(p) \
 					and _in_pianta(p.global_position, _punto.global_position) <= (portata_mano if modo == Modo.MANO else portata)
-			if letale and not _dimostrativa and vicino and _t >= tempo_presa:
+			if letale and not _dimostrativa and vicino and _t >= (tempo_presa_mano if modo == Modo.MANO else tempo_presa):
 				_prendi()
 			elif _t >= tempo_su:
 				_scendi(false)
@@ -600,7 +645,7 @@ func _vicino_del_giro(q: Vector3) -> int:
 func _esci() -> void:
 	_assicura_lei()
 	if _dimostrativa:
-		_dimostrate[str(get_path())] = true
+		_STATO.dimostrate[_chiave()] = true
 	_lei.reparent(self, false)
 	_lei.global_position = _punto.global_position
 	_lei.visible = true
@@ -753,6 +798,63 @@ func manda_via(secondi := 1.0) -> void:
 func respingi() -> void:
 	if fase == Fase.ESCE or fase == Fase.SU:
 		_scendi(true)
+
+
+# --- Il riscaldamento ---------------------------------------------------------------------------------------------
+
+var _riscaldo := false
+
+
+## Per il riscaldamento degli shader della zona (RiscaldamentoShader.disegna_fuori_vista intorno alla zona): con
+## [param acceso] mette lei fuori dall'acqua sul primo punto d'uscita, visibile, con la luce di quando è fuori e
+## l'animazione [param animazione] (vuota: quella dell'uscita, sale_dall_acqua o pozza_esce, a metà), così la prima
+## uscita vera non compila niente; con falso la nasconde e rimette la luce spenta sotto lo specchio. Non fa niente se
+## lei è in uso (qui fuori dalla fase LONTANA, o in un altro specchio).
+func posa_per_il_riscaldamento(acceso: bool, animazione := "") -> void:
+	if not acceso:
+		if not _riscaldo:
+			return
+		_riscaldo = false
+		if _lei and is_instance_valid(_lei):
+			_lei.visible = false
+		if _luce and is_instance_valid(_luce):
+			_luce.visible = false
+			_luce.light_energy = 0.0
+			_luce.reparent(self, false)
+		if _proprietaria == self and _giro.is_empty():
+			_proprietaria = null
+		return
+	if punti_uscita.is_empty() or fase != Fase.LONTANA or in_giro():
+		return
+	if _proprietaria != null and is_instance_valid(_proprietaria) and _proprietaria != self:
+		return
+	_assicura_lei()
+	_riscaldo = true
+	_proprietaria = self
+	var q := punti_uscita[0]
+	_lei.reparent(self, false)
+	if modo == Modo.MANO:
+		_lei.global_transform = q.global_transform
+		_luce.reparent(self, false)
+		_luce.global_position = _sotto(q)
+		_luce.light_energy = LUCE_POZZA
+		_luce.omni_range = LUCE_POZZA_PORTATA
+		_luce.shadow_enabled = false
+	else:
+		_lei.global_position = q.global_position
+		_luce.reparent(_lei, false)
+		_luce.position = Vector3(0, 2.4, 0.9)
+		_luce.light_energy = LUCE_SU
+		_luce.omni_range = LUCE_SU_PORTATA
+		_luce.shadow_enabled = true
+	_viso_mano(modo == Modo.MANO)
+	_lei.visible = true
+	_luce.visible = true
+	var nome := animazione if animazione != "" else ("pozza_esce" if modo == Modo.MANO else "sale_dall_acqua")
+	var dur := _anima(nome)
+	var ap := _ap()
+	if ap:
+		ap.seek(dur * 0.6, true)
 
 
 # --- Lei condivisa ------------------------------------------------------------------------------------------------
