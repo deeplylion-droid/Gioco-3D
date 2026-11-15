@@ -5,7 +5,20 @@
 [ext_resource type="PackedScene" path="res://assets/ambiente/inseguimento/inseguimento_tubi.glb" id="3_tubi"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/inseguimento/inseguimento_prop.glb" id="4_prop"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/inseguimento/inseguimento_mobili.glb" id="5_mobili"]
+[ext_resource type="Script" path="res://scripts/game/disegno_bambino.gd" id="6_disegno"]
+[ext_resource type="Texture2D" path="res://assets/storia_disegni/disegno_d4.jpg" id="7_d4"]
 
 [node name="SalaInseguimento" type="Node3D"]
 script = ExtResource("1_ins")
 modelli = Array[PackedScene]([ExtResource("2_strut"), ExtResource("3_tubi"), ExtResource("4_prop"), ExtResource("5_mobili")])
+
+[node name="StoriaD4" type="Node3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 40.4, -28.9, -3.3)
+script = ExtResource("6_disegno")
+disegno = ExtResource("7_d4")
+formato = 2
+altezza = 1.11
+pastello = true
+pastello_dove = Vector2(0.18, 0.07)
+impronte = true
+impronte_da = Vector2(-0.1, 2.0)

@@ -94,6 +94,7 @@
 [ext_resource type="Script" path="res://scripts/game/disegno_bambino.gd" id="storia_disegno"]
 [ext_resource type="Texture2D" path="res://assets/storia_disegni/disegno_d1.jpg" id="storia_d1"]
 [ext_resource type="Texture2D" path="res://assets/storia_disegni/disegno_d2.jpg" id="storia_d2"]
+[ext_resource type="Texture2D" path="res://assets/storia_disegni/disegno_d3.jpg" id="storia_d3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5tb5"]
 resource_name = "M_acqua_vasca"
@@ -1065,6 +1066,14 @@ impronte_da = Vector2(-1.75, 0.35)
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 52.5996, 1.1, 1.5)
 script = ExtResource("storia_disegno")
 disegno = ExtResource("storia_d2")
+pastello = true
+pastello_dove = Vector2(0.15, 0.1)
+
+[node name="StoriaD3" type="Node3D" parent="Gioco" unique_id=1530412887]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 19.9994, 1.23, -9)
+script = ExtResource("storia_disegno")
+disegno = ExtResource("storia_d3")
+altezza = 1.23
 pastello = true
 pastello_dove = Vector2(0.15, 0.1)
 
