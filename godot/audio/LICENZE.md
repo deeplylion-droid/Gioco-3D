@@ -79,12 +79,15 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `bambini/passo_bambino_muta_06.ogg` | 0.2 s | sintesi (originale) | piede nudo sul bagnato e la gomma della muta (0.3.21) |
 | `effetti/cancello_fine.ogg` | 0.8 s | Kenney Impact Sounds + RPG Audio (CC0), rielaborati |  |
 | `effetti/cancello_ruota.ogg` | 5.0 s | Kenney RPG Audio (CC0), rielaborato |  |
+| `effetti/catena_tirata.ogg` | 2.0 s | sintesi + Kenney Impact Sounds (CC0) |  |
 | `effetti/emergenza_ronzio_loop.ogg` | 4.0 s | sintesi (originale) |  |
 | `effetti/emergenza_rotante_loop.ogg` | 3.6 s | sintesi (originale) |  |
 | `effetti/faro_acceso.ogg` | 3.0 s | sintesi (originale) |  |
 | `effetti/faro_ronzio_loop.ogg` | 3.0 s | sintesi (originale) |  |
+| `effetti/fischietto.ogg` | 3.1 s | sintesi (originale) |  |
 | `effetti/gonfiabile_colpito.ogg` | 0.3 s | sintesi (originale) |  |
 | `effetti/gonfiabile_libero.ogg` | 2.2 s | sintesi (originale) |  |
+| `effetti/lucchetto_scatto.ogg` | 0.3 s | sintesi + Kenney RPG Audio (CC0) |  |
 | `effetti/medusa_presenza_loop.ogg` | 8.0 s | sintesi + Kenney Sci-Fi Sounds (CC0) | slime rallentato |
 | `effetti/medusa_risveglio.ogg` | 4.5 s | sintesi + Kenney Sci-Fi Sounds (CC0) | slime rallentato |
 | `effetti/neon_clic_01.ogg` | 0.1 s | sintesi (originale) |  |
@@ -295,4 +298,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 270 file, 8.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 273 file, 8.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

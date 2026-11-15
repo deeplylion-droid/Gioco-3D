@@ -549,6 +549,16 @@
   "lufs": -26.5,
   "lufs_max": -18.0
  },
+ "effetti/catena_tirata": {
+  "file": "res://audio/effetti/catena_tirata.ogg",
+  "canali": 1,
+  "durata": 2.003,
+  "loop": false,
+  "fonte": "sintesi + Kenney Impact Sounds (CC0)",
+  "nota": "",
+  "lufs": -28.3,
+  "lufs_max": -19.0
+ },
  "effetti/emergenza_ronzio_loop": {
   "file": "res://audio/effetti/emergenza_ronzio_loop.ogg",
   "canali": 1,
@@ -589,6 +599,16 @@
   "lufs": -27.0,
   "lufs_max": -24.5
  },
+ "effetti/fischietto": {
+  "file": "res://audio/effetti/fischietto.ogg",
+  "canali": 1,
+  "durata": 3.15,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.4,
+  "lufs_max": -17.0
+ },
  "effetti/gonfiabile_colpito": {
   "file": "res://audio/effetti/gonfiabile_colpito.ogg",
   "canali": 1,
@@ -608,6 +628,16 @@
   "nota": "",
   "lufs": -21.8,
   "lufs_max": -15.0
+ },
+ "effetti/lucchetto_scatto": {
+  "file": "res://audio/effetti/lucchetto_scatto.ogg",
+  "canali": 1,
+  "durata": 0.336,
+  "loop": false,
+  "fonte": "sintesi + Kenney RPG Audio (CC0)",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
  },
  "effetti/medusa_presenza_loop": {
   "file": "res://audio/effetti/medusa_presenza_loop.ogg",

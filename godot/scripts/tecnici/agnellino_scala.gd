@@ -145,17 +145,44 @@ func compari() -> void:
 	add_child(bambino)
 
 
-## Dentro il muro: le zampette che si allontanano nel condotto.
+## Dentro il muro: le zampette che si allontanano nel condotto. Poi (0.5.0, «La storia», GDD riga della grata di C2:
+## è lui che l'ha chiusa) dalla grata verde di C2 si sentono la catena tirata e il lucchetto che scatta. Solo suono:
+## non si vede niente di nuovo.
 func _corre_nel_muro() -> void:
 	var genitore := get_parent() as Node3D
 	Audio.suona(&"zampette_condotto", genitore.to_global(Vector3(muro_x + 0.9, posizione.y + 0.3, buco_z)))
+	get_tree().create_timer(dopo_le_zampette, false).timeout.connect(_chiude_la_grata)
 
 
-func save_state() -> Dictionary:
-	return {"fatto": _fatto}
+## Quando, dopo che si è infilato nel buco, si sente la catena (s): le zampette (8 s) si sono quasi perse.
+@export var dopo_le_zampette := 5.5
+## Quanto dopo la catena scatta il lucchetto (s): quando la catena tirata si ferma.
+@export var dopo_la_catena := 1.95
+## Volte che la grata è stata chiusa col suono (una sola: per i test).
+var grata_chiusa := 0
 
 
-func load_state(s: Dictionary) -> void:
-	_fatto = _fatto or bool(s.get("fatto", false))   # una volta sola: ripartendo da prima non ricompare
-	if _fatto and bambino and is_instance_valid(bambino):
-		bambino.queue_free()
+func _chiude_la_grata() -> void:
+	if grata_chiusa > 0 or not is_inside_tree():
+		return
+	grata_chiusa = 1
+	var dove := _lucchetto()
+	Audio.suona(&"catena_tirata", dove)
+	get_tree().create_timer(dopo_la_catena, false).timeout.connect(func():
+		if is_inside_tree():
+			grata_chiusa = 2
+			Audio.suona(&"lucchetto_scatto", dove))
+
+
+## Dove sta il lucchetto della grata verde di C2, nelle coordinate del genitore: nel modello del raccordo è
+## grata_c2_lucchetto (tools/blender/ambienti2_raccordo.py: x 44,77, y Blender GY + 0,08 = -5,845, quota 1 m sopra il
+## pavimento della sala, 9,05), unito alle altre mesh dei dettagli, quindi non è un nodo a parte.
+@export var lucchetto := Vector3(44.77, 10.05, 5.845)
+
+
+func lucchetto_grata() -> Vector3:
+	return _lucchetto()
+
+
+func _lucchetto() -> Vector3:
+	return (get_parent() as Node3D).to_global(lucchetto)

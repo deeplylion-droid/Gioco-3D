@@ -97,7 +97,9 @@ const TARATURA := {
 	&"portello_apre": [BUS_EFFETTI, 0.0, 7.0, 70.0, 0.0],
 	&"secchio_ribalta": [BUS_EFFETTI, 0.0, 9.0, 80.0, 0.0],
 	&"secchio_ritorno": [BUS_EFFETTI, -3.0, 7.0, 60.0, 0.0],
-	&"cancello_ruota": [BUS_EFFETTI, -2.0, 8.0, 70.0, 0.0],
+	# il volantino sotto il pavimento delle pozze (0.5.0, enigmi): da sotto un grigliato, a 1-3 m, in una stanza piccola
+	# (prima era la ruota grande del cancello, a 8 m e -2 dB, mai usata)
+	&"cancello_ruota": [BUS_EFFETTI, -6.0, 3.0, 30.0, 0.0],
 	&"cancello_fine": [BUS_EFFETTI, 0.0, 8.0, 70.0, 0.2],
 	&"quadro_scintille": [BUS_EFFETTI, 0.0, 7.0, 60.0, 0.3],
 	&"vasca_svuotata": [BUS_EFFETTI, -2.0, 6.0, 50.0, 0.0],
@@ -120,6 +122,12 @@ const TARATURA := {
 	&"cancello_stagno_apre": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
 	# l'agnellino che corre via dentro il condotto della grata di C2 (v0.3.6): vicino, poi si perde nel muro
 	&"zampette_condotto": [BUS_EFFETTI, 0.0, 3.0, 25.0, 0.0],
+	# la storia (0.5.0): gli ostacoli dell'agnellino si sentono soltanto. La catena e il lucchetto dalla grata verde di C2
+	# (dietro le sbarre, a pochi metri); il fischietto nella sala al buio, lontano: la distanza è già nel suono (passa-basso
+	# e coda della sala), qui solo la direzione, come i suoni lontani
+	&"catena_tirata": [BUS_EFFETTI, -3.0, 3.0, 30.0, 0.0],
+	&"lucchetto_scatto": [BUS_EFFETTI, -4.0, 2.5, 25.0, 0.0],
+	&"fischietto": [BUS_EFFETTI, -3.0, 40.0, 220.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 	&"squalo_passo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.6],

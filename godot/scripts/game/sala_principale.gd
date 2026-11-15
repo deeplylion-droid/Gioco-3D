@@ -1044,19 +1044,28 @@ func _on_fine_tunnel() -> void:
 	_fine_della_demo("")
 
 
-## Quanto resta la scritta della fine (secondi), e dopo quanto il gioco torna da solo al titolo.
+## Quanto resta la scritta della fine (secondi); poi il riepilogo (0.5.0).
 const FINE_SCRITTA := 9.0
 const FINE_AL_TITOLO := 9.5
+## Il riepilogo della partita, dopo la scritta (null prima).
+var riepilogo: RiepilogoCapitolo
 
 
-## La scritta "FINE DEL CAPITOLO 1" e, finita la scritta, il ritorno al titolo da solo (scelta 12A dell'utente: prima restava
-## il nero e bisognava premere Esc). Il timer si ferma con la pausa; se dalla pausa si torna al titolo prima, il livello
-## non c'è più e il collegamento se ne va con lui: non scatta due volte.
+## La scritta "FINE DEL CAPITOLO 1" e, finita la scritta, il riepilogo (build 0.5.0: Polaroid, tempo, morti), da cui si torna
+## al titolo con un tasto o da soli (prima, scelta 12A dell'utente, si tornava al titolo da soli finita la scritta). Il tempo
+## di gioco si ferma qui. Il timer si ferma con la pausa; se dalla pausa si torna al titolo prima, il livello non c'è più e
+## il collegamento se ne va con lui: non scatta due volte.
 func _fine_della_demo(testo: String) -> void:
+	GameState.tempo_fermo = true
 	var hud := _hud()
 	if hud:
 		hud.show_banner("FINE DEL CAPITOLO 1", testo, FINE_SCRITTA)
-	get_tree().create_timer(FINE_AL_TITOLO, false).timeout.connect(_torna_al_titolo)
+	get_tree().create_timer(FINE_AL_TITOLO, false).timeout.connect(_mostra_riepilogo)
+
+
+func _mostra_riepilogo() -> void:
+	if is_inside_tree() and get_tree().current_scene == self and riepilogo == null:
+		riepilogo = RiepilogoCapitolo.mostra(self)
 
 
 func _torna_al_titolo() -> void:

@@ -1,9 +1,9 @@
 extends Node
 ## La fine vera della demo, in fondo all'inseguimento (SB1): il nero dell'inseguimento (SalaInseguimento._nero, livello
 ## 80), la scritta "FINE DEL CAPITOLO 1" sopra il nero (l'HUD la mette su un livello suo, 90, sotto il menu di pausa a 100;
-## prima stava sotto il nero e non si vedeva: collaudo della v0.3.13), e finita la scritta il gioco torna da solo al
-## titolo (scelta 12A dell'utente, 24 ottobre). Il tempo della scritta si ferma con la pausa, e il ritorno al titolo
-## non scatta una seconda volta.
+## prima stava sotto il nero e non si vedeva: collaudo della v0.3.13), e finita la scritta il riepilogo (0.5.0: Polaroid,
+## tempo, morti), da cui un tasto dopo 4 s riporta al titolo (prima si tornava da soli finita la scritta, scelta 12A
+## dell'utente). Il tempo della scritta si ferma con la pausa, e il ritorno al titolo non scatta una seconda volta.
 ## Con FINE_SCATTO=<file.jpg> (e un renderer vero) salva lo schermo col nero e la scritta: la strada è ridotta (senza
 ## torre e senza tunnel, che col renderer software non entrano in memoria), con lo stesso nero e la stessa fine (del tunnel
 ## con FINE_TUNNEL, se no della torre); la scritta si controlla come nella strada intera, il ritorno al titolo no.
@@ -139,12 +139,41 @@ func _run() -> void:
 	Game.set_paused(false)
 	await _secondi(3.0)
 	check(get_tree().current_scene == level, "a 5 s di scritta è ancora la fine della demo")
+	# (0.5.0) finita la scritta il riepilogo: Polaroid su 16, tempo, morti; un tasto riporta al titolo solo dopo 4 s
 	await _secondi(6.0)
+	var r := level.get(&"riepilogo") as RiepilogoCapitolo
+	check(r != null and r.layer > strato.layer and r.layer < 100 and r.righe.size() == 3,
+			"finita la scritta, il riepilogo (livello %d)" % (r.layer if r else -1))
+	if r:
+		var testi := r.righe.map(func(l: Label): return l.text)
+		check("su 16" in testi[0] and ":" in testi[1] and testi[2].begins_with("Morti"), "Polaroid su 16, tempo e morti: %s" % [testi])
+	await _secondi(1.0)
+	_tasto()
+	await _secondi(0.5)
+	check(get_tree().current_scene == level, "un tasto subito non lo chiude")
+	await _secondi(3.5)
+	_tasto()
+	for i in 600:
+		await get_tree().process_frame
+		if get_tree().current_scene != level:
+			break
+	await _secondi(1.0)
 	var titolo := get_tree().current_scene
-	check(titolo != null and titolo.scene_file_path == Game.SCENE_TITLE, "finita la scritta, torna da solo al titolo (%s)" % (titolo.scene_file_path if titolo else "niente"))
+	check(titolo != null and titolo.scene_file_path == Game.SCENE_TITLE, "dopo 4 s un tasto torna al titolo (%s)" % (titolo.scene_file_path if titolo else "niente"))
 	await _secondi(10.0)
 	check(get_tree().current_scene == titolo, "e non ci torna una seconda volta")
 	_fine()
+
+
+func _tasto() -> void:
+	var ev := InputEventKey.new()
+	ev.keycode = KEY_SPACE
+	ev.pressed = true
+	Input.parse_input_event(ev)
+	var su := InputEventKey.new()
+	su.keycode = KEY_SPACE
+	su.pressed = false
+	Input.parse_input_event(su)
 
 
 func _fine() -> void:
