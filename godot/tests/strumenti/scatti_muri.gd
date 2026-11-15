@@ -138,6 +138,19 @@ func _scena(percorso: String, muri: Array) -> void:
 	cam.far = 60.0
 	add_child(cam)
 	cam.current = true
+	# (con "disegno" nella voce: un DisegnoBambino com'è nella scena del gioco, che la sala a parti non carica)
+	for m in muri:
+		if m.has("disegno"):
+			var dd: Dictionary = m["disegno"]
+			var db := DisegnoBambino.new()
+			db.disegno = load(String(dd["texture"]))
+			db.formato = int(dd.get("formato", 0)) as DisegnoBambino.Formato
+			db.altezza = float(dd.get("altezza", 1.1))
+			db.pastello = bool(dd.get("pastello", false))
+			db.impronte = bool(dd.get("impronte", false))
+			_radice.add_child(db)
+			_accese[db] = true
+			db.global_transform = Transform3D(Basis.looking_at(-_vec(m["normale"]), Vector3.UP), _vec(m["centro"]))
 	for m in muri:
 		var c := _vec(m["centro"])
 		var n := _vec(m["normale"])
