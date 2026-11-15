@@ -61,6 +61,11 @@ const N := 5
 @export_range(0.5, 1.0) var pieno := 0.93
 ## Litri "di gioco" di una pozza piena fino al bordo (lo zaino ne tiene 20).
 @export var litri_pozza := 80.0
+## Lo scarico di fondo tondo di ogni pozza (ScaricoPozza, 0.4.0: lei passa da lì). Spento, le pozze tornano senza.
+@export var scarichi := true
+## Nelle pozze del bordo lo scarico sta verso fuori (dove passa il braccio di lei): il suo centro a tanto dalla parete
+## interna dal lato della passerella (m). Nelle pozze di dentro sta al centro.
+@export var scarico_dal_bordo := 0.28
 
 @export_group("Regole e tempi")
 ## Litri da aspirare da una pozza perché si svuotino tutte quelle del suo colore.
@@ -90,6 +95,8 @@ var _t_errore := 0.0
 var _caricando := false
 var _luci_errore: Array[Light3D] = []
 var _accesi_errore: Array[Node3D] = []
+## Lei sotto il pavimento (0.4.0, LeiPozze): dopo il primo colore tolto esce dalle pozze piene del bordo.
+var lei: LeiPozze
 
 
 ## Il colore della pozza nella colonna [param colonna] e nella riga [param riga] (0..4).
@@ -129,6 +136,9 @@ func _ready() -> void:
 		for colonna in N:
 			_pozza(colonna, riga)
 	_lampeggiante(false)
+	lei = LeiPozze.new()
+	lei.name = "Lei"
+	add_child(lei)
 
 
 func _cerca(nome: StringName) -> Node:
@@ -176,8 +186,30 @@ func _pozza(colonna: int, riga: int) -> void:
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm and wm.has_method(&"unregister_body"):
 		wm.call(&"unregister_body", acqua)
+	if scarichi:
+		var sc := ScaricoPozza.new()
+		t.add_child(sc)
+		sc.position = _scarico_in_pozza(colonna, riga)
 	_pozze.append(t)
 	(_per_colore[c] as Array).append(t)
+
+
+## Dove sta lo scarico nella pozza della colonna [param colonna] e della riga [param riga], rispetto al centro del suo
+## fondo: verso fuori nelle pozze del bordo (in diagonale in quelle d'angolo), al centro nelle altre.
+func _scarico_in_pozza(colonna: int, riga: int) -> Vector3:
+	var d := lato * 0.5 - scarico_dal_bordo
+	var q := Vector3.ZERO
+	if colonna == 0 or colonna == N - 1:
+		q.x = d * signf(colonna - 2)
+	if riga == 0 or riga == N - 1:
+		q.z = d * signf(riga - 2)
+	return q
+
+
+## Il centro dello scarico della pozza [param t] sul suo fondo, nel mondo (senza scarichi: il centro del fondo).
+func centro_scarico(t: WaterTank) -> Vector3:
+	var sc := t.get_node_or_null(^"Scarico") as Node3D
+	return sc.global_position if sc else t.global_position
 
 
 func _physics_process(delta: float) -> void:
