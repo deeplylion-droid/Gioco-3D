@@ -10,7 +10,9 @@ extends Node
 ## - camera delle onde e tunnel fino alla sala pompe;
 ## - tappa 6: acqua dalla vasca di raccolta, turbine nell'ordine sbagliato (si ricomincia) e in
 ##   quello dello schema (blu, giallo, rosso), la leva bloccata e poi tirata col getto, il
-##   risveglio (flash, blackout con le sole luci rosse, neve sul monitor, paratie giù), la porta
+##   risveglio (flash, blackout con le sole luci rosse, neve sul monitor, paratie giù; la lezione del 0.4.0, che si
+##   riprova finché lei non può venire e c'è sempre, col canto solo mentre passa la luce: la luce
+##   rosa di lei passa sott'acqua nella vasca di raccolta e se ne va, senza che lei esca o prenda), la porta
 ##   col maniglione e il raccordo fino al pianerottolo davanti alla grata (la tappa 7 è in test_tappa7.gd);
 ## - i checkpoint lungo la strada e una ripartenza dopo il risveglio.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappe56.gd
@@ -411,6 +413,13 @@ func _run() -> void:
 	_metti(Vector3(43.6, 0.0, -4.4), _m("marker_leva") + Vector3(0, 0.25, 0))
 	await _frames(8)
 	_guarda(_m("marker_leva") + Vector3(0, 0.45, 0))
+	# (la lezione deve esserci sempre: per i primi secondi lei è «da un'altra parte», percorri() dice di no, e la
+	# lezione si riprova finché la luce non parte; collaudo del 15 novembre)
+	var altrove := Node3D.new()
+	altrove.name = "LeiAltrovePerProva"
+	altrove.add_to_group(AcquaDiLei.LEI_IN_SCENA)
+	level.add_child(altrove)
+	altrove.global_position = Vector3(0, -200, 0)
 	await _hold(&"spray", 60)
 	check(leva.abbassata, "il getto tira giù la leva")
 	check(GameState.luci == GameState.Luci.FLASH, "tutte le luci si accendono (flash)")
@@ -437,11 +446,64 @@ func _run() -> void:
 	check(frame_leva[1] > 0 and not porta.bloccata and dopo_s <= 2.0,
 			"la porta si sblocca entro 2 s dalla leva (%.2f s), mentre il risveglio va avanti" % dopo_s)
 	check(not ris.finito and not porta.is_open, "la porta sbloccata resta chiusa finché non la si apre col maniglione")
+	# la lezione (0.4.0): la luce rosa di lei passa nella vasca di raccolta e se ne va; lei non esce e non prende
+	var acqua: Node3D = ris.acqua_lezione
+	var canto_prima := {}
+	var giro_prima := false
+	# (fino al primo tentativo, poi 3 s di tentativi che non riescono)
+	var dopo_tentativo := -1
+	for i in 60 * 12:
+		canto_prima[StringName(acqua.get(&"fase_canto"))] = true
+		giro_prima = giro_prima or bool(acqua.call(&"in_giro"))
+		if dopo_tentativo < 0 and bool(ris.get(&"_avvisato")):
+			dopo_tentativo = i
+		if dopo_tentativo >= 0 and i - dopo_tentativo >= 60 * 3:
+			break
+		await get_tree().physics_frame
+	check(dopo_tentativo >= 0 and not ris.lezione_fatta and not giro_prima,
+			"con lei da un'altra parte la luce non può passare: per 3 s la lezione non è fatta e si riprova (tentativo %s, fatta %s, giro %s)"
+			% [dopo_tentativo >= 0, ris.lezione_fatta, giro_prima])
+	check(canto_prima.keys() == [&"ferma"], "prima della luce niente canto dalla vasca (%s)" % [canto_prima.keys()])
+	altrove.queue_free()
+	check(acqua != null and acqua.is_in_group(&"lei_nell_acqua"), "c'è l'acqua di lei sulla vasca di raccolta, non letale (%s)" %
+			[acqua.get(&"letale") if acqua else "-"])
+	var in_giro := [false, false]   # [visto in giro, finito]
+	var fasi_canto := {}
+	var fasi_lei := {}
+	var punti_luce: Array = []
 	for i in 60 * 20:
-		if ris.finito:
+		if acqua and acqua.has_method(&"in_giro"):
+			var g := bool(acqua.call(&"in_giro"))
+			if g:
+				in_giro[0] = true
+				punti_luce.append(acqua.get(&"punto_luce"))
+			elif in_giro[0]:
+				in_giro[1] = true
+			fasi_canto[StringName(acqua.get(&"fase_canto"))] = true
+			fasi_lei[int(acqua.get(&"fase"))] = true
+		if ris.finito and (in_giro[1] or i > 60 * 16):
 			break
 		await get_tree().physics_frame
 	check(ris.finito, "il risveglio arriva alla fine")
+	check(in_giro[0] and in_giro[1], "dopo il buio la luce rosa passa nella vasca di raccolta e se ne va (punti: %d)" % punti_luce.size())
+	check(ris.lezione_fatta, "la lezione è fatta, una volta, appena lei può venire")
+	var canto_dopo := {}
+	for i in 60 * 5:
+		canto_dopo[StringName(acqua.get(&"fase_canto"))] = true
+		await get_tree().physics_frame
+	check(canto_dopo.keys() == [&"ferma"] and not bool(acqua.get(&"abilitata")),
+			"finita la luce la vasca tace e non canta più, restando vicino (%s)" % [canto_dopo.keys()])
+	var vasca: WaterTank = ris.vasca
+	if not punti_luce.is_empty() and vasca:
+		var sotto := true
+		for q: Vector3 in punti_luce:
+			sotto = sotto and q.y < vasca.get_surface_global_y() - 0.3 and q.y > vasca.get_floor_global_y()
+		check(sotto, "la luce resta sott'acqua, dentro la vasca")
+	var fuori := false
+	for f in fasi_lei:
+		fuori = fuori or AcquaDiLei.Fase.find_key(f) in ["ESCE", "SU", "PRESA"]
+	check(not fuori and not GameState.is_dying, "lei non esce e non prende (fasi %s, canto %s)" % [
+			fasi_lei.keys().map(func(f): return AcquaDiLei.Fase.find_key(f)), fasi_canto.keys()])
 	for pa in ris.paratie:
 		check(pa.is_chiusa, "la paratia %s è scesa" % pa.name)
 	var space := p.get_world_3d().direct_space_state
@@ -480,6 +542,20 @@ func _run() -> void:
 	GameState._on_level_ready()
 	await _frames(5)
 	check(GameState.luci == GameState.Luci.BLACKOUT, "ripartendo, le luci sono di nuovo al blackout")
+	await _frames(60 * 4)
+	check(not (acqua.has_method(&"in_giro") and bool(acqua.call(&"in_giro"))), "ripartendo dopo il risveglio la lezione non si rifà")
+
+	print("La lezione vista dall'ingresso della sala pompe")
+	# (il collaudo: dall'ingresso, guardando la vasca, la luce non passava, per un bambino a 35 m dietro i muri)
+	_metti(tec.to_local(Vector3(0, -9.05, 31.8)), tec.to_local(ris.vasca.global_position))
+	await _frames(10)
+	ris.lezione_fatta = false
+	ris._lezione()
+	var passata := false
+	for i in 60 * 3:
+		passata = passata or bool(acqua.call(&"in_giro"))
+		await get_tree().physics_frame
+	check(passata and ris.lezione_fatta, "dall'ingresso, guardando la vasca, la luce passa")
 
 	_fine()
 
