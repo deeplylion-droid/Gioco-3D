@@ -75,6 +75,8 @@ var stato := Stato.ATTESA
 var fischio_fatto := false
 var _t_giro := 0.0
 var _t_fischio := -1.0
+## Da quanto (s) la sala è caricata e pronta: nei primi istanti lo schermo è ancora nero.
+var _appena_caricata := 0.0
 var acqua: AcquaDiLei
 var _punti: Array[Node3D] = []
 ## Quando è partito l'avviso della fossa (ms, Time.get_ticks_msec; -1: mai): per i test.
@@ -113,6 +115,9 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	# (il tempo dal caricamento della sala, contato da quando il livello è pronto: nei primi istanti lo schermo è nero)
+	if not GameState.is_restoring():
+		_appena_caricata += _delta
 	# (mentre il livello si ripristina il giocatore nuovo non è ancora al checkpoint: niente decisioni sulla sua posizione)
 	if acqua == null or GameState.luci != GameState.Luci.BLACKOUT or GameState.is_dying or GameState.is_restoring():
 		return
@@ -138,8 +143,14 @@ func _physics_process(_delta: float) -> void:
 			if not in_sala:
 				return
 			if vicino_fossa:
-				# ripartendo dalla fossa (o arrivati lì senza giro): la scena di oggi
-				_finisci(false)
+				# ripartendo vicino alla fossa: appena caricata la sala (lo schermo è ancora nero) lei è già affacciata, come
+				# quando la scena ricomincia dopo una presa; se no (arrivati lì senza giro) l'avviso e poi la fossa
+				if _appena_caricata < 0.5 and lei_sbuca and lei_sbuca.affaccia_alla_ripartenza():
+					stato = Stato.FINITO
+					acqua.lascia()
+					acqua.abilitata = false
+				else:
+					_finisci(false)
 			elif acqua.gira(_giro(), velocita):
 				stato = Stato.GIRO
 				_t_giro = 0.0
