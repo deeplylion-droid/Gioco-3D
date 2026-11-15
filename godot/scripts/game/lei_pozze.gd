@@ -97,8 +97,6 @@ var _enigma: EnigmaPozze
 var _t := 0.0
 ## Il punto d'uscita di ogni pozza del bordo.
 var _uscite := {}
-## Da dove parte la luce quando la si chiama (solo col motore che non sa far girare la luce): sotto la pozza accanto.
-var _partenza: Marker3D
 ## La luce sta facendo un tratto (o se ne sta andando): si aspetta che finisca.
 var _in_giro := false
 ## Le pozze del tratto che sta facendo.
@@ -132,12 +130,6 @@ func _metti_motore() -> void:
 	add_child(acqua)
 	# (il pelo dell'acqua piena: con la mano il punto d'uscita è sul grigliato, non sull'acqua)
 	acqua.pelo = _enigma.to_global(Vector3(0.0, _enigma.profondita * (_enigma.pieno - 1.0), 0.0)).y
-	_partenza = Marker3D.new()
-	_partenza.name = "PartenzaLuce"
-	acqua.add_child(_partenza)
-	# (col giro della luce il motore la fa partire da dove sta)
-	if not sa_girare():
-		acqua.partenza_luce = _partenza
 	var lista: Array[Node3D] = []
 	for t in _enigma.pozze():
 		if not _sul_bordo(t):
@@ -157,14 +149,14 @@ func _metti_motore() -> void:
 	acqua.uscita.connect(func(): uscite += 1)
 	acqua.presa.connect(func(): prese += 1)
 	acqua.respinta.connect(func(): respinte += 1)
-	if acqua.has_signal(&"percorso_finito"):
-		acqua.connect(&"percorso_finito", _su_percorso_finito)
+	acqua.percorso_finito.connect(_su_percorso_finito)
 
 
-## I punti d'uscita della pozza del bordo [param t], con +Z verso fuori. MANO: dove sbatte la mano, sul grigliato appena
-## fuori dal bordino esterno, uno per ogni lato sulla passerella. INTERA: il centro della pozza al pelo dell'acqua piena.
+## I punti d'uscita della pozza del bordo [param t], con +Z verso fuori, allineati al suo scarico (da lì passa lei,
+## EnigmaPozze.centro_scarico). MANO: dove sbatte la mano, sul grigliato appena fuori dal bordino esterno, uno per ogni
+## lato sulla passerella, di fronte allo scarico. INTERA: sopra lo scarico, al pelo dell'acqua piena.
 func _pose_uscita(t: WaterTank) -> Array[Transform3D]:
-	var c := _locale(t.global_position)
+	var c := _locale(_enigma.centro_scarico(t))
 	var lati: Array[Vector3] = []
 	var m := _enigma.passo * 2.0 - 0.01
 	if absf(c.x) >= m:
@@ -255,13 +247,14 @@ func _su_colore_cominciato(c: String) -> void:
 	if fase == Fase.VIENE and bersaglio and String(bersaglio.fill_pigment) == c and _manda_via():
 		cacciate += 1
 		cacciata.emit()
-	elif fase == Fase.GIRA and _in_giro and _giro.any(func(t): return String(t.fill_pigment) == c):
+	elif fase == Fase.GIRA and acqua.in_giro() and _giro.any(func(t): return String(t.fill_pigment) == c):
 		# (la luce girava per quelle pozze: se ne va, e riprende da una pozza piena)
 		_manda_via()
 
 
 func _su_risolto() -> void:
-	if fase == Fase.VIENE or (fase == Fase.GIRA and _in_giro):
+	# (anche con la luce ferma fra un tratto e l'altro: il motore se la terrebbe, accesa, per sempre)
+	if fase == Fase.VIENE or acqua.in_giro():
 		_manda_via()
 	bersaglio = null
 	if acqua:
@@ -273,18 +266,22 @@ func _su_risolto() -> void:
 ## Manda via lei: se non è ancora uscita (la luce che gira o l'avviso) la luce se ne va, se è fuori torna sotto. Falso
 ## se è troppo tardi (presa) o se ne sta già andando.
 func _manda_via() -> bool:
-	var nome := String(AcquaDiLei.Fase.find_key(acqua.fase))
-	if nome in ["ARRIVA", "SPEGNE", "SILENZIO"] or (nome == "LONTANA" and _in_giro):
-		if acqua.has_method(&"manda_via"):
-			acqua.call(&"manda_via")
-		else:
-			acqua.call(&"_annulla")
-		# (se ne va in un secondo: si riparte quando ha finito)
-		_in_giro = sa_girare()
-		return true
-	if nome in ["ESCE", "SU"]:
-		acqua.respingi()
-		return true
+	match acqua.fase:
+		AcquaDiLei.Fase.ARRIVA, AcquaDiLei.Fase.SPEGNE, AcquaDiLei.Fase.SILENZIO:
+			acqua.manda_via()
+			# (la luce se ne va in un secondo: si riparte quando ha finito, a percorso_finito)
+			_in_giro = true
+			return true
+		AcquaDiLei.Fase.LONTANA:
+			if not acqua.in_giro():
+				return false
+			acqua.manda_via()
+			_in_giro = true
+			return true
+		AcquaDiLei.Fase.ESCE, AcquaDiLei.Fase.SU:
+			# (già fuori: torna sotto, come respinta)
+			acqua.manda_via()
+			return true
 	return false
 
 
@@ -303,20 +300,15 @@ func _physics_process(delta: float) -> void:
 			_t += delta
 			if _enigma.stato == EnigmaPozze.Stato.RISOLTO:
 				return
-			if sa_girare():
-				# la luce gira di tratto in tratto (il prossimo lo fa partire _su_percorso_finito); se adesso non può,
-				# si riprova ogni tanto
-				_t_riprova -= delta
-				if not _in_giro and acqua.fase == AcquaDiLei.Fase.LONTANA and _t_riprova <= 0.0:
-					_t_riprova = riprova
-					_prossimo_tratto()
-				return
-			# (motore che non sa far girare la luce: solo la chiamata)
-			if _t < 0.0:
-				return
-			var b := _scegli()
-			if b == null or not _chiama(b):
-				_t = -riprova
+			# la luce gira di tratto in tratto (il prossimo lo fa partire _su_percorso_finito); se adesso lei non può
+			# venire (un'altra lei in vista, un bambino), si riprova ogni tanto
+			_t_riprova -= delta
+			if _in_giro and not acqua.in_giro() and acqua.fase == AcquaDiLei.Fase.LONTANA:
+				# (il motore non sta facendo niente: il tratto è finito senza dirlo)
+				_in_giro = false
+			if not _in_giro and acqua.fase == AcquaDiLei.Fase.LONTANA and _t_riprova <= 0.0:
+				_t_riprova = riprova
+				_prossimo_tratto()
 		Fase.VIENE:
 			# (rete di sicurezza: il motore è tornato lontano senza dirlo)
 			_t += delta
@@ -329,11 +321,6 @@ func _scegli() -> WaterTank:
 	return _bersaglio_dimostrativo() if prossima_dimostrativa() else _bersaglio()
 
 
-## Vero se il motore sa far girare la luce senza che lei esca (AcquaDiLei.percorri).
-func sa_girare() -> bool:
-	return acqua != null and acqua.has_method(&"percorri")
-
-
 ## Finito un tratto (o all'inizio): finita la pausa, se c'è una pozza dove venire la luce ci va per pozze piene fino a
 ## quella accanto e da lì comincia l'avviso; se no gira ancora.
 func _prossimo_tratto() -> void:
@@ -344,10 +331,14 @@ func _prossimo_tratto() -> void:
 				if _chiama(b):
 					return
 			else:
-				var strada: Array = _strada(luce_in if luce_in and _piena(luce_in) else b, b)
+				var da: WaterTank = luce_in if luce_in and _piena(luce_in) else null
+				var strada: Array = _strada(da, b) if da else []
 				strada.pop_back()
-				if not strada.is_empty() and _percorri(strada, velocita_avvicinamento):
-					return
+				# (dalla pozza dove sta la luce, fino a quella accanto alla scelta)
+				if not strada.is_empty() and (strada[0] in _vicine(da) or strada[0] == da):
+					strada.push_front(da)
+					if _percorri(strada, velocita_avvicinamento):
+						return
 	_percorri(_giro_a_caso(), velocita_luce)
 
 
@@ -357,14 +348,15 @@ func _su_percorso_finito() -> void:
 		_prossimo_tratto()
 
 
-## La luce fa il tratto [param pozze] (sotto il pelo, come la luce del motore) e resta accesa all'ultima.
+## La luce fa il tratto [param pozze] (sotto il pelo, come la luce del motore; la prima è quella dove sta) e resta accesa
+## all'ultima.
 func _percorri(pozze: Array, v: float) -> bool:
-	if pozze.is_empty():
+	if pozze.size() < 2:
 		return false
 	var punti := PackedVector3Array()
 	for t: WaterTank in pozze:
 		punti.append(_sotto(t))
-	if not bool(acqua.call(&"percorri", punti, v, null, 0.0)):
+	if not acqua.percorri(punti, v, null, 0.0):
 		return false
 	_in_giro = true
 	_giro = pozze
@@ -378,17 +370,16 @@ func _sotto(t: WaterTank) -> Vector3:
 	return c - Vector3(0.0, 0.6, 0.0)
 
 
-## Un tratto a caso di [member passi_giro] pozze piene vicine, da dove sta la luce.
+## Un tratto a caso di pozze piene vicine, da dove sta la luce (o da una pozza piena a caso) e poi altre
+## [member passi_giro].
 func _giro_a_caso() -> Array:
 	var out: Array = []
-	var t := luce_in if luce_in and _piena(luce_in) else null
+	var t := luce_in if luce_in and _piena(luce_in) else _pozza_a_caso(null)
 	if t == null:
-		t = _pozza_a_caso(null)
-		if t == null:
-			return out
-		out.append(t)
+		return out
+	out.append(t)
 	var prima: WaterTank = null
-	while out.size() < passi_giro:
+	while out.size() < passi_giro + 1:
 		var vicine := _vicine(t).filter(func(u): return _piena(u) and u != prima)
 		if vicine.is_empty():
 			vicine = _vicine(t).filter(func(u): return _piena(u))
@@ -400,20 +391,11 @@ func _giro_a_caso() -> Array:
 	return out
 
 
-## Chiama lei nella pozza [param t]. Col giro la luce è già nella pozza accanto; se no parte da una pozza piena vicina,
-## sulla strada da dove stava, così non passa sotto le pozze vuote.
+## Chiama lei nella pozza [param t]: la luce è già nella pozza accanto (o in quella), e da lì comincia l'avviso.
 func _chiama(t: WaterTank) -> bool:
 	var m := uscita_di(t)
 	if m == null:
 		return false
-	var da := t
-	if luce_in and _piena(luce_in) and luce_in != t:
-		var strada := _strada(luce_in, t)
-		if strada.size() >= 2:
-			da = strada[strada.size() - 2]
-		elif luce_in in _vicine(t):
-			da = luce_in
-	_partenza.global_position = da.global_position
 	if not acqua.chiama(m):
 		return false
 	bersaglio = t
@@ -424,11 +406,7 @@ func _chiama(t: WaterTank) -> bool:
 
 ## Vero se la prossima uscita è quella dimostrativa (una volta per partita, la tiene il motore).
 func prossima_dimostrativa() -> bool:
-	if acqua == null or not acqua.prima_volta_dimostrativa:
-		return false
-	if acqua.has_method(&"prossima_dimostrativa"):
-		return bool(acqua.call(&"prossima_dimostrativa"))
-	return not AcquaDiLei._dimostrate.has(str(acqua.get_path()))
+	return acqua != null and acqua.prossima_dimostrativa()
 
 
 # --- Dove uscire ---------------------------------------------------------------------------------------------------
