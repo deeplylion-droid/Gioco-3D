@@ -202,6 +202,17 @@ smette quando scivola sotto. Nessun suono nuovo.
 Il morso suona sul bus Interfaccia (da vicino, niente riverbero, non si abbassa con la morte); la
 fauce si chiude a `MORSO_COLPO` = 1,0 s, il lampo rosso di `DeathSequence`, e lì parte lo stinger.
 
+## Lei nel tunnel: il canto, le metas su di lei
+
+Il canto di lei nel tunnel lo suona l'addon da solo (`Statua._tunnel`), mentre insegue (le animazioni
+`inseguimento/insegue_aperta` e `insegue_morde`) e si vede. Due metas su di lei (la `MedusaAffacciata` di `LeiTunnel`)
+lo cambiano:
+
+| Meta | Chi la mette | Cosa fa |
+|---|---|---|
+| `canto_zitto` | `LeiTunnel` nella carica e nello scatto (0.4.0) | il canto tace: si spegne da solo in 1 s (`spegni_voce`), mai un taglio |
+| `canto_dietro` | `LeiTunnel.schianto()`, tolta da `stacca()` e `via()` (finale della 0.5.0) | il canto resta anche mentre è premuta sul portello chiuso, fuori dall'inseguimento: si sente dietro il portello e si spegne in 1 s quando lei si stacca |
+
 ## API
 
 ```gdscript
