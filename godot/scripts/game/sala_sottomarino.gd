@@ -1156,7 +1156,7 @@ func _fine_luci(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> 
 	var ls := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 	ls.name = "LampadaStanza"
 	nodo.add_child(ls)
-	ls.global_position = _al(p + d * CAMERA_TRATTO, r, Vector2(-(CAMERA_MEZZA + 0.4), sg + 2.1)) + d * 0.05
+	ls.global_position = _al(p + d * CAMERA_TRATTO, r, Vector2(-(CAMERA_MEZZA + 0.4), sg + 2.35)) + d * 0.05
 	ls.look_at(ls.global_position + d * 2.0, Vector3.UP)
 	ls.rotate_object_local(Vector3.UP, PI)
 	_a_filo_del_muro(ls, d)
@@ -1741,6 +1741,51 @@ func _metti_foglio(b: Bambino) -> void:
 	_foglio.scale = Vector3.ONE / b.scale.x
 	# (girato verso gli occhi del giocatore, un po' inclinato all'indietro come lo tiene un bambino)
 	_foglio.rotation = Vector3(deg_to_rad(-12.0), 0.0, 0.0)
+
+
+## Per il controllo di posizionamento e il collaudo: i bambini del finale come dopo la girata (fermi al loro posto) o,
+## con [param porge], col bambino col cubo venuto avanti di due passi a porgere il foglio. Ritorna quando è fatto.
+func mostra_finale_per_controllo(porge: bool) -> void:
+	for b in _bambini_finale:
+		b.visible = true
+		b.process_mode = Node.PROCESS_MODE_INHERIT
+	if not porge or _bambini_finale.is_empty():
+		return
+	var b := _bambini_finale[0]
+	var L := lunghezza()
+	var occhi := _al(punto(L) + direzione(L) * CAMERA_DOVE_GUARDA, destra(L), Vector2(0.0, piano + SOGLIA))
+	var verso := occhi - b.global_position
+	verso.y = 0.0
+	var m := Marker3D.new()
+	add_child(m)
+	m.global_position = b.global_position + verso.normalized() * porge_passi
+	if _foglio == null:
+		_foglio = _crea_foglio()
+		b.add_child(_foglio)
+	if b.has_method(&"porge"):
+		var porto := [false]
+		b.connect(&"porge_il_foglio", func(): porto[0] = true, CONNECT_ONE_SHOT)
+		b.call(&"porge", [m] as Array[Node3D])
+		for i in 600:
+			if porto[0]:
+				break
+			await get_tree().physics_frame
+		# (fino alla fine del gesto, che poi tiene)
+		for i in 90:
+			await get_tree().physics_frame
+		var mano := b.call(&"punto_foglio") as Node3D
+		if porto[0] and mano:
+			_foglio.reparent(mano, false)
+			_foglio.transform = Transform3D.IDENTITY
+		else:
+			# (senza il giocatore il bambino non si muove: due passi messi a mano e il foglio davanti a lui)
+			b.global_position = m.global_position
+			_metti_foglio(b)
+	else:
+		b.global_position = m.global_position
+		_metti_foglio(b)
+	_foglio.visible = true
+	m.queue_free()
 
 
 func _fase(f: String) -> void:

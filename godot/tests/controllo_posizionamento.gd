@@ -77,6 +77,13 @@ const ZONE := [
 			"parti": ["Gommoni"]},
 	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "sottomarino_t2",
 			"parti": ["Gommoni"]},
+	# il finale (0.5.0): i sei bambini nella stanza dopo la camera stagna, fermi al loro posto e col bambino col cubo
+	# venuto avanti a porgere il foglio. I bambini sono creature (esclusi da _mesh_visibili, come tutti): qui si controlla
+	# la stanza con loro dentro; piedi a terra, posti e distanze li controlla test_finale_tunnel
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "finale_fermi",
+			"parti": ["Approdo"]},
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "finale_porge",
+			"parti": ["Approdo"]},
 ]
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
@@ -384,6 +391,20 @@ func _prepara(stato: String) -> void:
 				# dove si cammina (coordinatore, 24 ottobre): tutte le banchine, la scala, il pontile e la camera stagna
 				# dell'approdo; i checkpoint del tunnel nascono solo costruendolo, quindi i punti li dà il tunnel
 				_semi.append_array(tunnel.punti_dove_si_cammina())
+			for i in 10:
+				await get_tree().physics_frame
+			return
+		"finale_fermi", "finale_porge":
+			var tunnel := _radice as SalaSottomarino
+			if tunnel == null:
+				tunnel = _radice.find_child("SalaSottomarino", true, false) as SalaSottomarino
+			if tunnel:
+				if not tunnel.costruita:
+					tunnel.costruisci()
+				tunnel.set_physics_process(false)
+				tunnel.ferma_gommoni(0.0)
+				_semi.append_array(tunnel.punti_dove_si_cammina())
+				await tunnel.mostra_finale_per_controllo(stato == "finale_porge")
 			for i in 10:
 				await get_tree().physics_frame
 			return

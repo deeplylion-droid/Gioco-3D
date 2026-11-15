@@ -574,6 +574,20 @@
 	},
 	{
 		"zona": "sottomarino",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@243",
+		"problema": "ingombro",
+		"pos": [
+			-57.5,
+			-27.0,
+			21.0
+		],
+		"firma": "|TorusMesh 0.54x0.08x0.54",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A; lo stesso anello visto dalla stanza dei bambini della 0.5.0, che allarga lo spazio dove si cammina)"
+	},
+	{
+		"zona": "sottomarino",
 		"nodo": "Approdo/@MeshInstance3D@226",
 		"problema": "ingombro",
 		"pos": [
