@@ -13,6 +13,7 @@ CODA = ("Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>\n"
 YML = ".github/workflows/build.yml"
 PRIMO = "      - name: Texture del pacchetto compresse"
 ESPORTA = "      - name: Esporta Windows e Linux"
+LIMITE = 20  # minuti per ogni passo di controllo o di test: un test appeso non ferma il giro
 
 def git(*args, stdin=None, env=None):
     r = subprocess.run(["git", "-C", REPO, *args], input=stdin, capture_output=True, text=True, env=env)
@@ -23,7 +24,13 @@ def git(*args, stdin=None, env=None):
 TRAPPOLA = """      - name: (branch di prova) i comandi falliti si scrivono in un file e il job va avanti
         run: |
           cat > "$RUNNER_TEMP/trappola.sh" <<'FINE'
-          trap 'echo "FALLITO ($0): $BASH_COMMAND" >> "$RUNNER_TEMP/falliti.txt"' ERR
+          case "$0" in
+            */_temp/*.sh)
+              echo "INIZIO $GITHUB_ACTION" >> "$RUNNER_TEMP/passi.txt"
+              trap 'echo "FALLITO $GITHUB_ACTION: $BASH_COMMAND" >> "$RUNNER_TEMP/falliti.txt"' ERR
+              trap 'echo "FINE $GITHUB_ACTION $?" >> "$RUNNER_TEMP/passi.txt"' EXIT
+              ;;
+          esac
           FINE
           echo "BASH_ENV=$RUNNER_TEMP/trappola.sh" >> "$GITHUB_ENV"
 
@@ -32,8 +39,14 @@ RIEPILOGO = """      - name: (branch di prova) riepilogo dei comandi falliti
         if: always()
         run: |
           echo "=== RIEPILOGO DEL BRANCH DI PROVA ==="
-          if [ -s "$RUNNER_TEMP/falliti.txt" ]; then cat "$RUNNER_TEMP/falliti.txt"; echo "=== FINE RIEPILOGO: CI SONO COMANDI FALLITI ==="; exit 1; fi
-          echo "=== FINE RIEPILOGO: NESSUN COMANDO FALLITO ==="
+          echo "--- comandi falliti:"; cat "$RUNNER_TEMP/falliti.txt" 2>/dev/null || true
+          echo "--- passi finiti con errore (FINE <passo> <codice>):"; grep -E "^FINE .* [1-9][0-9]*$" "$RUNNER_TEMP/passi.txt" || true
+          echo "--- passi cominciati e mai finiti (appesi, fermati dal limite di tempo):"
+          for p in $(grep "^INIZIO " "$RUNNER_TEMP/passi.txt" | cut -d" " -f2 | sort -u); do [ "$p" = "$GITHUB_ACTION" ] && continue; grep -q "^FINE $p " "$RUNNER_TEMP/passi.txt" || echo "APPESO $p"; done
+          echo "--- passi cominciati: $(grep -c "^INIZIO " "$RUNNER_TEMP/passi.txt")"
+          if [ -s "$RUNNER_TEMP/falliti.txt" ] || grep -q -E "^FINE .* [1-9][0-9]*$" "$RUNNER_TEMP/passi.txt"; then echo "=== FINE RIEPILOGO: CI SONO PASSI ROSSI ==="; exit 1; fi
+          for p in $(grep "^INIZIO " "$RUNNER_TEMP/passi.txt" | cut -d" " -f2 | sort -u); do [ "$p" = "$GITHUB_ACTION" ] && continue; grep -q "^FINE $p " "$RUNNER_TEMP/passi.txt" || { echo "=== FINE RIEPILOGO: CI SONO PASSI APPESI ==="; exit 1; }; done
+          echo "=== FINE RIEPILOGO: NESSUN PASSO ROSSO ==="
 """
 
 def main():
@@ -55,6 +68,7 @@ def main():
             fuori.extend(TRAPPOLA.rstrip("\n").split("\n"))
         if i >= i_primo[0] and r.startswith("      - name: "):
             fuori.append("        continue-on-error: true")
+            fuori.append("        timeout-minutes: %d" % LIMITE)
             n += 1
     while fuori and fuori[-1] == "":
         fuori.pop()
@@ -75,6 +89,26 @@ def main():
     sha = git("commit-tree", albero, "-p", unione, "-F", "-", stdin=msg + CODA).strip()
     print(git("diff", "--stat", unione, sha).strip())
     print("passi con continue-on-error:", n)
+    import json
+    k = 0
+    mappa = {}
+    nome = None
+    ha_id = False
+    for r in fuori:
+        if r.startswith("      - name: "):
+            nome = r[len("      - name: "):]
+            ha_id = False
+        elif r.startswith("      - uses:"):
+            nome = None
+        elif r.startswith("        id: "):
+            ha_id = True
+        elif r.startswith("        run:") and nome is not None:
+            if not ha_id:
+                k += 1
+                mappa["__run" if k == 1 else "__run_%d" % k] = nome
+            nome = None
+    open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "mappa_passi.json"), "w", encoding="utf-8").write(json.dumps(mappa, ensure_ascii=False, indent=0))
+    print("mappa dei passi scritta:", len(mappa))
     print(sha)
 
 if __name__ == "__main__":
