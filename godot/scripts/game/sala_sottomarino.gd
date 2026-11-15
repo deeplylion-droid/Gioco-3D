@@ -1163,15 +1163,20 @@ func _fine_luci(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> 
 	var gs := ls.find_child("globo", true, false) as MeshInstance3D
 	if gs:
 		gs.material_override = _mat_globo()
-	var os := OmniLight3D.new()
+	# (la sua luce è un cono debole verso i due davanti, il bambino col cubo più di tutti, anche quando viene avanti a
+	# porgere il foglio; il fondo della stanza resta al buio)
+	var os := SpotLight3D.new()
 	os.name = "LuceStanza"
-	os.light_color = Color(1.0, 0.76, 0.5)
+	os.light_color = Color(1.0, 0.8, 0.58)
 	os.light_energy = stanza_luce
-	os.omni_range = stanza_luce_raggio
-	os.omni_attenuation = 1.0
+	os.spot_range = stanza_luce_raggio
+	os.spot_angle = stanza_luce_cono
+	os.spot_angle_attenuation = 0.6
+	os.spot_attenuation = 0.6
 	os.shadow_enabled = true
 	nodo.add_child(os)
-	os.global_position = ls.global_position + d * 0.4
+	var mira := _al(p + d * stanza_luce_mira.y, r, Vector2(stanza_luce_mira.x, sg + 0.75))
+	os.look_at_from_position(ls.global_position + d * 0.25 - Vector3.UP * 0.05, mira, Vector3.UP)
 
 
 ## Un palo (o un tubo) di ferro da [param a] a [param b].
@@ -1637,13 +1642,17 @@ func _finale() -> void:
 ## Il campo visivo della camera sul foglio (gradi), e quanta altezza dello schermo prende il foglio.
 @export var foglio_fov := 55.0
 @export var foglio_schermo := 0.62
-## Quanto brillano gli agnellini delle sagome rispetto a quello davanti (si vede appena il viso).
-@export var sagoma_bagliore := 0.04
+## Quanto brillano di rosa gli agnellini del finale (0: niente, coi loro colori veri: dalla 0.4.0 la luce rosa vuol
+## dire «lei è qui», e qui lei se n'è andata).
+@export var agnelli_bagliore := 0.0
 ## La lampada a gabbia nella stanza dei bambini, sul muro accanto al primo tratto, vicino all'angolo (dalla parte del
 ## bambino col cubo, a circa 2,6 m da lui):
 ## quanto fa luce (energia) e fin dove arriva (m). Debole: i due davanti si riconoscono, le sagome dietro no.
-@export var stanza_luce := 4.0
-@export var stanza_luce_raggio := 3.8
+@export var stanza_luce := 6.0
+@export var stanza_luce_raggio := 5.0
+## Il cono della luce (gradi, mezza apertura) e dove punta: [di lato, dal portello] (m), a 75 cm da terra.
+@export var stanza_luce_cono := 24.0
+@export var stanza_luce_mira := Vector2(-0.35, 4.75)
 ## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
 ## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
 ## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
@@ -1651,7 +1660,7 @@ func _finale() -> void:
 ## dietro quattro sagome, mezze coperte dai due davanti e ai lati del semicerchio.
 @export var bambini_finale: Array = [
 	[0, -0.45, 5.15, 1.0, 0.0, false],
-	[1, 0.55, 5.0, 1.0, 1.4, false],
+	[1, 1.2, 5.2, 1.0, 1.4, false],
 	[1, -0.2, 6.75, 1.12, 0.0, true],
 	[0, 0.85, 6.45, 0.92, 1.9, true],
 	[1, -2.2, 7.0, 0.9, 0.0, true],
@@ -1692,11 +1701,11 @@ func _bambino_finale(i: int) -> void:
 	b.visible = false
 	b.process_mode = Node.PROCESS_MODE_DISABLED
 	b.set_meta(&"sagoma", bool(c[5]))
-	# (le sagome quasi nere: l'agnellino brilla al buio, dietro solo un filo)
-	if bool(c[5]):
-		for f in b.get_children():
-			if f is AgnelloFluorescente:
-				(f as AgnelloFluorescente).energia *= sagoma_bagliore
+	# (niente rosa: l'agnellino che brilla al buio qui è spento, coi suoi colori veri sotto la luce della stanza)
+	for f in b.get_children():
+		if f is AgnelloFluorescente:
+			(f as AgnelloFluorescente).energia *= agnelli_bagliore
+			(f as AgnelloFluorescente).luce = 0.0
 	add_child(b)
 	_bambini_finale.append(b)
 
