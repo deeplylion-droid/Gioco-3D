@@ -12,6 +12,11 @@ extends Node
 ##   del ponte inferiore col maniglione: il chiavistello si sfila un attimo dopo la leva
 ##   ([member sblocco_porta]), senza aspettare la fine del risveglio.
 ## Le luci le cambia GameState.imposta_luci(): un punto solo, a cui si aggancia la grafica.
+## - La lezione (0.4.0, «L'acqua è sua», GDD del 15 novembre): poco dopo il tonfo, la vasca di raccolta si accende di
+##   rosa da sotto per qualche secondo e dai tubi arriva per la prima volta il canto di lei: la luce passa sotto il
+##   pelo, dal lato più vicino al giocatore, e se ne va. Lei non esce e non prende: un AcquaDiLei sulla vasca, non
+##   letale e non automatico, fa solo [code]percorri()[/code] (la luce sott'acqua comune di mascotte; il canto lo segue
+##   l'audio, CantoPrima). Una volta sola: ripartendo dal checkpoint del risveglio non si rifà.
 
 signal pompa_avviata(indice: int)
 signal sequenza_sbagliata
@@ -44,6 +49,15 @@ signal porta_sbloccata
 ## tira e il chiavistello della porta si sfila con un colpo. Il resto del risveglio (blackout, rumori,
 ## paratie) va avanti intanto: la porta non lo aspetta (l'utente: "deve farlo in 1-2 secondi").
 @export var sblocco_porta := 0.9
+## La lezione: la vasca di raccolta (WaterTank) dove passa la luce rosa di lei, quanto dopo il tonfo (s), quanto dura il
+## passaggio (s, senza lo spegnimento), quanto sotto il pelo passa (m; ai capi della vasca più giù, dove entra ed esce
+## dai tubi) e in quanti secondi si spegne alla fine.
+@export var vasca: WaterTank
+@export var attesa_lezione := 1.2
+@export var durata_lezione := 6.0
+@export var sotto_il_pelo := 0.6
+@export var sotto_il_pelo_capi := 1.1
+@export var spegni_lezione := 1.5
 
 ## Quante pompe sono avviate nell'ordine giusto.
 var avviate := 0
@@ -51,6 +65,15 @@ var avviate := 0
 var risvegliata := false
 ## Il risveglio è finito: paratie giù, porta sbloccata.
 var finito := false
+## La luce di lei è passata nella vasca di raccolta (la lezione), o non poteva farlo.
+var lezione_fatta := false
+## Dalla leva finché la luce della lezione non si è spenta: lei è qui. Chi la vuole altrove (LeiSalaAlBuio) aspetta
+## (il nodo è nel gruppo [constant GRUPPO]).
+var lezione_in_corso := false
+const GRUPPO := &"risveglio_pompe"
+signal lezione_finita
+## L'acqua di lei sulla vasca di raccolta (AcquaDiLei), solo per la lezione.
+var acqua_lezione: Node3D
 
 var _vapori: Array[GPUParticles3D] = []
 var _motori: Array = []
@@ -58,6 +81,7 @@ var _motori: Array = []
 
 func _ready() -> void:
 	add_to_group(&"persist")
+	add_to_group(GRUPPO)
 	for i in turbine.size():
 		var t := turbine[i]
 		if t:
@@ -88,6 +112,7 @@ func _ready() -> void:
 			if motore[0] and is_instance_valid(motore[0]):
 				motore[0].queue_free()
 			motore[0] = null)
+	_prepara_lezione()
 	for v in vapori:
 		var punto := get_node_or_null(v) as Node3D
 		if punto:
@@ -130,6 +155,7 @@ func _risveglio() -> void:
 	if risvegliata:
 		return
 	risvegliata = true
+	lezione_in_corso = not lezione_fatta and acqua_lezione != null
 	risveglio_iniziato.emit()
 	_suona(&"cancello_fine", leva.global_position if leva else null, 0.0, 0.8)
 	get_tree().create_timer(sblocco_porta, false).timeout.connect(_sblocca_porta)
@@ -156,6 +182,8 @@ func _risveglio() -> void:
 	_suona(&"plastica_piega_lontano", punto_lontano)
 	await get_tree().create_timer(attesa_tonfo, false).timeout
 	_suona(&"tonfo_acqua_lontano", punto_lontano)
+	# la lezione va per conto suo, intanto le paratie scendono come sempre
+	get_tree().create_timer(attesa_lezione, false).timeout.connect(_lezione)
 	await get_tree().create_timer(attesa_paratie, false).timeout
 	for p in paratie:
 		p.chiudi()
@@ -236,3 +264,83 @@ func load_state(data: Dictionary) -> void:
 			monitor.mostra_neve()
 		for p in paratie:
 			p.load_state({"chiusa": true})
+
+
+# --- La lezione (0.4.0) ----------------------------------------------------------------------------------------------
+
+## L'acqua di lei sulla vasca di raccolta: non letale, non automatica, con un punto d'uscita al centro (il motore lo
+## vuole; lei qui non esce mai, perché si usa solo percorri() senza alla_fine).
+func _prepara_lezione() -> void:
+	if vasca == null:
+		return
+	var script := load("res://scripts/creature/acqua_di_lei.gd") as Script
+	if script == null:
+		return
+	acqua_lezione = script.new() as Node3D
+	acqua_lezione.name = "AcquaDiLeiLezione"
+	acqua_lezione.set(&"letale", false)
+	acqua_lezione.set(&"automatica", false)
+	var centro := Marker3D.new()
+	centro.name = "Centro"
+	acqua_lezione.add_child(centro)
+	vasca.add_child(acqua_lezione)
+	acqua_lezione.global_transform = vasca.global_transform
+	centro.global_position = Vector3(vasca.global_position.x, vasca.get_surface_global_y(), vasca.global_position.z)
+	acqua_lezione.set(&"pelo", vasca.get_surface_global_y())
+	acqua_lezione.set(&"punti_uscita", [centro] as Array[Node3D])
+
+
+## Il percorso della luce, nel mondo: dentro dal tubo a un capo della vasca (più giù), su fino a [member sotto_il_pelo]
+## nel punto della vasca più vicino al giocatore, via dall'altro capo (di nuovo giù). Lungo il lato lungo della vasca.
+func percorso_lezione() -> PackedVector3Array:
+	var punti := PackedVector3Array()
+	if vasca == null:
+		return punti
+	var lungo := vasca.inner_size.x >= vasca.inner_size.z
+	var mezzo := (vasca.inner_size.x if lungo else vasca.inner_size.z) * 0.5 - 0.35
+	var asse := vasca.global_basis.x.normalized() if lungo else vasca.global_basis.z.normalized()
+	var c := vasca.global_position
+	var pelo := vasca.get_surface_global_y()
+	var g := GameState.player as Node3D
+	# entra dal capo più lontano dal giocatore, passa nel punto della vasca più vicino a lui, esce dall'altro capo
+	var vicino := 0.0
+	if g and is_instance_valid(g):
+		vicino = clampf((g.global_position - c).dot(asse), -mezzo * 0.6, mezzo * 0.6)
+	var verso := 1.0 if vicino >= 0.0 else -1.0
+	var a := c - asse * mezzo * verso
+	var b := c + asse * mezzo * verso
+	a.y = pelo - sotto_il_pelo_capi
+	b.y = pelo - sotto_il_pelo_capi
+	var m := c + asse * vicino
+	m.y = pelo - sotto_il_pelo
+	punti.append(a)
+	punti.append(m)
+	punti.append(b)
+	return punti
+
+
+func _lezione() -> void:
+	if lezione_fatta or acqua_lezione == null or not is_instance_valid(acqua_lezione):
+		_fine_lezione()
+		return
+	lezione_fatta = true
+	if not acqua_lezione.has_method(&"percorri"):
+		push_warning("RisveglioSalaPompe: AcquaDiLei senza percorri(): niente lezione")
+		_fine_lezione()
+		return
+	var punti := percorso_lezione()
+	var lunghezza := 0.0
+	for i in range(1, punti.size()):
+		lunghezza += punti[i].distance_to(punti[i - 1])
+	var ok := bool(acqua_lezione.call(&"percorri", punti, lunghezza / maxf(durata_lezione, 0.1), null, spegni_lezione))
+	if not ok:
+		push_warning("RisveglioSalaPompe: la luce di lei non è potuta passare nella vasca di raccolta")
+		_fine_lezione()
+		return
+	acqua_lezione.connect(&"percorso_finito", _fine_lezione, CONNECT_ONE_SHOT)
+
+
+func _fine_lezione() -> void:
+	if lezione_in_corso:
+		lezione_in_corso = false
+		lezione_finita.emit()
