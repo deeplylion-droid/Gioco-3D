@@ -79,10 +79,6 @@ func _physics_process(_delta: float) -> void:
 	var p := GameState.player
 	if p == null or not is_instance_valid(p):
 		return
-	# (la lezione nella sala pompe: finché la luce di lei passa nella vasca di raccolta, lei è lì; ambienti-1, 0.4.0)
-	var rp := get_tree().get_first_node_in_group(&"risveglio_pompe")
-	if rp and bool(rp.get(&"lezione_in_corso")):
-		return
 	acqua.letale = letale
 	acqua.pelo = vasca_grande.get_surface_global_y()
 	var vicino_fossa := lei_sbuca != null and lei_sbuca.punto_sbuca != null \
