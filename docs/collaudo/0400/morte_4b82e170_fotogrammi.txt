@@ -990,3 +990,900 @@ PM: F bordo_ovest_0_2 0.450 cam (-3.475, 0.715, 0.274) guarda (0.66, -0.74, -0.1
 PM: F bordo_ovest_0_2 0.467 cam (-3.46, 0.715, 0.306) guarda (0.69, -0.71, -0.13); sopra il pelo di Pozza_0_2 0.767; dal centro della pozza in pianta 1.297; 
 PM: F bordo_ovest_0_2 0.483 cam (-3.438, 0.713, 0.335) guarda (0.73, -0.67, -0.14); sopra il pelo di Pozza_0_2 0.766; dal centro della pozza in pianta 1.283; 
 PM: F bordo_ovest_0_2 0.500 cam (-3.399, 0.733, 0.317) guarda (0.74, -0.66, -0.13); sopra il pelo di Pozza_0_2 0.785; dal centro della pozza in pianta 1.240; 
+PM: F bordo_ovest_0_2 0.017 cam (-3.338, 1.603, 0.019) guarda (0.54, -0.84, -0.01); sopra il pelo di Pozza_0_2 1.655; dal centro della pozza in pianta 1.138; 
+PM: F bordo_ovest_0_2 0.033 cam (-3.355, 1.577, 0.019) guarda (0.54, -0.84, 0.0); sopra il pelo di Pozza_0_2 1.629; dal centro della pozza in pianta 1.155; 
+PM: F bordo_ovest_0_2 0.050 cam (-3.376, 1.538, 0.015) guarda (0.53, -0.85, 0.01); sopra il pelo di Pozza_0_2 1.590; dal centro della pozza in pianta 1.176; 
+PM: F bordo_ovest_0_2 0.067 cam (-3.386, 1.499, 0.025) guarda (0.51, -0.86, 0.01); sopra il pelo di Pozza_0_2 1.551; dal centro della pozza in pianta 1.186; 
+PM: F bordo_ovest_0_2 0.083 cam (-3.387, 1.457, 0.045) guarda (0.51, -0.86, 0.0); sopra il pelo di Pozza_0_2 1.510; dal centro della pozza in pianta 1.187; 
+PM: F bordo_ovest_0_2 0.100 cam (-3.394, 1.406, 0.065) guarda (0.5, -0.86, -0.01); sopra il pelo di Pozza_0_2 1.458; dal centro della pozza in pianta 1.195; 
+PM: F bordo_ovest_0_2 0.117 cam (-3.409, 1.345, 0.094) guarda (0.49, -0.87, -0.01); sopra il pelo di Pozza_0_2 1.397; dal centro della pozza in pianta 1.213; 
+PM: F bordo_ovest_0_2 0.133 cam (-3.425, 1.279, 0.128) guarda (0.47, -0.88, 0.0); sopra il pelo di Pozza_0_2 1.332; dal centro della pozza in pianta 1.232; 
+PM: F bordo_ovest_0_2 0.150 cam (-3.426, 1.219, 0.132) guarda (0.52, -0.86, -0.01); sopra il pelo di Pozza_0_2 1.271; dal centro della pozza in pianta 1.233; 
+PM: F bordo_ovest_0_2 0.167 cam (-3.469, 1.135, 0.134) guarda (0.49, -0.87, -0.01); sopra il pelo di Pozza_0_2 1.187; dal centro della pozza in pianta 1.276; 
+PM: F bordo_ovest_0_2 0.183 cam (-3.486, 1.064, 0.178) guarda (0.47, -0.88, -0.02); sopra il pelo di Pozza_0_2 1.116; dal centro della pozza in pianta 1.299; 
+PM: F bordo_ovest_0_2 0.200 cam (-3.489, 1.0, 0.219) guarda (0.44, -0.9, -0.01); sopra il pelo di Pozza_0_2 1.052; dal centro della pozza in pianta 1.307; 
+PM: F bordo_ovest_0_2 0.217 cam (-3.497, 0.935, 0.241) guarda (0.41, -0.91, 0.0); sopra il pelo di Pozza_0_2 0.987; dal centro della pozza in pianta 1.319; 
+PM: F bordo_ovest_0_2 0.233 cam (-3.522, 0.865, 0.258) guarda (0.38, -0.92, 0.01); sopra il pelo di Pozza_0_2 0.917; dal centro della pozza in pianta 1.347; 
+PM: F bordo_ovest_0_2 0.250 cam (-3.553, 0.798, 0.278) guarda (0.37, -0.93, 0.0); sopra il pelo di Pozza_0_2 0.850; dal centro della pozza in pianta 1.381; 
+PM: F bordo_ovest_0_2 0.267 cam (-3.571, 0.741, 0.291) guarda (0.37, -0.93, -0.01); sopra il pelo di Pozza_0_2 0.793; dal centro della pozza in pianta 1.402; 
+PM: F bordo_ovest_0_2 0.283 cam (-3.583, 0.693, 0.304) guarda (0.37, -0.93, -0.01); sopra il pelo di Pozza_0_2 0.745; dal centro della pozza in pianta 1.416; 
+PM: F bordo_ovest_0_2 0.300 cam (-3.595, 0.652, 0.333) guarda (0.37, -0.93, -0.01); sopra il pelo di Pozza_0_2 0.704; dal centro della pozza in pianta 1.434; 
+PM: F bordo_ovest_0_2 0.317 cam (-3.55, 0.645, 0.357) guarda (0.37, -0.93, -0.05); sopra il pelo di Pozza_0_2 0.698; dal centro della pozza in pianta 1.396; 
+PM: F bordo_ovest_0_2 0.333 cam (-3.557, 0.629, 0.329) guarda (0.43, -0.9, -0.04); sopra il pelo di Pozza_0_2 0.681; dal centro della pozza in pianta 1.397; 
+PM: F bordo_ovest_0_2 0.350 cam (-3.584, 0.611, 0.324) guarda (0.47, -0.88, -0.04); sopra il pelo di Pozza_0_2 0.664; dal centro della pozza in pianta 1.421; 
+PM: F bordo_ovest_0_2 0.367 cam (-3.594, 0.605, 0.338) guarda (0.51, -0.86, -0.06); sopra il pelo di Pozza_0_2 0.657; dal centro della pozza in pianta 1.435; 
+PM: F bordo_ovest_0_2 0.383 cam (-3.584, 0.614, 0.302) guarda (0.48, -0.87, -0.06); sopra il pelo di Pozza_0_2 0.667; dal centro della pozza in pianta 1.417; 
+PM: F bordo_ovest_0_2 0.400 cam (-3.551, 0.64, 0.309) guarda (0.54, -0.84, -0.08); sopra il pelo di Pozza_0_2 0.692; dal centro della pozza in pianta 1.386; 
+PM: F bordo_ovest_0_2 0.417 cam (-3.52, 0.667, 0.319) guarda (0.61, -0.79, -0.07); sopra il pelo di Pozza_0_2 0.720; dal centro della pozza in pianta 1.358; 
+PM: F bordo_ovest_0_2 0.433 cam (-3.495, 0.696, 0.286) guarda (0.64, -0.77, -0.09); sopra il pelo di Pozza_0_2 0.748; dal centro della pozza in pianta 1.326; 
+PM: F bordo_ovest_0_2 0.450 cam (-3.475, 0.715, 0.274) guarda (0.66, -0.74, -0.11); sopra il pelo di Pozza_0_2 0.768; dal centro della pozza in pianta 1.304; 
+PM: F bordo_ovest_0_2 0.467 cam (-3.46, 0.715, 0.306) guarda (0.69, -0.71, -0.13); sopra il pelo di Pozza_0_2 0.767; dal centro della pozza in pianta 1.297; 
+PM: F bordo_ovest_0_2 0.483 cam (-3.438, 0.713, 0.335) guarda (0.73, -0.67, -0.14); sopra il pelo di Pozza_0_2 0.766; dal centro della pozza in pianta 1.283; 
+PM: F bordo_ovest_0_2 0.500 cam (-3.399, 0.733, 0.317) guarda (0.74, -0.66, -0.13); sopra il pelo di Pozza_0_2 0.785; dal centro della pozza in pianta 1.240; 
+PM: F bordo_ovest_0_2 0.517 cam (-3.349, 0.763, 0.286) guarda (0.73, -0.67, -0.14); sopra il pelo di Pozza_0_2 0.815; dal centro della pozza in pianta 1.184; 
+PM: F bordo_ovest_0_2 0.533 cam (-3.328, 0.756, 0.267) guarda (0.74, -0.66, -0.14); sopra il pelo di Pozza_0_2 0.809; dal centro della pozza in pianta 1.159; 
+PM: F bordo_ovest_0_2 0.550 cam (-3.301, 0.754, 0.253) guarda (0.74, -0.65, -0.15); sopra il pelo di Pozza_0_2 0.807; dal centro della pozza in pianta 1.130; 
+PM: F bordo_ovest_0_2 0.567 cam (-3.269, 0.75, 0.269) guarda (0.74, -0.66, -0.17); sopra il pelo di Pozza_0_2 0.803; dal centro della pozza in pianta 1.102; 
+PM: F bordo_ovest_0_2 0.583 cam (-3.238, 0.743, 0.291) guarda (0.72, -0.67, -0.17); sopra il pelo di Pozza_0_2 0.795; dal centro della pozza in pianta 1.077; 
+PM: F bordo_ovest_0_2 0.600 cam (-3.202, 0.75, 0.27) guarda (0.71, -0.69, -0.15); sopra il pelo di Pozza_0_2 0.802; dal centro della pozza in pianta 1.038; 
+PM: F bordo_ovest_0_2 0.617 cam (-3.138, 0.794, 0.21) guarda (0.72, -0.68, -0.14); sopra il pelo di Pozza_0_2 0.847; dal centro della pozza in pianta 0.961; 
+PM: F bordo_ovest_0_2 0.633 cam (-3.105, 0.787, 0.222) guarda (0.71, -0.68, -0.16); sopra il pelo di Pozza_0_2 0.840; dal centro della pozza in pianta 0.932; 
+PM: F bordo_ovest_0_2 0.650 cam (-3.09, 0.757, 0.231) guarda (0.7, -0.7, -0.16); sopra il pelo di Pozza_0_2 0.810; dal centro della pozza in pianta 0.920; 
+PM: F bordo_ovest_0_2 0.667 cam (-3.067, 0.726, 0.226) guarda (0.69, -0.71, -0.15); sopra il pelo di Pozza_0_2 0.779; dal centro della pozza in pianta 0.896; 
+PM: F bordo_ovest_0_2 0.683 cam (-3.028, 0.695, 0.22) guarda (0.69, -0.71, -0.14); sopra il pelo di Pozza_0_2 0.748; dal centro della pozza in pianta 0.857; 
+PM: F bordo_ovest_0_2 0.700 cam (-2.987, 0.656, 0.196) guarda (0.69, -0.71, -0.15); sopra il pelo di Pozza_0_2 0.709; dal centro della pozza in pianta 0.811; 
+PM: F bordo_ovest_0_2 0.717 cam (-2.949, 0.603, 0.188) guarda (0.69, -0.7, -0.14); sopra il pelo di Pozza_0_2 0.656; dal centro della pozza in pianta 0.772; 
+PM: F bordo_ovest_0_2 0.733 cam (-2.913, 0.552, 0.18) guarda (0.7, -0.7, -0.14); sopra il pelo di Pozza_0_2 0.604; dal centro della pozza in pianta 0.735; 
+PM: F bordo_ovest_0_2 0.750 cam (-2.882, 0.508, 0.172) guarda (0.7, -0.7, -0.14); sopra il pelo di Pozza_0_2 0.561; dal centro della pozza in pianta 0.704; 
+PM: F bordo_ovest_0_2 0.767 cam (-2.857, 0.473, 0.165) guarda (0.7, -0.69, -0.14); sopra il pelo di Pozza_0_2 0.526; dal centro della pozza in pianta 0.677; 
+PM: F bordo_ovest_0_2 0.783 cam (-2.835, 0.445, 0.158) guarda (0.71, -0.69, -0.14); sopra il pelo di Pozza_0_2 0.497; dal centro della pozza in pianta 0.654; 
+PM: F bordo_ovest_0_2 0.800 cam (-2.811, 0.417, 0.151) guarda (0.72, -0.68, -0.14); sopra il pelo di Pozza_0_2 0.470; dal centro della pozza in pianta 0.630; 
+PM: F bordo_ovest_0_2 0.817 cam (-2.785, 0.388, 0.145) guarda (0.72, -0.68, -0.14); sopra il pelo di Pozza_0_2 0.440; dal centro della pozza in pianta 0.603; 
+PM: F bordo_ovest_0_2 0.833 cam (-2.757, 0.353, 0.14) guarda (0.73, -0.67, -0.14); sopra il pelo di Pozza_0_2 0.406; dal centro della pozza in pianta 0.574; 
+PM: F bordo_ovest_0_2 0.850 cam (-2.732, 0.318, 0.135) guarda (0.74, -0.66, -0.14); sopra il pelo di Pozza_0_2 0.370; dal centro della pozza in pianta 0.549; 
+PM: F bordo_ovest_0_2 0.867 cam (-2.714, 0.285, 0.13) guarda (0.74, -0.65, -0.14); sopra il pelo di Pozza_0_2 0.337; dal centro della pozza in pianta 0.531; 
+PM: F bordo_ovest_0_2 0.883 cam (-2.705, 0.259, 0.127) guarda (0.75, -0.65, -0.14); sopra il pelo di Pozza_0_2 0.311; dal centro della pozza in pianta 0.520; 
+PM: F bordo_ovest_0_2 0.900 cam (-2.7, 0.243, 0.124) guarda (0.75, -0.64, -0.14); sopra il pelo di Pozza_0_2 0.295; dal centro della pozza in pianta 0.515; sopra Pozza_0_2 di 0.295
+PM: F bordo_ovest_0_2 0.917 cam (-2.695, 0.234, 0.122) guarda (0.76, -0.64, -0.14); sopra il pelo di Pozza_0_2 0.287; dal centro della pozza in pianta 0.510; sopra Pozza_0_2 di 0.287
+PM: F bordo_ovest_0_2 0.933 cam (-2.688, 0.23, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.283; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.283
+PM: F bordo_ovest_0_2 0.950 cam (-2.679, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 0.967 cam (-2.673, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 0.983 cam (-2.672, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.000 cam (-2.677, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.017 cam (-2.684, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.033 cam (-2.688, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.050 cam (-2.686, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.067 cam (-2.68, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.083 cam (-2.674, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.100 cam (-2.672, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.117 cam (-2.676, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 1.133 cam (-2.683, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.150 cam (-2.688, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.167 cam (-2.687, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.183 cam (-2.681, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.275; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.275
+PM: F bordo_ovest_0_2 1.200 cam (-2.674, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.217 cam (-2.672, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.233 cam (-2.675, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.250 cam (-2.682, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 1.267 cam (-2.687, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.283 cam (-2.687, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.300 cam (-2.682, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.317 cam (-2.675, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.275; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.275
+PM: F bordo_ovest_0_2 1.333 cam (-2.672, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.350 cam (-2.675, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.367 cam (-2.681, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.383 cam (-2.687, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 1.400 cam (-2.687, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.417 cam (-2.682, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.433 cam (-2.676, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.450 cam (-2.672, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.275; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.275
+PM: F bordo_ovest_0_2 1.467 cam (-2.674, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.483 cam (-2.681, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.500 cam (-2.687, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.517 cam (-2.688, 0.217, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 1.533 cam (-2.683, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.550 cam (-2.676, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.567 cam (-2.672, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.583 cam (-2.674, 0.223, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.275; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.275
+PM: F bordo_ovest_0_2 1.600 cam (-2.68, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.617 cam (-2.686, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.633 cam (-2.688, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.650 cam (-2.684, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 1.667 cam (-2.677, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.683 cam (-2.672, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.700 cam (-2.673, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.717 cam (-2.679, 0.222, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.275; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.275
+PM: F bordo_ovest_0_2 1.733 cam (-2.686, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.750 cam (-2.688, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.767 cam (-2.685, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.783 cam (-2.678, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 1.800 cam (-2.673, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.817 cam (-2.673, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.833 cam (-2.678, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.850 cam (-2.685, 0.222, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.275; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.275
+PM: F bordo_ovest_0_2 1.867 cam (-2.688, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.883 cam (-2.685, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 1.900 cam (-2.679, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 1.917 cam (-2.673, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 1.933 cam (-2.673, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 1.950 cam (-2.677, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 1.967 cam (-2.684, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.269; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.269
+PM: F bordo_ovest_0_2 1.983 cam (-2.688, 0.222, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.275; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.275
+PM: F bordo_ovest_0_2 2.000 cam (-2.686, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.017 cam (-2.679, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.033 cam (-2.673, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.276; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.276
+PM: F bordo_ovest_0_2 2.050 cam (-2.672, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.270; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.270
+PM: F bordo_ovest_0_2 2.067 cam (-2.677, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 2.083 cam (-2.684, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 2.100 cam (-2.688, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 2.117 cam (-2.686, 0.222, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 2.133 cam (-2.68, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.150 cam (-2.674, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.167 cam (-2.672, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 2.183 cam (-2.676, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 2.200 cam (-2.683, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 2.217 cam (-2.688, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 2.233 cam (-2.687, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 2.250 cam (-2.681, 0.222, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 2.267 cam (-2.675, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.283 cam (-2.672, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.300 cam (-2.675, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 2.317 cam (-2.682, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 2.333 cam (-2.687, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 2.350 cam (-2.687, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 2.367 cam (-2.682, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 2.383 cam (-2.675, 0.222, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 2.400 cam (-2.672, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.417 cam (-2.675, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.433 cam (-2.681, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 2.450 cam (-2.687, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 2.467 cam (-2.687, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 2.483 cam (-2.683, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 2.500 cam (-2.676, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 2.517 cam (-2.672, 0.222, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 2.533 cam (-2.674, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.550 cam (-2.68, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.567 cam (-2.686, 0.224, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 2.583 cam (-2.688, 0.218, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 2.600 cam (-2.683, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 2.617 cam (-2.676, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 2.633 cam (-2.672, 0.216, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 2.650 cam (-2.674, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 2.667 cam (-2.68, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.683 cam (-2.686, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.700 cam (-2.688, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 2.717 cam (-2.684, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 2.733 cam (-2.677, 0.213, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 2.750 cam (-2.672, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 2.767 cam (-2.673, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 2.783 cam (-2.679, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 2.800 cam (-2.685, 0.227, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.817 cam (-2.688, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.833 cam (-2.685, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 2.850 cam (-2.678, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 2.867 cam (-2.673, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 2.883 cam (-2.673, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 2.900 cam (-2.678, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 2.917 cam (-2.685, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 2.933 cam (-2.688, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.503; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 2.950 cam (-2.685, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 2.967 cam (-2.679, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 2.983 cam (-2.673, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 3.000 cam (-2.672, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 3.017 cam (-2.677, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.033 cam (-2.684, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 3.050 cam (-2.688, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.274; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.274
+PM: F bordo_ovest_0_2 3.067 cam (-2.686, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 3.083 cam (-2.68, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 3.100 cam (-2.674, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 3.117 cam (-2.672, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.271; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.271
+PM: F bordo_ovest_0_2 3.133 cam (-2.677, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 3.150 cam (-2.683, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.167 cam (-2.688, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.268; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.268
+PM: F bordo_ovest_0_2 3.183 cam (-2.686, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 3.200 cam (-2.68, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 3.217 cam (-2.674, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 3.233 cam (-2.672, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.277; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.277
+PM: F bordo_ovest_0_2 3.250 cam (-2.676, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 3.267 cam (-2.683, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 3.283 cam (-2.688, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.300 cam (-2.687, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.317 cam (-2.681, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 3.333 cam (-2.675, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 3.350 cam (-2.672, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 3.367 cam (-2.675, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 3.383 cam (-2.682, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 3.400 cam (-2.687, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 3.417 cam (-2.687, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.433 cam (-2.682, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.450 cam (-2.675, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 3.467 cam (-2.672, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 3.483 cam (-2.675, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 3.500 cam (-2.681, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 3.517 cam (-2.687, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 3.533 cam (-2.688, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 3.550 cam (-2.683, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.567 cam (-2.676, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.583 cam (-2.672, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 3.600 cam (-2.674, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 3.617 cam (-2.68, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 3.633 cam (-2.686, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 3.650 cam (-2.688, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 3.667 cam (-2.683, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.683 cam (-2.677, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.700 cam (-2.672, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.717 cam (-2.674, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 3.733 cam (-2.68, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 3.750 cam (-2.686, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 3.767 cam (-2.688, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 3.783 cam (-2.684, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 3.800 cam (-2.677, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.817 cam (-2.672, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.833 cam (-2.673, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.850 cam (-2.679, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 3.867 cam (-2.685, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 3.883 cam (-2.688, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 3.900 cam (-2.685, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 3.917 cam (-2.678, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 3.933 cam (-2.673, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.950 cam (-2.673, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 3.967 cam (-2.678, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 3.983 cam (-2.685, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.000 cam (-2.688, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.503; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.017 cam (-2.685, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 4.033 cam (-2.679, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.050 cam (-2.673, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 4.067 cam (-2.672, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.083 cam (-2.677, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 4.100 cam (-2.684, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.117 cam (-2.688, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.133 cam (-2.686, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.150 cam (-2.68, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.281; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.281
+PM: F bordo_ovest_0_2 4.167 cam (-2.674, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.183 cam (-2.672, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.200 cam (-2.676, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.217 cam (-2.683, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 4.233 cam (-2.688, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.250 cam (-2.686, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 4.267 cam (-2.68, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.283 cam (-2.674, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 4.300 cam (-2.672, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.317 cam (-2.676, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.333 cam (-2.683, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.350 cam (-2.687, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 4.367 cam (-2.687, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.383 cam (-2.681, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 4.400 cam (-2.675, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.417 cam (-2.672, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 4.433 cam (-2.675, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.450 cam (-2.682, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.467 cam (-2.687, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.483 cam (-2.687, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 4.500 cam (-2.682, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.517 cam (-2.675, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.490; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 4.533 cam (-2.672, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.550 cam (-2.675, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 4.567 cam (-2.681, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.583 cam (-2.687, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.600 cam (-2.688, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.617 cam (-2.683, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 4.633 cam (-2.676, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.491; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.650 cam (-2.672, 0.22, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 4.667 cam (-2.674, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.489; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.683 cam (-2.68, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 4.700 cam (-2.686, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.501; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 4.717 cam (-2.688, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.733 cam (-2.684, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.498; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.750 cam (-2.677, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 4.767 cam (-2.672, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.487; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 4.783 cam (-2.673, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 4.800 cam (-2.679, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.817 cam (-2.686, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 4.833 cam (-2.688, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.502; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 4.850 cam (-2.684, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.499; sopra Pozza_0_2 di 0.273
+PM: F bordo_ovest_0_2 4.867 cam (-2.677, 0.215, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.267; dal centro della pozza in pianta 0.492; sopra Pozza_0_2 di 0.267
+PM: F bordo_ovest_0_2 4.883 cam (-2.673, 0.212, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.265
+PM: F bordo_ovest_0_2 4.900 cam (-2.673, 0.214, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.266; dal centro della pozza in pianta 0.488; sopra Pozza_0_2 di 0.266
+PM: F bordo_ovest_0_2 4.917 cam (-2.679, 0.219, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.272; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.272
+PM: F bordo_ovest_0_2 4.933 cam (-2.685, 0.225, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.278; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.278
+PM: F bordo_ovest_0_2 4.950 cam (-2.688, 0.228, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_0_2 di 0.280
+PM: F bordo_ovest_0_2 4.967 cam (-2.685, 0.226, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.279; dal centro della pozza in pianta 0.500; sopra Pozza_0_2 di 0.279
+PM: F bordo_ovest_0_2 4.983 cam (-2.678, 0.221, 0.12) guarda (0.76, -0.63, -0.15); sopra il pelo di Pozza_0_2 0.273; dal centro della pozza in pianta 0.493; sopra Pozza_0_2 di 0.273
+PM: F bordo_nord_2_0 0.017 cam (-0.019, 1.603, -3.338) guarda (0.01, -0.84, 0.54); sopra il pelo di Pozza_2_0 1.655; dal centro della pozza in pianta 1.138; 
+PM: F bordo_nord_2_0 0.033 cam (-0.019, 1.577, -3.355) guarda (0.0, -0.84, 0.54); sopra il pelo di Pozza_2_0 1.629; dal centro della pozza in pianta 1.155; 
+PM: F bordo_nord_2_0 0.050 cam (-0.015, 1.538, -3.376) guarda (-0.01, -0.85, 0.53); sopra il pelo di Pozza_2_0 1.590; dal centro della pozza in pianta 1.176; 
+PM: F bordo_nord_2_0 0.067 cam (-0.025, 1.499, -3.386) guarda (-0.01, -0.86, 0.51); sopra il pelo di Pozza_2_0 1.551; dal centro della pozza in pianta 1.186; 
+PM: F bordo_nord_2_0 0.083 cam (-0.045, 1.457, -3.387) guarda (0.0, -0.86, 0.51); sopra il pelo di Pozza_2_0 1.510; dal centro della pozza in pianta 1.187; 
+PM: F bordo_nord_2_0 0.100 cam (-0.065, 1.406, -3.394) guarda (0.01, -0.86, 0.5); sopra il pelo di Pozza_2_0 1.458; dal centro della pozza in pianta 1.195; 
+PM: F bordo_nord_2_0 0.117 cam (-0.094, 1.345, -3.409) guarda (0.01, -0.87, 0.49); sopra il pelo di Pozza_2_0 1.397; dal centro della pozza in pianta 1.213; 
+PM: F bordo_nord_2_0 0.133 cam (-0.128, 1.279, -3.425) guarda (0.0, -0.88, 0.47); sopra il pelo di Pozza_2_0 1.332; dal centro della pozza in pianta 1.232; 
+PM: F bordo_nord_2_0 0.150 cam (-0.132, 1.219, -3.426) guarda (0.01, -0.86, 0.52); sopra il pelo di Pozza_2_0 1.271; dal centro della pozza in pianta 1.233; 
+PM: F bordo_nord_2_0 0.167 cam (-0.134, 1.135, -3.469) guarda (0.01, -0.87, 0.49); sopra il pelo di Pozza_2_0 1.187; dal centro della pozza in pianta 1.276; 
+PM: F bordo_nord_2_0 0.183 cam (-0.178, 1.064, -3.486) guarda (0.02, -0.88, 0.47); sopra il pelo di Pozza_2_0 1.116; dal centro della pozza in pianta 1.299; 
+PM: F bordo_nord_2_0 0.200 cam (-0.219, 1.0, -3.489) guarda (0.01, -0.9, 0.44); sopra il pelo di Pozza_2_0 1.052; dal centro della pozza in pianta 1.307; 
+PM: F bordo_nord_2_0 0.217 cam (-0.241, 0.935, -3.497) guarda (0.0, -0.91, 0.41); sopra il pelo di Pozza_2_0 0.987; dal centro della pozza in pianta 1.319; 
+PM: F bordo_nord_2_0 0.233 cam (-0.258, 0.865, -3.522) guarda (-0.01, -0.92, 0.38); sopra il pelo di Pozza_2_0 0.917; dal centro della pozza in pianta 1.347; 
+PM: F bordo_nord_2_0 0.250 cam (-0.278, 0.798, -3.553) guarda (0.0, -0.93, 0.37); sopra il pelo di Pozza_2_0 0.850; dal centro della pozza in pianta 1.381; 
+PM: F bordo_nord_2_0 0.267 cam (-0.291, 0.741, -3.571) guarda (0.01, -0.93, 0.37); sopra il pelo di Pozza_2_0 0.793; dal centro della pozza in pianta 1.402; 
+PM: F bordo_nord_2_0 0.283 cam (-0.304, 0.693, -3.583) guarda (0.01, -0.93, 0.37); sopra il pelo di Pozza_2_0 0.745; dal centro della pozza in pianta 1.416; 
+PM: F bordo_nord_2_0 0.300 cam (-0.333, 0.652, -3.595) guarda (0.01, -0.93, 0.37); sopra il pelo di Pozza_2_0 0.704; dal centro della pozza in pianta 1.434; 
+PM: F bordo_nord_2_0 0.317 cam (-0.323, 0.617, -3.616) guarda (-0.01, -0.91, 0.41); sopra il pelo di Pozza_2_0 0.669; dal centro della pozza in pianta 1.452; 
+PM: F bordo_nord_2_0 0.333 cam (-0.355, 0.604, -3.606) guarda (0.0, -0.9, 0.44); sopra il pelo di Pozza_2_0 0.656; dal centro della pozza in pianta 1.450; 
+PM: F bordo_nord_2_0 0.350 cam (-0.38, 0.617, -3.569) guarda (0.03, -0.87, 0.48); sopra il pelo di Pozza_2_0 0.670; dal centro della pozza in pianta 1.421; 
+PM: F bordo_nord_2_0 0.367 cam (-0.362, 0.635, -3.543) guarda (0.06, -0.84, 0.53); sopra il pelo di Pozza_2_0 0.687; dal centro della pozza in pianta 1.391; 
+PM: F bordo_nord_2_0 0.383 cam (-0.331, 0.637, -3.548) guarda (0.08, -0.82, 0.57); sopra il pelo di Pozza_2_0 0.690; dal centro della pozza in pianta 1.388; 
+PM: F bordo_nord_2_0 0.400 cam (-0.323, 0.635, -3.555) guarda (0.08, -0.8, 0.6); sopra il pelo di Pozza_2_0 0.688; dal centro della pozza in pianta 1.393; 
+PM: F bordo_nord_2_0 0.417 cam (-0.322, 0.658, -3.53) guarda (0.08, -0.77, 0.63); sopra il pelo di Pozza_2_0 0.710; dal centro della pozza in pianta 1.369; 
+PM: F bordo_nord_2_0 0.433 cam (-0.331, 0.684, -3.501) guarda (0.1, -0.73, 0.67); sopra il pelo di Pozza_2_0 0.736; dal centro della pozza in pianta 1.342; 
+PM: F bordo_nord_2_0 0.450 cam (-0.346, 0.708, -3.47) guarda (0.13, -0.71, 0.7); sopra il pelo di Pozza_2_0 0.760; dal centro della pozza in pianta 1.316; 
+PM: F bordo_nord_2_0 0.467 cam (-0.328, 0.736, -3.436) guarda (0.13, -0.69, 0.71); sopra il pelo di Pozza_2_0 0.788; dal centro della pozza in pianta 1.278; 
+PM: F bordo_nord_2_0 0.483 cam (-0.282, 0.756, -3.409) guarda (0.13, -0.69, 0.72); sopra il pelo di Pozza_2_0 0.808; dal centro della pozza in pianta 1.241; 
+PM: F bordo_nord_2_0 0.500 cam (-0.265, 0.75, -3.395) guarda (0.13, -0.68, 0.73); sopra il pelo di Pozza_2_0 0.802; dal centro della pozza in pianta 1.224; 
+PM: F bordo_nord_2_0 0.517 cam (-0.289, 0.75, -3.361) guarda (0.15, -0.66, 0.74); sopra il pelo di Pozza_2_0 0.802; dal centro della pozza in pianta 1.197; 
+PM: F bordo_nord_2_0 0.533 cam (-0.282, 0.751, -3.329) guarda (0.15, -0.66, 0.74); sopra il pelo di Pozza_2_0 0.804; dal centro della pozza in pianta 1.164; 
+PM: F bordo_nord_2_0 0.550 cam (-0.276, 0.752, -3.296) guarda (0.16, -0.66, 0.74); sopra il pelo di Pozza_2_0 0.805; dal centro della pozza in pianta 1.131; 
+PM: F bordo_nord_2_0 0.567 cam (-0.269, 0.755, -3.263) guarda (0.16, -0.66, 0.73); sopra il pelo di Pozza_2_0 0.807; dal centro della pozza in pianta 1.096; 
+PM: F bordo_nord_2_0 0.583 cam (-0.259, 0.759, -3.228) guarda (0.16, -0.67, 0.73); sopra il pelo di Pozza_2_0 0.812; dal centro della pozza in pianta 1.060; 
+PM: F bordo_nord_2_0 0.600 cam (-0.247, 0.766, -3.193) guarda (0.16, -0.68, 0.72); sopra il pelo di Pozza_2_0 0.818; dal centro della pozza in pianta 1.023; 
+PM: F bordo_nord_2_0 0.617 cam (-0.236, 0.771, -3.158) guarda (0.15, -0.69, 0.71); sopra il pelo di Pozza_2_0 0.824; dal centro della pozza in pianta 0.986; 
+PM: F bordo_nord_2_0 0.633 cam (-0.227, 0.772, -3.122) guarda (0.15, -0.69, 0.7); sopra il pelo di Pozza_2_0 0.824; dal centro della pozza in pianta 0.950; 
+PM: F bordo_nord_2_0 0.650 cam (-0.221, 0.763, -3.087) guarda (0.15, -0.7, 0.7); sopra il pelo di Pozza_2_0 0.815; dal centro della pozza in pianta 0.914; 
+PM: F bordo_nord_2_0 0.667 cam (-0.216, 0.74, -3.052) guarda (0.15, -0.7, 0.7); sopra il pelo di Pozza_2_0 0.793; dal centro della pozza in pianta 0.879; 
+PM: F bordo_nord_2_0 0.683 cam (-0.209, 0.704, -3.017) guarda (0.15, -0.7, 0.69); sopra il pelo di Pozza_2_0 0.756; dal centro della pozza in pianta 0.844; 
+PM: F bordo_nord_2_0 0.700 cam (-0.199, 0.656, -2.984) guarda (0.15, -0.71, 0.69); sopra il pelo di Pozza_2_0 0.709; dal centro della pozza in pianta 0.808; 
+PM: F bordo_nord_2_0 0.717 cam (-0.186, 0.603, -2.951) guarda (0.14, -0.7, 0.69); sopra il pelo di Pozza_2_0 0.656; dal centro della pozza in pianta 0.773; 
+PM: F bordo_nord_2_0 0.733 cam (-0.174, 0.552, -2.919) guarda (0.14, -0.7, 0.7); sopra il pelo di Pozza_2_0 0.604; dal centro della pozza in pianta 0.739; 
+PM: F bordo_nord_2_0 0.750 cam (-0.166, 0.508, -2.888) guarda (0.14, -0.7, 0.7); sopra il pelo di Pozza_2_0 0.561; dal centro della pozza in pianta 0.708; 
+PM: F bordo_nord_2_0 0.767 cam (-0.163, 0.473, -2.858) guarda (0.14, -0.69, 0.7); sopra il pelo di Pozza_2_0 0.526; dal centro della pozza in pianta 0.678; 
+PM: F bordo_nord_2_0 0.783 cam (-0.162, 0.445, -2.83) guarda (0.14, -0.69, 0.71); sopra il pelo di Pozza_2_0 0.497; dal centro della pozza in pianta 0.651; 
+PM: F bordo_nord_2_0 0.800 cam (-0.158, 0.417, -2.804) guarda (0.14, -0.68, 0.72); sopra il pelo di Pozza_2_0 0.470; dal centro della pozza in pianta 0.625; 
+PM: F bordo_nord_2_0 0.817 cam (-0.15, 0.388, -2.78) guarda (0.14, -0.68, 0.72); sopra il pelo di Pozza_2_0 0.440; dal centro della pozza in pianta 0.599; 
+PM: F bordo_nord_2_0 0.833 cam (-0.138, 0.353, -2.758) guarda (0.14, -0.67, 0.73); sopra il pelo di Pozza_2_0 0.406; dal centro della pozza in pianta 0.575; 
+PM: F bordo_nord_2_0 0.850 cam (-0.128, 0.318, -2.739) guarda (0.14, -0.66, 0.74); sopra il pelo di Pozza_2_0 0.370; dal centro della pozza in pianta 0.554; 
+PM: F bordo_nord_2_0 0.867 cam (-0.123, 0.285, -2.721) guarda (0.14, -0.65, 0.74); sopra il pelo di Pozza_2_0 0.337; dal centro della pozza in pianta 0.536; 
+PM: F bordo_nord_2_0 0.883 cam (-0.124, 0.259, -2.707) guarda (0.14, -0.65, 0.75); sopra il pelo di Pozza_2_0 0.311; dal centro della pozza in pianta 0.522; 
+PM: F bordo_nord_2_0 0.900 cam (-0.128, 0.243, -2.695) guarda (0.14, -0.64, 0.75); sopra il pelo di Pozza_2_0 0.295; dal centro della pozza in pianta 0.512; sopra Pozza_2_0 di 0.295
+PM: F bordo_nord_2_0 0.917 cam (-0.13, 0.234, -2.687) guarda (0.14, -0.64, 0.76); sopra il pelo di Pozza_2_0 0.287; dal centro della pozza in pianta 0.504; sopra Pozza_2_0 di 0.287
+PM: F bordo_nord_2_0 0.933 cam (-0.126, 0.23, -2.682) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.283; dal centro della pozza in pianta 0.498; sopra Pozza_2_0 di 0.283
+PM: F bordo_nord_2_0 0.950 cam (-0.119, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 0.967 cam (-0.113, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 0.983 cam (-0.112, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.000 cam (-0.117, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.017 cam (-0.124, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.033 cam (-0.128, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.050 cam (-0.126, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.067 cam (-0.12, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.083 cam (-0.114, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.100 cam (-0.112, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.117 cam (-0.116, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 1.133 cam (-0.123, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.150 cam (-0.128, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.167 cam (-0.127, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.183 cam (-0.121, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.275; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.275
+PM: F bordo_nord_2_0 1.200 cam (-0.114, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.217 cam (-0.112, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.233 cam (-0.115, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.250 cam (-0.122, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 1.267 cam (-0.127, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.283 cam (-0.127, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.300 cam (-0.122, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.317 cam (-0.115, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.275; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.275
+PM: F bordo_nord_2_0 1.333 cam (-0.112, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.350 cam (-0.115, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.367 cam (-0.121, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.383 cam (-0.127, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 1.400 cam (-0.127, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.417 cam (-0.122, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.433 cam (-0.116, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.450 cam (-0.112, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.275; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.275
+PM: F bordo_nord_2_0 1.467 cam (-0.114, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.483 cam (-0.121, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.500 cam (-0.127, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.517 cam (-0.128, 0.217, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 1.533 cam (-0.123, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.550 cam (-0.116, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.567 cam (-0.112, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.583 cam (-0.114, 0.223, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.275; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.275
+PM: F bordo_nord_2_0 1.600 cam (-0.12, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.617 cam (-0.126, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.633 cam (-0.128, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.650 cam (-0.124, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 1.667 cam (-0.117, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.683 cam (-0.112, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.700 cam (-0.113, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.717 cam (-0.119, 0.222, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.275; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.275
+PM: F bordo_nord_2_0 1.733 cam (-0.126, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.750 cam (-0.128, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.767 cam (-0.125, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.783 cam (-0.118, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 1.800 cam (-0.113, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.817 cam (-0.113, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.833 cam (-0.118, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.850 cam (-0.125, 0.222, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.275; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.275
+PM: F bordo_nord_2_0 1.867 cam (-0.128, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.883 cam (-0.125, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 1.900 cam (-0.119, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 1.917 cam (-0.113, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 1.933 cam (-0.113, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 1.950 cam (-0.117, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 1.967 cam (-0.124, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.269; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.269
+PM: F bordo_nord_2_0 1.983 cam (-0.128, 0.222, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.275; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.275
+PM: F bordo_nord_2_0 2.000 cam (-0.126, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.017 cam (-0.119, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.033 cam (-0.113, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.276; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.276
+PM: F bordo_nord_2_0 2.050 cam (-0.112, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.270; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.270
+PM: F bordo_nord_2_0 2.067 cam (-0.117, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 2.083 cam (-0.124, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 2.100 cam (-0.128, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 2.117 cam (-0.126, 0.222, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 2.133 cam (-0.12, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.150 cam (-0.114, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.167 cam (-0.112, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 2.183 cam (-0.116, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 2.200 cam (-0.123, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 2.217 cam (-0.128, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 2.233 cam (-0.127, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 2.250 cam (-0.121, 0.222, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 2.267 cam (-0.115, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.283 cam (-0.112, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.300 cam (-0.115, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 2.317 cam (-0.122, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 2.333 cam (-0.127, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 2.350 cam (-0.127, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 2.367 cam (-0.122, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 2.383 cam (-0.115, 0.222, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 2.400 cam (-0.112, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.417 cam (-0.115, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.433 cam (-0.121, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 2.450 cam (-0.127, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 2.467 cam (-0.127, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 2.483 cam (-0.123, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 2.500 cam (-0.116, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 2.517 cam (-0.112, 0.222, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 2.533 cam (-0.114, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.550 cam (-0.12, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.567 cam (-0.126, 0.224, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 2.583 cam (-0.128, 0.218, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 2.600 cam (-0.123, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 2.617 cam (-0.116, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 2.633 cam (-0.112, 0.216, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 2.650 cam (-0.114, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 2.667 cam (-0.12, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.683 cam (-0.126, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.700 cam (-0.128, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 2.717 cam (-0.124, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 2.733 cam (-0.117, 0.213, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 2.750 cam (-0.112, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 2.767 cam (-0.113, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 2.783 cam (-0.119, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 2.800 cam (-0.125, 0.227, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.817 cam (-0.128, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.833 cam (-0.125, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 2.850 cam (-0.118, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 2.867 cam (-0.113, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 2.883 cam (-0.113, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 2.900 cam (-0.118, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 2.917 cam (-0.125, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 2.933 cam (-0.128, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 2.950 cam (-0.125, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 2.967 cam (-0.119, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 2.983 cam (-0.113, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 3.000 cam (-0.112, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 3.017 cam (-0.117, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.033 cam (-0.124, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 3.050 cam (-0.128, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.274; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.274
+PM: F bordo_nord_2_0 3.067 cam (-0.126, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 3.083 cam (-0.12, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 3.100 cam (-0.114, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 3.117 cam (-0.112, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.271; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.271
+PM: F bordo_nord_2_0 3.133 cam (-0.117, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 3.150 cam (-0.123, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.167 cam (-0.128, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.268; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.268
+PM: F bordo_nord_2_0 3.183 cam (-0.126, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 3.200 cam (-0.12, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 3.217 cam (-0.114, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 3.233 cam (-0.112, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.277; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.277
+PM: F bordo_nord_2_0 3.250 cam (-0.116, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 3.267 cam (-0.123, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 3.283 cam (-0.128, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.300 cam (-0.127, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.317 cam (-0.121, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 3.333 cam (-0.115, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 3.350 cam (-0.112, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 3.367 cam (-0.115, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 3.383 cam (-0.122, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 3.400 cam (-0.127, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 3.417 cam (-0.127, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.433 cam (-0.122, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.450 cam (-0.115, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 3.467 cam (-0.112, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 3.483 cam (-0.115, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 3.500 cam (-0.121, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 3.517 cam (-0.127, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 3.533 cam (-0.128, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 3.550 cam (-0.123, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.567 cam (-0.116, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.583 cam (-0.112, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 3.600 cam (-0.114, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 3.617 cam (-0.12, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 3.633 cam (-0.126, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 3.650 cam (-0.128, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 3.667 cam (-0.123, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.683 cam (-0.117, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.700 cam (-0.112, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.717 cam (-0.114, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 3.733 cam (-0.12, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 3.750 cam (-0.126, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 3.767 cam (-0.128, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 3.783 cam (-0.124, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 3.800 cam (-0.117, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.817 cam (-0.112, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.833 cam (-0.113, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.850 cam (-0.119, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 3.867 cam (-0.125, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 3.883 cam (-0.128, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 3.900 cam (-0.125, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 3.917 cam (-0.118, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 3.933 cam (-0.113, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.950 cam (-0.113, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 3.967 cam (-0.118, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 3.983 cam (-0.125, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.000 cam (-0.128, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.017 cam (-0.125, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 4.033 cam (-0.119, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.050 cam (-0.113, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 4.067 cam (-0.112, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.083 cam (-0.117, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 4.100 cam (-0.124, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.117 cam (-0.128, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.133 cam (-0.126, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.150 cam (-0.12, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.281; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.281
+PM: F bordo_nord_2_0 4.167 cam (-0.114, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.183 cam (-0.112, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.200 cam (-0.116, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.217 cam (-0.123, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 4.233 cam (-0.128, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.250 cam (-0.126, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 4.267 cam (-0.12, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.283 cam (-0.114, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 4.300 cam (-0.112, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.317 cam (-0.116, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.333 cam (-0.123, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.350 cam (-0.127, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 4.367 cam (-0.127, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.383 cam (-0.121, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 4.400 cam (-0.115, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.417 cam (-0.112, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 4.433 cam (-0.115, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.450 cam (-0.122, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.467 cam (-0.127, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.483 cam (-0.127, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 4.500 cam (-0.122, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.517 cam (-0.115, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 4.533 cam (-0.112, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.550 cam (-0.115, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 4.567 cam (-0.121, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.583 cam (-0.127, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.600 cam (-0.128, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.617 cam (-0.123, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 4.633 cam (-0.116, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.650 cam (-0.112, 0.22, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 4.667 cam (-0.114, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.683 cam (-0.12, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 4.700 cam (-0.126, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 4.717 cam (-0.128, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.733 cam (-0.124, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.750 cam (-0.117, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 4.767 cam (-0.112, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 4.783 cam (-0.113, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 4.800 cam (-0.119, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.817 cam (-0.126, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 4.833 cam (-0.128, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 4.850 cam (-0.124, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.273
+PM: F bordo_nord_2_0 4.867 cam (-0.117, 0.215, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.267; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.267
+PM: F bordo_nord_2_0 4.883 cam (-0.113, 0.212, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.265; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.265
+PM: F bordo_nord_2_0 4.900 cam (-0.113, 0.214, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.266; dal centro della pozza in pianta 0.493; sopra Pozza_2_0 di 0.266
+PM: F bordo_nord_2_0 4.917 cam (-0.119, 0.219, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.272; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.272
+PM: F bordo_nord_2_0 4.933 cam (-0.125, 0.225, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.278
+PM: F bordo_nord_2_0 4.950 cam (-0.128, 0.228, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.280; dal centro della pozza in pianta 0.497; sopra Pozza_2_0 di 0.280
+PM: F bordo_nord_2_0 4.967 cam (-0.125, 0.226, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.279; dal centro della pozza in pianta 0.496; sopra Pozza_2_0 di 0.279
+PM: F bordo_nord_2_0 4.983 cam (-0.118, 0.221, -2.68) guarda (0.15, -0.63, 0.76); sopra il pelo di Pozza_2_0 0.273; dal centro della pozza in pianta 0.494; sopra Pozza_2_0 di 0.273
+PM: F bordo_est_4_2 0.017 cam (3.338, 1.603, -0.019) guarda (-0.54, -0.84, 0.01); sopra il pelo di Pozza_4_2 1.655; dal centro della pozza in pianta 1.138; 
+PM: F bordo_est_4_2 0.033 cam (3.355, 1.577, -0.019) guarda (-0.54, -0.84, 0.0); sopra il pelo di Pozza_4_2 1.629; dal centro della pozza in pianta 1.155; 
+PM: F bordo_est_4_2 0.050 cam (3.376, 1.538, -0.015) guarda (-0.53, -0.85, -0.01); sopra il pelo di Pozza_4_2 1.590; dal centro della pozza in pianta 1.176; 
+PM: F bordo_est_4_2 0.067 cam (3.386, 1.499, -0.025) guarda (-0.51, -0.86, -0.01); sopra il pelo di Pozza_4_2 1.551; dal centro della pozza in pianta 1.186; 
+PM: F bordo_est_4_2 0.083 cam (3.387, 1.457, -0.045) guarda (-0.51, -0.86, 0.0); sopra il pelo di Pozza_4_2 1.510; dal centro della pozza in pianta 1.187; 
+PM: F bordo_est_4_2 0.100 cam (3.394, 1.406, -0.065) guarda (-0.5, -0.86, 0.01); sopra il pelo di Pozza_4_2 1.458; dal centro della pozza in pianta 1.195; 
+PM: F bordo_est_4_2 0.117 cam (3.409, 1.345, -0.094) guarda (-0.49, -0.87, 0.01); sopra il pelo di Pozza_4_2 1.397; dal centro della pozza in pianta 1.213; 
+PM: F bordo_est_4_2 0.133 cam (3.425, 1.279, -0.128) guarda (-0.47, -0.88, 0.0); sopra il pelo di Pozza_4_2 1.332; dal centro della pozza in pianta 1.232; 
+PM: F bordo_est_4_2 0.150 cam (3.426, 1.219, -0.132) guarda (-0.52, -0.86, 0.01); sopra il pelo di Pozza_4_2 1.271; dal centro della pozza in pianta 1.233; 
+PM: F bordo_est_4_2 0.167 cam (3.469, 1.135, -0.134) guarda (-0.49, -0.87, 0.01); sopra il pelo di Pozza_4_2 1.187; dal centro della pozza in pianta 1.276; 
+PM: F bordo_est_4_2 0.183 cam (3.486, 1.064, -0.178) guarda (-0.47, -0.88, 0.02); sopra il pelo di Pozza_4_2 1.116; dal centro della pozza in pianta 1.299; 
+PM: F bordo_est_4_2 0.200 cam (3.489, 1.0, -0.219) guarda (-0.44, -0.9, 0.01); sopra il pelo di Pozza_4_2 1.052; dal centro della pozza in pianta 1.307; 
+PM: F bordo_est_4_2 0.217 cam (3.497, 0.935, -0.241) guarda (-0.41, -0.91, 0.0); sopra il pelo di Pozza_4_2 0.987; dal centro della pozza in pianta 1.319; 
+PM: F bordo_est_4_2 0.233 cam (3.522, 0.865, -0.258) guarda (-0.38, -0.92, -0.01); sopra il pelo di Pozza_4_2 0.917; dal centro della pozza in pianta 1.347; 
+PM: F bordo_est_4_2 0.250 cam (3.553, 0.798, -0.278) guarda (-0.37, -0.93, 0.0); sopra il pelo di Pozza_4_2 0.850; dal centro della pozza in pianta 1.381; 
+PM: F bordo_est_4_2 0.267 cam (3.571, 0.741, -0.291) guarda (-0.37, -0.93, 0.01); sopra il pelo di Pozza_4_2 0.793; dal centro della pozza in pianta 1.402; 
+PM: F bordo_est_4_2 0.283 cam (3.583, 0.693, -0.304) guarda (-0.37, -0.93, 0.01); sopra il pelo di Pozza_4_2 0.745; dal centro della pozza in pianta 1.416; 
+PM: F bordo_est_4_2 0.300 cam (3.595, 0.652, -0.333) guarda (-0.37, -0.93, 0.01); sopra il pelo di Pozza_4_2 0.704; dal centro della pozza in pianta 1.434; 
+PM: F bordo_est_4_2 0.317 cam (3.593, 0.626, -0.332) guarda (-0.36, -0.93, 0.01); sopra il pelo di Pozza_4_2 0.679; dal centro della pozza in pianta 1.432; 
+PM: F bordo_est_4_2 0.333 cam (3.588, 0.613, -0.335) guarda (-0.41, -0.91, 0.01); sopra il pelo di Pozza_4_2 0.666; dal centro della pozza in pianta 1.427; 
+PM: F bordo_est_4_2 0.350 cam (3.574, 0.618, -0.307) guarda (-0.45, -0.89, 0.03); sopra il pelo di Pozza_4_2 0.670; dal centro della pozza in pianta 1.408; 
+PM: F bordo_est_4_2 0.367 cam (3.567, 0.625, -0.299) guarda (-0.49, -0.87, 0.05); sopra il pelo di Pozza_4_2 0.677; dal centro della pozza in pianta 1.399; 
+PM: F bordo_est_4_2 0.383 cam (3.571, 0.622, -0.333) guarda (-0.55, -0.83, 0.08); sopra il pelo di Pozza_4_2 0.674; dal centro della pozza in pianta 1.411; 
+PM: F bordo_est_4_2 0.400 cam (3.564, 0.625, -0.364) guarda (-0.61, -0.79, 0.08); sopra il pelo di Pozza_4_2 0.677; dal centro della pozza in pianta 1.412; 
+PM: F bordo_est_4_2 0.417 cam (3.511, 0.673, -0.324) guarda (-0.64, -0.77, 0.08); sopra il pelo di Pozza_4_2 0.726; dal centro della pozza in pianta 1.351; 
+PM: F bordo_est_4_2 0.433 cam (3.482, 0.702, -0.312) guarda (-0.66, -0.75, 0.1); sopra il pelo di Pozza_4_2 0.755; dal centro della pozza in pianta 1.320; 
+PM: F bordo_est_4_2 0.450 cam (3.459, 0.726, -0.288) guarda (-0.62, -0.78, 0.09); sopra il pelo di Pozza_4_2 0.778; dal centro della pozza in pianta 1.292; 
+PM: F bordo_est_4_2 0.467 cam (3.444, 0.734, -0.284) guarda (-0.66, -0.74, 0.1); sopra il pelo di Pozza_4_2 0.787; dal centro della pozza in pianta 1.276; 
+PM: F bordo_est_4_2 0.483 cam (3.419, 0.743, -0.297) guarda (-0.69, -0.71, 0.11); sopra il pelo di Pozza_4_2 0.796; dal centro della pozza in pianta 1.254; 
+PM: F bordo_est_4_2 0.500 cam (3.393, 0.743, -0.317) guarda (-0.71, -0.7, 0.11); sopra il pelo di Pozza_4_2 0.796; dal centro della pozza in pianta 1.234; 
+PM: F bordo_est_4_2 0.517 cam (3.363, 0.75, -0.29) guarda (-0.74, -0.66, 0.15); sopra il pelo di Pozza_4_2 0.802; dal centro della pozza in pianta 1.199; 
+PM: F bordo_est_4_2 0.533 cam (3.329, 0.751, -0.282) guarda (-0.74, -0.66, 0.15); sopra il pelo di Pozza_4_2 0.804; dal centro della pozza in pianta 1.164; 
+PM: F bordo_est_4_2 0.550 cam (3.294, 0.752, -0.274) guarda (-0.74, -0.66, 0.16); sopra il pelo di Pozza_4_2 0.805; dal centro della pozza in pianta 1.128; 
+PM: F bordo_est_4_2 0.567 cam (3.26, 0.755, -0.266) guarda (-0.73, -0.66, 0.16); sopra il pelo di Pozza_4_2 0.807; dal centro della pozza in pianta 1.092; 
+PM: F bordo_est_4_2 0.583 cam (3.226, 0.759, -0.257) guarda (-0.73, -0.67, 0.16); sopra il pelo di Pozza_4_2 0.812; dal centro della pozza in pianta 1.058; 
+PM: F bordo_est_4_2 0.600 cam (3.194, 0.766, -0.248) guarda (-0.72, -0.68, 0.16); sopra il pelo di Pozza_4_2 0.818; dal centro della pozza in pianta 1.025; 
+PM: F bordo_est_4_2 0.617 cam (3.161, 0.771, -0.239) guarda (-0.71, -0.69, 0.15); sopra il pelo di Pozza_4_2 0.824; dal centro della pozza in pianta 0.991; 
+PM: F bordo_est_4_2 0.633 cam (3.126, 0.772, -0.231) guarda (-0.7, -0.69, 0.15); sopra il pelo di Pozza_4_2 0.824; dal centro della pozza in pianta 0.954; 
+PM: F bordo_est_4_2 0.650 cam (3.088, 0.763, -0.222) guarda (-0.7, -0.7, 0.15); sopra il pelo di Pozza_4_2 0.815; dal centro della pozza in pianta 0.915; 
+PM: F bordo_est_4_2 0.667 cam (3.049, 0.74, -0.213) guarda (-0.7, -0.7, 0.15); sopra il pelo di Pozza_4_2 0.793; dal centro della pozza in pianta 0.875; 
+PM: F bordo_est_4_2 0.683 cam (3.012, 0.704, -0.204) guarda (-0.69, -0.7, 0.15); sopra il pelo di Pozza_4_2 0.756; dal centro della pozza in pianta 0.838; 
+PM: F bordo_est_4_2 0.700 cam (2.981, 0.656, -0.196) guarda (-0.69, -0.71, 0.15); sopra il pelo di Pozza_4_2 0.709; dal centro della pozza in pianta 0.805; 
+PM: F bordo_est_4_2 0.717 cam (2.952, 0.603, -0.188) guarda (-0.69, -0.7, 0.14); sopra il pelo di Pozza_4_2 0.656; dal centro della pozza in pianta 0.775; 
+PM: F bordo_est_4_2 0.733 cam (2.924, 0.552, -0.18) guarda (-0.7, -0.7, 0.14); sopra il pelo di Pozza_4_2 0.604; dal centro della pozza in pianta 0.746; 
+PM: F bordo_est_4_2 0.750 cam (2.893, 0.508, -0.172) guarda (-0.7, -0.7, 0.14); sopra il pelo di Pozza_4_2 0.561; dal centro della pozza in pianta 0.714; 
+PM: F bordo_est_4_2 0.767 cam (2.86, 0.473, -0.165) guarda (-0.7, -0.69, 0.14); sopra il pelo di Pozza_4_2 0.526; dal centro della pozza in pianta 0.680; 
+PM: F bordo_est_4_2 0.783 cam (2.826, 0.445, -0.158) guarda (-0.71, -0.69, 0.14); sopra il pelo di Pozza_4_2 0.497; dal centro della pozza in pianta 0.646; 
+PM: F bordo_est_4_2 0.800 cam (2.797, 0.417, -0.151) guarda (-0.72, -0.68, 0.14); sopra il pelo di Pozza_4_2 0.470; dal centro della pozza in pianta 0.616; 
+PM: F bordo_est_4_2 0.817 cam (2.776, 0.388, -0.145) guarda (-0.72, -0.68, 0.14); sopra il pelo di Pozza_4_2 0.440; dal centro della pozza in pianta 0.594; 
+PM: F bordo_est_4_2 0.833 cam (2.76, 0.353, -0.14) guarda (-0.73, -0.67, 0.14); sopra il pelo di Pozza_4_2 0.406; dal centro della pozza in pianta 0.577; 
+PM: F bordo_est_4_2 0.850 cam (2.745, 0.318, -0.135) guarda (-0.74, -0.66, 0.14); sopra il pelo di Pozza_4_2 0.370; dal centro della pozza in pianta 0.562; 
+PM: F bordo_est_4_2 0.867 cam (2.729, 0.285, -0.13) guarda (-0.74, -0.65, 0.14); sopra il pelo di Pozza_4_2 0.337; dal centro della pozza in pianta 0.544; 
+PM: F bordo_est_4_2 0.883 cam (2.709, 0.259, -0.127) guarda (-0.75, -0.65, 0.14); sopra il pelo di Pozza_4_2 0.311; dal centro della pozza in pianta 0.525; 
+PM: F bordo_est_4_2 0.900 cam (2.691, 0.243, -0.124) guarda (-0.75, -0.64, 0.14); sopra il pelo di Pozza_4_2 0.295; dal centro della pozza in pianta 0.507; sopra Pozza_4_2 di 0.295
+PM: F bordo_est_4_2 0.917 cam (2.679, 0.234, -0.122) guarda (-0.76, -0.64, 0.14); sopra il pelo di Pozza_4_2 0.287; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.287
+PM: F bordo_est_4_2 0.933 cam (2.676, 0.23, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.283; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.283
+PM: F bordo_est_4_2 0.950 cam (2.681, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 0.967 cam (2.687, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 0.983 cam (2.688, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.000 cam (2.683, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.017 cam (2.676, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.033 cam (2.672, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.050 cam (2.674, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.067 cam (2.68, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.083 cam (2.686, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.100 cam (2.688, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.117 cam (2.684, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 1.133 cam (2.677, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.150 cam (2.672, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.167 cam (2.673, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.183 cam (2.679, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.275; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.275
+PM: F bordo_est_4_2 1.200 cam (2.686, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.217 cam (2.688, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.233 cam (2.685, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.250 cam (2.678, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 1.267 cam (2.673, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.283 cam (2.673, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.300 cam (2.678, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.317 cam (2.685, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.275; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.275
+PM: F bordo_est_4_2 1.333 cam (2.688, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.350 cam (2.685, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.367 cam (2.679, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.383 cam (2.673, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 1.400 cam (2.673, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.417 cam (2.678, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.433 cam (2.684, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.450 cam (2.688, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.275; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.275
+PM: F bordo_est_4_2 1.467 cam (2.686, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.483 cam (2.679, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.500 cam (2.673, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.517 cam (2.672, 0.217, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 1.533 cam (2.677, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.550 cam (2.684, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.567 cam (2.688, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.583 cam (2.686, 0.223, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.275; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.275
+PM: F bordo_est_4_2 1.600 cam (2.68, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.617 cam (2.674, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.633 cam (2.672, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.650 cam (2.676, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 1.667 cam (2.683, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.683 cam (2.688, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.700 cam (2.687, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.717 cam (2.681, 0.222, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.275; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.275
+PM: F bordo_est_4_2 1.733 cam (2.674, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.750 cam (2.672, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.767 cam (2.675, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.783 cam (2.682, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 1.800 cam (2.687, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.817 cam (2.687, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.833 cam (2.682, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.850 cam (2.675, 0.222, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.275; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.275
+PM: F bordo_est_4_2 1.867 cam (2.672, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.883 cam (2.675, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 1.900 cam (2.681, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 1.917 cam (2.687, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 1.933 cam (2.687, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 1.950 cam (2.683, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 1.967 cam (2.676, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.269; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.269
+PM: F bordo_est_4_2 1.983 cam (2.672, 0.222, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.275; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.275
+PM: F bordo_est_4_2 2.000 cam (2.674, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.017 cam (2.681, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.033 cam (2.687, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.276; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.276
+PM: F bordo_est_4_2 2.050 cam (2.688, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.270; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.270
+PM: F bordo_est_4_2 2.067 cam (2.683, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 2.083 cam (2.676, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 2.100 cam (2.672, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 2.117 cam (2.674, 0.222, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 2.133 cam (2.68, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.150 cam (2.686, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.167 cam (2.688, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 2.183 cam (2.684, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 2.200 cam (2.677, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 2.217 cam (2.672, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 2.233 cam (2.673, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 2.250 cam (2.679, 0.222, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 2.267 cam (2.685, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.283 cam (2.688, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.300 cam (2.685, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 2.317 cam (2.678, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 2.333 cam (2.673, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 2.350 cam (2.673, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 2.367 cam (2.678, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 2.383 cam (2.685, 0.222, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 2.400 cam (2.688, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.417 cam (2.685, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.433 cam (2.679, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 2.450 cam (2.673, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 2.467 cam (2.673, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 2.483 cam (2.677, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 2.500 cam (2.684, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 2.517 cam (2.688, 0.222, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 2.533 cam (2.686, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.550 cam (2.68, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.567 cam (2.674, 0.224, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 2.583 cam (2.672, 0.218, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 2.600 cam (2.677, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 2.617 cam (2.684, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 2.633 cam (2.688, 0.216, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 2.650 cam (2.686, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 2.667 cam (2.68, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.683 cam (2.674, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.700 cam (2.672, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 2.717 cam (2.676, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 2.733 cam (2.683, 0.213, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 2.750 cam (2.688, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 2.767 cam (2.687, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 2.783 cam (2.681, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 2.800 cam (2.675, 0.227, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.817 cam (2.672, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.833 cam (2.675, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 2.850 cam (2.682, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 2.867 cam (2.687, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 2.883 cam (2.687, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 2.900 cam (2.682, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 2.917 cam (2.675, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 2.933 cam (2.672, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 2.950 cam (2.675, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 2.967 cam (2.681, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 2.983 cam (2.687, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 3.000 cam (2.688, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 3.017 cam (2.683, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.033 cam (2.676, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 3.050 cam (2.672, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.274; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.274
+PM: F bordo_est_4_2 3.067 cam (2.674, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 3.083 cam (2.68, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 3.100 cam (2.686, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 3.117 cam (2.688, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.271; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.271
+PM: F bordo_est_4_2 3.133 cam (2.683, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 3.150 cam (2.677, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.167 cam (2.672, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.268; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.268
+PM: F bordo_est_4_2 3.183 cam (2.674, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 3.200 cam (2.68, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 3.217 cam (2.686, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 3.233 cam (2.688, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.277; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.277
+PM: F bordo_est_4_2 3.250 cam (2.684, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 3.267 cam (2.677, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 3.283 cam (2.672, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.300 cam (2.673, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.317 cam (2.679, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 3.333 cam (2.685, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 3.350 cam (2.688, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 3.367 cam (2.685, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 3.383 cam (2.678, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 3.400 cam (2.673, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 3.417 cam (2.673, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.433 cam (2.678, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.450 cam (2.685, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 3.467 cam (2.688, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 3.483 cam (2.685, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 3.500 cam (2.679, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 3.517 cam (2.673, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 3.533 cam (2.672, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 3.550 cam (2.677, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.567 cam (2.684, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.583 cam (2.688, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 3.600 cam (2.686, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 3.617 cam (2.68, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 3.633 cam (2.674, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 3.650 cam (2.672, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 3.667 cam (2.677, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.683 cam (2.683, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.700 cam (2.688, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.717 cam (2.686, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 3.733 cam (2.68, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 3.750 cam (2.674, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 3.767 cam (2.672, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 3.783 cam (2.676, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 3.800 cam (2.683, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.817 cam (2.688, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.833 cam (2.687, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.850 cam (2.681, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 3.867 cam (2.675, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 3.883 cam (2.672, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 3.900 cam (2.675, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 3.917 cam (2.682, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 3.933 cam (2.687, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.950 cam (2.687, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 3.967 cam (2.682, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 3.983 cam (2.675, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.000 cam (2.672, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.017 cam (2.675, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 4.033 cam (2.681, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.050 cam (2.687, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 4.067 cam (2.688, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.083 cam (2.683, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 4.100 cam (2.676, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.117 cam (2.672, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.133 cam (2.674, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.150 cam (2.68, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.281; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.281
+PM: F bordo_est_4_2 4.167 cam (2.686, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.183 cam (2.688, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.200 cam (2.684, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.217 cam (2.677, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 4.233 cam (2.672, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.250 cam (2.674, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 4.267 cam (2.68, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.283 cam (2.686, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 4.300 cam (2.688, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.317 cam (2.684, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.333 cam (2.677, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.350 cam (2.673, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 4.367 cam (2.673, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.383 cam (2.679, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 4.400 cam (2.685, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.417 cam (2.688, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 4.433 cam (2.685, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.450 cam (2.678, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.467 cam (2.673, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.483 cam (2.673, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 4.500 cam (2.678, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.493; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.517 cam (2.685, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 4.533 cam (2.688, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.503; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.550 cam (2.685, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.500; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 4.567 cam (2.679, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.494; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.583 cam (2.673, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.488; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.600 cam (2.672, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.617 cam (2.677, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.492; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 4.633 cam (2.684, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.499; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.650 cam (2.688, 0.22, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 4.667 cam (2.686, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.683 cam (2.68, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 4.700 cam (2.674, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 4.717 cam (2.672, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.733 cam (2.676, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.750 cam (2.683, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.498; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 4.767 cam (2.688, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 4.783 cam (2.687, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.501; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 4.800 cam (2.681, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.495; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.817 cam (2.674, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.489; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 4.833 cam (2.672, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 4.850 cam (2.676, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.491; sopra Pozza_4_2 di 0.273
+PM: F bordo_est_4_2 4.867 cam (2.683, 0.215, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.267; dal centro della pozza in pianta 0.497; sopra Pozza_4_2 di 0.267
+PM: F bordo_est_4_2 4.883 cam (2.687, 0.212, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.265; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.265
+PM: F bordo_est_4_2 4.900 cam (2.687, 0.214, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.266; dal centro della pozza in pianta 0.502; sopra Pozza_4_2 di 0.266
+PM: F bordo_est_4_2 4.917 cam (2.681, 0.219, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.272; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.272
+PM: F bordo_est_4_2 4.933 cam (2.675, 0.225, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.278; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.278
+PM: F bordo_est_4_2 4.950 cam (2.672, 0.228, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.280; dal centro della pozza in pianta 0.487; sopra Pozza_4_2 di 0.280
+PM: F bordo_est_4_2 4.967 cam (2.675, 0.226, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.279; dal centro della pozza in pianta 0.490; sopra Pozza_4_2 di 0.279
+PM: F bordo_est_4_2 4.983 cam (2.682, 0.221, -0.12) guarda (-0.76, -0.63, 0.15); sopra il pelo di Pozza_4_2 0.273; dal centro della pozza in pianta 0.496; sopra Pozza_4_2 di 0.273
