@@ -17,8 +17,11 @@ const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 ## la nuova partita normale (niente file).
 const PARTENZE := [
 	{"id": "inizio", "nome": "Inizio", "nota": "nuova partita"},
+	{"id": "sala_pompe", "nome": "Sala pompe", "nota": "le pompe da riavviare, poi la lezione"},
 	{"id": "risalita", "nome": "Risalita", "nota": "dopo la sala generatori"},
 	{"id": "fiume", "nome": "Fiume lento", "nota": "all'ingresso del fiume"},
+	{"id": "pozze", "nome": "Stanza delle pozze", "nota": "all'ingresso, l'enigma da fare"},
+	{"id": "sala_buio", "nome": "Sala al buio", "nota": "alla serranda, prima del giro della luce e della fossa"},
 	{"id": "torre", "nome": "Torre degli scivoli", "nota": "oltre il portone"},
 	{"id": "inseguimento", "nome": "Inseguimento", "nota": "le condotte, dal fondo della torre"},
 	{"id": "tunnel", "nome": "Tunnel sottomarino", "nota": "dopo SB1, all'ingresso del tunnel"},
