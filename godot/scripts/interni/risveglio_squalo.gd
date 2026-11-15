@@ -331,12 +331,20 @@ func _prepara_porta() -> void:
 
 
 func _aggancia_porta() -> void:
-	# (gli interni liberati prima di questa chiamata differita: niente porta da agganciare)
-	if not is_instance_valid(porta) or not is_instance_valid(_perno) or not _perno.is_inside_tree():
+	# (gli interni liberati prima di questa chiamata differita: niente porta da agganciare. Il perno senza genitore, non
+	# fuori dall'albero: con gli interni preparati fuori dall'albero il perno ha il genitore e la porta si aggancia lo
+	# stesso; nota di grafica-2 del 10 novembre)
+	if not is_instance_valid(porta) or not is_instance_valid(_perno) or _perno.get_parent() == null:
 		return
 	var r := _perno.rotation.y      # la porta si aggancia chiusa, poi il perno torna dov'era
 	_perno.rotation.y = 0.0
-	porta.reparent(_perno, true)
+	if porta.is_inside_tree() or porta.get_parent() != _perno.get_parent():
+		porta.reparent(_perno, true)
+	else:
+		# (fuori dall'albero la trasformazione nel mondo non c'è: col genitore in comune, quella nel perno a mano)
+		var nel_perno := _perno.transform.affine_inverse() * porta.transform
+		porta.reparent(_perno, false)
+		porta.transform = nel_perno
 	_perno.rotation.y = r
 	# la collisione della porta (il corridoio ha il vano libero): gira con lei, chiusa blocca il passaggio
 	var corpo := StaticBody3D.new()

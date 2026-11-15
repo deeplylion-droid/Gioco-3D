@@ -95,8 +95,9 @@ func _run() -> void:
 		var s := s0
 		while s < lung - 25.0:
 			s = await _corri(s, CORSA, 1.0)
-			if s >= prossimo:
-				prossimo += GETTO_OGNI
+			if s >= prossimo or sala.lei_stato == SalaSottomarino.Lei.CARICA:
+				# (anche a ogni carica, build 0.4.0: senza getto lei scatta e ti prende)
+				prossimo = s + GETTO_OGNI
 				getti += 1
 				sala.respingi()
 			if sala.lei_stato == SalaSottomarino.Lei.PRESA:
