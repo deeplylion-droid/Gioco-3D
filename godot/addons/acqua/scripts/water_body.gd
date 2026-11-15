@@ -107,6 +107,11 @@ var _was_empty := false
 func _ready() -> void:
 	target_level = level
 	wet_level = level
+	# (la griglia già con la qualità del gioco: prima si faceva quella dell'alta e poi, in _on_quality_changed, quella
+	# vera, due griglie nuove per un'acqua sola; 18-24 ms per l'acqua della presa del tunnel, collaudo del 10 novembre)
+	var wm0 := _wm()
+	if wm0 and not Engine.is_editor_hint():
+		_quality = wm0.quality
 	_rebuild_surface()
 	_apply_style()
 	_apply_level()
@@ -337,9 +342,7 @@ func _rebuild_surface() -> void:
 		_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_surface.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
 		add_child(_surface, false, Node.INTERNAL_MODE_FRONT)
-	# densita' della griglia: serve per le onde della simulazione e per l'imbuto dei gorghi
-	var cell: float = [0.25, 0.1, 0.05][_quality]
-	_surface.mesh = _griglia(size, clampi(int(size.x / cell), 4, 320), clampi(int(size.y / cell), 4, 320))
+	_surface.mesh = _griglia_per(size, _quality)
 	if material == null:
 		material = ShaderMaterial.new()
 		material.shader = SURFACE_SHADER
@@ -360,6 +363,21 @@ static var _griglie := {}
 ## tecnici, perché le loro non restino in memoria insieme alla torre e al tunnel.
 static func svuota_griglie() -> void:
 	_griglie.clear()
+
+
+## La griglia del pelo dell'acqua di misura [param misura] con la qualità [param qualita] (0-2).
+static func _griglia_per(misura: Vector2, qualita: int) -> PlaneMesh:
+	# densita' della griglia: serve per le onde della simulazione e per l'imbuto dei gorghi
+	var cell: float = [0.25, 0.1, 0.05][qualita]
+	return _griglia(misura, clampi(int(misura.x / cell), 4, 320), clampi(int(misura.y / cell), 4, 320))
+
+
+## Prepara prima la griglia di un'acqua di misura [param misura] con la qualità del gioco (WaterManager), già fatta
+## (la mesh calcolata): l'acqua che arriva dopo la trova pronta. Per dividere in due il costo di un'acqua nuova.
+static func prepara_griglia(albero: SceneTree, misura: Vector2) -> void:
+	var wm := albero.root.get_node_or_null("WaterManager")
+	if wm:
+		_griglia_per(misura, int(wm.quality)).get_rid()
 
 
 static func _griglia(misura: Vector2, larghe: int, fonde: int) -> PlaneMesh:

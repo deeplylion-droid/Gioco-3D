@@ -11,6 +11,9 @@ extends Node
 ## lì, lei lo prende. Lo stesso per le gallerie basse (a 205 e 425 m): entra accovacciato con lei a 17,9 m, esce con
 ## lei ad almeno 8 m. Poi l'approdo (guado obbligato, scala, pontile: lei sempre ad almeno 8 m) e il portello (mentre
 ## si chiude lei si ferma).
+## Con la carica (build 0.4.0): durante un passaggio obbligato lei non carica mai, e dopo la prima carica arriva solo
+## quando il giocatore è sulla banchina da SalaSottomarino.carica_dopo_passaggio secondi; a ogni carica il bersaglio
+## finto si gira e spruzza dopo [constant REAZIONE] s (dentro la finestra), come farebbe il giocatore.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_attraversamenti.gd
 
 var ok := 0
@@ -18,6 +21,11 @@ var falliti := 0
 var sala: SalaSottomarino
 var b: Node3D
 var preso := false
+## Quando lei carica: il tempo (s dal via del test) di ogni carica.
+var cariche: Array[float] = []
+var _t := 0.0
+## Dopo quanto il bersaglio finto risponde a una carica con il getto (s).
+const REAZIONE := 1.0
 
 
 func _ready() -> void:
@@ -32,6 +40,7 @@ func _run() -> void:
 	add_child(b)
 	sala.bersaglio = b
 	sala.giocatore_preso.connect(func(): preso = true)
+	sala.lei_carica.connect(func(): cariche.append(_t))
 	var modi := {"corre": [1.1, 0.0, 5.8], "si gira": [2.25, 0.0, 5.8], "lento": [1.5, 1.5, 5.8]}
 	var k := 0
 	for att in sala.attraversamenti:
@@ -47,6 +56,9 @@ func _run() -> void:
 			_controlla(not preso and float(r[0]) >= 7.95 and dopo_ok,
 					"attraversamento a %d m, %s: all'atterraggio lei è almeno a 8 m e non ti prende" % [int(att[0]), modo],
 					["all'atterraggio %.2f m, minimo dopo %.2f m, preso %s" % [r[0], r[1], preso]])
+			_controlla(int(r[2]) == 0 and float(r[3]) >= sala.carica_dopo_passaggio - 0.05,
+					"attraversamento a %d m, %s: nessuna carica nel passaggio, la prima dopo %.0f s di banchina" % [int(att[0]), modo, sala.carica_dopo_passaggio],
+					["cariche nel passaggio %d, la prima %.2f s dopo l'atterraggio" % [r[2], r[3]]])
 		# chi cade in acqua dal primo gommone e resta lì viene preso
 		var caduto: bool = await _cade(gs)
 		_controlla(caduto, "attraversamento a %d m: se cadi in acqua e resti lì ti prende" % int(att[0]), ["preso %s" % caduto])
@@ -58,10 +70,14 @@ func _run() -> void:
 		_controlla(not preso and float(r[0]) >= 7.95 and float(r[1]) > sala.distanza_presa,
 				"galleria a %d m: all'uscita lei è almeno a 8 m e non ti prende" % int(g["s"]),
 				["all'uscita %.2f m, minimo dopo %.2f m, preso %s" % [r[0], r[1], preso]])
+		_controlla(int(r[2]) == 0 and float(r[3]) >= sala.carica_dopo_passaggio - 0.05,
+				"galleria a %d m: nessuna carica dentro, la prima dopo %.0f s di banchina" % [int(g["s"]), sala.carica_dopo_passaggio],
+				["cariche dentro %d, la prima %.2f s dopo l'uscita" % [r[2], r[3]]])
 	# l'approdo: il guado obbligato verso la scala, la scala e il pontile
 	var r2: Array = await _approdo()
-	_controlla(not preso and float(r2[0]) >= 7.95, "approdo: guado, scala e pontile con lei sempre ad almeno 8 m",
-			["minimo %.2f m, preso %s" % [r2[0], preso]])
+	_controlla(not preso and float(r2[0]) >= 7.95 and int(r2[1]) == 0,
+			"approdo: guado, scala e pontile con lei sempre ad almeno 8 m, senza cariche",
+			["minimo %.2f m, cariche %d, preso %s" % [r2[0], r2[1], preso]])
 	# il portello: mentre si chiude lei non avanza più (e non prende dietro il portello)
 	var r3: Array = await _portello()
 	_controlla(not preso and float(r3[0]) < 0.05, "portello: mentre si chiude lei si ferma",
@@ -106,7 +122,9 @@ func _attraversa(s_ost: float, gs: Array, salto: float, pausa: float, dopo: floa
 		var dt := await _passo()
 		s += 5.8 * dt
 		b.global_position = _banchina(minf(s, s0), lato)
-	# i salti: dal bordo della banchina a ogni gommone e dall'ultimo alla banchina libera
+		_rispondi()
+	# i salti (da qui nessuna carica): dal bordo della banchina a ogni gommone e dall'ultimo alla banchina libera
+	var t_via := _t
 	var punti: Array = []
 	var bordo := sala.punto(s0) + sala.destra(s0) * lato * (sala.canale + 0.4)
 	punti.append(Vector3(bordo.x, sala.piano, bordo.z))
@@ -126,6 +144,8 @@ func _attraversa(s_ost: float, gs: Array, salto: float, pausa: float, dopo: floa
 		if i < punti.size() - 1:
 			await _aspetta(pausa)
 	var all_atterraggio := sala._s_bersaglio - sala.lei_s
+	var t_atterraggio := _t
+	var cariche_prima := cariche.filter(func(x): return x > t_via).size()
 	# dopo l'atterraggio
 	var minimo := INF
 	var sd := sl
@@ -142,9 +162,13 @@ func _attraversa(s_ost: float, gs: Array, salto: float, pausa: float, dopo: floa
 				sala.respingi()
 			sd += dopo * dt
 		b.global_position = _banchina(sd, -lato)
+		_rispondi()
 		minimo = minf(minimo, sala._s_bersaglio - sala.lei_s)
-	print("    %s a %d m: all'atterraggio %.2f m, minimo dopo %.2f m" % [modo, int(s_ost), all_atterraggio, minimo])
-	return [all_atterraggio, minimo]
+	var dopo_c: Array = cariche.filter(func(x): return x > t_atterraggio)
+	var prima_c: float = (float(dopo_c[0]) - t_atterraggio) if not dopo_c.is_empty() else INF
+	print("    %s a %d m: all'atterraggio %.2f m, minimo dopo %.2f m, cariche nel passaggio %d, la prima dopo %.2f s" % [
+			modo, int(s_ost), all_atterraggio, minimo, cariche_prima, prima_c])
+	return [all_atterraggio, minimo, cariche_prima, prima_c]
 
 
 ## Una galleria bassa: sulla banchina fino alla bocca con lei 17,9 m dietro, dentro accovacciato a 2,3 m/s fino
@@ -166,10 +190,13 @@ func _galleria(g: Dictionary) -> Array:
 		t += await _passo()
 		b.global_position = a.lerp(c, clampf(t / 0.8, 0.0, 1.0))
 	var s := s0
+	var t_dentro := _t
 	while s < s1 and not preso:
 		s += 2.3 * await _passo()
 		b.global_position = _al_lato(minf(s, s1), lato * dentro)
 	var all_uscita := sala._s_bersaglio - sala.lei_s
+	var cariche_dentro := cariche.filter(func(x): return x > t_dentro).size()
+	var t_uscita := _t
 	a = b.global_position
 	c = _banchina(s1, lato)
 	t = 0.0
@@ -184,9 +211,13 @@ func _galleria(g: Dictionary) -> Array:
 		t += dt
 		s += 5.8 * dt
 		b.global_position = _banchina(s, lato)
+		_rispondi()
 		minimo = minf(minimo, sala._s_bersaglio - sala.lei_s)
-	print("    galleria a %d m: all'uscita %.2f m, minimo dopo %.2f m" % [int(g["s"]), all_uscita, minimo])
-	return [all_uscita, minimo]
+	var dopo_c: Array = cariche.filter(func(x): return x > t_uscita)
+	var prima_c: float = (float(dopo_c[0]) - t_uscita) if not dopo_c.is_empty() else INF
+	print("    galleria a %d m: all'uscita %.2f m, minimo dopo %.2f m, cariche dentro %d, la prima dopo %.2f s" % [
+			int(g["s"]), all_uscita, minimo, cariche_dentro, prima_c])
+	return [all_uscita, minimo, cariche_dentro, prima_c]
 
 
 ## L'approdo coi tempi del collaudo: arriva sulla banchina destra a 5,7 m dalla fine con lei 17,8 m dietro, guado di
@@ -200,6 +231,7 @@ func _approdo() -> Array:
 	sala._s_bersaglio = s0
 	sala.insegui_da(s0 - 17.8)
 	var minimo := INF
+	var t0 := _t
 	var tappe := [[3.5, _al_lato(s0, -sala.canale) - Vector3.UP * 0.4], [0.4, _banchina(s0, -1.0)],
 			[2.2, _al_lato(L - 0.1, -sala.muro + 0.6) + Vector3.UP * sala.SOGLIA],
 			[2.0, _al_lato(L - 0.1, sala.PONTILE_FINO - 0.2) + Vector3.UP * sala.SOGLIA]]
@@ -213,8 +245,9 @@ func _approdo() -> Array:
 			b.global_position = a.lerp(c, clampf(t / float(tp[0]), 0.0, 1.0))
 			minimo = minf(minimo, sala._s_bersaglio - sala.lei_s)
 		a = c
-	print("    approdo: minimo %.2f m" % minimo)
-	return [minimo]
+	var n_c := cariche.filter(func(x): return x > t0).size()
+	print("    approdo: minimo %.2f m, cariche %d" % [minimo, n_c])
+	return [minimo, n_c]
 
 
 ## Il portello che si chiude con lei a 3 m: ritorna [quanto è avanzata lei mentre si chiude].
@@ -254,7 +287,14 @@ func _cade(gs: Array) -> bool:
 
 func _passo() -> float:
 	await get_tree().process_frame
+	_t += get_process_delta_time()
 	return get_process_delta_time()
+
+
+## Il bersaglio finto si gira e spruzza [constant REAZIONE] s dopo che lei comincia a caricare.
+func _rispondi() -> void:
+	if sala.lei_stato == SalaSottomarino.Lei.CARICA and sala._lei_t >= REAZIONE:
+		sala.respingi()
 
 
 func _aspetta(secondi: float) -> void:
