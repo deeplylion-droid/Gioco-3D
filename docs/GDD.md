@@ -712,3 +712,50 @@ Entra nel gioco solo dopo l'ok dell'utente sugli scatti in inglese (titolo, opzi
   - **0.3.24 uscita** (10 novembre; Release v0.3.24 pubblicata alle 01:12 UTC da main 26f399fe, collaudo finale superato): il tunnel sottomarino si prepara a piccoli pezzi nelle condotte (prima fino a 0,4 s fermo, ora al massimo un piccolo scatto quando compare); le 16 Polaroid appoggiate a 0,2 mm, girate col piano sul fondo in pendenza, la P16 anche col fiume fermo a lungo; la goccia di bava pronta prima di comparire. Nelle note, il blocco di circa un secondo ripartendo dal primo checkpoint del tunnel (c'era già). Per la 0.3.25, già in lavoro (lavoro/caricamenti-thread, in ricontrollo): i caricamenti dal disco nel thread (sagome, suoni, materiali del tunnel), la torre e l'inseguimento tenuti fra le ripartenze, il tunnel sotto i 33 ms anche quando compare e quando è pronto, niente blocco ripartendo dal primo checkpoint del tunnel; poi test_torre robusto e l'oggetto in più a ogni morte.
   - **0.3.25 uscita** (10 novembre; Release v0.3.25 pubblicata alle 11:22 UTC da main 6da98e77). L'utente ha chiesto di fermare le prove («sono due giorni che fai prove») e di pubblicarla così: la Prova su Vulkan non era finita e il collaudo finale si è fermato a metà (ripartenze nel tunnel superate). Dentro: niente blocco di circa un secondo ripartendo dal primo checkpoint del tunnel, tunnel preparato a passi più corti, sagome, materiali e suoni caricati in sottofondo, ripartenze nella torre e nell'inseguimento più veloci, perno della porta del risveglio liberato. Squadre ferme. Pronti ma non uniti, da riprendere solo se l'utente lo chiede: tunnel sotto i 33 ms (lavoro/tunnel-fotogrammi-33 268a13b4, ricontrollato) e lancia a FOV largo (lavoro/lancia-fov 1e123eec).
 - **Niente calibrazione della luminosità al primo avvio (richiesta dell'utente dopo la 0.3.21, 7 novembre)**: «non mi piace, levala». Al primo avvio il gioco parte dal titolo, senza la schermata della luminosità. La luminosità nelle opzioni resta: il cursore e «Calibra la luminosità…» nella scheda Luminosità. La scena che si apriva da sola è in `godot/addons/grafica/scartati/`. Si fa nella 0.3.22.
+
+## Analisi del capitolo 1 e direzione nuova (15 novembre)
+
+Richiesta dell'utente: «Ho lavorato a questo gioco per settimane. Si tratta di un gioco ispirato a poppy play time. Il risultato di questo primo capitolo non è male, ma sono sicuro che non stupirebbe abbastanza da distinguersi su Steam. Analizzalo come se tu fossi un giocatore di videogiochi stagionato. Trova i punti deboli in tutto il gameplay. Dopo proponimi miglioramenti.»
+
+L'analisi è nella pagina "Analisi del capitolo 1", https://claude.ai/artifact/SHq2ZGYPCGbkhJvNPzQhEQ. È fatta sul codice, su questo documento, sui riscontri e sugli scatti: il gioco intero qui non gira. I dieci punti deboli:
+1. non c'è la frase che lo distingue: la struttura è quella del primo capitolo di Poppy Playtime;
+2. fino all'inseguimento non si rischia niente: lei si vede sei volte senza conseguenze;
+3. nelle fughe non si decide niente: nel tunnel lei va a 4,6 m/s e il giocatore a 5,8, e nei passaggi lenti è tenuta a 8 m, quindi lo spruzzo non serve;
+4. lo zaino fa quasi sempre da telecomando;
+5. gli enigmi si risolvono copiando un disegno, e tre su sei sono sui colori;
+6. lo squalo sparisce dopo il primo minuto;
+7. la storia dei bambini quasi non si vede, lei non ha un carattere e il giocatore non ha uno scopo;
+8. il finale non lascia niente;
+9. è corto (15 minuti per chi sa le soluzioni) e non c'è motivo di rigiocarlo;
+10. finiture per Steam: joypad solo nei menu, scritte e indicatori provvisori, provato solo dall'utente, niente obiettivi, parti fatte con l'IA da dichiarare.
+
+**Risposte dell'utente alle 14 proposte (15 novembre, 10:20-10:24 UTC):**
+- **Farlo provare a 3-5 persone nuove: sì.**
+- **«L'acqua è sua. Tu hai la pompa»: sì.** Lei passa solo dove c'è acqua, la luce rosa sotto il pelo avvisa, l'asciutto è sicuro, e il giocatore ha l'unico attrezzo che sposta l'acqua. Cambia la scelta del 14 ottobre («Prima dell'inseguimento lei può prenderti solo se te la vai a cercare»): ora può prenderti se resti vicino all'acqua quando arriva.
+- **I bambini giocano con te: sì.** Uno aiuta e uno ostacola. Restano i vincoli: sempre vestiti, niente violenza sui bambini.
+- **Nel tunnel lo spruzzo serve davvero: A**, solo la carica da respingere e il serbatoio da pochi spruzzi. Non la B (lei che cambia ogni terzo del tunnel). La distanza resta fra 8 e 18 m e l'acqua del canale resta infinita.
+- **Lo squalo torna: A**, nel fiume lento. Non nel finale.
+- **Il canto si sente già prima del tunnel: sì.**
+- **Due enigmi dove la soluzione è l'acqua (livello, peso, spinta): no.** Non riproporli.
+- **Aiuto per chi confonde i colori: sì.** Un'opzione spenta all'inizio; i cerchi dei giocattoli tengono i loro colori.
+- **Finale: A.** Dall'altra parte del portello i bambini aspettano in silenzio; uno porge un disegno: sei tu. Poi il riepilogo (Polaroid su 16, tempo, morti) e un'immagine sola del capitolo 2; niente crediti.
+- **Uno scopo dal primo minuto: sì.** Un disegno dei bambini mostra dove andare; il mistero su chi è il giocatore resta.
+- **Un motivo per rigiocarlo: nessuna scelta**, con la nota: «Lo allunghiamo fino alle 2 ore, piano piano, dopo averlo raffinato bene.» Quindi prima si raffina, poi il capitolo si allunga poco per volta fino a circa due ore. Diciassettesima Polaroid e obiettivi di Steam restano non decisi.
+- **Joypad in tutto il gioco: sì.** Chiude la domanda rimasta aperta sul joypad nel mondo.
+- **Scritte e indicatori definitivi: sì**, con le varianti descritte prima per iscritto.
+- **Parti fatte con l'IA: sì.** Si prepara con l'utente il testo da dichiarare a Steam, e la voce dello spot la registra una persona.
+
+**Proposte nel dettaglio, in attesa di risposta** (pagina "Proposte nel dettaglio", https://claude.ai/artifact/DagEbSgymA14naZ3dkfY1a, 20 voci). Sono proposte: niente entra nel gioco finché l'utente non risponde e non scrive «vai», e le squadre restano ferme. In breve:
+- **La regola**: lei esce solo da vasche, pozze profonde e canali; vetri e grate la fermano; la luce rosa sotto il pelo e il canto che si avvicina avvisano, e quando il canto si ferma esce (circa 3 s); ci si salva allontanandosi dal bordo o col getto in faccia; se prende, la scena della morte e l'ultimo checkpoint. Vale da quando si riaccendono le pompe: lì la vasca di raccolta si accende di rosa da sotto e si sente il canto per la prima volta, senza che lei esca.
+- **Dove**: oblò come oggi; nel fiume lo squalo; infermeria e acquari sicuri; stanza delle pozze (lei nuota sotto il pavimento, escono la mano e i tentacoli dalla pozza piena più vicina; stanza, colori, cartello ed enigma identici); sala al buio (la luce gira nella vasca grande e nelle vasche dei bimbi, poi la fossa come oggi); torre (chi cade in una vasca di raccolta ha circa 5 s per uscire).
+- **Canto**: A, prima del tunnel la sigla del parco storpiata e nel tunnel il canto approvato il 25 ottobre; B, la sigla dappertutto.
+- **Squalo nel fiume**: pinna e scia dopo il primo bivio, tre o quattro attacchi per giro, un getto sul muso lo ricaccia; se raggiunge la ciambella morde e si riparte dall'imbarco (A) oppure la fa solo girare (B). Tocca la scelta del 18 ottobre («non si cade e non si muore»).
+- **Tunnel**: da 18 a 8 m in circa 15 s; a 8 m smette di cantare e scatta dopo 2 s (3 la prima volta) se non è colpita; mai durante i passaggi obbligati; serbatoio da tre spruzzi, ricarica 2 s.
+- **Bambini**: aiuta il bambino con la scatola (tracce, disegni firmati, una apparizione nuova agli acquari), ostacola l'agnellino (la grata con la catena, un colore riempito di nuovo nella stanza delle pozze, un fischio che la chiama nella sala al buio), sempre solo sentito.
+- **Scopo**: quattro disegni che portano alle scialuppe (A) o alla radio (B).
+- **Finale**: i bambini nella camera dopo il portello, il bambino con la scatola porge il disegno; l'ultimo disegno è da scegliere (sulla barca con loro; in mezzo a loro con lei che tiene tutti per mano; il giocatore da bambino).
+- **Finiture**: forme sui colori, tasti del joypad, acqua rimasta sulla lancia o in un disegno a pastello, scritte a disegni.
+- **Steam e prova**: bozza del testo da dichiarare (con o senza il codice), chi registra la voce dello spot, foglio per la prova con persone nuove.
+- **Ordine**: tre build (la regola; la storia; le finiture), poi l'allungamento verso le due ore.
+
+Fatti controllati per le proposte (15 novembre): lei uccide oggi solo alla fossa, nelle condotte e nel tunnel; lo squalo ha un solo movimento, quello del risveglio; i bambini hanno fermo, testa inclinata, cammina, corsa, partenza e girata; il canto si sente solo nel tunnel; la voce dello spot è sintetica (Kokoro, Apache 2.0); suoni e sigla sono sintesi scritta per il gioco più campioni CC0 di Kenney.
