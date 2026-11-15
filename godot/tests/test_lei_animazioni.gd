@@ -13,6 +13,7 @@ extends Node
 const DURATE := {
 	&"sale_dall_acqua": 1.6, &"sale_dall_acqua_veloce": 1.0, &"sale_puntata": 1.6, &"sale_mano": 1.6, &"incombe": 2.4, &"presa": 1.2,
 	&"respinta": 1.2, &"scende": 1.0, &"colpo_grata": 0.5, &"colpo_grata_sbieco": 0.5, &"affacciata_sb1": 5.4,
+	&"carica": 2.0, &"scatto": 0.8,
 }
 const IN_CICLO := [&"incombe", &"colpo_grata", &"colpo_grata_sbieco"]
 ## Gli stessi valori di tools/blender/medusa_inseguimento.py (lei guarda verso +Z).
@@ -134,6 +135,22 @@ func _run() -> void:
 		occhio_basso = minf(occhio_basso, (o["occhio"] as Vector3).y)
 	check(peggio < 0.12, "le mani restano sul bordo del pozzo (al massimo a %.2f m)" % peggio)
 	check(occhio_basso > BORDO_SB1.y + 0.3, "e l'occhio sta sopra il bordo (%.2f m)" % occhio_basso)
+
+	print("La carica e lo scatto del tunnel (0.4.0)")
+	var corsa := _ossa(&"insegue_aperta", 0.0)
+	var sc_c := _scarto(_ossa(&"carica", 0.0), corsa)
+	check(sc_c < 0.03, "la carica parte dalla posa della corsa al tempo 0 (scarto %.3f m, %s)" % [sc_c, peggiore])
+	var sc_s := _scarto(_ossa(&"scatto", 0.0), _ossa(&"carica", 2.0))
+	check(sc_s < 0.03, "lo scatto parte dalla fine della carica (scarto %.3f m, %s)" % [sc_s, peggiore])
+	var sc_f := _scarto(_ossa(&"scatto", 0.8), corsa)
+	check(sc_f < 0.03, "e finisce nella posa della corsa al tempo 0 (scarto %.3f m, %s)" % [sc_f, peggiore])
+	var indietro: float = (_ossa(&"carica", 1.2)["radice"] as Vector3).z - (corsa["radice"] as Vector3).z
+	check(indietro < -0.4, "nella carica si tira indietro (%.2f m)" % indietro)
+	var avanti: float = (_ossa(&"scatto", 0.2)["testa"] as Vector3).z - (_ossa(&"carica", 2.0)["testa"] as Vector3).z
+	check(avanti > 0.5, "nello scatto la testa va avanti (%.2f m)" % avanti)
+	for nome: StringName in [&"carica", &"scatto"]:
+		var salto_cs := _salto_massimo(nome)
+		check(salto_cs < 0.36, "%s senza scatti fra un fotogramma e l'altro (al più %.2f m, %s)" % [nome, salto_cs, peggiore])
 
 	print("Le zampe sul petto")
 	# come stanno nella posa approvata insegue, rispetto al petto

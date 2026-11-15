@@ -31,8 +31,9 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | Fase | Cosa succede |
 |---|---|
 | `LONTANA` | niente |
-| `ARRIVA` | la luce rosa sott'acqua parte (da `partenza_luce`, o 8 m dietro l'uscita) e arriva sotto il punto, 0,6 m sotto il pelo, in `avviso - silenzio` s |
-| `SILENZIO` | gli ultimi `silenzio` s dell'avviso: la luce è ferma lì e pulsa, e **il canto tace** |
+| `ARRIVA` | la luce rosa sott'acqua parte (da `partenza_luce`, o 8 m dietro l'uscita, o da dove sta se è già accesa) e arriva sotto il punto, 0,6 m sotto il pelo, in `avviso - spegnimento - silenzio` s (2 s) |
+| `SPEGNE` | la luce è ferma lì e pulsa; **il canto sfuma** in `spegnimento` s (1 s): non si tronca mai di netto |
+| `SILENZIO` | gli ultimi `silenzio` s (0,5 s) dell'avviso: **silenzio vero**, poi esce |
 | `ESCE` | sale dall'acqua (`inseguimento/sale_dall_acqua`) |
 | `SU` | incombe e ti segue con la testa. Se sei entro `portata` (in pianta) ti prende dopo `tempo_presa`; se no, dopo `tempo_su`, torna sotto |
 | `PRESA` | `GameState.kill_player(&"medusa")`, la scena di morte di sempre |
@@ -46,13 +47,14 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 | Parametro | Valore | Cosa fa |
 |---|---|---|
 | `abilitata` | `true` | spento, la zona è sicura |
-| `modo` | `INTERA` | `MANO` (mano e tentacoli, per le pozze) arriva nella prossima tappa |
+| `modo` | `INTERA` | `MANO` (mano e tentacoli, per le pozze) arriva dopo |
 | `punti_uscita` | | i marker d'uscita |
 | `pelo` | `NAN` | quota del pelo dell'acqua |
 | `profondita` | `5` | spazio libero sotto i punti |
 | `partenza_luce` | | da dove arriva la luce |
-| `avviso` | `3` | in s |
-| `silenzio` | `1` | in s |
+| `avviso` | `3,5` | in s: 2 arrivo + 1 spegnimento + 0,5 silenzio |
+| `spegnimento` | `1` | in s: il canto sfuma |
+| `silenzio` | `0,5` | in s: silenzio vero prima che esca |
 | `portata` | `3` | in m |
 | `tempo_su` | `2,2` | in s |
 | `tempo_presa` | `0,35` | in s |
@@ -75,23 +77,48 @@ Nella scena (.tscn) si mettono il nodo con lo script e i marker figli, poi si sc
 
 ## Segnali
 
-`fase_cambiata(fase)`, `arriva(punto)`, `uscita`, `presa`, `respinta`, `tornata_sotto`.
+`fase_cambiata(fase)`, `arriva(punto)`, `uscita`, `presa`, `respinta`, `tornata_sotto`, `percorso_finito`.
+
+Altre domande: `prossima_dimostrativa()` (vero se la prossima uscita da qui sarà quella dimostrativa), `in_giro()`, `chi_la_usa()`.
 
 ## Per il canto (ambienti-1)
 
 Ogni istanza sta nel gruppo `lei_nell_acqua` (`AcquaDiLei.GRUPPO`) e dà:
 - `vicinanza`: 0 lontana, sale con la luce che arriva fino a 0,9, poi 1 nel silenzio e quando è fuori, poi scende mentre torna sotto;
 - `punto_luce`: dove sta la luce rosa, nel mondo;
-- `fase`: nel `SILENZIO` il canto tace; in `ESCE`, `SU` e `PRESA` restano i suoni di lei.
+- `fase`: in `SPEGNE` il canto sfuma, nel `SILENZIO` tace; in `ESCE`, `SU` e `PRESA` restano i suoni di lei;
+- `fase_canto` (StringName), già pronta per il canto: `ferma`, `lontana`, `arriva`, `spegne`, `silenzio`, `fuori`, `respinta`, `va_via`. «`LONTANA` + `in_giro()`» vuol dire che la luce passa.
 
 ## Lei e la luce
 
 - **Lei:** è una `MedusaAffacciata` col modello, i materiali bagnati e le animazioni dell'inseguimento, come negli oblò e nelle condotte. È già nel riscaldamento (`RiscaldamentoShader`, i materiali `medusa_*`). Si crea nascosta alla prima istanza (`_ready`) e passa da un'istanza all'altra.
 - **La luce:** è una sola. Sotto l'acqua è la LuceSottacqua di LeiSbuca (rosa, 2,6, portata 4,5, senza ombre); fuori le sta addosso come nelle condotte (6, portata 9, con le ombre).
 
+## Il giro della luce (la sala al buio)
+
+`gira(punti, velocita)` fa girare la luce rosa sott'acqua lungo dei punti, in ciclo, mentre lei è lontana. Lei è lì: in nessun altro posto. Con `punto_vicino_alla_luce(raggio)` la zona sa quando la luce passa sopra un punto d'uscita e la chiama da lì (`chiama(punto)` parte da dove sta la luce). `smetti_giro(verso, secondi)` manda la luce verso un punto, la spegne e libera lei.
+
+Per una luce che va da un punto all'altro una volta sola, senza che lei esca: `percorri(punti, velocita, alla_fine = null, spegni = 1.5)`. Alla fine si spegne in `spegni` s (con `spegni = 0` resta accesa e ferma lì: poi `chiama()` o `manda_via(secondi)`) ed emette `percorso_finito`. Se `alla_fine` è un punto d'uscita, alla fine lei esce da lì. Per il canto, durante il giro `vicinanza` va da 0 a 0,8 secondo la distanza fra il giocatore e la luce.
+
+La sala al buio usa tutto questo: `godot/scripts/game/lei_sala_al_buio.gd` (LeiSalaAlBuio, nodo `Gioco/LeiSalaAlBuio` della sala).
+- La luce gira nella VascaArrivo e nelle vasche dei bimbi.
+- Se il giocatore è entro 3 m da un punto d'uscita della VascaArrivo (uno a metà di ogni lato, `rientro` 2,4 m dentro: più vicino al bordo i tentacoli entrano nelle griglie e nel pavimento) quando la luce ci passa, lei esce.
+- Quando lei arriva, i giocattoli che galleggiano nella vasca si scostano a `spazio_galleggianti` (3,6 m) dal punto (`prepara_uscita`), così uscendo non li attraversa.
+- L'acqua della VascaArrivo è torbida e bassa (0,88 m): la salita parte sotto il fondo e non si vede. È un limite noto.
+- Arrivato a 9 m dalla fossa (`distanza_fossa`), se non è sul bordo vicino a un punto d'uscita (lì lei può ancora uscire: il bordo nord della vasca è a 4,8 m dalla fossa), la luce va nella fossa in `tempo_alla_fossa` (1,5 s) e LeiSbuca fa la scena di oggi. `LeiSbuca.aspetta_il_giro` e `vai_alla_fossa()`: se la fossa è inquadrata sbuca, se no è già affacciata.
+
+## Carica e scatto (tunnel)
+
+Nella libreria dell'inseguimento ci sono anche:
+- `inseguimento/carica` (2 s): parte dalla posa di `insegue_aperta` al tempo 0, si tira indietro di circa 0,6 m e si raccoglie, con la bocca spalancata e un tremito, e finisce ferma;
+- `inseguimento/scatto` (0,8 s): parte dalla fine di `carica`, si allunga in avanti e finisce nella posa di `insegue_aperta` al tempo 0.
+
+Lo spostamento in avanti lo fa il gioco. Mentre suonano, lei non è in `insegue_aperta` né in `insegue_morde`.
+
+## Controllo d'ingombro
+
+`godot/tests/sonda_ingombro_acqua_di_lei.gd <scena.tscn>`: per ogni AcquaDiLei della scena, ogni punto d'uscita e 8 direzioni, controlla le ossa di lei mentre esce, incombe, prende, è respinta e scende, contro le collisioni. Stampa cosa attraversa sopra il pelo, che è un difetto da correggere, e sotto il pelo, nell'acqua torbida. Gli oggetti mobili si contano a parte. Se il genitore dell'AcquaDiLei ha `prepara_uscita(punto, 0)`, la chiama prima. Con `Classe.proprieta=valore` si prova un valore prima di entrare nella scena (per esempio `LeiSalaAlBuio.rientro=2.4`).
+
 ## Ancora da fare
 
-- `modo = MANO`, cioè mano e tentacoli dagli specchi stretti (per le pozze);
-- `carica` e `scatto` per il tunnel;
-- la sala al buio;
-- un controllo d'ingombro per ogni punto d'uscita (lei che non entra nei bordi).
+- `modo = MANO` (mano e tentacoli dalle pozze, scelta C: di fianco, braccio e mano che sbatte sul grigliato, poi tre o quattro tentacoli lungo la passerella fino a 2 m; la presa la fa la mano, alla caviglia): in lavoro, sulle misure di Pozza_2_4.
