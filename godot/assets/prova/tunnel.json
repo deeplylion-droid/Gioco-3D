@@ -25,7 +25,8 @@
    "powered": false
   },
   "Risalita/Fiume/FiumeLento": {
-   "arrivato": true
+   "arrivato": true,
+   "morsi_giro": 0
   },
   "Risalita/Fiume/FiumeLento/Paratia1": {
    "a_destra": true
@@ -87,7 +88,8 @@
     "viola",
     "arancione"
    ],
-   "svuotando": []
+   "svuotando": [],
+   "agnellino": true
   },
   "Risalita/StanzaPozze/EnigmaPozze/Pozza_0_0": {
    "fill": 0.0,

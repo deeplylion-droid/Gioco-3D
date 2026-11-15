@@ -60,6 +60,10 @@ func costruisci_a_pezzi() -> void:
 
 func _pausa() -> void:
 	if costruzione_a_pezzi:
+		# (tolta dalla scena a metà, per esempio cambiando partenza F9: aspetta di rientrarci; se intanto viene liberata,
+		# la costruzione finisce lì, senza errori)
+		if not is_inside_tree():
+			await tree_entered
 		await get_tree().process_frame
 
 

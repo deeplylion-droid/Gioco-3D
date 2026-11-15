@@ -180,6 +180,10 @@ func _costruisci() -> void:
 ## costruzione resta tutta nello stesso fotogramma, come prima).
 func _pausa() -> void:
 	if costruzione_a_pezzi and Time.get_ticks_usec() - _t_pezzo > _pezzo_us:
+		# (tolto dalla scena a metà, per esempio cambiando partenza F9: aspetta di rientrarci; se intanto viene liberato,
+		# la costruzione finisce lì, senza errori)
+		if not is_inside_tree():
+			await tree_entered
 		await get_tree().process_frame
 		_t_pezzo = Time.get_ticks_usec()
 		# fra un fotogramma e l'altro il generatore comune l'hanno usato altri (luci che sfarfallano, suoni): lo si
