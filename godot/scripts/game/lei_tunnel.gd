@@ -27,7 +27,7 @@ signal schianto_contro
 ## Lo schianto è finito: lei resta premuta sul portello.
 signal schianto_finito
 
-enum Stato { VIA, RIEMERGE, INSEGUE, RITRAE, PRESA, SCHIANTO, CARICA, SCATTO }
+enum Stato { VIA, RIEMERGE, INSEGUE, RITRAE, PRESA, SCHIANTO, CARICA, SCATTO, STACCA }
 
 const ANIM := "inseguimento/"
 ## L'origine di lei sopra il pelo dell'acqua (m): le punte dei tentacoli restano sopra il piano delle banchine (0,42 m
@@ -42,6 +42,11 @@ const ROSA := Color(1.0, 0.35, 0.6)
 ## (0,8 s, in avanti con la testa) di mascotte (medusa_inseguimento.res, lavoro/acqua-di-lei).
 const CARICA := "carica"
 const SCATTO := "scatto"
+## Il finale (build 0.5.0): l'animazione con cui si stacca dal portello, se mascotte la fa; se no si usa "ritrae".
+const STACCA := "stacca"
+## Il segno su lei che tiene il canto anche mentre è premuta sul portello (l'addon audio, Statua._tunnel): dal
+## portello chiuso il canto si sente dietro, e si spegne quando si stacca ([method stacca]).
+const CANTO_DIETRO := &"canto_dietro"
 ## Il segno su lei che fa tacere il canto (l'addon audio, Statua._tunnel): nella carica e nello scatto.
 const CANTO_ZITTO := &"canto_zitto"
 
@@ -288,6 +293,7 @@ func schianto(centro_oblo: Vector3, normale: Vector3) -> void:
 	_orienta(0.0)
 	lei.visible = true
 	_in_scena(true)
+	lei.set_meta(CANTO_DIETRO, true)
 	stato = Stato.SCHIANTO
 	_t = 0.0
 	lei.segui_con_la_testa(0.0, 0.1)
@@ -328,8 +334,34 @@ func in_ritrae() -> bool:
 	return stato == Stato.RITRAE
 
 
+## Il finale (build 0.5.0): dopo lo schianto si stacca dal vetro e torna giù nel buio della vasca dell'approdo in
+## [param durata] s, e il canto dietro il portello si spegne da solo (in circa 1 s, mai un taglio: l'addon audio). Poi
+## sparisce ([method via]). Ritorna quando è sparita.
+func stacca(durata := 1.0) -> void:
+	if stato == Stato.VIA:
+		return
+	stato = Stato.STACCA
+	_t = 0.0
+	lei.remove_meta(CANTO_DIETRO)
+	_canta(false)
+	var nome := STACCA if _ap and _ap.has_animation(StringName(ANIM + STACCA)) else "ritrae"
+	_anima(nome, 0.25)
+	lei.segui_con_la_testa(0.0, 0.2)
+	# (all'indietro, via dal portello, e giù verso l'acqua: dall'oblò si vede la faccia che si allontana nel buio)
+	var da := global_position
+	var a := da - _dir * 1.4 - Vector3.UP * 2.2
+	var tw := create_tween()
+	tw.tween_method(func(k: float): global_position = da.lerp(a, k), 0.0, 1.0, durata) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await tw.finished
+	if is_instance_valid(lei) and stato == Stato.STACCA:
+		via()
+
+
 ## Nasconde lei (per i checkpoint: si riparte con riemergi).
 func via() -> void:
+	if lei:
+		lei.remove_meta(CANTO_DIETRO)
 	_canta(true)
 	stato = Stato.VIA
 	lei.visible = false
@@ -398,7 +430,6 @@ func _anima(nome: String, sfuma: float) -> void:
 	_ap.play(StringName(ANIM + nome), sfuma)
 
 
-## Il canto (l'addon audio): tace nella carica e nello scatto ([constant CANTO_ZITTO] su lei).
 ## Lei nel gruppo [code]lei_in_scena[/code] (AcquaDiLei.LEI_IN_SCENA, scritto per esteso) da quando compare a quando
 ## sparisce: le acque di lei vicine non la chiamano e non cantano da lontano (lei non è in due posti).
 func _in_scena(si: bool) -> void:
@@ -412,6 +443,7 @@ func _exit_tree() -> void:
 	_in_scena(false)
 
 
+## Il canto (l'addon audio): tace nella carica e nello scatto ([constant CANTO_ZITTO] su lei).
 func _canta(si: bool) -> void:
 	if lei == null:
 		return

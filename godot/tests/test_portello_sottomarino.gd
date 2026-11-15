@@ -105,7 +105,8 @@ func _prova(dentro: float, lato: float) -> void:
 		mosso = maxf(mosso, p.global_position.distance_to(fermo))
 		if sott.lei_stato == SalaSottomarino.Lei.PRESA:
 			schianto = true
-		if schianto and not fine[0]:
+		# (dallo schianto finché lei si stacca: poi, col finale dei bambini, la camera si gira)
+		if schianto and not fine[0] and sott.fase_finale in ["schianto", "stacca"]:
 			fotogrammi += 1
 			var oblo := sott._oblo_chiuso()
 			var cam := p.camera.global_position

@@ -232,6 +232,33 @@ func _porta_bacino(level: Node3D, torre: Node3D, spazio: PhysicsDirectSpaceState
 	if fuori > 0:
 		_casi.append("condotte: dagli occhi di Checkpoint_bacino in %s si vede il cielo dal vano della porta di servizio con %d raggi su %d (da correggere)" % [
 				occhio.snapped(Vector3.ONE * 0.01), fuori, n])
+	await _camera_stagna(level, tunnel as SalaSottomarino, spazio, p)
+
+
+## La camera stagna in fondo al tunnel, allargata per i bambini del finale (build 0.5.0): dagli occhi del giocatore nel
+## primo tratto e nella stanza dietro, a portello chiuso, il cielo non si vede da nessuna parte (il fondo è buio).
+func _camera_stagna(level: Node3D, sott: SalaSottomarino, spazio: PhysicsDirectSpaceState3D, p: Node) -> void:
+	if sott == null:
+		return
+	var L := sott.lunghezza()
+	var sg := sott.piano + SalaSottomarino.SOGLIA
+	var occhi: Array[Vector3] = []
+	for k: float in [0.6, SalaSottomarino.CAMERA_DOVE_GUARDA, 4.5, sott.stanza_fondo - 0.6]:
+		for u: float in ([0.0] if k < SalaSottomarino.CAMERA_TRATTO else [-sott.stanza_mezza + 0.5, 0.0, sott.stanza_mezza - 0.5]):
+			occhi.append(sott.to_global(sott._al(sott.punto(L) + sott.direzione(L) * k, sott.destra(L), Vector2(u, sg + OCCHI))))
+	# (a portello chiuso, come nel finale: il battente chiude il vano)
+	var perno := sott.get(&"_perno") as Node3D
+	if perno:
+		perno.global_transform.basis = sott.get(&"_perno_chiuso")
+	CorpiMesh.crea(level, AABB(occhi[0], Vector3.ZERO).grow(20.0), p)
+	for i in 3:
+		await get_tree().physics_frame
+	var scatole := _scatole(level)
+	var buchi := 0
+	for o in occhi:
+		if not _posto("tunnel: la camera stagna, occhi in %s" % o.snapped(Vector3.ONE * 0.01), o, spazio, scatole, p):
+			buchi += 1
+	print("CIELO: tunnel, la camera stagna col portello chiuso: %d posti, %d col cielo" % [occhi.size(), buchi])
 
 
 

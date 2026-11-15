@@ -74,6 +74,7 @@ const VELOCITA_GUADO_ACCOVACCIATO := 1.2
 const GALLERIA_ALTA := 1.25
 ## L'agnellino del bambino visto di sfuggita alla bocca della galleria (preload: col thread della zona).
 const BAMBINO_AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
+const BAMBINO_CUBO := preload("res://scenes/creature/bambino_cubo.tscn")
 const GALLERIA_LARGA := 1.5
 const GALLERIA_BOCCA := 1.4
 ## Lo smusso dello spigolo fra lo stipite della bocca e il muro della galleria (si gira dentro senza fermarsi).
@@ -290,6 +291,8 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 	# lei del tunnel, a pezzi e nelle sue pose (LeiTunnel.prepara): quando riemerge dietro il giocatore non si ferma
 	if is_inside_tree() and lei_tunnel and is_instance_valid(lei_tunnel):
 		await lei_tunnel.prepara(get_viewport())
+	# i bambini del finale e il foglio (uno per modello: gli altri hanno gli stessi materiali), fuori vista
+	await _riscalda_finale()
 	# le forme del tunnel per i tentacoli di lei (FormeTunnel di grafica, circa 1 s di calcolo a pezzi)
 	if is_inside_tree():
 		await FormeTunnel.prepara_a_pezzi(self)
@@ -314,6 +317,7 @@ func punti_dove_si_cammina() -> Array[Vector3]:
 	out.append(_al(p - d * 0.5, r, Vector2(PONTILE_FINO - 0.6, sg)))
 	out.append(_al(p - d * 0.5, r, Vector2(-muro + 0.5, sg)))
 	out.append(_al(p + d * 1.5, r, Vector2(0.0, sg)))
+	out.append(_al(p + d * (CAMERA_TRATTO + 1.0), r, Vector2(0.0, sg)))
 	return out
 
 
@@ -428,6 +432,8 @@ func _passi() -> Array:
 	out.append(_checkpoint)
 	out.append(_lei_crea)
 	out.append(_nebbia_viola)
+	for i in bambini_finale.size():
+		out.append(_bambino_finale.bind(i))
 	return out
 
 
@@ -1006,18 +1012,33 @@ func _fine() -> void:
 					var t := [_al(p, r, poly[tri[k]]), _al(p, r, poly[tri[k + 1]]), _al(p, r, poly[tri[k + 2]])]
 					_tri(st["mosaico"], t, -d)
 					facce.append_array(PackedVector3Array(t))
-	# la camera stagna dietro il muro: pavimento alla soglia, soffitto, due fianchi e il fondo
-	var cl := 3.0
-	var ca := 2.75
-	var cm := 1.4
+	# la camera stagna dietro il muro: il primo tratto com'era (CAMERA_TRATTO m, largo 2,8, col portello, il volantino e
+	# il posto del giocatore), poi la stanza dove aspettano i bambini (build 0.5.0, il finale): più larga
+	# ([member stanza_mezza] per parte) e lunga fino a [member stanza_fondo] dal portello, stesso soffitto. Pavimento
+	# di graniglia alla soglia, muri e soffitto a mosaico; il fondo resta al buio
+	var cl := CAMERA_TRATTO
+	var ca := CAMERA_ALTA
+	var cm := CAMERA_MEZZA
+	var sm := stanza_mezza
 	var c0 := p
 	var c1 := p + d * cl
+	var c2 := p + d * stanza_fondo
+	var muro4 := func(a: Vector3, u0: float, b: Vector3, u1: float, v0: float, v1: float) -> Array:
+		return [_al(a, r, Vector2(u0, v0)), _al(b, r, Vector2(u1, v0)), _al(b, r, Vector2(u1, v1)), _al(a, r, Vector2(u0, v1))]
 	var cam := [
+		# il primo tratto: pavimento, soffitto, i due fianchi
 		[[_al(c0, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg))], "graniglia", Vector3.UP],
 		[[_al(c0, r, Vector2(-cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", Vector3.DOWN],
 		[[_al(c0, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", r],
 		[[_al(c0, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", -r],
-		[[_al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca))], "mosaico", -d],
+		# la stanza: pavimento, soffitto, i due fianchi, il fondo, e i due pezzi di muro ai lati del primo tratto
+		[[_al(c1, r, Vector2(-sm, sg)), _al(c2, r, Vector2(-sm, sg)), _al(c2, r, Vector2(sm, sg)), _al(c1, r, Vector2(sm, sg))], "graniglia", Vector3.UP],
+		[[_al(c1, r, Vector2(-sm, sg + ca)), _al(c2, r, Vector2(-sm, sg + ca)), _al(c2, r, Vector2(sm, sg + ca)), _al(c1, r, Vector2(sm, sg + ca))], "mosaico", Vector3.DOWN],
+		[muro4.call(c1, -sm, c2, -sm, sg, sg + ca), "mosaico", r],
+		[muro4.call(c1, sm, c2, sm, sg, sg + ca), "mosaico", -r],
+		[muro4.call(c2, -sm, c2, sm, sg, sg + ca), "mosaico", -d],
+		[muro4.call(c1, -sm, c1, -cm, sg, sg + ca), "mosaico", d],
+		[muro4.call(c1, cm, c1, sm, sg, sg + ca), "mosaico", d],
 	]
 	for pz in cam:
 		_quad(st[pz[1]], pz[0], pz[2])
@@ -1452,6 +1473,13 @@ var _usa_battente: Interactable
 ## Dove va il giocatore quando chiude il portello: sull'asse della camera stagna, a questa distanza dalla porta (fuori
 ## da dove passa il battente, che chiudendosi spazza fino a 1,6 m dalla cerniera; collaudo P1).
 const CAMERA_DOVE_GUARDA := 2.2
+## Il primo tratto della camera stagna (dal portello): lungo, alto e largo (per parte) come prima della 0.5.0.
+const CAMERA_TRATTO := 3.0
+const CAMERA_ALTA := 2.75
+const CAMERA_MEZZA := 1.4
+## La stanza dei bambini dopo il primo tratto (build 0.5.0): fin dove arriva dal portello, e quanto è larga per parte.
+@export var stanza_fondo := 9.5
+@export var stanza_mezza := 3.2
 var _guarda_oblo := false
 var finito := false
 signal fine_demo
@@ -1518,7 +1546,10 @@ func _in_camera(q: Vector3) -> bool:
 	var L := lunghezza()
 	var v := q - punto(L)
 	var dentro := v.dot(direzione(L))
-	return dentro > -0.2 and dentro < 3.2 and absf(v.dot(destra(L))) < 1.6
+	var u := absf(v.dot(destra(L)))
+	if dentro > -0.2 and dentro < CAMERA_TRATTO + 0.2 and u < CAMERA_MEZZA + 0.2:
+		return true
+	return dentro >= CAMERA_TRATTO and dentro < stanza_fondo + 0.2 and u < stanza_mezza + 0.2
 
 
 ## Il centro dell'oblò a portello chiuso, dalla parte della camera (dove guarda il giocatore).
@@ -1536,7 +1567,8 @@ func _process_oblo() -> void:
 		pl.look_at_point(_oblo_chiuso())
 
 
-## Lei sbatte contro il portello: arriva dal fondo della vasca dell'approdo e ci schiaccia la faccia sull'oblò.
+## Lei sbatte contro il portello: arriva dal fondo della vasca dell'approdo e ci schiaccia la faccia sull'oblò. Poi il
+## resto del finale ([method _dopo_lo_schianto]).
 func _finale() -> void:
 	if lei_tunnel:
 		lei_stato = Lei.PRESA     # (ferma: la muove lo schianto)
@@ -1552,14 +1584,261 @@ func _finale() -> void:
 				lei_s = s
 				_metti_lei(get_process_delta_time()), lei_s, arrivo, (arrivo - lei_s) / velocita_rincorsa)
 			await tw.finished
+		_fase("schianto")
 		lei_tunnel.schianto(oblo, -direzione(lunghezza()))
 		lei_tunnel.schianto_contro.connect(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6), CONNECT_ONE_SHOT)
-		get_tree().create_timer(2.6, false).timeout.connect(_nero)
+		get_tree().create_timer(2.6, false).timeout.connect(_dopo_lo_schianto)
 	else:
+		_dopo_lo_schianto()
+
+
+@export_group("Finale")
+## Il finale dopo lo schianto (build 0.5.0, «La storia»; GDD del 15 novembre, finale A). Spento: nero subito dopo lo
+## schianto, come nella 0.4.0.
+@export var finale_bambini := true
+## Lei si stacca dal vetro in tanti secondi, mentre il canto dietro il portello si spegne (circa 1 s, mai un taglio).
+@export var finale_stacca := 1.0
+## Poi il silenzio vero, prima che la camera si giri (s).
+@export var finale_silenzio := 1.5
+## La camera si gira da sola di 180 gradi in tanti secondi (i comandi restano spenti).
+@export var finale_girata := 1.8
+## I bambini restano fermi a guardarti tanti secondi, prima che quello col cubo venga avanti.
+@export var finale_fermi := 2.5
+## Quanto viene avanti il bambino col cubo (m, due passi) e quanto ci mette (s).
+@export var porge_passi := 0.9
+## La camera si abbassa sul foglio in tanti secondi, e il foglio resta davanti per [member finale_foglio] s.
+@export var finale_abbassa := 1.6
+@export var finale_foglio := 5.0
+## Da dove guardano: gli occhi del giocatore (sopra la soglia) mentre si abbassa sul foglio, e quanto viene avanti.
+@export var abbassa_occhi := 1.0
+@export var abbassa_avanti := 0.85
+## Il campo visivo della camera sul foglio (gradi).
+@export var foglio_fov := 55.0
+## I sei bambini del finale, nella stanza dopo il primo tratto della camera stagna: [scena (0 col cubo, 1
+## l'agnellino), di lato (m, verso destra guardando dal portello), dal portello (m), altezza (1 = la loro),
+## inclina la testa ogni (s, 0 mai), sagoma (vero: dietro, al buio)]. Il primo è quello che porge il foglio.
+## Davanti, a circa 3 m dal giocatore (che sta a CAMERA_DOVE_GUARDA m dal portello), il bambino col cubo e l'agnellino;
+## dietro quattro sagome, mezze coperte dai due davanti e ai lati del semicerchio.
+@export var bambini_finale: Array = [
+	[0, -0.45, 5.15, 1.0, 0.0, false],
+	[1, 0.55, 5.0, 1.0, 1.4, false],
+	[1, -0.2, 6.75, 1.12, 0.0, true],
+	[0, 0.85, 6.45, 0.92, 1.9, true],
+	[1, -1.45, 6.0, 0.9, 0.0, true],
+	[0, 1.55, 6.25, 1.06, 0.0, true],
+]
+## Il disegno che porge il bambino col cubo (DZ, di ambienti-1): finché non c'è, un foglio bianco.
+const DISEGNO_FINALE := "res://assets/storia_disegni/disegno_dz.jpg"
+## Le misure del foglio (A4, m).
+const FOGLIO := Vector2(0.21, 0.297)
+## Il foglio in mano al bambino col cubo, nelle sue coordinate (+Z verso chi guarda), finché mascotte non fa il
+## movimento «porge» (Bambino.porgi: se c'è, lo chiama e attacca il foglio dove dice lui).
+const FOGLIO_IN_MANO := Vector3(0.0, 0.78, 0.3)
+## A che punto del finale si è (per i test e per l'audio): "", "schianto", "stacca", "silenzio", "girata", "fermi",
+## "porge", "foglio", "nero".
+var fase_finale := ""
+signal fase_finale_cambiata(fase: String)
+var _bambini_finale: Array[Bambino] = []
+var _foglio: MeshInstance3D
+
+
+## Uno dei bambini del finale ([member bambini_finale]), nascosto e fermo finché la camera non si gira.
+func _bambino_finale(i: int) -> void:
+	var c: Array = bambini_finale[i]
+	var L := lunghezza()
+	var b := (BAMBINO_CUBO if int(c[0]) == 0 else BAMBINO_AGNELLO).instantiate() as Bambino
+	b.name = "BambinoFinale%d" % i
+	b.modalita = Bambino.Modalita.OSSERVA
+	b.distanza_fuga = 0.0                 # (non scappano: ti aspettano)
+	b.gira_il_corpo = false
+	b.inclina_ogni = float(c[4])
+	b.fermo_vivo = true
+	var dove := _al(punto(L) + direzione(L) * float(c[2]), destra(L), Vector2(float(c[1]), piano + SOGLIA))
+	var occhi := _al(punto(L) + direzione(L) * CAMERA_DOVE_GUARDA, destra(L), Vector2(0.0, piano + SOGLIA))
+	var verso := occhi - dove
+	verso.y = 0.0
+	b.transform = Transform3D(Basis.looking_at(verso.normalized(), Vector3.UP, true).scaled(Vector3.ONE * float(c[3])), dove)
+	b.visible = false
+	b.process_mode = Node.PROCESS_MODE_DISABLED
+	b.set_meta(&"sagoma", bool(c[5]))
+	add_child(b)
+	_bambini_finale.append(b)
+
+
+## I bambini del finale e il foglio disegnati fuori vista mentre il tunnel si prepara (RiscaldamentoShader): quando la
+## camera si gira non si compila niente.
+func _riscalda_finale() -> void:
+	if _bambini_finale.is_empty() or not is_inside_tree() or DisplayServer.get_name() == "headless":
+		return
+	if _foglio == null:
+		_foglio = _crea_foglio()
+		_bambini_finale[0].add_child(_foglio)
+		_metti_foglio(_bambini_finale[0])
+	_foglio.visible = true
+	var fatti := {}
+	for b in _bambini_finale:
+		if not is_inside_tree():
+			return
+		if fatti.has(b.scene_file_path):
+			continue
+		fatti[b.scene_file_path] = true
+		await RiscaldamentoShader.disegna_a_pezzi(b, get_viewport(), 2)
+	if is_instance_valid(_foglio):
+		_foglio.visible = false
+
+
+## Il foglio in mano al bambino [param b] che lo porge (finché mascotte non fa «porge»: [constant FOGLIO_IN_MANO]).
+func _metti_foglio(b: Bambino) -> void:
+	_foglio.position = FOGLIO_IN_MANO / b.scale.x
+	_foglio.scale = Vector3.ONE / b.scale.x
+	# (girato verso gli occhi del giocatore, un po' inclinato all'indietro come lo tiene un bambino)
+	_foglio.rotation = Vector3(deg_to_rad(-12.0), 0.0, 0.0)
+
+
+func _fase(f: String) -> void:
+	fase_finale = f
+	fase_finale_cambiata.emit(f)
+
+
+## Il finale dopo lo schianto (GDD, 15 novembre): lei si stacca e il canto si spegne, il silenzio, la camera si gira e
+## nella camera stagna ci sono i bambini, fermi in semicerchio; quello col cubo viene avanti e ti porge un foglio, la
+## camera si abbassa sul foglio (il disegno DZ); nero e [signal fine_demo]. I bambini mai insieme a lei: compaiono
+## quando lei è già sparita e il canto è spento.
+func _dopo_lo_schianto() -> void:
+	var pl := GameState.player
+	if not finale_bambini or _bambini_finale.is_empty() or pl == null or not is_instance_valid(pl) \
+			or not _in_camera(pl.global_position):
 		_nero()
+		return
+	_fase("stacca")
+	if lei_tunnel and lei_tunnel.stato != LeiTunnel.Stato.VIA:
+		await lei_tunnel.stacca(finale_stacca)
+	if not is_inside_tree():
+		return
+	lei_stato = Lei.VIA
+	_guarda_oblo = false
+	_fase("silenzio")
+	await get_tree().create_timer(finale_silenzio, false).timeout
+	if not is_inside_tree() or not is_instance_valid(pl):
+		return
+	# la girata: 180 gradi attorno a sé, lo sguardo dall'oblò ai visi dei due davanti
+	_fase("girata")
+	for b in _bambini_finale:
+		b.visible = true
+		b.process_mode = Node.PROCESS_MODE_INHERIT
+	var vm := pl.get_node_or_null(^"Head/Camera3D/ViewModel") as Node3D
+	var vm_da := vm.position if vm else Vector3.ZERO
+	var yaw0 := pl.yaw
+	var pitch0 := pl.pitch
+	var davanti := _bambini_finale[0].global_position.lerp(_bambini_finale[1].global_position, 0.5)
+	var dv := davanti + Vector3.UP * 0.95 - pl.get_eye_position()
+	var yaw1 := yaw0 + PI
+	var pitch1 := atan2(dv.y, Vector2(dv.x, dv.z).length())
+	var tw := create_tween()
+	tw.tween_method(func(k: float):
+		if is_instance_valid(pl):
+			pl.set_look(yaw0 + (yaw1 - yaw0) * k, lerpf(pitch0, pitch1, k))
+			pl.velocity = Vector3.ZERO
+		# (la lancia scende fuori dalla vista mentre si gira: davanti ai bambini e al foglio non c'è)
+		if vm:
+			vm.position = vm_da + Vector3.DOWN * 0.5 * k, 0.0, 1.0, finale_girata).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tw.finished
+	if vm:
+		vm.visible = false
+	_fase("fermi")
+	await get_tree().create_timer(finale_fermi, false).timeout
+	if not is_inside_tree() or not is_instance_valid(pl):
+		return
+	# il bambino col cubo fa due passi e ti porge il foglio
+	_fase("porge")
+	var porge := _bambini_finale[0]
+	var occhi := pl.get_eye_position()
+	var verso := occhi - porge.global_position
+	verso.y = 0.0
+	var arrivo := porge.global_position + verso.normalized() * porge_passi
+	var punto_passi := Marker3D.new()
+	add_child(punto_passi)
+	punto_passi.global_position = arrivo
+	porge.cammina([punto_passi] as Array[Node3D])
+	var t0 := Time.get_ticks_msec()
+	while porge.modalita == Bambino.Modalita.CAMMINA and Time.get_ticks_msec() - t0 < 4000:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	punto_passi.queue_free()
+	if _foglio == null:
+		_foglio = _crea_foglio()
+		porge.add_child(_foglio)
+	var mano: Node3D = porge.call(&"porgi") if porge.has_method(&"porgi") else null
+	if mano:
+		_foglio.reparent(mano, false)
+		_foglio.transform = Transform3D.IDENTITY
+	else:
+		_metti_foglio(porge)
+	_foglio.visible = true
+	await get_tree().create_timer(0.6, false).timeout
+	if not is_inside_tree() or not is_instance_valid(pl):
+		return
+	# la camera si abbassa sul foglio
+	_fase("foglio")
+	var cam := pl.get_node_or_null(^"Head/Camera3D") as Camera3D
+	var fov0 := cam.fov if cam else 75.0
+	var cam_da := cam.position if cam else Vector3.ZERO
+	var eye0 := pl.get_eye_position()
+	var sg := piano + SOGLIA
+	var al_foglio := _foglio.global_position - eye0
+	al_foglio.y = 0.0
+	var eye1 := Vector3(eye0.x, sg + abbassa_occhi, eye0.z) + al_foglio.normalized() * abbassa_avanti
+	var yaw_a := pl.yaw
+	var pitch_a := pl.pitch
+	var tf := create_tween()
+	tf.tween_method(func(k: float):
+		if not is_instance_valid(pl) or not is_instance_valid(_foglio):
+			return
+		var e := eye0.lerp(eye1, k)
+		var df := _foglio.global_position - e
+		var yaw_f := atan2(-df.x, -df.z)
+		var pitch_f := atan2(df.y, Vector2(df.x, df.z).length())
+		pl.set_look(lerp_angle(yaw_a, yaw_f, k), lerpf(pitch_a, pitch_f, k))
+		if cam:
+			# (la camera scende e va avanti dentro la testa, che resta dov'è: il corpo non si muove)
+			cam.global_position = e
+			cam.fov = lerpf(fov0, foglio_fov, k), 0.0, 1.0, finale_abbassa).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tf.finished
+	# (poi resta sul foglio: la testa del giocatore torna a guardarlo se il foglio si muove con la mano)
+	var fermo := create_tween()
+	fermo.tween_method(func(_k: float):
+		if is_instance_valid(pl) and is_instance_valid(_foglio) and cam:
+			var df := _foglio.global_position - cam.global_position
+			pl.set_look(atan2(-df.x, -df.z), atan2(df.y, Vector2(df.x, df.z).length()))
+			cam.global_position = eye1, 0.0, 1.0, finale_foglio)
+	await fermo.finished
+	if cam and is_instance_valid(cam):
+		cam.fov = fov0
+		cam.position = cam_da
+	_nero()
+
+
+## Il foglio del finale: il disegno DZ (o un foglio bianco finché non c'è) su un foglio di carta A4, il disegno verso +Z.
+func _crea_foglio() -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = "FoglioFinale"
+	var qm := QuadMesh.new()
+	qm.size = FOGLIO
+	mi.mesh = qm
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.92, 0.9, 0.84)
+	m.roughness = 0.95
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	if ResourceLoader.exists(DISEGNO_FINALE):
+		m.albedo_texture = load(DISEGNO_FINALE)
+		m.albedo_color = Color.WHITE
+	mi.material_override = m
+	return mi
 
 
 func _nero() -> void:
+	_fase("nero")
 	var cl := CanvasLayer.new()
 	cl.layer = 80
 	var fade := ColorRect.new()

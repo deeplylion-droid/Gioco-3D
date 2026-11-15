@@ -1900,7 +1900,8 @@ class Statua:
 				verso_t = randf_range(VERSO_OGNI.x, VERSO_OGNI.y)
 		else:
 			verso_t = -2.0
-		_canto(a, corsa and (n as Node3D).is_visible_in_tree() and not n.has_meta(&"canto_zitto"))
+		# (anche premuta sul portello chiuso, nel finale: lì il canto si spegne quando si stacca; LeiTunnel.CANTO_DIETRO)
+		_canto(a, (corsa or n.has_meta(&"canto_dietro")) and (n as Node3D).is_visible_in_tree() and not n.has_meta(&"canto_zitto"))
 		if n.has_meta(&"cuore_condotte"):
 			# (nelle condotte solo il battito, mentre lei è su: lo segnala SalaInseguimento)
 			_cuore_condotte(a, int(n.get_meta(&"cuore_condotte")))

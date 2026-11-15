@@ -159,7 +159,8 @@ func _run() -> void:
 		await _frames(3)
 		Input.action_release(&"interact")
 	t0 = Time.get_ticks_msec()
-	while not fine[0] and Time.get_ticks_msec() - t0 < 10000:
+	# (col finale dei bambini, build 0.5.0: circa 20 s dallo schianto al nero)
+	while not fine[0] and Time.get_ticks_msec() - t0 < 60000:
 		await _frames(1)
 	check(fine[0], "dalla camera stagna con E si chiude il portello, poi la fine")
 	_fine()
