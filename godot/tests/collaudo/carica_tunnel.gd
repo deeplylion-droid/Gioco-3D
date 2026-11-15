@@ -69,6 +69,14 @@ func _physics_process(_d: float) -> void:
 	if not registra or p == null or not is_instance_valid(p) or sott == null or not is_instance_valid(sott):
 		return
 	_f += 1
+	var pc := _pipeline()
+	if pc != _pip_ult:
+		if _pip_ult >= 0:
+			_evento("COMPILAZIONI +%d (draw %d, spec %d, surface %d) a s %.1f, lato %.1f, y %.2f, fase %s, lei %s, gap %.1f" % [pc - _pip_ult,
+					Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW), Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION),
+					Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SURFACE), s_g, float(sott.proietta_vicino(p.global_position, s_g)[1]),
+					p.global_position.y, fase, SalaSottomarino.Lei.keys()[sott.lei_stato], sott._s_bersaglio - sott.lei_s])
+		_pip_ult = pc
 	if modo == "prova":
 		if OS.get_environment("SEMPRE_3D") == "":
 			get_viewport().disable_3d = (_f % OGNI) < OGNI - 3 and not _forza_3d
@@ -110,6 +118,7 @@ func _physics_process(_d: float) -> void:
 
 
 var _forza_3d := false
+var _pip_ult := -1
 
 
 func _accendi() -> void:
@@ -131,6 +140,50 @@ func _scatto(extra: String) -> void:
 	if img:
 		img.save_jpg(cart.path_join(nome + ".jpg"), 0.8)
 	_riga(nome)
+
+
+var _cam_lei: Camera3D
+
+
+## Scatti di lei (solo nella scena di prova): dagli occhi del giocatore girati verso di lei, di lato, e radente al canale.
+func _scatti_lei(tag: String, ritardi: Array) -> void:
+	if modo != "prova":
+		return
+	var t0 := _t()
+	for r in ritardi:
+		while _t() - t0 < float(r):
+			await get_tree().physics_frame
+		if sott == null or not is_instance_valid(sott) or sott.lei == null:
+			return
+		var lei := sott.lei as Node3D
+		var occhio: Vector3 = lei.call(&"get_eye_position") if lei.has_method(&"get_eye_position") else lei.global_position + Vector3.UP * 2.5
+		var s_lei := float(sott.proietta(lei.global_position)[0])
+		var dx := sott.destra(s_lei)
+		var dv := sott.direzione(s_lei)
+		if _cam_lei == null:
+			_cam_lei = Camera3D.new()
+			_cam_lei.near = 0.03
+			_cam_lei.fov = 70.0
+			add_child(_cam_lei)
+		var vecchia := get_viewport().get_camera_3d()
+		var viste := [["occhi", p.global_position + Vector3.UP * 1.6, occhio],
+			["lato", lei.global_position + dx * 3.2 + Vector3.UP * 1.4, lei.global_position + Vector3.UP * 0.9],
+			["radente", lei.global_position + dv * 3.5 - dx * 0.8 + Vector3.UP * 0.25, lei.global_position + Vector3.UP * 0.2]]
+		for v in viste:
+			_cam_lei.global_position = v[1]
+			_cam_lei.look_at(v[2], Vector3.UP)
+			_cam_lei.make_current()
+			_forza_3d = true
+			get_viewport().disable_3d = false
+			for i in 3:
+				await get_tree().process_frame
+			await RenderingServer.frame_post_draw
+			var img := get_viewport().get_texture().get_image()
+			if img:
+				img.save_jpg(cart.path_join("lei_%s_%.1f_%s.jpg" % [tag, float(r), v[0]]), 0.85)
+		_forza_3d = false
+		if vecchia:
+			vecchia.make_current()
 
 
 func _riga(nome: String) -> void:
@@ -185,13 +238,15 @@ func _collega() -> void:
 		_evento("CARICA %d (in questa vita %d): s %.1f, distanza %.2f m, sulla banchina %s, nel passaggio %s, %s, finestra %.2f s, prima respinta fatta %s, %.1f s dalla riemersione, canto %s" % [
 				cariche, _carica_n, s_g, gap, sott.su_banchina(p.global_position), sott.in_tubo(p.global_position), _vicino_passaggi(s_g),
 				float(sott.get(&"_finestra")), preload("res://scripts/game/stato_tunnel.gd").prima_respinta_fatta, _t() - _riemersa_t, spia.call(&"adesso")])
-		_scatto("carica"))
+		_scatto("carica")
+		_scatti_lei("carica", [0.3, 1.0, 2.0, 3.5]))
 	sott.lei_scatta.connect(func():
 		scatti += 1
 		_in_carica = false
 		_evento("SCATTO dopo %.2f s di carica: s %.1f, distanza %.2f m, sulla banchina %s, %s, canto %s" % [_t() - _carica_t, s_g,
 				sott._s_bersaglio - sott.lei_s, sott.su_banchina(p.global_position), _vicino_passaggi(s_g), spia.call(&"adesso")])
-		_scatto("scatto"))
+		_scatto("scatto")
+		_scatti_lei("scatto", [0.1, 0.3, 0.5]))
 	sott.lei_respinta.connect(func():
 		respinte += 1
 		var da := _t() - _carica_t if _in_carica else -1.0
@@ -250,6 +305,23 @@ func _run() -> void:
 		ins.sb1_finito.emit()
 		await _frames(5)
 		await _entra()
+	elif modo == "ridotta":
+		# il riscaldamento del gioco (come la schermata di caricamento), poi la ripresa dal checkpoint del tunnel nella
+		# sala senza le parti pesanti (col renderer vero la sala intera non sta in memoria)
+		var r := RiscaldamentoShader.new()
+		get_tree().root.add_child(r)
+		var tr := Time.get_ticks_msec()
+		while not r.concluso and Time.get_ticks_msec() - tr < 600000:
+			await get_tree().process_frame
+		print("CT: riscaldamento concluso %s in %.1f s, compilazioni finora %d" % [r.concluso, (Time.get_ticks_msec() - tr) / 1000.0, _pipeline()])
+		GameState.prepara_ripresa(MenuProva.istantanea("tunnel"))
+		get_tree().change_scene_to_file(load("res://tests/scena_ridotta.gd").riduci("res://scenes/sala_principale.tscn", ["Interni", "Risalita",
+				"Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Mascotte", "Sala/Dettagli", "Sala/TorreScivoli",
+				"Gioco/EnigmaAcquari", "Atmosfera", "Sala/Piscina", "Sala/VascaCentrale", "Piscina", "Vasca", "Sala/Architettura",
+				"Sala/Cupola", "Sala/AreaBimbi", "Sala/Oggetti", "Polaroid", "Vasche", "Tecnici", "Scarabocchi"]))
+		await _arriva(0)
+		_prendi()
+		print("CT: arrivato nella sala ridotta, tunnel %s, compilazioni finora %d" % [sott != null, _pipeline()])
 	else:
 		print("CT: F9 tunnel: %s" % MenuProva.parti(get_tree(), "tunnel"))
 		await _arriva(0)
