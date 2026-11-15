@@ -27,6 +27,8 @@ extends Node3D
 ## Quanta luce rosa quando lei è lontana (piena da vicino): bassa, si nota quando si avvicina (riscontro dell'utente sulla
 ## 0.3.16, il tunnel "troppo luminoso"; prima 0,55).
 @export var luce_lontana := 0.3
+## Nella carica (build 0.4.0) la luce rosa davanti è più forte di quando è vicina (1: come da vicino).
+@export var luce_carica := 1.8
 ## Dove nasce la luce, sopra l'origine di lei (come la sua OmniLight in LeiTunnel).
 const LUCE_DA := Vector3(0, 2.6, 0.9)
 
@@ -132,8 +134,9 @@ func _process(delta: float) -> void:
 	if _riscalda:
 		return
 	var gap := INF
+	var carica := sala.lei_stato == SalaSottomarino.Lei.CARICA or sala.lei_stato == SalaSottomarino.Lei.SCATTO
 	var attiva := sala.lei_stato == SalaSottomarino.Lei.INSEGUE or sala.lei_stato == SalaSottomarino.Lei.RESPINTA \
-			or sala.lei_stato == SalaSottomarino.Lei.SALE
+			or sala.lei_stato == SalaSottomarino.Lei.SALE or carica
 	if attiva and sala.lei_tunnel and sala.lei_tunnel.lei.visible and not sala.finito:
 		gap = sala._s_bersaglio - sala.lei_s
 	# i bordi: salgono in fretta quando si avvicina, scendono più piano
@@ -147,7 +150,10 @@ func _process(delta: float) -> void:
 	var vuole_luce := 0.0
 	if gap < sala.distanza_max + 6.0:
 		vuole_luce = lerpf(1.0, luce_lontana, clampf((gap - bordi_pieni) / (sala.distanza_max - bordi_pieni), 0.0, 1.0))
-	forza_luce = lerpf(forza_luce, vuole_luce, 1.0 - exp(-2.5 * delta))
+	# (nella carica la sua luce ti supera sulle pareti: piena e più forte, in fretta; build 0.4.0)
+	if carica:
+		vuole_luce = luce_carica
+	forza_luce = lerpf(forza_luce, vuole_luce, 1.0 - exp(-(8.0 if carica else 2.5) * delta))
 	luce.visible = forza_luce > 0.01
 	if luce.visible:
 		_metti_luce(gap)
