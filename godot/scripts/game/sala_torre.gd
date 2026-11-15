@@ -677,6 +677,9 @@ func _raccolta_lei() -> void:
 		var c0 := b([r[0], r[1], 0.0])
 		var c1 := b([r[2], r[3], 0.0])
 		var rett := Rect2(Vector2(minf(c0.x, c1.x), minf(c0.z, c1.z)), Vector2(absf(c1.x - c0.x), absf(c1.z - c0.z)))
+		# la presa vale in tutta la vasca, angoli compresi: la portata (in pianta) arriva oltre gli angoli, con il
+		# margine di in_vasca; chi è salito è fuori perché letale è acceso solo mentre è dentro (_vasche_lei)
+		a.portata = rett.size.length() * 0.5 + 0.3
 		acque_vasche.append([a, u, rett, float(v["fondo"]), float(v["scala"]["z1"])])
 		k += 1
 

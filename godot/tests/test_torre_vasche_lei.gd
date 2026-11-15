@@ -5,7 +5,7 @@ extends Node
 ##   SalaTorre.vasche_avviso secondi;
 ## - chi sale la scaletta e arriva sulla pedana in tempo è salvo: lei esce, ma non lo prende;
 ## - con letale_vasche spento lei esce e non prende nemmeno chi è rimasto nell'acqua;
-## - chi resta nell'acqua viene preso (l'ultima prova: la morte).
+## - chi resta nell'acqua viene preso, anche nell'angolo più lontano dall'uscita (l'ultima prova: la morte).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_vasche_lei.gd
 
 const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
@@ -93,20 +93,43 @@ func _run() -> void:
 	_controlla(su and not preso0 and not GameState.is_dying, "con letale_vasche spento lei esce e non prende",
 			["su %s, preso %s" % [su, preso0]])
 	torre.letale_vasche = true
-	# 3) resta nell'acqua: preso
-	await _calma(a0)
-	_nell_acqua(voce0)
-	var t2 := _t
-	var morto := false
-	while _t - t2 < torre.vasche_avviso + 6.0 and not morto:
+	# 3) nell'angolo più lontano dall'uscita e dalla scaletta, fermo lì: preso lo stesso, dopo l'avviso (niente angoli
+	# sicuri; la presa uccide: è l'ultima prova)
+	var voce2: Array = torre.acque_vasche[torre.acque_vasche.size() - 1]
+	var a2 := voce2[0] as AcquaDiLei
+	await _calma(a2)
+	var angolo := _angolo(voce2)
+	g.teleport(angolo, g.yaw)
+	var t3 := _t
+	var preso2 := false
+	while _t - t3 < torre.vasche_avviso + 6.0 and not preso2:
 		await _passo()
-		if not GameState.is_dying:
-			_nell_acqua(voce0, false)
-		morto = GameState.is_dying and a0.fase == AcquaDiLei.Fase.PRESA
-	_controlla(morto and _t - t2 >= torre.vasche_avviso, "chi resta nell'acqua viene preso (dopo %.1f s)" % (_t - t2),
-			["morto %s, fase %s" % [morto, a0.fase]])
+		if not GameState.is_dying and g.global_position.distance_to(angolo) > 0.5:
+			g.teleport(angolo, g.yaw)
+		preso2 = a2.fase == AcquaDiLei.Fase.PRESA and GameState.is_dying
+	var u2 := voce2[1] as Marker3D
+	var lontano := Vector2(angolo.x - u2.global_position.x, angolo.z - u2.global_position.z).length()
+	_controlla(preso2 and _t - t3 >= torre.vasche_avviso and lontano > 3.0,
+			"nell'angolo più lontano della vasca (a %.1f m in pianta dall'uscita) chi resta viene preso, dopo l'avviso" % Vector2(angolo.x - u2.global_position.x, angolo.z - u2.global_position.z).length(),
+			["preso %s dopo %.1f s, portata %.1f m" % [preso2, _t - t3, a2.portata]])
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
+
+
+## L'angolo della vasca [param voce] più lontano dalla scaletta, 30 cm dentro i bordi (oltre i 3 m in pianta
+## dall'uscita, la portata di base del motore).
+func _angolo(voce: Array) -> Vector3:
+	var rett := (voce[2] as Rect2).grow(-0.3)
+	var u := voce[1] as Marker3D
+	var sc := torre.get_node_or_null("ScalaRaccolta%d" % torre.acque_vasche.find(voce)) as Node3D
+	var meglio := Vector3.ZERO
+	var d := -1.0
+	for c: Vector2 in [rett.position, rett.position + Vector2(rett.size.x, 0), rett.position + Vector2(0, rett.size.y), rett.end]:
+		var dd := 0.0 if sc == null else c.distance_to(Vector2(sc.global_position.x, sc.global_position.z))
+		if dd > d:
+			d = dd
+			meglio = Vector3(c.x, u.global_position.y - 0.3, c.y)
+	return meglio
 
 
 ## Aspetta che [param a] sia di nuovo lontana (dopo la calma), e che lei sia libera.
