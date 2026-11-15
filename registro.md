@@ -81,3 +81,4 @@ il branch non contiene `.github`). Le ore le scrive il comando (`O=$(date -u +%H
   due modifiche della morte nelle pozze. Arrivi delle 18:26-18:33: enigmi CONSEGNA FINALE f342d44a (letta: 9 file);
   ambienti-2 finale v2 (81428ca3) e D3/D4 posati (baaa54ca), guardati e approvati con le due correzioni sul foglio in
   mano. Brief della build 2 mandato a enigmi.
+- 18:38 UTC: CI alle 18:39: seconda candidata 0c177214 Build 43742397419 in corso a 59 minuti (ha passato test_tappa8, che cade al 26° minuto: il test adeguato da mascotte regge in CI); Vulkan su d9a801c7 (43738622096) in corso a 99 minuti; ri-esecuzione di cfc7b450 (43725747044) ancora in corso a 136 minuti (più lenta del solito: da riguardare alle 19:18). Messaggi mandati: ambienti-2 (mani coi pollici davanti e dita dietro, niente nastri sul foglio in mano, D3 e D4 approvati, D4 senza impronte), enigmi (brief della build 2). Cartella salvata su lavoro/coordinatore (afad031d).
