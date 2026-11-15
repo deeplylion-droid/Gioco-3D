@@ -135,6 +135,13 @@ func _df() -> void:
 	radice.add_child(p)
 	GameState.player = p
 	await _fisica(10)
+	# le stanze (il capannone del fiume, il cui muro est chiude il lato ovest del corridoio) come col giocatore vicino
+	ris.call(&"carica_subito")
+	for i in 3000:
+		await get_tree().process_frame
+		if ris.get(&"fiume") != null:
+			break
+	await _fisica(120)
 	p.camera.make_current()
 	Grafica.imposta("fov", 75.0)
 	var df := ris.find_child("StoriaDF", true, false) as DisegnoBambino
