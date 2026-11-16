@@ -25,7 +25,12 @@ Linux e i caricamenti; i due test della torre passati alla prima misura).
 Prova su Vulkan della terza (run 43755696401, stessi file di gioco della quarta): fiume, inseguimento, torre e
 tunnel arrivano, ripartono dopo la morte e restano (picco video del fiume 4248 MB, limite 4672); strati e luci ok,
 0 ERROR: BUG; rosso solo primo_avvio, scaduto col gioco ancora vivo (limite noto, come sulle prime due candidate).
-[DA COMPLETARE: collaudo sulla terza, lavoro/collaudo-0400: punti e fogli guardati dal coordinatore]
+Collaudo sulla terza (lavoro/collaudo-0400 2a15354e, squadra che non ha costruito le zone; vale per la quarta):
+morte nelle pozze in 7 casi (camera mai dentro il liquido, i bordi o lei), prima uscita dopo F9, Continua e presa
+(0 surface, 0 draw, 0 specialization; senza il riscaldamento della stanza 8 e 8), pelo della fossa (al più 2,6 mm
+per fotogramma, erano 2,1-4,8 cm), luce fra le pozze dagli occhi in piedi (nessuna macchia sul grigliato): 0 difetti,
+fogli e numeri guardati dal coordinatore. Sulle candidate prima, senza cambi da allora: fossa per tutte le strade,
+sala al buio, canto alla carica nel tunnel, gommoni, partenze F9.
 Noti e lasciati: test_pozze_lei dà poco tempo a lei per arrivare e cade circa 1 volta su 20 (il gioco è giusto;
 correzione pronta su lavoro/test-pozze-attese fbe7df86); test_attesa_zone può cadere per un fotogramma lento del
 runner; primo_avvio nella Prova su Vulkan scade col gioco ancora vivo (limite del renderer software).
