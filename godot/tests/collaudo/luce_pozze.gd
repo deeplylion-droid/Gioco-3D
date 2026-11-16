@@ -21,6 +21,7 @@ var acqua: AcquaDiLei
 var cart := ""
 var peggiori: Array = []
 var uscite: Array = []
+var _segnati := 0
 
 
 func _ready() -> void:
@@ -83,6 +84,8 @@ func _run() -> void:
 	print("LC: stanza pronta, grigliato a y %.3f, pelo pieno %.3f" % [y_grigliato, acqua.pelo])
 	lei.call(&"_sveglia")
 	for posto in POSTI:
+		if OS.get_environment("SOLO_SUD") == "1" and posto[0] != "sud":
+			continue
 		await _posto(posto[0], posto[1], y_grigliato)
 	peggiori.sort_custom(func(x, y): return x[0] > y[0])
 	print("LC: i momenti peggiori mentre passa: %s" % [peggiori.slice(0, 8).map(func(x): return "%s %.1f %% (%s)" % [x[1], x[0] * 100.0, x[2]])])
@@ -116,13 +119,16 @@ func _posto(nome: String, dove: Vector3, yg: float) -> void:
 	await _frames(10)
 	var cam := g.camera
 	var vp := get_viewport()
-	var sz := vp.get_visible_rect().size
-	# i pixel che guardano il grigliato fuori dalle pozze (campione ogni 8 pixel)
+	var vis := vp.get_visible_rect().size
+	var sz := Vector2(vp.get_texture().get_size())
+	var scala := vis / sz
+	print("LC: vista %s, immagine %s" % [vis, sz])
+	# i pixel che guardano il grigliato fuori dalle pozze (campione ogni 8 pixel dell'immagine)
 	var campioni: Array[Vector2i] = []
 	for y in range(4, int(sz.y), 8):
 		for x in range(4, int(sz.x), 8):
-			var o := cam.project_ray_origin(Vector2(x, y))
-			var d := cam.project_ray_normal(Vector2(x, y))
+			var o := cam.project_ray_origin(Vector2(x, y) * scala)
+			var d := cam.project_ray_normal(Vector2(x, y) * scala)
 			if d.y >= -0.01:
 				continue
 			var q := o + d * ((yg - o.y) / d.y)
@@ -164,6 +170,18 @@ func _posto(nome: String, dove: Vector3, yg: float) -> void:
 				chiari += 1
 			piu = maxf(piu, dlum)
 		var quota := float(chiari) / maxf(campioni.size(), 1)
+		# (con SEGNA=1: lo scatto con i pixel del grigliato e della passerella che schiariscono segnati in verde)
+		if OS.get_environment("SEGNA") == "1" and quota > 0.02 and _segnati < 12:
+			_segnati += 1
+			var m := con.duplicate() as Image
+			for c in campioni:
+				var dl2 := con.get_pixel(c.x, c.y).get_luminance() - senza.get_pixel(c.x, c.y).get_luminance()
+				var col := Color(0, 1, 0) if dl2 > 0.04 else Color(0, 0, 1)
+				for yy in range(-2, 3):
+					for xx in range(-2, 3):
+						m.set_pixel(clampi(c.x + xx, 0, m.get_width() - 1), clampi(c.y + yy, 0, m.get_height() - 1), col if absi(xx) + absi(yy) <= 2 else m.get_pixel(clampi(c.x + xx, 0, m.get_width() - 1), clampi(c.y + yy, 0, m.get_height() - 1)))
+			m.save_jpg(cart.path_join("segna_%s_%s.jpg" % [nome, "%05.1fs_%s" % [n / 60.0, String(AcquaDiLei.Fase.find_key(acqua.fase))]]), 0.9)
+			senza.save_jpg(cart.path_join("senza_%s_%s.jpg" % [nome, "%05.1fs" % (n / 60.0)]), 0.9)
 		var etichetta := "%s_%05.1fs_%s" % [nome, n / 60.0, fase]
 		if quota > 0.0 or n % 120 == 0:
 			print("LC: %s: luce %s, energia %.2f, raggio %.2f; grigliato più chiaro in %.1f %% dei pixel, il più chiaro +%.3f" % [etichetta,

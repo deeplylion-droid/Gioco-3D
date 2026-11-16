@@ -1,0 +1,62 @@
+# luce fra le pozze su 4b82e170 (luce_pozze.gd, renderer vero, stanza vera a pezzi, occhi in piedi a 1,60 m, 20 gradi in giù)
+# nota: le percentuali di pixel del primo giro (luce2) non valgono: i pixel campionati erano sulla scala della finestra, non dell'immagine. Valgono gli scatti e le differenze con/senza luce (luce3).
+LC: stanza pronta, grigliato a y 0.000, pelo pieno -0.052
+LC: vista (1280.0, 720.0), immagine (720.0, 405.0)
+LC: sud: giocatore a (0.0, 0.0, 3.35), occhi a 1.60 m sopra il grigliato, pixel del grigliato campionati 468
+LC: sud_001.3s_LONTANA: luce in Pozza_3_3 (-0.60 dal pelo), energia 0.35, raggio 4.50; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.099
+LC: sud_002.0s_LONTANA: luce in Pozza_3_3 (-0.60 dal pelo), energia 2.43, raggio 4.50; grigliato più chiaro in 0.0 % dei pixel, il più chiaro +0.000
+LC: sud_003.5s_ARRIVA: luce in Pozza_2_3 (-0.60 dal pelo), energia 2.60, raggio 4.50; grigliato più chiaro in 8.5 % dei pixel, il più chiaro +0.340
+LC: sud_003.7s_ARRIVA: luce in Pozza_2_3 (-0.59 dal pelo), energia 0.87, raggio 4.50; grigliato più chiaro in 4.7 % dei pixel, il più chiaro +0.171
+LC: sud_004.0s_ARRIVA: luce in Pozza_2_3 (-0.54 dal pelo), energia 0.87, raggio 4.50; grigliato più chiaro in 3.8 % dei pixel, il più chiaro +0.192
+LC: sud_004.2s_ARRIVA: luce in Pozza_2_3 (-0.51 dal pelo), energia 2.60, raggio 4.50; grigliato più chiaro in 7.9 % dei pixel, il più chiaro +0.338
+LC: sud_004.3s_ARRIVA: luce FUORI dalle pozze a (0.0, -0.53, 1.65), energia 1.21, raggio 4.50; grigliato più chiaro in 4.9 % dei pixel, il più chiaro +0.217
+LC: sud_004.5s_ARRIVA: luce in Pozza_2_4 (-0.44 dal pelo), energia 0.69, raggio 4.50; grigliato più chiaro in 2.6 % dei pixel, il più chiaro +0.152
+LC: sud_004.7s_ARRIVA: luce in Pozza_2_4 (-0.41 dal pelo), energia 2.60, raggio 4.50; grigliato più chiaro in 6.4 % dei pixel, il più chiaro +0.315
+LC: sud_004.8s_ARRIVA: luce in Pozza_2_4 (-0.38 dal pelo), energia 2.60, raggio 4.50; grigliato più chiaro in 5.6 % dei pixel, il più chiaro +0.301
+LC: sud_005.0s_ARRIVA: luce in Pozza_2_4 (-0.36 dal pelo), energia 2.60, raggio 4.50; grigliato più chiaro in 5.3 % dei pixel, il più chiaro +0.293
+LC: sud_005.2s_ARRIVA: luce in Pozza_2_4 (-0.35 dal pelo), energia 2.60, raggio 4.50; grigliato più chiaro in 5.3 % dei pixel, il più chiaro +0.289
+LC: sud_005.3s_SPEGNE: luce in Pozza_2_4 (-0.35 dal pelo), energia 2.48, raggio 4.50; grigliato più chiaro in 5.1 % dei pixel, il più chiaro +0.282
+LC: sud_005.5s_SPEGNE: luce in Pozza_2_4 (-0.35 dal pelo), energia 2.47, raggio 4.50; grigliato più chiaro in 5.3 % dei pixel, il più chiaro +0.281
+LC: sud_005.7s_SPEGNE: luce in Pozza_2_4 (-0.35 dal pelo), energia 1.90, raggio 4.50; grigliato più chiaro in 4.3 % dei pixel, il più chiaro +0.243
+LC: sud_005.8s_SPEGNE: luce in Pozza_2_4 (-0.35 dal pelo), energia 2.00, raggio 4.50; grigliato più chiaro in 4.7 % dei pixel, il più chiaro +0.255
+LC: sud_006.0s_SPEGNE: luce in Pozza_2_4 (-0.35 dal pelo), energia 2.55, raggio 4.50; grigliato più chiaro in 5.3 % dei pixel, il più chiaro +0.290
+LC: sud_006.2s_SILENZIO: luce in Pozza_2_4 (-0.35 dal pelo), energia 2.37, raggio 4.50; grigliato più chiaro in 4.9 % dei pixel, il più chiaro +0.273
+LC: sud_006.3s_SILENZIO: luce in Pozza_2_4 (-0.09 dal pelo), energia 2.60, raggio 4.50; grigliato più chiaro in 4.3 % dei pixel, il più chiaro +0.275
+LC: sud_006.5s_SILENZIO: luce in Pozza_2_4 (0.24 dal pelo), energia 2.15, raggio 4.50; grigliato più chiaro in 4.1 % dei pixel, il più chiaro +0.236
+LC: sud_006.7s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.4 % dei pixel, il più chiaro +0.051
+LC: sud_006.8s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.047
+LC: sud_007.0s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_007.2s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_007.3s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.047
+LC: sud_007.5s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.047
+LC: sud_007.7s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.047
+LC: sud_007.8s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.047
+LC: sud_008.0s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_008.2s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_008.3s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_008.5s_ESCE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_008.7s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.052
+LC: sud_008.8s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.052
+LC: sud_009.0s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_009.2s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_009.3s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_009.5s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_009.7s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_009.8s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_010.0s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_010.2s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_010.3s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_010.5s_SU: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_010.7s_SCENDE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+LC: sud_010.8s_SCENDE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.048
+LC: sud_011.0s_SCENDE: luce in Pozza_2_4 (0.25 dal pelo), energia 3.00, raggio 1.60; grigliato più chiaro in 0.2 % dei pixel, il più chiaro +0.051
+## giro con due posti (sud, ovest), solo posizioni della luce
+LC: sud: giocatore a (0.0, 0.0, 3.35), occhi a 1.60 m sopra il grigliato, pixel del grigliato campionati 1446
+LC: sud_001.8s_LONTANA: luce FUORI dalle pozze a (0.0, -0.65, 1.7), energia 1.73, raggio 4.50
+LC: sud_015.7s_ARRIVA: luce FUORI dalle pozze a (-0.54, -0.52, 2.2), energia 1.04, raggio 4.50
+LC: sud: mentre passa il grigliato più chiaro al più in 12.1 % dei pixel; luce fuori dalle pozze in 7 campioni
+LC: ovest: giocatore a (-3.35, 0.0, -1.1), occhi a 1.60 m sopra il grigliato, pixel del grigliato campionati 1749
+LC: ovest_004.0s_LONTANA: luce FUORI dalle pozze a (-0.53, -0.65, 1.63), energia 1.21, raggio 4.50
+LC: ovest_004.7s_LONTANA: luce FUORI dalle pozze a (-1.62, -0.65, 1.68), energia 1.91, raggio 4.50
+LC: ovest_006.0s_ARRIVA: luce FUORI dalle pozze a (-2.2, -0.54, -0.51), energia 1.73, raggio 4.50
+LC: ovest_014.3s_LONTANA: luce FUORI dalle pozze a (-2.2, -0.65, -0.53), energia 1.04, raggio 4.50
