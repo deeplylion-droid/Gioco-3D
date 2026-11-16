@@ -20,6 +20,10 @@ var _passed := 0
 var _failed := 0
 var _checkpoint_visti: Array[String] = []
 var _errori := ContaErrori.new()
+## Il test non resta mai appeso: un errore di script nel test (che ferma la funzione a metà, come l'Array in Array[Node]
+## della CI di candidata-0400b) lo fa finire subito rosso, e comunque finisce rosso dopo LIMITE_S secondi.
+const LIMITE_S := 1100.0
+var _finito := false
 
 
 ## Gli errori del motore e degli script dalla presa in poi: nel gioco esportato un accesso a un oggetto già liberato, che
@@ -27,10 +31,17 @@ var _errori := ContaErrori.new()
 class ContaErrori extends Logger:
 	var attivo := false
 	var errori: PackedStringArray = []
+	## Il primo errore di script nel test stesso (sempre, anche con [member attivo] spento).
+	var rotto := ""
 	var _m := Mutex.new()
 
 	func _log_error(function: String, file: String, line: int, code: String, rationale: String, _editor_notify: bool,
 			error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
+		if error_type == Logger.ERROR_TYPE_SCRIPT and file.ends_with("test_presa_vera.gd"):
+			_m.lock()
+			if rotto == "":
+				rotto = "%s (%s:%d, %s)" % [rationale if rationale != "" else code, file.get_file(), line, function]
+			_m.unlock()
 		if not attivo or error_type == Logger.ERROR_TYPE_WARNING or file.contains("rendering/dummy"):
 			return
 		_m.lock()
@@ -39,8 +50,25 @@ class ContaErrori extends Logger:
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	OS.add_logger(_errori)
 	_run.call_deferred()
+
+
+func _process(_delta: float) -> void:
+	if _finito:
+		return
+	_errori._m.lock()
+	var r := _errori.rotto
+	_errori._m.unlock()
+	if r != "":
+		_failed += 1
+		printerr("  FALLITO un errore nel test lo ha fermato a metà: ", r)
+		_fine()
+	elif Time.get_ticks_msec() > LIMITE_S * 1000.0:
+		_failed += 1
+		printerr("  FALLITO il test non è finito in %d s (appeso)" % int(LIMITE_S))
+		_fine()
 
 
 func _run() -> void:
@@ -213,23 +241,47 @@ func _presa() -> void:
 		if scia[i].distance_to(p.global_position) < scia[vicino].distance_to(p.global_position):
 			vicino = i
 	_stato("alla serranda")
+	# (0.4.0, la fossa che non sorprende mai: lei sbuca solo con la fossa in vista e il giocatore oltre distanza_sbuca dal
+	# suo occhio, e prende solo dopo che l'ha avuta in vista; come chi gioca: lungo la scia fino a 8 m dalla fossa, lì ci si
+	# ferma a guardarla finché non è sul bordo, poi le si va incontro guardandola)
+	var occhio := lei.punto_sbuca.global_position + Vector3.UP * 1.2
+	var fermo := maxf(lei.distanza_affaccia, lei.distanza_sbuca + 1.0)
 	Input.action_press(&"move_forward")
 	for k in range(vicino, scia.size()):
 		for i in 600:
 			var d := scia[k] - p.global_position
-			if Vector2(d.x, d.z).length() < 0.35 or GameState.is_dying:
+			var a := occhio - p.global_position
+			if Vector2(d.x, d.z).length() < 0.35 or GameState.is_dying or Vector2(a.x, a.z).length() < fermo:
 				break
 			p.set_look(atan2(-d.x, -d.z), 0.0)
 			await get_tree().physics_frame
-		if GameState.is_dying:
+		var a2 := occhio - p.global_position
+		if GameState.is_dying or Vector2(a2.x, a2.z).length() < fermo:
 			break
 	Input.action_release(&"move_forward")
-	check(GameState.is_dying and lei.fase == LeiSbuca.Fase.PRESA, "lungo la scia, alla fossa, lei ti prende (in %s)" % p.global_position.snapped(Vector3.ONE * 0.01))
+	var guardata := 0
+	for i in 60 * 20:
+		if GameState.is_dying or (lei.fase == LeiSbuca.Fase.GUARDA and lei.puo_prendere()):
+			break
+		p.look_at_point(occhio)
+		await get_tree().physics_frame
+		guardata += 1
+	print("  (fermi a %.1f m dalla fossa a guardarla per %.1f s: fase %d, in vista %.1f s)" % [
+		Vector2(occhio.x - p.global_position.x, occhio.z - p.global_position.z).length(), guardata / 60.0, lei.fase, lei.in_vista_t])
+	Input.action_press(&"move_forward")
+	for i in 60 * 10:
+		if GameState.is_dying:
+			break
+		p.look_at_point(occhio)
+		await get_tree().physics_frame
+	Input.action_release(&"move_forward")
+	check(GameState.is_dying and lei.fase == LeiSbuca.Fase.PRESA, "lungo la scia, alla fossa, lei ti prende (in %s, fase %d)" % [
+		p.global_position.snapped(Vector3.ONE * 0.01), lei.fase])
 	_stato("presa")
 	var vecchia := level
 	var seq := GameState.get_children().filter(func(n): return n is DeathSequence)
 	check(seq.size() == 1 and (seq[0] as DeathSequence).cause == &"medusa", "parte la sequenza di morte di lei, che non si salta")
-	var glitch := (seq[0] as Node).find_children("*", "JumpscareGlitch", true, false) if seq.size() == 1 else []
+	var glitch: Array = (seq[0] as Node).find_children("*", "JumpscareGlitch", true, false) if seq.size() == 1 else []
 	check(glitch.size() == 1, "con il jumpscare (glitch e urlo)")
 	_errori.attivo = true
 	var t0 := Time.get_ticks_msec()
@@ -383,6 +435,9 @@ func check(cond: bool, what: String) -> void:
 
 
 func _fine() -> void:
+	if _finito:
+		return
+	_finito = true
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	Game.esci(1 if _failed > 0 else 0)

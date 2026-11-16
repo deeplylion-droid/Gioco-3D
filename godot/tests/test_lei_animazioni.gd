@@ -13,8 +13,10 @@ extends Node
 const DURATE := {
 	&"sale_dall_acqua": 1.6, &"sale_dall_acqua_veloce": 1.0, &"sale_puntata": 1.6, &"sale_mano": 1.6, &"incombe": 2.4, &"presa": 1.2,
 	&"respinta": 1.2, &"scende": 1.0, &"colpo_grata": 0.5, &"colpo_grata_sbieco": 0.5, &"affacciata_sb1": 5.4,
+	&"carica": 2.0, &"scatto": 0.8,
+	&"pozza_esce": 2.2, &"pozza_attesa": 2.4, &"pozza_presa": 0.8, &"pozza_respinta": 1.0, &"pozza_scende": 1.2,
 }
-const IN_CICLO := [&"incombe", &"colpo_grata", &"colpo_grata_sbieco"]
+const IN_CICLO := [&"incombe", &"colpo_grata", &"colpo_grata_sbieco", &"pozza_attesa"]
 ## Gli stessi valori di tools/blender/medusa_inseguimento.py (lei guarda verso +Z).
 const GRAB := Vector3(0.0, 3.85, 2.4)
 const GRATA := 2.3
@@ -134,6 +136,53 @@ func _run() -> void:
 		occhio_basso = minf(occhio_basso, (o["occhio"] as Vector3).y)
 	check(peggio < 0.12, "le mani restano sul bordo del pozzo (al massimo a %.2f m)" % peggio)
 	check(occhio_basso > BORDO_SB1.y + 0.3, "e l'occhio sta sopra il bordo (%.2f m)" % occhio_basso)
+
+	print("La carica e lo scatto del tunnel (0.4.0)")
+	var corsa := _ossa(&"insegue_aperta", 0.0)
+	var sc_c := _scarto(_ossa(&"carica", 0.0), corsa)
+	check(sc_c < 0.03, "la carica parte dalla posa della corsa al tempo 0 (scarto %.3f m, %s)" % [sc_c, peggiore])
+	var sc_s := _scarto(_ossa(&"scatto", 0.0), _ossa(&"carica", 2.0))
+	check(sc_s < 0.03, "lo scatto parte dalla fine della carica (scarto %.3f m, %s)" % [sc_s, peggiore])
+	var sc_f := _scarto(_ossa(&"scatto", 0.8), corsa)
+	check(sc_f < 0.03, "e finisce nella posa della corsa al tempo 0 (scarto %.3f m, %s)" % [sc_f, peggiore])
+	var indietro: float = (_ossa(&"carica", 1.2)["radice"] as Vector3).z - (corsa["radice"] as Vector3).z
+	check(indietro < -0.4, "nella carica si tira indietro (%.2f m)" % indietro)
+	var avanti: float = (_ossa(&"scatto", 0.2)["testa"] as Vector3).z - (_ossa(&"carica", 2.0)["testa"] as Vector3).z
+	check(avanti > 0.5, "nello scatto la testa va avanti (%.2f m)" % avanti)
+	for nome: StringName in [&"carica", &"scatto"]:
+		var salto_cs := _salto_massimo(nome)
+		check(salto_cs < 0.36, "%s senza scatti fra un fotogramma e l'altro (al più %.2f m, %s)" % [nome, salto_cs, peggiore])
+
+	print("Le pozze (modo MANO, 0.4.0)")
+	# spazio di lei = il marker della pozza: origine dove sbatte la mano, +Z verso la passerella
+	var attesa := _ossa(&"pozza_attesa", 0.0, true)
+	var sc_e := _scarto(_ossa(&"pozza_esce", 2.2, true), attesa)
+	check(sc_e < 0.03, "pozza_esce finisce nella posa d'attesa (scarto %.3f m, %s)" % [sc_e, peggiore])
+	var sc_l := _scarto(_ossa(&"pozza_attesa", 2.4 - 0.0001, true), attesa)
+	check(sc_l < 0.03, "pozza_attesa finisce come comincia (scarto %.3f m, %s)" % [sc_l, peggiore])
+	for nome: StringName in [&"pozza_presa", &"pozza_respinta", &"pozza_scende"]:
+		var sc_p := _scarto(_ossa(nome, 0.0, true), attesa)
+		check(sc_p < 0.03, "%s parte dalla posa d'attesa (scarto %.3f m, %s)" % [nome, sc_p, peggiore])
+	var mano: Vector3 = attesa["mano.R"]
+	check(mano.distance_to(Vector3(0.0, 0.09, -0.04)) < 0.03, "nell'attesa il polso è sul grigliato, a filo del bordo (%s)" % mano)
+	var presa_p: Vector3 = _ossa(&"pozza_presa", 0.35)["mano.R"]
+	check(presa_p.distance_to(Vector3(0.0, 0.26, 0.40)) < 0.06, "nella presa il polso è alla caviglia (%s)" % presa_p)
+	var punte := []
+	for t in ["03", "05", "02", "04"]:
+		var p: Vector3 = attesa["tentacolo_%s_10" % t] if attesa.has("tentacolo_%s_10" % t) else Vector3.ZERO
+		punte.append(p)
+	var sul_grigliato := true
+	for p: Vector3 in punte:
+		sul_grigliato = sul_grigliato and p.z > 0.2 and p.z < 1.2 and p.y > 0.0 and p.y < 0.1 and absf(p.x) > 0.5
+	check(sul_grigliato, "le punte dei quattro tentacoli strisciano sulla passerella (%s)" % [punte])
+	var sotto := -99.0
+	for nome_t in [[&"pozza_esce", 0.0], [&"pozza_scende", 1.2], [&"pozza_respinta", 1.0]]:
+		var o := _ossa(nome_t[0], nome_t[1], true)
+		for n in o:
+			if (o[n] as Vector3).y > sotto:
+				sotto = (o[n] as Vector3).y
+				peggiore = "%s, %s" % [nome_t[0], n]
+	check(sotto < -0.75, "all'inizio di pozza_esce e alla fine di scende e respinta è tutta sotto il fondo (al più a %.2f m: %s)" % [sotto, peggiore])
 
 	print("Le zampe sul petto")
 	# come stanno nella posa approvata insegue, rispetto al petto

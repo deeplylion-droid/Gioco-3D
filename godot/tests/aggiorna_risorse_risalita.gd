@@ -32,7 +32,23 @@ func _run() -> void:
 	RisorseNodi.materiali_per_shader(level, sala)
 	ris.call(&"carica_subito")
 	await get_tree().process_frame
+	# come test_risalita_tardi: il risveglio e il giocatore dentro, così ci sono anche i file che le stanze prendono
+	# appena vive (i suoni in ciclo delle pozze e di lei, il cartello), che un fotogramma dopo non c'erano ancora
+	GameState.imposta_luci(GameState.Luci.FLASH)
+	await _secondi(1.2)
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	await _secondi(1.0)
+	GameState.player.teleport((ris.get_node(^"Fiume/Marker/Ingresso") as Node3D).global_position, 0.0, 0.0)
+	await _secondi(1.5)
 	var l := elenco(ris)
+	# e quelli che c'erano già e ci sono ancora: l'elenco non perde file che le stanze usano solo in certi momenti
+	if FileAccess.file_exists(ELENCO):
+		var prima: Variant = JSON.parse_string(FileAccess.get_file_as_string(ELENCO))
+		if prima is Array:
+			for x in prima:
+				if not String(x) in l and ResourceLoader.exists(String(x)):
+					l.append(String(x))
+			l.sort()
 	var f := FileAccess.open(ELENCO, FileAccess.WRITE)
 	f.store_string(JSON.stringify(Array(l), "\t") + "\n")
 	f.close()
@@ -45,6 +61,11 @@ func _run() -> void:
 	ResourceSaver.save(r, CAMPIONI)
 	print("%s: %d materiali" % [CAMPIONI, campioni.size()])
 	Game.esci(0)
+
+
+func _secondi(t: float) -> void:
+	for i in int(t * 60.0):
+		await get_tree().physics_frame
 
 
 ## I file usati dalle stanze costruite, in ordine (senza le tre scene, che si chiedono a parte).

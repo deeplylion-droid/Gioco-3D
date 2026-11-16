@@ -6,7 +6,10 @@ extends Node
 ## - il giocatore sta nel posto del checkpoint, con lo zaino pieno, le luci, le Polaroid e gli oggetti persist
 ##   dell'istantanea; la torre e il tunnel ci sono quando la partenza è lì dentro;
 ## - la memoria resta sotto [constant MEMORIA_MAX] (statica, quella che si misura senza scheda video);
-## - morendo si riparte dallo stesso checkpoint.
+## - morendo si riparte dallo stesso checkpoint;
+## - le partenze della 0.4.0 nel loro stato: sala pompe con le pompe da riavviare, stanza delle pozze con l'enigma da
+##   fare, sala al buio con lei non ancora sbucata dalla fossa e il giro della luce che parte solo uscendo dalla
+##   serranda.
 ## E il titolo: F9 apre il menu di prova con le partenze, Esc lo chiude, fra le voci del titolo non c'è.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_partenze_prova.gd [id,id]
 
@@ -160,6 +163,7 @@ func _partenza(id: String) -> void:
 		if objects.has(key) and n.has_method(&"save_state") and not _uguali(n.call(&"save_state"), objects[key]):
 			diversi.append(key)
 	_check(diversi.is_empty(), "%s: gli oggetti persist come nell'istantanea (diversi: %s)" % [id, diversi])
+	await _controlli_0400(id, level)
 	if String(d["checkpoint"]).begins_with("SalaTorre"):
 		_check(level.get(&"sala_torre") is Node, "%s: la torre c'è" % id)
 	if String(d["checkpoint"]).begins_with("SalaSottomarino"):
@@ -174,6 +178,42 @@ func _partenza(id: String) -> void:
 	await _aspetta_ripresa()
 	pl = GameState.player
 	_check(pl != null and pl.global_position.distance_to(spawn) < 1.5, "%s: dopo una morte di nuovo al checkpoint" % id)
+
+
+## Le partenze nuove della 0.4.0 (per provare i momenti nuovi senza rigiocare): ognuna nel suo stato.
+func _controlli_0400(id: String, level: Node) -> void:
+	match id:
+		"sala_pompe":
+			var ris: Node = level.get(&"risveglio")
+			_check(GameState.luci == GameState.Luci.PRIMA_DEL_RISVEGLIO, "%s: le pompe sono da riavviare (luci di prima del risveglio)" % id)
+			_check(ris != null and not bool(ris.get(&"risvegliata")) and int(ris.get(&"avviate")) == 0,
+					"%s: nessuna pompa avviata, la leva da tirare" % id)
+			_check(GameState.get_collected_count(&"polaroid") == 8, "%s: le Polaroid di interni, piscina e P06 (8)" % id)
+		"pozze":
+			var e := level.get_node_or_null(^"Risalita/StanzaPozze/EnigmaPozze")
+			_check(e != null and int(e.get(&"stato")) != 2, "%s: l'enigma delle pozze è da fare (stato %s)" % [id, e.get(&"stato") if e else "-"])
+			_check(GameState.luci == GameState.Luci.BLACKOUT, "%s: dopo il risveglio (blackout)" % id)
+		"sala_buio":
+			var lei := level.get_node_or_null(^"Gioco/LeiSbuca")
+			_check(lei != null and not bool((lei.call(&"save_state") as Dictionary).get("finita", true)),
+					"%s: lei non è ancora sbucata dalla fossa" % id)
+			var serranda := level.get_node_or_null(^"Tecnici/Logica/SerrandaMagazzino")
+			_check(serranda != null and bool(serranda.get(&"aperta")), "%s: la serranda del magazzino è aperta" % id)
+			# il giro della luce parte solo uscendo dalla serranda (dentro la sala al buio), non al checkpoint
+			var giro := level.get_node_or_null(^"Gioco/LeiSalaAlBuio")
+			_check(giro != null and int(giro.get(&"stato")) == 0, "%s: al checkpoint il giro della luce non è partito (stato %s)"
+					% [id, giro.get(&"stato") if giro else "-"])
+			var pl := GameState.player as Node3D
+			if giro and pl:
+				var da := pl.global_position
+				pl.global_position = da + Vector3(0, 0, -4)
+				for i in 20:
+					await get_tree().physics_frame
+				_check(int(giro.get(&"stato")) == 1, "%s: uscendo dalla serranda (4 m dentro la sala) il giro parte (stato %d)"
+						% [id, giro.get(&"stato")])
+				pl.global_position = da
+				for i in 20:
+					await get_tree().physics_frame
 
 
 func _aspetta_ripresa() -> void:
