@@ -1,3 +1,5 @@
+# NOTA: «DIFETTO ovest/spiaggia: comparsa in vista» è la soglia vecchia degli 8 m della sonda: lei è sbucata dopo l'avviso con il giocatore oltre 3,4 m dal suo occhio, come vuole la regola finale (distanza_sbuca 3,4).
+# Il collaudo non lo conta come difetto.
 # pelo della fossa su 4b82e170 (buio_fossa.gd ovest, spiaggia; senza schermo, gioco vero)
 BF: ===== ovest
 BF: ovest parte da (-18.5, 0.0, 8.0) (16.70 m dalla fossa), stato giro GIRO

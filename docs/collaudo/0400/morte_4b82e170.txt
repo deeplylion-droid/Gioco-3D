@@ -1,3 +1,5 @@
+# NOTA: le righe «DIFETTO … @MeshInstance3D@N prende più di metà schermo» sono la regola automatica della sonda: scatta sul fondo e sulle pareti della pozza sotto il liquido opaco (coperto, voluto).
+# Il collaudo non le conta come difetti (vedi scatti: a fine corsa si vede il liquido).
 PM: camera near 0.030, fov 75
 PM: sud: chiamata dalla pozza Pozza_2_4, uscita Uscita_Pozza_2_4 (0.0, 0.0, 2.8), giocatore a (0.0, 0.0, 3.35) (0.55 m dall'uscita)
 PM: sud: presa, scena breve false, durata 5.00, meta camera_morte [(0.35, 0.6, 3.6), (0.12, 0.22, 2.68), (0.0, -0.3025, 2.05)]
