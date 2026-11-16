@@ -1,0 +1,98 @@
+# prima uscita di lei nelle pozze su 4b82e170
+## (a) renderer vero, stanza da sola, riscaldamento del gioco + della stanza (con) / senza quello della stanza (senza)
+PB: con: riscaldamento del gioco concluso, compilazioni (338.0, 105.0, 149.0)
+PB: con: F9 / Continua (ingresso): riscaldamento della stanza finito al fotogramma 4; compilazioni (fotogramma: surface/draw/spec) ["0 (riscaldando): 0/14/15"]
+PB: con: F9 / Continua (ingresso): luminosità 0.179 0.179 0.179 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164
+PB: con: prima uscita dall'ingresso: chiamata true, dimostrativa true, letale false
+PB: con: prima uscita dall'ingresso: nel fotogramma in cui esce: surface 0, draw 0, specialization 0
+PB: con: prima uscita dall'ingresso: dal silenzio a 1 s dopo su: surface 0, draw 0, specialization 0; fotogrammi []
+PB: con: presa: chiamata true, dimostrativa false, letale true
+PB: con: presa: nel fotogramma in cui esce: surface 0, draw 0, specialization 0
+PB: con: presa: dal silenzio a 1 s dopo su (e 1 s di scena di morte): surface 0, draw 0, specialization 0; fotogrammi []
+PB: con: presa: preso true
+PB: con: dopo la presa (stanza e giocatore nuovi): riscaldamento della stanza finito al fotogramma 4; compilazioni (fotogramma: surface/draw/spec) []
+PB: con: dopo la presa (stanza e giocatore nuovi): luminosità 0.179 0.179 0.179 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165
+PB: con: prima uscita dopo la presa: chiamata true, dimostrativa false, letale false
+PB: con: prima uscita dopo la presa: nel fotogramma in cui esce: surface 0, draw 0, specialization 0
+PB: con: prima uscita dopo la presa: dal silenzio a 1 s dopo su: surface 0, draw 0, specialization 0; fotogrammi []
+PB: con: difetti 0
+PB: finito
+PB: senza: riscaldamento del gioco concluso, compilazioni (338.0, 105.0, 149.0)
+PB: senza: F9 / Continua (ingresso): riscaldamento della stanza finito al fotogramma 0; compilazioni (fotogramma: surface/draw/spec) ["0: 0/1/1"]
+PB: senza: F9 / Continua (ingresso): luminosità 0.179 0.179 0.179 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164 0.164
+PB: senza: prima uscita dall'ingresso: chiamata true, dimostrativa true, letale false
+PB: senza: prima uscita dall'ingresso: nel fotogramma in cui esce: surface 0, draw 8, specialization 8
+PB: DIFETTO senza: prima uscita dall'ingresso: nel fotogramma in cui esce draw 8, specialization 8
+PB: senza: prima uscita dall'ingresso: dal silenzio a 1 s dopo su: surface 0, draw 8, specialization 8; fotogrammi ["211 ESCE: 0/8/8"]
+PB: DIFETTO senza: prima uscita dall'ingresso: draw 8, specialization 8 mentre esce
+PB: senza: presa: chiamata true, dimostrativa false, letale true
+PB: senza: presa: nel fotogramma in cui esce: surface 0, draw 0, specialization 0
+PB: senza: presa: dal silenzio a 1 s dopo su (e 1 s di scena di morte): surface 0, draw 0, specialization 0; fotogrammi []
+PB: senza: presa: preso true
+PB: senza: dopo la presa (stanza e giocatore nuovi): riscaldamento della stanza finito al fotogramma 0; compilazioni (fotogramma: surface/draw/spec) []
+PB: senza: dopo la presa (stanza e giocatore nuovi): luminosità 0.179 0.179 0.179 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165 0.165
+PB: senza: prima uscita dopo la presa: chiamata true, dimostrativa false, letale false
+PB: senza: prima uscita dopo la presa: nel fotogramma in cui esce: surface 0, draw 0, specialization 0
+PB: senza: prima uscita dopo la presa: dal silenzio a 1 s dopo su: surface 0, draw 0, specialization 0; fotogrammi []
+PB: senza: difetti 2
+PB:   senza: prima uscita dall'ingresso: nel fotogramma in cui esce draw 8, specialization 8
+PB:   senza: prima uscita dall'ingresso: draw 8, specialization 8 mentre esce
+PB: finito
+## (b) senza schermo, gioco vero: F9, presa, Continua
+PU: scena ridotta res://scenes/sala_principale.tscn
+PU: f9: arrivo dopo 10.0 s, scena sala_principale.tscn, checkpoint Risalita/StanzaPozze/Checkpoint/CheckpointIngresso
+PU: f9: riscaldamento della stanza parte al fotogramma 0 (schermo libero false, luminosità 0.000)
+PU: f9: riscaldamento della stanza finito al fotogramma 2 (schermo libero false, luminosità 0.000)
+PU: f9: schermo libero al fotogramma 115
+PU: f9: compilazioni nell'apertura (fotogramma: surface/draw/spec) []
+PU: f9: chiamata true, dimostrativa true, letale true
+PU: f9: fase SPEGNE al fotogramma 145
+PU: f9: fase SILENZIO al fotogramma 217
+PU: f9: fase ESCE al fotogramma 254
+PU: f9: fotogramma 0 dall'uscita: surface 0, draw 0, specialization 0
+PU: f9: fotogramma 1 dall'uscita: surface 0, draw 0, specialization 0
+PU: f9: fotogramma 2 dall'uscita: surface 0, draw 0, specialization 0
+PU: f9: fotogramma 3 dall'uscita: surface 0, draw 0, specialization 0
+PU: f9: fotogramma 4 dall'uscita: surface 0, draw 0, specialization 0
+PU: f9: fotogramma 5 dall'uscita: surface 0, draw 0, specialization 0
+PU: f9: fase SU al fotogramma 415
+PU: f9: dal silenzio a 1 s dopo su: surface 0, draw 0, specialization 0; fotogrammi con compilazioni []
+PU: presa (quella che prende): preso true
+PU: dopo la presa: arrivo dopo 9.1 s, scena sala_principale.tscn, checkpoint Risalita/StanzaPozze/Checkpoint/CheckpointIngresso
+PU: dopo la presa: schermo libero al fotogramma 0
+PU: dopo la presa: riscaldamento della stanza parte al fotogramma 0 (schermo libero true, luminosità 0.000)
+PU: dopo la presa: riscaldamento della stanza finito al fotogramma 2 (schermo libero true, luminosità 0.000)
+PU: dopo la presa: compilazioni nell'apertura (fotogramma: surface/draw/spec) []
+PU: dopo la presa: chiamata true, dimostrativa false, letale true
+PU: dopo la presa: fase SPEGNE al fotogramma 145
+PU: dopo la presa: fase SILENZIO al fotogramma 218
+PU: dopo la presa: fase ESCE al fotogramma 255
+PU: dopo la presa: fotogramma 0 dall'uscita: surface 0, draw 0, specialization 0
+PU: dopo la presa: fotogramma 1 dall'uscita: surface 0, draw 0, specialization 0
+PU: dopo la presa: fotogramma 2 dall'uscita: surface 0, draw 0, specialization 0
+PU: dopo la presa: fotogramma 3 dall'uscita: surface 0, draw 0, specialization 0
+PU: dopo la presa: fotogramma 4 dall'uscita: surface 0, draw 0, specialization 0
+PU: dopo la presa: fotogramma 5 dall'uscita: surface 0, draw 0, specialization 0
+PU: dopo la presa: fase SU al fotogramma 416
+PU: dopo la presa: fase PRESA al fotogramma 441
+PU: dopo la presa: dal silenzio a 1 s dopo su: surface 0, draw 0, specialization 0; fotogrammi con compilazioni []
+PU: salvataggio su disco: Risalita/StanzaPozze/Checkpoint/CheckpointIngresso
+PU: continua: arrivo dopo 6.7 s, scena sala_principale.tscn, checkpoint Risalita/StanzaPozze/Checkpoint/CheckpointIngresso
+PU: continua: riscaldamento della stanza parte al fotogramma 0 (schermo libero false, luminosità 0.000)
+PU: continua: riscaldamento della stanza finito al fotogramma 2 (schermo libero false, luminosità 0.000)
+PU: continua: schermo libero al fotogramma 116
+PU: continua: compilazioni nell'apertura (fotogramma: surface/draw/spec) []
+PU: continua: chiamata true, dimostrativa true, letale true
+PU: continua: fase SPEGNE al fotogramma 145
+PU: continua: fase SILENZIO al fotogramma 218
+PU: continua: fase ESCE al fotogramma 255
+PU: continua: fotogramma 0 dall'uscita: surface 0, draw 0, specialization 0
+PU: continua: fotogramma 1 dall'uscita: surface 0, draw 0, specialization 0
+PU: continua: fotogramma 2 dall'uscita: surface 0, draw 0, specialization 0
+PU: continua: fotogramma 3 dall'uscita: surface 0, draw 0, specialization 0
+PU: continua: fotogramma 4 dall'uscita: surface 0, draw 0, specialization 0
+PU: continua: fotogramma 5 dall'uscita: surface 0, draw 0, specialization 0
+PU: continua: fase SU al fotogramma 416
+PU: continua: dal silenzio a 1 s dopo su: surface 0, draw 0, specialization 0; fotogrammi con compilazioni []
+PU: difetti 0
+PU: finito
